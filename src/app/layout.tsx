@@ -1,12 +1,13 @@
 import LayoutRoot from "@/components/common/layout-root";
+import { siteConfig } from "@/config/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    template: `%s | Nem Lager`,
-    default: "Nem Lager",
+    template: `%s | ${siteConfig.name}`,
+    default: siteConfig.name,
   },
-  description: "Hold styr på din beholdning.",
+  description: siteConfig.description,
 }
 
 export default LayoutRoot
