@@ -1,0 +1,58 @@
+"use client"
+
+import { User } from "lucia";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import Link from "next/link";
+import { signOutAction } from "@/app/(auth)/log-ud/actions";
+
+export function NavUser({ user }: { user: User }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant='outline' className='relative size-9 rounded-md'>
+          <Avatar className='size-9 border'>
+            <AvatarImage src={undefined} alt={`${user.email} avatar`} />
+            <AvatarFallback>{user.email.substring(0, 2)}</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className='w-56' align='end' forceMount>
+        <DropdownMenuLabel className='font-normal'>
+          <div className='flex flex-col gap-1'>
+            <p className='h-4 overflow-x-hidden text-ellipsis text-sm font-semibold leading-none'>
+              {user.email}
+            </p>
+            <p className='h-4 overflow-x-hidden text-ellipsis text-sm leading-none text-muted-foreground'>
+              {user.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <Link href='/profil'>Min profil</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>Få hjælp</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className='focus:text-destructive' asChild>
+          <form action={() => signOutAction()}>
+            <button className='w-full text-left' type='submit'>
+              Log ud
+            </button>
+          </form>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}

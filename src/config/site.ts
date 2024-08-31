@@ -1,4 +1,5 @@
 import { Icons } from "@/components/ui/icons";
+import { UserRole } from "@/data/user.types";
 import { LucideIcon } from "lucide-react";
 
 export const siteConfig: SiteConfig = {
@@ -15,18 +16,21 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Beholdning',
           description: 'Se en oversigt over hele din beholdning',
-          href: '/oversigt/beholdning'
+          href: '/oversigt/beholdning',
+          isExternal: false,
         },
         {
           label: 'Historik',
           description: 'Se historikken på alle bevægelser på din beholdning',
-          href: '/oversigt/histik'
+          href: '/oversigt/histik',
+          isExternal: false,
         },
       ]
     },
     {
       label: 'Support',
       roles: ['admin', 'bruger'],
+      isExternal: true,
       isDisabled: false,
       isDropdown: false,
       href: '/support'
@@ -45,20 +49,22 @@ export type NavItem = NavItemNoDropdown | NavItemDropdown
 
 type NavItemNoDropdown = {
   label: string
-  roles: string[],
-  isDisabled: boolean,
+  roles: UserRole[]
+  isExternal: boolean
+  isDisabled: boolean
   isDropdown: false
   href: string
 }
 
 type NavItemDropdown = {
   label: string
-  roles: string[],
-  isDisabled: boolean,
+  roles: UserRole[]
+  isDisabled: boolean
   isDropdown: true
   items: {
     label: string
     description: string
     href: string
+    isExternal: boolean
   }[]
 }
