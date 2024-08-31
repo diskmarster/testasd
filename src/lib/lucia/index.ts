@@ -2,6 +2,7 @@ import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 import { Lucia, TimeSpan } from "lucia";
 import { db } from "@/lib/database";
 import { sessionTable, userTable } from "@/lib/database/schema/auth";
+import { UserRole } from "@/data/user.types";
 
 const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
 
@@ -35,7 +36,7 @@ declare module "lucia" {
 
 interface SessionUser {
   email: string
-  role: string
+  role: UserRole
   inserted: Date
   updated: Date
 }

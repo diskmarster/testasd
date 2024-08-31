@@ -1,3 +1,4 @@
+import { UserRole } from "@/data/user.types";
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
@@ -5,7 +6,7 @@ export const userTable = sqliteTable("nl_user", {
   id: integer("id").notNull().primaryKey({ autoIncrement: true }),
   email: text("email").notNull().unique(),
   hash: text("hash").notNull(),
-  role: text("role").notNull().default('bruger'),
+  role: text("role").$type<UserRole>().notNull().default('bruger'),
   isActive: integer("is_active", { mode: 'boolean' }).notNull().default(false),
   inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   updated: integer("updated", { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>()

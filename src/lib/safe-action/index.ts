@@ -1,5 +1,5 @@
 import { createSafeActionClient } from "next-safe-action";
-import { ACTION_ERR_UNAUTHORIZED, ActionError } from "./error";
+import { ACTION_ERR_UNAUTHORIZED, ActionError } from "@/lib/safe-action/error";
 import { sessionService } from "@/service/session";
 
 // public action client for unauthorized requests
