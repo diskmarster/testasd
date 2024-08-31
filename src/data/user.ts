@@ -1,20 +1,18 @@
 import { db } from "@/lib/database";
-import { NewUser, UserNoHash, userTable } from "@/lib/database/schema/auth";
-import { eq, getTableColumns } from "drizzle-orm";
+import { NewUser, User, userTable } from "@/lib/database/schema/auth";
+import { eq } from "drizzle-orm";
 
-const { hash, ...rest } = getTableColumns(userTable)
-
-export const users = {
-  create: async function(u: NewUser): Promise<UserNoHash> {
-    const [user] = await db.insert(userTable).values(u).returning(rest)
+export const user = {
+  create: async function(u: NewUser): Promise<User> {
+    const [user] = await db.insert(userTable).values(u).returning()
     return user
   },
-  getByID: async function(userID: number): Promise<UserNoHash | undefined> {
-    const [user] = await db.select(rest).from(userTable).where(eq(userTable.id, userID)).limit(1)
+  getByID: async function(userID: number): Promise<User | undefined> {
+    const [user] = await db.select().from(userTable).where(eq(userTable.id, userID)).limit(1)
     return user
   },
-  getByEmail: async function(userEmail: string): Promise<UserNoHash | undefined> {
-    const [user] = await db.select(rest).from(userTable).where(eq(userTable.email, userEmail)).limit(1)
+  getByEmail: async function(userEmail: string): Promise<User | undefined> {
+    const [user] = await db.select().from(userTable).where(eq(userTable.email, userEmail)).limit(1)
     return user
   }
 }

@@ -1,3 +1,4 @@
+import { SignInCard } from "@/components/auth/sign-in-card"
 import { siteConfig } from "@/config/site"
 import { Metadata } from "next"
 
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   return (
-    <div>Log ind siden</div>
+    <section className="w-full">
+      <SignInCard />
+    </section>
   )
 }

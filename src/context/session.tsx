@@ -1,0 +1,17 @@
+"use client"
+
+import { sessionService } from "@/service/auth";
+import { createContext, useContext } from "react";
+
+type SessionContextType = Awaited<ReturnType<typeof sessionService.validate>>
+
+const SessionContext = createContext<SessionContextType>({
+  session: null,
+  user: null
+})
+
+export const useSession = () => useContext(SessionContext)
+
+export const SessionProvider = ({ children, value }: React.PropsWithChildren<{ value: SessionContextType }>) => {
+  return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
+};

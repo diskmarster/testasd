@@ -4,7 +4,7 @@ import { publicAction } from "@/lib/safe-action"
 import { userService } from "@/service/user"
 import { signUpValidation } from "@/app/(auth)/registrer/validation"
 import { ActionError } from "@/lib/safe-action/error"
-import { authService } from "@/service/auth"
+import { sessionService } from "@/service/auth"
 import { redirect } from "next/navigation"
 
 export const signUpAction = publicAction
@@ -16,7 +16,7 @@ export const signUpAction = publicAction
     }
 
     const newUser = await userService.register({ email: parsedInput.email, hash: parsedInput.password })
-    const newSessionID = await authService.createSession(newUser.id)
+    const newSessionID = await sessionService.create(newUser.id)
 
     redirect("/oversigt")
   })
