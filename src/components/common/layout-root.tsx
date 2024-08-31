@@ -3,7 +3,7 @@ import "../../app/globals.css";
 import { ProviderTheme } from "@/components/common/provider-theme";
 import { cn } from "@/lib/utils";
 import { SessionProvider } from "@/context/session";
-import { sessionService } from "@/service/auth";
+import { sessionService } from "@/service/session";
 
 const font = Inter({ subsets: ["latin"] });
 

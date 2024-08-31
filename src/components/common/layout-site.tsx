@@ -1,4 +1,4 @@
-import { sessionService } from "@/service/auth"
+import { sessionService } from "@/service/session"
 import { redirect } from "next/navigation"
 
 export default async function LayoutSite({

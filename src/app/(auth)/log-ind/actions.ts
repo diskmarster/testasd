@@ -4,8 +4,8 @@ import { publicAction } from "@/lib/safe-action"
 import { userService } from "@/service/user"
 import { signInValidation } from "@/app/(auth)/log-ind/validation"
 import { ActionError } from "@/lib/safe-action/error"
-import { sessionService } from "@/service/auth"
 import { redirect } from "next/navigation"
+import { sessionService } from "@/service/session"
 
 export const signInAction = publicAction
   .schema(signInValidation)
