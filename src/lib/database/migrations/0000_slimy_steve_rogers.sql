@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `nl_session` (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS `nl_user` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL,
 	`email` text NOT NULL,
 	`hash` text NOT NULL,
 	`role` text DEFAULT 'bruger' NOT NULL,

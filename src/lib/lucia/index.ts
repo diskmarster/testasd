@@ -18,8 +18,10 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (u: SessionUser) => {
     return {
       // define attributes for session
+      name: u.name,
       email: u.email,
       role: u.role,
+      clientID: u.clientID,
       isActive: u.isActive,
       inserted: u.inserted,
       updated: u.updated
@@ -36,8 +38,10 @@ declare module "lucia" {
 }
 
 interface SessionUser {
+  name: string
   email: string
   role: UserRole
+  clientID: number
   isActive: boolean
   inserted: Date
   updated: Date

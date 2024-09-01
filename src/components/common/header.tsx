@@ -2,6 +2,7 @@ import { sessionService } from "@/service/session";
 import { ThemeToggle } from "./theme-toggle";
 import { NavUser } from "./nav-user";
 import { NavDesktop } from "./nav-desktop";
+import { NavMobile } from "./nav-mobile";
 
 export async function Header() {
   const { session, user } = await sessionService.validate()
@@ -9,9 +10,9 @@ export async function Header() {
 
   return (
     <header className='sticky top-0 z-40 w-full border-b bg-background shadow-sm'>
-      <div className='container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0'>
+      <div className='container flex h-16 items-center md:space-x-4 sm:justify-between'>
         <NavDesktop user={user} />
-        <p className="md:hidden">Mobile nav</p>
+        <NavMobile user={user} />
         <div className='flex flex-1 items-center justify-end space-x-4'>
           <nav className='flex items-center space-x-2'>
             <ThemeToggle />

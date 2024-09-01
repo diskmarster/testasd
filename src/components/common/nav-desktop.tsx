@@ -13,7 +13,7 @@ export function NavDesktop({ user }: { user: User }) {
   return (
     <div className='hidden gap-6 md:flex md:gap-10'>
       <Link href='/' className='flex items-center space-x-2'>
-        <Icons.boxes className="size-6" strokeWidth={1.5} />
+        <siteConfig.logo className="size-6" strokeWidth={1.5} />
         <span className='inline-block font-semibold'>
           {siteConfig.name}
         </span>
@@ -26,7 +26,7 @@ export function NavDesktop({ user }: { user: User }) {
               item => item.roles.includes(user.role) || item.roles.length == 0,
             )
             .map((item, index) => (
-              <Item key={index} pathname={pathname} item={item} />
+              <Item key={index} pathname={pathname} item={item} user={user} />
             ))}
         </NavigationMenuList>
       </NavigationMenu>
@@ -34,7 +34,7 @@ export function NavDesktop({ user }: { user: User }) {
   )
 }
 
-export function Item({ item, pathname }: { item: NavItem, pathname: string }) {
+export function Item({ item, pathname, user }: { item: NavItem, pathname: string, user: User }) {
   function isActive(path: string): boolean {
     return pathname === path
   }
@@ -52,7 +52,7 @@ export function Item({ item, pathname }: { item: NavItem, pathname: string }) {
         </NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className='grid gap-2 p-2 md:w-[250px]'>
-            {item.items.map((link, index) => (
+            {item.items.filter(item => item.roles.includes(user.role) || item.roles.length == 0).map((link, index) => (
               <li key={index}>
                 <NavigationMenuLink asChild>
                   <Link
@@ -60,6 +60,8 @@ export function Item({ item, pathname }: { item: NavItem, pathname: string }) {
                     className={cn(
                       'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
                       isActive(link.href) && 'bg-muted',
+                      link.isDisabled &&
+                      'pointer-events-none cursor-not-allowed select-none opacity-50',
                     )}>
                     <div className='space-y-1.5'>
                       <div className='flex items-center gap-1.5 text-sm font-semibold leading-none'>
@@ -87,7 +89,7 @@ export function Item({ item, pathname }: { item: NavItem, pathname: string }) {
         className={cn(
           'relative',
           item.isDisabled &&
-          'pointer-events-none cursor-not-allowed select-none opacity-60',
+          'pointer-events-none cursor-not-allowed select-none opacity-50',
         )}>
         <Link href={item.href} legacyBehavior passHref>
           <NavigationMenuLink

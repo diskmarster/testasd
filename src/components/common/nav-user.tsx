@@ -21,8 +21,8 @@ export function NavUser({ user }: { user: User }) {
       <DropdownMenuTrigger asChild>
         <Button variant='outline' className='relative size-9 rounded-md'>
           <Avatar className='size-9 border'>
-            <AvatarImage src={undefined} alt={`${user.email} avatar`} />
-            <AvatarFallback>{user.email.substring(0, 2)}</AvatarFallback>
+            <AvatarImage src={undefined} alt={`${user.name} avatar`} />
+            <AvatarFallback>{user.name.substring(0, 2)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -30,7 +30,7 @@ export function NavUser({ user }: { user: User }) {
         <DropdownMenuLabel className='font-normal'>
           <div className='flex flex-col gap-1'>
             <p className='h-4 overflow-x-hidden text-ellipsis text-sm font-semibold leading-none'>
-              {user.email}
+              {user.name}
             </p>
             <p className='h-4 overflow-x-hidden text-ellipsis text-sm leading-none text-muted-foreground'>
               {user.email}

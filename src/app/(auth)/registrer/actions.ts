@@ -6,6 +6,8 @@ import { signUpValidation } from "@/app/(auth)/registrer/validation"
 import { ActionError } from "@/lib/safe-action/error"
 import { sessionService } from "@/service/session"
 import { redirect } from "next/navigation"
+import { emailService } from "@/service/email"
+import { EmailTest } from "@/components/email/email-test"
 
 export const signUpAction = publicAction
   .schema(signUpValidation)
@@ -15,8 +17,13 @@ export const signUpAction = publicAction
       throw new ActionError("En bruger med den email findes allerede")
     }
 
-    const newUser = await userService.register({ email: parsedInput.email, hash: parsedInput.password })
+    const newUser = await userService.register({ name: parsedInput.name, email: parsedInput.email, hash: parsedInput.password })
     const newSessionID = await sessionService.create(newUser.id)
+
+    const emailError = await emailService.sendOnce([parsedInput.email], "Velkommen til Nem Lager", EmailTest())
+    if (emailError) {
+      throw new ActionError("Kunne ikke sende en velkomst mail")
+    }
 
     redirect("/oversigt")
   })

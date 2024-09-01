@@ -71,6 +71,15 @@ function Form() {
         </Alert>
       )}
       <div className='grid gap-2'>
+        <Label htmlFor='name'>Navn</Label>
+        <Input id='name' type='text' {...register('name')} />
+        {formState.errors.name && (
+          <p className='text-sm text-destructive '>
+            {formState.errors.name.message}
+          </p>
+        )}
+      </div>
+      <div className='grid gap-2'>
         <Label htmlFor='email'>Email</Label>
         <Input id='email' type='email' {...register('email')} />
         {formState.errors.email && (

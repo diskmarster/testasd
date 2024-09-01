@@ -4,6 +4,7 @@ import { ProviderTheme } from "@/components/common/provider-theme";
 import { cn } from "@/lib/utils";
 import { SessionProvider } from "@/context/session";
 import { sessionService } from "@/service/session";
+import { Toaster } from "@/components/ui/sonner";
 
 const font = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default async function LayoutRoot({
             {children}
           </SessionProvider>
         </ProviderTheme>
+        <Toaster position="bottom-right" duration={4000} closeButton />
       </body>
     </html>
   );
