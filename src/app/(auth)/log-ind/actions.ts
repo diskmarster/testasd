@@ -14,6 +14,9 @@ export const signInAction = publicAction
     if (!existingUser) {
       throw new ActionError("Forkert email eller kodeord")
     }
+    if (!existingUser.isActive) {
+      throw new ActionError("Brugeren er inaktiv")
+    }
     const newSessionID = await sessionService.create(existingUser.id)
 
     redirect("/oversigt")
