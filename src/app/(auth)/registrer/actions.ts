@@ -17,7 +17,7 @@ export const signUpAction = publicAction
       throw new ActionError("En bruger med den email findes allerede")
     }
 
-    const newUser = await userService.register({ name: parsedInput.name, email: parsedInput.email, hash: parsedInput.password })
+    const newUser = await userService.register({ clientID: parsedInput.clientID, name: parsedInput.name, email: parsedInput.email, hash: parsedInput.password })
     const newSessionID = await sessionService.create(newUser.id)
 
     const emailError = await emailService.sendOnce([parsedInput.email], "Velkommen til Nem Lager", EmailTest())
