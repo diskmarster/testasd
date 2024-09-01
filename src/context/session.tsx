@@ -1,6 +1,6 @@
 "use client"
 
-import { sessionService } from "@/service/auth";
+import { sessionService } from "@/service/session";
 import { createContext, useContext } from "react";
 
 type SessionContextType = Awaited<ReturnType<typeof sessionService.validate>>

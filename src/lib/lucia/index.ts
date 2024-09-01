@@ -20,6 +20,7 @@ export const lucia = new Lucia(adapter, {
       // define attributes for session
       email: u.email,
       role: u.role,
+      isActive: u.isActive,
       inserted: u.inserted,
       updated: u.updated
     }
@@ -37,6 +38,7 @@ declare module "lucia" {
 interface SessionUser {
   email: string
   role: UserRole
+  isActive: boolean
   inserted: Date
   updated: Date
 }

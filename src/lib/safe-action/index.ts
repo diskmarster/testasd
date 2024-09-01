@@ -25,7 +25,7 @@ export const publicAction = createSafeActionClient({
 export const privateAction = publicAction.use(async ({ next }) => {
   const { session, user } = await sessionService.validate()
 
-  if (!session) {
+  if (!session || !user) {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
