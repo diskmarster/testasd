@@ -14,3 +14,15 @@ export const customerTable = sqliteTable("nl_customer", {
 
 export type NewCustomer = typeof customerTable.$inferInsert
 export type Customer = typeof customerTable.$inferSelect
+export type PartialCustomer = Partial<Customer>
+
+export const customerLinkTable = sqliteTable('nl_customer_link', {
+  id: integer("id").notNull().primaryKey({ autoIncrement: true }),
+  customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
+  email: text('email').notNull(),
+  inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+})
+
+export type NewCustomerLink = typeof customerLinkTable.$inferInsert
+export type CustomerLink = typeof customerLinkTable.$inferSelect
+export type PartialCustomerLink = Partial<CustomerLink>

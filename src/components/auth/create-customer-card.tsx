@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { Dispatch, SetStateAction, useState, useTransition } from "react";
 import { useForm } from 'react-hook-form'
 import { z } from "zod";
 import { createCustomerValidation } from "@/app/(auth)/opret/validation";
@@ -18,34 +18,45 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plan, plans } from "@/data/customer.types";
 
 export function CreateCustomerCard() {
+  const [emailSent, setEmailSent] = useState(false)
+
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
         <CardTitle>
-          Opret dig som kunde
+          {emailSent ? 'Du er nu oprettet som kunde' : 'Opret dig som kunde'}
         </CardTitle>
-        <CardDescription>
-          Udfyld dine informationer for at starte
-        </CardDescription>
+        {!emailSent && (
+          <CardDescription>
+            Udfyld dine informationer for at starte
+          </CardDescription>
+        )}
       </CardHeader>
       <CardContent>
-        <Form />
+        {emailSent ? (
+          <p>Vi har sendt et aktiveringslink til dig.</p>
+        ) : (
+          <Form setEmailSent={setEmailSent} />
+        )}
       </CardContent>
-      <CardFooter>
-        <Link
-          className={cn(
-            buttonVariants({ variant: 'link' }),
-            'mx-auto h-auto p-0',
-          )}
-          href={'/log-ind'}>
-          Er du allerede kunde i Nem Lager?
-        </Link>
-      </CardFooter>
+      {!emailSent && (
+        <CardFooter>
+
+          <Link
+            className={cn(
+              buttonVariants({ variant: 'link' }),
+              'mx-auto h-auto p-0',
+            )}
+            href={'/log-ind'}>
+            Er du allerede kunde i Nem Lager?
+          </Link>
+        </CardFooter>
+      )}
     </Card>
   )
 }
 
-function Form() {
+function Form({ setEmailSent }: { setEmailSent: Dispatch<SetStateAction<boolean>> }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
@@ -58,7 +69,9 @@ function Form() {
       const response = await createCustomerAction(values)
       if (response && response.serverError) {
         setError(response.serverError)
+        return
       }
+      setEmailSent(true)
     })
   }
 

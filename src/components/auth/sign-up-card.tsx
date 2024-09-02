@@ -7,16 +7,17 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useForm } from 'react-hook-form'
 import { z } from "zod";
-import { signUpValidation } from "@/app/(auth)/registrer/validation";
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icons } from "@/components/ui/icons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { signUpAction } from "@/app/(auth)/registrer/actions";
+import { signUpValidation } from "@/app/(auth)/registrer/[linkID]/validation";
+import { signUpAction } from "@/app/(auth)/registrer/[linkID]/actions";
+import { Customer } from "@/lib/database/schema/customer";
 
-export function SignUpCard() {
+export function SignUpCard({ customer }: { customer: Customer }) {
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
@@ -28,7 +29,7 @@ export function SignUpCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form />
+        <Form customer={customer} />
       </CardContent>
       <CardFooter>
         <Link
@@ -44,12 +45,16 @@ export function SignUpCard() {
   )
 }
 
-function Form() {
+function Form({ customer }: { customer: Customer }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
   const { handleSubmit, formState, register } = useForm<z.infer<typeof signUpValidation>>({
     resolver: zodResolver(signUpValidation),
+    defaultValues: {
+      email: customer.email,
+      clientID: customer.id
+    }
   })
 
   async function onSubmit(values: z.infer<typeof signUpValidation>) {

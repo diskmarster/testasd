@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0ed62418-2e99-4f49-8915-ae93a4c92d35",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "27ad94ef-8ee4-44b4-bd98-6726561156b2",
+  "prevId": "0ed62418-2e99-4f49-8915-ae93a4c92d35",
   "tables": {
     "nl_session": {
       "name": "nl_session",
@@ -135,6 +135,58 @@
           "tableTo": "nl_customer",
           "columnsFrom": [
             "client_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "nl_customer_link": {
+      "name": "nl_customer_link",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "inserted": {
+          "name": "inserted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nl_customer_link_customer_id_nl_customer_id_fk": {
+          "name": "nl_customer_link_customer_id_nl_customer_id_fk",
+          "tableFrom": "nl_customer_link",
+          "tableTo": "nl_customer",
+          "columnsFrom": [
+            "customer_id"
           ],
           "columnsTo": [
             "id"

@@ -2,7 +2,7 @@
 
 import { publicAction } from "@/lib/safe-action"
 import { userService } from "@/service/user"
-import { signUpValidation } from "@/app/(auth)/registrer/validation"
+import { signUpValidation } from "@/app/(auth)/registrer/[linkID]/validation"
 import { ActionError } from "@/lib/safe-action/error"
 import { sessionService } from "@/service/session"
 import { redirect } from "next/navigation"
