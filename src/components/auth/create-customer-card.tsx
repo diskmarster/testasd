@@ -127,7 +127,7 @@ function Form({ setEmailSent }: { setEmailSent: Dispatch<SetStateAction<boolean>
           </p>
         )}
         <p className='text-sm text-muted-foreground'>
-          Du vil modtage en email med at link til at oprette dit firmas første bruger.
+          Du vil modtage en mail med et link til at aktivere din virksomhed og oprette din første bruger.
         </p>
       </div>
       <Button type='submit' className='flex items-center gap-2'>
