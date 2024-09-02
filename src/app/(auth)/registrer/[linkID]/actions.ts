@@ -18,6 +18,10 @@ export const signUpAction = publicAction
     }
 
     const newUser = await userService.register({ clientID: parsedInput.clientID, name: parsedInput.name, email: parsedInput.email, hash: parsedInput.password })
+    if (!newUser) {
+      throw new ActionError("Din bruger blev ikke oprettet")
+    }
+
     const newSessionID = await sessionService.create(newUser.id)
 
     const emailError = await emailService.sendOnce([parsedInput.email], "Velkommen til Nem Lager", EmailTest())

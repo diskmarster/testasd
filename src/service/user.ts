@@ -3,10 +3,11 @@ import { NewUser, PartialUser, UserID, UserNoHash } from "@/lib/database/schema/
 import { hashPassword, userDTO, verifyPassword } from "./user.utils"
 
 export const userService = {
-  register: async function(userData: NewUser): Promise<UserNoHash> {
+  register: async function(userData: NewUser): Promise<UserNoHash | undefined> {
     const hashed = await hashPassword(userData.hash)
     userData.hash = hashed
     const newUser = await user.create(userData)
+    if (!newUser) return undefined
     return userDTO(newUser)
   },
   verifyPassword: async function(email: string, password: string): Promise<UserNoHash | undefined> {
