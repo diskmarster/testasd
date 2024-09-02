@@ -20,38 +20,50 @@ import { Plan, plans } from "@/data/customer.types";
 export function CreateCustomerCard() {
   const [emailSent, setEmailSent] = useState(false)
 
+  if (emailSent) {
+
+    return (
+      <div className="max-w-lg mx-auto text-center space-y-4">
+        <Icons.mail className="mx-auto h-12 w-12 text-primary animate-bounce" />
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          Tak for din tilmelding
+        </h1>
+        <p className="text-foreground text-md">
+          Vi har sendt et aktiveringslink til din e-mailadresse. Tjek venligst din indbakke og klik på linket for at aktivere din konto.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Hvis du ikke kan se e-mailen, så tjek venligst din spam-mappe.
+        </p>
+        <Button asChild className="w-full">
+          <Link href="/log-ind">Gå til log ind siden</Link>
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
         <CardTitle>
-          {emailSent ? 'Du er nu oprettet som kunde' : 'Opret dig som kunde'}
+          Opret dig som kunde
         </CardTitle>
-        {!emailSent && (
-          <CardDescription>
-            Udfyld dine informationer for at starte
-          </CardDescription>
-        )}
+        <CardDescription>
+          Udfyld dine informationer for at starte
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        {emailSent ? (
-          <p>Vi har sendt et aktiveringslink til dig.</p>
-        ) : (
-          <Form setEmailSent={setEmailSent} />
-        )}
+        <Form setEmailSent={setEmailSent} />
       </CardContent>
-      {!emailSent && (
-        <CardFooter>
-
-          <Link
-            className={cn(
-              buttonVariants({ variant: 'link' }),
-              'mx-auto h-auto p-0',
-            )}
-            href={'/log-ind'}>
-            Er du allerede kunde i Nem Lager?
-          </Link>
-        </CardFooter>
-      )}
+      <CardFooter>
+        <Link
+          className={cn(
+            buttonVariants({ variant: 'link' }),
+            'mx-auto h-auto p-0',
+          )}
+          href={'/log-ind'}>
+          Er du allerede kunde i Nem Lager?
+        </Link>
+      </CardFooter>
     </Card>
   )
 }

@@ -1,4 +1,4 @@
-import { Warehouse, ChevronDown, Sun, Boxes, Moon, CircleAlert, Loader2, ExternalLink, Menu } from "lucide-react";
+import { Warehouse, ChevronDown, Mail, Sun, Boxes, Moon, CircleAlert, Loader2, ExternalLink, Menu } from "lucide-react";
 
 export const Icons = {
   sun: Sun,
@@ -9,5 +9,6 @@ export const Icons = {
   warehouse: Warehouse,
   external: ExternalLink,
   menu: Menu,
+  mail: Mail,
   boxes: Boxes,
 };
