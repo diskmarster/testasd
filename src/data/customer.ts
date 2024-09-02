@@ -1,5 +1,5 @@
 import { db } from "@/lib/database";
-import { Customer, CustomerLink, customerLinkTable, customerTable, NewCustomer, NewCustomerLink } from "@/lib/database/schema/customer";
+import { Customer, CustomerID, CustomerLink, CustomerLinkID, customerLinkTable, customerTable, NewCustomer, NewCustomerLink } from "@/lib/database/schema/customer";
 import { eq } from "drizzle-orm";
 
 export const customer = {
@@ -8,7 +8,7 @@ export const customer = {
     if (customer.length != 1) return undefined
     return customer[0]
   },
-  getByID: async function(customerID: number): Promise<Customer | undefined> {
+  getByID: async function(customerID: CustomerID): Promise<Customer | undefined> {
     const customer = await db.select().from(customerTable).where(eq(customerTable.id, customerID)).limit(1)
     if (customer.length != 1) return undefined
     return customer[0]
@@ -23,7 +23,7 @@ export const customer = {
     if (newCustomerLink.length != 1) return undefined
     return newCustomerLink[0]
   },
-  getCustomerLinkByID: async function(linkID: number): Promise<CustomerLink | undefined> {
+  getCustomerLinkByID: async function(linkID: CustomerLinkID): Promise<CustomerLink | undefined> {
     const customerLink = await db.select().from(customerLinkTable).where(eq(customerLinkTable.id, linkID)).limit(1)
     if (customerLink.length != 1) return undefined
     return customerLink[0]

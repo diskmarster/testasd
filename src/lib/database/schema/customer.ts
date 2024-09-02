@@ -14,6 +14,7 @@ export const customerTable = sqliteTable("nl_customer", {
 
 export type NewCustomer = typeof customerTable.$inferInsert
 export type Customer = typeof customerTable.$inferSelect
+export type CustomerID = Customer['id']
 export type PartialCustomer = Partial<Customer>
 
 export const customerLinkTable = sqliteTable('nl_customer_link', {
@@ -25,4 +26,5 @@ export const customerLinkTable = sqliteTable('nl_customer_link', {
 
 export type NewCustomerLink = typeof customerLinkTable.$inferInsert
 export type CustomerLink = typeof customerLinkTable.$inferSelect
+export type CustomerLinkID = CustomerLink['id']
 export type PartialCustomerLink = Partial<CustomerLink>

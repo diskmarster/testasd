@@ -16,6 +16,7 @@ export const userTable = sqliteTable("nl_user", {
 })
 
 export type User = typeof userTable.$inferSelect
+export type UserID = User['id']
 export type NewUser = typeof userTable.$inferInsert
 export type PartialUser = Partial<User>
 export type UserNoHash = Omit<User, 'hash'>
