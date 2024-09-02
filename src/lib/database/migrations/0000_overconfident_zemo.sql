@@ -1,11 +1,11 @@
-CREATE TABLE IF NOT EXISTS `nl_session` (
+CREATE TABLE `nl_session` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` integer NOT NULL,
 	`expires_at` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `nl_user`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `nl_user` (
+CREATE TABLE `nl_user` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
 	`email` text NOT NULL,
@@ -18,7 +18,15 @@ CREATE TABLE IF NOT EXISTS `nl_user` (
 	FOREIGN KEY (`client_id`) REFERENCES `nl_customer`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS `nl_customer` (
+CREATE TABLE `nl_customer_link` (
+	`id` text PRIMARY KEY NOT NULL,
+	`customer_id` integer NOT NULL,
+	`email` text NOT NULL,
+	`inserted` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`customer_id`) REFERENCES `nl_customer`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `nl_customer` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`plan` text NOT NULL,
 	`company` text NOT NULL,
@@ -28,5 +36,5 @@ CREATE TABLE IF NOT EXISTS `nl_customer` (
 	`updated` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS `nl_user_email_unique` ON `nl_user` (`email`);--> statement-breakpoint
-CREATE UNIQUE INDEX IF NOT EXISTS `nl_customer_email_unique` ON `nl_customer` (`email`);
+CREATE UNIQUE INDEX `nl_user_email_unique` ON `nl_user` (`email`);--> statement-breakpoint
+CREATE UNIQUE INDEX `nl_customer_email_unique` ON `nl_customer` (`email`);
