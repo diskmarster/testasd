@@ -20,7 +20,7 @@ export const customerService = {
     const existingCustomer = await customer.getByID(customerID)
     return existingCustomer
   },
-  createActivationLink: async function(customerLinkData: NewCustomerLink): Promise<CustomerActivationLink | undefined> {
+  createActivationLink: async function(customerLinkData: Omit<NewCustomerLink, 'id'>): Promise<CustomerActivationLink | undefined> {
     const id = generateIdFromEntropySize(16)
     const newCustomerLink = await customer.createCustomerLink({ ...customerLinkData, id: id })
     if (!newCustomerLink) return undefined
