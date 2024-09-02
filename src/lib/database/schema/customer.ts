@@ -18,7 +18,7 @@ export type CustomerID = Customer['id']
 export type PartialCustomer = Partial<Customer>
 
 export const customerLinkTable = sqliteTable('nl_customer_link', {
-  id: integer("id").notNull().primaryKey({ autoIncrement: true }),
+  id: text("id").notNull().primaryKey(),
   customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   email: text('email').notNull(),
   inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),

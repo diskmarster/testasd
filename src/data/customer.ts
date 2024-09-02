@@ -1,6 +1,6 @@
 import { db } from "@/lib/database";
 import { Customer, CustomerID, CustomerLink, CustomerLinkID, customerLinkTable, customerTable, NewCustomer, NewCustomerLink } from "@/lib/database/schema/customer";
-import { eq } from "drizzle-orm";
+import { eq, not } from "drizzle-orm";
 
 export const customer = {
   create: async function(newCustomer: NewCustomer): Promise<Customer | undefined> {
@@ -23,9 +23,17 @@ export const customer = {
     if (newCustomerLink.length != 1) return undefined
     return newCustomerLink[0]
   },
+  deleteCustomerLink: async function(linkID: CustomerLinkID): Promise<boolean> {
+    const resultSet = await db.delete(customerLinkTable).where(eq(customerLinkTable.id, linkID))
+    return resultSet.rowsAffected == 1
+  },
   getCustomerLinkByID: async function(linkID: CustomerLinkID): Promise<CustomerLink | undefined> {
     const customerLink = await db.select().from(customerLinkTable).where(eq(customerLinkTable.id, linkID)).limit(1)
     if (customerLink.length != 1) return undefined
     return customerLink[0]
+  },
+  toggleActivationStatusByID: async function(customerID: CustomerID): Promise<boolean> {
+    const resultSet = await db.update(customerTable).set({ isActive: not(customerTable.isActive) }).where(eq(customerTable.id, customerID))
+    return resultSet.rowsAffected == 1
   }
 }

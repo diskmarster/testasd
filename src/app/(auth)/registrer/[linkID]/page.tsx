@@ -8,14 +8,13 @@ export const metadata: Metadata = {
 }
 
 export default async function Page({ params }: { params: { linkID: string } }) {
-  const customer = await customerService.getByLinkID(parseInt(params.linkID))
+  const customer = await customerService.getByLinkID(params.linkID)
 
   if (!customer || !params.linkID) redirect("/log-ind")
 
   return (
     <section className="w-full">
-      <p>{JSON.stringify(customer, null, 2)}</p>
-      <SignUpCard customer={customer} />
+      <SignUpCard customer={customer} linkID={params.linkID} />
     </section>
   )
 }

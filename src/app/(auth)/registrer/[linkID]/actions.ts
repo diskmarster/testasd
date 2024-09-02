@@ -8,23 +8,61 @@ import { sessionService } from "@/service/session"
 import { redirect } from "next/navigation"
 import { emailService } from "@/service/email"
 import { EmailTest } from "@/components/email/email-test"
+import { customerService } from "@/service/customer"
 
 export const signUpAction = publicAction
   .schema(signUpValidation)
   .action(async ({ parsedInput }) => {
+    const activationLink = await customerService.getActivationLinkByID(parsedInput.linkID)
+    if (!activationLink) {
+      throw new ActionError("Dit aktiveringslink findes ikke længere")
+    }
+
+    const isLinkValid = customerService.validateActivationLink(activationLink.inserted)
+    if (!isLinkValid) {
+      throw new ActionError("Dit aktiveringslink er udløbet")
+    }
+
     const existingUser = await userService.getByEmail(parsedInput.email)
     if (existingUser) {
       throw new ActionError("En bruger med den email findes allerede")
     }
 
-    const newUser = await userService.register({ clientID: parsedInput.clientID, name: parsedInput.name, email: parsedInput.email, hash: parsedInput.password })
+    const newUser = await userService.register({
+      clientID: parsedInput.clientID,
+      name: parsedInput.name,
+      email: parsedInput.email,
+      hash: parsedInput.password,
+      isActive: true
+    })
     if (!newUser) {
       throw new ActionError("Din bruger blev ikke oprettet")
     }
 
+    const existingCustomer = await customerService.getByID(parsedInput.clientID)
+    if (!existingCustomer) {
+      throw new ActionError("Din firmakonto findes ikke")
+    }
+
+    if (!existingCustomer.isActive) {
+      const isCustomerToggled = await customerService.toggleActivationByID(existingCustomer.id)
+      if (!isCustomerToggled) {
+        throw new ActionError("Din firmakonto blev ikke aktiveret")
+      }
+    }
+
+    const isLinkDeleted = await customerService.deleteActivationLink(parsedInput.linkID)
+    if (!isLinkDeleted) {
+      // NOTE: What to do?
+    }
+
     const newSessionID = await sessionService.create(newUser.id)
 
-    const emailError = await emailService.sendOnce([parsedInput.email], "Velkommen til Nem Lager", EmailTest())
+    const emailError = await emailService.sendOnce(
+      [parsedInput.email],
+      "Velkommen til Nem Lager",
+      EmailTest()
+    )
     if (emailError) {
       throw new ActionError("Kunne ikke sende en velkomst mail")
     }

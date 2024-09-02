@@ -6,6 +6,7 @@ import { customerService } from "@/service/customer"
 import { ActionError } from "@/lib/safe-action/error"
 import { emailService } from "@/service/email"
 import { EmailWelcomeCustomer } from "@/components/email/email-welcome-customer"
+import { userService } from "@/service/user"
 
 export const createCustomerAction = publicAction
   .schema(createCustomerValidation)
@@ -13,6 +14,11 @@ export const createCustomerAction = publicAction
     const existingCustomer = await customerService.getByEmail(parsedInput.email)
     if (existingCustomer) {
       throw new ActionError("En kunde med den email findes allerede")
+    }
+
+    const existingUser = await userService.getByEmail(parsedInput.email)
+    if (existingUser) {
+      throw new ActionError("En bruger med den email findes allerede")
     }
 
     const newCustomer = await customerService.create(parsedInput)

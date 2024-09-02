@@ -17,19 +17,19 @@ import { signUpValidation } from "@/app/(auth)/registrer/[linkID]/validation";
 import { signUpAction } from "@/app/(auth)/registrer/[linkID]/actions";
 import { Customer } from "@/lib/database/schema/customer";
 
-export function SignUpCard({ customer }: { customer: Customer }) {
+export function SignUpCard({ customer, linkID }: { customer: Customer, linkID: string }) {
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
         <CardTitle>
-          Opret en konto
+          Velkommen {customer.company}
         </CardTitle>
         <CardDescription>
-          Udfyld dine informationer for at starte
+          Før i kan komme i gang, skal i oprette en administrator bruger.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Form customer={customer} />
+        <Form customer={customer} linkID={linkID} />
       </CardContent>
       <CardFooter>
         <Link
@@ -45,13 +45,15 @@ export function SignUpCard({ customer }: { customer: Customer }) {
   )
 }
 
-function Form({ customer }: { customer: Customer }) {
+function Form({ customer, linkID }: { customer: Customer, linkID: string }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
   const { handleSubmit, formState, register } = useForm<z.infer<typeof signUpValidation>>({
     resolver: zodResolver(signUpValidation),
     defaultValues: {
+      linkID: linkID,
+      name: 'Administrator',
       email: customer.email,
       clientID: customer.id
     }
@@ -86,7 +88,7 @@ function Form({ customer }: { customer: Customer }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='email'>Email</Label>
-        <Input id='email' type='email' {...register('email')} />
+        <Input id='email' type='email' defaultValue={customer.email} disabled />
         {formState.errors.email && (
           <p className='text-sm text-destructive '>
             {formState.errors.email.message}
