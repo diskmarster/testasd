@@ -10,47 +10,95 @@ export const siteConfig: SiteConfig = {
   successTitle: "Handling fuldført",
   navItems: [
     {
-      label: 'Lager',
+      label: 'Oversigt',
+      isDisabled: false,
+      isDropdown: false,
+      isExternal: false,
+      href: "/oversigt",
+      roles: []
+    },
+    {
+      label: 'Registrer',
       roles: ['sysadmin', 'admin', 'bruger'],
       isDisabled: false,
       isDropdown: true,
       items: [
         {
-          label: 'Oversigt',
-          description: 'Se en oversigt over hele din beholdning',
-          href: '/lager/oversigt',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-        {
           label: 'Tilgang',
-          description: 'Opret en tilgang til din beholdning',
-          href: '/lager/tilgang',
+          description: 'Opret en tilgang til din vare beholdning',
+          href: '/registrer/tilgang',
           roles: [],
           isExternal: false,
           isDisabled: true
         },
         {
           label: 'Afgang',
-          description: 'Opret en afgang til fra din beholdning',
-          href: '/lager/afgang',
+          description: 'Opret en afgang til fra din vare beholdning',
+          href: '/registrer/afgang',
           roles: [],
           isExternal: false,
           isDisabled: true
         },
         {
           label: 'Regulering',
-          description: 'Opret en regulering for din beholdning',
-          href: '/lager/regulering',
+          description: 'Opret en regulering for din vare beholdning',
+          href: '/registrer/regulering',
           roles: [],
           isExternal: false,
           isDisabled: true
         },
         {
-          label: 'Historik',
-          description: 'Se historikken på alle bevægelser i din beholdning',
-          href: '/lager/historik',
+          label: 'Flyt',
+          description: 'Flyt en vare fra en placering til en anden placering',
+          href: '/registrer/flyt',
+          roles: [],
+          isExternal: false,
+          isDisabled: true
+        },
+      ]
+    },
+    {
+      label: 'Genbestil',
+      isDisabled: true,
+      isDropdown: false,
+      isExternal: false,
+      href: "/genbestil",
+      roles: []
+    },
+    {
+      label: 'Administration',
+      roles: ['sysadmin', 'admin'],
+      isDisabled: false,
+      isDropdown: true,
+      items: [
+        {
+          label: 'Brugere',
+          description: 'Se en oversigt over alle brugere',
+          href: '/sys/kunder',
+          roles: [],
+          isExternal: false,
+          isDisabled: true
+        },
+        {
+          label: 'Varegrupper',
+          description: 'Se, opret og rediger i dine varegrupper',
+          href: '/sys/brugere',
+          roles: [],
+          isExternal: false,
+          isDisabled: true
+        },
+        {
+          label: 'Placeringer',
+          description: 'Se, opret og rediger i dine placeringer',
+          href: '/sys/fejl',
+          roles: [],
+          isExternal: false,
+          isDisabled: true
+        },
+        {
+          label: 'Lokationer',
+          description: 'Se, opret og rediger i dine lokationer',
+          href: '/sys/fejl',
           roles: [],
           isExternal: false,
           isDisabled: true
