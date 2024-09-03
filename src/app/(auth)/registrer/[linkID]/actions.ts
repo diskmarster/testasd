@@ -9,6 +9,7 @@ import { redirect } from "next/navigation"
 import { emailService } from "@/service/email"
 import { EmailTest } from "@/components/email/email-test"
 import { customerService } from "@/service/customer"
+import { locationService } from "@/service/location"
 
 export const signUpAction = publicAction
   .schema(signUpValidation)
@@ -37,6 +38,12 @@ export const signUpAction = publicAction
     })
     if (!newUser) {
       throw new ActionError("Din bruger blev ikke oprettet")
+    }
+
+    // create access to default location
+    const isAccessAdded = await locationService.addAccess({ userID: newUser.id, locationID: 2, isPrimary: true })
+    if (!isAccessAdded) {
+      throw new ActionError("Der gik noget galt med at give brugeren tilladelse til lokation")
     }
 
     const existingCustomer = await customerService.getByID(parsedInput.clientID)

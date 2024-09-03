@@ -1,5 +1,5 @@
 import { db } from "@/lib/database";
-import { CustomerID, Location, locationsTable, NewLocation } from "@/lib/database/schema/customer";
+import { CustomerID, linkLocationToUserTable, Location, locationsTable, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
 import { eq } from "drizzle-orm";
 
 export const location = {
@@ -11,5 +11,9 @@ export const location = {
   getAllByCustomerID: async function(customerID: CustomerID): Promise<Location[]> {
     const locations = await db.select().from(locationsTable).where(eq(locationsTable.customerID, customerID))
     return locations
+  },
+  createAccess: async function(newLink: NewLinkLocationToUser): Promise<boolean> {
+    const resultSet = await db.insert(linkLocationToUserTable).values(newLink)
+    return resultSet.rowsAffected == 1
   }
 }
