@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9bbd2efb-697e-4ef0-8a3c-1c22e0e77b97",
+  "id": "bc053fb1-0b37-4577-bfa1-539bdb876d7b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "nl_session": {
@@ -170,6 +170,20 @@
           "notNull": true,
           "autoincrement": false
         },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "location_id": {
+          "name": "location_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "inserted": {
           "name": "inserted",
           "type": "integer",
@@ -192,6 +206,19 @@
             "id"
           ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "nl_customer_link_location_id_nl_location_id_fk": {
+          "name": "nl_customer_link_location_id_nl_location_id_fk",
+          "tableFrom": "nl_customer_link",
+          "tableTo": "nl_location",
+          "columnsFrom": [
+            "location_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
@@ -264,6 +291,116 @@
         }
       },
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "nl_link_location_to_user": {
+      "name": "nl_link_location_to_user",
+      "columns": {
+        "location_id": {
+          "name": "location_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_selected": {
+          "name": "last_selected",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nl_link_location_to_user_location_id_nl_location_id_fk": {
+          "name": "nl_link_location_to_user_location_id_nl_location_id_fk",
+          "tableFrom": "nl_link_location_to_user",
+          "tableTo": "nl_location",
+          "columnsFrom": [
+            "location_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "nl_link_location_to_user_user_id_nl_user_id_fk": {
+          "name": "nl_link_location_to_user_user_id_nl_user_id_fk",
+          "tableFrom": "nl_link_location_to_user",
+          "tableTo": "nl_user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "nl_link_location_to_user_user_id_location_id_pk": {
+          "columns": [
+            "user_id",
+            "location_id"
+          ],
+          "name": "nl_link_location_to_user_user_id_location_id_pk"
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "nl_location": {
+      "name": "nl_location",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nl_location_customer_id_nl_customer_id_fk": {
+          "name": "nl_location_customer_id_nl_customer_id_fk",
+          "tableFrom": "nl_location",
+          "tableTo": "nl_customer",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     }

@@ -35,7 +35,12 @@ export const createCustomerAction = publicAction
       throw new ActionError("Der gik noget galt med at oprette en lokation")
     }
 
-    const activationLink = await customerService.createActivationLink({ customerID: newCustomer.id, email: newCustomer.email })
+    const activationLink = await customerService.createActivationLink({
+      customerID: newCustomer.id,
+      email: newCustomer.email,
+      locationID: newLocation.id,
+      role: 'admin'
+    })
     if (!activationLink) {
       throw new ActionError("Der gik noget galt med at sende din aktiveringsmail")
     }

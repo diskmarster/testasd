@@ -24,6 +24,11 @@ export const signUpAction = publicAction
       throw new ActionError("Dit aktiveringslink er udløbet")
     }
 
+    const existingCustomer = await customerService.getByID(parsedInput.clientID)
+    if (!existingCustomer) {
+      throw new ActionError("Din firmakonto findes ikke")
+    }
+
     const existingUser = await userService.getByEmail(parsedInput.email)
     if (existingUser) {
       throw new ActionError("En bruger med den email findes allerede")
@@ -34,21 +39,11 @@ export const signUpAction = publicAction
       name: parsedInput.name,
       email: parsedInput.email,
       hash: parsedInput.password,
+      role: activationLink.role,
       isActive: true
     })
     if (!newUser) {
       throw new ActionError("Din bruger blev ikke oprettet")
-    }
-
-    // create access to default location
-    const isAccessAdded = await locationService.addAccess({ userID: newUser.id, locationID: 2, isPrimary: true })
-    if (!isAccessAdded) {
-      throw new ActionError("Der gik noget galt med at give brugeren tilladelse til lokation")
-    }
-
-    const existingCustomer = await customerService.getByID(parsedInput.clientID)
-    if (!existingCustomer) {
-      throw new ActionError("Din firmakonto findes ikke")
     }
 
     if (!existingCustomer.isActive) {
@@ -58,6 +53,11 @@ export const signUpAction = publicAction
       }
     }
 
+    const isAccessAdded = await locationService.addAccess({ userID: newUser.id, locationID: activationLink.locationID })
+    if (!isAccessAdded) {
+      throw new ActionError("Der gik noget galt med at give brugeren tilladelse til lokation")
+    }
+
     const isLinkDeleted = await customerService.deleteActivationLink(parsedInput.linkID)
     if (!isLinkDeleted) {
       // NOTE: What to do?
@@ -65,14 +65,11 @@ export const signUpAction = publicAction
 
     const newSessionID = await sessionService.create(newUser.id)
 
-    const emailError = await emailService.sendOnce(
+    emailService.sendRecursively(
       [parsedInput.email],
       "Velkommen til Nem Lager",
       EmailTest()
     )
-    if (emailError) {
-      throw new ActionError("Kunne ikke sende en velkomst mail")
-    }
 
     redirect("/oversigt")
   })

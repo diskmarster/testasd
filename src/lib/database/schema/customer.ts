@@ -2,6 +2,7 @@ import { Plan } from "@/data/customer.types";
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text, primaryKey, PrimaryKey } from "drizzle-orm/sqlite-core";
 import { userTable } from "./auth";
+import { UserRole } from "@/data/user.types";
 
 export const customerTable = sqliteTable("nl_customer", {
   id: integer("id").notNull().primaryKey({ autoIncrement: true }),
@@ -22,6 +23,8 @@ export const customerLinkTable = sqliteTable('nl_customer_link', {
   id: text("id").notNull().primaryKey(),
   customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   email: text('email').notNull(),
+  role: text('role').notNull().$type<UserRole>(),
+  locationID: integer('location_id').notNull().references(() => locationTable.id),
   inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
 })
 
@@ -30,21 +33,21 @@ export type CustomerLink = typeof customerLinkTable.$inferSelect
 export type CustomerLinkID = CustomerLink['id']
 export type PartialCustomerLink = Partial<CustomerLink>
 
-export const locationsTable = sqliteTable('nl_locations', {
+export const locationTable = sqliteTable('nl_location', {
   id: integer("id").notNull().primaryKey({ autoIncrement: true }),
   customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   name: text('name').notNull()
 })
 
-export type NewLocation = typeof locationsTable.$inferInsert
-export type Location = typeof locationsTable.$inferSelect
+export type NewLocation = typeof locationTable.$inferInsert
+export type Location = typeof locationTable.$inferSelect
 export type LocationID = Location['id']
 export type PartialLocation = Partial<Location>
 
 export const linkLocationToUserTable = sqliteTable('nl_link_location_to_user', {
-  locationID: integer('location_id').notNull().references(() => locationsTable.id, { onDelete: 'cascade' }),
-  userID: integer('user_id').notNull().references(() => userTable.id),
-  isPrimary: integer('is_primary', { mode: 'boolean' }).notNull().default(false)
+  locationID: integer('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
+  userID: integer('user_id').notNull().references(() => userTable.id, { onDelete: 'cascade' }),
+  lastSelected: integer('last_selected', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`)
 }, (table) => {
   return {
     pk: primaryKey({ columns: [table.userID, table.locationID] })
