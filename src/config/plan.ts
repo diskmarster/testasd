@@ -5,10 +5,12 @@ import { Icons } from "@/components/ui/icons";
 export const plansConfig: PlanConfig[] = [
   {
     plan: 'lite',
+    description: 'Til enkeltmands virksomheden',
     price: 299,
     userCount: 1,
     locations: 1,
     features: [
+      "1 bruger",
       "Beholdningsstyring",
       "Import/export",
       "Varetekst 1, 2, 3",
@@ -22,12 +24,14 @@ export const plansConfig: PlanConfig[] = [
     ],
   },
   {
-    plan: 'basis',
+    plan: 'plus',
+    description: 'Til de små virksomheder',
     price: 499,
     userCount: 3,
     locations: 3,
     features: [
       "Alt i Lite",
+      "10 brugere",
       "Placerings-styring",
       "Genbestil",
       "3 lokationer"
@@ -35,6 +39,7 @@ export const plansConfig: PlanConfig[] = [
   },
   {
     plan: 'pro',
+    description: 'Til de store virksomheder',
     price: 799,
     userCount: 20,
     locations: 10,
@@ -50,7 +55,8 @@ export const plansConfig: PlanConfig[] = [
 ]
 
 type PlanConfig = {
-  plan: Plan,
+  description: String
+  plan: Plan
   price: number
   userCount: number
   locations: number
