@@ -1,7 +1,7 @@
 import { db } from "@/lib/database";
 import { UserID } from "@/lib/database/schema/auth";
-import { CustomerID, linkLocationToUserTable, Location, locationTable, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
-import { desc, eq, getTableColumns } from "drizzle-orm";
+import { CustomerID, linkLocationToUserTable, Location, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
+import { eq, and, getTableColumns } from "drizzle-orm";
 
 export const location = {
   create: async function(locationData: NewLocation): Promise<Location | undefined> {
@@ -13,10 +13,10 @@ export const location = {
     const locations = await db.select().from(locationTable).where(eq(locationTable.customerID, customerID))
     return locations
   },
-  getAllByUserID: async function(userID: UserID): Promise<(Location & { lastSelected: Date })[]> {
+  getAllByUserID: async function(userID: UserID): Promise<LocationWithPrimary[]> {
     const locationCols = getTableColumns(locationTable)
     const locations = await db
-      .select({ ...locationCols, lastSelected: linkLocationToUserTable.lastSelected })
+      .select({ ...locationCols, isPrimary: linkLocationToUserTable.isPrimary })
       .from(linkLocationToUserTable)
       .where(eq(linkLocationToUserTable.userID, userID))
       .innerJoin(locationTable, eq(locationTable.id, linkLocationToUserTable.locationID))
@@ -26,14 +26,13 @@ export const location = {
     const resultSet = await db.insert(linkLocationToUserTable).values(newLink)
     return resultSet.rowsAffected == 1
   },
-  getLastVisited: async function(userID: UserID): Promise<Location | undefined> {
+  getPrimary: async function(userID: UserID): Promise<Location | undefined> {
     const locationCols = getTableColumns(locationTable)
     const location = await db
       .select({ ...locationCols })
       .from(linkLocationToUserTable)
-      .where(eq(linkLocationToUserTable.userID, userID))
+      .where(and(eq(linkLocationToUserTable.userID, userID), eq(linkLocationToUserTable.isPrimary, true)))
       .innerJoin(locationTable, eq(locationTable.id, linkLocationToUserTable.locationID))
-      .orderBy(desc(linkLocationToUserTable.lastSelected))
       .limit(1)
     if (location.length != 1) return undefined
     return location[0]

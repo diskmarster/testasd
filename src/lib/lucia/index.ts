@@ -1,7 +1,7 @@
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 import { Lucia, TimeSpan } from "lucia";
 import { db } from "@/lib/database";
-import { sessionTable, userTable } from "@/lib/database/schema/auth";
+import { sessionTable, UserID, userTable } from "@/lib/database/schema/auth";
 import { UserRole } from "@/data/user.types";
 
 const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
@@ -24,7 +24,7 @@ export const lucia = new Lucia(adapter, {
       clientID: u.clientID,
       isActive: u.isActive,
       inserted: u.inserted,
-      updated: u.updated
+      updated: u.updated,
     }
   }
 })

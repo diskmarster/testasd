@@ -1,6 +1,6 @@
 import { Plan } from "@/data/customer.types";
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text, primaryKey, PrimaryKey } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
 import { userTable } from "./auth";
 import { UserRole } from "@/data/user.types";
 
@@ -43,11 +43,12 @@ export type NewLocation = typeof locationTable.$inferInsert
 export type Location = typeof locationTable.$inferSelect
 export type LocationID = Location['id']
 export type PartialLocation = Partial<Location>
+export type LocationWithPrimary = Location & { isPrimary: boolean }
 
 export const linkLocationToUserTable = sqliteTable('nl_link_location_to_user', {
   locationID: integer('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
   userID: integer('user_id').notNull().references(() => userTable.id, { onDelete: 'cascade' }),
-  lastSelected: integer('last_selected', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`)
+  isPrimary: integer('is_primary', { mode: 'boolean' }).notNull().default(false)
 }, (table) => {
   return {
     pk: primaryKey({ columns: [table.userID, table.locationID] })

@@ -29,7 +29,7 @@ export const createCustomerAction = publicAction
 
     const newLocation = await locationService.create({
       customerID: newCustomer.id,
-      name: "Hovedlokation"
+      name: "Hovedlokation",
     })
     if (!newLocation) {
       throw new ActionError("Der gik noget galt med at oprette en lokation")
@@ -39,7 +39,7 @@ export const createCustomerAction = publicAction
       customerID: newCustomer.id,
       email: newCustomer.email,
       locationID: newLocation.id,
-      role: 'admin'
+      role: 'firma_admin'
     })
     if (!activationLink) {
       throw new ActionError("Der gik noget galt med at sende din aktiveringsmail")

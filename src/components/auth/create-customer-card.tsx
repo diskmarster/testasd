@@ -45,10 +45,10 @@ export function CreateCustomerCard() {
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
         <CardTitle>
-          Opret dig som kunde
+          Opret firma som kunde
         </CardTitle>
         <CardDescription>
-          Udfyld dine informationer for at starte
+          Udfyld firma informationer for at starte
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -127,7 +127,7 @@ function Form({ setEmailSent }: { setEmailSent: Dispatch<SetStateAction<boolean>
           </p>
         )}
         <p className='text-sm text-muted-foreground'>
-          Du vil modtage en mail med et link til at aktivere din virksomhed og oprette din første bruger.
+          Du vil modtage en mail med et link til at aktivere jeres firma og oprette jeres første bruger.
         </p>
       </div>
       <Button type='submit' className='flex items-center gap-2'>

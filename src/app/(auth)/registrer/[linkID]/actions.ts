@@ -21,7 +21,7 @@ export const signUpAction = publicAction
 
     const isLinkValid = customerService.validateActivationLink(activationLink.inserted)
     if (!isLinkValid) {
-      throw new ActionError("Dit aktiveringslink er udløbet")
+      throw new ActionError("Dit aktiveringslink er ikke længere gyldigt")
     }
 
     const existingCustomer = await customerService.getByID(parsedInput.clientID)
@@ -53,7 +53,11 @@ export const signUpAction = publicAction
       }
     }
 
-    const isAccessAdded = await locationService.addAccess({ userID: newUser.id, locationID: activationLink.locationID })
+    const isAccessAdded = await locationService.addAccess({
+      userID: newUser.id,
+      locationID: activationLink.locationID,
+      isPrimary: true
+    })
     if (!isAccessAdded) {
       throw new ActionError("Der gik noget galt med at give brugeren tilladelse til lokation")
     }
@@ -63,7 +67,8 @@ export const signUpAction = publicAction
       // NOTE: What to do?
     }
 
-    const newSessionID = await sessionService.create(newUser.id)
+    locationService.setCookie(activationLink.locationID)
+    await sessionService.create(newUser.id)
 
     emailService.sendRecursively(
       [parsedInput.email],

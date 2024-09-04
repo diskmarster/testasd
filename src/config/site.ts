@@ -19,7 +19,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       label: 'Registrer',
-      roles: ['sysadmin', 'admin', 'bruger'],
+      roles: ['sys_admin', 'firma_admin', 'lokal_admin', 'bruger'],
       isDisabled: false,
       isDropdown: true,
       items: [
@@ -67,7 +67,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       label: 'Administration',
-      roles: ['sysadmin', 'admin'],
+      roles: ['sys_admin', 'firma_admin', 'lokal_admin'],
       isDisabled: false,
       isDropdown: true,
       items: [
@@ -107,7 +107,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       label: 'Skancode',
-      roles: ['sysadmin'],
+      roles: ['sys_admin'],
       isDisabled: false,
       isDropdown: true,
       items: [
@@ -115,7 +115,7 @@ export const siteConfig: SiteConfig = {
           label: 'Kunder',
           description: 'Se en oversigt over alle kunder i Nem Lager',
           href: '/sys/kunder',
-          roles: ['sysadmin'],
+          roles: ['sys_admin'],
           isExternal: false,
           isDisabled: true
         },
@@ -123,7 +123,7 @@ export const siteConfig: SiteConfig = {
           label: 'Brugere',
           description: 'Se en oversigt over alle brugere i Nem Lager',
           href: '/sys/brugere',
-          roles: ['sysadmin'],
+          roles: ['sys_admin'],
           isExternal: false,
           isDisabled: true
         },
@@ -131,7 +131,7 @@ export const siteConfig: SiteConfig = {
           label: 'Fejlbeskeder',
           description: 'Se en oversigt over alle fejlbeskeder i Nem Lager',
           href: '/sys/fejl',
-          roles: ['sysadmin'],
+          roles: ['sys_admin'],
           isExternal: false,
           isDisabled: true
         },
