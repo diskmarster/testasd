@@ -1,34 +1,50 @@
 import { Plan } from "@/data/customer.types"
+import { Icons } from "@/components/ui/icons";
 
-export const plan: PlanConfig[] = [
+
+export const plansConfig: PlanConfig[] = [
   {
     plan: 'lite',
     price: 299,
     userCount: 1,
+    locations: 1,
     features: [
-      "feature 1",
-      "feature 2",
-      "feature 3",
+      "Beholdningsstyring",
+      "Import/export",
+      "Varetekst 1, 2, 3",
+      "Lagerliste",
+      "Varegrupper",
+      "Konto/sags styring",
+      "Print stregkoder",
+      "Scanner-app",
+      "Rapporter via historik",
+      "1 lokation"
     ],
   },
   {
     plan: 'basis',
     price: 499,
     userCount: 3,
+    locations: 3,
     features: [
-      "feature 1",
-      "feature 2",
-      "feature 3",
+      "Alt i Lite",
+      "Placerings-styring",
+      "Genbestil",
+      "3 lokationer"
     ],
   },
   {
     plan: 'pro',
     price: 799,
     userCount: 20,
+    locations: 10,
     features: [
-      "feature 1",
-      "feature 2",
-      "feature 3",
+      "Alt i Basis",
+      "Batchnr",
+      "Salgsordrenr",
+      "Købsordrenr",
+      "Serienummer",
+      "Ubegrænsede lokationer"
     ],
   },
 ]
@@ -37,5 +53,6 @@ type PlanConfig = {
   plan: Plan,
   price: number
   userCount: number
+  locations: number
   features: string[]
 }

@@ -16,6 +16,9 @@ import { Input } from "@/components/ui/input";
 import { createCustomerAction } from "@/app/(auth)/opret/actions";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plan, plans } from "@/data/customer.types";
+import { plansConfig } from "@/config/plan";
+import { Separator } from "../ui/separator";
+
 
 export function CreateCustomerCard() {
   const [emailSent, setEmailSent] = useState(false)
@@ -41,7 +44,43 @@ export function CreateCustomerCard() {
     )
   }
 
+  
   return (
+      <div className="container">
+      <div className="flex flex-col flex-auto justify-center gap-6 p-6 my-6 rounded-md">
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {plansConfig.map((plan, index) => (
+          <Card key={index} className="shadow-lg transition-transform duration-300 ease-in-out transform flex flex-col group hover:shadow-2xl hover:scale-105">
+          <CardHeader className="p-4 bg-muted rounded-t-md dark:bg-muted">
+            <CardTitle className="text-2xl capitalize transition-colors duration-150 group-hover:text-primary">{plan.plan}</CardTitle>
+            <CardDescription className="text-4xl font-semibold mt-2 text-primary">
+                {plan.price} DKK,-
+              </CardDescription>
+              <p className="text-base mt-1">pr. måned</p>
+              <p className="text-base mt-1">Antal brugere: {plan.userCount}</p>
+            </CardHeader>
+            <Separator className="my-4 bg-primary" />
+            <CardContent className="px-6 py-4 flex-grow">
+              <p className="font-bold mb-2 text-2xl">Features:</p>
+              <ul className="space-y-2">
+                {plan.features.map((feature, index) => (
+                  <li key={index} className="flex items-center text-xl">
+                  <div className="inline-flex items-center mr-2">
+                    <Icons.check className="w-5 h-5 text-primary" />
+                  </div>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+            <CardFooter className="px-6 py-4">
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+        </div>
+
+
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
         <CardTitle>
@@ -65,8 +104,10 @@ export function CreateCustomerCard() {
         </Link>
       </CardFooter>
     </Card>
+    </div>
   )
 }
+
 
 function Form({ setEmailSent }: { setEmailSent: Dispatch<SetStateAction<boolean>> }) {
   const [pending, startTransition] = useTransition()
