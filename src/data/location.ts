@@ -1,7 +1,7 @@
 import { db } from "@/lib/database";
 import { UserID } from "@/lib/database/schema/auth";
-import { CustomerID, linkLocationToUserTable, Location, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
-import { eq, and, getTableColumns } from "drizzle-orm";
+import { CustomerID, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation, PartialLinkLocationToUser } from "@/lib/database/schema/customer";
+import { eq, and, getTableColumns, not, count } from "drizzle-orm";
 
 export const location = {
   create: async function(locationData: NewLocation): Promise<Location | undefined> {
@@ -36,5 +36,30 @@ export const location = {
       .limit(1)
     if (location.length != 1) return undefined
     return location[0]
+  },
+  toggleLocationPrimary: async function(userID: UserID, locationID: LocationID): Promise<boolean> {
+    console.log("locationID", locationID, "userID", userID)
+    const resultSet = await db.transaction(async (tsx) => {
+
+      await tsx
+        .update(linkLocationToUserTable)
+        .set({ isPrimary: false })
+        .where(and(
+          eq(linkLocationToUserTable.userID, userID),
+          eq(linkLocationToUserTable.isPrimary, true)
+        ))
+
+      const updateNewLocation = await tsx
+        .update(linkLocationToUserTable)
+        .set({ isPrimary: true })
+        .where(and(
+          eq(linkLocationToUserTable.locationID, locationID),
+          eq(linkLocationToUserTable.userID, userID)
+        ))
+
+
+      return updateNewLocation
+    })
+    return resultSet.rowsAffected == 1
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f84de628-5b61-4b01-9f78-8dd36ee5824b",
+  "id": "df208818-cdf9-4f19-94f6-21ec6da78dd8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "nl_session": {
@@ -179,7 +179,7 @@
         },
         "location_id": {
           "name": "location_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -299,7 +299,7 @@
       "columns": {
         "location_id": {
           "name": "location_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -365,10 +365,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "customer_id": {
           "name": "customer_id",

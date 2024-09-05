@@ -31,11 +31,29 @@ export const locationService = {
       }
     )
   },
-  getCookie: function(): RequestCookie | undefined {
-    const cookie = cookies().get(LAST_LOCATION_COOKIE_NAME)
-    return cookie
-  },
   deleteCookie: function(): void {
     cookies().delete(LAST_LOCATION_COOKIE_NAME)
+  },
+  getLastVisited: async function(userID: UserID): Promise<LocationID | undefined> {
+    const locations = await location.getAllByUserID(userID)
+
+    const locationCookie = cookies().get(LAST_LOCATION_COOKIE_NAME)
+
+    const primaryLocation = locations.find(loc => loc.isPrimary)
+    if (!primaryLocation) {
+      return undefined
+    }
+
+    let defualtLocationID = locationCookie ? locationCookie.value : primaryLocation ? primaryLocation.id : locations[0].id
+
+    if (locationCookie && !locations.find(loc => loc.id == locationCookie.value)) {
+      defualtLocationID = primaryLocation.id
+    }
+
+    return defualtLocationID
+  },
+  toggleLocationPrimary: async function(userID: UserID, newLocationID: LocationID): Promise<boolean> {
+    const didUpdate = await location.toggleLocationPrimary(userID, newLocationID)
+    return didUpdate
   }
 }

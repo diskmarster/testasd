@@ -4,10 +4,12 @@ import {
   adminUpdateProfileValidation,
   deleteProfileValidation,
   updatePasswordValidation,
+  updatePrimaryLocationValidation,
   updateProfileValidation,
 } from '@/app/(site)/profil/validation'
 import { adminAction, privateAction } from '@/lib/safe-action'
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
+import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
@@ -56,4 +58,23 @@ export const updatePasswordAction = privateAction
       }
       const sessionID = await sessionService.create(updatedUser.id)
       revalidatePath("/profil")
+    })
+
+export const updatePrimaryLocationAction = privateAction
+  .schema(updatePrimaryLocationValidation)
+  .action(
+    async ({ parsedInput: { locationID }, ctx: { user } }) => {
+      console.log("locID", locationID)
+      const locations = await locationService.getAllByUserID(user.id)
+
+      if (!locations.some(loc => loc.id == locationID)) {
+        throw new ActionError("Du har ikke adgang til denne lokation")
+      }
+
+      const didUpdate = await locationService.toggleLocationPrimary(user.id, locationID)
+      if (!didUpdate) {
+        throw new ActionError("Din hovedlokation blev ikke opdateret")
+      }
+
+      revalidatePath("/porfil")
     })

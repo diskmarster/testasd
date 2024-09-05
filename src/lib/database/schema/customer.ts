@@ -24,7 +24,7 @@ export const customerLinkTable = sqliteTable('nl_customer_link', {
   customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   email: text('email').notNull(),
   role: text('role').notNull().$type<UserRole>(),
-  locationID: integer('location_id').notNull().references(() => locationTable.id),
+  locationID: text('location_id').notNull().references(() => locationTable.id),
   inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
 })
 
@@ -34,7 +34,7 @@ export type CustomerLinkID = CustomerLink['id']
 export type PartialCustomerLink = Partial<CustomerLink>
 
 export const locationTable = sqliteTable('nl_location', {
-  id: integer("id").notNull().primaryKey({ autoIncrement: true }),
+  id: text("id").notNull().primaryKey(),
   customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   name: text('name').notNull()
 })
@@ -46,7 +46,7 @@ export type PartialLocation = Partial<Location>
 export type LocationWithPrimary = Location & { isPrimary: boolean }
 
 export const linkLocationToUserTable = sqliteTable('nl_link_location_to_user', {
-  locationID: integer('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
+  locationID: text('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
   userID: integer('user_id').notNull().references(() => userTable.id, { onDelete: 'cascade' }),
   isPrimary: integer('is_primary', { mode: 'boolean' }).notNull().default(false)
 }, (table) => {
@@ -58,3 +58,4 @@ export const linkLocationToUserTable = sqliteTable('nl_link_location_to_user', {
 export type NewLinkLocationToUser = typeof linkLocationToUserTable.$inferInsert
 export type LinkLocationToUser = typeof linkLocationToUserTable.$inferSelect
 export type LinkLocationToUserPK = { userID: LinkLocationToUser['userID'], locationID: LinkLocationToUser['locationID'] }
+export type PartialLinkLocationToUser = Partial<LinkLocationToUser>

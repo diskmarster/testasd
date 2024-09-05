@@ -8,6 +8,7 @@ import { emailService } from "@/service/email"
 import { EmailWelcomeCustomer } from "@/components/email/email-welcome-customer"
 import { userService } from "@/service/user"
 import { locationService } from "@/service/location"
+import { generateIdFromEntropySize } from "lucia"
 
 export const createCustomerAction = publicAction
   .schema(createCustomerValidation)
@@ -27,7 +28,9 @@ export const createCustomerAction = publicAction
       throw new ActionError("Der gik noget galt med at oprette dig som kunde")
     }
 
+    const newLocationID = generateIdFromEntropySize(8)
     const newLocation = await locationService.create({
+      id: newLocationID,
       customerID: newCustomer.id,
       name: "Hovedlokation",
     })
