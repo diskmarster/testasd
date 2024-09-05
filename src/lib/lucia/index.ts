@@ -21,7 +21,7 @@ export const lucia = new Lucia(adapter, {
       name: u.name,
       email: u.email,
       role: u.role,
-      clientID: u.clientID,
+      customerID: u.customerID,
       isActive: u.isActive,
       inserted: u.inserted,
       updated: u.updated,
@@ -41,7 +41,7 @@ interface SessionUser {
   name: string
   email: string
   role: UserRole
-  clientID: number
+  customerID: number
   isActive: boolean
   inserted: Date
   updated: Date

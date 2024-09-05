@@ -9,6 +9,7 @@ import { changeLocationAction } from "@/app/actions";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { useSession } from "@/context/session";
+import { siteConfig } from "@/config/site";
 
 export function NavLocationSelect({ locations, lastVisitedID }: { locations: LocationWithPrimary[], lastVisitedID: string | undefined }) {
   const { user } = useSession()
@@ -21,9 +22,9 @@ export function NavLocationSelect({ locations, lastVisitedID }: { locations: Loc
     startTransition(async () => {
       const res = await changeLocationAction({ locationID: locationID, revalidatePath: pathname })
       if (res && res.serverError) {
-        toast.error(res.serverError)
+        toast.error(siteConfig.errorTitle, { description: res.serverError })
       } {
-        toast.success(`Skiftet lokation til ${locations.find(loc => loc.id)?.name ?? 'Unavngivet'}`)
+        toast.success(siteConfig.successTitle, { description: `Skiftet lokation til ${locations.find(loc => loc.id)?.name ?? 'Unavngivet'}` })
         router.refresh()
       }
     })

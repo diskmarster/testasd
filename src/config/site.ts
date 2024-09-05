@@ -74,7 +74,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Brugere',
           description: 'Se en oversigt over alle brugere',
-          href: '/sys/kunder',
+          href: '/admin/brugere',
           roles: [],
           isExternal: false,
           isDisabled: true
@@ -82,23 +82,23 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Varegrupper',
           description: 'Se, opret og rediger i dine varegrupper',
-          href: '/sys/brugere',
-          roles: [],
+          href: '/admin/varegrupper',
+          roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: true
         },
         {
           label: 'Placeringer',
           description: 'Se, opret og rediger i dine placeringer',
-          href: '/sys/fejl',
-          roles: [],
+          href: '/admin/placeringer',
+          roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: true
         },
         {
           label: 'Lokationer',
           description: 'Se, opret og rediger i dine lokationer',
-          href: '/sys/fejl',
+          href: '/admin/lokationer',
           roles: [],
           isExternal: false,
           isDisabled: true

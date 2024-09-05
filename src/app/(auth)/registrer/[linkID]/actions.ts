@@ -35,7 +35,7 @@ export const signUpAction = publicAction
     }
 
     const newUser = await userService.register({
-      clientID: parsedInput.clientID,
+      customerID: parsedInput.clientID,
       name: parsedInput.name,
       email: parsedInput.email,
       hash: parsedInput.password,
@@ -56,6 +56,7 @@ export const signUpAction = publicAction
     const isAccessAdded = await locationService.addAccess({
       userID: newUser.id,
       locationID: activationLink.locationID,
+      customerID: existingCustomer.id,
       isPrimary: true
     })
     if (!isAccessAdded) {

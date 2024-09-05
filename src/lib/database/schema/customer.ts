@@ -1,6 +1,6 @@
 import { Plan } from "@/data/customer.types";
-import { eq, sql } from "drizzle-orm";
-import { integer, sqliteTable, text, primaryKey, unique } from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
+import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
 import { userTable } from "./auth";
 import { UserRole } from "@/data/user.types";
 
@@ -48,6 +48,7 @@ export type LocationWithPrimary = Location & { isPrimary: boolean }
 export const linkLocationToUserTable = sqliteTable('nl_link_location_to_user', {
   locationID: text('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
   userID: integer('user_id').notNull().references(() => userTable.id, { onDelete: 'cascade' }),
+  customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   isPrimary: integer('is_primary', { mode: 'boolean' }).notNull().default(false)
 }, (table) => {
   return {
