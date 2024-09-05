@@ -1,6 +1,6 @@
 import { Plan } from "@/data/customer.types";
-import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
+import { eq, sql } from "drizzle-orm";
+import { integer, sqliteTable, text, primaryKey, unique } from "drizzle-orm/sqlite-core";
 import { userTable } from "./auth";
 import { UserRole } from "@/data/user.types";
 
@@ -24,7 +24,7 @@ export const customerLinkTable = sqliteTable('nl_customer_link', {
   customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   email: text('email').notNull(),
   role: text('role').notNull().$type<UserRole>(),
-  locationID: text('location_id').notNull().references(() => locationTable.id),
+  locationID: text('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
   inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
 })
 
@@ -51,7 +51,7 @@ export const linkLocationToUserTable = sqliteTable('nl_link_location_to_user', {
   isPrimary: integer('is_primary', { mode: 'boolean' }).notNull().default(false)
 }, (table) => {
   return {
-    pk: primaryKey({ columns: [table.userID, table.locationID] })
+    pk: primaryKey({ columns: [table.userID, table.locationID] }),
   }
 })
 

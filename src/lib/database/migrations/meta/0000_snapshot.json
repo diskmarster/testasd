@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "df208818-cdf9-4f19-94f6-21ec6da78dd8",
+  "id": "209ec01d-d2b8-4cf8-bfbb-cb67ac489b9f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "nl_session": {
@@ -218,7 +218,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
