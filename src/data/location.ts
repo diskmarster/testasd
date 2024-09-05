@@ -1,11 +1,13 @@
-import { db } from "@/lib/database";
+import { db, TRX } from "@/lib/database";
 import { UserID } from "@/lib/database/schema/auth";
 import { CustomerID, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
 import { eq, and, getTableColumns } from "drizzle-orm";
 
+
 export const location = {
-  create: async function(locationData: NewLocation): Promise<Location | undefined> {
-    const newLocation = await db.insert(locationTable).values(locationData).returning()
+  create: async function(locationData: NewLocation, trx?: TRX): Promise<Location | undefined> {
+    const database = trx || db
+    const newLocation = await database.insert(locationTable).values(locationData).returning()
     return newLocation[0]
   },
   getAllByCustomerID: async function(customerID: CustomerID): Promise<Location[]> {
