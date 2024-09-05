@@ -49,7 +49,8 @@ export const locationService = {
     }
 
     return defaultLocationID;
-  }, toggleLocationPrimary: async function(userID: UserID, newLocationID: LocationID): Promise<boolean> {
+  },
+  toggleLocationPrimary: async function(userID: UserID, newLocationID: LocationID): Promise<boolean> {
     const didUpdate = await location.toggleLocationPrimary(userID, newLocationID)
     return didUpdate
   }

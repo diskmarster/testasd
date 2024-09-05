@@ -1,7 +1,7 @@
 import { db } from "@/lib/database";
 import { UserID } from "@/lib/database/schema/auth";
-import { CustomerID, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation, PartialLinkLocationToUser } from "@/lib/database/schema/customer";
-import { eq, and, getTableColumns, not, count } from "drizzle-orm";
+import { CustomerID, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
+import { eq, and, getTableColumns } from "drizzle-orm";
 
 export const location = {
   create: async function(locationData: NewLocation): Promise<Location | undefined> {
