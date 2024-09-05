@@ -1,5 +1,4 @@
 import { Plan } from "@/data/customer.types"
-import { Icons } from "@/components/ui/icons";
 
 
 export const plansConfig: PlanConfig[] = [
@@ -44,7 +43,7 @@ export const plansConfig: PlanConfig[] = [
     userCount: 20,
     locations: 10,
     features: [
-      "Alt i Basis",
+      "Alt i Plus",
       "Batchnr",
       "Salgsordrenr",
       "Købsordrenr",
@@ -54,7 +53,7 @@ export const plansConfig: PlanConfig[] = [
   },
 ]
 
-type PlanConfig = {
+export type PlanConfig = {
   description: String
   plan: Plan
   price: number

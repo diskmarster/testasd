@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useState, useTransition } from "react";
-import { useForm } from 'react-hook-form';
+import { FormState, SubmitHandler, useForm, UseFormSetValue } from 'react-hook-form';
 import { z } from "zod";
 import { createCustomerValidation } from "@/app/(auth)/opret/validation";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,23 +14,19 @@ import { Icons } from "@/components/ui/icons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { createCustomerAction } from "@/app/(auth)/opret/actions";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plan, plans } from "@/data/customer.types";
-import { plansConfig } from "@/config/plan";
-import { Separator } from "../ui/separator";
+import { PlanConfig, plansConfig } from "@/config/plan";
+
 
 export function CreateCustomerCard() {
   const [emailSent, setEmailSent] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
-  
+  const [isExpanded, setIsExpanded] = useState(false);;
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string>();
-
-  const { handleSubmit, formState, register, setValue } = useForm<z.infer<typeof createCustomerValidation>>({
+  const { handleSubmit, formState, register, setValue, getValues, watch } = useForm<z.infer<typeof createCustomerValidation>>({
     resolver: zodResolver(createCustomerValidation),
+    
   });
-
+  watch()
   async function onSubmit(values: z.infer<typeof createCustomerValidation>) {
     startTransition(async () => {
       const response = await createCustomerAction(values);
@@ -66,10 +62,10 @@ export function CreateCustomerCard() {
     <div className="flex flex-col items-center p-6 my-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full md:w-fit">
         {plansConfig.map((plan, index) => (
-          <ExpandableCard key={index} plan={plan} isExpanded={isExpanded} isSelected={selectedPlan === plan.plan} onSelect={() => {
-            setSelectedPlan(plan.plan);
-            setValue('plan', plan.plan); ////////////////I WAS HERE!!
-          }} />
+          <ExpandableCard key={index} plan={plan} isExpanded={isExpanded} setPlan={(plan) => {
+            setValue("plan", plan, {shouldValidate: true})
+          }} isSelected={getValues().plan == plan.plan}
+          />
         ))}
       </div>
       <Button
@@ -89,7 +85,14 @@ export function CreateCustomerCard() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form setEmailSent={setEmailSent} />
+          <Form  
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                error={error}
+                formState={formState}
+                register={register}
+                pending={pending}               
+          />
         </CardContent>
         <CardFooter>
           <Link
@@ -106,15 +109,15 @@ export function CreateCustomerCard() {
   );
 }
 
-function ExpandableCard({ plan, isExpanded }: { plan: typeof plansConfig[0], isExpanded: boolean }) {
+function ExpandableCard({ plan, isExpanded, setPlan: setValue, isSelected }: { plan: PlanConfig, isExpanded: boolean, setPlan: (value: 'lite' | 'plus' | 'pro') => void, isSelected: boolean, }) {
   return (
-    <Card className="w-full md:w-60 shadow-lg transition-transform duration-300 ease-in-out transform flex flex-col group hover:shadow-2xl hover:scale-105 cursor-pointer"
-    onClick={() => console.log("lol")}>
-      <CardHeader className="bg-muted rounded-t-md dark:bg-muted">
-        <CardTitle className="text-2xl capitalize transition-colors duration-150 group-hover:text-primary">{plan.plan}</CardTitle>
+    <Card className={cn("w-full md:w-60 rounded-lg border-2 border-muted transition-transform duration-300 ease-in-out transform flex flex-col group hover:scale-105", isSelected && "border-primary border-2 border-collapse" )}
+    onClick={() => setValue(plan.plan)}>
+      <CardHeader className={cn("bg-muted rounded-md dark:bg-muted", isExpanded && "rounded-b-none")}>
+        <CardTitle className="text-2xl capitalize transition-colors duration-150">{plan.plan}</CardTitle>
         <CardDescription className="text-2xl font-semibold mt-2 text-primary">
           {plan.price}{" "}
-          <span className="text-xs">DKK / måned</span>
+          <span className="text-muted-foreground opacity-50 text-xs">DKK /måned</span>
         </CardDescription>
       <p className="text-xs text-muted-foreground mt-1">{plan.description}</p>
       </CardHeader>
@@ -133,18 +136,22 @@ function ExpandableCard({ plan, isExpanded }: { plan: typeof plansConfig[0], isE
               ))}
             </ul>
           </>
-        
-          
-        
       </CardContent>
         )}
     </Card>
   );
 }
 
-function Form({ setEmailSent }: { setEmailSent: Dispatch<SetStateAction<boolean>> }) {
-
-
+function Form({handleSubmit, onSubmit, error, formState, register, pending, }: 
+  {
+  handleSubmit: any;
+  onSubmit: SubmitHandler<z.infer<typeof createCustomerValidation>>;
+  error: string | undefined;
+  formState: FormState<z.infer<typeof createCustomerValidation>>;
+  register: any;
+  pending: boolean;
+}) {
+  
   return (
     <form className="grid w-full items-start gap-4" onSubmit={handleSubmit(onSubmit)}>
       {error && (
@@ -154,21 +161,11 @@ function Form({ setEmailSent }: { setEmailSent: Dispatch<SetStateAction<boolean>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      <div className="grid gap-2">
-        <Label htmlFor='plan'>Plan</Label>
-        <Select onValueChange={(value: Plan) => setValue('plan', value)}>
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {plans.map((p, i) => (
-              <SelectItem key={i} value={p} className="capitalize">{p}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+    
       <div className='grid gap-2'>
-        <Label htmlFor='company'>Firmanavn</Label>
+        <Label htmlFor='company'>
+          Firmanavn
+          </Label>
         <Input id='company' type='text' {...register('company')} />
         {formState.errors.company && (
           <p className='text-sm text-destructive'>
@@ -177,7 +174,9 @@ function Form({ setEmailSent }: { setEmailSent: Dispatch<SetStateAction<boolean>
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='email'>Email</Label>
+        <Label htmlFor='email'>
+          Email
+          </Label>
         <Input id='email' type='email' {...register('email')} />
         {formState.errors.email && (
           <p className='text-sm text-destructive'>
@@ -188,7 +187,7 @@ function Form({ setEmailSent }: { setEmailSent: Dispatch<SetStateAction<boolean>
           Du vil modtage en mail med et link til at aktivere din virksomhed og oprette din første bruger.
         </p>
       </div>
-      <Button type='submit' className='flex items-center gap-2'>
+      <Button type='submit' disabled={pending || !formState.isValid} className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
         Opret
       </Button>
