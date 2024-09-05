@@ -44,6 +44,7 @@ export const plansConfig: PlanConfig[] = [
     locations: 10,
     features: [
       "Alt i Plus",
+      "20+ brugere",
       "Batchnr",
       "Salgsordrenr",
       "Købsordrenr",
