@@ -38,9 +38,7 @@ export const location = {
     return location[0]
   },
   toggleLocationPrimary: async function(userID: UserID, locationID: LocationID): Promise<boolean> {
-    console.log("locationID", locationID, "userID", userID)
     const resultSet = await db.transaction(async (tsx) => {
-
       await tsx
         .update(linkLocationToUserTable)
         .set({ isPrimary: false })
@@ -56,8 +54,6 @@ export const location = {
           eq(linkLocationToUserTable.locationID, locationID),
           eq(linkLocationToUserTable.userID, userID)
         ))
-
-
       return updateNewLocation
     })
     return resultSet.rowsAffected == 1
