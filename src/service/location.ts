@@ -2,7 +2,6 @@ import { location } from "@/data/location";
 import { UserID } from "@/lib/database/schema/auth";
 import { Location, LocationID, LocationWithPrimary, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
 import { addDays } from "date-fns";
-import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 
 const LAST_LOCATION_COOKIE_NAME = 'nl_last_location'
@@ -36,23 +35,21 @@ export const locationService = {
   },
   getLastVisited: async function(userID: UserID): Promise<LocationID | undefined> {
     const locations = await location.getAllByUserID(userID)
+    if (!locations.length) return undefined
 
     const locationCookie = cookies().get(LAST_LOCATION_COOKIE_NAME)
-
     const primaryLocation = locations.find(loc => loc.isPrimary)
-    if (!primaryLocation) {
-      return undefined
+    if (!primaryLocation) return undefined
+
+    let defaultLocationID = primaryLocation.id;
+
+    if (locationCookie) {
+      const cookieLocationExists = locations.some(loc => loc.id === locationCookie.value)
+      defaultLocationID = cookieLocationExists ? locationCookie.value : primaryLocation.id
     }
 
-    let defualtLocationID = locationCookie ? locationCookie.value : primaryLocation ? primaryLocation.id : locations[0].id
-
-    if (locationCookie && !locations.find(loc => loc.id == locationCookie.value)) {
-      defualtLocationID = primaryLocation.id
-    }
-
-    return defualtLocationID
-  },
-  toggleLocationPrimary: async function(userID: UserID, newLocationID: LocationID): Promise<boolean> {
+    return defaultLocationID;
+  }, toggleLocationPrimary: async function(userID: UserID, newLocationID: LocationID): Promise<boolean> {
     const didUpdate = await location.toggleLocationPrimary(userID, newLocationID)
     return didUpdate
   }
