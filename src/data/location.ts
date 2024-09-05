@@ -6,7 +6,6 @@ import { eq, and, getTableColumns } from "drizzle-orm";
 export const location = {
   create: async function(locationData: NewLocation): Promise<Location | undefined> {
     const newLocation = await db.insert(locationTable).values(locationData).returning()
-    if (newLocation.length != 1) return undefined
     return newLocation[0]
   },
   getAllByCustomerID: async function(customerID: CustomerID): Promise<Location[]> {
@@ -34,7 +33,6 @@ export const location = {
       .where(and(eq(linkLocationToUserTable.userID, userID), eq(linkLocationToUserTable.isPrimary, true)))
       .innerJoin(locationTable, eq(locationTable.id, linkLocationToUserTable.locationID))
       .limit(1)
-    if (location.length != 1) return undefined
     return location[0]
   },
   toggleLocationPrimary: async function(userID: UserID, locationID: LocationID): Promise<boolean> {
