@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { Dispatch, SetStateAction, useState, useTransition } from "react";
-import { FormState, SubmitHandler, useForm, UseFormSetValue } from 'react-hook-form';
+import { FormState, SubmitHandler, useForm, UseFormHandleSubmit, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 import { z } from "zod";
 import { createCustomerValidation } from "@/app/(auth)/opret/validation";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { createCustomerAction } from "@/app/(auth)/opret/actions";
 import { PlanConfig, plansConfig } from "@/config/plan";
+import { Badge } from "../ui/badge";
 
 
 export function CreateCustomerCard() {
@@ -60,6 +61,9 @@ export function CreateCustomerCard() {
 
   return (
     <div className="flex flex-col items-center p-6 my-6">
+        <Badge variant={"default"} className="mb-5 text-primary-foreground"> 
+          Vælg en plan 
+          </Badge>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full md:w-fit">
         {plansConfig.map((plan, index) => (
           <ExpandableCard key={index} plan={plan} isExpanded={isExpanded} setPlan={(plan) => {
@@ -73,7 +77,9 @@ export function CreateCustomerCard() {
         onClick={() => setIsExpanded(!isExpanded)}
         className="my-6"
       >
-        {isExpanded ? "Se mindre" : "Se mere"}
+        {isExpanded ? ("Se mindre") : ("Se mere")}
+
+      
       </Button>
       <Card className='relative w-full max-w-sm mx-auto'>
         <CardHeader>
@@ -109,46 +115,64 @@ export function CreateCustomerCard() {
   );
 }
 
-function ExpandableCard({ plan, isExpanded, setPlan: setValue, isSelected }: { plan: PlanConfig, isExpanded: boolean, setPlan: (value: 'lite' | 'plus' | 'pro') => void, isSelected: boolean, }) {
+function ExpandableCard({
+  plan,
+  isExpanded,
+  setPlan: setValue,
+  isSelected,
+}: {
+  plan: PlanConfig;
+  isExpanded: boolean;
+  setPlan: (value: 'lite' | 'plus' | 'pro') => void;
+  isSelected: boolean;
+}) {
   return (
-    <Card className={cn("w-full md:w-60 rounded-lg border-2 border-muted transition-transform duration-300 ease-in-out transform flex flex-col group hover:scale-105", isSelected && "border-primary border-2 border-collapse" )}
-    onClick={() => setValue(plan.plan)}>
+    <Card
+      className={cn(
+        "w-full md:w-60 rounded-lg border-2 border-muted transition-transform duration-300 ease-in-out transform flex flex-col group hover:scale-105 cursor-pointer",
+        isSelected && "border-primary"
+      )}
+      onClick={() => setValue(plan.plan)}
+    >
       <CardHeader className={cn("bg-muted rounded-md dark:bg-muted", isExpanded && "rounded-b-none")}>
         <CardTitle className="text-2xl capitalize transition-colors duration-150">{plan.plan}</CardTitle>
         <CardDescription className="text-2xl font-semibold mt-2 text-primary">
           {plan.price}{" "}
           <span className="text-muted-foreground opacity-50 text-xs">DKK /måned</span>
         </CardDescription>
-      <p className="text-xs text-muted-foreground mt-1">{plan.description}</p>
+        <p className="text-xs text-muted-foreground mt-1">{plan.description}</p>
       </CardHeader>
-        {isExpanded && (
-          <CardContent className={`px-6 py-4 flex-grow transition-all duration-300 ease-in-out ${isExpanded ? "max-h-[500px] opacity-100" : "max-h-[100px] overflow-hidden opacity-80"}`}>
-          <>
-            <p className="font-bold mb-2 text-2xl">Features:</p>
-            <ul className="space-y-2">
-              {plan.features.map((feature, index) => (
-                <li key={index} className="flex text-xl">
-                  <div className="mr-2">
-                    <Icons.check className="w-5 h-5 text-success" />
-                  </div>
-                  <span className="text-sm">{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </>
-      </CardContent>
+      <div
+        className={cn(
+          "transition-all duration-500 ease-in-out overflow-hidden",
+          isExpanded ? "max-h-[500px] opacity-100 py-4" : "max-h-0 opacity-0 py-0" 
         )}
+      >
+        <CardContent className="px-6 flex-grow">
+          <p className="font-bold mb-2 text-2xl">Features:</p>
+          <ul className="space-y-2">
+            {plan.features.map((feature, index) => (
+              <li key={index} className="flex text-xl">
+                <div className="mr-2">
+                  <Icons.check className="w-5 h-5 text-success" />
+                </div>
+                <span className="text-sm">{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </div>
     </Card>
   );
 }
 
 function Form({handleSubmit, onSubmit, error, formState, register, pending, }: 
   {
-  handleSubmit: any;
+  handleSubmit: UseFormHandleSubmit<z.infer<typeof createCustomerValidation>>
   onSubmit: SubmitHandler<z.infer<typeof createCustomerValidation>>;
   error: string | undefined;
   formState: FormState<z.infer<typeof createCustomerValidation>>;
-  register: any;
+  register: UseFormRegister<z.infer<typeof createCustomerValidation>>
   pending: boolean;
 }) {
   
