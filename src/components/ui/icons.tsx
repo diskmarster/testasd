@@ -1,6 +1,9 @@
-import { Warehouse, ChevronDown, Mail, Sun, Boxes, Moon, CircleAlert, Loader2, ExternalLink, Menu, Check, Infinity } from "lucide-react";
+import { Warehouse, ChevronDown, Mail, Sun, Boxes, Moon, CircleAlert, Loader2, ExternalLink, Menu, Check, Infinity, ChevronsUpDown, Plus, Star } from "lucide-react";
 
 export const Icons = {
+  updown: ChevronsUpDown,
+  plus: Plus,
+  star: Star,
   sun: Sun,
   moon: Moon,
   chevronDown: ChevronDown,
@@ -11,6 +14,6 @@ export const Icons = {
   menu: Menu,
   mail: Mail,
   boxes: Boxes,
-  check: Check,  
+  check: Check,
   infinity: Infinity,
 };

@@ -7,6 +7,8 @@ import { ActionError } from "@/lib/safe-action/error"
 import { emailService } from "@/service/email"
 import { EmailWelcomeCustomer } from "@/components/email/email-welcome-customer"
 import { userService } from "@/service/user"
+import { locationService } from "@/service/location"
+import { generateIdFromEntropySize } from "lucia"
 
 export const createCustomerAction = publicAction
   .schema(createCustomerValidation)
@@ -26,7 +28,22 @@ export const createCustomerAction = publicAction
       throw new ActionError("Der gik noget galt med at oprette dig som kunde")
     }
 
-    const activationLink = await customerService.createActivationLink({ customerID: newCustomer.id, email: newCustomer.email })
+    const newLocationID = generateIdFromEntropySize(8)
+    const newLocation = await locationService.create({
+      id: newLocationID,
+      customerID: newCustomer.id,
+      name: "Hovedlokation",
+    })
+    if (!newLocation) {
+      throw new ActionError("Der gik noget galt med at oprette en lokation")
+    }
+
+    const activationLink = await customerService.createActivationLink({
+      customerID: newCustomer.id,
+      email: newCustomer.email,
+      locationID: newLocation.id,
+      role: 'firma_admin'
+    })
     if (!activationLink) {
       throw new ActionError("Der gik noget galt med at sende din aktiveringsmail")
     }

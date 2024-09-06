@@ -139,9 +139,9 @@ function ExpandableCard({
         <CardTitle className="text-2xl capitalize transition-colors duration-150">{plan.plan}</CardTitle>
         <CardDescription className="text-2xl font-semibold mt-2 text-primary">
           {plan.price}{" "}
-          <span className="text-muted-foreground opacity-50 text-xs">DKK /måned</span>
+          <span className="text-muted-foreground opacity-50 text-xs">DKK / måned</span>
         </CardDescription>
-        <p className="text-xs text-muted-foreground mt-1">{plan.description}</p>
+        <p className="text-xs font-semibold text-muted-foreground mt-1">{plan.description}</p>
       </CardHeader>
       <div
         className={cn(

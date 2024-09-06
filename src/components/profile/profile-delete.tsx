@@ -25,7 +25,7 @@ export function ProfileDelete({ user }: { user?: UserNoHash }) {
   return (
     <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
       <div className='grid gap-0.5'>
-        <Label htmlFor='twofa'>Slet bruger</Label>
+        <Label>Slet bruger</Label>
         <p className='text-sm text-muted-foreground'>
           Slet bruger fra platformen
         </p>
