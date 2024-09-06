@@ -2,23 +2,24 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import { Dispatch, SetStateAction, useState, useTransition } from "react";
-import { FormState, SubmitHandler, useForm, UseFormHandleSubmit, UseFormRegister, UseFormSetValue } from 'react-hook-form';
+import { useState, useTransition } from "react";
+import { FormState, SubmitHandler, useForm, UseFormHandleSubmit, UseFormRegister, } from 'react-hook-form';
 import { z } from "zod";
 import { createCustomerValidation } from "@/app/(auth)/opret/validation";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { createCustomerAction } from "@/app/(auth)/opret/actions";
 import { PlanConfig, plansConfig } from "@/config/plan";
-import { Badge } from "../ui/badge";
+import { siteConfig } from "@/config/site";
 
 
-export function CreateCustomerCard() {
+export function CreateCustomer() {
   const [emailSent, setEmailSent] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);;
   const [pending, startTransition] = useTransition();
@@ -149,7 +150,7 @@ function ExpandableCard({
         )}
       >
         <CardContent className="px-6 flex-grow">
-          <p className="font-bold mb-2 text-2xl">Features:</p>
+          <p className="font-semibold mb-2 text-sm">Features:</p>
           <ul className="space-y-2">
             {plan.features.map((feature, index) => (
               <li key={index} className="flex text-xl">
@@ -181,7 +182,7 @@ function Form({handleSubmit, onSubmit, error, formState, register, pending, }:
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>Der skete en fejl</AlertTitle>
+          <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}

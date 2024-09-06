@@ -29,7 +29,7 @@ export const plansConfig: PlanConfig[] = [
     userCount: 3,
     locations: 3,
     features: [
-      "Alt i Lite",
+      "Alt fra Lite",
       "10 brugere",
       "Placerings-styring",
       "Genbestil",
@@ -43,13 +43,13 @@ export const plansConfig: PlanConfig[] = [
     userCount: 20,
     locations: 10,
     features: [
-      "Alt i Plus",
-      "20+ brugere",
+      "Alt fra Plus",
+      "Ubegrænset brugere",
       "Batchnr",
       "Salgsordrenr",
       "Købsordrenr",
       "Serienummer",
-      "Ubegrænsede lokationer"
+      "Ubegrænset lokationer"
     ],
   },
 ]
