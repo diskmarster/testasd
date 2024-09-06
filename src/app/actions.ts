@@ -10,7 +10,6 @@ const changeLocationValidation = z.object({ locationID: z.string(), revalidatePa
 export const changeLocationAction = privateAction
   .schema(changeLocationValidation)
   .action(async ({ parsedInput }) => {
-    console.log(parsedInput)
     locationService.setCookie(parsedInput.locationID)
     revalidatePath(parsedInput.revalidatePath)
   })
