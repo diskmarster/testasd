@@ -76,5 +76,5 @@ export const updatePrimaryLocationAction = privateAction
         throw new ActionError("Din hovedlokation blev ikke opdateret")
       }
 
-      revalidatePath("/porfil")
+      revalidatePath("/profil")
     })
