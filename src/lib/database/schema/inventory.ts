@@ -1,6 +1,7 @@
 import { integer, primaryKey, real, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { customerTable, locationTable } from "@/lib/database/schema/customer";
 import { sql } from "drizzle-orm";
+import { HistoryType } from "@/data/inventory.types";
 
 export const unitTable = sqliteTable('nl_unit', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
@@ -114,8 +115,8 @@ export const historyTable = sqliteTable('nl_history', {
   productID: integer('product_id').notNull(),
   placementID: integer('placement_id').notNull(),
   batchID: integer('batch_id').notNull(),
-  type: text('type').notNull().$type<any>().default("Hvis det læser dette, så glemte jeg det"),
-  amount: real('amount').notNull().default(0),
+  type: text('type').notNull().$type<HistoryType>(),
+  amount: real('amount').notNull(),
   reference: text('reference').notNull().default(''),
   inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 })
