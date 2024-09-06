@@ -110,6 +110,7 @@ export function LocationDialog({ locations }: { locations: LocationWithPrimary[]
                     description: `Hovedlokation opdateret til ${locations.find(loc => loc.id == values.locationID)?.name ?? 'Unavngivet'}`,
                   })
                   setOpen(false)
+                  setValue('locationID', values.locationID)
                 })
               })}>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
