@@ -3,7 +3,7 @@ import { Customer, CustomerID, CustomerLink, CustomerLinkID, NewCustomer, NewCus
 import { generateIdFromEntropySize } from "lucia";
 import { isLinkExpired } from "./customer.utils";
 
-const ACTIVATION_LINK_BASEURL = process.env.VERCEL_ENV === 'production' ? 'https://lager.nemunivers.app' : process.env.VERCEL_ENV === 'preview' ? 'stage-lager.nemunivers.app' : 'http://localhost:3000'
+const ACTIVATION_LINK_BASEURL = process.env.VERCEL_ENV === 'production' ? 'https://lager.nemunivers.app' : process.env.VERCEL_ENV === 'preview' ? 'stage.lager.nemunivers.app' : 'http://localhost:3000'
 export type CustomerActivationLink = `${typeof ACTIVATION_LINK_BASEURL}/registrer/${CustomerLinkID}`
 const LINK_DURATION_HOURS = 1
 
