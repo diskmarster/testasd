@@ -1,9 +1,12 @@
 import { integer, primaryKey, real, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { customerTable, locationTable } from "@/lib/database/schema/customer";
+import { sql } from "drizzle-orm";
 
 export const unitTable = sqliteTable('nl_unit', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
   name: text('name').notNull().unique(),
+  inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  updated: integer('updated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>(),
   isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false)
 })
 
@@ -16,6 +19,8 @@ export const placementTable = sqliteTable('nl_placement', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
   locationID: text('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
+  inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  updated: integer('updated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>(),
   isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false)
 }, (t) => ({
   unq: unique().on(t.locationID, t.name),
@@ -31,6 +36,8 @@ export const batchTable = sqliteTable('nl_batch', {
   locationID: text('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
   batch: text('batch').notNull(),
   expiry: integer('expiry', { mode: 'timestamp' }),
+  inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  updated: integer('updated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>(),
   isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false)
 }, (t) => ({
   unq: unique().on(t.locationID, t.batch)
@@ -45,6 +52,8 @@ export const groupTable = sqliteTable('nl_group', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
   locationID: text('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
+  inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  updated: integer('updated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>(),
   isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false)
 }, (t) => ({
   unq: unique().on(t.locationID, t.name)
@@ -67,6 +76,8 @@ export const productTable = sqliteTable('nl_product', {
   barcode: text('barcode').notNull(),
   costPrice: real('cost_price').notNull(),
   salesPrice: real('sales_price').notNull().default(0),
+  inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  updated: integer('updated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>(),
   isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false)
 }, (t) => ({
   unqSku: unique().on(t.customerID, t.sku),
@@ -84,7 +95,9 @@ export const inventoryTable = sqliteTable('nl_inventory', {
   batchID: integer('batch_id').notNull().references(() => batchTable.id),
   locationID: integer('location_id').notNull().references(() => locationTable.id),
   customerID: integer('customer_id').notNull().references(() => customerTable.id),
-  quantity: real('quantity').notNull().default(0)
+  quantity: real('quantity').notNull().default(0),
+  inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
+  updated: integer('updated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>(),
 }, (t) => ({
   pk: primaryKey({ columns: [t.productID, t.placementID, t.batchID, t.locationID, t.customerID] })
 }))
@@ -103,7 +116,8 @@ export const historyTable = sqliteTable('nl_history', {
   batchID: integer('batch_id').notNull(),
   type: text('type').notNull().$type<any>().default("Hvis det læser dette, så glemte jeg det"),
   amount: real('amount').notNull().default(0),
-  reference: text('reference').notNull().default('')
+  reference: text('reference').notNull().default(''),
+  inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 })
 
 export type History = typeof historyTable.$inferSelect
