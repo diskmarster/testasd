@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "db:local": "./setup-local-db.bash nem-lager-stage",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "tsx src/lib/database/migrate.ts",
@@ -36,6 +37,7 @@
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.33.0",
+    "jsonwebtoken": "^9.0.2",
     "lucia": "^3.2.0",
     "lucide-react": "^0.436.0",
     "next": "14.2.7",
@@ -52,6 +54,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
