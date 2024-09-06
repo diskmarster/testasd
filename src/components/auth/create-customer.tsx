@@ -26,9 +26,11 @@ export function CreateCustomer() {
   const [error, setError] = useState<string>();
   const { handleSubmit, formState, register, setValue, getValues, watch } = useForm<z.infer<typeof createCustomerValidation>>({
     resolver: zodResolver(createCustomerValidation),
-    
+
   });
-  watch()
+
+  watch('plan')
+
   async function onSubmit(values: z.infer<typeof createCustomerValidation>) {
     startTransition(async () => {
       const response = await createCustomerAction(values);
@@ -62,13 +64,13 @@ export function CreateCustomer() {
 
   return (
     <div className="flex flex-col items-center p-6 my-6">
-        <Badge variant={"default"} className="mb-5 text-primary-foreground"> 
-          Vælg en plan 
-          </Badge>
+      <Badge variant={"default"} className="mb-5 text-primary-foreground">
+        Vælg en plan
+      </Badge>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full md:w-fit">
         {plansConfig.map((plan, index) => (
           <ExpandableCard key={index} plan={plan} isExpanded={isExpanded} setPlan={(plan) => {
-            setValue("plan", plan, {shouldValidate: true})
+            setValue("plan", plan, { shouldValidate: true })
           }} isSelected={getValues().plan == plan.plan}
           />
         ))}
@@ -79,8 +81,6 @@ export function CreateCustomer() {
         className="my-6"
       >
         {isExpanded ? ("Se mindre") : ("Se mere")}
-
-      
       </Button>
       <Card className='relative w-full max-w-sm mx-auto'>
         <CardHeader>
@@ -92,13 +92,13 @@ export function CreateCustomer() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form  
-                handleSubmit={handleSubmit}
-                onSubmit={onSubmit}
-                error={error}
-                formState={formState}
-                register={register}
-                pending={pending}               
+          <FormCard
+            handleSubmit={handleSubmit}
+            onSubmit={onSubmit}
+            error={error}
+            formState={formState}
+            register={register}
+            pending={pending}
           />
         </CardContent>
         <CardFooter>
@@ -146,7 +146,7 @@ function ExpandableCard({
       <div
         className={cn(
           "transition-all duration-500 ease-in-out overflow-hidden",
-          isExpanded ? "max-h-[500px] opacity-100 py-4" : "max-h-0 opacity-0 py-0" 
+          isExpanded ? "max-h-[500px] opacity-100 py-4" : "max-h-0 opacity-0 py-0"
         )}
       >
         <CardContent className="px-6 flex-grow">
@@ -167,16 +167,16 @@ function ExpandableCard({
   );
 }
 
-function Form({handleSubmit, onSubmit, error, formState, register, pending, }: 
+function FormCard({ handleSubmit, onSubmit, error, formState, register, pending, }:
   {
-  handleSubmit: UseFormHandleSubmit<z.infer<typeof createCustomerValidation>>
-  onSubmit: SubmitHandler<z.infer<typeof createCustomerValidation>>;
-  error: string | undefined;
-  formState: FormState<z.infer<typeof createCustomerValidation>>;
-  register: UseFormRegister<z.infer<typeof createCustomerValidation>>
-  pending: boolean;
-}) {
-  
+    handleSubmit: UseFormHandleSubmit<z.infer<typeof createCustomerValidation>>
+    onSubmit: SubmitHandler<z.infer<typeof createCustomerValidation>>;
+    error: string | undefined;
+    formState: FormState<z.infer<typeof createCustomerValidation>>;
+    register: UseFormRegister<z.infer<typeof createCustomerValidation>>
+    pending: boolean;
+  }) {
+
   return (
     <form className="grid w-full items-start gap-4" onSubmit={handleSubmit(onSubmit)}>
       {error && (
@@ -186,11 +186,11 @@ function Form({handleSubmit, onSubmit, error, formState, register, pending, }:
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-    
+
       <div className='grid gap-2'>
         <Label htmlFor='company'>
           Firmanavn
-          </Label>
+        </Label>
         <Input id='company' type='text' {...register('company')} />
         {formState.errors.company && (
           <p className='text-sm text-destructive'>
@@ -201,7 +201,7 @@ function Form({handleSubmit, onSubmit, error, formState, register, pending, }:
       <div className='grid gap-2'>
         <Label htmlFor='email'>
           Email
-          </Label>
+        </Label>
         <Input id='email' type='email' {...register('email')} />
         {formState.errors.email && (
           <p className='text-sm text-destructive'>

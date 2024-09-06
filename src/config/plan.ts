@@ -1,6 +1,5 @@
 import { Plan } from "@/data/customer.types"
 
-
 export const plansConfig: PlanConfig[] = [
   {
     plan: 'lite',
