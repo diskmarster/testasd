@@ -92,3 +92,21 @@ export const inventoryTable = sqliteTable('nl_inventory', {
 export type Inventory = typeof inventoryTable.$inferSelect
 export type NewInventory = typeof inventoryTable.$inferSelect
 export type PartialInventory = Partial<Inventory>
+
+export const historyTable = sqliteTable('nl_history', {
+  id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+  userID: integer('user_id').notNull(),
+  customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
+  locationID: integer('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
+  productID: integer('product_id').notNull(),
+  placementID: integer('placement_id').notNull(),
+  batchID: integer('batch_id').notNull(),
+  type: text('type').notNull().$type<any>().default("Hvis det læser dette, så glemte jeg det"),
+  amount: real('amount').notNull().default(0),
+  reference: text('reference').notNull().default('')
+})
+
+export type History = typeof historyTable.$inferSelect
+export type NewHistory = typeof historyTable.$inferSelect
+export type PartialHistory = Partial<History>
+export type HistoryID = History['id']
