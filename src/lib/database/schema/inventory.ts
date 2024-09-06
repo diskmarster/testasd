@@ -94,7 +94,7 @@ export const inventoryTable = sqliteTable('nl_inventory', {
   productID: integer('product_id').notNull().references(() => productTable.id, { onDelete: 'cascade' }),
   placementID: integer('placement_id').notNull().references(() => placementTable.id),
   batchID: integer('batch_id').notNull().references(() => batchTable.id),
-  locationID: integer('location_id').notNull().references(() => locationTable.id),
+  locationID: text('location_id').notNull().references(() => locationTable.id),
   customerID: integer('customer_id').notNull().references(() => customerTable.id),
   quantity: real('quantity').notNull().default(0),
   inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
