@@ -1,5 +1,6 @@
 import { signOutAction } from "@/app/(auth)/log-ud/actions";
 import { SiteWrapper } from "@/components/common/site-wrapper";
+import { TableOverview } from "@/components/inventory/table-overview";
 import { inventoryService } from "@/service/inventory";
 import { locationService } from "@/service/location";
 import { sessionService } from "@/service/session";
@@ -14,9 +15,8 @@ export default async function Home() {
   const inventory = await inventoryService.getInventory(location)
 
   return (
-    <SiteWrapper title="Oversigt">
-      <p>Sidst besøgt lokation: {location}</p>
-      <pre>{JSON.stringify(inventory, null, 2)}</pre>
+    <SiteWrapper title="Oversigt" description="Se en oversigt over din vare beholdning">
+      <TableOverview data={inventory} user={user} plan="pro" />
     </SiteWrapper>
   );
 }
