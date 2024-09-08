@@ -80,18 +80,21 @@ export function TableOverview<TValue>({ data, user, plan }: Props<TValue>) {
 
   const filterFields: FilterField<FormattedInventory>[] = [
     {
+      // @ts-ignore
       column: table.getColumn('sku'),
       type: 'text',
       label: 'Varenr.',
       placeholder: 'Søg i varenr.'
     },
     {
+      // @ts-ignore
       column: table.getColumn('barcode'),
       type: 'text',
       label: 'Stregkode',
       placeholder: 'Søg i stregkode'
     },
     {
+      // @ts-ignore
       column: table.getColumn('group'),
       type: 'select',
       label: 'Varegruppe',
