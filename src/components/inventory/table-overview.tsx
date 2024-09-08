@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { TableGroupedCell } from '../table/table-grouped-cell'
 import { Plan } from '@/data/customer.types'
 import { numberToDKCurrency } from '@/lib/utils'
+import { TableToolbar, FilterField } from '../table/table-toolbar'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -77,9 +78,32 @@ export function TableOverview<TValue>({ data, user, plan }: Props<TValue>) {
     },
   })
 
+  const filterFields: FilterField<FormattedInventory>[] = [
+    {
+      column: table.getColumn('sku'),
+      type: 'text',
+      label: 'Varenr.',
+      placeholder: 'Søg i varenr.'
+    },
+    {
+      column: table.getColumn('barcode'),
+      type: 'text',
+      label: 'Stregkode',
+      placeholder: 'Søg i stregkode'
+    },
+    {
+      column: table.getColumn('group'),
+      type: 'select',
+      label: 'Varegruppe',
+      options: [
+        { value: 0, label: "Stk" }, { value: 1, label: "Gram" }
+      ]
+    }
+  ]
+
   return (
     <div>
-      {/* table toolbar component */}
+      <TableToolbar table={table} options={{ showExport: true }} filterFields={filterFields} />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>

@@ -14,7 +14,7 @@ export function TableActionsWrapper({ children }: Props) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' size='iconSm'>
-          <Icons.horizontalDots className="size-3" />
+          <Icons.horizontalDots className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

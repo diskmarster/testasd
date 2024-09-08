@@ -20,6 +20,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const barcodeCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.barcode',
+    id: 'barcode',
     header: ({ column }) => (
       <TableHeader column={column} title='Stregkode' />
     ),
@@ -30,6 +31,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const groupCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.group',
+    id: 'group',
     header: ({ column }) => (
       <TableHeader column={column} title='Varegruppe' />
     ),
@@ -40,6 +42,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const text1Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text1',
+    id: 'text1',
     header: ({ column }) => (
       <TableHeader column={column} title='Varetekst 1' />
     ),
@@ -50,6 +53,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const text2Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text2',
+    id: 'text2',
     header: ({ column }) => (
       <TableHeader column={column} title='Varetekst 2' />
     ),
@@ -60,6 +64,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const text3Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text3',
+    id: 'text3',
     header: ({ column }) => (
       <TableHeader column={column} title='Varetekst 3' />
     ),
@@ -70,6 +75,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const placementCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'placement.name',
+    id: 'placement',
     header: ({ column }) => (
       <TableHeader column={column} title='Placering' />
     ),
@@ -78,6 +84,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const batchCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'batch.batch',
+    id: 'batch',
     header: ({ column }) => (
       <TableHeader column={column} title='Batchnr.' />
     ),
@@ -97,6 +104,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const unitCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.unit',
+    id: 'unit',
     header: ({ column }) => (
       <TableHeader column={column} title='Enhed' />
     ),
@@ -107,6 +115,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const costPriceCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.costPrice',
+    id: 'costPrice',
     header: ({ column }) => (
       <TableHeader column={column} title='Kostpris' />
     ),
@@ -120,6 +129,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
 
   const salesPriceCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.salesPrice',
+    id: 'salesPrice',
     header: ({ column }) => (
       <TableHeader column={column} title='Salgspris' />
     ),
@@ -144,6 +154,13 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     accessorKey: 'actions',
     header: () => null,
     aggregatedCell: ({ table, row }) => <TableOverviewActions table={table} row={row} />
+  }
+
+  const isBarredCol: ColumnDef<FormattedInventory> = {
+    accessorKey: 'product.isBarred',
+    id: 'isBarred',
+    header: () => null,
+    cell: () => null,
   }
 
   switch (plan) {
