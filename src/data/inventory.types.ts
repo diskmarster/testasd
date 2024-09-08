@@ -12,7 +12,7 @@ export type FormattedInventory = {
   quantity: number
   customerID: CustomerID
   locationID: LocationID
-  product: Product & { unit: string }
+  product: Product & { unit: string, group: string }
   placement: Placement
   batch: Batch
 }
