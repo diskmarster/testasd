@@ -12,6 +12,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { CheckIcon, ListIcon, TextIcon } from 'lucide-react';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { Calendar } from "@/components/ui/calendar"
+import { format } from 'date-fns';
 
 type TableToolbarFiltersProps<T> = {
   table: Table<T>;
@@ -83,11 +84,11 @@ function FilterPopover<T>({
       <PopoverTrigger asChild>
         <Button variant="outline" className="flex items-center gap-1" onClick={() => setActiveIndex(isActive ? undefined : index)}>
           <span>{field.label}:</span>
-          <span className="opacity-50">{field.column.getFilterValue() as string}</span>
+          <span className="opacity-50">{field.type === 'date' ? format(field.column.getFilterValue() as Date, "dd/MM/yyyy") : field.type === 'select' ? field.options?.find(opt => opt.value == field.column.getFilterValue() as number)?.label : field.column.getFilterValue() as string}</span>
         </Button>
 
       </PopoverTrigger>
-      <PopoverContent className="max-w-56 p-3 space-y-1" align="center">
+      <PopoverContent className="p-3 space-y-1" align="center">
         <div className="flex items-center justify-between">
           <Label>{field.label}</Label>
           <Button variant="ghost" size="icon" onClick={() => onRemoveField(field)}>
