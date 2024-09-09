@@ -1,6 +1,7 @@
 import * as jwt from 'jsonwebtoken'
 import { User, UserNoHash } from '@/lib/database/schema/auth'
 import { hash, verify } from '@node-rs/argon2'
+import { sessionService } from './session'
 const MEMORY_COST = 19456
 const TIME_COST = 2
 const OUTPUT_LEN = 32
@@ -81,4 +82,34 @@ export function verifyJWT(jwtString: string): VerifyJWTResponse {
       error: e as JWTFailed,
     }
   }
+}
+
+export async function validateRequest(request: Request): Promise<{session: any, user: any} | {session: null, user: null}> {
+  const authHeader = request.headers.get("Authorization")
+  if (!authHeader) {
+    return {
+      session: null,
+      user: null,
+    }
+  }
+
+  const authWords = authHeader.split(' ')
+  if (authWords.length != 2 || authWords[0].toLowerCase() != 'bearer') {
+    return {
+      session: null,
+      user: null,
+    }
+  }
+
+  const jwtString = authWords[1]
+
+  const res = verifyJWT(jwtString)
+  if (!res.ok) {
+    return {
+      session: null,
+      user: null,
+    }
+  }
+
+  return await sessionService.validateSessionId(res.data.sessionId)
 }
