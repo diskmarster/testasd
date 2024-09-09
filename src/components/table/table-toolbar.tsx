@@ -1,0 +1,137 @@
+"use client"
+
+import { Column, Table } from "@tanstack/react-table";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Icons } from "../ui/icons";
+import { exportTableToCSV } from "@/lib/export/csv";
+import { useState, useTransition } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CaretSortIcon, CheckIcon, ChevronDownIcon, MixerHorizontalIcon, PlusIcon, TextIcon } from "@radix-ui/react-icons";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { ListIcon } from "lucide-react";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import TableToolbarFilters from "./table-filters";
+
+type ToolbarOptions = {
+  showExport?: boolean
+  showHideShow?: false
+} | {
+  showExport?: boolean
+  showHideShow?: true
+  localStorageKey: string
+}
+
+type FilterOption = {
+  label: string
+  value: any
+  icon?: React.ComponentType<{ className?: string }>
+}
+
+export type FilterField<TRow> = {
+  column: Column<TRow>
+  type: 'text' | 'date' | 'select'
+  label: string
+  value: any
+  placeholder?: string
+  options?: FilterOption[]
+}
+
+interface Props<T> {
+  table: Table<T>
+  options?: ToolbarOptions
+  filterFields?: FilterField<T>[]
+}
+
+export function TableToolbar<T>({ table, options, filterFields = [] }: Props<T>) {
+
+  return (
+    <div className="flex items-center gap-2 py-4">
+      <div className="mr-auto">
+        <TableToolbarFilters table={table} filterFields={filterFields} />
+      </div>
+      {options && (
+        <div className="ml-auto flex items-center gap-2">
+          {options.showExport && (
+            <DownloadButton table={table} />
+          )}
+          {options.showHideShow && (
+            <ViewOptions table={table} />
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DownloadButton<T>({ table }: { table: Table<T> }) {
+  const [pending, startTransition] = useTransition()
+  return (
+    <TooltipProvider>
+      <Tooltip delayDuration={250}>
+        <TooltipTrigger asChild>
+          <Button
+            variant='outline'
+            size='icon'
+            onClick={() => {
+              startTransition(() => {
+                // BUG: when table has grouped rows, filter out the grouped row so only leaf rows are exported
+                exportTableToCSV(table, {
+                  excludeColumns: ['select', 'actions'],
+                })
+              })
+            }}>
+            {pending
+              ? <Icons.spinner className="size-4 animate-spin" />
+              : <Icons.download className="size-4" />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Eksporter alt data</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
+
+export function ViewOptions<T>({
+  table,
+}: { table: Table<T> }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon" >
+          <MixerHorizontalIcon className="size-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[150px]">
+        <DropdownMenuLabel>Gem/vis kollonner</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {table
+          .getAllColumns()
+          .filter(
+            (column) =>
+              typeof column.accessorFn !== "undefined" && column.getCanHide()
+          )
+          .map((column) => {
+            return (
+              <DropdownMenuCheckboxItem
+                key={column.id}
+                className="capitalize"
+                checked={column.getIsVisible()}
+                onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                onSelect={e => e.preventDefault()}>
+                {column.id}
+              </DropdownMenuCheckboxItem>
+            )
+          })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+

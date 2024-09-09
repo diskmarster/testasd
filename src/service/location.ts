@@ -35,7 +35,7 @@ export const locationService = {
   },
   getLastVisited: async function(userID: UserID): Promise<LocationID | undefined> {
     const locations = await location.getAllByUserID(userID)
-    if (!locations.length) return undefined
+    if (locations.length == 0) return undefined
 
     const locationCookie = cookies().get(LAST_LOCATION_COOKIE_NAME)
     const primaryLocation = locations.find(loc => loc.isPrimary)

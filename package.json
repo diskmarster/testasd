@@ -10,7 +10,8 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:migrate": "tsx src/lib/database/migrate.ts",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:drop": "drizzle-kit drop"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -19,6 +20,7 @@
     "@node-rs/argon2": "^1.8.3",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-avatar": "^1.1.0",
+    "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-collapsible": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
@@ -29,7 +31,9 @@
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tooltip": "^1.1.2",
     "@react-email/components": "0.0.24",
+    "@tanstack/react-table": "^8.20.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
@@ -42,6 +46,7 @@
     "next-safe-action": "^7.8.1",
     "next-themes": "^0.3.0",
     "react": "^18",
+    "react-day-picker": "8.10.1",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
     "resend": "^4.0.0",
