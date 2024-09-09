@@ -16,7 +16,6 @@ const COLUMN_FILTERS_ENABLED = true
 const ROW_PER_PAGE = [100, 250, 500, 1000]
 
 interface Props<TValue> {
-  //columns: ColumnDef<FormattedInventory, TValue>[]
   data: FormattedInventory[]
   user: User
   plan: Plan
@@ -24,7 +23,6 @@ interface Props<TValue> {
 
 export function TableOverview<TValue>({ data, user, plan }: Props<TValue>) {
   const columns = useMemo(() => getTableOverviewColumns(plan, user.role), [user.role, plan])
-  //const columns = getTableOverviewColumns(plan, user.role)
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
