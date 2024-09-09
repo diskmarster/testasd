@@ -111,7 +111,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
   }
 
   const costPriceCol: ColumnDef<FormattedInventory> = {

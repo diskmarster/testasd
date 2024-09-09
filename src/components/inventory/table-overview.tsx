@@ -93,11 +93,11 @@ export function TableOverview<TValue>({ data, user, plan }: Props<TValue>) {
     },
     {
       // @ts-ignore
-      column: table.getColumn('group'),
+      column: table.getColumn('unit'),
       type: 'select',
-      label: 'Varegruppe',
+      label: 'Enhed',
       options: [
-        { value: 1, label: "Stk" }, { value: 2, label: "Gram" }
+        { value: 1, label: "Stk" }, { value: 2, label: "Kasse" }
       ]
     },
     {
