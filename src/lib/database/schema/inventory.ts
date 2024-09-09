@@ -51,13 +51,13 @@ export type BatchID = Batch['id']
 
 export const groupTable = sqliteTable('nl_group', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-  locationID: text('location_id').notNull().references(() => locationTable.id, { onDelete: 'cascade' }),
+  customerID: text('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
   updated: integer('updated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>(),
   isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false)
 }, (t) => ({
-  unq: unique().on(t.locationID, t.name)
+  unq: unique().on(t.customerID, t.name)
 }))
 
 export type Group = typeof groupTable.$inferSelect

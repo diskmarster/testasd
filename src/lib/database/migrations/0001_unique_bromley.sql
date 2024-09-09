@@ -11,12 +11,12 @@ CREATE TABLE `nl_batch` (
 --> statement-breakpoint
 CREATE TABLE `nl_group` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`location_id` text NOT NULL,
+	`customer_id` text NOT NULL,
 	`name` text NOT NULL,
 	`inserted` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated` integer DEFAULT (unixepoch()) NOT NULL,
 	`is_barred` integer DEFAULT false NOT NULL,
-	FOREIGN KEY (`location_id`) REFERENCES `nl_location`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`customer_id`) REFERENCES `nl_customer`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `nl_history` (
@@ -91,7 +91,7 @@ CREATE TABLE `nl_unit` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `nl_batch_location_id_batch_unique` ON `nl_batch` (`location_id`,`batch`);--> statement-breakpoint
-CREATE UNIQUE INDEX `nl_group_location_id_name_unique` ON `nl_group` (`location_id`,`name`);--> statement-breakpoint
+CREATE UNIQUE INDEX `nl_group_customer_id_name_unique` ON `nl_group` (`customer_id`,`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `nl_placement_location_id_name_unique` ON `nl_placement` (`location_id`,`name`);--> statement-breakpoint
 CREATE UNIQUE INDEX `nl_product_customer_id_sku_unique` ON `nl_product` (`customer_id`,`sku`);--> statement-breakpoint
 CREATE UNIQUE INDEX `nl_product_customer_id_barcode_unique` ON `nl_product` (`customer_id`,`barcode`);--> statement-breakpoint

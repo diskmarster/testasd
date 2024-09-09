@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "939c8a0d-bd01-4f73-aedc-03d9d61f0226",
+  "id": "c2ebcea0-8e22-448b-9cb2-947a78a46af5",
   "prevId": "67ceed56-ffc3-4a53-999c-d97085ddd8e9",
   "tables": {
     "nl_session": {
@@ -518,8 +518,8 @@
           "notNull": true,
           "autoincrement": true
         },
-        "location_id": {
-          "name": "location_id",
+        "customer_id": {
+          "name": "customer_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -558,22 +558,22 @@
         }
       },
       "indexes": {
-        "nl_group_location_id_name_unique": {
-          "name": "nl_group_location_id_name_unique",
+        "nl_group_customer_id_name_unique": {
+          "name": "nl_group_customer_id_name_unique",
           "columns": [
-            "location_id",
+            "customer_id",
             "name"
           ],
           "isUnique": true
         }
       },
       "foreignKeys": {
-        "nl_group_location_id_nl_location_id_fk": {
-          "name": "nl_group_location_id_nl_location_id_fk",
+        "nl_group_customer_id_nl_customer_id_fk": {
+          "name": "nl_group_customer_id_nl_customer_id_fk",
           "tableFrom": "nl_group",
-          "tableTo": "nl_location",
+          "tableTo": "nl_customer",
           "columnsFrom": [
-            "location_id"
+            "customer_id"
           ],
           "columnsTo": [
             "id"
