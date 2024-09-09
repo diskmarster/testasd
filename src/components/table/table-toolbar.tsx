@@ -6,14 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "../ui/icons";
 import { exportTableToCSV } from "@/lib/export/csv";
 import { useState, useTransition } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CaretSortIcon, CheckIcon, ChevronDownIcon, MixerHorizontalIcon, PlusIcon, TextIcon } from "@radix-ui/react-icons";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { ListIcon } from "lucide-react";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { cn } from "@/lib/utils";
 import TableToolbarFilters from "./table-filters";
 
 type ToolbarOptions = {
