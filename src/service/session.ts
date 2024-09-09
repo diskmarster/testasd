@@ -35,6 +35,11 @@ export const sessionService = {
       return result;
     }
   ),
+  validateSessionId: cache(
+    async (sessionId: string): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
+      return await lucia.validateSession(sessionId);
+    }
+    ),
   delete: async function(sessionID: string): Promise<void> {
     await lucia.invalidateSession(sessionID)
     const blankCookie = lucia.createBlankSessionCookie()
