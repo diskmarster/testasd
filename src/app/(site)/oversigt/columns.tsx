@@ -160,14 +160,9 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
-    aggregatedCell: ({ table, row }) => <TableOverviewActions table={table} row={row} />
-  }
-
-  const isBarredCol: ColumnDef<FormattedInventory> = {
-    accessorKey: 'product.isBarred',
-    id: 'isBarred',
-    header: () => null,
-    cell: () => null,
+    aggregatedCell: ({ table, row }) => <TableOverviewActions table={table} row={row} />,
+    enableHiding: false,
+    enableSorting: false,
   }
 
   switch (plan) {
@@ -196,7 +191,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
         unitCol,
         costPriceCol,
         salesPriceCol,
-        updatedCol
+        updatedCol,
       ]
       if (userRole != 'bruger') plusCols.push(actionsCol)
       return plusCols
@@ -214,7 +209,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
         unitCol,
         costPriceCol,
         salesPriceCol,
-        updatedCol
+        updatedCol,
       ]
       if (userRole != 'bruger') proCols.push(actionsCol)
       return proCols

@@ -17,10 +17,12 @@ export default async function Home() {
   if (!customer) return null
 
   const inventory = await inventoryService.getInventory(location)
+  const units = await inventoryService.getUnits()
+  const groups = await inventoryService.getGroupsByID(customer.id)
 
   return (
     <SiteWrapper title="Oversigt" description="Se en oversigt over din vare beholdning">
-      <TableOverview data={inventory} user={user} plan={customer.plan} />
+      <TableOverview data={inventory} user={user} plan={customer.plan} units={units} groups={groups} />
     </SiteWrapper>
   );
 }

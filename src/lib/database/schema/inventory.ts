@@ -51,7 +51,7 @@ export type BatchID = Batch['id']
 
 export const groupTable = sqliteTable('nl_group', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-  customerID: text('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
+  customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   inserted: integer('inserted', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
   updated: integer('updated', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>(),

@@ -1,7 +1,7 @@
 import { db, TRX } from "@/lib/database"
-import { LocationID } from "@/lib/database/schema/customer"
-import { batchTable, groupTable, inventoryTable, placementTable, productTable, unitTable } from "@/lib/database/schema/inventory"
-import { eq, getTableColumns } from "drizzle-orm"
+import { CustomerID, LocationID } from "@/lib/database/schema/customer"
+import { batchTable, Group, groupTable, inventoryTable, placementTable, productTable, Unit, unitTable } from "@/lib/database/schema/inventory"
+import { and, eq, getTableColumns } from "drizzle-orm"
 import { FormattedInventory } from "./inventory.types"
 
 const PRODUCT_COLS = getTableColumns(productTable)
@@ -32,5 +32,22 @@ export const inventory = {
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
 
     return inventory
+  },
+  getUnits: async function(trx: TRX = db): Promise<Unit[]> {
+    return await trx
+      .select()
+      .from(unitTable)
+      .where(eq(unitTable.isBarred, false))
+  },
+  getGroupsByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<Group[]> {
+    return await trx
+      .select()
+      .from(groupTable)
+      .where(
+        and(
+          eq(groupTable.isBarred, false),
+          eq(groupTable.customerID, customerID)
+        )
+      )
   }
 }

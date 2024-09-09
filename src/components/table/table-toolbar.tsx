@@ -5,20 +5,15 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Button } from "@/components/ui/button";
 import { Icons } from "../ui/icons";
 import { exportTableToCSV } from "@/lib/export/csv";
-import { useState, useTransition } from "react";
-import { CaretSortIcon, CheckIcon, ChevronDownIcon, MixerHorizontalIcon, PlusIcon, TextIcon } from "@radix-ui/react-icons";
+import { useTransition } from "react";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import TableToolbarFilters from "./table-filters";
 
 type ToolbarOptions = {
   showExport?: boolean
-  showHideShow?: false
-} | {
-  showExport?: boolean
-  showHideShow?: true
-  localStorageKey: string
+  showHideShow?: boolean
+  localStorageKey?: string // NOTE: not implemented yet, see nem status for implementation
 }
-
 type FilterOption = {
   label: string
   value: any
@@ -26,7 +21,7 @@ type FilterOption = {
 }
 
 export type FilterField<TRow> = {
-  column: Column<TRow>
+  column: Column<TRow> | undefined
   type: 'text' | 'date' | 'select'
   label: string
   value: any
@@ -100,7 +95,7 @@ export function ViewOptions<T>({
         <Button
           variant="outline"
           size="icon" >
-          <MixerHorizontalIcon className="size-4" />
+          <Icons.columns className="size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">

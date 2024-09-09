@@ -7,7 +7,7 @@ import { Icons } from '@/components/ui/icons';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { CaretSortIcon } from '@radix-ui/react-icons';
 import { Calendar } from "@/components/ui/calendar"
 import { format } from 'date-fns';
@@ -34,7 +34,7 @@ function TableToolbarFilters<T>({ table, filterFields }: TableToolbarFiltersProp
   };
 
   const handleRemoveField = (field: FilterField<T>) => {
-    field.column.setFilterValue(undefined);
+    field.column?.setFilterValue(undefined);
     setSelectedFields((prev) => prev.filter((f) => f.label !== field.label));
   };
 
@@ -78,24 +78,32 @@ function FilterPopover<T>({
   index: number
 }) {
   const filterDisplayValue = field.type === 'date' ? (
-    field.column.getFilterValue() ? format(new Date(field.column.getFilterValue() as string), "dd/MM/yyyy") : ''
+    field.column?.getFilterValue() ? format(new Date(field.column.getFilterValue() as string), "dd/MM/yyyy") : ''
   ) : field.type === 'select' ? (
-    Array.isArray(field.column.getFilterValue()) ? (
-      field.column.getFilterValue().map(val => field.options?.find(opt => opt.value == val)?.label).join(', ')
+    Array.isArray(field.column?.getFilterValue()) ? (
+      // @ts-ignore
+      field.column?.getFilterValue().map(val => field.options?.find(opt => opt.label == val)?.label).join(', ')
     ) : (
-      field.options?.find(opt => opt.value == field.column.getFilterValue())?.label
+      field.options?.find(opt => opt.label == field.column?.getFilterValue())?.label
     )
   ) : (
-    field.column.getFilterValue() as string
+    field.column?.getFilterValue() as string
   )
 
   return (
     <Popover open={isActive} onOpenChange={(isOpen) => !isOpen && setActiveIndex(undefined)}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-1" onClick={() => setActiveIndex(isActive ? undefined : index)}>
-          <span>{field.label}:</span>
-          <span className="opacity-50">{filterDisplayValue}</span>
-        </Button>
+        <div className='relative group'>
+          <div
+            onClick={() => onRemoveField(field)}
+            className='size-4 rounded-full cursor-pointer bg-foreground flex items-center justify-center absolute -right-1.5 -top-1.5 pointer-events-none group-hover:pointer-events-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+            <Icons.cross strokeWidth={3} className='size-3 text-background' />
+          </div>
+          <Button variant="outline" className="flex items-center gap-1" onClick={() => setActiveIndex(isActive ? undefined : index)}>
+            <span>{field.label}:</span>
+            <span className="opacity-50">{filterDisplayValue}</span>
+          </Button>
+        </div>
 
       </PopoverTrigger>
       <PopoverContent className={cn('space-y-1 p-2', field.type === 'date' && 'w-auto p-0')} align="center">
@@ -105,8 +113,8 @@ function FilterPopover<T>({
             size={12}
             placeholder={field.placeholder}
 
-            value={field.column.getFilterValue() as string}
-            onChange={(e) => field.column.setFilterValue(e.target.value)}
+            value={field.column?.getFilterValue() as string}
+            onChange={(e) => field.column?.setFilterValue(e.target.value)}
           />
         ) : field.type === 'select' ? (
           <FilterSelect field={field} />
@@ -165,7 +173,7 @@ function FilterSelect<T>({ field }: { field: FilterField<T> }) {
                   } else {
                     selectedValues.add(option.label);
                   }
-                  field.column.setFilterValue(Array.from(selectedValues).length ? Array.from(selectedValues) : undefined);
+                  field.column?.setFilterValue(Array.from(selectedValues).length ? Array.from(selectedValues) : undefined);
                 }}
               >
                 <div className={cn('mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary', isSelected ? 'bg-primary text-primary-foreground' : 'opacity-50 [&_svg]:invisible')}>
@@ -186,7 +194,7 @@ function FilterSelect<T>({ field }: { field: FilterField<T> }) {
           <>
             <CommandSeparator />
             <CommandGroup>
-              <CommandItem onSelect={() => field.column.setFilterValue(undefined)} className="justify-center text-center">
+              <CommandItem onSelect={() => field.column?.setFilterValue(undefined)} className="justify-center text-center">
                 Nulstil filter
               </CommandItem>
             </CommandGroup>
