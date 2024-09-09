@@ -5,6 +5,7 @@ import { FormattedInventory } from "@/data/inventory.types";
 import { UserRole } from "@/data/user.types";
 import { formatDate, numberToDKCurrency } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
+import { isSameDay } from 'date-fns'
 
 export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnDef<FormattedInventory>[] {
   const skuCol: ColumnDef<FormattedInventory> = {
@@ -147,7 +148,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
       <TableHeader column={column} title='Sidst opdateret' />
     ),
     aggregatedCell: ({ getValue }) => formatDate(getValue<Date[]>()[0]),
-    cell: () => null
+    cell: () => null,
+    filterFn: (row, id, value) => {
+      return isSameDay(value, row.getValue(id))
+    },
   }
 
   const actionsCol: ColumnDef<FormattedInventory> = {

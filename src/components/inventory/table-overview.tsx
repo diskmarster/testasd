@@ -97,14 +97,20 @@ export function TableOverview<TValue>({ data, user, plan }: Props<TValue>) {
       type: 'select',
       label: 'Varegruppe',
       options: [
-        { value: 0, label: "Stk" }, { value: 1, label: "Gram" }
+        { value: 1, label: "Stk" }, { value: 2, label: "Gram" }
       ]
-    }
+    },
+    {
+      // @ts-ignore
+      column: table.getColumn('updated'),
+      type: 'date',
+      label: 'Sidst opdateret',
+    },
   ]
 
   return (
     <div>
-      <TableToolbar table={table} options={{ showExport: true }} filterFields={filterFields} />
+      <TableToolbar table={table} options={{ showExport: true, showHideShow: true, localStorageKey: "inventory-cols" }} filterFields={filterFields} />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
