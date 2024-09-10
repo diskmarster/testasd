@@ -95,7 +95,7 @@ export async function validateRequest(request: Request): Promise<{session: any, 
   }
 
   const authWords = authHeader.split(' ')
-  if (authWords.length != 2 || authWords[0].toLowerCase() != 'bearer') {
+  if (authWords.length != 2 || !authWords[0].toLowerCase().includes('bearer')) {
     console.error("Invalid authentication header")
     return {
       session: null,
