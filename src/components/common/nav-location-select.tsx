@@ -35,10 +35,10 @@ export function NavLocationSelect({ locations, lastVisitedID }: { locations: Loc
       <SelectTrigger className="max-w-44">
         <SelectValue placeholder="Vælg en lokation" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent align="end">
         <SelectGroup>
           <SelectLabel className="text-sm font-semibold">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 justify-between">
               <p>Vælg lokation</p>
               {user?.role == 'sys_admin' || user?.role == 'firma_admin' && (
                 <Button size='iconSm' variant='outline'>
