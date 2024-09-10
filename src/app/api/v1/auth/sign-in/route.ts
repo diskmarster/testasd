@@ -1,4 +1,3 @@
-import { lucia } from "@/lib/lucia";
 import { sessionService } from "@/service/session";
 import { userService } from "@/service/user";
 import { signJwt } from "@/service/user.utils";
