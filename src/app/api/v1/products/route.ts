@@ -15,7 +15,13 @@ export async function GET(request: NextRequest): Promise<NextResponse<unknown>> 
 		}
 
 		const products = await productService.getAllProducts(user.customerId).catch(e => {
-			throw new Error(e)
+			console.log(`Error getting products for authenticated user: '${e}'`)
+
+			return NextResponse.json({
+				msg: `Error getting products for authenticated user: '${e}'`,
+				}, {
+					status: 500,
+			})
 		})
 
 		return NextResponse.json({
