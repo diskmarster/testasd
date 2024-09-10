@@ -16,7 +16,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<unknown>> 
 
 		console.log(JSON.stringify(user, null, 2))
 
-		const products = await productService.getAllProducts(user.customerId).catch(e => {
+		const products = await productService.getAllProducts(user.customerID).catch(e => {
 			console.error(`Error getting products for authenticated user: '${e}'`)
 
 			return NextResponse.json({
