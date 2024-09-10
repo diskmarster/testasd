@@ -3,22 +3,32 @@ import { validateRequest } from "@/service/user.utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest): Promise<NextResponse<unknown>> {
-	const {session, user} = await validateRequest(request)
+	try {
+		const { session, user } = await validateRequest(request)
 
-	if (session == null || user == null) {
+		if (session == null || user == null) {
+			return NextResponse.json({
+				msg: "Du har ikke adgang til denne resource"
+			}, {
+				status: 401,
+			})
+		}
+
+		const products = await productService.getAllProducts(user.customerId)
+
 		return NextResponse.json({
-			msg: "Du har ikke adgang til denne resource"
+			msg: "Success",
+			products,
 		}, {
-			status: 401,
+			status: 200,
+		})
+	} catch (e) {
+		console.log(`Error getting products for authenticated user: '${(e as Error).message}'`)
+
+		return NextResponse.json({
+			msg: `Error getting products for authenticated user: '${(e as Error).message}'`,
+		}, {
+			status: 500,
 		})
 	}
-
-	const products = await productService.getAllProducts(user.customerId)
-
-	return NextResponse.json({
-		msg: "Succes",
-		products,
-	}, {
-		status: 200,
-	})
 }
