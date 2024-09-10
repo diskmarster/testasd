@@ -1,6 +1,6 @@
 import { db, TRX } from "@/lib/database"
 import { CustomerID, LocationID } from "@/lib/database/schema/customer"
-import { batchTable, Group, groupTable, inventoryTable, placementTable, productTable, Unit, unitTable } from "@/lib/database/schema/inventory"
+import { Batch, batchTable, Group, groupTable, inventoryTable, Placement, placementTable, productTable, Unit, unitTable } from "@/lib/database/schema/inventory"
 import { and, eq, getTableColumns } from "drizzle-orm"
 import { FormattedInventory } from "./inventory.types"
 
@@ -39,7 +39,7 @@ export const inventory = {
       .from(unitTable)
       .where(eq(unitTable.isBarred, false))
   },
-  getGroupsByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<Group[]> {
+  getGroupsByID: async function(customerID: CustomerID, trx: TRX = db): Promise<Group[]> {
     return await trx
       .select()
       .from(groupTable)
@@ -49,5 +49,23 @@ export const inventory = {
           eq(groupTable.customerID, customerID)
         )
       )
-  }
+  },
+  getPlacementsByID: async function(locationID: LocationID, trx: TRX = db): Promise<Placement[]> {
+    return await trx
+      .select()
+      .from(placementTable)
+      .where(and(
+        eq(placementTable.locationID, locationID),
+        eq(placementTable.isBarred, false)
+      ))
+  },
+  getBatchesByID: async function(locationID: LocationID, trx: TRX = db): Promise<Batch[]> {
+    return await trx
+      .select()
+      .from(batchTable)
+      .where(and(
+        eq(batchTable.locationID, locationID),
+        eq(batchTable.isBarred, false)
+      ))
+  },
 }
