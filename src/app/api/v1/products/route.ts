@@ -14,7 +14,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<unknown>> 
 			})
 		}
 
-		const products = await productService.getAllProducts(user.customerId)
+		const products = await productService.getAllProducts(user.customerId).catch(e => {
+			throw new Error(e)
+		})
 
 		return NextResponse.json({
 			msg: "Success",
