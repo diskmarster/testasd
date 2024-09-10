@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c2ebcea0-8e22-448b-9cb2-947a78a46af5",
+  "id": "21d7654f-eedb-473e-9fff-821d49a6e277",
   "prevId": "67ceed56-ffc3-4a53-999c-d97085ddd8e9",
   "tables": {
     "nl_session": {
@@ -520,7 +520,7 @@
         },
         "customer_id": {
           "name": "customer_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
