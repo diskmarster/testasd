@@ -11,8 +11,16 @@ import {
 } from "@/components/ui/credenza"
 import { Button } from "@/components/ui/button"
 import { Icons } from "@/components/ui/icons"
+import { FormattedInventory } from "@/data/inventory.types"
+import { Batch, Placement } from "@/lib/database/schema/inventory"
 
-export function ModalInventoryIncoming() {
+interface Props {
+  inventory: FormattedInventory[]
+  placements: Placement[]
+  batches: Batch[]
+}
+
+export function ModalInventoryIncoming({ inventory, placements, batches }: Props) {
   return (
     <Credenza>
       <CredenzaTrigger asChild>
@@ -22,14 +30,13 @@ export function ModalInventoryIncoming() {
       </CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
-          <CredenzaTitle>Credenza</CredenzaTitle>
+          <CredenzaTitle>Opdater beholdning</CredenzaTitle>
           <CredenzaDescription>
-            A responsive modal component for shadcn/ui.
+            Opdater beholdning ved at lave en tilgang eller afgang
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
-          This component is built using shadcn/ui&apos;s dialog and drawer
-          component, which is built on top of Vaul.
+          Beholdning antal: {inventory.length}
         </CredenzaBody>
         <CredenzaFooter>
           <CredenzaClose asChild>

@@ -26,9 +26,11 @@ export default async function Home() {
   return (
     <SiteWrapper title="Oversigt" description="Se en oversigt over din vare beholdning" actions={
       <>
-        <ModalInventoryIncoming />
-        <ModalInventoryIncoming />
-        <ModalInventoryIncoming />
+        <ModalInventoryIncoming
+          inventory={inventory}
+          placements={placements}
+          batches={batches}
+        />
       </>
     }>
       <TableOverview
