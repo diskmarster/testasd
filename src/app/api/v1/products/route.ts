@@ -24,6 +24,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<unknown>> 
 			})
 		})
 
+		if (products instanceof NextResponse) {
+			return products
+		}
+
 		return NextResponse.json({
 			msg: "Success",
 			products,
