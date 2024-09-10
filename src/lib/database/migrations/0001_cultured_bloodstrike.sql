@@ -11,7 +11,7 @@ CREATE TABLE `nl_batch` (
 --> statement-breakpoint
 CREATE TABLE `nl_group` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`customer_id` text NOT NULL,
+	`customer_id` integer NOT NULL,
 	`name` text NOT NULL,
 	`inserted` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated` integer DEFAULT (unixepoch()) NOT NULL,

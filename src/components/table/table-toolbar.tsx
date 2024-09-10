@@ -3,28 +3,16 @@
 import { Column, Table } from "@tanstack/react-table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Icons } from "../ui/icons";
+import { Icons } from "@/components/ui/icons";
 import { exportTableToCSV } from "@/lib/export/csv";
-import { useState, useTransition } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CaretSortIcon, CheckIcon, ChevronDownIcon, MixerHorizontalIcon, PlusIcon, TextIcon } from "@radix-ui/react-icons";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { ListIcon } from "lucide-react";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import TableToolbarFilters from "./table-filters";
+import { useTransition } from "react";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import TableToolbarFilters from "@/components/table/table-filters";
 
 type ToolbarOptions = {
   showExport?: boolean
-  showHideShow?: false
-} | {
-  showExport?: boolean
-  showHideShow?: true
-  localStorageKey: string
+  showHideShow?: boolean
 }
-
 type FilterOption = {
   label: string
   value: any
@@ -32,7 +20,7 @@ type FilterOption = {
 }
 
 export type FilterField<TRow> = {
-  column: Column<TRow>
+  column: Column<TRow> | undefined
   type: 'text' | 'date' | 'select'
   label: string
   value: any
@@ -97,19 +85,17 @@ function DownloadButton<T>({ table }: { table: Table<T> }) {
   )
 }
 
-export function ViewOptions<T>({
-  table,
-}: { table: Table<T> }) {
+export function ViewOptions<T>({ table, }: { table: Table<T>, }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
           size="icon" >
-          <MixerHorizontalIcon className="size-4" />
+          <Icons.columns className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[150px]">
+      <DropdownMenuContent align="end" className="w-auto">
         <DropdownMenuLabel>Gem/vis kollonner</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
@@ -126,7 +112,8 @@ export function ViewOptions<T>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 onSelect={e => e.preventDefault()}>
-                {column.id}
+                {/* @ts-ignore */}
+                {column.columnDef.meta?.viewLabel ?? column.id}
               </DropdownMenuCheckboxItem>
             )
           })}

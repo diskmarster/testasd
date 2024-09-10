@@ -1,11 +1,14 @@
 import { TableOverviewActions } from "@/components/inventory/table-overview-actions";
 import { TableHeader } from "@/components/table/table-header";
+import { FilterField } from "@/components/table/table-toolbar";
 import { Plan } from "@/data/customer.types";
 import { FormattedInventory } from "@/data/inventory.types";
 import { UserRole } from "@/data/user.types";
+import { Batch, Group, Placement, Unit } from "@/lib/database/schema/inventory";
 import { formatDate, numberToDKCurrency } from "@/lib/utils";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import { isSameDay } from 'date-fns'
+import { unique } from "drizzle-orm/pg-core";
 
 export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnDef<FormattedInventory>[] {
   const skuCol: ColumnDef<FormattedInventory> = {
@@ -16,7 +19,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     cell: ({ getValue }) => getValue<string>(),
     aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>()
+    aggregatedCell: ({ getValue }) => getValue<string>(),
+    meta: {
+      viewLabel: 'Varenr.'
+    }
   }
 
   const barcodeCol: ColumnDef<FormattedInventory> = {
@@ -27,7 +33,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Stregkode'
+    }
   }
 
   const groupCol: ColumnDef<FormattedInventory> = {
@@ -38,7 +47,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Varegruppe'
+    }
   }
 
   const text1Col: ColumnDef<FormattedInventory> = {
@@ -49,7 +61,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Varetekst 1'
+    }
   }
 
   const text2Col: ColumnDef<FormattedInventory> = {
@@ -60,7 +75,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Varetekst 2'
+    }
   }
 
   const text3Col: ColumnDef<FormattedInventory> = {
@@ -71,7 +89,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Varetekst 3'
+    }
   }
 
   const placementCol: ColumnDef<FormattedInventory> = {
@@ -81,6 +102,12 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
       <TableHeader column={column} title='Placering' />
     ),
     cell: ({ getValue }) => getValue<string>(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+    meta: {
+      viewLabel: 'Placering'
+    }
   }
 
   const batchCol: ColumnDef<FormattedInventory> = {
@@ -90,6 +117,12 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
       <TableHeader column={column} title='Batchnr.' />
     ),
     cell: ({ getValue }) => getValue<string>(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+    meta: {
+      viewLabel: 'Batchnr.'
+    }
   }
 
   const quantityCol: ColumnDef<FormattedInventory> = {
@@ -99,7 +132,8 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     cell: ({ getValue }) => getValue<number>(),
     meta: {
-      rightAlign: true
+      rightAlign: true,
+      viewLabel: 'Beholdning'
     },
   }
 
@@ -111,7 +145,13 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: ({ getValue }) => <p className="text-muted-foreground">{getValue<string>()}</p>,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+    meta: {
+      viewLabel: 'Enhed'
+    }
   }
 
   const costPriceCol: ColumnDef<FormattedInventory> = {
@@ -124,7 +164,8 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
     meta: {
-      rightAlign: true
+      rightAlign: true,
+      viewLabel: 'Kostpris'
     }
   }
 
@@ -138,7 +179,8 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
     meta: {
-      rightAlign: true
+      rightAlign: true,
+      viewLabel: 'Salgspris'
     }
   }
 
@@ -152,19 +194,17 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     filterFn: (row, id, value) => {
       return isSameDay(value, row.getValue(id))
     },
+    meta: {
+      viewLabel: 'Sidst opdateret'
+    }
   }
 
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
-    aggregatedCell: ({ table, row }) => <TableOverviewActions table={table} row={row} />
-  }
-
-  const isBarredCol: ColumnDef<FormattedInventory> = {
-    accessorKey: 'product.isBarred',
-    id: 'isBarred',
-    header: () => null,
-    cell: () => null,
+    aggregatedCell: ({ table, row }) => <TableOverviewActions table={table} row={row} />,
+    enableHiding: false,
+    enableSorting: false,
   }
 
   switch (plan) {
@@ -193,7 +233,7 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
         unitCol,
         costPriceCol,
         salesPriceCol,
-        updatedCol
+        updatedCol,
       ]
       if (userRole != 'bruger') plusCols.push(actionsCol)
       return plusCols
@@ -211,10 +251,142 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
         unitCol,
         costPriceCol,
         salesPriceCol,
-        updatedCol
+        updatedCol,
       ]
       if (userRole != 'bruger') proCols.push(actionsCol)
       return proCols
   }
 
+}
+
+export function getTableOverviewFilters(plan: Plan, table: Table<FormattedInventory>, units: Unit[], groups: Group[], placements: Placement[], batches: Batch[]): FilterField<FormattedInventory>[] {
+
+  const skuFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('sku'),
+    type: 'text',
+    label: 'Varenr.',
+    value: '',
+    placeholder: 'Søg i varenr.'
+  }
+  const barcodeFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('barcode'),
+    type: 'text',
+    label: 'Stregkode',
+    value: '',
+    placeholder: 'Søg i stregkode'
+  }
+  const unitFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('unit'),
+    type: 'select',
+    label: 'Enhed',
+    value: '',
+    options: [
+      ...units.map(unit => ({
+        value: unit.id,
+        label: unit.name
+      }))
+    ]
+  }
+  const groupFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('group'),
+    type: 'select',
+    label: 'Varegruppe',
+    value: '',
+    options: [
+      ...groups.map(group => ({
+        value: group.id,
+        label: group.name
+      }))
+    ]
+  }
+  const text1Filter: FilterField<FormattedInventory> = {
+    column: table.getColumn('text1'),
+    type: 'text',
+    label: 'Varetekst 1',
+    value: '',
+    placeholder: 'Søg i varetekst 1'
+  }
+  const text2Filter: FilterField<FormattedInventory> = {
+    column: table.getColumn('text2'),
+    type: 'text',
+    label: 'Varetekst 2',
+    value: '',
+    placeholder: 'Søg i varetekst 2'
+  }
+  const text3Filter: FilterField<FormattedInventory> = {
+    column: table.getColumn('text3'),
+    type: 'text',
+    label: 'Varetekst 3',
+    value: '',
+    placeholder: 'Søg i varetekst 3'
+  }
+  const placementFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('placement'),
+    type: 'select',
+    label: 'Placering',
+    value: '',
+    options: [
+      ...placements.map(placement => ({
+        value: placement.id,
+        label: placement.name
+      }))
+    ]
+  }
+  const batchFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('batch'),
+    type: 'select',
+    label: 'Batchnr.',
+    value: '',
+    options: [
+      ...batches.map(batch => ({
+        value: batch.id,
+        label: batch.batch
+      }))
+    ]
+  }
+  const updatedFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('updated'),
+    type: 'date',
+    label: 'Sidst opdateret',
+    value: ''
+  }
+
+  switch (plan) {
+    case "lite":
+      return [
+        skuFilter,
+        barcodeFilter,
+        unitFilter,
+        groupFilter,
+        text1Filter,
+        text2Filter,
+        text3Filter,
+        updatedFilter
+      ]
+    case "plus":
+      return [
+        skuFilter,
+        barcodeFilter,
+        unitFilter,
+        groupFilter,
+        text1Filter,
+        text2Filter,
+        text3Filter,
+        placementFilter,
+        updatedFilter
+      ]
+    case "pro":
+      return [
+        skuFilter,
+        barcodeFilter,
+        unitFilter,
+        groupFilter,
+        text1Filter,
+        text2Filter,
+        text3Filter,
+        placementFilter,
+        batchFilter,
+        updatedFilter
+      ]
+  }
 }
