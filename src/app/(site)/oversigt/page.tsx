@@ -1,5 +1,6 @@
 import { signOutAction } from "@/app/(auth)/log-ud/actions";
 import { SiteWrapper } from "@/components/common/site-wrapper";
+import { ModalInventoryIncoming } from "@/components/inventory/modal-inventory-incoming";
 import { TableOverview } from "@/components/inventory/table-overview";
 import { customerService } from "@/service/customer";
 import { inventoryService } from "@/service/inventory";
@@ -23,7 +24,11 @@ export default async function Home() {
   const batches = await inventoryService.getBatchesByID(location)
 
   return (
-    <SiteWrapper title="Oversigt" description="Se en oversigt over din vare beholdning">
+    <SiteWrapper title="Oversigt" description="Se en oversigt over din vare beholdning" actions={
+      <div>
+        <ModalInventoryIncoming />
+      </div>
+    }>
       <TableOverview
         data={inventory}
         user={user}
