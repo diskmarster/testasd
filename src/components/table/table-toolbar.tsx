@@ -3,16 +3,15 @@
 import { Column, Table } from "@tanstack/react-table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Icons } from "../ui/icons";
+import { Icons } from "@/components/ui/icons";
 import { exportTableToCSV } from "@/lib/export/csv";
 import { useTransition } from "react";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import TableToolbarFilters from "./table-filters";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import TableToolbarFilters from "@/components/table/table-filters";
 
 type ToolbarOptions = {
   showExport?: boolean
   showHideShow?: boolean
-  localStorageKey?: string // NOTE: not implemented yet, see nem status for implementation
 }
 type FilterOption = {
   label: string
@@ -86,9 +85,7 @@ function DownloadButton<T>({ table }: { table: Table<T> }) {
   )
 }
 
-export function ViewOptions<T>({
-  table,
-}: { table: Table<T> }) {
+export function ViewOptions<T>({ table, }: { table: Table<T>, }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
