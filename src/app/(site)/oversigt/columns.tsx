@@ -19,7 +19,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     cell: ({ getValue }) => getValue<string>(),
     aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>()
+    aggregatedCell: ({ getValue }) => getValue<string>(),
+    meta: {
+      viewLabel: 'Varenr.'
+    }
   }
 
   const barcodeCol: ColumnDef<FormattedInventory> = {
@@ -30,7 +33,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Stregkode'
+    }
   }
 
   const groupCol: ColumnDef<FormattedInventory> = {
@@ -41,7 +47,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Varegruppe'
+    }
   }
 
   const text1Col: ColumnDef<FormattedInventory> = {
@@ -52,7 +61,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Varetekst 1'
+    }
   }
 
   const text2Col: ColumnDef<FormattedInventory> = {
@@ -63,7 +75,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Varetekst 2'
+    }
   }
 
   const text3Col: ColumnDef<FormattedInventory> = {
@@ -74,7 +89,10 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null
+    cell: () => null,
+    meta: {
+      viewLabel: 'Varetekst 3'
+    }
   }
 
   const placementCol: ColumnDef<FormattedInventory> = {
@@ -87,6 +105,9 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+    meta: {
+      viewLabel: 'Placering'
+    }
   }
 
   const batchCol: ColumnDef<FormattedInventory> = {
@@ -99,6 +120,9 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+    meta: {
+      viewLabel: 'Batchnr.'
+    }
   }
 
   const quantityCol: ColumnDef<FormattedInventory> = {
@@ -108,7 +132,8 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     ),
     cell: ({ getValue }) => getValue<number>(),
     meta: {
-      rightAlign: true
+      rightAlign: true,
+      viewLabel: 'Beholdning'
     },
   }
 
@@ -124,6 +149,9 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+    meta: {
+      viewLabel: 'Enhed'
+    }
   }
 
   const costPriceCol: ColumnDef<FormattedInventory> = {
@@ -136,7 +164,8 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
     meta: {
-      rightAlign: true
+      rightAlign: true,
+      viewLabel: 'Kostpris'
     }
   }
 
@@ -150,7 +179,8 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
     meta: {
-      rightAlign: true
+      rightAlign: true,
+      viewLabel: 'Salgspris'
     }
   }
 
@@ -164,6 +194,9 @@ export function getTableOverviewColumns(plan: Plan, userRole: UserRole): ColumnD
     filterFn: (row, id, value) => {
       return isSameDay(value, row.getValue(id))
     },
+    meta: {
+      viewLabel: 'Sidst opdateret'
+    }
   }
 
   const actionsCol: ColumnDef<FormattedInventory> = {
