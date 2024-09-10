@@ -33,7 +33,7 @@ export function SiteWrapper({
             <p className='text-muted-foreground'>{description}</p>
           )}
         </div>
-        {actions && <div>{actions}</div>}
+        {actions && <div className='flex items-center gap-2'>{actions}</div>}
       </div>
       {children}
     </div>
