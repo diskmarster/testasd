@@ -116,8 +116,6 @@ export async function validateRequest(request: Request): Promise<{ session: Sess
       }
     }
 
-    console.log("jwtData:", JSON.stringify(res.data, null, 2))
-
     return await sessionService.validateSessionId(res.data.sessionId)
   } catch (e) {
     console.error(`Error validation request: '${(e as Error).message}'`)
