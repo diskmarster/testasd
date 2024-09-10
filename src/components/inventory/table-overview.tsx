@@ -1,16 +1,16 @@
 "use client"
 
-import { getTableOverviewColumns } from '@/app/(site)/oversigt/columns'
+import { getTableOverviewColumns, getTableOverviewFilters } from '@/app/(site)/oversigt/columns'
 import { FormattedInventory } from '@/data/inventory.types'
-import { ColumnFiltersState, ExpandedState, flexRender, getCoreRowModel, getExpandedRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getGroupedRowModel, getPaginationRowModel, getSortedRowModel, GroupingState, RowSelectionState, SortingState, useReactTable } from '@tanstack/react-table'
+import { ColumnFiltersState, ExpandedState, flexRender, getCoreRowModel, getExpandedRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getGroupedRowModel, getPaginationRowModel, getSortedRowModel, GroupingState, RowSelectionState, SortingState, Updater, useReactTable, VisibilityState } from '@tanstack/react-table'
 import { User } from 'lucia'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { TableGroupedCell } from '../table/table-grouped-cell'
+import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { Plan } from '@/data/customer.types'
-import { TableToolbar, FilterField } from '../table/table-toolbar'
+import { TableToolbar } from '@/components/table/table-toolbar'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
-import { TablePagination } from '../table/table-pagination'
+import { TablePagination } from '@/components/table/table-pagination'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -27,6 +27,7 @@ interface Props {
 }
 
 export function TableOverview({ data, user, plan, units, groups, placements, batches }: Props) {
+  const LOCALSTORAGE_KEY = 'inventory_cols'
   const columns = useMemo(() => getTableOverviewColumns(plan, user.role), [user.role, plan])
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -34,6 +35,36 @@ export function TableOverview({ data, user, plan, units, groups, placements, bat
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [grouping, setGrouping] = useState<GroupingState>(['sku'])
   const [expanded, setExpanded] = useState<ExpandedState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+
+  useEffect(() => {
+    const visibility = JSON.parse(
+      localStorage.getItem(LOCALSTORAGE_KEY) || '{}'
+    )
+    setColumnVisibility(visibility)
+  }, [LOCALSTORAGE_KEY])
+
+  const handleVisibilityChange = (updaterOrValue: Updater<VisibilityState>) => {
+    if (LOCALSTORAGE_KEY) {
+      if (typeof updaterOrValue === 'function') {
+        const currentState = JSON.parse(
+          localStorage.getItem(LOCALSTORAGE_KEY) || '{}',
+
+        )
+
+
+        const updatedState = updaterOrValue(currentState)
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(updatedState))
+        setColumnVisibility(updatedState)
+      } else {
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(updaterOrValue))
+
+        setColumnVisibility(updaterOrValue)
+      }
+    } else {
+      setColumnVisibility(updaterOrValue)
+    }
+  }
 
   const table = useReactTable({
     data,
@@ -55,6 +86,7 @@ export function TableOverview({ data, user, plan, units, groups, placements, bat
     onSortingChange: setSorting,
     onGroupingChange: setGrouping,
     onExpandedChange: setExpanded,
+    onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -67,7 +99,8 @@ export function TableOverview({ data, user, plan, units, groups, placements, bat
       rowSelection,
       sorting,
       grouping,
-      expanded
+      expanded,
+      columnVisibility
     },
 
     meta: {
@@ -75,80 +108,11 @@ export function TableOverview({ data, user, plan, units, groups, placements, bat
     },
   })
 
-  const filterFields: FilterField<FormattedInventory>[] = [
-    {
-      column: table.getColumn('sku'),
-      type: 'text',
-      label: 'Varenr.',
-      value: '',
-      placeholder: 'Søg i varenr.'
-    },
-    {
-      column: table.getColumn('barcode'),
-      type: 'text',
-      label: 'Stregkode',
-      value: '',
-      placeholder: 'Søg i stregkode'
-    },
-    {
-      column: table.getColumn('unit'),
-      type: 'select',
-      label: 'Enhed',
-      value: '',
-      options: [
-        ...units.map(unit => ({
-          value: unit.id,
-          label: unit.name
-        }))
-      ]
-    },
-    {
-      column: table.getColumn('group'),
-      type: 'select',
-      label: 'Varegruppe',
-      value: '',
-      options: [
-        ...groups.map(group => ({
-          value: group.id,
-          label: group.name
-        }))
-      ]
-    },
-    {
-      column: table.getColumn('placement'),
-      type: 'select',
-      label: 'Placering',
-      value: '',
-      options: [
-        ...placements.map(placement => ({
-          value: placement.id,
-          label: placement.name
-        }))
-      ]
-    },
-    {
-      column: table.getColumn('batch'),
-      type: 'select',
-      label: 'Batchnr.',
-      value: '',
-      options: [
-        ...batches.map(batch => ({
-          value: batch.id,
-          label: batch.batch
-        }))
-      ]
-    },
-    {
-      column: table.getColumn('updated'),
-      type: 'date',
-      label: 'Sidst opdateret',
-      value: ''
-    },
-  ]
+  const filterFields = useMemo(() => getTableOverviewFilters(plan, table, units, groups, placements, batches), [plan, table, units, groups, placements, batches])
 
   return (
     <div>
-      <TableToolbar table={table} options={{ showExport: true, showHideShow: true, localStorageKey: "inventory-cols" }} filterFields={filterFields} />
+      <TableToolbar table={table} options={{ showExport: true, showHideShow: true }} filterFields={filterFields} />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
