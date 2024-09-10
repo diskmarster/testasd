@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { TableGroupedCell } from '../table/table-grouped-cell'
 import { Plan } from '@/data/customer.types'
 import { TableToolbar, FilterField } from '../table/table-toolbar'
-import { Group, Unit } from '@/lib/database/schema/inventory'
+import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { TablePagination } from '../table/table-pagination'
 
 const ROW_SELECTION_ENABLED = true
@@ -22,9 +22,11 @@ interface Props {
   plan: Plan
   units: Unit[]
   groups: Group[]
+  placements: Placement[]
+  batches: Batch[]
 }
 
-export function TableOverview({ data, user, plan, units, groups }: Props) {
+export function TableOverview({ data, user, plan, units, groups, placements, batches }: Props) {
   const columns = useMemo(() => getTableOverviewColumns(plan, user.role), [user.role, plan])
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -109,6 +111,30 @@ export function TableOverview({ data, user, plan, units, groups }: Props) {
         ...groups.map(group => ({
           value: group.id,
           label: group.name
+        }))
+      ]
+    },
+    {
+      column: table.getColumn('placement'),
+      type: 'select',
+      label: 'Placering',
+      value: '',
+      options: [
+        ...placements.map(placement => ({
+          value: placement.id,
+          label: placement.name
+        }))
+      ]
+    },
+    {
+      column: table.getColumn('batch'),
+      type: 'select',
+      label: 'Batchnr.',
+      value: '',
+      options: [
+        ...batches.map(batch => ({
+          value: batch.id,
+          label: batch.batch
         }))
       ]
     },
