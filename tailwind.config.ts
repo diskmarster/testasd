@@ -13,7 +13,7 @@ const config: Config = {
         center: true,
         padding: '2rem',
         screens: {
-          '2xl': '1300px',
+          '2xl': '1600px',
         },
       },
       backgroundImage: {
