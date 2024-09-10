@@ -87,6 +87,7 @@ export function verifyJWT(jwtString: string): VerifyJWTResponse {
 export async function validateRequest(request: Request): Promise<{session: any, user: any} | {session: null, user: null}> {
   const authHeader = request.headers.get("Authorization")
   if (!authHeader) {
+    console.error("No authentication header found")
     return {
       session: null,
       user: null,
@@ -95,6 +96,7 @@ export async function validateRequest(request: Request): Promise<{session: any, 
 
   const authWords = authHeader.split(' ')
   if (authWords.length != 2 || authWords[0].toLowerCase() != 'bearer') {
+    console.error("Invalid authentication header")
     return {
       session: null,
       user: null,
@@ -105,6 +107,7 @@ export async function validateRequest(request: Request): Promise<{session: any, 
 
   const res = verifyJWT(jwtString)
   if (!res.ok) {
+    console.error("Could not verify jwt")
     return {
       session: null,
       user: null,
