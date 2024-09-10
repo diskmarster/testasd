@@ -1,9 +1,17 @@
+import { historyTypeZodSchema } from "@/data/inventory.types";
 import { validateRequest } from "@/service/user.utils";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const createRegulationSchema = z.object({
+	productId: z.coerce.number(),
+	type: historyTypeZodSchema,
+	quantity: z.coerce.number(),
+})
 
 export async function POST(request: NextRequest): Promise<NextResponse<unknown>> {
 	try {
-		const {session, user} = await validateRequest(request)
+		const { session, user } = await validateRequest(request)
 
 		if (session == null || user == null) {
 			return NextResponse.json({
@@ -12,6 +20,30 @@ export async function POST(request: NextRequest): Promise<NextResponse<unknown>>
 				status: 401,
 			})
 		}
+
+		if (request.headers.get("content-type") != "application/json") {
+			return NextResponse.json({
+				msg: "Request body skal være json format",
+			}, {
+				status: 400,
+			})
+		}
+
+		const zodRes = createRegulationSchema.safeParse(await request.json())
+
+		if (!zodRes.success) {
+			return NextResponse.json({
+				msg: "Indlæsning af data fejlede",
+				errorMessages: zodRes.error.flatten().formErrors,
+				error: zodRes.error,
+			}, {
+				status: 400,
+			})
+		}
+
+		const { data } = zodRes
+
+		console.log("data received:", JSON.stringify(data, null, 2))
 
 		return NextResponse.json({
 			msg: "Success, not fully implemented",
