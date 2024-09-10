@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import {
   Select,
@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
 import { Table } from '@tanstack/react-table'
 import { useEffect } from 'react'
 
@@ -27,7 +26,7 @@ export function TablePagination<TData>({
     ) {
       table.setPageSize(pageSizes[0])
     }
-  }, [])
+  })
 
   return (
     <div className='flex items-center justify-between mt-4'>
