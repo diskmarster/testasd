@@ -18,44 +18,12 @@ export const siteConfig: SiteConfig = {
       roles: []
     },
     {
-      label: 'Registrer',
-      roles: ['sys_admin', 'firma_admin', 'lokal_admin', 'bruger'],
-      isDisabled: false,
-      isDropdown: true,
-      items: [
-        {
-          label: 'Tilgang',
-          description: 'Opret en tilgang til din vare beholdning',
-          href: '/registrer/tilgang',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-        {
-          label: 'Afgang',
-          description: 'Opret en afgang til fra din vare beholdning',
-          href: '/registrer/afgang',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-        {
-          label: 'Regulering',
-          description: 'Opret en regulering for din vare beholdning',
-          href: '/registrer/regulering',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-        {
-          label: 'Flyt',
-          description: 'Flyt en vare fra en placering til en anden placering',
-          href: '/registrer/flyt',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-      ]
+      label: 'Historik',
+      isDisabled: true,
+      isDropdown: false,
+      isExternal: false,
+      href: "/historik",
+      roles: []
     },
     {
       label: 'Genbestil',
@@ -76,6 +44,14 @@ export const siteConfig: SiteConfig = {
           description: 'Se en oversigt over alle brugere',
           href: '/admin/brugere',
           roles: [],
+          isExternal: false,
+          isDisabled: true
+        },
+        {
+          label: 'Produkter',
+          description: 'Se, opret og rediger i dine produkter',
+          href: '/admin/produkter',
+          roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: true
         },
