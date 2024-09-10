@@ -95,7 +95,7 @@ export function ViewOptions<T>({ table, }: { table: Table<T>, }) {
           <Icons.columns className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[150px]">
+      <DropdownMenuContent align="end" className="w-auto">
         <DropdownMenuLabel>Gem/vis kollonner</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
@@ -112,7 +112,8 @@ export function ViewOptions<T>({ table, }: { table: Table<T>, }) {
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 onSelect={e => e.preventDefault()}>
-                {column.id}
+                {/* @ts-ignore */}
+                {column.columnDef.meta?.viewLabel ?? column.id}
               </DropdownMenuCheckboxItem>
             )
           })}
