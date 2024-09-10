@@ -10,6 +10,7 @@ import { TableGroupedCell } from '../table/table-grouped-cell'
 import { Plan } from '@/data/customer.types'
 import { TableToolbar, FilterField } from '../table/table-toolbar'
 import { Group, Unit } from '@/lib/database/schema/inventory'
+import { TablePagination } from '../table/table-pagination'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -161,8 +162,7 @@ export function TableOverview({ data, user, plan, units, groups }: Props) {
           </TableBody>
         </Table>
       </div>
-      {/* table pagination component */}
-      {/* table floating bar component */}
+      <TablePagination table={table} pageSizes={ROW_PER_PAGE} />
     </div>
   )
 }
