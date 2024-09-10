@@ -36,7 +36,20 @@ export const sessionService = {
     }
   ),
   validateSessionId: async (sessionId: string): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
-    return await lucia.validateSession(sessionId);
+    const result = await lucia.validateSession(sessionId);
+    // next.js throws when you attempt to set cookie when rendering page
+    try {
+      if (result.session && result.session.fresh) {
+        const sessionCookie = lucia.createSessionCookie(result.session.id);
+        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+      }
+      if (!result.session) {
+        console.error('session was not valid')
+        const sessionCookie = lucia.createBlankSessionCookie();
+        cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+      }
+    } catch { }
+    return result;
   },
   delete: async function(sessionID: string): Promise<void> {
     await lucia.invalidateSession(sessionID)

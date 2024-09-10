@@ -114,5 +114,7 @@ export async function validateRequest(request: Request): Promise<{session: any, 
     }
   }
 
+  console.log("jwtData:", JSON.stringify(res.data, null, 2))
+
   return await sessionService.validateSessionId(res.data.sessionId)
 }
