@@ -12,7 +12,7 @@ export const unitTable = sqliteTable('nl_unit', {
 })
 
 export type Unit = typeof unitTable.$inferSelect
-export type NewUnit = typeof unitTable.$inferSelect
+export type NewUnit = typeof unitTable.$inferInsert
 export type PartialUnit = Partial<Unit>
 export type UnitID = Unit['id']
 
@@ -28,7 +28,7 @@ export const placementTable = sqliteTable('nl_placement', {
 }))
 
 export type Placement = typeof placementTable.$inferSelect
-export type NewPlacement = typeof placementTable.$inferSelect
+export type NewPlacement = typeof placementTable.$inferInsert
 export type PartialPlacement = Partial<Placement>
 export type PlacementID = Placement['id']
 
@@ -45,7 +45,7 @@ export const batchTable = sqliteTable('nl_batch', {
 }))
 
 export type Batch = typeof batchTable.$inferSelect
-export type NewBatch = typeof batchTable.$inferSelect
+export type NewBatch = typeof batchTable.$inferInsert
 export type PartialBatch = Partial<Batch>
 export type BatchID = Batch['id']
 
@@ -61,7 +61,7 @@ export const groupTable = sqliteTable('nl_group', {
 }))
 
 export type Group = typeof groupTable.$inferSelect
-export type NewGroup = typeof groupTable.$inferSelect
+export type NewGroup = typeof groupTable.$inferInsert
 export type PartialGroup = Partial<Group>
 export type GroupID = Group['id']
 
@@ -86,7 +86,7 @@ export const productTable = sqliteTable('nl_product', {
 }))
 
 export type Product = typeof productTable.$inferSelect
-export type NewProduct = typeof productTable.$inferSelect
+export type NewProduct = typeof productTable.$inferInsert
 export type PartialProduct = Partial<Product>
 export type ProductID = Product['id']
 
@@ -104,7 +104,7 @@ export const inventoryTable = sqliteTable('nl_inventory', {
 }))
 
 export type Inventory = typeof inventoryTable.$inferSelect
-export type NewInventory = typeof inventoryTable.$inferSelect
+export type NewInventory = typeof inventoryTable.$inferInsert
 export type PartialInventory = Partial<Inventory>
 
 export const historyTable = sqliteTable('nl_history', {
@@ -122,6 +122,6 @@ export const historyTable = sqliteTable('nl_history', {
 })
 
 export type History = typeof historyTable.$inferSelect
-export type NewHistory = typeof historyTable.$inferSelect
+export type NewHistory = typeof historyTable.$inferInsert
 export type PartialHistory = Partial<History>
 export type HistoryID = History['id']
