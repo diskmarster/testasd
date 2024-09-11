@@ -12,10 +12,8 @@ import { Button } from '../ui/button'
 import {
   Credenza,
   CredenzaBody,
-  CredenzaClose,
   CredenzaContent,
   CredenzaDescription,
-  CredenzaFooter,
   CredenzaHeader,
   CredenzaTitle,
   CredenzaTrigger,
@@ -31,7 +29,13 @@ import {
   SelectValue,
 } from '../ui/select'
 
-export function FormCreateProducts({ units, groups }: { units: Unit[], groups: Group[] }) {
+export function FormCreateProducts({
+  units,
+  groups,
+}: {
+  units: Unit[]
+  groups: Group[]
+}) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
   const { handleSubmit, register, formState, setValue } = useForm<
@@ -40,6 +44,8 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
     resolver: zodResolver(createProductValidation),
     defaultValues: {
       customerID: 2,
+      costPrice: 0,
+      salesPrice: 0,
     },
   })
 
@@ -66,9 +72,7 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
-          <form
-            className='grid gap-6 max-w-lg'
-            onSubmit={handleSubmit(onSubmit)}>
+          <form className='grid gap-6' onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='!top-3 size-4' />
@@ -77,7 +81,7 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
               </Alert>
             )}
 
-            <div className='grid md:grid-cols-2 gap-12'>
+            <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
                   Varenr.
@@ -94,7 +98,7 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
               <div className='grid gap-2'>
                 <Label htmlFor='barcode'>
                   Stregkode
-                  <span className='dark:text-red-500 text-red-600'> * </span>
+                  <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='barcode' type='text' {...register('barcode')} />
                 {formState.errors.barcode && (
@@ -105,9 +109,11 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
               </div>
             </div>
 
-            <div className='grid md:grid-cols-2 gap-12'>
+            <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
-                <Label htmlFor='groupID'>Varegruppe</Label>
+                <Label htmlFor='groupID'>
+                  Varegruppe<span className='text-destructive'> * </span>
+                </Label>
                 <Select
                   onValueChange={(value: string) =>
                     setValue('groupID', parseInt(value), {
@@ -121,7 +127,7 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
                     {groups.map(group => (
                       <SelectItem
                         key={group.id}
-                        value={group.name.toString()}
+                        value={group.id.toString()}
                         className='capitalize'>
                         {group.name}
                       </SelectItem>
@@ -132,8 +138,7 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
 
               <div className='grid gap-2'>
                 <Label htmlFor='unitID'>
-                  Enhed{' '}
-                  <span className='dark:text-red-500 text-red-600'> * </span>
+                  Enhed <span className='text-destructive'> * </span>
                 </Label>
                 <Select
                   onValueChange={(value: string) =>
@@ -148,7 +153,7 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
                     {units.map(unit => (
                       <SelectItem
                         key={unit.id}
-                        value={unit.name.toString()}
+                        value={unit.id.toString()}
                         className='capitalize'>
                         {unit.name}
                       </SelectItem>
@@ -162,7 +167,7 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
               <div className='grid gap-2'>
                 <Label htmlFor='text1'>
                   Varetekst 1{' '}
-                  <span className='dark:text-red-500 text-red-600'> * </span>
+                  <span className='text-destructive'> * </span>
                 </Label>
                 <Input
                   id='text1'
@@ -208,10 +213,15 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
               </div>
             </div>
 
-            <div className='grid md:grid-cols-2 gap-12'>
+            <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
-                <Label htmlFor='costPrice'>Kostpris</Label>
+                <Label htmlFor='costPrice'>
+                  Kostpris
+                  <span className='text-destructive'> * </span>
+                </Label>
                 <Input
+                  min={0}
+                  required
                   id='costPrice'
                   type='number'
                   {...register('costPrice')}
@@ -226,6 +236,7 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
               <div className='grid gap-2'>
                 <Label htmlFor='salesPrice'>Salgspris</Label>
                 <Input
+                  min={0}
                   id='salesPrice'
                   type='number'
                   {...register('salesPrice')}
@@ -246,11 +257,6 @@ export function FormCreateProducts({ units, groups }: { units: Unit[], groups: G
             </Button>
           </form>
         </CredenzaBody>
-        <CredenzaFooter>
-          <CredenzaClose asChild>
-            <button>Close</button>
-          </CredenzaClose>
-        </CredenzaFooter>
       </CredenzaContent>
     </Credenza>
   )
