@@ -2,6 +2,7 @@
 import { createProductAction } from '@/app/(site)/produkter/opret/actions'
 import { createProductValidation } from '@/app/(site)/produkter/opret/validation'
 import { siteConfig } from '@/config/site'
+import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -30,21 +31,7 @@ import {
   SelectValue,
 } from '../ui/select'
 
-const groupIdOptions = [
-  { label: 'Handheld Scanners', value: 0 },
-  { label: 'Printer', value: 1 },
-  { label: 'Speed data', value: 2 },
-  { label: 'Tablets', value: 3 },
-]
-
-const unitIdOptions = [
-  { label: 'Rulle', value: 0 },
-  { label: 'Pose', value: 1 },
-  { label: 'Plade', value: 2 },
-  { label: 'Pakke', value: 3 },
-]
-
-export function FormCreateProducts() {
+export function FormCreateProducts({ units, groups }: { units: Unit[], groups: Group[] }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
   const { handleSubmit, register, formState, setValue } = useForm<
@@ -131,12 +118,12 @@ export function FormCreateProducts() {
                     <SelectValue placeholder='Select an option' />
                   </SelectTrigger>
                   <SelectContent>
-                    {groupIdOptions.map(option => (
+                    {groups.map(group => (
                       <SelectItem
-                        key={option.value}
-                        value={option.value.toString()}
+                        key={group.id}
+                        value={group.name.toString()}
                         className='capitalize'>
-                        {option.label}
+                        {group.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -158,12 +145,12 @@ export function FormCreateProducts() {
                     <SelectValue placeholder='Select an option' />
                   </SelectTrigger>
                   <SelectContent>
-                    {unitIdOptions.map(option => (
+                    {units.map(unit => (
                       <SelectItem
-                        key={option.value}
-                        value={option.value.toString()}
+                        key={unit.id}
+                        value={unit.name.toString()}
                         className='capitalize'>
-                        {option.label}
+                        {unit.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
