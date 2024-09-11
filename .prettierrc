@@ -5,5 +5,5 @@
   "jsxSingleQuote": true,
   "arrowParens": "avoid",
   "bracketSameLine": true,
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-organize-imports"]
 }
