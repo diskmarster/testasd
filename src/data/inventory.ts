@@ -1,8 +1,19 @@
-import { db, TRX } from "@/lib/database"
-import { CustomerID, LocationID } from "@/lib/database/schema/customer"
-import { Batch, batchTable, Group, groupTable, inventoryTable, Placement, placementTable, productTable, Unit, unitTable } from "@/lib/database/schema/inventory"
-import { and, eq, getTableColumns } from "drizzle-orm"
-import { FormattedInventory } from "./inventory.types"
+import { FormattedInventory } from '@/data/inventory.types'
+import { db, TRX } from '@/lib/database'
+import { CustomerID, LocationID } from '@/lib/database/schema/customer'
+import {
+  Batch,
+  batchTable,
+  Group,
+  groupTable,
+  inventoryTable,
+  Placement,
+  placementTable,
+  productTable,
+  Unit,
+  unitTable,
+} from '@/lib/database/schema/inventory'
+import { and, eq, getTableColumns } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
 const PLACEMENT_COLS = getTableColumns(placementTable)
@@ -11,7 +22,10 @@ const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
 
 export const inventory = {
-  getInventoryByLocationID: async function(locationID: LocationID, trx: TRX = db): Promise<FormattedInventory[]> {
+  getInventoryByLocationID: async function(
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<FormattedInventory[]> {
     const inventory: FormattedInventory[] = await trx
       .select({
         inserted: inventoryTable.inserted,
@@ -19,14 +33,21 @@ export const inventory = {
         quantity: inventoryTable.quantity,
         customerID: inventoryTable.customerID,
         locationID: inventoryTable.locationID,
-        product: { ...PRODUCT_COLS, unit: UNIT_COLS.name, group: GROUP_COLS.name },
+        product: {
+          ...PRODUCT_COLS,
+          unit: UNIT_COLS.name,
+          group: GROUP_COLS.name,
+        },
         placement: { ...PLACEMENT_COLS },
-        batch: { ...BATCH_COLS }
+        batch: { ...BATCH_COLS },
       })
       .from(inventoryTable)
       .where(eq(inventoryTable.locationID, locationID))
       .innerJoin(productTable, eq(productTable.id, inventoryTable.productID))
-      .innerJoin(placementTable, eq(placementTable.id, inventoryTable.placementID))
+      .innerJoin(
+        placementTable,
+        eq(placementTable.id, inventoryTable.placementID),
+      )
       .innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
@@ -39,33 +60,46 @@ export const inventory = {
       .from(unitTable)
       .where(eq(unitTable.isBarred, false))
   },
-  getGroupsByID: async function(customerID: CustomerID, trx: TRX = db): Promise<Group[]> {
+  getGroupsByID: async function(
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<Group[]> {
     return await trx
       .select()
       .from(groupTable)
       .where(
         and(
           eq(groupTable.isBarred, false),
-          eq(groupTable.customerID, customerID)
-        )
+          eq(groupTable.customerID, customerID),
+        ),
       )
   },
-  getPlacementsByID: async function(locationID: LocationID, trx: TRX = db): Promise<Placement[]> {
+  getPlacementsByID: async function(
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<Placement[]> {
     return await trx
       .select()
       .from(placementTable)
-      .where(and(
-        eq(placementTable.locationID, locationID),
-        eq(placementTable.isBarred, false)
-      ))
+      .where(
+        and(
+          eq(placementTable.locationID, locationID),
+          eq(placementTable.isBarred, false),
+        ),
+      )
   },
-  getBatchesByID: async function(locationID: LocationID, trx: TRX = db): Promise<Batch[]> {
+  getBatchesByID: async function(
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<Batch[]> {
     return await trx
       .select()
       .from(batchTable)
-      .where(and(
-        eq(batchTable.locationID, locationID),
-        eq(batchTable.isBarred, false)
-      ))
+      .where(
+        and(
+          eq(batchTable.locationID, locationID),
+          eq(batchTable.isBarred, false),
+        ),
+      )
   },
 }

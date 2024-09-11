@@ -1,11 +1,11 @@
-import { signOutAction } from "@/app/(auth)/log-ud/actions";
-import { SiteWrapper } from "@/components/common/site-wrapper";
-import { ModalInventoryIncoming } from "@/components/inventory/modal-inventory-incoming";
-import { TableOverview } from "@/components/inventory/table-overview";
-import { customerService } from "@/service/customer";
-import { inventoryService } from "@/service/inventory";
-import { locationService } from "@/service/location";
-import { sessionService } from "@/service/session";
+import { signOutAction } from '@/app/(auth)/log-ud/actions'
+import { SiteWrapper } from '@/components/common/site-wrapper'
+import { ModalInventoryIncoming } from '@/components/inventory/modal-inventory-incoming'
+import { TableOverview } from '@/components/inventory/table-overview'
+import { customerService } from '@/service/customer'
+import { inventoryService } from '@/service/inventory'
+import { locationService } from '@/service/location'
+import { sessionService } from '@/service/session'
 
 export default async function Home() {
   const { session, user } = await sessionService.validate()
@@ -24,15 +24,14 @@ export default async function Home() {
   const batches = await inventoryService.getBatchesByID(location)
 
   return (
-    <SiteWrapper title="Oversigt" description="Se en oversigt over din vare beholdning" actions={
-      <>
-        <ModalInventoryIncoming
-          inventory={inventory}
-          placements={placements}
-          batches={batches}
-        />
-      </>
-    }>
+    <SiteWrapper
+      title='Oversigt'
+      description='Se en oversigt over din vare beholdning'
+      actions={
+        <>
+          <ModalInventoryIncoming customer={customer} inventory={inventory} />
+        </>
+      }>
       <TableOverview
         data={inventory}
         user={user}
@@ -43,5 +42,5 @@ export default async function Home() {
         batches={batches}
       />
     </SiteWrapper>
-  );
+  )
 }
