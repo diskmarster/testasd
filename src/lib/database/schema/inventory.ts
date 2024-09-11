@@ -86,7 +86,7 @@ export const productTable = sqliteTable('nl_product', {
 }))
 
 export type Product = typeof productTable.$inferSelect
-export type NewProduct = typeof productTable.$inferSelect
+export type NewProduct = typeof productTable.$inferInsert
 export type PartialProduct = Partial<Product>
 export type ProductID = Product['id']
 
