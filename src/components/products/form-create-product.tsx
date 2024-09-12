@@ -6,6 +6,7 @@ import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
@@ -37,8 +38,9 @@ export function FormCreateProducts({
   groups: Group[]
 }) {
   const [pending, startTransition] = useTransition()
+  const [show, setShow] = useState(false)
   const [error, setError] = useState<string>()
-  const { handleSubmit, register, formState, setValue } = useForm<
+  const { handleSubmit, register, formState, setValue, reset } = useForm<
     z.infer<typeof createProductValidation>
   >({
     resolver: zodResolver(createProductValidation),
@@ -54,15 +56,23 @@ export function FormCreateProducts({
       const response = await createProductAction(values)
       if (response && response.serverError) {
         setError(response.serverError)
+        toast.error(siteConfig.errorTitle, {
+          description: 'Der var en fejl, produktet er ikke blevet oprettet',
+        })
         return
       }
+      setShow(false)
+      reset()
+      toast.success(siteConfig.successTitle, {
+        description: 'Produktet er oprettet succesfuldt.',
+      })
     })
   }
 
   return (
-    <Credenza>
+    <Credenza open={show} onOpenChange={setShow}>
       <CredenzaTrigger asChild>
-        <button>Open modal</button>
+        <button onClick={() => setShow(true)}>Open modal</button>
       </CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
@@ -166,8 +176,7 @@ export function FormCreateProducts({
             <div className='grid gap-5'>
               <div className='grid gap-2'>
                 <Label htmlFor='text1'>
-                  Varetekst 1{' '}
-                  <span className='text-destructive'> * </span>
+                  Varetekst 1 <span className='text-destructive'> * </span>
                 </Label>
                 <Input
                   id='text1'
@@ -248,7 +257,6 @@ export function FormCreateProducts({
                 )}
               </div>
             </div>
-
             <Button
               type='submit'
               disabled={pending || !formState.isValid}
