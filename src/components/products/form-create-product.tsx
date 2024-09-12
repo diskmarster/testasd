@@ -85,7 +85,7 @@ export function FormCreateProducts({
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
                   Varenr.
-                  <span className='dark:text-red-500 text-red-600'> * </span>
+                  <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='sku' type='text' {...register('sku')} />
                 {formState.errors.sku && (
