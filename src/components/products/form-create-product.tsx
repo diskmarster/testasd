@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
+
 import {
   Credenza,
   CredenzaBody,
@@ -56,21 +57,24 @@ export function FormCreateProducts({
       const response = await createProductAction(values)
       if (response && response.serverError) {
         setError(response.serverError)
-        toast.error(siteConfig.errorTitle, {
-          description: 'Der var en fejl, produktet er ikke blevet oprettet',
-        })
         return
       }
       setShow(false)
+      setError(undefined)
       reset()
       toast.success(siteConfig.successTitle, {
         description: 'Produktet er oprettet succesfuldt.',
       })
     })
   }
+  function onOpenChange(open: boolean) {
+    setShow(open)
+    reset()
+    setError(undefined)
+  }
 
   return (
-    <Credenza open={show} onOpenChange={setShow}>
+    <Credenza open={show} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
         <button onClick={() => setShow(true)}>Open modal</button>
       </CredenzaTrigger>
@@ -82,7 +86,7 @@ export function FormCreateProducts({
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
-          <form className='grid gap-6' onSubmit={handleSubmit(onSubmit)}>
+          <form className='grid gap-4 mb-4' onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='!top-3 size-4' />
@@ -131,14 +135,11 @@ export function FormCreateProducts({
                     })
                   }>
                   <SelectTrigger>
-                    <SelectValue placeholder='Select an option' />
+                    <SelectValue placeholder='Vælg en varegruppe' />
                   </SelectTrigger>
                   <SelectContent>
                     {groups.map(group => (
-                      <SelectItem
-                        key={group.id}
-                        value={group.id.toString()}
-                        className='capitalize'>
+                      <SelectItem key={group.id} value={group.id.toString()}>
                         {group.name}
                       </SelectItem>
                     ))}
@@ -157,14 +158,11 @@ export function FormCreateProducts({
                     })
                   }>
                   <SelectTrigger>
-                    <SelectValue placeholder='Select an option' />
+                    <SelectValue placeholder='Vælg en enhed' />
                   </SelectTrigger>
                   <SelectContent>
                     {units.map(unit => (
-                      <SelectItem
-                        key={unit.id}
-                        value={unit.id.toString()}
-                        className='capitalize'>
+                      <SelectItem key={unit.id} value={unit.id.toString()}>
                         {unit.name}
                       </SelectItem>
                     ))}
@@ -257,10 +255,7 @@ export function FormCreateProducts({
                 )}
               </div>
             </div>
-            <Button
-              type='submit'
-              disabled={pending || !formState.isValid}
-              className='flex items-center gap-2'>
+            <Button type='submit' disabled={pending || !formState.isValid}>
               Opret
             </Button>
           </form>
