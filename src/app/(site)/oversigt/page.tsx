@@ -22,6 +22,7 @@ export default async function Home() {
   const groups = await inventoryService.getGroupsByID(customer.id)
   const placements = await inventoryService.getPlacementsByID(location)
   const batches = await inventoryService.getBatchesByID(location)
+  const products = await inventoryService.getProductsByID(customer.id)
 
   return (
     <SiteWrapper
@@ -29,7 +30,13 @@ export default async function Home() {
       description='Se en oversigt over din vare beholdning'
       actions={
         <>
-          <ModalInventoryIncoming customer={customer} inventory={inventory} />
+          <ModalInventoryIncoming
+            customer={customer}
+            inventory={inventory}
+            products={products}
+            placements={placements}
+            batches={batches}
+          />
         </>
       }>
       <TableOverview

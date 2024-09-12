@@ -3,17 +3,28 @@ import { db, TRX } from '@/lib/database'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
+  BatchID,
   batchTable,
   Group,
   groupTable,
+  History,
+  historyTable,
+  Inventory,
   inventoryTable,
+  NewBatch,
+  NewHistory,
+  NewInventory,
+  NewPlacement,
   Placement,
+  PlacementID,
   placementTable,
+  Product,
+  ProductID,
   productTable,
   Unit,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, eq, getTableColumns } from 'drizzle-orm'
+import { and, eq, getTableColumns, sql } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
 const PLACEMENT_COLS = getTableColumns(placementTable)
@@ -22,7 +33,7 @@ const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
 
 export const inventory = {
-  getInventoryByLocationID: async function(
+  getInventoryByLocationID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<FormattedInventory[]> {
@@ -54,13 +65,13 @@ export const inventory = {
 
     return inventory
   },
-  getUnits: async function(trx: TRX = db): Promise<Unit[]> {
+  getUnits: async function (trx: TRX = db): Promise<Unit[]> {
     return await trx
       .select()
       .from(unitTable)
       .where(eq(unitTable.isBarred, false))
   },
-  getGroupsByID: async function(
+  getGroupsByID: async function (
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Group[]> {
@@ -74,7 +85,7 @@ export const inventory = {
         ),
       )
   },
-  getPlacementsByID: async function(
+  getPlacementsByID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Placement[]> {
@@ -88,7 +99,7 @@ export const inventory = {
         ),
       )
   },
-  getBatchesByID: async function(
+  getBatchesByID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Batch[]> {
@@ -101,5 +112,86 @@ export const inventory = {
           eq(batchTable.isBarred, false),
         ),
       )
+  },
+  getInventoryByIDs: async function (
+    productID: ProductID,
+    placementID: PlacementID,
+    batchID: BatchID,
+    trx: TRX = db,
+  ): Promise<Inventory | undefined> {
+    const inventory = await trx
+      .select()
+      .from(inventoryTable)
+      .where(
+        and(
+          eq(inventoryTable.productID, productID),
+          eq(inventoryTable.placementID, placementID),
+          eq(inventoryTable.batchID, batchID),
+        ),
+      )
+    return inventory[0]
+  },
+  upsertInventory: async function (
+    inventory: NewInventory,
+    trx: TRX = db,
+  ): Promise<boolean> {
+    console.log('upserting')
+    const resultSet = await trx
+      .insert(inventoryTable)
+      .values({ ...inventory })
+      .onConflictDoUpdate({
+        target: [
+          inventoryTable.productID,
+          inventoryTable.placementID,
+          inventoryTable.batchID,
+          inventoryTable.locationID,
+          inventoryTable.customerID,
+        ],
+        set: {
+          quantity: sql`${inventoryTable.quantity} + ${inventory.quantity}`,
+        },
+      })
+    return resultSet.rowsAffected == 1
+  },
+  createHitoryLog: async function (
+    historyData: NewHistory,
+    trx: TRX = db,
+  ): Promise<History | undefined> {
+    const history = await trx
+      .insert(historyTable)
+      .values(historyData)
+      .returning()
+    return history[0]
+  },
+  getProductsByID: async function (
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<Product[]> {
+    return await trx
+      .select()
+      .from(productTable)
+      .where(
+        and(
+          eq(productTable.customerID, customerID),
+          eq(productTable.isBarred, false),
+        ),
+      )
+  },
+  createPlacement: async function (
+    placementData: NewPlacement,
+    trx: TRX = db,
+  ): Promise<Placement> {
+    const placement = await trx
+      .insert(placementTable)
+      .values(placementData)
+      .returning()
+    return placement[0]
+  },
+  createBatch: async function (
+    batchData: NewBatch,
+    trx: TRX = db,
+  ): Promise<Batch> {
+    const batch = await trx.insert(batchTable).values(batchData).returning()
+    return batch[0]
   },
 }

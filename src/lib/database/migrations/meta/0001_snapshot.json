@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "21d7654f-eedb-473e-9fff-821d49a6e277",
+  "id": "4bde4a4a-ed62-4e25-b9f0-922491d0e931",
   "prevId": "67ceed56-ffc3-4a53-999c-d97085ddd8e9",
   "tables": {
     "nl_session": {
@@ -611,7 +611,7 @@
         },
         "location_id": {
           "name": "location_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -639,6 +639,13 @@
         },
         "type": {
           "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "platform": {
+          "name": "platform",
           "type": "text",
           "primaryKey": false,
           "notNull": true,

@@ -5,7 +5,7 @@ import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
-import { formatDate, numberToDKCurrency } from '@/lib/utils'
+import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
 
@@ -114,7 +114,11 @@ export function getTableOverviewColumns(
   const quantityCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'quantity',
     header: ({ column }) => <TableHeader column={column} title='Beholdning' />,
-    cell: ({ getValue }) => getValue<number>(),
+    cell: ({ getValue }) => (
+      <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
+        {getValue<number>()}
+      </span>
+    ),
     meta: {
       rightAlign: true,
       viewLabel: 'Beholdning',

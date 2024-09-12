@@ -1,5 +1,6 @@
 'use client'
 
+import { updateInventoryAction } from '@/app/(site)/oversigt/actions'
 import { updateInventoryValidation } from '@/app/(site)/oversigt/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -8,7 +9,6 @@ import {
   CredenzaBody,
   CredenzaContent,
   CredenzaDescription,
-  CredenzaFooter,
   CredenzaHeader,
   CredenzaTitle,
   CredenzaTrigger,
@@ -17,7 +17,13 @@ import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { FormattedInventory } from '@/data/inventory.types'
 import { Customer } from '@/lib/database/schema/customer'
-import { PlacementID, ProductID } from '@/lib/database/schema/inventory'
+import {
+  Batch,
+  Placement,
+  PlacementID,
+  Product,
+  ProductID,
+} from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
@@ -37,12 +43,23 @@ import {
 interface Props {
   customer: Customer
   inventory: FormattedInventory[]
+  products: Product[]
+  placements: Placement[]
+  batches: Batch[]
 }
 
-export function ModalInventoryIncoming({ customer, inventory }: Props) {
+export function ModalInventoryIncoming({
+  customer,
+  inventory,
+  products,
+  placements,
+  batches,
+}: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+  const [newPlacement, setNewPlacement] = useState(false)
+  const [newBatch, setNewBatch] = useState(false)
 
   const uniqueProducts = inventory.filter((item, index, self) => {
     return index === self.findIndex(i => i.product.id === item.product.id)
@@ -100,15 +117,27 @@ export function ModalInventoryIncoming({ customer, inventory }: Props) {
 
   function onOpenChange(open: boolean) {
     reset()
+    setError(undefined)
     setOpen(open)
   }
 
   function onSubmit(values: z.infer<typeof updateInventoryValidation>) {
-    console.log(values)
-  }
+    startTransition(async () => {
+      const res = await updateInventoryAction(values)
 
-  console.log(formState.errors)
-  console.log(getValues())
+      if (res && res.serverError) {
+        setError(res.serverError)
+        return
+      }
+
+      setError(undefined)
+      reset()
+      setOpen(false)
+      toast.success(siteConfig.successTitle, {
+        description: `${isIncoming ? 'Tilgang' : 'Afgang'} blev oprettet`,
+      })
+    })
+  }
 
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
@@ -117,7 +146,7 @@ export function ModalInventoryIncoming({ customer, inventory }: Props) {
           <Icons.plus className='size-4' />
         </Button>
       </CredenzaTrigger>
-      <CredenzaContent className='md:max-w-md'>
+      <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
           <CredenzaTitle>Opdater beholdning</CredenzaTitle>
           <CredenzaDescription>
@@ -126,8 +155,8 @@ export function ModalInventoryIncoming({ customer, inventory }: Props) {
         </CredenzaHeader>
         <CredenzaBody>
           <form
-            className='space-y-4'
-            onSubmit={handleSubmit(onSubmit, () => toast.error('fejl'))}>
+            className='space-y-4 pb-4 md:pb-0'
+            onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
@@ -148,16 +177,21 @@ export function ModalInventoryIncoming({ customer, inventory }: Props) {
                     shouldValidate: true,
                   })
                 }}>
-                <SelectTrigger>
+                <SelectTrigger className='h-[58px]'>
                   <SelectValue placeholder='Vælg vare' />
                 </SelectTrigger>
                 <SelectContent>
-                  {uniqueProducts.map((p, i) => (
+                  {products.map((p, i) => (
                     <SelectItem
                       key={i}
-                      value={p.product.id.toString()}
+                      value={p.id.toString()}
                       className='capitalize'>
-                      {p.product.sku}
+                      <div className='flex flex-col gap items-start'>
+                        <span className='font-semibold'>{p.text1}</span>
+                        <span className='text-muted-foreground text-sm'>
+                          {p.sku}
+                        </span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -165,55 +199,91 @@ export function ModalInventoryIncoming({ customer, inventory }: Props) {
             </div>
             <div className='flex flex-col gap-4 md:flex-row'>
               <div className='grid gap-2 w-full'>
-                <Label>Placering</Label>
-                <Select
-                  value={placementID ? placementID.toString() : undefined}
-                  disabled={!hasProduct}
-                  onValueChange={(value: string) => {
-                    resetField('batchID')
-                    setValue('placementID', parseInt(value), {
-                      shouldValidate: true,
-                    })
-                  }}>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Vælg placering' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {uniquePlacements(productID).map((p, i) => (
-                      <SelectItem
-                        key={i}
-                        value={p.placement.id.toString()}
-                        className='capitalize'>
-                        {p.placement.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className='flex items-center justify-between'>
+                  <Label>Placering</Label>
+                  <span
+                    className='text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none'
+                    onClick={() => {
+                      resetField('placementID')
+                      setNewPlacement(prev => !prev)
+                    }}>
+                    {newPlacement ? 'Brug eksisterende' : 'Opret ny'}
+                  </span>
+                </div>
+                {newPlacement ? (
+                  <Input
+                    autoFocus
+                    placeholder='Skriv ny placering'
+                    {...register('placementID')}
+                  />
+                ) : (
+                  <Select
+                    value={placementID ? placementID.toString() : undefined}
+                    disabled={!hasProduct}
+                    onValueChange={(value: string) => {
+                      resetField('batchID')
+                      setValue('placementID', parseInt(value), {
+                        shouldValidate: true,
+                      })
+                    }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Vælg placering' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {placements.map((p, i) => (
+                        <SelectItem
+                          key={i}
+                          value={p.id.toString()}
+                          className='capitalize'>
+                          {p.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
               <div className='grid gap-2 w-full'>
-                <Label>Batchnr.</Label>
-                <Select
-                  value={batchID ? batchID.toString() : undefined}
-                  disabled={!hasPlacement}
-                  onValueChange={(value: string) =>
-                    setValue('batchID', parseInt(value), {
-                      shouldValidate: true,
-                    })
-                  }>
-                  <SelectTrigger>
-                    <SelectValue placeholder='Vælg batchnr.' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {uniqueBatches(productID, placementID).map((p, i) => (
-                      <SelectItem
-                        key={i}
-                        value={p.batch.id.toString()}
-                        className='capitalize'>
-                        {p.batch.batch}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className='flex items-center justify-between'>
+                  <Label>Batchnr.</Label>
+                  <span
+                    className='text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none'
+                    onClick={() => {
+                      resetField('batchID')
+                      setNewBatch(prev => !prev)
+                    }}>
+                    {newBatch ? 'Brug eksisterende' : 'Opret ny'}
+                  </span>
+                </div>
+                {newBatch ? (
+                  <Input
+                    autoFocus
+                    placeholder='Skriv ny batchnr.'
+                    {...register('batchID')}
+                  />
+                ) : (
+                  <Select
+                    value={batchID ? batchID.toString() : undefined}
+                    disabled={!hasPlacement}
+                    onValueChange={(value: string) =>
+                      setValue('batchID', parseInt(value), {
+                        shouldValidate: true,
+                      })
+                    }>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Vælg batchnr.' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {batches.map((p, i) => (
+                        <SelectItem
+                          key={i}
+                          value={p.id.toString()}
+                          className='capitalize'>
+                          {p.batch}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </div>
             <div className='flex items-center pt-2'>
@@ -230,9 +300,15 @@ export function ModalInventoryIncoming({ customer, inventory }: Props) {
                 type='button'
                 className='w-full rounded-l-none'
                 variant={!isIncoming ? 'default' : 'secondary'}
-                onClick={() =>
+                onClick={() => {
+                  setNewPlacement(false)
+                  setNewBatch(false)
+                  if (newPlacement || newBatch) {
+                    resetField('placementID')
+                    resetField('batchID')
+                  }
                   setValue('type', 'afgang', { shouldValidate: true })
-                }>
+                }}>
                 Afgang
               </Button>
             </div>
