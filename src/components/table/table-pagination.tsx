@@ -30,10 +30,7 @@ export function TablePagination<TData>({
 
   return (
     <div className='flex items-center justify-between mt-4'>
-      <div className='flex items-center space-x-2'>
-        <p className='text-sm font-medium text-muted-foreground'>
-          Rækker pr. side
-        </p>
+      <div className='flex items-center space-x-4'>
         <Select
           value={`${table.getState().pagination.pageSize}`}
           onValueChange={value => {
@@ -50,6 +47,9 @@ export function TablePagination<TData>({
             ))}
           </SelectContent>
         </Select>
+        <p className='text-sm font-medium text-muted-foreground'>
+          Rækker pr. side ({table.getFilteredRowModel().rows.length} total)
+        </p>
       </div>
       <div className='space-x-2'>
         <Button
