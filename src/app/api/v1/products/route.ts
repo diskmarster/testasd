@@ -30,7 +30,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<unknown>> 
 
 		return NextResponse.json({
 			msg: "Success",
-			products,
+			data: products,
 		}, {
 			status: 200,
 		})

@@ -56,8 +56,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<unknown>>
 
 		return NextResponse.json({
 			msg: "Log ind fuldendt",
-			jwt,
-			user,
+			data: {
+				jwt,
+				user,
+			}
 		}, {
 			status: 201,
 		})
