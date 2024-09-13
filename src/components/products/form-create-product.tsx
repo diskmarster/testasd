@@ -57,7 +57,6 @@ export function FormCreateProducts({
   })
 
   async function onSubmit(values: z.infer<typeof createProductValidation>) {
-    console.log(values.customerID)
     startTransition(async () => {
       const response = await createProductAction(values)
       if (response && response.serverError) {
