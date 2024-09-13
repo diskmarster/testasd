@@ -10,6 +10,7 @@ import {
   ChevronsUpDown,
   CircleAlert,
   Columns2,
+  Diff,
   Download,
   Ellipsis,
   ExternalLink,
@@ -31,6 +32,7 @@ import {
 
 export const Icons = {
   updown: ChevronsUpDown,
+  diff: Diff,
   minus: Minus,
   arrowLeft: ArrowLeft,
   arrowRight: ArrowRight,
