@@ -1,5 +1,7 @@
 import { product } from '@/data/products'
+import { CustomerID } from '@/lib/database/schema/customer'
 import { NewProduct, Product } from '@/lib/database/schema/inventory'
+
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 
@@ -16,10 +18,13 @@ export const productService = {
         if (err.message.includes('barcode')) {
           throw new ActionError('Stregkoden findes allerede')
         }
-        if (err.message.includes('sku')){
+        if (err.message.includes('sku')) {
           throw new ActionError('Varenr. findes allerede')
         }
       }
     }
+  },
+  getAllByID: async function (customerID: CustomerID): Promise<Product[]> {
+    return await product.getAllByID(customerID)
   },
 }
