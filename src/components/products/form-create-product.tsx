@@ -11,6 +11,7 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
+import { useSession } from '@/context/session'
 import {
   Credenza,
   CredenzaBody,
@@ -38,21 +39,25 @@ export function FormCreateProducts({
   units: Unit[]
   groups: Group[]
 }) {
+  const { user } = useSession()
+
   const [pending, startTransition] = useTransition()
   const [show, setShow] = useState(false)
   const [error, setError] = useState<string>()
+
   const { handleSubmit, register, formState, setValue, reset } = useForm<
     z.infer<typeof createProductValidation>
   >({
     resolver: zodResolver(createProductValidation),
     defaultValues: {
-      customerID: 2,
+      customerID: user!.customerID,
       costPrice: 0,
       salesPrice: 0,
     },
   })
 
   async function onSubmit(values: z.infer<typeof createProductValidation>) {
+    console.log(values.customerID)
     startTransition(async () => {
       const response = await createProductAction(values)
       if (response && response.serverError) {
