@@ -32,7 +32,6 @@ export default async function Home() {
         <>
           <ModalUpdateInventory
             customer={customer}
-            inventory={inventory}
             products={products}
             placements={placements}
             batches={batches}

@@ -15,14 +15,8 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
-import { FormattedInventory } from '@/data/inventory.types'
 import { Customer } from '@/lib/database/schema/customer'
-import {
-  Batch,
-  Placement,
-  Product,
-  ProductID,
-} from '@/lib/database/schema/inventory'
+import { Batch, Placement, Product } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
@@ -42,7 +36,6 @@ import {
 
 interface Props {
   customer: Customer
-  inventory: FormattedInventory[]
   products: Product[]
   placements: Placement[]
   batches: Batch[]
@@ -50,7 +43,6 @@ interface Props {
 
 export function ModalUpdateInventory({
   customer,
-  inventory,
   products,
   placements,
   batches,
@@ -60,13 +52,6 @@ export function ModalUpdateInventory({
   const [pending, startTransition] = useTransition()
   const [newPlacement, setNewPlacement] = useState(false)
   const [newBatch, setNewBatch] = useState(false)
-
-  const uniqueProducts = inventory.filter((item, index, self) => {
-    return index === self.findIndex(i => i.product.id === item.product.id)
-  })
-
-  const uniquePlacements = (productID: ProductID) =>
-    uniqueProducts.filter(item => item.product.id == productID)
 
   const fallbackPlacementID =
     customer.plan == 'lite'
