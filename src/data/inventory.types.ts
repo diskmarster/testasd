@@ -1,3 +1,4 @@
+import { UserNoHash } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
@@ -32,4 +33,5 @@ export interface FormattedHistory extends History {
   product: Product & { unit: string; group: string }
   placement: Placement
   batch: Batch
+  user: UserNoHash
 }

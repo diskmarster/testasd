@@ -25,14 +25,14 @@ import {
   Unit,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, eq, getTableColumns, sql } from 'drizzle-orm'
+import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
 const PLACEMENT_COLS = getTableColumns(placementTable)
 const BATCH_COLS = getTableColumns(batchTable)
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
-const USER_COLS = getTableColumns(userTable)
+const { hash, ...USER_COLS } = getTableColumns(userTable)
 const HISTORY_COLS = getTableColumns(historyTable)
 
 export const inventory = {
@@ -197,8 +197,8 @@ export const inventory = {
     const batch = await trx.insert(batchTable).values(batchData).returning()
     return batch[0]
   },
-  getHistoryByCustomerID: async function (
-    customerID: CustomerID,
+  getHistoryByLocationID: async function (
+    locationID: LocationID,
     trx: TRX = db,
   ): Promise<FormattedHistory[]> {
     const history = await trx
@@ -211,9 +211,10 @@ export const inventory = {
         },
         placement: { ...PLACEMENT_COLS },
         batch: { ...BATCH_COLS },
+        user: { ...USER_COLS },
       })
       .from(historyTable)
-      .where(eq(historyTable.customerID, customerID))
+      .where(eq(historyTable.locationID, locationID))
       .innerJoin(productTable, eq(productTable.id, historyTable.productID))
       .innerJoin(userTable, eq(userTable.id, historyTable.userID))
       .innerJoin(
@@ -223,6 +224,7 @@ export const inventory = {
       .innerJoin(batchTable, eq(batchTable.id, historyTable.batchID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+      .orderBy(desc(historyTable.inserted))
 
     return history
   },

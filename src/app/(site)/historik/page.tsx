@@ -1,17 +1,40 @@
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { TableHistory } from '@/components/inventory/table-history'
+import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
+import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
 
 export default async function Page() {
   const { session, user } = await sessionService.validate()
   if (!session) redirect('/log-ind')
-  const history = await inventoryService.getHistoryByCustomerID(user.customerID)
+
+  const location = await locationService.getLastVisited(user.id!)
+  if (!location) redirect('/log-ind')
+
+  const history = await inventoryService.getHistoryByLocationID(location)
+  const customer = await customerService.getByID(user.customerID)
+  if (!customer) redirect('/log-ind')
+
+  const units = await inventoryService.getUnits()
+  const groups = await inventoryService.getGroupsByID(customer.id)
+  const placements = await inventoryService.getPlacementsByID(location)
+  const batches = await inventoryService.getBatchesByID(location)
+
   return (
     <SiteWrapper
       title='Historik'
       description='Se en oversigt over alle dine vare bevægelser'>
-      <pre>{JSON.stringify(history, null, 2)}</pre>
+      <TableHistory
+        data={history}
+        user={user}
+        plan={customer.plan}
+        units={units}
+        groups={groups}
+        placements={placements}
+        batches={batches}
+      />
     </SiteWrapper>
   )
 }

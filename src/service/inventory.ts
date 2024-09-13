@@ -136,9 +136,9 @@ export const inventoryService = {
       }
     }
   },
-  getHistoryByCustomerID: async function (
-    customerID: CustomerID,
+  getHistoryByLocationID: async function (
+    locationID: LocationID,
   ): Promise<FormattedHistory[]> {
-    return await inventory.getHistoryByCustomerID(customerID)
+    return await inventory.getHistoryByLocationID(locationID)
   },
 }
