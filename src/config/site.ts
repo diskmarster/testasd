@@ -3,7 +3,7 @@ import { UserRole } from "@/data/user.types";
 import { LucideIcon } from "lucide-react";
 
 export const siteConfig: SiteConfig = {
-  name: 'Nem Lager',
+  name: 'NemLager',
   description: 'Hold styr på din beholdning',
   logo: Icons.boxes,
   errorTitle: "Der gik noget galt",
