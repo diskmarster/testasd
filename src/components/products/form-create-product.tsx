@@ -1,6 +1,6 @@
 'use client'
-import { createProductAction } from '@/app/(site)/produkter/opret/actions'
-import { createProductValidation } from '@/app/(site)/produkter/opret/validation'
+import { createProductAction } from '@/app/(site)/produkter/actions'
+import { createProductValidation } from '@/app/(site)/produkter/validation'
 import { siteConfig } from '@/config/site'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -80,7 +80,11 @@ export function FormCreateProducts({
   return (
     <Credenza open={show} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <button onClick={() => setShow(true)}>Open modal</button>
+        <button
+          className='bg-blue-700 hover:bg-blue-900 text-primary-foreground font-bold py-2 px-4 border-b-4 border-blue-900 hover:border-blue-500 rounded '
+          onClick={() => setShow(true)}>
+          Opret nyt produkt
+        </button>
       </CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
