@@ -35,5 +35,15 @@ export const product = {
       .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
       .innerJoin(groupTable, eq(productTable.unitID, groupTable.id))
       .where(eq(productTable.customerID, customerID))
+    },
+  getAllByID: async function (
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<Product[]> {
+    const product = await trx
+      .select()
+      .from(productTable)
+      .where(eq(productTable.customerID, customerID))
+    return product
   },
 }

@@ -65,4 +65,7 @@ export const productService = {
       return []
     }
   },
+  getAllByID: async function (customerID: CustomerID): Promise<Product[]> {
+    return await product.getAllByID(customerID)
+  },
 }
