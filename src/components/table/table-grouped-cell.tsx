@@ -1,11 +1,10 @@
 'use client'
 
-import { Row, flexRender } from '@tanstack/react-table'
-import { TableCell } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { number, unknown } from 'zod'
+import { Row, flexRender } from '@tanstack/react-table'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 
 interface Props<T> {
   row: Row<T>
@@ -46,27 +45,45 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </div>
           ) : cell.getIsAggregated() ? (
-            <div className={cn(
-              'flex whitespace-nowrap',
-              typeof cell.getValue() == 'number' && 'justify-end',
-              Array.isArray(cell.getValue<number | number[]>()) && cell.getValue<number[]>().every(item => typeof item === 'number') && 'justify-end'
-            )}>
+            <div
+              className={cn(
+                'flex whitespace-nowrap',
+                typeof cell.getValue() == 'number' && 'justify-end',
+                Array.isArray(cell.getValue<number | number[]>()) &&
+                  cell
+                    .getValue<number[]>()
+                    .every(item => typeof item === 'number') &&
+                  'justify-end',
+                // @ts-ignore
+                cell.column.columnDef.meta?.className &&
+                  // @ts-ignore
+                  cell.column.columnDef.meta.className,
+              )}>
               {cell.column.columnDef.aggregationFn && (
                 <>
                   {flexRender(
                     cell.column.columnDef.aggregatedCell ??
-                    cell.column.columnDef.cell,
+                      cell.column.columnDef.cell,
                     cell.getContext(),
                   )}
                 </>
               )}
             </div>
           ) : cell.getIsPlaceholder() ? null : (
-            <div className={cn(
-              'flex whitespace-nowrap',
-              typeof cell.getValue() == 'number' && 'justify-end',
-              Array.isArray(cell.getValue<number | number[]>()) && cell.getValue<number[]>().every(item => typeof item === 'number') && 'justify-end'
-            )}>
+            <div
+              className={cn(
+                'flex whitespace-nowrap',
+                typeof cell.getValue() == 'number' && 'justify-end',
+                Array.isArray(cell.getValue<number | number[]>()) &&
+                  cell
+                    .getValue<number[]>()
+                    .every(item => typeof item === 'number') &&
+                  'justify-end',
+                // @ts-ignore
+                cell.column.columnDef.meta?.className &&
+                  // @ts-ignore
+                  cell.column.columnDef.meta.className,
+              )}>
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </div>
           )}

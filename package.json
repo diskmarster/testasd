@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "pnpm i && next dev --turbo",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -48,6 +48,7 @@
     "next-safe-action": "7.8.1",
     "next-themes": "^0.3.0",
     "react": "^18",
+    "react-custom-events": "^1.1.1",
     "react-day-picker": "8.10.1",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
@@ -67,6 +68,8 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.7",
     "postcss": "^8",
+    "prettier-plugin-organize-imports": "^4.0.0",
+    "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwindcss": "^3.4.1",
     "tsx": "^4.19.0",
     "typescript": "^5"

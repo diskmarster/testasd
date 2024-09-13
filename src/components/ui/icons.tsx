@@ -1,7 +1,39 @@
-import { Warehouse, ArrowLeft, ArrowRight, Columns2, Calendar, List, Type, X, Trash, Download, Ellipsis, ArrowUp, ArrowDown, ChevronDown, Mail, Sun, Boxes, Moon, CircleAlert, Loader2, ExternalLink, Menu, Check, Infinity, ChevronsUpDown, Plus, Star } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  Boxes,
+  Calendar,
+  Check,
+  ChevronDown,
+  ChevronsUpDown,
+  CircleAlert,
+  Columns2,
+  Diff,
+  Download,
+  Ellipsis,
+  ExternalLink,
+  Infinity,
+  List,
+  Loader2,
+  Mail,
+  Menu,
+  Minus,
+  Moon,
+  Plus,
+  Star,
+  Sun,
+  Trash,
+  Type,
+  Warehouse,
+  X,
+} from 'lucide-react'
 
 export const Icons = {
   updown: ChevronsUpDown,
+  diff: Diff,
+  minus: Minus,
   arrowLeft: ArrowLeft,
   arrowRight: ArrowRight,
   columns: Columns2,
@@ -28,4 +60,4 @@ export const Icons = {
   boxes: Boxes,
   check: Check,
   infinity: Infinity,
-};
+}
