@@ -20,13 +20,13 @@ import { Customer } from '@/lib/database/schema/customer'
 import {
   Batch,
   Placement,
-  PlacementID,
   Product,
   ProductID,
 } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
+import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -48,7 +48,7 @@ interface Props {
   batches: Batch[]
 }
 
-export function ModalInventoryIncoming({
+export function ModalUpdateInventory({
   customer,
   inventory,
   products,
@@ -68,8 +68,14 @@ export function ModalInventoryIncoming({
   const uniquePlacements = (productID: ProductID) =>
     uniqueProducts.filter(item => item.product.id == productID)
 
-  const uniqueBatches = (productID: ProductID, placementID: PlacementID) =>
-    uniquePlacements(productID).filter(item => item.placement.id, placementID)
+  const fallbackPlacementID =
+    customer.plan == 'lite'
+      ? placements.find(placement => placement.name == '-')?.id
+      : undefined
+  const fallbackBatchID =
+    customer.plan != 'pro'
+      ? batches.find(batch => batch.batch == '-')?.id
+      : undefined
 
   const {
     register,
@@ -86,8 +92,8 @@ export function ModalInventoryIncoming({
       type: 'tilgang',
       amount: 0,
       productID: undefined,
-      placementID: undefined,
-      batchID: undefined,
+      placementID: fallbackPlacementID,
+      batchID: fallbackBatchID,
     },
   })
 
@@ -139,11 +145,18 @@ export function ModalInventoryIncoming({
     })
   }
 
+  useCustomEventListener('UpdateInventoryByIDs', (data: any) => {
+    setOpen(true)
+    setValue('productID', data.productID)
+    setValue('placementID', data.placementID)
+    setValue('batchID', data.batchID)
+  })
+
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
         <Button size='icon' variant='outline'>
-          <Icons.plus className='size-4' />
+          <Icons.diff className='size-4' />
         </Button>
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
@@ -169,10 +182,6 @@ export function ModalInventoryIncoming({
               <Select
                 value={productID ? productID.toString() : undefined}
                 onValueChange={(value: string) => {
-                  // @ts-ignore
-                  setValue('placementID', undefined)
-                  // @ts-ignore
-                  setValue('batchID', undefined)
                   setValue('productID', parseInt(value), {
                     shouldValidate: true,
                   })
@@ -197,95 +206,105 @@ export function ModalInventoryIncoming({
                 </SelectContent>
               </Select>
             </div>
-            <div className='flex flex-col gap-4 md:flex-row'>
-              <div className='grid gap-2 w-full'>
-                <div className='flex items-center justify-between'>
-                  <Label>Placering</Label>
-                  <span
-                    className='text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none'
-                    onClick={() => {
-                      resetField('placementID')
-                      setNewPlacement(prev => !prev)
-                    }}>
-                    {newPlacement ? 'Brug eksisterende' : 'Opret ny'}
-                  </span>
+            {customer.plan != 'lite' && (
+              <div className='flex flex-col gap-4 md:flex-row'>
+                <div className='grid gap-2 w-full'>
+                  <div className='flex items-center justify-between h-4'>
+                    <Label>Placering</Label>
+                    <span
+                      className={cn(
+                        'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
+                        !isIncoming && 'hidden',
+                      )}
+                      onClick={() => {
+                        resetField('placementID')
+                        setNewPlacement(prev => !prev)
+                      }}>
+                      {newPlacement ? 'Brug eksisterende' : 'Opret ny'}
+                    </span>
+                  </div>
+                  {newPlacement ? (
+                    <Input
+                      autoFocus
+                      placeholder='Skriv ny placering'
+                      {...register('placementID')}
+                    />
+                  ) : (
+                    <Select
+                      value={placementID ? placementID.toString() : undefined}
+                      disabled={!hasProduct}
+                      onValueChange={(value: string) => {
+                        //resetField('batchID')
+                        setValue('placementID', parseInt(value), {
+                          shouldValidate: true,
+                        })
+                      }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Vælg placering' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {placements.map((p, i) => (
+                          <SelectItem
+                            key={i}
+                            value={p.id.toString()}
+                            className='capitalize'>
+                            {p.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
-                {newPlacement ? (
-                  <Input
-                    autoFocus
-                    placeholder='Skriv ny placering'
-                    {...register('placementID')}
-                  />
-                ) : (
-                  <Select
-                    value={placementID ? placementID.toString() : undefined}
-                    disabled={!hasProduct}
-                    onValueChange={(value: string) => {
-                      resetField('batchID')
-                      setValue('placementID', parseInt(value), {
-                        shouldValidate: true,
-                      })
-                    }}>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Vælg placering' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {placements.map((p, i) => (
-                        <SelectItem
-                          key={i}
-                          value={p.id.toString()}
-                          className='capitalize'>
-                          {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                {customer.plan == 'pro' && (
+                  <div className='grid gap-2 w-full'>
+                    <div className='flex items-center justify-between h-4'>
+                      <Label>Batchnr.</Label>
+                      <span
+                        className={cn(
+                          'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
+                          !isIncoming && 'hidden',
+                        )}
+                        onClick={() => {
+                          resetField('batchID')
+                          setNewBatch(prev => !prev)
+                        }}>
+                        {newBatch ? 'Brug eksisterende' : 'Opret ny'}
+                      </span>
+                    </div>
+                    {newBatch ? (
+                      <Input
+                        autoFocus
+                        placeholder='Skriv ny batchnr.'
+                        {...register('batchID')}
+                      />
+                    ) : (
+                      <Select
+                        value={batchID ? batchID.toString() : undefined}
+                        disabled={!hasPlacement}
+                        onValueChange={(value: string) =>
+                          setValue('batchID', parseInt(value), {
+                            shouldValidate: true,
+                          })
+                        }>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Vælg batchnr.' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {batches.map((p, i) => (
+                            <SelectItem
+                              key={i}
+                              value={p.id.toString()}
+                              className='capitalize'>
+                              {p.batch}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
                 )}
               </div>
-              <div className='grid gap-2 w-full'>
-                <div className='flex items-center justify-between'>
-                  <Label>Batchnr.</Label>
-                  <span
-                    className='text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none'
-                    onClick={() => {
-                      resetField('batchID')
-                      setNewBatch(prev => !prev)
-                    }}>
-                    {newBatch ? 'Brug eksisterende' : 'Opret ny'}
-                  </span>
-                </div>
-                {newBatch ? (
-                  <Input
-                    autoFocus
-                    placeholder='Skriv ny batchnr.'
-                    {...register('batchID')}
-                  />
-                ) : (
-                  <Select
-                    value={batchID ? batchID.toString() : undefined}
-                    disabled={!hasPlacement}
-                    onValueChange={(value: string) =>
-                      setValue('batchID', parseInt(value), {
-                        shouldValidate: true,
-                      })
-                    }>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Vælg batchnr.' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {batches.map((p, i) => (
-                        <SelectItem
-                          key={i}
-                          value={p.id.toString()}
-                          className='capitalize'>
-                          {p.batch}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              </div>
-            </div>
+            )}
             <div className='flex items-center pt-2'>
               <Button
                 type='button'

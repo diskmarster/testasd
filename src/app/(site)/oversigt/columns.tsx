@@ -1,6 +1,7 @@
-import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
+import { Button } from '@/components/ui/button'
+import { Icons } from '@/components/ui/icons'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
@@ -8,6 +9,7 @@ import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
+import { emitCustomEvent } from 'react-custom-events'
 
 export function getTableOverviewColumns(
   plan: Plan,
@@ -186,8 +188,23 @@ export function getTableOverviewColumns(
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
-    aggregatedCell: ({ table, row }) => (
-      <TableOverviewActions table={table} row={row} />
+    //aggregatedCell: ({ table, row }) => (
+    //  <TableOverviewActions table={table} row={row} />
+    //),
+    cell: ({ row }) => (
+      <Button
+        size='iconSm'
+        variant='ghost'
+        type='button'
+        onClick={() => {
+          emitCustomEvent('UpdateInventoryByIDs', {
+            productID: row.original.product.id,
+            placementID: row.original.placement.id,
+            batchID: row.original.batch.id,
+          })
+        }}>
+        <Icons.diff className='size-3.5' />
+      </Button>
     ),
     enableHiding: false,
     enableSorting: false,
@@ -203,6 +220,8 @@ export function getTableOverviewColumns(
         barcodeCol,
         groupCol,
         text1Col,
+        text2Col,
+        text3Col,
         quantityCol,
         unitCol,
         costPriceCol,
@@ -217,6 +236,8 @@ export function getTableOverviewColumns(
         barcodeCol,
         groupCol,
         text1Col,
+        text2Col,
+        text3Col,
         quantityCol,
         unitCol,
         costPriceCol,
