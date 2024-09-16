@@ -297,7 +297,7 @@ export function getTableOverviewFilters(
     value: '',
     options: [
       ...units.map(unit => ({
-        value: unit.id,
+        value: unit.name,
         label: unit.name,
       })),
     ],
@@ -309,7 +309,7 @@ export function getTableOverviewFilters(
     value: '',
     options: [
       ...groups.map(group => ({
-        value: group.id,
+        value: group.name,
         label: group.name,
       })),
     ],
@@ -342,7 +342,7 @@ export function getTableOverviewFilters(
     value: '',
     options: [
       ...placements.map(placement => ({
-        value: placement.id,
+        value: placement.name,
         label: placement.name,
       })),
     ],
@@ -354,7 +354,7 @@ export function getTableOverviewFilters(
     value: '',
     options: [
       ...batches.map(batch => ({
-        value: batch.id,
+        value: batch.batch,
         label: batch.batch,
       })),
     ],
