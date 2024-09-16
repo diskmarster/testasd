@@ -47,7 +47,7 @@ export function TablePagination<TData>({
             ))}
           </SelectContent>
         </Select>
-        <p className='text-sm font-medium text-muted-foreground'>
+        <p className='text-sm font-medium text-muted-foreground hidden md:block'>
           Rækker pr. side ({table.getFilteredRowModel().rows.length} total)
         </p>
       </div>
