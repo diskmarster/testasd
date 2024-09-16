@@ -187,7 +187,7 @@ export function TableHistory({
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  Ingen beholdning
+                  Ingen historik
                 </TableCell>
               </TableRow>
             )}
