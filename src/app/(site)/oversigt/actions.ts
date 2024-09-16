@@ -6,7 +6,10 @@ import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
-import { updateInventoryValidation } from './validation'
+import {
+  moveInventoryValidation,
+  updateInventoryValidation,
+} from './validation'
 
 export const updateInventoryAction = privateAction
   .schema(updateInventoryValidation)
@@ -72,3 +75,9 @@ export const updateInventoryAction = privateAction
       revalidatePath('/oversigt')
     },
   )
+
+export const moveInventoryAction = privateAction
+  .schema(moveInventoryValidation)
+  .action(async ({ parsedInput, ctx }) => {
+    console.log(parsedInput)
+  })

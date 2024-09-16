@@ -200,7 +200,7 @@ export function getTableOverviewColumns(
             batchID: row.original.batch.id,
           })
         }}>
-        <Icons.diff className='size-3.5' />
+        <Icons.arrowDownUp className='size-3' />
       </Button>
     ),
     enableHiding: false,

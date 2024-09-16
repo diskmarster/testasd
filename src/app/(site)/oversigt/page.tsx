@@ -1,5 +1,6 @@
 import { signOutAction } from '@/app/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
 import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
 import { TableOverview } from '@/components/inventory/table-overview'
 import { customerService } from '@/service/customer'
@@ -36,6 +37,7 @@ export default async function Home() {
             placements={placements}
             batches={batches}
           />
+          <ModalMoveInventory products={products} placements={placements} />
         </>
       }>
       <TableOverview

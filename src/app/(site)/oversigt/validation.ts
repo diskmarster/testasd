@@ -29,3 +29,11 @@ export const updateInventoryValidation = z
       }
     }
   })
+
+export const moveInventoryValidation = z.object({
+  productID: z.coerce.number(),
+  fromPlacementID: z.coerce.number(),
+  fromBatchID: z.coerce.number(),
+  toPlacementID: z.coerce.number(),
+  amount: z.coerce.number(),
+})
