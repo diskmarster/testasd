@@ -7,8 +7,8 @@ import { z } from 'zod'
 const createRegulationSchema = z.object({
 	locationId: z.string(),
 	productId: z.coerce.number(),
-	placementId: z.coerce.number().or(z.string()).optional(),
-	batchId: z.coerce.number().or(z.string()).optional(),
+	placementId: z.string().or(z.coerce.number()).nullable(),
+	batchId: z.string().or(z.coerce.number()).nullable(),
 	type: historyTypeZodSchema,
 	quantity: z.coerce.number(),
 })
