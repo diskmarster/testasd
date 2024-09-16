@@ -188,9 +188,6 @@ export function getTableOverviewColumns(
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
-    //aggregatedCell: ({ table, row }) => (
-    //  <TableOverviewActions table={table} row={row} />
-    //),
     cell: ({ row }) => (
       <Button
         size='iconSm'
