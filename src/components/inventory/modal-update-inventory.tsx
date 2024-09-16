@@ -33,6 +33,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip'
 
 interface Props {
   customer: Customer
@@ -140,9 +146,18 @@ export function ModalUpdateInventory({
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
-          <Icons.diff className='size-4' />
-        </Button>
+        <TooltipProvider>
+          <Tooltip delayDuration={250}>
+            <TooltipTrigger asChild>
+              <Button size='icon' variant='outline'>
+                <Icons.arrowDownUp className='size-4' />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Opdater beholdning</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
