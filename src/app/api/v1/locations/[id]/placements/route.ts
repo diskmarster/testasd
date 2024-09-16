@@ -7,6 +7,7 @@ export async function GET(
 	{ params }: { params: { id: string } },
 ): Promise<NextResponse<unknown>> {
 	try {
+		console.log(request.headers)
 		const { session, user } = await validateRequest(request)
 
 		if (session == null || user == null) {
