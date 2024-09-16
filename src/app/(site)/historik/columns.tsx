@@ -50,10 +50,10 @@ export function getTableHistoryColumns(
   }
 
   const groupCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.groupID',
+    accessorKey: 'product.group',
     id: 'group',
     header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
-    cell: ({ row: { original } }) => original.product.group,
+    cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Varegruppe',
     },
@@ -105,10 +105,10 @@ export function getTableHistoryColumns(
   }
 
   const unitCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.unitID',
+    accessorKey: 'product.unit',
     id: 'unit',
     header: ({ column }) => <TableHeader column={column} title='Enhed' />,
-    cell: ({ row: { original } }) => original.product.unit,
+    cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Enhed',
     },
@@ -163,10 +163,10 @@ export function getTableHistoryColumns(
   }
 
   const placementCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'placementID',
+    accessorKey: 'placement.name',
     id: 'placement',
     header: ({ column }) => <TableHeader column={column} title='Placering' />,
-    cell: ({ row: { original } }) => original.placement.name,
+    cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Placering',
     },
@@ -176,10 +176,10 @@ export function getTableHistoryColumns(
   }
 
   const batchCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'batchID',
+    accessorKey: 'batch.batch',
     id: 'batch',
     header: ({ column }) => <TableHeader column={column} title='Batchnr.' />,
-    cell: ({ row: { original } }) => original.batch.batch,
+    cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Batchnr.',
     },
@@ -212,7 +212,9 @@ export function getTableHistoryColumns(
   const refCol: ColumnDef<FormattedHistory> = {
     accessorKey: 'reference',
     header: ({ column }) => <TableHeader column={column} title='Reference' />,
-    cell: ({ getValue }) => getValue<string>(),
+    cell: ({ getValue }) => (
+      <span className='max-w-48 truncate'>{getValue<string>()}</span>
+    ),
     meta: {
       viewLabel: 'Reference',
     },
@@ -330,7 +332,7 @@ export function getTableHistoryFilters(
     value: '',
     options: [
       ...groups.map(group => ({
-        value: group.id,
+        value: group.name,
         label: group.name,
       })),
     ],
@@ -374,7 +376,7 @@ export function getTableHistoryFilters(
     value: '',
     options: [
       ...units.map(unit => ({
-        value: unit.id,
+        value: unit.name,
         label: unit.name,
       })),
     ],
@@ -406,7 +408,7 @@ export function getTableHistoryFilters(
     value: '',
     options: [
       ...placements.map(placement => ({
-        value: placement.id,
+        value: placement.name,
         label: placement.name,
       })),
     ],
@@ -418,7 +420,7 @@ export function getTableHistoryFilters(
     value: '',
     options: [
       ...batches.map(batch => ({
-        value: batch.id,
+        value: batch.batch,
         label: batch.batch,
       })),
     ],
