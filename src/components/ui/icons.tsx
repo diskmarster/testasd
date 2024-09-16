@@ -1,6 +1,8 @@
 import {
   ArrowDown,
+  ArrowDownUp,
   ArrowLeft,
+  ArrowLeftRight,
   ArrowRight,
   ArrowUp,
   Boxes,
@@ -33,6 +35,8 @@ import {
 
 export const Icons = {
   updown: ChevronsUpDown,
+  arrowDownUp: ArrowDownUp,
+  arrowLeftRight: ArrowLeftRight,
   chevronDownUp: ChevronsUpDownIcon,
   diff: Diff,
   minus: Minus,
