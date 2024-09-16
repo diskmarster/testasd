@@ -20,7 +20,6 @@ import { FormattedHistory } from '@/data/inventory.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
-  ExpandedState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -30,7 +29,6 @@ import {
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  GroupingState,
   RowSelectionState,
   SortingState,
   Updater,
@@ -73,6 +71,11 @@ export function TableHistory({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const visibility = JSON.parse(
@@ -142,6 +145,8 @@ export function TableHistory({
       getTableHistoryFilters(plan, table, units, groups, placements, batches),
     [plan, table, units, groups, placements, batches],
   )
+
+  if (!mounted) return null
 
   return (
     <div>
