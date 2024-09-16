@@ -1,37 +1,37 @@
-import { Icons } from "@/components/ui/icons";
-import { UserRole } from "@/data/user.types";
-import { LucideIcon } from "lucide-react";
+import { Icons } from '@/components/ui/icons'
+import { UserRole } from '@/data/user.types'
+import { LucideIcon } from 'lucide-react'
 
 export const siteConfig: SiteConfig = {
   name: 'NemLager',
   description: 'Hold styr på din beholdning',
   logo: Icons.boxes,
-  errorTitle: "Der gik noget galt",
-  successTitle: "Handling fuldført",
+  errorTitle: 'Der gik noget galt',
+  successTitle: 'Handling fuldført',
   navItems: [
     {
       label: 'Oversigt',
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: "/oversigt",
-      roles: []
+      href: '/oversigt',
+      roles: [],
     },
     {
       label: 'Historik',
-      isDisabled: true,
+      isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: "/historik",
-      roles: []
+      href: '/historik',
+      roles: [],
     },
     {
       label: 'Genbestil',
       isDisabled: true,
       isDropdown: false,
       isExternal: false,
-      href: "/genbestil",
-      roles: []
+      href: '/genbestil',
+      roles: [],
     },
     {
       label: 'Administration',
@@ -45,7 +45,7 @@ export const siteConfig: SiteConfig = {
           href: '/admin/brugere',
           roles: [],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
         {
           label: 'Produkter',
@@ -53,7 +53,7 @@ export const siteConfig: SiteConfig = {
           href: '/admin/produkter',
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
         {
           label: 'Varegrupper',
@@ -61,7 +61,7 @@ export const siteConfig: SiteConfig = {
           href: '/admin/varegrupper',
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
         {
           label: 'Placeringer',
@@ -69,7 +69,7 @@ export const siteConfig: SiteConfig = {
           href: '/admin/placeringer',
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
         {
           label: 'Lokationer',
@@ -77,9 +77,9 @@ export const siteConfig: SiteConfig = {
           href: '/admin/lokationer',
           roles: [],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
-      ]
+      ],
     },
     {
       label: 'Skancode',
@@ -93,7 +93,7 @@ export const siteConfig: SiteConfig = {
           href: '/sys/kunder',
           roles: ['sys_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
         {
           label: 'Brugere',
@@ -101,7 +101,7 @@ export const siteConfig: SiteConfig = {
           href: '/sys/brugere',
           roles: ['sys_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
         {
           label: 'Fejlbeskeder',
@@ -109,11 +109,11 @@ export const siteConfig: SiteConfig = {
           href: '/sys/fejl',
           roles: ['sys_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
-      ]
-    }
-  ]
+      ],
+    },
+  ],
 }
 
 type SiteConfig = {

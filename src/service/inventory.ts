@@ -1,5 +1,9 @@
 import { inventory } from '@/data/inventory'
-import { FormattedInventory, HistoryType } from '@/data/inventory.types'
+import {
+  FormattedHistory,
+  FormattedInventory,
+  HistoryType,
+} from '@/data/inventory.types'
 import { db } from '@/lib/database'
 import { UserID } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
@@ -131,5 +135,10 @@ export const inventoryService = {
         }
       }
     }
+  },
+  getHistoryByLocationID: async function (
+    locationID: LocationID,
+  ): Promise<FormattedHistory[]> {
+    return await inventory.getHistoryByLocationID(locationID)
   },
 }

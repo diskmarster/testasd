@@ -1,5 +1,11 @@
+import { UserNoHash } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
-import { Batch, Placement, Product } from '@/lib/database/schema/inventory'
+import {
+  Batch,
+  History,
+  Placement,
+  Product,
+} from '@/lib/database/schema/inventory'
 import { z } from 'zod'
 
 export const historyTypeZodSchema = z.enum(['tilgang', 'afgang', 'regulering'])
@@ -21,4 +27,11 @@ export type FormattedInventory = {
   product: Product & { unit: string; group: string }
   placement: Placement
   batch: Batch
+}
+
+export interface FormattedHistory extends History {
+  product: Product & { unit: string; group: string }
+  placement: Placement
+  batch: Batch
+  user: UserNoHash
 }

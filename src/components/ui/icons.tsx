@@ -8,6 +8,7 @@ import {
   Check,
   ChevronDown,
   ChevronsUpDown,
+  ChevronsUpDownIcon,
   CircleAlert,
   Columns2,
   Diff,
@@ -32,6 +33,7 @@ import {
 
 export const Icons = {
   updown: ChevronsUpDown,
+  chevronDownUp: ChevronsUpDownIcon,
   diff: Diff,
   minus: Minus,
   arrowLeft: ArrowLeft,
