@@ -109,6 +109,8 @@ export function ModalUpdateInventory({
   function onOpenChange(open: boolean) {
     reset()
     setError(undefined)
+    setNewBatch(false)
+    setNewPlacement(false)
     setOpen(open)
   }
 
@@ -124,6 +126,8 @@ export function ModalUpdateInventory({
       setError(undefined)
       reset()
       setOpen(false)
+      setNewBatch(false)
+      setNewPlacement(false)
       toast.success(siteConfig.successTitle, {
         description: `${isIncoming ? 'Tilgang' : 'Afgang'} blev oprettet`,
       })
