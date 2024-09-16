@@ -1,16 +1,44 @@
-"use client"
+'use client'
 
-import { getTableOverviewColumns, getTableOverviewFilters } from '@/app/(site)/oversigt/columns'
+import {
+  getTableOverviewColumns,
+  getTableOverviewFilters,
+} from '@/app/(site)/oversigt/columns'
+import { TableGroupedCell } from '@/components/table/table-grouped-cell'
+import { TablePagination } from '@/components/table/table-pagination'
+import { TableToolbar } from '@/components/table/table-toolbar'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
-import { ColumnFiltersState, ExpandedState, flexRender, getCoreRowModel, getExpandedRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getGroupedRowModel, getPaginationRowModel, getSortedRowModel, GroupingState, RowSelectionState, SortingState, Updater, useReactTable, VisibilityState } from '@tanstack/react-table'
+import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
+import {
+  ColumnFiltersState,
+  ExpandedState,
+  flexRender,
+  getCoreRowModel,
+  getExpandedRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getGroupedRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  GroupingState,
+  RowSelectionState,
+  SortingState,
+  Updater,
+  useReactTable,
+  VisibilityState,
+} from '@tanstack/react-table'
 import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { TableGroupedCell } from '@/components/table/table-grouped-cell'
-import { Plan } from '@/data/customer.types'
-import { TableToolbar } from '@/components/table/table-toolbar'
-import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
-import { TablePagination } from '@/components/table/table-pagination'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -26,9 +54,20 @@ interface Props {
   batches: Batch[]
 }
 
-export function TableOverview({ data, user, plan, units, groups, placements, batches }: Props) {
+export function TableOverview({
+  data,
+  user,
+  plan,
+  units,
+  groups,
+  placements,
+  batches,
+}: Props) {
   const LOCALSTORAGE_KEY = 'inventory_cols'
-  const columns = useMemo(() => getTableOverviewColumns(plan, user.role), [user.role, plan])
+  const columns = useMemo(
+    () => getTableOverviewColumns(plan, user.role),
+    [user.role, plan],
+  )
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -39,19 +78,17 @@ export function TableOverview({ data, user, plan, units, groups, placements, bat
 
   useEffect(() => {
     const visibility = JSON.parse(
-      localStorage.getItem(LOCALSTORAGE_KEY) || '{}'
+      localStorage.getItem(LOCALSTORAGE_KEY) || '{}',
     )
     setColumnVisibility(visibility)
-  }, [LOCALSTORAGE_KEY])
+  }, [LOCALSTORAGE_KEY, setColumnVisibility])
 
   const handleVisibilityChange = (updaterOrValue: Updater<VisibilityState>) => {
     if (LOCALSTORAGE_KEY) {
       if (typeof updaterOrValue === 'function') {
         const currentState = JSON.parse(
           localStorage.getItem(LOCALSTORAGE_KEY) || '{}',
-
         )
-
 
         const updatedState = updaterOrValue(currentState)
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(updatedState))
@@ -100,7 +137,7 @@ export function TableOverview({ data, user, plan, units, groups, placements, bat
       sorting,
       grouping,
       expanded,
-      columnVisibility
+      columnVisibility,
     },
 
     meta: {
@@ -108,11 +145,19 @@ export function TableOverview({ data, user, plan, units, groups, placements, bat
     },
   })
 
-  const filterFields = useMemo(() => getTableOverviewFilters(plan, table, units, groups, placements, batches), [plan, table, units, groups, placements, batches])
+  const filterFields = useMemo(
+    () =>
+      getTableOverviewFilters(plan, table, units, groups, placements, batches),
+    [plan, table, units, groups, placements, batches],
+  )
 
   return (
     <div>
-      <TableToolbar table={table} options={{ showExport: true, showHideShow: true }} filterFields={filterFields} />
+      <TableToolbar
+        table={table}
+        options={{ showExport: true, showHideShow: true }}
+        filterFields={filterFields}
+      />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
@@ -123,9 +168,9 @@ export function TableOverview({ data, user, plan, units, groups, placements, bat
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
