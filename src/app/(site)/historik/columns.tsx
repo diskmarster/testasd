@@ -50,10 +50,10 @@ export function getTableHistoryColumns(
   }
 
   const groupCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.group',
+    accessorKey: 'product.groupID',
     id: 'group',
     header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
-    cell: ({ getValue }) => getValue<string>(),
+    cell: ({ row: { original } }) => original.product.group,
     meta: {
       viewLabel: 'Varegruppe',
     },
@@ -105,12 +105,15 @@ export function getTableHistoryColumns(
   }
 
   const unitCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.unit',
+    accessorKey: 'product.unitID',
     id: 'unit',
     header: ({ column }) => <TableHeader column={column} title='Enhed' />,
-    cell: ({ getValue }) => getValue<string>(),
+    cell: ({ row: { original } }) => original.product.unit,
     meta: {
       viewLabel: 'Enhed',
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
     },
   }
 
@@ -160,10 +163,10 @@ export function getTableHistoryColumns(
   }
 
   const placementCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'placement.name',
+    accessorKey: 'placementID',
     id: 'placement',
     header: ({ column }) => <TableHeader column={column} title='Placering' />,
-    cell: ({ getValue }) => getValue<string>(),
+    cell: ({ row: { original } }) => original.placement.name,
     meta: {
       viewLabel: 'Placering',
     },
@@ -173,10 +176,10 @@ export function getTableHistoryColumns(
   }
 
   const batchCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'batch.batch',
+    accessorKey: 'batchID',
     id: 'batch',
     header: ({ column }) => <TableHeader column={column} title='Batchnr.' />,
-    cell: ({ getValue }) => getValue<string>(),
+    cell: ({ row: { original } }) => original.batch.batch,
     meta: {
       viewLabel: 'Batchnr.',
     },
