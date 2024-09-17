@@ -80,11 +80,9 @@ export function FormCreateProducts({
   return (
     <Credenza open={show} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <button
-          className='bg-blue-700 hover:bg-blue-900 text-primary-foreground font-bold py-2 px-4 border-b-4 border-blue-900 hover:border-blue-500 rounded '
-          onClick={() => setShow(true)}>
-          Opret nyt produkt
-        </button>
+        <Button size='icon' variant='outline'>
+          <Icons.plus className='size-5' />
+        </Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <CredenzaHeader>
@@ -94,7 +92,9 @@ export function FormCreateProducts({
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
-          <form className='grid gap-4 mb-4' onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className='grid gap-4 mb-4 md:mb-0'
+            onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='!top-3 size-4' />
