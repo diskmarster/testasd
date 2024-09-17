@@ -13,7 +13,7 @@ export function exportTableToCSV<TData>(
   opts: ExportOptions<TData> = {},
 ): void {
   const {
-    filename = 'table_new',
+    filename = 'nemlager_table',
     excludeColumns = [],
     onlySelected = false,
     delimiter = ';',
