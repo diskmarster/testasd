@@ -1,89 +1,70 @@
 import { TableHeader } from '@/components/table/table-header'
+import { FilterField } from '@/components/table/table-toolbar'
 import { Plan } from '@/data/customer.types'
-import { Product } from '@/lib/database/schema/inventory'
+import { FormattedProduct } from '@/data/products'
+import { Group, Unit } from '@/lib/database/schema/inventory'
 import { formatDate, numberToDKCurrency } from '@/lib/utils'
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
 
-export function getProductOverviewColumns(plan: Plan): ColumnDef<Product>[] {
-  const skuCol: ColumnDef<Product> = {
+export function getProductOverviewColumns(
+  plan: Plan,
+): ColumnDef<FormattedProduct>[] {
+  const skuCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'sku',
-    id: 'sku',
     header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
     cell: ({ getValue }) => getValue<string>(),
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Varenr.',
     },
   }
-  const barcodeCol: ColumnDef<Product> = {
+  const barcodeCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'barcode',
-    id: 'barcode',
     header: ({ column }) => <TableHeader column={column} title='Stregkode' />,
-    aggregationFn: 'unique',
     cell: ({ getValue }) => getValue<string>(),
-    aggregatedCell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Stregkode',
     },
   }
-  const groupCol: ColumnDef<Product> = {
-    accessorKey: 'groupID',
-    id: 'groupID',
+  const groupCol: ColumnDef<FormattedProduct> = {
+    accessorKey: 'group',
     header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+    cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Varegruppe',
     },
   }
 
-  const text1Col: ColumnDef<Product> = {
+  const text1Col: ColumnDef<FormattedProduct> = {
     accessorKey: 'text1',
-    id: 'text1',
     header: ({ column }) => <TableHeader column={column} title='Varetekst 1' />,
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+    cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Varetekst 1',
     },
   }
 
-  const text2Col: ColumnDef<Product> = {
+  const text2Col: ColumnDef<FormattedProduct> = {
     accessorKey: 'text2',
-    id: 'text2',
     header: ({ column }) => <TableHeader column={column} title='Varetekst 2' />,
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+    cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Varetekst 2',
     },
   }
 
-  const text3Col: ColumnDef<Product> = {
+  const text3Col: ColumnDef<FormattedProduct> = {
     accessorKey: 'text3',
-    id: 'text3',
     header: ({ column }) => <TableHeader column={column} title='Varetekst 3' />,
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+    cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Varetekst 3',
     },
   }
-  const unitCol: ColumnDef<Product> = {
-    accessorKey: 'unitID',
-    id: 'unitID',
+  const unitCol: ColumnDef<FormattedProduct> = {
+    accessorKey: 'unit',
     header: ({ column }) => <TableHeader column={column} title='Enhed' />,
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: ({ getValue }) => (
-      <p className='text-muted-foreground'>{getValue<string>()}</p>
-    ),
+    cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
@@ -92,38 +73,33 @@ export function getProductOverviewColumns(plan: Plan): ColumnDef<Product>[] {
     },
   }
 
-  const costPriceCol: ColumnDef<Product> = {
+  const costPriceCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'costPrice',
-    id: 'costPrice',
     header: ({ column }) => <TableHeader column={column} title='Kostpris' />,
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
-    cell: () => null,
+    cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    filterFn: 'includesString',
     meta: {
       rightAlign: true,
       viewLabel: 'Kostpris',
     },
   }
 
-  const salesPriceCol: ColumnDef<Product> = {
+  const salesPriceCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'salesPrice',
-    id: 'salesPrice',
     header: ({ column }) => <TableHeader column={column} title='Salgspris' />,
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
-    cell: () => null,
+    cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    filterFn: 'includesString',
     meta: {
       rightAlign: true,
       viewLabel: 'Salgspris',
     },
   }
-  const updatedCol: ColumnDef<Product> = {
+  const updatedCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'updated',
     header: ({ column }) => (
       <TableHeader column={column} title='Sidst opdateret' />
     ),
-    aggregatedCell: ({ getValue }) => formatDate(getValue<Date[]>()[0]),
-    cell: () => null,
+    cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value) => {
       return isSameDay(value, row.getValue(id))
     },
@@ -171,5 +147,129 @@ export function getProductOverviewColumns(plan: Plan): ColumnDef<Product>[] {
         updatedCol,
       ]
       return proCols
+  }
+}
+
+export function getProductTableOverviewFilters(
+  plan: Plan,
+  units: Unit[],
+  groups: Group[],
+  table: Table<FormattedProduct>,
+): FilterField<FormattedProduct>[] {
+  const skuFilter: FilterField<FormattedProduct> = {
+    column: table.getColumn('sku'),
+    type: 'text',
+    label: 'Varenr.',
+    value: '',
+    placeholder: 'Søg i varenr.',
+  }
+  const barcodeFilter: FilterField<FormattedProduct> = {
+    column: table.getColumn('barcode'),
+    type: 'text',
+    label: 'Stregkode',
+    value: '',
+    placeholder: 'Søg i stregkode',
+  }
+  const unitFilter: FilterField<FormattedProduct> = {
+    column: table.getColumn('unit'),
+    type: 'select',
+    label: 'Enhed',
+    value: '',
+    options: [
+      ...units.map(unit => ({
+        value: unit.id,
+        label: unit.name,
+      })),
+    ],
+  }
+  const groupFilter: FilterField<FormattedProduct> = {
+    column: table.getColumn('group'),
+    type: 'select',
+    label: 'Varegruppe',
+    value: '',
+    options: [
+      ...groups.map(group => ({
+        value: group.id,
+        label: group.name,
+      })),
+    ],
+  }
+  const text1Filter: FilterField<FormattedProduct> = {
+    column: table.getColumn('text1'),
+    type: 'text',
+    label: 'Varetekst 1',
+    value: '',
+    placeholder: 'Søg i varetekst 1',
+  }
+  const text2Filter: FilterField<FormattedProduct> = {
+    column: table.getColumn('text2'),
+    type: 'text',
+    label: 'Varetekst 2',
+    value: '',
+    placeholder: 'Søg i varetekst 2',
+  }
+  const text3Filter: FilterField<FormattedProduct> = {
+    column: table.getColumn('text3'),
+    type: 'text',
+    label: 'Varetekst 3',
+    value: '',
+    placeholder: 'Søg i varetekst 3',
+  }
+  const updatedFilter: FilterField<FormattedProduct> = {
+    column: table.getColumn('updated'),
+    type: 'date',
+    label: 'Sidst opdateret',
+    value: '',
+  }
+  const costPriceFilter: FilterField<FormattedProduct> = {
+    column: table.getColumn('costPrice'),
+    type: 'text',
+    label: 'Kostpris',
+    value: '',
+    placeholder: 'Søg i kostpris.',
+  }
+  const salesPriceFilter: FilterField<FormattedProduct> = {
+    column: table.getColumn('salesPrice'),
+    type: 'text',
+    label: 'Salgspris',
+    value: '',
+    placeholder: 'Søg i salgspris.',
+  }
+  switch (plan) {
+    case 'lite':
+      return [
+        skuFilter,
+        barcodeFilter,
+        groupFilter,
+        text1Filter,
+        unitFilter,
+        costPriceFilter,
+        salesPriceFilter,
+        updatedFilter,
+      ]
+    case 'plus':
+      return [
+        skuFilter,
+        barcodeFilter,
+        groupFilter,
+        text1Filter,
+        unitFilter,
+        costPriceFilter,
+        salesPriceFilter,
+        updatedFilter,
+      ]
+    case 'pro':
+      return [
+        skuFilter,
+        barcodeFilter,
+        groupFilter,
+        text1Filter,
+        text2Filter,
+        text3Filter,
+        unitFilter,
+        costPriceFilter,
+        salesPriceFilter,
+        updatedFilter,
+      ]
   }
 }
