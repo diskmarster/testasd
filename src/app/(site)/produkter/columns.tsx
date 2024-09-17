@@ -1,7 +1,9 @@
+import { TableOverviewActions } from '@/components/products/product-table-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
+import { UserRole } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -9,6 +11,7 @@ import { isSameDay } from 'date-fns'
 
 export function getProductOverviewColumns(
   plan: Plan,
+  userRole: UserRole
 ): ColumnDef<FormattedProduct>[] {
   const skuCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'sku',
@@ -107,6 +110,13 @@ export function getProductOverviewColumns(
       viewLabel: 'Sidst opdateret',
     },
   }
+  const actionsCol: ColumnDef<FormattedProduct> = {
+    accessorKey: 'actions',
+    header: () => null,
+    cell: ({ table, row }) => <TableOverviewActions table={table} row={row} />,
+    enableHiding: false,
+    enableSorting: false,
+  }
 
   switch (plan) {
     case 'lite':
@@ -120,6 +130,7 @@ export function getProductOverviewColumns(
         salesPriceCol,
         updatedCol,
       ]
+      if (userRole != 'bruger') liteCols.push(actionsCol)
       return liteCols
     case 'plus':
       const plusCols = [
@@ -132,6 +143,7 @@ export function getProductOverviewColumns(
         salesPriceCol,
         updatedCol,
       ]
+      if (userRole != 'bruger') plusCols.push(actionsCol)
       return plusCols
     case 'pro':
       const proCols = [
@@ -146,6 +158,7 @@ export function getProductOverviewColumns(
         salesPriceCol,
         updatedCol,
       ]
+      if (userRole != 'bruger') proCols.push(actionsCol)
       return proCols
   }
 }
