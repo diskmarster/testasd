@@ -26,7 +26,12 @@ import {
 import { siteConfig } from '@/config/site'
 import { FormattedInventory } from '@/data/inventory.types'
 import { Customer } from '@/lib/database/schema/customer'
-import { Placement, Product } from '@/lib/database/schema/inventory'
+import {
+  Batch,
+  Placement,
+  PlacementID,
+  ProductID,
+} from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
@@ -36,16 +41,16 @@ import { z } from 'zod'
 
 interface Props {
   customer: Customer
-  products: Product[]
   placements: Placement[]
+  batches: Batch[]
   inventory: FormattedInventory[]
 }
 
 export function ModalMoveInventory({
   customer,
-  products,
   placements,
   inventory,
+  batches,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
@@ -55,19 +60,50 @@ export function ModalMoveInventory({
     return index === self.findIndex(i => i.product.id === item.product.id)
   })
 
-  console.table(inventory.map(item => item.product))
+  const placementsForProduct = (productID: ProductID) =>
+    inventory.filter(item => item.product.id === productID)
 
-  const { reset, handleSubmit, watch, setValue, formState, register } = useForm<
-    z.infer<typeof moveInventoryValidation>
-  >({
+  const batchesForProduct = (productID: ProductID, placementID: PlacementID) =>
+    inventory.filter(
+      item =>
+        item.product.id === productID && item.placement.id === placementID,
+    )
+
+  //const fallbackPlacementID =
+  //  customer.plan == 'plus'
+  //    ? placements.find(placement => placement.name == '-')?.id
+  //    : undefined
+  const fallbackBatchID =
+    customer.plan == 'plus'
+      ? batches.find(batch => batch.batch == '-')?.id
+      : undefined
+
+  const {
+    reset,
+    handleSubmit,
+    watch,
+    setValue,
+    formState,
+    register,
+    resetField,
+  } = useForm<z.infer<typeof moveInventoryValidation>>({
     resolver: zodResolver(moveInventoryValidation),
     defaultValues: {
       amount: 0,
+      //fromPlacementID: fallbackPlacementID,
+      fromBatchID: fallbackBatchID,
     },
   })
 
   const formValues = watch()
   const hasProduct = formValues.productID != undefined
+
+  const fromInventoryItem = inventory.find(
+    item =>
+      item.product.id === formValues.productID &&
+      item.placement.id === formValues.fromPlacementID &&
+      item.batch.id === formValues.fromBatchID,
+  )
 
   function onSubmit(values: z.infer<typeof moveInventoryValidation>) {
     startTransition(async () => {
@@ -143,6 +179,8 @@ export function ModalMoveInventory({
                     : undefined
                 }
                 onValueChange={(value: string) => {
+                  resetField('fromPlacementID')
+                  resetField('fromBatchID')
                   setValue('productID', parseInt(value), {
                     shouldValidate: true,
                   })
@@ -179,7 +217,7 @@ export function ModalMoveInventory({
                     }
                     disabled={!hasProduct}
                     onValueChange={(value: string) => {
-                      //resetField('batchID')
+                      resetField('fromBatchID')
                       setValue('fromPlacementID', parseInt(value), {
                         shouldValidate: true,
                       })
@@ -188,14 +226,16 @@ export function ModalMoveInventory({
                       <SelectValue placeholder='Vælg placering' />
                     </SelectTrigger>
                     <SelectContent>
-                      {placements.map((p, i) => (
-                        <SelectItem
-                          key={i}
-                          value={p.id.toString()}
-                          className='capitalize'>
-                          {p.name}
-                        </SelectItem>
-                      ))}
+                      {placementsForProduct(formValues.productID).map(
+                        (p, i) => (
+                          <SelectItem
+                            key={i}
+                            value={p.placement.id.toString()}
+                            className='capitalize'>
+                            {p.placement.name}
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -204,14 +244,14 @@ export function ModalMoveInventory({
                     <Label>Fra batch</Label>
                     <Select
                       value={
-                        formValues.fromPlacementID
-                          ? formValues.fromPlacementID.toString()
+                        formValues.fromBatchID
+                          ? formValues.fromBatchID.toString()
                           : undefined
                       }
                       disabled={!hasProduct}
                       onValueChange={(value: string) => {
                         //resetField('batchID')
-                        setValue('fromPlacementID', parseInt(value), {
+                        setValue('fromBatchID', parseInt(value), {
                           shouldValidate: true,
                         })
                       }}>
@@ -219,12 +259,15 @@ export function ModalMoveInventory({
                         <SelectValue placeholder='Vælg batchnr.' />
                       </SelectTrigger>
                       <SelectContent>
-                        {placements.map((p, i) => (
+                        {batchesForProduct(
+                          formValues.productID,
+                          formValues.fromPlacementID,
+                        ).map((p, i) => (
                           <SelectItem
                             key={i}
-                            value={p.id.toString()}
+                            value={p.batch.id.toString()}
                             className='capitalize'>
-                            {p.name}
+                            {p.batch.batch}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -234,10 +277,10 @@ export function ModalMoveInventory({
               </div>
 
               <div className='flex items-center my-2 gap-1 flex-col'>
-                <div className='rounded-full bg-primary opacity-60 dark:opacity-90 size-2 animate-pulse delay-100' />
-                <div className='rounded-full bg-primary opacity-30 dark:opacity-70 size-1.5 animate-pulse delay-200' />
-                <div className='rounded-full bg-primary opacity-20 dark:opacity-60 size-1 animate-pulse delay-300' />
-                <div className='rounded-full bg-primary opacity-30 dark:opacity-70 size-1.5 animate-pulse delay-400' />
+                <div className='rounded-full bg-primary opacity-60 dark:opacity-90 size-2' />
+                <div className='rounded-full bg-primary opacity-30 dark:opacity-70 size-1.5' />
+                <div className='rounded-full bg-primary opacity-20 dark:opacity-60 size-1' />
+                <div className='rounded-full bg-primary opacity-30 dark:opacity-70 size-1.5' />
                 <div className='rounded-full bg-primary opacity-60 dark:opacity-90 size-2' />
               </div>
 
@@ -246,14 +289,13 @@ export function ModalMoveInventory({
                   <Label>Til placering</Label>
                   <Select
                     value={
-                      formValues.fromPlacementID
-                        ? formValues.fromPlacementID.toString()
+                      formValues.toPlacementID
+                        ? formValues.toPlacementID.toString()
                         : undefined
                     }
                     disabled={!hasProduct}
                     onValueChange={(value: string) => {
-                      //resetField('batchID')
-                      setValue('fromPlacementID', parseInt(value), {
+                      setValue('toPlacementID', parseInt(value), {
                         shouldValidate: true,
                       })
                     }}>
@@ -261,14 +303,16 @@ export function ModalMoveInventory({
                       <SelectValue placeholder='Vælg placering' />
                     </SelectTrigger>
                     <SelectContent>
-                      {placements.map((p, i) => (
-                        <SelectItem
-                          key={i}
-                          value={p.id.toString()}
-                          className='capitalize'>
-                          {p.name}
-                        </SelectItem>
-                      ))}
+                      {placements
+                        .filter(item => item.id != formValues.fromPlacementID)
+                        .map((p, i) => (
+                          <SelectItem
+                            key={i}
+                            value={p.id.toString()}
+                            className='capitalize'>
+                            {p.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
