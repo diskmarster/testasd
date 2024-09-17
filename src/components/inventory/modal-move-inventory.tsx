@@ -2,6 +2,7 @@
 
 import { moveInventoryAction } from '@/app/(site)/oversigt/actions'
 import { moveInventoryValidation } from '@/app/(site)/oversigt/validation'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -13,7 +14,17 @@ import {
   CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { siteConfig } from '@/config/site'
+import { FormattedInventory } from '@/data/inventory.types'
 import { Customer } from '@/lib/database/schema/customer'
 import { Placement, Product } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
@@ -22,27 +33,29 @@ import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select'
 
 interface Props {
   customer: Customer
   products: Product[]
   placements: Placement[]
+  inventory: FormattedInventory[]
 }
 
-export function ModalMoveInventory({ customer, products, placements }: Props) {
+export function ModalMoveInventory({
+  customer,
+  products,
+  placements,
+  inventory,
+}: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+
+  const uniqueProducts = inventory.filter((item, index, self) => {
+    return index === self.findIndex(i => i.product.id === item.product.id)
+  })
+
+  console.table(inventory.map(item => item.product))
 
   const { reset, handleSubmit, watch, setValue, formState, register } = useForm<
     z.infer<typeof moveInventoryValidation>
@@ -138,15 +151,15 @@ export function ModalMoveInventory({ customer, products, placements }: Props) {
                   <SelectValue placeholder='Vælg vare' />
                 </SelectTrigger>
                 <SelectContent>
-                  {products.map((p, i) => (
+                  {uniqueProducts.map((p, i) => (
                     <SelectItem
                       key={i}
-                      value={p.id.toString()}
+                      value={p.product.id.toString()}
                       className='capitalize'>
                       <div className='flex flex-col gap items-start'>
-                        <span className='font-semibold'>{p.text1}</span>
+                        <span className='font-semibold'>{p.product.text1}</span>
                         <span className='text-muted-foreground text-sm'>
-                          {p.sku}
+                          {p.product.sku}
                         </span>
                       </div>
                     </SelectItem>
