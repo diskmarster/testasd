@@ -1,61 +1,70 @@
 import { type Table } from '@tanstack/react-table'
 import { format, isValid } from 'date-fns'
 
-export function exportTableToCSV<TData>(
-  /**
-   * The table to export.
-   * @type Table<TData>
-   */
-  table: Table<TData>,
-  opts: {
-    /**
-     * The filename for the CSV file.
-     * @default "table"
-     * @example "tasks"
-     */
-    filename?: string
-    /**
-     * The columns to exclude from the CSV file.
-     * @default []
-     * @example ["select", "actions"]
-     */
-    excludeColumns?: (keyof TData | 'select' | 'actions')[]
+type ExportOptions<TData> = {
+  filename?: string
+  excludeColumns?: (keyof TData | 'select' | 'actions')[]
+  onlySelected?: boolean
+  delimiter?: ';' | ','
+}
 
-    /**
-     * Whether to export only the selected rows.
-     * @default false
-     */
-    onlySelected?: boolean
-    delimiter?: ';' | ','
-  } = {},
+export function exportTableToCSV<TData>(
+  table: Table<TData>,
+  opts: ExportOptions<TData> = {},
 ): void {
   const {
-    filename = 'table',
+    filename = 'nemlager_eksport',
     excludeColumns = [],
     onlySelected = false,
     delimiter = ';',
   } = opts
 
-  // Retrieve headers (column names)
-  const headers = table
+  // Fetch all columns and filter out excluded ones
+  const columns = table
     .getAllLeafColumns()
-    .map(column => column.id)
-    .filter(id => !excludeColumns.includes(id as keyof TData))
+    .filter(column => !excludeColumns.includes(column.id as keyof TData))
 
-  // Build CSV content
+  // Generate CSV headers based on the viewLabel from meta, fallback to column id
+  const headers = columns.map(column => {
+    // Assert that the columnDef might contain 'meta' with a 'viewLabel'
+    const viewLabel = (column.columnDef as any).meta?.viewLabel
+    return viewLabel || column.id
+  })
+
+  // Generate rows for the CSV file
   const csvContent = [
     headers.join(delimiter),
     ...(onlySelected
       ? table.getFilteredSelectedRowModel().rows
       : table.getRowModel().rows
     ).map(row =>
-      headers
-        .map(header => {
-          const cellValue = row.getValue(header)
-          if (typeof cellValue != 'number' && isValid(cellValue)) {
-            return format(cellValue as Date, 'dd/MM/yyyy HH:mm')
+      columns
+        .map(column => {
+          const cellValue = row.getValue(column.id)
+
+          // Check if cellValue is an array of dates or date-like strings
+          if (Array.isArray(cellValue) && cellValue[0] instanceof Date) {
+            const validDates = cellValue
+              .map(date => new Date(date))
+              .filter(isValid) // Filter out invalid dates
+
+            if (validDates.length > 0) {
+              // Get the latest date from the array
+              const latestDate = new Date(
+                Math.max(...validDates.map(date => date.getTime())),
+              )
+              return format(latestDate, 'dd/MM/yyyy HH:mm')
+            }
           }
-          // Handle values that might contain commas or newlines
+          // If the value is a single valid date, format it
+          if (typeof cellValue != 'number' && cellValue instanceof Date) {
+            const date = new Date(cellValue)
+            if (isValid(date)) {
+              return format(date, 'dd/MM/yyyy HH:mm')
+            }
+          }
+
+          // For non-date columns, return the value as it is or escape quotes in strings
           return typeof cellValue === 'string'
             ? `"${cellValue.replace(/"/g, '""')}"`
             : cellValue
@@ -64,10 +73,10 @@ export function exportTableToCSV<TData>(
     ),
   ].join('\n')
 
-  // Create a Blob with CSV content
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  // Prepend the BOM for Excel compatibility
+  const csvWithBom = '\uFEFF' + csvContent
 
-  // Create a link and trigger the download
+  const blob = new Blob([csvWithBom], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.setAttribute('href', url)
