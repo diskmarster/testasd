@@ -172,7 +172,6 @@ export function getTableOverviewColumns(
 
   const updatedCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'updated',
-    id: 'updated',
     header: ({ column }) => (
       <TableHeader column={column} title='Sidst opdateret' />
     ),
