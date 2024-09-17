@@ -43,7 +43,7 @@ export function exportTableToCSV<TData>(
           const cellValue = row.getValue(column.id)
 
           // Check if cellValue is an array of dates or date-like strings
-          if (Array.isArray(cellValue) && isValid(cellValue[0])) {
+          if (Array.isArray(cellValue) && cellValue[0] instanceof Date) {
             const validDates = cellValue
               .map(date => new Date(date))
               .filter(isValid) // Filter out invalid dates
@@ -55,17 +55,12 @@ export function exportTableToCSV<TData>(
               )
               return format(latestDate, 'dd/MM/yyyy HH:mm')
             }
-
-            // If the value is a single valid date, format it
-            if (
-              typeof cellValue === 'string' ||
-              typeof cellValue === 'number' ||
-              cellValue instanceof Date
-            ) {
-              const date = new Date(cellValue)
-              if (isValid(date)) {
-                return format(date, 'dd/MM/yyyy HH:mm')
-              }
+          }
+          // If the value is a single valid date, format it
+          if (typeof cellValue != 'number' && cellValue instanceof Date) {
+            const date = new Date(cellValue)
+            if (isValid(date)) {
+              return format(date, 'dd/MM/yyyy HH:mm')
             }
           }
 
