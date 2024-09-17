@@ -1,5 +1,5 @@
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { FormCreateProducts } from '@/components/products/form-create-product'
+import { FormCreateProducts } from '@/components/products/create-product-form'
 import { ProductOverview } from '@/components/products/table-overview'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -27,7 +27,7 @@ export default async function Page() {
           <FormCreateProducts units={units} groups={groups} />
         </>
       }>
-      <ProductOverview data={products} user={user} plan={customer.plan} />
+      <ProductOverview data={products} user={user} plan={customer.plan} units={units} groups={groups} />
     </SiteWrapper>
   )
 }
