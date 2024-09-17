@@ -1,58 +1,51 @@
 import { type Table } from '@tanstack/react-table'
 import { format, isValid } from 'date-fns'
 
+type ExportOptions<TData> = {
+  filename?: string
+  excludeColumns?: (keyof TData | 'select' | 'actions')[]
+  onlySelected?: boolean
+  delimiter?: ';' | ','
+}
+
 export function exportTableToCSV<TData>(
   table: Table<TData>,
-  opts: {
-    filename?: string
-    excludeColumns?: (keyof TData | 'select' | 'actions')[]
-    onlySelected?: boolean
-    delimiter?: ';' | ','
-  } = {}
+  opts: ExportOptions<TData> = {},
 ): void {
   const {
-    filename = 'table',
+    filename = 'table_new',
     excludeColumns = [],
     onlySelected = false,
     delimiter = ';',
   } = opts
 
-  const columnMapping: Record<string, string> = {
-    'sku': 'Varenr.',
-    'barcode': 'Stregkode',
-    'group': 'Varegruppe',
-    'text1': 'Varetekst 1',
-    'text2': 'Varetekst 2',
-    'text3': 'Varetekst 3',
-    'costPrice': 'Kostpris',
-    'salesPrice': 'Salgspris',
-    'quantity': 'Beholdning',
-    'unit': 'Enhed',
-    'placement': 'Placering',
-    'batch': 'Batchnr.',
-    'updated': 'Sidst opdateret'
-  }
-
-  const headers = table
+  // Fetch all columns and filter out excluded ones
+  const columns = table
     .getAllLeafColumns()
-    .map(column => column.id)
-    .filter(id => !excludeColumns.includes(id as keyof TData))
+    .filter(column => !excludeColumns.includes(column.id as keyof TData))
 
-  const headerNames = headers.map(id => columnMapping[id] || id)
+  // Generate CSV headers based on the viewLabel from meta, fallback to column id
+  const headers = columns.map(column => {
+    // Assert that the columnDef might contain 'meta' with a 'viewLabel'
+    const viewLabel = (column.columnDef as any).meta?.viewLabel
+    return viewLabel || column.id
+  })
 
+  // Generate rows for the CSV file
   const csvContent = [
-    headerNames.join(delimiter),
+    headers.join(delimiter),
     ...(onlySelected
       ? table.getFilteredSelectedRowModel().rows
       : table.getRowModel().rows
     ).map(row =>
-      headerNames
-        .map(headerName => {
-          const columnId = Object.keys(columnMapping).find(id => columnMapping[id] === headerName)
-          const cellValue = columnId ? row.getValue(columnId) : ''
-          if (typeof cellValue != 'number' && isValid(cellValue)) {
+      columns
+        .map(column => {
+          const cellValue = row.getValue(column.id)
+          // If the value is a date, format it
+          if (typeof cellValue !== 'number' && isValid(cellValue)) {
             return format(cellValue as Date, 'dd/MM/yyyy HH:mm')
           }
+          // Escape quotes in strings
           return typeof cellValue === 'string'
             ? `"${cellValue.replace(/"/g, '""')}"`
             : cellValue
@@ -61,10 +54,10 @@ export function exportTableToCSV<TData>(
     ),
   ].join('\n')
 
+  // Prepend the BOM for Excel compatibility
   const csvWithBom = '\uFEFF' + csvContent
 
   const blob = new Blob([csvWithBom], { type: 'text/csv;charset=utf-8;' })
-
   const url = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.setAttribute('href', url)
