@@ -1,7 +1,7 @@
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Plan } from '@/data/customer.types'
-import { FormattedProduct } from '@/data/products'
+import { FormattedProduct } from '@/data/products.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
