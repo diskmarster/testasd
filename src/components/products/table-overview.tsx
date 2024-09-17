@@ -1,6 +1,9 @@
 'use client'
 
-import { getProductOverviewColumns } from '@/app/(site)/produkter/columns'
+import {
+  getProductOverviewColumns,
+  getProductTableOverviewFilters,
+} from '@/app/(site)/produkter/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import {
@@ -12,7 +15,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Plan } from '@/data/customer.types'
-import { Product } from '@/lib/database/schema/inventory'
+import { FormattedProduct } from '@/data/products'
+import { Group, Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
   ExpandedState,
@@ -25,7 +29,6 @@ import {
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  GroupingState,
   RowSelectionState,
   SortingState,
   Updater,
@@ -34,24 +37,26 @@ import {
 } from '@tanstack/react-table'
 import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
+import { TableToolbar } from '../table/table-toolbar'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
 const ROW_PER_PAGE = [100, 250, 500, 1000]
 interface Props {
-  data: Product[]
+  data: FormattedProduct[]
   plan: Plan
   user: User
+  units: Unit[]
+  groups: Group[]
 }
 
-export function ProductOverview({ data, plan, user }: Props) {
+export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'product_cols'
   const columns = useMemo(() => getProductOverviewColumns(plan), [plan])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [grouping, setGrouping] = useState<GroupingState>(['sku'])
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
@@ -100,7 +105,6 @@ export function ProductOverview({ data, plan, user }: Props) {
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onGroupingChange: setGrouping,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,
 
@@ -114,7 +118,6 @@ export function ProductOverview({ data, plan, user }: Props) {
       columnFilters,
       rowSelection,
       sorting,
-      grouping,
       expanded,
       columnVisibility,
     },
@@ -124,15 +127,18 @@ export function ProductOverview({ data, plan, user }: Props) {
     },
   })
 
-  /* const filterFields = useMemo(() => getProductTableOverviewFilters(products), [])
-   */
+  const filterFields = useMemo(
+    () => getProductTableOverviewFilters(plan, units, groups, table),
+    [plan, units, groups, table],
+  )
+
   return (
     <div>
-      {/* <TableToolbar
+      <TableToolbar
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-      /> */}
+      />
       <div className='rounded-md border'>
         <Table>
           <TableHeader>
