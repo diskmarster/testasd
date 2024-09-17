@@ -1,4 +1,5 @@
-import { FormattedProduct, product, products} from '@/data/products'
+import { product} from '@/data/products'
+import { FormattedProduct } from '@/data/products.types'
 import { CustomerID } from '@/lib/database/schema/customer'
 import { NewProduct, Product } from '@/lib/database/schema/inventory'
 
@@ -27,6 +28,6 @@ export const productService = {
   getAllByID: async function (
     customerID: CustomerID,
   ): Promise<FormattedProduct[]> {
-    return await products.getAllByCustomerID(customerID)
+    return await product.getAllByCustomerID(customerID)
   },
 }

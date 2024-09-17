@@ -15,7 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Plan } from '@/data/customer.types'
-import { FormattedProduct } from '@/data/products'
+import { FormattedProduct } from '@/data/products.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
@@ -52,7 +52,7 @@ interface Props {
 
 export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'product_cols'
-  const columns = useMemo(() => getProductOverviewColumns(plan), [plan])
+  const columns = useMemo(() => getProductOverviewColumns(plan, user.role), [user.role, plan])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
