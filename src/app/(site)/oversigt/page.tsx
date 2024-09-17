@@ -16,7 +16,7 @@ export default async function Home() {
   if (!location) return null // TODO: make some error page
 
   const customer = await customerService.getByID(user.customerID)
-  if (!customer) return null
+  if (!customer) return signOutAction()
 
   const inventory = await inventoryService.getInventory(location)
   const units = await inventoryService.getUnits()
@@ -37,7 +37,13 @@ export default async function Home() {
             placements={placements}
             batches={batches}
           />
-          <ModalMoveInventory products={products} placements={placements} />
+          {customer.plan != 'lite' && (
+            <ModalMoveInventory
+              products={products}
+              placements={placements}
+              customer={customer}
+            />
+          )}
         </>
       }>
       <TableOverview

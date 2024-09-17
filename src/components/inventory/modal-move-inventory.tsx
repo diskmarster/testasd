@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { Customer } from '@/lib/database/schema/customer'
 import { Placement, Product } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -33,11 +34,12 @@ import {
 } from '../ui/select'
 
 interface Props {
+  customer: Customer
   products: Product[]
   placements: Placement[]
 }
 
-export function ModalMoveInventory({ products, placements }: Props) {
+export function ModalMoveInventory({ customer, products, placements }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
@@ -153,7 +155,7 @@ export function ModalMoveInventory({ products, placements }: Props) {
               </Select>
             </div>
             <div>
-              <div className='flex flex-col gap-4 md:flex-row bg-muted/50 border-dashed border p-4 rounded-md'>
+              <div className='flex flex-col gap-4 md:flex-row bg-muted border-dashed border p-4 rounded-md'>
                 <div className='grid gap-2 w-full'>
                   <Label>Fra placering</Label>
                   <Select
@@ -184,47 +186,49 @@ export function ModalMoveInventory({ products, placements }: Props) {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className='grid gap-2 w-full'>
-                  <Label>Fra batch</Label>
-                  <Select
-                    value={
-                      formValues.fromPlacementID
-                        ? formValues.fromPlacementID.toString()
-                        : undefined
-                    }
-                    disabled={!hasProduct}
-                    onValueChange={(value: string) => {
-                      //resetField('batchID')
-                      setValue('fromPlacementID', parseInt(value), {
-                        shouldValidate: true,
-                      })
-                    }}>
-                    <SelectTrigger className='bg-background'>
-                      <SelectValue placeholder='Vælg batchnr.' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {placements.map((p, i) => (
-                        <SelectItem
-                          key={i}
-                          value={p.id.toString()}
-                          className='capitalize'>
-                          {p.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {customer.plan == 'pro' && (
+                  <div className='grid gap-2 w-full'>
+                    <Label>Fra batch</Label>
+                    <Select
+                      value={
+                        formValues.fromPlacementID
+                          ? formValues.fromPlacementID.toString()
+                          : undefined
+                      }
+                      disabled={!hasProduct}
+                      onValueChange={(value: string) => {
+                        //resetField('batchID')
+                        setValue('fromPlacementID', parseInt(value), {
+                          shouldValidate: true,
+                        })
+                      }}>
+                      <SelectTrigger className='bg-background'>
+                        <SelectValue placeholder='Vælg batchnr.' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {placements.map((p, i) => (
+                          <SelectItem
+                            key={i}
+                            value={p.id.toString()}
+                            className='capitalize'>
+                            {p.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
 
               <div className='flex items-center my-2 gap-1 flex-col'>
-                <div className='rounded-full bg-primary opacity-60 dark:opacity-90 size-2' />
-                <div className='rounded-full bg-primary opacity-30 dark:opacity-70 size-1.5' />
-                <div className='rounded-full bg-primary opacity-20 dark:opacity-60 size-1' />
-                <div className='rounded-full bg-primary opacity-30 dark:opacity-70 size-1.5' />
+                <div className='rounded-full bg-primary opacity-60 dark:opacity-90 size-2 animate-pulse delay-100' />
+                <div className='rounded-full bg-primary opacity-30 dark:opacity-70 size-1.5 animate-pulse delay-200' />
+                <div className='rounded-full bg-primary opacity-20 dark:opacity-60 size-1 animate-pulse delay-300' />
+                <div className='rounded-full bg-primary opacity-30 dark:opacity-70 size-1.5 animate-pulse delay-400' />
                 <div className='rounded-full bg-primary opacity-60 dark:opacity-90 size-2' />
               </div>
 
-              <div className='flex flex-col gap-4 md:flex-row bg-muted/50 border border-dashed p-4 rounded-md'>
+              <div className='flex flex-col gap-4 md:flex-row bg-muted border border-dashed p-4 rounded-md'>
                 <div className='grid gap-2 w-full'>
                   <Label>Til placering</Label>
                   <Select
