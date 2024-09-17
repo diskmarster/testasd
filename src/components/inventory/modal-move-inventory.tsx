@@ -90,8 +90,9 @@ export function ModalMoveInventory({
     resolver: zodResolver(moveInventoryValidation),
     defaultValues: {
       amount: 0,
-      //fromPlacementID: fallbackPlacementID,
+      fromPlacementID: undefined,
       fromBatchID: fallbackBatchID,
+      toPlacementID: undefined,
     },
   })
 
@@ -126,6 +127,9 @@ export function ModalMoveInventory({
   function increment() {
     // @ts-ignore
     const nextValue = parseFloat(formValues.amount) + 1
+
+    if (fromInventoryItem && nextValue > fromInventoryItem.quantity) return
+
     setValue('amount', parseFloat(nextValue.toFixed(4)), {
       shouldValidate: true,
     })
@@ -181,6 +185,7 @@ export function ModalMoveInventory({
                 onValueChange={(value: string) => {
                   resetField('fromPlacementID')
                   resetField('fromBatchID')
+                  resetField('amount')
                   setValue('productID', parseInt(value), {
                     shouldValidate: true,
                   })
@@ -319,17 +324,28 @@ export function ModalMoveInventory({
               </div>
             </div>
 
-            <div className='pt-2 flex flex-col gap-2'>
+            <div className='pt-2 flex flex-col'>
+              <div className='p-4 border border-b-0 rounded-t-md text-sm text-muted-foreground flex items-center gap-2 justify-center'>
+                {fromInventoryItem ? (
+                  <>
+                    <p>Flytbar beholdning:</p>
+                    <p>{fromInventoryItem.quantity}</p>
+                  </>
+                ) : (
+                  <p>En beholdning skal vælges før du kan flytte vare</p>
+                )}
+              </div>
               <div className='flex'>
                 <Button
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-14 w-28 border-r-0 rounded-r-none'
+                  className='h-14 w-28 border-r-0 rounded-r-none rounded-tl-none'
                   onClick={decrement}>
                   <Icons.minus className='size-6' />
                 </Button>
                 <Input
+                  max={fromInventoryItem?.quantity}
                   type='number'
                   {...register('amount')}
                   className={cn(
@@ -341,7 +357,7 @@ export function ModalMoveInventory({
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-14 w-28 border-l-0 rounded-l-none'
+                  className='h-14 w-28 border-l-0 rounded-l-none rounded-tr-none'
                   onClick={increment}>
                   <Icons.plus className='size-6' />
                 </Button>
