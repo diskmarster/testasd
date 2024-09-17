@@ -75,6 +75,11 @@ export function TableOverview({
   const [grouping, setGrouping] = useState<GroupingState>(['sku'])
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const visibility = JSON.parse(
@@ -151,6 +156,8 @@ export function TableOverview({
     [plan, table, units, groups, placements, batches],
   )
 
+  if (!mounted) return null
+
   return (
     <div>
       <TableToolbar
@@ -168,9 +175,9 @@ export function TableOverview({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
