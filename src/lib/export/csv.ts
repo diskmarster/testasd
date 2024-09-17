@@ -13,7 +13,7 @@ export function exportTableToCSV<TData>(
   opts: ExportOptions<TData> = {},
 ): void {
   const {
-    filename = 'nemlager_table',
+    filename = 'nemlager_eksport',
     excludeColumns = [],
     onlySelected = false,
     delimiter = ';',
@@ -41,11 +41,35 @@ export function exportTableToCSV<TData>(
       columns
         .map(column => {
           const cellValue = row.getValue(column.id)
-          // If the value is a date, format it
-          if (typeof cellValue !== 'number' && isValid(cellValue)) {
-            return format(cellValue as Date, 'dd/MM/yyyy HH:mm')
+
+          // Check if cellValue is an array of dates or date-like strings
+          if (Array.isArray(cellValue) && isValid(cellValue[0])) {
+            const validDates = cellValue
+              .map(date => new Date(date))
+              .filter(isValid) // Filter out invalid dates
+
+            if (validDates.length > 0) {
+              // Get the latest date from the array
+              const latestDate = new Date(
+                Math.max(...validDates.map(date => date.getTime())),
+              )
+              return format(latestDate, 'dd/MM/yyyy HH:mm')
+            }
+
+            // If the value is a single valid date, format it
+            if (
+              typeof cellValue === 'string' ||
+              typeof cellValue === 'number' ||
+              cellValue instanceof Date
+            ) {
+              const date = new Date(cellValue)
+              if (isValid(date)) {
+                return format(date, 'dd/MM/yyyy HH:mm')
+              }
+            }
           }
-          // Escape quotes in strings
+
+          // For non-date columns, return the value as it is or escape quotes in strings
           return typeof cellValue === 'string'
             ? `"${cellValue.replace(/"/g, '""')}"`
             : cellValue
