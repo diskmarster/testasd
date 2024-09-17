@@ -42,6 +42,7 @@ export default async function Home() {
               products={products}
               placements={placements}
               customer={customer}
+              inventory={inventory}
             />
           )}
         </>
