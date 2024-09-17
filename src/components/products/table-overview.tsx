@@ -3,7 +3,7 @@
 import {
   getProductOverviewColumns,
   getProductTableOverviewFilters,
-} from '@/app/(site)/produkter/columns'
+} from '@/app/(site)/admin/produkter/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import {
@@ -52,7 +52,10 @@ interface Props {
 
 export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'product_cols'
-  const columns = useMemo(() => getProductOverviewColumns(plan, user.role), [user.role, plan])
+  const columns = useMemo(
+    () => getProductOverviewColumns(plan, user.role),
+    [user.role, plan],
+  )
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
