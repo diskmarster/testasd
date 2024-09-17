@@ -39,10 +39,10 @@ export default async function Home() {
           />
           {customer.plan != 'lite' && (
             <ModalMoveInventory
-              products={products}
               placements={placements}
               customer={customer}
               inventory={inventory}
+              batches={batches}
             />
           )}
         </>
