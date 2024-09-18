@@ -65,7 +65,6 @@ export const inventory = {
       .innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
-      .orderBy(desc(inventoryTable.updated))
 
     return inventory
   },
