@@ -99,10 +99,89 @@ export const inventoryService = {
         trx,
       )
       if (!historyLog) {
-        throw new ActionError('Beholdning blev ikke opdateret, test')
+        throw new ActionError('Beholdning blev ikke opdateret')
       }
 
       return didUpsert && !!historyLog
+    })
+
+    return result
+  },
+  moveInventory: async function (
+    platform: 'web' | 'app',
+    customerID: CustomerID,
+    userID: UserID,
+    locationID: LocationID,
+    productID: ProductID,
+    fromPlacementID: PlacementID,
+    fromBatchID: BatchID,
+    toPlacementID: PlacementID,
+    type: HistoryType,
+    amount: number,
+  ): Promise<boolean> {
+    const result = await db.transaction(async trx => {
+      const didUpdateFrom = await inventory.updateInventory(
+        productID,
+        fromPlacementID,
+        fromBatchID,
+        -amount,
+        trx,
+      )
+      if (!didUpdateFrom) {
+        throw new ActionError('Beholdning blev opdatere beholdning')
+      }
+
+      const didUpsertTo = await inventory.upsertInventory(
+        {
+          customerID,
+          locationID,
+          productID,
+          placementID: toPlacementID,
+          batchID: fromBatchID,
+          quantity: amount,
+        },
+        trx,
+      )
+
+      if (!didUpsertTo) {
+        throw new ActionError('Kunne ikke flytte beholdning til placering')
+      }
+
+      const fromHistoryLog = await inventory.createHitoryLog(
+        {
+          customerID,
+          locationID,
+          productID,
+          placementID: fromPlacementID,
+          batchID: fromBatchID,
+          userID,
+          type,
+          platform,
+          amount: -amount,
+        },
+        trx,
+      )
+
+      const toHistoryLog = await inventory.createHitoryLog(
+        {
+          customerID,
+          locationID,
+          productID,
+          placementID: toPlacementID,
+          batchID: fromBatchID,
+          userID,
+          type,
+          platform,
+          amount,
+        },
+        trx,
+      )
+
+      if (!fromHistoryLog || !toHistoryLog) {
+        throw new ActionError('Kunne ikke opdatere historikken')
+      }
+
+      return didUpdateFrom && didUpsertTo && !!fromHistoryLog && !!toHistoryLog
     })
 
     return result
