@@ -102,6 +102,15 @@ export const inventory = {
         ),
       )
   },
+  getAllPlacementsByID: async function (
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<Placement[]> {
+    return await trx
+      .select()
+      .from(placementTable)
+      .where(eq(placementTable.locationID, locationID))
+  },
   getBatchesByID: async function (
     locationID: LocationID,
     trx: TRX = db,
