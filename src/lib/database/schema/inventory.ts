@@ -233,3 +233,20 @@ export type History = typeof historyTable.$inferSelect
 export type NewHistory = typeof historyTable.$inferInsert
 export type PartialHistory = Partial<History>
 export type HistoryID = History['id']
+
+export const reorderTable = sqliteTable('nl_reorder', {
+  id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+  locationID: text('location_id')
+    .notNull()
+    .references(() => locationTable.id, { onDelete: 'cascade' }),
+  productID: integer('product_id')
+    .notNull()
+    .references(() => productTable.id, { onDelete: 'cascade' }),
+  minimum: real('amount').notNull(),
+  ordered: real('amount').notNull().default(0),
+})
+
+export type Reorder = typeof reorderTable.$inferSelect
+export type NewReorder = typeof reorderTable.$inferInsert
+export type PartialReorder = Partial<Reorder>
+export type ReorderID = Reorder['id']
