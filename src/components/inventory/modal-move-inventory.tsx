@@ -35,6 +35,7 @@ import {
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
+import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -152,11 +153,18 @@ export function ModalMoveInventory({
     setOpen(open)
   }
 
+  useCustomEventListener('MoveInventoryByIDs', (data: any) => {
+    setOpen(true)
+    setValue('productID', data.productID)
+    setValue('fromPlacementID', data.placementID)
+    setValue('fromBatchID', data.batchID)
+  })
+
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
         <Button size='icon' variant='outline'>
-          <Icons.arrowLeftRight className='size-4' />
+          <Icons.replace className='size-[18px]' />
         </Button>
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
