@@ -61,7 +61,15 @@ export function ModalMoveInventory({
   })
 
   const placementsForProduct = (productID: ProductID) =>
-    inventory.filter(item => item.product.id === productID)
+    inventory.filter((item, index, self) => {
+      return (
+        index ===
+        self.findIndex(
+          i =>
+            i.product.id === productID && i.placement.id === item.placement.id,
+        )
+      )
+    })
 
   const batchesForProduct = (productID: ProductID, placementID: PlacementID) =>
     inventory.filter(
@@ -69,10 +77,6 @@ export function ModalMoveInventory({
         item.product.id === productID && item.placement.id === placementID,
     )
 
-  //const fallbackPlacementID =
-  //  customer.plan == 'plus'
-  //    ? placements.find(placement => placement.name == '-')?.id
-  //    : undefined
   const fallbackBatchID =
     customer.plan == 'plus'
       ? batches.find(batch => batch.batch == '-')?.id
@@ -332,7 +336,7 @@ export function ModalMoveInventory({
                     <p>{fromInventoryItem.quantity}</p>
                   </>
                 ) : (
-                  <p>En beholdning skal vælges før du kan flytte vare</p>
+                  <p>En beholdning skal vælges før du kan flytte den</p>
                 )}
               </div>
               <div className='flex'>
