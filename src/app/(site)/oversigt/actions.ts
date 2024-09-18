@@ -79,5 +79,27 @@ export const updateInventoryAction = privateAction
 export const moveInventoryAction = privateAction
   .schema(moveInventoryValidation)
   .action(async ({ parsedInput, ctx }) => {
-    console.log(parsedInput)
+    const location = await locationService.getLastVisited(ctx.user.id)
+    if (!location) {
+      throw new ActionError('Kunne ikke finde din lokation')
+    }
+    const customer = await customerService.getByID(ctx.user.customerID)
+    if (!customer) {
+      throw new ActionError('Firmakonto findes ikke i systemet')
+    }
+
+    await inventoryService.moveInventory(
+      'web',
+      customer.id,
+      ctx.user.id,
+      location,
+      parsedInput.productID,
+      parsedInput.fromPlacementID,
+      parsedInput.fromBatchID,
+      parsedInput.toPlacementID,
+      'flyt',
+      parsedInput.amount,
+    )
+
+    revalidatePath('/oversigt')
   })
