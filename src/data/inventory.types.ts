@@ -8,7 +8,12 @@ import {
 } from '@/lib/database/schema/inventory'
 import { z } from 'zod'
 
-export const historyTypeZodSchema = z.enum(['tilgang', 'afgang', 'regulering'])
+export const historyTypeZodSchema = z.enum([
+  'tilgang',
+  'afgang',
+  'regulering',
+  'flyt',
+])
 export type HistoryType = z.infer<typeof historyTypeZodSchema>
 export const historyTypes =
   historyTypeZodSchema.options as readonly HistoryType[]
