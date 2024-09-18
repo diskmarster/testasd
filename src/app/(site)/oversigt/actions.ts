@@ -6,7 +6,10 @@ import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
-import { updateInventoryValidation } from './validation'
+import {
+  moveInventoryValidation,
+  updateInventoryValidation,
+} from './validation'
 
 export const updateInventoryAction = privateAction
   .schema(updateInventoryValidation)
@@ -72,3 +75,31 @@ export const updateInventoryAction = privateAction
       revalidatePath('/oversigt')
     },
   )
+
+export const moveInventoryAction = privateAction
+  .schema(moveInventoryValidation)
+  .action(async ({ parsedInput, ctx }) => {
+    const location = await locationService.getLastVisited(ctx.user.id)
+    if (!location) {
+      throw new ActionError('Kunne ikke finde din lokation')
+    }
+    const customer = await customerService.getByID(ctx.user.customerID)
+    if (!customer) {
+      throw new ActionError('Firmakonto findes ikke i systemet')
+    }
+
+    await inventoryService.moveInventory(
+      'web',
+      customer.id,
+      ctx.user.id,
+      location,
+      parsedInput.productID,
+      parsedInput.fromPlacementID,
+      parsedInput.fromBatchID,
+      parsedInput.toPlacementID,
+      'flyt',
+      parsedInput.amount,
+    )
+
+    revalidatePath('/oversigt')
+  })

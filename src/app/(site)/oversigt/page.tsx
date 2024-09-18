@@ -1,5 +1,6 @@
 import { signOutAction } from '@/app/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
 import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
 import { TableOverview } from '@/components/inventory/table-overview'
 import { customerService } from '@/service/customer'
@@ -15,7 +16,7 @@ export default async function Home() {
   if (!location) return null // TODO: make some error page
 
   const customer = await customerService.getByID(user.customerID)
-  if (!customer) return null
+  if (!customer) return signOutAction()
 
   const inventory = await inventoryService.getInventory(location)
   const units = await inventoryService.getUnits()
@@ -36,6 +37,14 @@ export default async function Home() {
             placements={placements}
             batches={batches}
           />
+          {customer.plan != 'lite' && (
+            <ModalMoveInventory
+              placements={placements}
+              customer={customer}
+              inventory={inventory}
+              batches={batches}
+            />
+          )}
         </>
       }>
       <TableOverview
