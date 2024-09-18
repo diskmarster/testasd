@@ -32,7 +32,7 @@ import {
   SelectValue,
 } from '../ui/select'
 
-export function FormCreateProducts({
+export function CreateProductsForm({
   units,
   groups,
 }: {
