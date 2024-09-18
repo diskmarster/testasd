@@ -1,7 +1,6 @@
+import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
-import { Button } from '@/components/ui/button'
-import { Icons } from '@/components/ui/icons'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
@@ -9,7 +8,6 @@ import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
-import { emitCustomEvent } from 'react-custom-events'
 
 export function getTableOverviewColumns(
   plan: Plan,
@@ -188,21 +186,7 @@ export function getTableOverviewColumns(
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
-    cell: ({ row }) => (
-      <Button
-        size='iconSm'
-        variant='ghost'
-        type='button'
-        onClick={() => {
-          emitCustomEvent('UpdateInventoryByIDs', {
-            productID: row.original.product.id,
-            placementID: row.original.placement.id,
-            batchID: row.original.batch.id,
-          })
-        }}>
-        <Icons.arrowDownUp className='size-3' />
-      </Button>
-    ),
+    cell: ({ table, row }) => <TableOverviewActions row={row} table={table} />,
     enableHiding: false,
     enableSorting: false,
     meta: {
@@ -224,8 +208,8 @@ export function getTableOverviewColumns(
         costPriceCol,
         salesPriceCol,
         updatedCol,
+        actionsCol,
       ]
-      if (userRole != 'bruger') liteCols.push(actionsCol)
       return liteCols
     case 'plus':
       const plusCols = [
@@ -241,8 +225,8 @@ export function getTableOverviewColumns(
         salesPriceCol,
         placementCol,
         updatedCol,
+        actionsCol,
       ]
-      if (userRole != 'bruger') plusCols.push(actionsCol)
       return plusCols
     case 'pro':
       const proCols = [
@@ -259,8 +243,8 @@ export function getTableOverviewColumns(
         placementCol,
         batchCol,
         updatedCol,
+        actionsCol,
       ]
-      if (userRole != 'bruger') proCols.push(actionsCol)
       return proCols
   }
 }
