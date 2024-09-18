@@ -141,7 +141,7 @@ export function ModalUpdateInventory({
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
         <Button size='icon' variant='outline'>
-          <Icons.arrowDownUp className='size-4' />
+          <Icons.plusMinus className='size-4' />
         </Button>
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
