@@ -42,6 +42,11 @@ export const inventoryService = {
   ): Promise<Placement[]> {
     return await inventory.getPlacementsByID(locationID)
   },
+  getAllPlacementsByID: async function (
+    locationID: LocationID,
+  ): Promise<Placement[]> {
+    return await inventory.getAllPlacementsByID(locationID)
+  },
   getBatchesByID: async function (locationID: LocationID): Promise<Batch[]> {
     return await inventory.getBatchesByID(locationID)
   },
