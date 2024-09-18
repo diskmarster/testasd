@@ -237,7 +237,6 @@ export type HistoryID = History['id']
 export const reorderTable = sqliteTable(
   'nl_reorder',
   {
-    id: integer('id').notNull().primaryKey({ autoIncrement: true }),
     locationID: text('location_id')
       .notNull()
       .references(() => locationTable.id, { onDelete: 'cascade' }),
@@ -251,11 +250,12 @@ export const reorderTable = sqliteTable(
     ordered: real('ordered').notNull().default(0),
   },
   t => ({
-    unq: unique().on(t.productID, t.locationID, t.customerID),
+    pk: primaryKey({
+      columns: [t.productID, t.locationID, t.customerID],
+    }),
   }),
 )
 
 export type Reorder = typeof reorderTable.$inferSelect
 export type NewReorder = typeof reorderTable.$inferInsert
 export type PartialReorder = Partial<Reorder>
-export type ReorderID = Reorder['id']
