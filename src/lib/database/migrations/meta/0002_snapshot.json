@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ec8efe2d-6a61-484a-91ee-fe83fd138152",
+  "id": "924e8b4d-fdc8-4d29-b9bb-8c0ee3450cf6",
   "prevId": "4bde4a4a-ed62-4e25-b9f0-922491d0e931",
   "tables": {
     "nl_session": {
@@ -1102,13 +1102,6 @@
     "nl_reorder": {
       "name": "nl_reorder",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
         "location_id": {
           "name": "location_id",
           "type": "text",
@@ -1146,17 +1139,7 @@
           "default": 0
         }
       },
-      "indexes": {
-        "nl_reorder_product_id_location_id_customer_id_unique": {
-          "name": "nl_reorder_product_id_location_id_customer_id_unique",
-          "columns": [
-            "product_id",
-            "location_id",
-            "customer_id"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "nl_reorder_location_id_nl_location_id_fk": {
           "name": "nl_reorder_location_id_nl_location_id_fk",
@@ -1198,7 +1181,16 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "nl_reorder_product_id_location_id_customer_id_pk": {
+          "columns": [
+            "product_id",
+            "location_id",
+            "customer_id"
+          ],
+          "name": "nl_reorder_product_id_location_id_customer_id_pk"
+        }
+      },
       "uniqueConstraints": {}
     },
     "nl_unit": {
