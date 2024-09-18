@@ -391,6 +391,7 @@ export function getTableHistoryFilters(
       { value: 'tilgang', label: 'Tilgang' },
       { value: 'afgang', label: 'Afgang' },
       { value: 'regulering', label: 'Regulering' },
+      { value: 'flyt', label: 'Flyt' },
     ],
   }
 
