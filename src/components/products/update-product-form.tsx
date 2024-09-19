@@ -49,7 +49,6 @@ export function UpdateProductsForm({
 }) {
   const { user } = useSession()
   const [pending, startTransition] = useTransition()
-  const [show, setShow] = useState(false)
   const [error, setError] = useState<string>()
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<

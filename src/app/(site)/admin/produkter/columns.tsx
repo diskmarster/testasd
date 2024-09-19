@@ -4,14 +4,14 @@ import { FilterField } from '@/components/table/table-toolbar'
 import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
 import { UserRole } from '@/data/user.types'
-import { Group, Unit } from '@/lib/database/schema/inventory'
+import { Group, ProductID, Unit } from '@/lib/database/schema/inventory'
 import { formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
 
 export function getProductOverviewColumns(
   plan: Plan,
-  userRole: UserRole
+  userRole: UserRole,
 ): ColumnDef<FormattedProduct>[] {
   const skuCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'sku',
@@ -110,6 +110,17 @@ export function getProductOverviewColumns(
       viewLabel: 'Sidst opdateret',
     },
   }
+
+  const isBarredCol: ColumnDef<FormattedProduct> = {
+    accessorKey: 'isBarred',
+    header: () => null,
+    cell: ({ getValue }) => getValue<boolean>() ? "Spærret" : "Aktiv",
+    filterFn: (row, id, value) => {
+      console.log(value)
+      return value.includes(row.getValue<boolean>(id) ? "Spærret": "Aktiv")
+    },
+  }
+
   const actionsCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'actions',
     header: () => null,
@@ -129,6 +140,7 @@ export function getProductOverviewColumns(
         costPriceCol,
         salesPriceCol,
         updatedCol,
+        isBarredCol,
       ]
       if (userRole != 'bruger') liteCols.push(actionsCol)
       return liteCols
@@ -142,6 +154,7 @@ export function getProductOverviewColumns(
         costPriceCol,
         salesPriceCol,
         updatedCol,
+        isBarredCol,
       ]
       if (userRole != 'bruger') plusCols.push(actionsCol)
       return plusCols
@@ -157,6 +170,7 @@ export function getProductOverviewColumns(
         costPriceCol,
         salesPriceCol,
         updatedCol,
+        isBarredCol,
       ]
       if (userRole != 'bruger') proCols.push(actionsCol)
       return proCols
@@ -248,6 +262,16 @@ export function getProductTableOverviewFilters(
     value: '',
     placeholder: 'Søg i salgspris.',
   }
+  const barredFilter: FilterField<FormattedProduct> = {
+    column: table.getColumn('isBarred'),
+    type: 'select',
+    label: 'Bar Status',
+    value: '',
+    options: [
+      { value: false, label: 'Spærret' },
+      { value: true, label: 'Aktiv' },
+    ],
+  };
   switch (plan) {
     case 'lite':
       return [
@@ -259,6 +283,7 @@ export function getProductTableOverviewFilters(
         costPriceFilter,
         salesPriceFilter,
         updatedFilter,
+        barredFilter,
       ]
     case 'plus':
       return [
@@ -270,6 +295,7 @@ export function getProductTableOverviewFilters(
         costPriceFilter,
         salesPriceFilter,
         updatedFilter,
+        barredFilter
       ]
     case 'pro':
       return [
@@ -283,6 +309,7 @@ export function getProductTableOverviewFilters(
         costPriceFilter,
         salesPriceFilter,
         updatedFilter,
+        barredFilter
       ]
   }
 }
