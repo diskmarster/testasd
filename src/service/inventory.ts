@@ -41,16 +41,15 @@ export const inventoryService = {
   getGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
     return await inventory.getGroupsByID(customerID)
   },
-
-  getAllGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
+  getAllGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
     return await inventory.getAllGroupsByID(customerID)
   },
-  getPlacementsByID: async function (
+  getPlacementsByID: async function(
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getActivePlacementsByID(locationID)
   },
-  getAllPlacementsByID: async function (
+  getAllPlacementsByID: async function(
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getAllPlacementsByID(locationID)
@@ -244,7 +243,7 @@ export const inventoryService = {
       }
     }
   },
-  createProductGroup: async function (groupData: {
+  createProductGroup: async function(groupData: {
     name: string
     customerID: number
   }): Promise<Group | undefined> {
@@ -258,7 +257,7 @@ export const inventoryService = {
       }
     }
   },
-  createBatch: async function (
+  createBatch: async function(
     batchData: NewBatch,
   ): Promise<Batch | undefined> {
     try {
@@ -327,7 +326,7 @@ export const inventoryService = {
     })
 
     return reordersWithRecommended
-  }, 
+  },
   getInventoryByProductID: async (
     productID: ProductID,
   ): Promise<Inventory[]> => {
