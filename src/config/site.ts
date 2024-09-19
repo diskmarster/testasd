@@ -27,7 +27,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       label: 'Genbestil',
-      isDisabled: true,
+      isDisabled: false,
       isDropdown: false,
       isExternal: false,
       href: '/genbestil',
