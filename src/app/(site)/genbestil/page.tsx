@@ -1,6 +1,7 @@
 import { signOutAction } from '@/app/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalCreateReorder } from '@/components/inventory/modal-create-reorder'
+import { TableReorder } from '@/components/inventory/table-reorder'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -17,6 +18,9 @@ export default async function Page() {
   if (!customer) return signOutAction()
 
   const products = await inventoryService.getProductsByID(customer.id)
+  const reorders = await inventoryService.getReordersByID(location)
+  const units = await inventoryService.getUnits()
+  const groups = await inventoryService.getGroupsByID(customer.id)
 
   return (
     <SiteWrapper
@@ -27,7 +31,7 @@ export default async function Page() {
           <ModalCreateReorder products={products} locationID={location} />
         </>
       }>
-      <div>hello</div>
+      <TableReorder data={reorders} user={user} units={units} groups={groups} />
     </SiteWrapper>
   )
 }

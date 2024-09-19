@@ -2,6 +2,7 @@ import { inventory } from '@/data/inventory'
 import {
   FormattedHistory,
   FormattedInventory,
+  FormattedReorder,
   HistoryType,
 } from '@/data/inventory.types'
 import { db } from '@/lib/database'
@@ -226,5 +227,10 @@ export const inventoryService = {
     reorderData: NewReorder,
   ): Promise<Reorder | undefined> {
     return await inventory.createReorder(reorderData)
+  },
+  getReordersByID: async function(
+    locationID: LocationID,
+  ): Promise<FormattedReorder[]> {
+    return await inventory.getAllReordersByID(locationID)
   },
 }
