@@ -4,7 +4,7 @@ import { FilterField } from '@/components/table/table-toolbar'
 import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
 import { UserRole } from '@/data/user.types'
-import { Group, ProductID, Unit } from '@/lib/database/schema/inventory'
+import { Group, Unit } from '@/lib/database/schema/inventory'
 import { formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
@@ -113,11 +113,13 @@ export function getProductOverviewColumns(
 
   const isBarredCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'isBarred',
-    header: () => null,
-    cell: ({ getValue }) => getValue<boolean>() ? "Spærret" : "Aktiv",
+    header: ({ column }) => <TableHeader column={column} title='Status' />,
+    cell: ({ getValue }) => (getValue<boolean>() ? 'Spærret' : 'Aktiv'),
     filterFn: (row, id, value) => {
-      console.log(value)
-      return value.includes(row.getValue<boolean>(id) ? "Spærret": "Aktiv")
+      return value.includes(row.getValue<boolean>(id))
+    },
+    meta: {
+      viewLabel: 'Status',
     },
   }
 
@@ -204,7 +206,7 @@ export function getProductTableOverviewFilters(
     value: '',
     options: [
       ...units.map(unit => ({
-        value: unit.id,
+        value: unit.name,
         label: unit.name,
       })),
     ],
@@ -216,7 +218,7 @@ export function getProductTableOverviewFilters(
     value: '',
     options: [
       ...groups.map(group => ({
-        value: group.id,
+        value: group.name,
         label: group.name,
       })),
     ],
@@ -265,13 +267,13 @@ export function getProductTableOverviewFilters(
   const barredFilter: FilterField<FormattedProduct> = {
     column: table.getColumn('isBarred'),
     type: 'select',
-    label: 'Bar Status',
+    label: 'Status',
     value: '',
     options: [
-      { value: false, label: 'Spærret' },
-      { value: true, label: 'Aktiv' },
+      { value: true, label: 'Spærret' },
+      { value: false, label: 'Aktiv' },
     ],
-  };
+  }
   switch (plan) {
     case 'lite':
       return [
@@ -295,7 +297,7 @@ export function getProductTableOverviewFilters(
         costPriceFilter,
         salesPriceFilter,
         updatedFilter,
-        barredFilter
+        barredFilter,
       ]
     case 'pro':
       return [
@@ -309,7 +311,7 @@ export function getProductTableOverviewFilters(
         costPriceFilter,
         salesPriceFilter,
         updatedFilter,
-        barredFilter
+        barredFilter,
       ]
   }
 }

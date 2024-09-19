@@ -58,7 +58,9 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
   )
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+    { id: 'isBarred', value: [false] },
+  ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -128,7 +130,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     meta: {
       user,
       units,
-      groups
+      groups,
     },
   })
 
