@@ -14,9 +14,6 @@ export function getTableGroupColumns(): ColumnDef<Groups>[] {
     meta: {
       viewLabel: 'Varegruppe',
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
-    },
   }
 
   const isBarredCol: ColumnDef<Groups> = {
@@ -29,6 +26,13 @@ export function getTableGroupColumns(): ColumnDef<Groups>[] {
           {isBarred ? 'Ja' : 'Nej'}
         </Badge>
       )
+    },
+    meta: {
+      viewLabel: 'Spærret',
+    },
+    filterFn: (row, id, value) => {
+      const isBarredValue = value == 'Ja'
+      return row.getValue(id) === isBarredValue
     },
   }
 
@@ -76,5 +80,30 @@ export function getTableGroupFilters(
     ],
   }
 
-  return [groupFilter]
+  const isBarredFilter: FilterField<Groups> = {
+    column: table.getColumn('isBarred'),
+    type: 'select',
+    label: 'Spærret',
+    value: '',
+    options: [
+      { value: 'Ja', label: 'Ja' },
+      { value: 'Nej', label: 'Nej' },
+    ],
+  }
+
+  const insertedFilter: FilterField<Groups> = {
+    column: table.getColumn('inserted'),
+    type: 'date',
+    label: 'Oprettet',
+    value: '',
+  }
+
+  const updatedFilter: FilterField<Groups> = {
+    column: table.getColumn('updated'),
+    type: 'date',
+    label: 'Opdateret',
+    value: '',
+  }
+
+  return [groupFilter, isBarredFilter, insertedFilter, updatedFilter]
 }

@@ -1,24 +1,18 @@
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
-import { UserRole } from '@/data/user.types'
 import { Placement } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
 
-export function getTablePlacementColumns(
-  userRole: UserRole,
-): ColumnDef<Placement>[] {
+export function getTablePlacementColumns(): ColumnDef<Placement>[] {
   const placementCol: ColumnDef<Placement> = {
     accessorKey: 'name',
     header: ({ column }) => <TableHeader column={column} title='Placering' />,
     cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: 'Placering',
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
     },
   }
 
@@ -71,7 +65,32 @@ export function getTablePlacementColumns(
 
 export function getTablePlacementFilters(
   table: Table<Placement>,
+  placements: Placement[], // Ensure placements are passed in
 ): FilterField<Placement>[] {
+  const placementFilter: FilterField<Placement> = {
+    column: table.getColumn('name'),
+    type: 'select',
+    label: 'Placering',
+    value: '',
+    options: [
+      ...placements.map(placement => ({
+        value: placement.name,
+        label: placement.name,
+      })),
+    ],
+  }
+
+  const isBarredFilter: FilterField<Placement> = {
+    column: table.getColumn('isBarred'),
+    type: 'select',
+    label: 'Spærret',
+    value: '',
+    options: [
+      { value: 'Ja', label: 'Ja' },
+      { value: 'Nej', label: 'Nej' },
+    ],
+  }
+
   const insertedFilter: FilterField<Placement> = {
     column: table.getColumn('inserted'),
     type: 'date',
@@ -86,16 +105,5 @@ export function getTablePlacementFilters(
     value: '',
   }
 
-  const isBarredFilter: FilterField<Placement> = {
-    column: table.getColumn('isBarred'),
-    type: 'select',
-    label: 'Spærret',
-    value: '',
-    options: [
-      { value: 'Ja', label: 'Ja' },
-      { value: 'Nej', label: 'Nej' },
-    ],
-  }
-
-  return [insertedFilter, updatedFilter, isBarredFilter]
+  return [placementFilter, isBarredFilter, insertedFilter, updatedFilter]
 }

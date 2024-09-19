@@ -47,10 +47,7 @@ interface Props {
 
 export function TablePlacement({ data, user }: Props) {
   const LOCALSTORAGE_KEY = 'history_cols'
-  const columns = useMemo(
-    () => getTablePlacementColumns(user.role),
-    [user.role],
-  )
+  const columns = useMemo(() => getTablePlacementColumns(), [user.role])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -125,7 +122,10 @@ export function TablePlacement({ data, user }: Props) {
     },
   })
 
-  const filterFields = useMemo(() => getTablePlacementFilters(table), [table])
+  const filterFields = useMemo(
+    () => getTablePlacementFilters(table, data),
+    [table, data],
+  )
 
   if (!mounted) return null
 
