@@ -88,6 +88,15 @@ export const inventory = {
         ),
       )
   },
+  getAllGroupsByID: async function (
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<Group[]> {
+    return await trx
+      .select()
+      .from(groupTable)
+      .where(eq(groupTable.customerID, customerID))
+  },
   getPlacementsByID: async function (
     locationID: LocationID,
     trx: TRX = db,

@@ -37,6 +37,9 @@ export const inventoryService = {
   getGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
     return await inventory.getGroupsByID(customerID)
   },
+  getAllGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
+    return await inventory.getAllGroupsByID(customerID)
+  },
   getPlacementsByID: async function (
     locationID: LocationID,
   ): Promise<Placement[]> {
