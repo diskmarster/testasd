@@ -11,6 +11,7 @@ const createRegulationSchema = z.object({
 	batchId: z.string().or(z.coerce.number()).nullable(),
 	type: historyTypeZodSchema,
 	quantity: z.coerce.number(),
+	reference: z.string().nullable(),
 })
 
 export async function POST(
