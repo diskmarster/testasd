@@ -1,4 +1,5 @@
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { ModalCreatePlacement } from '@/components/inventory/modal-create-placement'
 import { TablePlacement } from '@/components/inventory/table-placements'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -22,10 +23,17 @@ export default async function Page() {
   const placements = await inventoryService.getPlacementsByID(location)
   const allPlacement = await inventoryService.getAllPlacementsByID(location)
   const batches = await inventoryService.getBatchesByID(location)
+  const products = await inventoryService.getProductsByID(customer.id)
+
   return (
     <SiteWrapper
       title='Placeringer'
-      description='Se en oversigt over alle dine placeringer'>
+      description='Se en oversigt over alle dine placeringer'
+      actions={
+        <>
+          <ModalCreatePlacement />
+        </>
+      }>
       <TablePlacement data={allPlacement} user={user} />
     </SiteWrapper>
   )

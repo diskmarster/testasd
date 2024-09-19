@@ -210,6 +210,22 @@ export const inventoryService = {
       }
     }
   },
+
+  createProductGroup: async function (groupData: {
+    name: string
+    customerID: number
+  }): Promise<Group | undefined> {
+    try {
+      return await inventory.createProductGroup(groupData)
+    } catch (err) {
+      if (err instanceof LibsqlError) {
+        if (err.message.includes('name')) {
+          throw new ActionError('Produktgruppenavn findes allerede')
+        }
+      }
+    }
+  },
+
   createBatch: async function (
     batchData: NewBatch,
   ): Promise<Batch | undefined> {

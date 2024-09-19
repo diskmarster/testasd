@@ -13,6 +13,7 @@ import {
   Inventory,
   inventoryTable,
   NewBatch,
+  NewGroup,
   NewHistory,
   NewInventory,
   NewPlacement,
@@ -97,6 +98,14 @@ export const inventory = {
       .from(groupTable)
       .where(eq(groupTable.customerID, customerID))
   },
+  createProductGroup: async function (
+    groupData: NewGroup,
+    trx: TRX = db,
+  ): Promise<Group> {
+    const group = await trx.insert(groupTable).values(groupData).returning()
+    return group[0]
+  },
+
   getPlacementsByID: async function (
     locationID: LocationID,
     trx: TRX = db,

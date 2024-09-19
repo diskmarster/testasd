@@ -64,7 +64,7 @@ export function getTableGroupFilters(
   groups: Groups[],
 ): FilterField<Groups>[] {
   const groupFilter: FilterField<Groups> = {
-    column: table.getColumn('group'),
+    column: table.getColumn('name'),
     type: 'select',
     label: 'Varegruppe',
     value: '',
@@ -76,6 +76,5 @@ export function getTableGroupFilters(
     ],
   }
 
-  // Return the filters as an array
   return [groupFilter]
 }

@@ -88,7 +88,6 @@ export function TablePlacement({ data, user }: Props) {
       setColumnVisibility(updaterOrValue)
     }
   }
-  console.log(data)
 
   const table = useReactTable({
     data,
