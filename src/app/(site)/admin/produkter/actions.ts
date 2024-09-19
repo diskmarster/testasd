@@ -36,5 +36,19 @@ export async function updateProductAction(
     return { success: false, serverError: err.message }
   }
 }
+export async function toggleBarredProductAction(productID: ProductID, isBarred: boolean) {
+  try {
+    const updatedProduct = await productService.updateBarredStatus(productID, isBarred);
+    if (!updatedProduct) {
+      throw new Error('Failed to update product bar status');
+    }
+    revalidatePath('/admin/produkter');  
+    return { success: true, product: updatedProduct };
+  } catch (err: any) {
+    console.error('Error updating product bar status:', err);
+    return { success: false, serverError: 'Could not update the bar status.' };
+  }
+}
+
 
 

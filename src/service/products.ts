@@ -47,4 +47,14 @@ export const productService = {
       }
     }
   },
+  async updateBarredStatus(productID: ProductID, isBarred: boolean): Promise<Product | undefined> {
+    try {
+      const updatedProduct = await product.updateByID(productID, { isBarred });
+      if (!updatedProduct) return undefined;
+      return updatedProduct;
+    } catch (err) {
+      console.error('Error updating barred status:', err);
+      throw new ActionError('Failed to update product bar status');
+    }
+  },
 }
