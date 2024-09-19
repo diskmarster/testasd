@@ -3,7 +3,9 @@ import { CustomerID } from '@/lib/database/schema/customer'
 import {
   groupTable,
   NewProduct,
+  PartialProduct,
   Product,
+  ProductID,
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
@@ -13,8 +15,6 @@ import { FormattedProduct } from './products.types'
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
 const PRODUCT_COLS = getTableColumns(productTable)
-
-
 
 export const product = {
   getAllByCustomerID: async function (
@@ -38,9 +38,9 @@ export const product = {
     trx: TRX = db,
   ): Promise<Product | undefined> {
     const product = await trx
-    .insert(productTable)
-    .values(newProduct)
-    .returning()
+      .insert(productTable)
+      .values(newProduct)
+      .returning()
     return product[0]
   },
   getAllByID: async function (
@@ -48,10 +48,21 @@ export const product = {
     trx: TRX = db,
   ): Promise<Product[]> {
     const product = await trx
-    .select()
-    .from(productTable)
-    .where(eq(productTable.customerID, customerID))
+      .select()
+      .from(productTable)
+      .where(eq(productTable.customerID, customerID))
     return product
   },
-  }
-
+  updateByID: async function (
+    productID: ProductID,
+    updatedProductData: PartialProduct,
+    trx: TRX = db,
+  ): Promise<Product | undefined> {
+    const product = await trx
+      .update(productTable)
+      .set({ ...updatedProductData })
+      .where(eq(productTable.id, productID))
+      .returning()
+    return product[0]
+  },
+}
