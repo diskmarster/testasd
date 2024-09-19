@@ -80,6 +80,7 @@ export const inventoryService = {
     batchID: BatchID,
     type: HistoryType,
     amount: number,
+    reference: string = '',
   ): Promise<boolean> {
     const result = await db.transaction(async trx => {
       const isReorderOnProduct = await inventory.getReorderByProductID(
@@ -135,6 +136,7 @@ export const inventoryService = {
           type,
           platform,
           amount,
+          reference,
         },
         trx,
       )
