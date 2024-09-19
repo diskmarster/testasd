@@ -16,48 +16,50 @@ import {
   NewBatch,
   NewHistory,
   NewPlacement,
+  NewReorder,
   Placement,
   PlacementID,
   Product,
   ProductID,
+  Reorder,
   Unit,
 } from '@/lib/database/schema/inventory'
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 
 export const inventoryService = {
-  getInventory: async function (
+  getInventory: async function(
     locationID: LocationID,
   ): Promise<FormattedInventory[]> {
     return await inventory.getInventoryByLocationID(locationID)
   },
-  getUnits: async function (): Promise<Unit[]> {
+  getUnits: async function(): Promise<Unit[]> {
     return inventory.getUnits()
   },
-  getGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
+  getGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
     return await inventory.getGroupsByID(customerID)
   },
-  getPlacementsByID: async function (
+  getPlacementsByID: async function(
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getPlacementsByID(locationID)
   },
-  getBatchesByID: async function (locationID: LocationID): Promise<Batch[]> {
+  getBatchesByID: async function(locationID: LocationID): Promise<Batch[]> {
     return await inventory.getBatchesByID(locationID)
   },
-  getInventoryByIDs: async function (
+  getInventoryByIDs: async function(
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
   ): Promise<Inventory | undefined> {
     return await inventory.getInventoryByIDs(productID, placementID, batchID)
   },
-  createHistoryLog: async function (
+  createHistoryLog: async function(
     historyData: NewHistory,
   ): Promise<History | undefined> {
     return await inventory.createHitoryLog(historyData)
   },
-  upsertInventory: async function (
+  upsertInventory: async function(
     platform: 'web' | 'app',
     customerID: CustomerID,
     userID: UserID,
@@ -107,7 +109,7 @@ export const inventoryService = {
 
     return result
   },
-  moveInventory: async function (
+  moveInventory: async function(
     platform: 'web' | 'app',
     customerID: CustomerID,
     userID: UserID,
@@ -186,10 +188,10 @@ export const inventoryService = {
 
     return result
   },
-  getProductsByID: async function (customerID: CustomerID): Promise<Product[]> {
+  getProductsByID: async function(customerID: CustomerID): Promise<Product[]> {
     return await inventory.getProductsByID(customerID)
   },
-  createPlacement: async function (
+  createPlacement: async function(
     placementData: NewPlacement,
   ): Promise<Placement | undefined> {
     try {
@@ -202,7 +204,7 @@ export const inventoryService = {
       }
     }
   },
-  createBatch: async function (
+  createBatch: async function(
     batchData: NewBatch,
   ): Promise<Batch | undefined> {
     try {
@@ -215,9 +217,14 @@ export const inventoryService = {
       }
     }
   },
-  getHistoryByLocationID: async function (
+  getHistoryByLocationID: async function(
     locationID: LocationID,
   ): Promise<FormattedHistory[]> {
     return await inventory.getHistoryByLocationID(locationID)
+  },
+  createReorder: async function(
+    reorderData: NewReorder,
+  ): Promise<Reorder | undefined> {
+    return await inventory.createReorder(reorderData)
   },
 }
