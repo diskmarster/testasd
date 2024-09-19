@@ -127,6 +127,8 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
 
     meta: {
       user,
+      units,
+      groups
     },
   })
 
