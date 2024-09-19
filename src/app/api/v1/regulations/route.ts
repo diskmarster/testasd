@@ -186,6 +186,7 @@ export async function POST(
 				batchId,
 				data.type,
 				data.quantity,
+				data.reference ?? '',
 			))
 		) {
 			return NextResponse.json(
