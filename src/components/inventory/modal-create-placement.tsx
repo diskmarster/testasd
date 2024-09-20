@@ -1,5 +1,5 @@
 'use client'
-import { createPlacementAction } from '@/app/(site)/placering/actions'
+import { createPlacementAction } from '@/app/(site)/admin/placering/actions'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,

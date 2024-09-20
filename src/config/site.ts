@@ -58,7 +58,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Varegrupper',
           description: 'Se, opret og rediger i dine varegrupper',
-          href: '/varegrupper',
+          href: '/admin/varegrupper',
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: false,
@@ -66,7 +66,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Placeringer',
           description: 'Se, opret og rediger i dine placeringer',
-          href: '/placering',
+          href: '/admin/placering',
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: false,

@@ -43,7 +43,7 @@ export const inventoryService = {
   getPlacementsByID: async function (
     locationID: LocationID,
   ): Promise<Placement[]> {
-    return await inventory.getPlacementsByID(locationID)
+    return await inventory.getActivePlacementsByID(locationID)
   },
   getAllPlacementsByID: async function (
     locationID: LocationID,

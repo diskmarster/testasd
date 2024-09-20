@@ -106,7 +106,7 @@ export const inventory = {
     return group[0]
   },
 
-  getPlacementsByID: async function (
+  getActivePlacementsByID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Placement[]> {

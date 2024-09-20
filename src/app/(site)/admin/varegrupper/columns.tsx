@@ -1,13 +1,13 @@
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
-import { Groups } from '@/lib/database/schema/inventory'
+import { Group } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
 
-export function getTableGroupColumns(): ColumnDef<Groups>[] {
-  const groupCol: ColumnDef<Groups> = {
+export function getTableGroupColumns(): ColumnDef<Group>[] {
+  const groupCol: ColumnDef<Group> = {
     accessorKey: 'name',
     header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -16,7 +16,7 @@ export function getTableGroupColumns(): ColumnDef<Groups>[] {
     },
   }
 
-  const isBarredCol: ColumnDef<Groups> = {
+  const isBarredCol: ColumnDef<Group> = {
     accessorKey: 'isBarred',
     header: ({ column }) => <TableHeader column={column} title='Spærret' />,
     cell: ({ getValue }) => {
@@ -36,7 +36,7 @@ export function getTableGroupColumns(): ColumnDef<Groups>[] {
     },
   }
 
-  const insertedCol: ColumnDef<Groups> = {
+  const insertedCol: ColumnDef<Group> = {
     accessorKey: 'inserted',
     header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
@@ -48,7 +48,7 @@ export function getTableGroupColumns(): ColumnDef<Groups>[] {
     },
   }
 
-  const updatedCol: ColumnDef<Groups> = {
+  const updatedCol: ColumnDef<Group> = {
     accessorKey: 'updated',
     header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
@@ -64,10 +64,10 @@ export function getTableGroupColumns(): ColumnDef<Groups>[] {
 }
 
 export function getTableGroupFilters(
-  table: Table<Groups>,
-  groups: Groups[],
-): FilterField<Groups>[] {
-  const groupFilter: FilterField<Groups> = {
+  table: Table<Group>,
+  groups: Group[],
+): FilterField<Group>[] {
+  const groupFilter: FilterField<Group> = {
     column: table.getColumn('name'),
     type: 'select',
     label: 'Varegruppe',
@@ -80,7 +80,7 @@ export function getTableGroupFilters(
     ],
   }
 
-  const isBarredFilter: FilterField<Groups> = {
+  const isBarredFilter: FilterField<Group> = {
     column: table.getColumn('isBarred'),
     type: 'select',
     label: 'Spærret',
@@ -91,14 +91,14 @@ export function getTableGroupFilters(
     ],
   }
 
-  const insertedFilter: FilterField<Groups> = {
+  const insertedFilter: FilterField<Group> = {
     column: table.getColumn('inserted'),
     type: 'date',
     label: 'Oprettet',
     value: '',
   }
 
-  const updatedFilter: FilterField<Groups> = {
+  const updatedFilter: FilterField<Group> = {
     column: table.getColumn('updated'),
     type: 'date',
     label: 'Opdateret',

@@ -1,6 +1,6 @@
 'use client'
 
-import { createProductGroupAction } from '@/app/(site)/varegrupper/actions'
+import { createProductGroupAction } from '@/app/(site)/admin/varegrupper/actions'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,

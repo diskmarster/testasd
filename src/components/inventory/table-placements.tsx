@@ -3,7 +3,7 @@
 import {
   getTablePlacementColumns,
   getTablePlacementFilters,
-} from '@/app/(site)/placering/columns'
+} from '@/app/(site)/admin/placering/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -46,7 +46,7 @@ interface Props {
 }
 
 export function TablePlacement({ data, user }: Props) {
-  const LOCALSTORAGE_KEY = 'history_cols'
+  const LOCALSTORAGE_KEY = 'placements_cols'
   const columns = useMemo(() => getTablePlacementColumns(), [user.role])
 
   const [sorting, setSorting] = useState<SortingState>([])
