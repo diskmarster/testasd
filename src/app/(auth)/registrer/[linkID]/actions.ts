@@ -39,6 +39,7 @@ export const signUpAction = publicAction
       name: parsedInput.name,
       email: parsedInput.email,
       hash: parsedInput.password,
+      //pincode: parsedInput.pincode,
       role: activationLink.role,
       isActive: true
     })
