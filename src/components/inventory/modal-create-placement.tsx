@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -46,6 +47,8 @@ export function ModalCreatePlacement() {
     setOpen(open)
   }
 
+  const router = useRouter()
+
   const onSubmit = async (data: CreatePlacementForm) => {
     try {
       await createPlacementAction({
@@ -58,7 +61,7 @@ export function ModalCreatePlacement() {
 
       setOpen(false)
 
-      window.location.reload()
+      router.refresh()
     } catch (error) {
       toast.error('Noget gik galt', {
         description: 'Kunne ikke oprette placeringen. Prøv igen senere.',
