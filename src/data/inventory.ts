@@ -375,4 +375,10 @@ export const inventory = {
 
     return reorders
   },
+  getInventoryByProductID: async (productID: ProductID): Promise<Inventory[]> => { 
+    return await db
+      .select()
+      .from(inventoryTable)
+      .where(eq(inventoryTable.productID, productID))
+  },
 }

@@ -327,5 +327,10 @@ export const inventoryService = {
     })
 
     return reordersWithRecommended
+  }, 
+  getInventoryByProductID: async (
+    productID: ProductID,
+  ): Promise<Inventory[]> => {
+    return await inventory.getInventoryByProductID(productID)
   },
 }
