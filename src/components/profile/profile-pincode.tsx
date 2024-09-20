@@ -1,7 +1,7 @@
 'use client'
 
-import { updatePasswordAction } from '@/app/(site)/profil/actions'
-import { updatePasswordValidation } from '@/app/(site)/profil/validation'
+import { updatePasswordAction, updatePincodeAction } from '@/app/(site)/profil/actions'
+import { updatePasswordValidation, updatePincodeValidation } from '@/app/(site)/profil/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,44 +27,47 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-export function ProfilePassword() {
+export function ProfilePincode() {
   return (
     <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
       <div className='grid gap-0.5'>
-        <Label>Nyt kodeord</Label>
-        <p className='text-sm text-muted-foreground'>Opdater dit kodeord</p>
+        <Label>Ny PIN-kode</Label>
+        <p className='text-sm text-muted-foreground'>Opdater din PIN-kode</p>
       </div>
-      <PasswordDialog />
+      <PincodeDialog />
     </div>
   )
 }
 
-function PasswordDialog() {
+function PincodeDialog() {
   const { session } = useSession()
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
   const [open, setOpen] = useState<boolean>(false)
 
-  const { handleSubmit, formState, register, reset } = useForm<
-    z.infer<typeof updatePasswordValidation>
+  const { handleSubmit, formState, register, reset, watch } = useForm<
+    z.infer<typeof updatePincodeValidation> //lav validation i profil/validation /done
   >({
-    resolver: zodResolver(updatePasswordValidation),
+    resolver: zodResolver(updatePincodeValidation), // same / done
   })
+
+  const watchedValues = watch()
+  console.log('Form Values:', watchedValues)
 
   if (!session) return null
   return (
     <Credenza open={open} onOpenChange={setOpen}>
       <CredenzaTrigger asChild>
         <Button variant='outline' className='hover:text-destructive'>
-          Nyt kodeord
+          Ny PIN-kode
         </Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <form className='space-y-4'>
           <CredenzaHeader>
-            <CredenzaTitle>Nyt kodeord</CredenzaTitle>
+            <CredenzaTitle>Ny PIN-kode</CredenzaTitle>
             <CredenzaDescription>
-              Udfyld formularen for at opdatere dit kodeord
+              Udfyld formularen for at opdatere din PIN-kode
             </CredenzaDescription>
           </CredenzaHeader>
           <CredenzaBody>
@@ -77,38 +80,38 @@ function PasswordDialog() {
                 </Alert>
               )}
               <div className='grid gap-2'>
-                <Label htmlFor='currentPassword'>Nuværende kodeord</Label>
+                <Label htmlFor='currentPincode'>Nuværende PIN-kode</Label>
                 <PasswordInput
-                  id='currentPassword'
-                  {...register('currentPassword')}
+                  id='currentPincode' //current 
+                  {...register('currentPincode')} //register('currentPincode')
                 />
-                {formState.errors.currentPassword && (
+                {formState.errors.currentPincode && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.currentPassword.message}
+                    {formState.errors.currentPincode.message}
                   </p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='newPassword'>Nyt kodeord</Label>
+                <Label htmlFor='newPincode'>Ny PIN-kode</Label>
                 <PasswordInput
-                  id='newPassword'
-                  {...register('newPassword')}
+                  id='newPincode'
+                  {...register('newPincode')} //register('newPincode')
                 />
-                {formState.errors.newPassword && (
+                {formState.errors.newPincode && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.newPassword.message}
+                    {formState.errors.newPincode.message}
                   </p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
+                <Label htmlFor='confirmPincode'>Bekræft PIN-kode</Label>
                 <PasswordInput
-                  id='confirmPassword'
-                  {...register('confirmPassword')}
+                  id='confirmPincode'
+                  {...register('confirmPincode')} //register('confirmPincode')?
                 />
-                {formState.errors.confirmPassword && (
+                {formState.errors.confirmPincode && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.confirmPassword.message}
+                    {formState.errors.confirmPincode.message}
                   </p>
                 )}
               </div>
@@ -125,13 +128,13 @@ function PasswordDialog() {
               onClick={handleSubmit(values => {
                 startTransition(async () => {
                   reset()
-                  const res = await updatePasswordAction({ ...values })
+                  const res = await updatePincodeAction({ ...values })
                   if (res && res.serverError) {
                     setFormError(res.serverError)
                     return
                   }
                   toast(siteConfig.successTitle, {
-                    description: 'Kodeord blev opdateret',
+                    description: 'PIN-kode blev opdateret',
                   })
                   setOpen(false)
                 })
