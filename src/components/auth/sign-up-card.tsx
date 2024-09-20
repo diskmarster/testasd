@@ -12,7 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icons } from "@/components/ui/icons";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
+import { PincodeInput } from "@/components/ui/pincode-input";
 import { signUpValidation } from "@/app/(auth)/registrer/[linkID]/validation";
 import { signUpAction } from "@/app/(auth)/registrer/[linkID]/actions";
 import { Customer } from "@/lib/database/schema/customer";
@@ -97,7 +97,7 @@ function Form({ customer, linkID }: { customer: Customer, linkID: string }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='password'>Kodeord</Label>
-        <PasswordInput id='password' {...register('password')} />
+        <PincodeInput id='password' {...register('password')} />
         {formState.errors.password && (
           <p className='text-sm text-destructive '>
             {formState.errors.password.message}
@@ -106,10 +106,28 @@ function Form({ customer, linkID }: { customer: Customer, linkID: string }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
-        <PasswordInput id='confirmPassword' {...register('confirmPassword')} />
+        <PincodeInput id='confirmPassword' {...register('confirmPassword')} />
         {formState.errors.confirmPassword && (
           <p className='text-sm text-destructive '>
             {formState.errors.confirmPassword.message}
+          </p>
+        )}
+        </div>
+        <div className='grid gap-2'>
+        <Label htmlFor='pincode'>PIN-Kode</Label>
+        <PincodeInput id='pincode' {...register('pincode')} />
+        {formState.errors.pincode && (
+          <p className='text-sm text-destructive '>
+            {formState.errors.pincode.message}
+          </p>
+        )}
+        </div>
+        <div className='grid gap-2'>
+        <Label htmlFor='confirmPincode'>Bekræft PIN-Kode</Label>
+        <PincodeInput id='confirmPincode' {...register('confirmPincode')} />
+        {formState.errors.pincode && (
+          <p className='text-sm text-destructive '>
+            {formState.errors.pincode.message}
           </p>
         )}
       </div>
