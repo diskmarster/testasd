@@ -1,9 +1,10 @@
-"use server"
+'use server'
 
 import {
   adminUpdateProfileValidation,
   deleteProfileValidation,
   updatePasswordValidation,
+  updatePincodeValidation,
   updatePrimaryLocationValidation,
   updateProfileValidation,
 } from '@/app/(site)/profil/validation'
@@ -20,14 +21,14 @@ export const updateProfileInformationAction = privateAction
   .action(async ({ parsedInput, ctx: { user } }) => {
     const updatedUser = userService.updateByID(user.id, { ...parsedInput })
     if (!updatedUser) {
-      throw new ActionError("Profil blev ikke opdateret")
+      throw new ActionError('Profil blev ikke opdateret')
     }
-    revalidatePath("/profil")
+    revalidatePath('/profil')
   })
 
 export const adminUpdateProfileInformationAction = adminAction
   .schema(adminUpdateProfileValidation)
-  .action(async ({ parsedInput: { userId, ...userInfo }, ctx: { user } }) => { })
+  .action(async ({ parsedInput: { userId, ...userInfo }, ctx: { user } }) => {})
 
 export const deleteProfileAction = privateAction
   .schema(deleteProfileValidation)
@@ -38,43 +39,75 @@ export const deleteProfileAction = privateAction
     }
     const isDeleted = await userService.deleteByID(user.id)
     if (!isDeleted) {
-      throw new ActionError("Der gik noget galt med sletningen")
+      throw new ActionError('Der gik noget galt med sletningen')
     }
     await sessionService.delete(session.id)
-    redirect("/log-ind")
+    redirect('/log-ind')
   })
 
 export const updatePasswordAction = privateAction
   .schema(updatePasswordValidation)
   .action(
-    async ({ parsedInput: { currentPassword, newPassword }, ctx: { user }, }) => {
-      const isValidPassword = await userService.verifyPassword(user.email, currentPassword)
+    async ({
+      parsedInput: { currentPassword, newPassword },
+      ctx: { user },
+    }) => {
+      const isValidPassword = await userService.verifyPassword(
+        user.email,
+        currentPassword,
+      )
       if (!isValidPassword) {
-        throw new ActionError("Kodeord er ikke korrekt")
+        throw new ActionError('Kodeord er ikke korrekt')
       }
+
       const updatedUser = await userService.updatePassword(user.id, newPassword)
       if (!updatedUser) {
-        throw new ActionError("Kodeord blev ikke opdateret")
+        throw new ActionError('Kodeord blev ikke opdateret')
       }
       const sessionID = await sessionService.create(updatedUser.id)
-      revalidatePath("/profil")
-    })
+      revalidatePath('/profil')
+    },
+  )
 
 export const updatePrimaryLocationAction = privateAction
   .schema(updatePrimaryLocationValidation)
+  .action(async ({ parsedInput: { locationID }, ctx: { user } }) => {
+    console.log('locID', locationID)
+    const locations = await locationService.getAllByUserID(user.id)
+
+    if (!locations.some(loc => loc.id == locationID)) {
+      throw new ActionError('Du har ikke adgang til denne lokation')
+    }
+
+    const didUpdate = await locationService.toggleLocationPrimary(
+      user.id,
+      locationID,
+    )
+    if (!didUpdate) {
+      throw new ActionError('Din hovedlokation blev ikke opdateret')
+    }
+
+    revalidatePath('/profil')
+  })
+
+export const updatePincodeAction = privateAction
+  .schema(updatePincodeValidation)
   .action(
-    async ({ parsedInput: { locationID }, ctx: { user } }) => {
-      console.log("locID", locationID)
-      const locations = await locationService.getAllByUserID(user.id)
-
-      if (!locations.some(loc => loc.id == locationID)) {
-        throw new ActionError("Du har ikke adgang til denne lokation")
+    async ({ parsedInput: { currentPincode, newPincode }, ctx: { user } }) => {
+      const isValidPincode = await userService.verifyPincode(
+        user.email,
+        currentPincode,
+      )
+      if (!isValidPincode) {
+        throw new ActionError('Din PIN-kode er ikke korrekt.')
       }
-
-      const didUpdate = await locationService.toggleLocationPrimary(user.id, locationID)
-      if (!didUpdate) {
-        throw new ActionError("Din hovedlokation blev ikke opdateret")
+      const updatedPincode = await userService.updatePincode(
+        user.id,
+        newPincode,
+      )
+      if (!updatedPincode) {
+        throw new ActionError('PIN-koden blev ikke opdateret.')
       }
-
-      revalidatePath("/profil")
-    })
+      revalidatePath('/profil')
+    },
+  )
