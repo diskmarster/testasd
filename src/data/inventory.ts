@@ -46,7 +46,7 @@ const HISTORY_COLS = getTableColumns(historyTable)
 const REORDER_COLS = getTableColumns(reorderTable)
 
 export const inventory = {
-  getInventoryByLocationID: async function (
+  getInventoryByLocationID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<FormattedInventory[]> {
@@ -78,13 +78,13 @@ export const inventory = {
 
     return inventory
   },
-  getUnits: async function (trx: TRX = db): Promise<Unit[]> {
+  getUnits: async function(trx: TRX = db): Promise<Unit[]> {
     return await trx
       .select()
       .from(unitTable)
       .where(eq(unitTable.isBarred, false))
   },
-  getGroupsByID: async function (
+  getGroupsByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Group[]> {
@@ -98,7 +98,7 @@ export const inventory = {
         ),
       )
   },
-  getAllGroupsByID: async function (
+  getAllGroupsByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Group[]> {
@@ -107,7 +107,7 @@ export const inventory = {
       .from(groupTable)
       .where(eq(groupTable.customerID, customerID))
   },
-  createProductGroup: async function (
+  createProductGroup: async function(
     groupData: NewGroup,
     trx: TRX = db,
   ): Promise<Group> {
@@ -115,7 +115,7 @@ export const inventory = {
     return group[0]
   },
 
-  getActivePlacementsByID: async function (
+  getActivePlacementsByID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Placement[]> {
@@ -129,7 +129,7 @@ export const inventory = {
         ),
       )
   },
-  getAllPlacementsByID: async function (
+  getAllPlacementsByID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Placement[]> {
@@ -138,7 +138,7 @@ export const inventory = {
       .from(placementTable)
       .where(eq(placementTable.locationID, locationID))
   },
-  getBatchesByID: async function (
+  getBatchesByID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Batch[]> {
@@ -152,7 +152,7 @@ export const inventory = {
         ),
       )
   },
-  getInventoryByIDs: async function (
+  getInventoryByIDs: async function(
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
@@ -170,7 +170,7 @@ export const inventory = {
       )
     return inventory[0]
   },
-  upsertInventory: async function (
+  upsertInventory: async function(
     inventory: NewInventory,
     trx: TRX = db,
   ): Promise<boolean> {
@@ -191,7 +191,7 @@ export const inventory = {
       })
     return resultSet.rowsAffected == 1
   },
-  updateInventory: async function (
+  updateInventory: async function(
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
@@ -212,7 +212,7 @@ export const inventory = {
       )
     return resultSet.rowsAffected == 1
   },
-  createHitoryLog: async function (
+  createHitoryLog: async function(
     historyData: NewHistory,
     trx: TRX = db,
   ): Promise<History | undefined> {
@@ -222,7 +222,7 @@ export const inventory = {
       .returning()
     return history[0]
   },
-  getProductsByID: async function (
+  getProductsByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Product[]> {
@@ -236,7 +236,7 @@ export const inventory = {
         ),
       )
   },
-  createPlacement: async function (
+  createPlacement: async function(
     placementData: NewPlacement,
     trx: TRX = db,
   ): Promise<Placement> {
@@ -246,14 +246,14 @@ export const inventory = {
       .returning()
     return placement[0]
   },
-  createBatch: async function (
+  createBatch: async function(
     batchData: NewBatch,
     trx: TRX = db,
   ): Promise<Batch> {
     const batch = await trx.insert(batchTable).values(batchData).returning()
     return batch[0]
   },
-  getHistoryByLocationID: async function (
+  getHistoryByLocationID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<FormattedHistory[]> {
@@ -375,7 +375,9 @@ export const inventory = {
 
     return reorders
   },
-  getInventoryByProductID: async (productID: ProductID): Promise<Inventory[]> => { 
+  getInventoryByProductID: async (
+    productID: ProductID,
+  ): Promise<Inventory[]> => {
     return await db
       .select()
       .from(inventoryTable)
