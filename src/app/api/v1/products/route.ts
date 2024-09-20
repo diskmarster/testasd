@@ -1,4 +1,4 @@
-import { productService } from "@/service/product";
+import { productService } from "@/service/products";
 import { validateRequest } from "@/service/user.utils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<unknown>> 
 			})
 		}
 
-		const products = await productService.getAllProducts(user.customerID).catch(e => {
+		const products = await productService.getAllProductsWithInventories(user.customerID).catch(e => {
 			console.error(`Error getting products for authenticated user: '${e}'`)
 
 			return NextResponse.json({
