@@ -1,11 +1,13 @@
 import { db, TRX } from '@/lib/database'
 import { CustomerID } from '@/lib/database/schema/customer'
 import {
+  groupTable,
   NewProduct,
   Product,
   productTable,
+  unitTable,
 } from '@/lib/database/schema/inventory'
-import { eq } from 'drizzle-orm'
+import { eq, getTableColumns } from 'drizzle-orm'
 
 export const product = {
   create: async function(
@@ -18,10 +20,20 @@ export const product = {
       .returning()
     return product[0]
   },
-  getAllProducts: async (customerID: CustomerID): Promise<Product[]> => {
+  getAllProducts: async (
+    customerID: CustomerID,
+  ): Promise<(Product & { unit: string; group: string })[]> => {
+    const cols = getTableColumns(productTable)
+
     return await db
-      .select()
+      .select({
+        ...cols,
+        unit: unitTable.name,
+        group: groupTable.name,
+      })
       .from(productTable)
+      .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
+      .innerJoin(groupTable, eq(productTable.unitID, groupTable.id))
       .where(eq(productTable.customerID, customerID))
   },
 }

@@ -1,12 +1,12 @@
 import { product } from '@/data/products'
+import { CustomerID } from '@/lib/database/schema/customer'
 import { Inventory, NewProduct, Product } from '@/lib/database/schema/inventory'
-import { CustomerID } from "@/lib/database/schema/customer";
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
-import { inventoryService } from './inventory';
+import { inventoryService } from './inventory'
 
 export const productService = {
-  create: async function (
+  create: async function(
     productData: NewProduct,
   ): Promise<Product | undefined> {
     try {
@@ -18,37 +18,51 @@ export const productService = {
         if (err.message.includes('barcode')) {
           throw new ActionError('Stregkoden findes allerede')
         }
-        if (err.message.includes('sku')){
+        if (err.message.includes('sku')) {
           throw new ActionError('Varenr. findes allerede')
         }
       }
     }
   },
-  getAllProducts: async (customerID: CustomerID): Promise<Product[]> => {
+  getAllProducts: async (
+    customerID: CustomerID,
+  ): Promise<(Product & { unit: string; group: string })[]> => {
     try {
       return await product.getAllProducts(customerID)
     } catch (e) {
       console.error(e)
-      Promise.reject(`Error getting products from database ${JSON.stringify(e, null, 2)}`)
+      Promise.reject(
+        `Error getting products from database ${JSON.stringify(e, null, 2)}`,
+      )
       return []
     }
   },
-  getAllProductsWithInventories: async (customerID: CustomerID): Promise<(Product & { inventories: Inventory[] })[]> => {
+  getAllProductsWithInventories: async (
+    customerID: CustomerID,
+  ): Promise<
+    (Product & { unit: string; group: string; inventories: Inventory[] })[]
+  > => {
     try {
       const products = await product.getAllProducts(customerID)
 
-      return await Promise.all(products.map(async p => {
-        const inventories = await inventoryService.getInventoryByProductID(p.id)
+      return await Promise.all(
+        products.map(async p => {
+          const inventories = await inventoryService.getInventoryByProductID(
+            p.id,
+          )
 
-        return {
-          ...p,
-          inventories,
-        }
-      }))
+          return {
+            ...p,
+            inventories,
+          }
+        }),
+      )
     } catch (e) {
       console.error(e)
-      Promise.reject(`Error getting products from database ${JSON.stringify(e, null, 2)}`)
+      Promise.reject(
+        `Error getting products from database ${JSON.stringify(e, null, 2)}`,
+      )
       return []
     }
-  }
+  },
 }
