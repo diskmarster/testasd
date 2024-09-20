@@ -26,6 +26,26 @@ export async function verifyPassword(hash: string, unhashed: string): Promise<bo
   return valid
 }
 
+export async function hashPincode(pc: string): Promise<string> {
+  const hashedPin = await hash(pc, {
+    memoryCost: MEMORY_COST,
+    timeCost: TIME_COST,
+    outputLen: OUTPUT_LEN,
+    parallelism: PARELLELISM
+  })
+  return hashedPin
+}
+
+export async function verifyPincode(hash: string, unhashed: string): Promise<boolean> {
+  const validPin = await verify(hash, unhashed, {
+    memoryCost: MEMORY_COST,
+    timeCost: TIME_COST,
+    outputLen: OUTPUT_LEN,
+    parallelism: PARELLELISM
+  })
+  return validPin
+}
+
 export function userDTO(u: User): UserNoHash {
   const { hash, ...rest } = u
   const user = { ...rest }
