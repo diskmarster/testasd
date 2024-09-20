@@ -26,7 +26,7 @@ export const updatePasswordValidation = z
         /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{8,}$/,
         {
           message:
-            'Kodeord skal minimum være 8 karakterer, have et stork bogstav, nummer og special karakter',
+            'Kodeord skal minimum være 8 karakterer, have et stort bogstav, nummer og special karakter',
         },
       ),
     confirmPassword: z.string(),
@@ -40,5 +40,25 @@ export const updatePasswordValidation = z
       })
     }
   })
+
+  export const updatePincodeValidation = z
+  .object({
+    currentPincode: z.string(), 
+    newPincode: z
+      .string()
+      .regex(/^\d{4}$/, {
+        message: 'PIN-koden skal have en længde på 4, og skal være tal',
+      }),
+    confirmPincode: z.string(),
+  })
+  .superRefine(({ newPincode, confirmPincode }, ctx) => {
+    if (newPincode !== confirmPincode) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'PIN-koderne er ikke ens', 
+        path: ['confirmPincode'],
+      });
+    }
+  });
 
 export const updatePrimaryLocationValidation = z.object({ locationID: z.string() })
