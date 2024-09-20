@@ -175,18 +175,25 @@ function ExpandableCard({
             : 'max-h-0 py-0 opacity-0',
         )}>
         <CardContent className='flex-grow px-6'>
-          <p className='mb-2 text-sm font-semibold'>Features:</p>
-          <ul className='space-y-2'>
-            {plan.features.map((feature, index) => (
-              <li key={index} className='flex text-xl'>
-                <div className='mr-2'>
-                  <Icons.check className='h-5 w-5 text-success' />
-                </div>
-                <span className='text-sm'>{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
+  <p className='mb-2 text-xl font-semibold'>Features:</p>
+  <ul className='space-y-2'>
+    {plan.features.map((feature, index) => {
+      const isFirstFeature = (plan.plan === 'plus' && index === 0) || (plan.plan === 'pro' && index === 0);
+      return (
+        <li key={index} className='flex text-xl'>
+          {!isFirstFeature && (
+          <div className='mr-2'>
+            <Icons.check className='h-5 w-5 text-success' />
+          </div>
+          )}
+          <span className={`text-sm ${isFirstFeature ? 'font-bold' : ''}`}>
+            {feature}
+          </span>
+        </li>
+      );
+    })}
+  </ul>
+</CardContent>
       </div>
     </Card>
   )

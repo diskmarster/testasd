@@ -43,10 +43,8 @@ export const plansConfig: PlanConfig[] = [
     locations: 10,
     features: [
       'Alt fra Plus',
-      'Ubegrænset brugere',
+      '20 brugere',
       'Batchnr',
-      'Salgsordrenr',
-      'Købsordrenr',
       'Serienummer',
       'Ubegrænset lokationer',
     ],
