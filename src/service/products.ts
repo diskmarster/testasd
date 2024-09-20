@@ -1,7 +1,9 @@
 import { product } from '@/data/products'
-import { NewProduct, Product } from '@/lib/database/schema/inventory'
+import { Inventory, NewProduct, Product } from '@/lib/database/schema/inventory'
+import { CustomerID } from "@/lib/database/schema/customer";
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
+import { inventoryService } from './inventory';
 
 export const productService = {
   create: async function (
@@ -22,4 +24,31 @@ export const productService = {
       }
     }
   },
+  getAllProducts: async (customerID: CustomerID): Promise<Product[]> => {
+    try {
+      return await product.getAllProducts(customerID)
+    } catch (e) {
+      console.error(e)
+      Promise.reject(`Error getting products from database ${JSON.stringify(e, null, 2)}`)
+      return []
+    }
+  },
+  getAllProductsWithInventories: async (customerID: CustomerID): Promise<(Product & { inventories: Inventory[] })[]> => {
+    try {
+      const products = await product.getAllProducts(customerID)
+
+      return await Promise.all(products.map(async p => {
+        const inventories = await inventoryService.getInventoryByProductID(p.id)
+
+        return {
+          ...p,
+          inventories,
+        }
+      }))
+    } catch (e) {
+      console.error(e)
+      Promise.reject(`Error getting products from database ${JSON.stringify(e, null, 2)}`)
+      return []
+    }
+  }
 }
