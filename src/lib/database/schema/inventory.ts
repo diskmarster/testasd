@@ -55,7 +55,6 @@ export const placementTable = sqliteTable(
 )
 
 export type Placement = typeof placementTable.$inferSelect
-export type Groups = typeof groupTable.$inferInsert
 export type NewPlacement = typeof placementTable.$inferInsert
 export type PartialPlacement = Partial<Placement>
 export type PlacementID = Placement['id']
