@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/table'
 import { FormattedReorder } from '@/data/inventory.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
+import { cn } from '@/lib/utils'
 import {
   ColumnFiltersState,
   flexRender,
@@ -151,9 +152,9 @@ export function TableReorder({ data, user, units, groups }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -172,8 +173,8 @@ export function TableReorder({ data, user, units, groups }: Props) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'>
-                  Ingen beholdning
+                  className={cn('h-24 text-center')}>
+                  Ingen min. beholdninger
                 </TableCell>
               </TableRow>
             )}

@@ -1,4 +1,4 @@
-import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
+import { TableReorderActions } from '@/components/inventory/table-reorder-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { FormattedReorder } from '@/data/inventory.types'
@@ -49,10 +49,61 @@ export function getTableReorderColumns(
     },
   }
 
+  const unitCol: ColumnDef<FormattedReorder> = {
+    accessorKey: 'product.unit',
+    id: 'unit',
+    header: ({ column }) => <TableHeader column={column} title='Enhed' />,
+    cell: ({ getValue }) => getValue<string>(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+    meta: {
+      viewLabel: 'Enhed',
+    },
+  }
+
+  const minimumCol: ColumnDef<FormattedReorder> = {
+    accessorKey: 'minimum',
+    header: ({ column }) => (
+      <TableHeader column={column} title='Min. beholdning' />
+    ),
+    cell: ({ getValue }) => getValue<number>(),
+    filterFn: 'weakEquals',
+    meta: {
+      viewLabel: 'Min. beholdning',
+      rightAlign: true,
+    },
+  }
+
+  const recAmountCol: ColumnDef<FormattedReorder> = {
+    accessorKey: 'recommended',
+    header: ({ column }) => (
+      <TableHeader column={column} title='Anbefalet genbestil' />
+    ),
+    cell: ({ getValue }) => getValue<string>(),
+    filterFn: 'weakEquals',
+    meta: {
+      viewLabel: 'Anbefalet genbestil',
+      rightAlign: true,
+      className: 'justify-end',
+    },
+  }
+
+  const orderedCol: ColumnDef<FormattedReorder> = {
+    accessorKey: 'ordered',
+    header: ({ column }) => <TableHeader column={column} title='Bestilt' />,
+    cell: ({ getValue }) => getValue<number>(),
+    filterFn: 'weakEquals',
+    meta: {
+      viewLabel: 'Bestilt',
+      rightAlign: true,
+    },
+  }
+
   const actionsCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'actions',
     header: () => null,
-    cell: ({ table, row }) => <TableOverviewActions row={row} table={table} />,
+    cell: ({ table, row }) => <TableReorderActions row={row} table={table} />,
     enableHiding: false,
     enableSorting: false,
     meta: {
@@ -60,7 +111,17 @@ export function getTableReorderColumns(
     },
   }
 
-  return [skuCol, barcodeCol, text1Col, quantityCol, actionsCol]
+  return [
+    skuCol,
+    barcodeCol,
+    text1Col,
+    quantityCol,
+    unitCol,
+    minimumCol,
+    recAmountCol,
+    orderedCol,
+    actionsCol,
+  ]
 }
 
 export function getTableReorderFilters(
@@ -134,6 +195,14 @@ export function getTableReorderFilters(
     value: '',
   }
 
+  const recAmountFilter: FilterField<FormattedReorder> = {
+    column: table.getColumn('recommended'),
+    type: 'text',
+    label: 'Anbefalet ',
+    value: '',
+    placeholder: 'Søg i varetekst 3',
+  }
+
   return [
     skuFilter,
     barcodeFilter,
@@ -143,5 +212,6 @@ export function getTableReorderFilters(
     text2Filter,
     text3Filter,
     updatedFilter,
+    recAmountFilter,
   ]
 }

@@ -61,6 +61,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
     defaultValues: {
       locationID: locationID,
       minimum: 0,
+      buffer: 0,
     },
   })
 
@@ -176,6 +177,66 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                   onClick={increment}>
                   <Icons.plus className='size-6' />
                 </Button>
+              </div>
+              {formState.errors.minimum && (
+                <p className='text-sm text-destructive'>
+                  {formState.errors.minimum.message}
+                </p>
+              )}
+            </div>
+            <div className='pt-2 flex flex-col gap-2'>
+              <Label>Buffer rate (%)</Label>
+              <p className='text-sm text-muted-foreground -mt-1.5'>
+                Buffer raten bruges til at udregne en anbefalet genbestillings
+                antal.
+              </p>
+              <div className='flex flex-col'>
+                <Input
+                  type='number'
+                  {...register('buffer')}
+                  className={cn(
+                    'w-full h-14 rounded-b-none text-center text-2xl z-10',
+                    '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+                  )}
+                />
+                <div className='flex'>
+                  <Button
+                    tabIndex={-1}
+                    size='icon'
+                    type='button'
+                    variant='outline'
+                    className='h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0'
+                    onClick={() => setValue('buffer', 25)}>
+                    25%
+                  </Button>
+                  <Button
+                    tabIndex={-1}
+                    size='icon'
+                    type='button'
+                    variant='outline'
+                    className='h-14 w-1/4 rounded-none border-t-0 border-l-0'
+                    onClick={() => setValue('buffer', 50)}>
+                    50%
+                  </Button>
+                  <Button
+                    tabIndex={-1}
+                    size='icon'
+                    type='button'
+                    variant='outline'
+                    className='h-14 w-1/4 rounded-none border-t-0 border-l-0'
+                    onClick={() => setValue('buffer', 75)}>
+                    75%
+                  </Button>
+                  <Button
+                    tabIndex={-1}
+                    size='icon'
+                    type='button'
+                    variant='outline'
+                    className='h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none'
+                    onClick={() => setValue('buffer', 100)}>
+                    100%
+                  </Button>
+                </div>
               </div>
               {formState.errors.minimum && (
                 <p className='text-sm text-destructive'>

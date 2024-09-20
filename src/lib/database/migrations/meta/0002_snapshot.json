@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "924e8b4d-fdc8-4d29-b9bb-8c0ee3450cf6",
+  "id": "c0739931-9421-46b3-89ae-9ff0d28cbc15",
   "prevId": "4bde4a4a-ed62-4e25-b9f0-922491d0e931",
   "tables": {
     "nl_session": {
@@ -1137,6 +1137,29 @@
           "notNull": true,
           "autoincrement": false,
           "default": 0
+        },
+        "buffer": {
+          "name": "buffer",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "inserted": {
+          "name": "inserted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated": {
+          "name": "updated",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
         }
       },
       "indexes": {},
