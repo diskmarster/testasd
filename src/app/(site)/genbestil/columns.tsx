@@ -4,6 +4,7 @@ import { FilterField } from '@/components/table/table-toolbar'
 import { FormattedReorder } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
+import { cn } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 
 export function getTableReorderColumns(
@@ -42,7 +43,14 @@ export function getTableReorderColumns(
   const quantityCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'quantity',
     header: ({ column }) => <TableHeader column={column} title='Beholdning' />,
-    cell: ({ getValue }) => getValue<number>(),
+    cell: ({ getValue, row }) => (
+      <span
+        className={cn(
+          row.original.quantity < row.original.minimum && 'text-destructive',
+        )}>
+        {getValue<number>()}
+      </span>
+    ),
     meta: {
       viewLabel: 'Beholdning',
       rightAlign: true,
