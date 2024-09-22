@@ -78,13 +78,13 @@ export const inventory = {
 
     return inventory
   },
-  getUnits: async function(trx: TRX = db): Promise<Unit[]> {
+  getActiveUnits: async function(trx: TRX = db): Promise<Unit[]> {
     return await trx
       .select()
       .from(unitTable)
       .where(eq(unitTable.isBarred, false))
   },
-  getGroupsByID: async function(
+  getActiveGroupsByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Group[]> {
@@ -138,7 +138,7 @@ export const inventory = {
       .from(placementTable)
       .where(eq(placementTable.locationID, locationID))
   },
-  getBatchesByID: async function(
+  getActiveBatchesByID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Batch[]> {
@@ -222,7 +222,7 @@ export const inventory = {
       .returning()
     return history[0]
   },
-  getProductsByID: async function(
+  getActiveProductsByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Product[]> {
