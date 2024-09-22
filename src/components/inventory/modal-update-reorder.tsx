@@ -45,7 +45,7 @@ export function ModalUpdateReorder({ products }: Props) {
     setValue('locationID', data.locationID)
     setValue('productID', data.productID)
     setValue('minimum', data.minimum)
-    setValue('buffer', data.buffer)
+    setValue('buffer', data.buffer.toFixed(2))
   })
 
   const formValues = watch()
