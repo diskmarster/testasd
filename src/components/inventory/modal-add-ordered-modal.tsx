@@ -88,8 +88,8 @@ export function ModalAddOrderedReorder({ products }: Props) {
         <CredenzaHeader>
           <CredenzaTitle>Tilføj bestilt antal</CredenzaTitle>
           <CredenzaDescription>
-            Bliv gjort opmærksom på når en vare kommer under en minimums grænse
-            som du selv bestemmer
+            Det bestilte antal vil automatisk blive opdateret når der laves en
+            tilgang på dette produkt
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -118,7 +118,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Minimums beholdning</Label>
+              <Label>Antal bestilt</Label>
               <div className='flex'>
                 <Button
                   tabIndex={-1}
@@ -158,7 +158,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
               size='lg'
               className='w-full gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opdater
+              Tilføj
             </Button>
           </form>
         </CredenzaBody>
