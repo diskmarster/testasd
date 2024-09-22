@@ -1,5 +1,6 @@
 import { signOutAction } from '@/app/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { ModalAddOrderedReorder } from '@/components/inventory/modal-add-ordred-modal'
 import { ModalCreateReorder } from '@/components/inventory/modal-create-reorder'
 import { ModalDeleteReorder } from '@/components/inventory/modal-delete-reorder'
 import { ModalUpdateReorder } from '@/components/inventory/modal-update-reorder'
@@ -45,6 +46,7 @@ export default async function Page() {
       {/* Modals without triggers that we open with custom events from row actions */}
       <ModalUpdateReorder products={products} />
       <ModalDeleteReorder products={products} />
+      <ModalAddOrderedReorder products={products} />
     </SiteWrapper>
   )
 }

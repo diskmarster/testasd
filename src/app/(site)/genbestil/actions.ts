@@ -6,6 +6,7 @@ import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
 import {
+  addOrderedToReorderValidation,
   createReorderValidation,
   deleteReorderValidation,
   updateReorderValidation,
@@ -50,7 +51,7 @@ export const updateReorderAction = privateAction
       ctx.user.customerID,
       {
         minimum: parsedInput.minimum,
-        buffer: parsedInput.buffer,
+        buffer: parsedInput.buffer / 100,
       },
     )
     if (!newReorder) {
@@ -78,6 +79,32 @@ export const deleteReorderAction = privateAction
     )
     if (!didDelete) {
       throw new ActionError('Minimums beholdning blev ikke slettet')
+    }
+
+    revalidatePath('/genbestil')
+  })
+
+export const addOrderedToReorderAction = privateAction
+  .schema(addOrderedToReorderValidation)
+  .action(async ({ parsedInput, ctx }) => {
+    const existsLocation = await locationService.getByID(parsedInput.locationID)
+    if (!existsLocation) {
+      throw new ActionError('Firma lokation findes ikke i databasen')
+    }
+    if (existsLocation.customerID != ctx.user.customerID) {
+      throw new ActionError('Firma lokation tilhører dit firma')
+    }
+
+    const newReorder = await inventoryService.updateReorderByIDs(
+      parsedInput.productID,
+      parsedInput.locationID,
+      ctx.user.customerID,
+      {
+        ordered: parsedInput.ordered,
+      },
+    )
+    if (!newReorder) {
+      throw new ActionError('Minimums beholdning blev ikke opdateret')
     }
 
     revalidatePath('/genbestil')

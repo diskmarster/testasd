@@ -26,3 +26,11 @@ export const deleteReorderValidation = z.object({
   productID: z.coerce.number({ required_error: 'Et produkt skal vælges' }),
   locationID: z.string().min(1),
 })
+
+export const addOrderedToReorderValidation = z.object({
+  productID: z.coerce.number({ required_error: 'Et produkt skal vælges' }),
+  locationID: z.string().min(1),
+  ordered: z.coerce
+    .number()
+    .min(1, { message: 'Minimums beholdning skal være større end 1' }),
+})

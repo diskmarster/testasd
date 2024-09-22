@@ -18,6 +18,7 @@ import {
   NewHistory,
   NewPlacement,
   NewReorder,
+  PartialReorder,
   Placement,
   PlacementID,
   Product,
@@ -269,16 +270,13 @@ export const inventoryService = {
     productID: ProductID,
     locationID: LocationID,
     customerID: CustomerID,
-    reorderData: Pick<Reorder, 'minimum' | 'buffer'>,
+    reorderData: PartialReorder,
   ): Promise<boolean> {
     return await inventory.updateReorderByID(
       productID,
       locationID,
       customerID,
-      {
-        ...reorderData,
-        buffer: reorderData.buffer / 100,
-      },
+      reorderData,
     )
   },
   getReordersByID: async function(

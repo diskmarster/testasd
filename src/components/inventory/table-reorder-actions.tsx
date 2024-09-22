@@ -16,7 +16,16 @@ interface Props {
 export function TableReorderActions({ table, row }: Props) {
   return (
     <div className='flex items-center gap-2'>
-      <Button size='iconSm' variant='ghost'>
+      <Button
+        size='iconSm'
+        variant='ghost'
+        onClick={() =>
+          emitCustomEvent('AddOrderedReorderByIDs', {
+            locationID: row.original.locationID,
+            productID: row.original.productID,
+            ordered: row.original.recommended,
+          })
+        }>
         <Icons.plus className='size-4' />
       </Button>
       <TableActionsWrapper>
