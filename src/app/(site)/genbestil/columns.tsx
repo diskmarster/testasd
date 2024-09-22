@@ -4,8 +4,9 @@ import { FilterField } from '@/components/table/table-toolbar'
 import { FormattedReorder } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
+import { isSameDay } from 'date-fns'
 
 export function getTableReorderColumns(
   userRole: UserRole,
@@ -51,6 +52,7 @@ export function getTableReorderColumns(
         {getValue<number>()}
       </span>
     ),
+    filterFn: 'weakEquals',
     meta: {
       viewLabel: 'Beholdning',
       rightAlign: true,
@@ -67,6 +69,19 @@ export function getTableReorderColumns(
     },
     meta: {
       viewLabel: 'Enhed',
+    },
+  }
+
+  const groupCol: ColumnDef<FormattedReorder> = {
+    accessorKey: 'product.group',
+    id: 'group',
+    header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
+    cell: ({ getValue }) => getValue<string>(),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+    meta: {
+      viewLabel: 'Varegruppe',
     },
   }
 
@@ -108,6 +123,20 @@ export function getTableReorderColumns(
     },
   }
 
+  const updatedCol: ColumnDef<FormattedReorder> = {
+    accessorKey: 'updated',
+    header: ({ column }) => (
+      <TableHeader column={column} title='Sidst opdateret' />
+    ),
+    cell: ({ getValue }) => formatDate(getValue<Date>()),
+    filterFn: (row, id, value) => {
+      return isSameDay(value, row.getValue(id))
+    },
+    meta: {
+      viewLabel: 'Oprettet',
+    },
+  }
+
   const actionsCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'actions',
     header: () => null,
@@ -123,11 +152,13 @@ export function getTableReorderColumns(
     skuCol,
     barcodeCol,
     text1Col,
+    groupCol,
     quantityCol,
     unitCol,
     minimumCol,
     recAmountCol,
     orderedCol,
+    updatedCol,
     actionsCol,
   ]
 }
@@ -175,6 +206,23 @@ export function getTableReorderFilters(
       })),
     ],
   }
+
+  const quantityFilter: FilterField<FormattedReorder> = {
+    column: table.getColumn('quantity'),
+    type: 'text',
+    label: 'Beholdning',
+    value: '',
+    placeholder: 'Søg i beholdning',
+  }
+
+  const minimumFilter: FilterField<FormattedReorder> = {
+    column: table.getColumn('minimum'),
+    type: 'text',
+    label: 'Min. beholdning',
+    value: '',
+    placeholder: 'Søg i min. beholdning',
+  }
+
   const text1Filter: FilterField<FormattedReorder> = {
     column: table.getColumn('text1'),
     type: 'text',
@@ -182,25 +230,19 @@ export function getTableReorderFilters(
     value: '',
     placeholder: 'Søg i varetekst 1',
   }
-  const text2Filter: FilterField<FormattedReorder> = {
-    column: table.getColumn('text2'),
-    type: 'text',
-    label: 'Varetekst 2',
-    value: '',
-    placeholder: 'Søg i varetekst 2',
-  }
-  const text3Filter: FilterField<FormattedReorder> = {
-    column: table.getColumn('text3'),
-    type: 'text',
-    label: 'Varetekst 3',
-    value: '',
-    placeholder: 'Søg i varetekst 3',
-  }
   const updatedFilter: FilterField<FormattedReorder> = {
     column: table.getColumn('updated'),
     type: 'date',
     label: 'Sidst opdateret',
     value: '',
+  }
+
+  const orderedFilter: FilterField<FormattedReorder> = {
+    column: table.getColumn('ordered'),
+    type: 'text',
+    label: 'Bestilt',
+    value: '',
+    placeholder: 'Søg i bestilt',
   }
 
   const recAmountFilter: FilterField<FormattedReorder> = {
@@ -214,12 +256,13 @@ export function getTableReorderFilters(
   return [
     skuFilter,
     barcodeFilter,
-    unitFilter,
-    groupFilter,
     text1Filter,
-    text2Filter,
-    text3Filter,
-    updatedFilter,
+    groupFilter,
+    quantityFilter,
+    unitFilter,
+    minimumFilter,
     recAmountFilter,
+    orderedFilter,
+    updatedFilter,
   ]
 }
