@@ -35,16 +35,18 @@ export const inventoryService = {
   ): Promise<FormattedInventory[]> {
     return await inventory.getInventoryByLocationID(locationID)
   },
-  getUnits: async function(): Promise<Unit[]> {
-    return inventory.getUnits()
+  getActiveUnits: async function(): Promise<Unit[]> {
+    return inventory.getActiveUnits()
   },
-  getGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
-    return await inventory.getGroupsByID(customerID)
+  getActiveGroupsByID: async function(
+    customerID: CustomerID,
+  ): Promise<Group[]> {
+    return await inventory.getActiveGroupsByID(customerID)
   },
   getAllGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
     return await inventory.getAllGroupsByID(customerID)
   },
-  getPlacementsByID: async function(
+  getActivePlacementsByID: async function(
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getActivePlacementsByID(locationID)
@@ -54,8 +56,10 @@ export const inventoryService = {
   ): Promise<Placement[]> {
     return await inventory.getAllPlacementsByID(locationID)
   },
-  getBatchesByID: async function(locationID: LocationID): Promise<Batch[]> {
-    return await inventory.getBatchesByID(locationID)
+  getActiveBatchesByID: async function(
+    locationID: LocationID,
+  ): Promise<Batch[]> {
+    return await inventory.getActiveBatchesByID(locationID)
   },
   getInventoryByIDs: async function(
     productID: ProductID,
@@ -227,8 +231,10 @@ export const inventoryService = {
 
     return result
   },
-  getProductsByID: async function(customerID: CustomerID): Promise<Product[]> {
-    return await inventory.getProductsByID(customerID)
+  getActiveProductsByID: async function(
+    customerID: CustomerID,
+  ): Promise<Product[]> {
+    return await inventory.getActiveProductsByID(customerID)
   },
   createPlacement: async function(
     placementData: NewPlacement,
