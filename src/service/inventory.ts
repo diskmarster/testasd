@@ -258,6 +258,13 @@ export const inventoryService = {
       buffer: reorderData.buffer / 100,
     })
   },
+  deleteReorderByIDs: async function(
+    productID: ProductID,
+    locationID: LocationID,
+    customerID: CustomerID,
+  ): Promise<boolean> {
+    return await inventory.deleteReorderByID(productID, locationID, customerID)
+  },
   updateReorderByIDs: async function(
     productID: ProductID,
     locationID: LocationID,

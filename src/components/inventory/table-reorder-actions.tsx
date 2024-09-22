@@ -37,7 +37,6 @@ export function TableReorderActions({ table, row }: Props) {
             emitCustomEvent('DeleteReorderByIDs', {
               locationID: row.original.locationID,
               productID: row.original.productID,
-              customerID: row.original.customerID,
             })
           }}>
           Slet

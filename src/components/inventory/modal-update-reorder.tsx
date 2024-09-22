@@ -32,7 +32,6 @@ interface Props {
 export function ModalUpdateReorder({ products }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const [searchValue, setSearchValue] = useState<string>('')
   const [pending, startTransition] = useTransition()
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<

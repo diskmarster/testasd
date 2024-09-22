@@ -5,7 +5,11 @@ import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
-import { createReorderValidation } from './validation'
+import {
+  createReorderValidation,
+  deleteReorderValidation,
+  updateReorderValidation,
+} from './validation'
 
 export const createReorderAction = privateAction
   .schema(createReorderValidation)
@@ -24,6 +28,56 @@ export const createReorderAction = privateAction
     })
     if (!newReorder) {
       throw new ActionError('Minimums beholdning blev ikke oprettet')
+    }
+
+    revalidatePath('/genbestil')
+  })
+
+export const updateReorderAction = privateAction
+  .schema(updateReorderValidation)
+  .action(async ({ parsedInput, ctx }) => {
+    const existsLocation = await locationService.getByID(parsedInput.locationID)
+    if (!existsLocation) {
+      throw new ActionError('Firma lokation findes ikke i databasen')
+    }
+    if (existsLocation.customerID != ctx.user.customerID) {
+      throw new ActionError('Firma lokation tilhører dit firma')
+    }
+
+    const newReorder = await inventoryService.updateReorderByIDs(
+      parsedInput.productID,
+      parsedInput.locationID,
+      ctx.user.customerID,
+      {
+        minimum: parsedInput.minimum,
+        buffer: parsedInput.buffer,
+      },
+    )
+    if (!newReorder) {
+      throw new ActionError('Minimums beholdning blev ikke opdateret')
+    }
+
+    revalidatePath('/genbestil')
+  })
+
+export const deleteReorderAction = privateAction
+  .schema(deleteReorderValidation)
+  .action(async ({ parsedInput, ctx }) => {
+    const existsLocation = await locationService.getByID(parsedInput.locationID)
+    if (!existsLocation) {
+      throw new ActionError('Firma lokation findes ikke i databasen')
+    }
+    if (existsLocation.customerID != ctx.user.customerID) {
+      throw new ActionError('Firma lokation tilhører dit firma')
+    }
+
+    const didDelete = await inventoryService.deleteReorderByIDs(
+      parsedInput.productID,
+      parsedInput.locationID,
+      ctx.user.customerID,
+    )
+    if (!didDelete) {
+      throw new ActionError('Minimums beholdning blev ikke slettet')
     }
 
     revalidatePath('/genbestil')
