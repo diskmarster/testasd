@@ -324,12 +324,11 @@ export const inventory = {
   getAllReordersByID: async function(
     locationID: LocationID,
     trx: TRX = db,
-  ): Promise<FormattedReorder[]> {
+  ): Promise<Omit<FormattedReorder, 'recommended'>[]> {
     const reorders = await trx
       .select({
         ...REORDER_COLS,
         quantity: sql<number>`sum(${inventoryTable.quantity})`.as('quantity'),
-        recommended: sql<number>`(${reorderTable.minimum} - sum(${inventoryTable.quantity})) + (${reorderTable.minimum} * ${reorderTable.buffer})`,
         product: {
           ...PRODUCT_COLS,
           unit: UNIT_COLS.name,

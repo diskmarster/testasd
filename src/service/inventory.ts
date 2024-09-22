@@ -262,6 +262,16 @@ export const inventoryService = {
   getReordersByID: async function(
     locationID: LocationID,
   ): Promise<FormattedReorder[]> {
-    return await inventory.getAllReordersByID(locationID)
+    const reorders = await inventory.getAllReordersByID(locationID)
+
+    const reordersWithRecommended = reorders.map(reorder => ({
+      ...reorder,
+      recommended: Math.max(
+        reorder.minimum - reorder.quantity + reorder.minimum * reorder.buffer,
+        0,
+      ),
+    }))
+
+    return reordersWithRecommended
   },
 }
