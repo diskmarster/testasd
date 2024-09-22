@@ -32,7 +32,9 @@ export function ModalDeleteReorder({ products }: Props) {
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
 
-  const { setValue, handleSubmit, formState, watch, reset } = useForm({
+  const { setValue, handleSubmit, formState, watch, reset } = useForm<
+    z.infer<typeof deleteReorderValidation>
+  >({
     resolver: zodResolver(deleteReorderValidation),
   })
 
