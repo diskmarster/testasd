@@ -16,7 +16,7 @@ interface Props {
 export function TableReorderActions({ table, row }: Props) {
   return (
     <div className='flex items-center gap-2'>
-      <Button size={'iconMd'} variant={'ghost'}>
+      <Button size='iconSm' variant='ghost'>
         <Icons.plus className='size-4' />
       </Button>
       <TableActionsWrapper>
