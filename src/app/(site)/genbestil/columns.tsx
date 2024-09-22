@@ -112,6 +112,20 @@ export function getTableReorderColumns(
     },
   }
 
+  const factorCol: ColumnDef<FormattedReorder> = {
+    accessorKey: 'buffer',
+    header: ({ column }) => <TableHeader column={column} title='Faktor (%)' />,
+    cell: ({ getValue }) => (getValue<number>() * 100).toFixed(2) + '%',
+    meta: {
+      viewLabel: 'Faktor (%)',
+      rightAlign: true,
+    },
+    filterFn: (row, id, value) => {
+      const adjustedSearchValue = (value / 100).toFixed(2)
+      return adjustedSearchValue == row.getValue(id)
+    },
+  }
+
   const orderedCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'ordered',
     header: ({ column }) => <TableHeader column={column} title='Bestilt' />,
@@ -133,7 +147,7 @@ export function getTableReorderColumns(
       return isSameDay(value, row.getValue(id))
     },
     meta: {
-      viewLabel: 'Oprettet',
+      viewLabel: 'Sidst opdateret',
     },
   }
 
@@ -156,6 +170,7 @@ export function getTableReorderColumns(
     quantityCol,
     unitCol,
     minimumCol,
+    factorCol,
     recAmountCol,
     orderedCol,
     updatedCol,
@@ -248,9 +263,17 @@ export function getTableReorderFilters(
   const recAmountFilter: FilterField<FormattedReorder> = {
     column: table.getColumn('recommended'),
     type: 'text',
-    label: 'Anbefalet ',
+    label: 'Anbefalet',
     value: '',
-    placeholder: 'Søg i varetekst 3',
+    placeholder: 'Søg i anbefalet genbestil',
+  }
+
+  const factorFilter: FilterField<FormattedReorder> = {
+    column: table.getColumn('buffer'),
+    type: 'text',
+    label: 'Faktor (%)',
+    value: '',
+    placeholder: 'Søg i faktor',
   }
 
   return [
@@ -261,6 +284,7 @@ export function getTableReorderFilters(
     quantityFilter,
     unitFilter,
     minimumFilter,
+    factorFilter,
     recAmountFilter,
     orderedFilter,
     updatedFilter,
