@@ -185,10 +185,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Buffer rate (%)</Label>
+              <Label>Genbestillingsfaktor (%)</Label>
               <p className='text-sm text-muted-foreground -mt-1.5'>
-                Buffer raten bruges til at udregne en anbefalet genbestillings
-                antal.
+                Dette bruges til at udregne en anbefalet genbestillings antal.
               </p>
               <div className='flex flex-col'>
                 <Input
