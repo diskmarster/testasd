@@ -41,10 +41,19 @@ export const inventoryService = {
   getGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
     return await inventory.getGroupsByID(customerID)
   },
-  getPlacementsByID: async function(
+
+  getAllGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
+    return await inventory.getAllGroupsByID(customerID)
+  },
+  getPlacementsByID: async function (
     locationID: LocationID,
   ): Promise<Placement[]> {
-    return await inventory.getPlacementsByID(locationID)
+    return await inventory.getActivePlacementsByID(locationID)
+  },
+  getAllPlacementsByID: async function (
+    locationID: LocationID,
+  ): Promise<Placement[]> {
+    return await inventory.getAllPlacementsByID(locationID)
   },
   getBatchesByID: async function(locationID: LocationID): Promise<Batch[]> {
     return await inventory.getBatchesByID(locationID)
@@ -233,7 +242,21 @@ export const inventoryService = {
       }
     }
   },
-  createBatch: async function(
+  createProductGroup: async function (groupData: {
+    name: string
+    customerID: number
+  }): Promise<Group | undefined> {
+    try {
+      return await inventory.createProductGroup(groupData)
+    } catch (err) {
+      if (err instanceof LibsqlError) {
+        if (err.message.includes('name')) {
+          throw new ActionError('Produktgruppenavn findes allerede')
+        }
+      }
+    }
+  },
+  createBatch: async function (
     batchData: NewBatch,
   ): Promise<Batch | undefined> {
     try {
