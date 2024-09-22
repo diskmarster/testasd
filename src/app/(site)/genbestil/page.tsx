@@ -22,13 +22,20 @@ export default async function Page() {
   const units = await inventoryService.getUnits()
   const groups = await inventoryService.getGroupsByID(customer.id)
 
+  const productsWithNoReorder = products.filter(
+    prod => !reorders.some(reorder => prod.id === reorder.productID),
+  )
+
   return (
     <SiteWrapper
       title='Genbestil'
       description='Få et overblik over hvilke vare der er under en minimums beholdning'
       actions={
         <>
-          <ModalCreateReorder products={products} locationID={location} />
+          <ModalCreateReorder
+            products={productsWithNoReorder}
+            locationID={location}
+          />
         </>
       }>
       <TableReorder data={reorders} user={user} units={units} groups={groups} />
