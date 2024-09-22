@@ -163,6 +163,7 @@ export function ModalUpdateReorder({ products }: Props) {
               <div className='flex flex-col'>
                 <Input
                   type='number'
+                  step={0.01}
                   {...register('buffer')}
                   className={cn(
                     'w-full h-14 rounded-b-none text-center text-2xl z-10',
