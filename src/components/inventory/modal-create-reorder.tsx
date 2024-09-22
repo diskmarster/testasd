@@ -204,7 +204,12 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     size='icon'
                     type='button'
                     variant='outline'
-                    className='h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0'
+                    className={cn(
+                      'h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0',
+                      formValues.minimum != 0 &&
+                        formValues.buffer != 0 &&
+                        'rounded-l-none',
+                    )}
                     onClick={() => setValue('buffer', 25)}>
                     25%
                   </Button>
@@ -231,15 +236,35 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     size='icon'
                     type='button'
                     variant='outline'
-                    className='h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none'
+                    className={cn(
+                      'h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
+                      formValues.minimum != 0 &&
+                        formValues.buffer != 0 &&
+                        'rounded-r-none',
+                    )}
                     onClick={() => setValue('buffer', 100)}>
                     100%
                   </Button>
                 </div>
+                <div
+                  className={cn(
+                    'bg-border rounded-b-md text-sm h-0 transition-all text-muted-foreground flex items-center gap-2 justify-center',
+                    formValues.minimum && formValues.buffer && 'h-12 md:h-9',
+                  )}>
+                  {formValues.minimum != 0 && formValues.buffer != 0 && (
+                    <p className='text-center'>
+                      Anbefalet genbestilling:{' '}
+                      {(formValues.minimum * (formValues.buffer / 100)).toFixed(
+                        2,
+                      )}{' '}
+                      over minimumsbeholdningen
+                    </p>
+                  )}
+                </div>
               </div>
-              {formState.errors.minimum && (
+              {formState.errors.buffer && (
                 <p className='text-sm text-destructive'>
-                  {formState.errors.minimum.message}
+                  {formState.errors.buffer.message}
                 </p>
               )}
             </div>
