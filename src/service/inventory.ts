@@ -253,24 +253,48 @@ export const inventoryService = {
   createReorder: async function(
     reorderData: NewReorder,
   ): Promise<Reorder | undefined> {
-    console.log(reorderData)
     return await inventory.createReorder({
       ...reorderData,
       buffer: reorderData.buffer / 100,
     })
+  },
+  updateReorderByIDs: async function(
+    productID: ProductID,
+    locationID: LocationID,
+    customerID: CustomerID,
+    reorderData: Pick<Reorder, 'minimum' | 'buffer'>,
+  ): Promise<boolean> {
+    return await inventory.updateReorderByID(
+      productID,
+      locationID,
+      customerID,
+      {
+        ...reorderData,
+        buffer: reorderData.buffer / 100,
+      },
+    )
   },
   getReordersByID: async function(
     locationID: LocationID,
   ): Promise<FormattedReorder[]> {
     const reorders = await inventory.getAllReordersByID(locationID)
 
-    const reordersWithRecommended = reorders.map(reorder => ({
-      ...reorder,
-      recommended: Math.max(
-        reorder.minimum - reorder.quantity + reorder.minimum * reorder.buffer,
-        0,
-      ),
-    }))
+    const reordersWithRecommended = reorders.map(reorder => {
+      const isQuantityGreater = reorder.quantity > reorder.minimum
+      const recommended = isQuantityGreater
+        ? 0
+        : Math.max(
+          reorder.minimum -
+          reorder.quantity +
+          reorder.minimum * reorder.buffer,
+          0,
+        )
+
+      return {
+        ...reorder,
+        recommended,
+      }
+    })
 
     return reordersWithRecommended
   },
