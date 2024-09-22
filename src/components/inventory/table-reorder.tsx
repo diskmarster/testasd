@@ -53,7 +53,9 @@ export function TableReorder({ data, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'reorder_cols'
   const columns = useMemo(() => getTableReorderColumns(user.role), [user.role])
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'recommended', desc: true },
+  ])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -152,9 +154,9 @@ export function TableReorder({ data, user, units, groups }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
