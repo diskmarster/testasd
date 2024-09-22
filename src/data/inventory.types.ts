@@ -44,5 +44,6 @@ export interface FormattedHistory extends History {
 
 export interface FormattedReorder extends Reorder {
   quantity: number
+  recommended: number
   product: Product & { unit: string; group: string }
 }
