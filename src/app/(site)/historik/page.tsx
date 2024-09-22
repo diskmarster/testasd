@@ -17,10 +17,10 @@ export default async function Page() {
   const customer = await customerService.getByID(user.customerID)
   if (!customer) redirect('/log-ind')
 
-  const units = await inventoryService.getUnits()
-  const groups = await inventoryService.getGroupsByID(customer.id)
-  const placements = await inventoryService.getPlacementsByID(location)
-  const batches = await inventoryService.getBatchesByID(location)
+  const units = await inventoryService.getActiveUnits()
+  const groups = await inventoryService.getActiveGroupsByID(customer.id)
+  const placements = await inventoryService.getActivePlacementsByID(location)
+  const batches = await inventoryService.getActiveBatchesByID(location)
 
   return (
     <SiteWrapper

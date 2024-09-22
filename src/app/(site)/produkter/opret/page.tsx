@@ -5,13 +5,11 @@ import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
 
 export default async function Page() {
-  const {session, user} = await sessionService.validate()
-  if (
-    !session
-  ) redirect("/log-ind")
+  const { session, user } = await sessionService.validate()
+  if (!session) redirect('/log-ind')
 
-  const units = await inventoryService.getUnits()
-  const groups = await inventoryService.getGroupsByID(user.customerID)
+  const units = await inventoryService.getActiveUnits()
+  const groups = await inventoryService.getActiveGroupsByID(user.customerID)
 
   return (
     <SiteWrapper
