@@ -2,6 +2,7 @@ import { inventory } from '@/data/inventory'
 import {
   FormattedHistory,
   FormattedInventory,
+  FormattedReorder,
   HistoryType,
 } from '@/data/inventory.types'
 import { db } from '@/lib/database'
@@ -16,27 +17,31 @@ import {
   NewBatch,
   NewHistory,
   NewPlacement,
+  NewReorder,
+  PartialReorder,
   Placement,
   PlacementID,
   Product,
   ProductID,
+  Reorder,
   Unit,
 } from '@/lib/database/schema/inventory'
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 
 export const inventoryService = {
-  getInventory: async function (
+  getInventory: async function(
     locationID: LocationID,
   ): Promise<FormattedInventory[]> {
     return await inventory.getInventoryByLocationID(locationID)
   },
-  getUnits: async function (): Promise<Unit[]> {
+  getUnits: async function(): Promise<Unit[]> {
     return inventory.getUnits()
   },
-  getGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
+  getGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
     return await inventory.getGroupsByID(customerID)
   },
+
   getAllGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
     return await inventory.getAllGroupsByID(customerID)
   },
@@ -50,22 +55,22 @@ export const inventoryService = {
   ): Promise<Placement[]> {
     return await inventory.getAllPlacementsByID(locationID)
   },
-  getBatchesByID: async function (locationID: LocationID): Promise<Batch[]> {
+  getBatchesByID: async function(locationID: LocationID): Promise<Batch[]> {
     return await inventory.getBatchesByID(locationID)
   },
-  getInventoryByIDs: async function (
+  getInventoryByIDs: async function(
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
   ): Promise<Inventory | undefined> {
     return await inventory.getInventoryByIDs(productID, placementID, batchID)
   },
-  createHistoryLog: async function (
+  createHistoryLog: async function(
     historyData: NewHistory,
   ): Promise<History | undefined> {
     return await inventory.createHitoryLog(historyData)
   },
-  upsertInventory: async function (
+  upsertInventory: async function(
     platform: 'web' | 'app',
     customerID: CustomerID,
     userID: UserID,
@@ -77,6 +82,33 @@ export const inventoryService = {
     amount: number,
   ): Promise<boolean> {
     const result = await db.transaction(async trx => {
+      const isReorderOnProduct = await inventory.getReorderByProductID(
+        productID,
+        locationID,
+        customerID,
+        trx,
+      )
+
+      if (
+        isReorderOnProduct &&
+        isReorderOnProduct.ordered > 0 &&
+        type == 'tilgang'
+      ) {
+        const updatedOrdered = Math.max(isReorderOnProduct.ordered - amount, 0)
+        const isReorderUpdated = await inventory.updateReorderByID(
+          productID,
+          locationID,
+          customerID,
+          {
+            ordered: updatedOrdered,
+          },
+          trx,
+        )
+        if (!isReorderUpdated) {
+          throw new ActionError('Genbestil på produktet kunne ikke opdateret')
+        }
+      }
+
       const didUpsert = await inventory.upsertInventory(
         {
           customerID,
@@ -115,7 +147,7 @@ export const inventoryService = {
 
     return result
   },
-  moveInventory: async function (
+  moveInventory: async function(
     platform: 'web' | 'app',
     customerID: CustomerID,
     userID: UserID,
@@ -194,10 +226,10 @@ export const inventoryService = {
 
     return result
   },
-  getProductsByID: async function (customerID: CustomerID): Promise<Product[]> {
+  getProductsByID: async function(customerID: CustomerID): Promise<Product[]> {
     return await inventory.getProductsByID(customerID)
   },
-  createPlacement: async function (
+  createPlacement: async function(
     placementData: NewPlacement,
   ): Promise<Placement | undefined> {
     try {
@@ -210,7 +242,6 @@ export const inventoryService = {
       }
     }
   },
-
   createProductGroup: async function (groupData: {
     name: string
     customerID: number
@@ -225,7 +256,6 @@ export const inventoryService = {
       }
     }
   },
-
   createBatch: async function (
     batchData: NewBatch,
   ): Promise<Batch | undefined> {
@@ -239,9 +269,61 @@ export const inventoryService = {
       }
     }
   },
-  getHistoryByLocationID: async function (
+  getHistoryByLocationID: async function(
     locationID: LocationID,
   ): Promise<FormattedHistory[]> {
     return await inventory.getHistoryByLocationID(locationID)
+  },
+  createReorder: async function(
+    reorderData: NewReorder,
+  ): Promise<Reorder | undefined> {
+    return await inventory.createReorder({
+      ...reorderData,
+      buffer: reorderData.buffer / 100,
+    })
+  },
+  deleteReorderByIDs: async function(
+    productID: ProductID,
+    locationID: LocationID,
+    customerID: CustomerID,
+  ): Promise<boolean> {
+    return await inventory.deleteReorderByID(productID, locationID, customerID)
+  },
+  updateReorderByIDs: async function(
+    productID: ProductID,
+    locationID: LocationID,
+    customerID: CustomerID,
+    reorderData: PartialReorder,
+  ): Promise<boolean> {
+    return await inventory.updateReorderByID(
+      productID,
+      locationID,
+      customerID,
+      reorderData,
+    )
+  },
+  getReordersByID: async function(
+    locationID: LocationID,
+  ): Promise<FormattedReorder[]> {
+    const reorders = await inventory.getAllReordersByID(locationID)
+
+    const reordersWithRecommended = reorders.map(reorder => {
+      const isQuantityGreater = reorder.quantity > reorder.minimum
+      const recommended = isQuantityGreater
+        ? 0
+        : Math.max(
+          reorder.minimum -
+          reorder.quantity +
+          reorder.minimum * reorder.buffer,
+          0,
+        )
+
+      return {
+        ...reorder,
+        recommended,
+      }
+    })
+
+    return reordersWithRecommended
   },
 }

@@ -5,6 +5,7 @@ import {
   History,
   Placement,
   Product,
+  Reorder,
 } from '@/lib/database/schema/inventory'
 import { z } from 'zod'
 
@@ -39,4 +40,10 @@ export interface FormattedHistory extends History {
   placement: Placement
   batch: Batch
   user: UserNoHash
+}
+
+export interface FormattedReorder extends Reorder {
+  quantity: number
+  recommended: number
+  product: Product & { unit: string; group: string }
 }

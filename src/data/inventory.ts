@@ -1,4 +1,8 @@
-import { FormattedHistory, FormattedInventory } from '@/data/inventory.types'
+import {
+  FormattedHistory,
+  FormattedInventory,
+  FormattedReorder,
+} from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
 import { userTable } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
@@ -17,12 +21,16 @@ import {
   NewHistory,
   NewInventory,
   NewPlacement,
+  NewReorder,
+  PartialReorder,
   Placement,
   PlacementID,
   placementTable,
   Product,
   ProductID,
   productTable,
+  Reorder,
+  reorderTable,
   Unit,
   unitTable,
 } from '@/lib/database/schema/inventory'
@@ -35,6 +43,7 @@ const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
 const { hash, ...USER_COLS } = getTableColumns(userTable)
 const HISTORY_COLS = getTableColumns(historyTable)
+const REORDER_COLS = getTableColumns(reorderTable)
 
 export const inventory = {
   getInventoryByLocationID: async function (
@@ -274,5 +283,96 @@ export const inventory = {
       .orderBy(desc(historyTable.inserted))
 
     return history
+  },
+  createReorder: async function(
+    reorderData: NewReorder,
+    trx: TRX = db,
+  ): Promise<Reorder | undefined> {
+    const newReorder = await trx
+      .insert(reorderTable)
+      .values(reorderData)
+      .returning()
+    return newReorder[0]
+  },
+  updateReorderByID: async function(
+    productID: ProductID,
+    locationID: LocationID,
+    customerID: CustomerID,
+    reorderData: PartialReorder,
+    trx: TRX = db,
+  ): Promise<boolean> {
+    const resultSet = await trx
+      .update(reorderTable)
+      .set(reorderData)
+      .where(
+        and(
+          eq(reorderTable.productID, productID),
+          eq(reorderTable.locationID, locationID),
+          eq(reorderTable.customerID, customerID),
+        ),
+      )
+    return resultSet.rowsAffected == 1
+  },
+  deleteReorderByID: async function(
+    productID: ProductID,
+    locationID: LocationID,
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<boolean> {
+    const resultSet = await trx
+      .delete(reorderTable)
+      .where(
+        and(
+          eq(reorderTable.productID, productID),
+          eq(reorderTable.locationID, locationID),
+          eq(reorderTable.customerID, customerID),
+        ),
+      )
+    return resultSet.rowsAffected == 1
+  },
+  getReorderByProductID: async function(
+    productID: ProductID,
+    locationID: LocationID,
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<Reorder | undefined> {
+    const reorder = await trx
+      .select()
+      .from(reorderTable)
+      .where(
+        and(
+          eq(reorderTable.productID, productID),
+          eq(reorderTable.locationID, locationID),
+          eq(reorderTable.customerID, customerID),
+        ),
+      )
+    return reorder[0]
+  },
+  getAllReordersByID: async function(
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<Omit<FormattedReorder, 'recommended'>[]> {
+    const reorders = await trx
+      .select({
+        ...REORDER_COLS,
+        quantity: sql<number>`sum(${inventoryTable.quantity})`.as('quantity'),
+        product: {
+          ...PRODUCT_COLS,
+          unit: UNIT_COLS.name,
+          group: GROUP_COLS.name,
+        },
+      })
+      .from(reorderTable)
+      .where(eq(reorderTable.locationID, locationID))
+      .innerJoin(productTable, eq(productTable.id, reorderTable.productID))
+      .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
+      .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+      .innerJoin(
+        inventoryTable,
+        eq(inventoryTable.productID, reorderTable.productID),
+      )
+      .groupBy(reorderTable.productID)
+
+    return reorders
   },
 }
