@@ -36,14 +36,12 @@ export function UpdateProductsForm({
   units,
   groups,
   productToEdit,
-  onProductUpdated,
   isOpen,
   setOpen,
 }: {
   units: Unit[]
   groups: Group[]
   productToEdit?: FormattedProduct
-  onProductUpdated?: () => void
   isOpen: boolean
   setOpen: (open: boolean) => void
 }) {
@@ -72,14 +70,16 @@ export function UpdateProductsForm({
         return
       }
 
-      const response = await updateProductAction(productToEdit.id, values)
+      const response = await updateProductAction({
+        productID: productToEdit.id,
+        data: values,
+      })
 
       if (response && response.serverError) {
         setError(response.serverError)
         return
       }
 
-      onProductUpdated?.()
       setError(undefined)
       setOpen(false)
       toast.success(siteConfig.successTitle, {
@@ -106,7 +106,7 @@ export function UpdateProductsForm({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent>
         <CredenzaHeader>
-          <CredenzaTitle>Redigér produkt</CredenzaTitle>
+          <CredenzaTitle>Rediger produkt</CredenzaTitle>
           <CredenzaDescription>
             Her kan du redigere et produkt
           </CredenzaDescription>

@@ -131,52 +131,21 @@ export function getProductOverviewColumns(
     enableSorting: false,
   }
 
-  switch (plan) {
-    case 'lite':
-      const liteCols = [
-        skuCol,
-        barcodeCol,
-        groupCol,
-        text1Col,
-        unitCol,
-        costPriceCol,
-        salesPriceCol,
-        updatedCol,
-        isBarredCol,
-      ]
-      if (userRole != 'bruger') liteCols.push(actionsCol)
-      return liteCols
-    case 'plus':
-      const plusCols = [
-        skuCol,
-        barcodeCol,
-        groupCol,
-        text1Col,
-        unitCol,
-        costPriceCol,
-        salesPriceCol,
-        updatedCol,
-        isBarredCol,
-      ]
-      if (userRole != 'bruger') plusCols.push(actionsCol)
-      return plusCols
-    case 'pro':
-      const proCols = [
-        skuCol,
-        barcodeCol,
-        groupCol,
-        text1Col,
-        text2Col,
-        text3Col,
-        unitCol,
-        costPriceCol,
-        salesPriceCol,
-        updatedCol,
-        isBarredCol,
-      ]
-      if (userRole != 'bruger') proCols.push(actionsCol)
-      return proCols
-  }
+  const columns = [
+    skuCol,
+    barcodeCol,
+    groupCol,
+    text1Col,
+    text2Col,
+    text3Col,
+    unitCol,
+    costPriceCol,
+    salesPriceCol,
+    updatedCol,
+    isBarredCol,
+  ]
+  if (userRole != 'bruger') columns.push(actionsCol)
+  return columns
 }
 
 export function getProductTableOverviewFilters(
@@ -274,44 +243,19 @@ export function getProductTableOverviewFilters(
       { value: false, label: 'Aktiv' },
     ],
   }
-  switch (plan) {
-    case 'lite':
-      return [
-        skuFilter,
-        barcodeFilter,
-        groupFilter,
-        text1Filter,
-        unitFilter,
-        costPriceFilter,
-        salesPriceFilter,
-        updatedFilter,
-        barredFilter,
-      ]
-    case 'plus':
-      return [
-        skuFilter,
-        barcodeFilter,
-        groupFilter,
-        text1Filter,
-        unitFilter,
-        costPriceFilter,
-        salesPriceFilter,
-        updatedFilter,
-        barredFilter,
-      ]
-    case 'pro':
-      return [
-        skuFilter,
-        barcodeFilter,
-        groupFilter,
-        text1Filter,
-        text2Filter,
-        text3Filter,
-        unitFilter,
-        costPriceFilter,
-        salesPriceFilter,
-        updatedFilter,
-        barredFilter,
-      ]
-  }
+
+  return [
+    skuFilter,
+    barcodeFilter,
+    groupFilter,
+    text1Filter,
+    text2Filter,
+    text3Filter,
+    unitFilter,
+    costPriceFilter,
+    salesPriceFilter,
+    updatedFilter,
+    barredFilter,
+  ] 
+  
 }
