@@ -1,11 +1,11 @@
 'use server'
 
-import { PartialProduct, ProductID } from '@/lib/database/schema/inventory'
+import { ProductID } from '@/lib/database/schema/inventory'
 import { adminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
-import { createProductValidation } from './validation'
+import { createProductValidation, updateProductValidation } from './validation'
 
 export const createProductAction = adminAction
   .schema(createProductValidation)
@@ -17,38 +17,35 @@ export const createProductAction = adminAction
     revalidatePath('/admin/produkter')
   })
 
-export async function updateProductAction(
-  productID: ProductID,
-  updatedProductData: PartialProduct,
-) {
-  try {
+  export const updateProductAction = adminAction
+  .schema(updateProductValidation)
+  .action(async ({ parsedInput: { productID, data: updatedProductData } }) => {
     const updatedProduct = await productService.updateByID(
       productID,
       updatedProductData,
-    )
+    );
+
     if (!updatedProduct) {
-      throw new Error('Failed to update the product')
+      throw new ActionError('Der gik noget galt med at opdatere produktet');
     }
-    revalidatePath('/admin/produkter')
-    return { success: true, product: updatedProduct }
-  } catch (err: any) {
-    console.error('Error updating product:', err)
-    return { success: false, serverError: err.message }
-  }
-}
-export async function toggleBarredProductAction(productID: ProductID, isBarred: boolean) {
-  try {
-    const updatedProduct = await productService.updateBarredStatus(productID, isBarred);
-    if (!updatedProduct) {
-      throw new Error('Failed to update product bar status');
-    }
-    revalidatePath('/admin/produkter');  
+
+    revalidatePath('/admin/produkter');
     return { success: true, product: updatedProduct };
-  } catch (err: any) {
-    console.error('Error updating product bar status:', err);
-    return { success: false, serverError: 'Could not update the bar status.' };
+  });
+
+  export async function toggleBarredProductAction(
+    productID: ProductID,
+    isBarred: boolean,
+  ) {
+    const updatedProduct = await productService.updateBarredStatus(
+      productID,
+      isBarred,
+    );
+  
+    if (!updatedProduct) {
+      throw new ActionError('Der gik noget galt med at opdatere spærring statusen.');
+    }
+  
+    revalidatePath('/admin/produkter');
+    return { success: true, product: updatedProduct };
   }
-}
-
-
-

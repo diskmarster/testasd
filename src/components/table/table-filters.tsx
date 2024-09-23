@@ -37,13 +37,6 @@ function TableToolbarFilters<T>({
   )
   const [activeIndex, setActiveIndex] = useState<number>()
 
-  /*   useEffect(() => {
-    selectedFields.forEach(f => {
-      if (f.column != undefined)
-        f.column?.setFilterValue(f.value)
-    })
-  }, [] ) */
-
   const handleClearAllFilters = () => {
     setSelectedFields([])
     table.setColumnFilters([])
