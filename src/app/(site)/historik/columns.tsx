@@ -211,12 +211,12 @@ export function getTableHistoryColumns(
 
   const refCol: ColumnDef<FormattedHistory> = {
     accessorKey: 'reference',
-    header: ({ column }) => <TableHeader column={column} title='Reference' />,
+    header: ({ column }) => <TableHeader column={column} title='Konto/sag' />,
     cell: ({ getValue }) => (
       <span className='max-w-48 truncate'>{getValue<string>()}</span>
     ),
     meta: {
-      viewLabel: 'Reference',
+      viewLabel: 'Konto/sag',
     },
   }
 
@@ -430,7 +430,8 @@ export function getTableHistoryFilters(
   const refFilter: FilterField<FormattedHistory> = {
     column: table.getColumn('reference'),
     type: 'text',
-    label: 'Reference',
+    label: 'Konto/sag',
+    placeholder: 'Søg i konto/sag',
     value: '',
   }
 
