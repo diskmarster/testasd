@@ -1,9 +1,11 @@
+import { siteConfig } from "@/config/site";
 import { resendClient } from "@/lib/resend";
 import React from "react";
 import { ErrorResponse } from "resend";
 
-const FROM = 'Nem Lager <noreply@nemunivers.app>'
+const FROM = `${siteConfig.name} <noreply@nemunivers.app>`
 const MAX_ATTEMPTS = 5
+const WAIT_MS = 1000
 
 export const emailService = {
   sendOnce: async function(to: string[], subject: string, comp: React.ReactElement): Promise<ErrorResponse | null> {
@@ -15,7 +17,7 @@ export const emailService = {
     })
     return error
   },
-  sendRecursively: async function(to: string[], subject: string, comp: React.ReactElement, attempt: number = 0, waitMs: number = 200): Promise<void> {
+  sendRecursively: async function(to: string[], subject: string, comp: React.ReactElement, attempt: number = 0, waitMs: number = WAIT_MS): Promise<void> {
     const { error } = await resendClient.emails.send({
       from: FROM,
       to: to,
@@ -27,7 +29,7 @@ export const emailService = {
       if (attempt >= MAX_ATTEMPTS) {
         // do like a tree and leave (get it? leaf...)
       } else {
-        const nextWaitMs = Math.min(waitMs * 2, 5000)
+        const nextWaitMs = Math.min(waitMs * 2, 30000)
         const nextAttempt = attempt + 1
         setTimeout(() => this.sendRecursively(to, subject, comp, nextAttempt, nextWaitMs), waitMs)
       }
