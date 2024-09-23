@@ -22,6 +22,7 @@ import {
   NewInventory,
   NewPlacement,
   NewReorder,
+  NewUnit,
   PartialReorder,
   Placement,
   PlacementID,
@@ -97,6 +98,14 @@ export const inventory = {
           eq(groupTable.customerID, customerID),
         ),
       )
+  },
+  
+  createProductUnit: async function (
+    unitData: NewUnit,
+    trx: TRX = db,
+  ): Promise<Unit> {
+    const unit = await trx.insert(unitTable).values(unitData).returning()
+    return unit[0]
   },
   getAllGroupsByID: async function(
     customerID: CustomerID,
@@ -301,7 +310,7 @@ export const inventory = {
 
     return history
   },
-  createReorder: async function(
+  createReorder: async function (
     reorderData: NewReorder,
     trx: TRX = db,
   ): Promise<Reorder | undefined> {
@@ -311,7 +320,7 @@ export const inventory = {
       .returning()
     return newReorder[0]
   },
-  updateReorderByID: async function(
+  updateReorderByID: async function (
     productID: ProductID,
     locationID: LocationID,
     customerID: CustomerID,
@@ -330,7 +339,7 @@ export const inventory = {
       )
     return resultSet.rowsAffected == 1
   },
-  deleteReorderByID: async function(
+  deleteReorderByID: async function (
     productID: ProductID,
     locationID: LocationID,
     customerID: CustomerID,
@@ -347,7 +356,7 @@ export const inventory = {
       )
     return resultSet.rowsAffected == 1
   },
-  getReorderByProductID: async function(
+  getReorderByProductID: async function (
     productID: ProductID,
     locationID: LocationID,
     customerID: CustomerID,
@@ -365,7 +374,7 @@ export const inventory = {
       )
     return reorder[0]
   },
-  getAllReordersByID: async function(
+  getAllReordersByID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Omit<FormattedReorder, 'recommended'>[]> {
