@@ -1,4 +1,3 @@
-import { lucia } from "@/lib/lucia";
 import { sessionService } from "@/service/session";
 import { userService } from "@/service/user";
 import { signJwt } from "@/service/user.utils";
@@ -57,8 +56,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<unknown>>
 
 		return NextResponse.json({
 			msg: "Log ind fuldendt",
-			jwt,
-			user,
+			data: {
+				jwt,
+				user,
+			}
 		}, {
 			status: 201,
 		})
