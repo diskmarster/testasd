@@ -1,6 +1,8 @@
 import * as jwt from 'jsonwebtoken'
 import { User, UserNoHash } from '@/lib/database/schema/auth'
 import { hash, verify } from '@node-rs/argon2'
+import { sessionService } from './session'
+import { Session, User as AuthUser } from 'lucia'
 const MEMORY_COST = 19456
 const TIME_COST = 2
 const OUTPUT_LEN = 32
@@ -59,26 +61,67 @@ export type VerifyJWTResponse = {
 }
 export function verifyJWT(jwtString: string): VerifyJWTResponse {
   try {
-  const payload = jwt.verify(jwtString, process.env.JWT_SECRET as string)
+    const payload = jwt.verify(jwtString, process.env.JWT_SECRET as string)
 
-  let jwtObj: JWTObject
-  if (typeof payload == "string") {
-    jwtObj = JSON.parse(payload);
-  } else {
-    jwtObj = {
-      sessionId: payload.sessionId,
-      user: payload.user,
+    let jwtObj: JWTObject
+    if (typeof payload == "string") {
+      jwtObj = JSON.parse(payload);
+    } else {
+      jwtObj = {
+        sessionId: payload.sessionId,
+        user: payload.user,
+      }
     }
-  }
 
-  return {
-    ok: true,
-    data: jwtObj,
-  }
+    return {
+      ok: true,
+      data: jwtObj,
+    }
   } catch (e) {
     return {
       ok: false,
       error: e as JWTFailed,
+    }
+  }
+}
+
+export async function validateRequest(request: Request): Promise<{ session: Session, user: AuthUser } | { session: null, user: null }> {
+  try {
+    const authHeader = request.headers.get("Authorization")
+    if (!authHeader) {
+      console.error("No authentication header found")
+      return {
+        session: null,
+        user: null,
+      }
+    }
+
+    const authWords = authHeader.split(' ')
+    if (authWords.length != 2 || !authWords[0].toLowerCase().includes('bearer')) {
+      console.error("Invalid authentication header")
+      return {
+        session: null,
+        user: null,
+      }
+    }
+
+    const jwtString = authWords[1]
+
+    const res = verifyJWT(jwtString)
+    if (!res.ok) {
+      console.error("Could not verify jwt")
+      return {
+        session: null,
+        user: null,
+      }
+    }
+
+    return await sessionService.validateSessionId(res.data.sessionId)
+  } catch (e) {
+    console.error(`Error validation request: '${(e as Error).message}'`)
+    return {
+      session: null,
+      user: null,
     }
   }
 }
