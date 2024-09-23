@@ -3,6 +3,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { NavUser } from "./nav-user";
 import { NavDesktop } from "./nav-desktop";
 import { NavMobile } from "./nav-mobile";
+import { NavLocation } from "./nav-location";
 
 export async function Header() {
   const { session, user } = await sessionService.validate()
@@ -15,6 +16,7 @@ export async function Header() {
         <NavMobile user={user} />
         <div className='flex flex-1 items-center justify-end space-x-4'>
           <nav className='flex items-center space-x-2'>
+            <NavLocation />
             <ThemeToggle />
             <NavUser user={user} />
           </nav>

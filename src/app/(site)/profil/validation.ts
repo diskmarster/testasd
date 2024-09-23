@@ -40,3 +40,5 @@ export const updatePasswordValidation = z
       })
     }
   })
+
+export const updatePrimaryLocationValidation = z.object({ locationID: z.string() })

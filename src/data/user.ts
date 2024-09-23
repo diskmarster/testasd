@@ -1,30 +1,26 @@
-import { db } from "@/lib/database";
+import { db, TRX } from "@/lib/database";
 import { NewUser, PartialUser, User, UserID, userTable } from "@/lib/database/schema/auth";
 import { eq } from "drizzle-orm";
 
 export const user = {
-  create: async function(newUser: NewUser): Promise<User | undefined> {
-    const user = await db.insert(userTable).values(newUser).returning()
-    if (user.length != 1) return undefined
+  create: async function(newUser: NewUser, trx: TRX = db): Promise<User | undefined> {
+    const user = await trx.insert(userTable).values(newUser).returning()
     return user[0]
   },
-  getByID: async function(userID: UserID): Promise<User | undefined> {
-    const user = await db.select().from(userTable).where(eq(userTable.id, userID)).limit(1)
-    if (user.length != 1) return undefined
+  getByID: async function(userID: UserID, trx: TRX = db): Promise<User | undefined> {
+    const user = await trx.select().from(userTable).where(eq(userTable.id, userID)).limit(1)
     return user[0]
   },
-  getByEmail: async function(userEmail: string): Promise<User | undefined> {
-    const user = await db.select().from(userTable).where(eq(userTable.email, userEmail)).limit(1)
-    if (user.length != 1) return undefined
+  getByEmail: async function(userEmail: string, trx: TRX = db): Promise<User | undefined> {
+    const user = await trx.select().from(userTable).where(eq(userTable.email, userEmail)).limit(1)
     return user[0]
   },
-  updateByID: async function(userID: UserID, updatedUser: PartialUser): Promise<User | undefined> {
-    const user = await db.update(userTable).set({ ...updatedUser }).where(eq(userTable.id, userID)).returning()
-    if (user.length != 1) return undefined
+  updateByID: async function(userID: UserID, updatedUser: PartialUser, trx: TRX = db): Promise<User | undefined> {
+    const user = await trx.update(userTable).set({ ...updatedUser }).where(eq(userTable.id, userID)).returning()
     return user[0]
   },
-  deleteByID: async function(userID: UserID): Promise<boolean> {
-    const resultSet = await db.delete(userTable).where(eq(userTable.id, userID))
+  deleteByID: async function(userID: UserID, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx.delete(userTable).where(eq(userTable.id, userID))
     return resultSet.rowsAffected == 1
   }
 }

@@ -1,6 +1,8 @@
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
+import { createClient, ResultSet } from "@libsql/client";
+import { drizzle, LibSQLDatabase } from "drizzle-orm/libsql";
 import { config } from 'dotenv';
+import { SQLiteTransaction } from "drizzle-orm/sqlite-core";
+import { ExtractTablesWithRelations } from "drizzle-orm";
 
 config({ path: '.env' });
 
@@ -10,3 +12,5 @@ const libsql = createClient({
 })
 
 export const db = drizzle(libsql)
+
+export type TRX = SQLiteTransaction<"async", ResultSet, Record<string, never>, ExtractTablesWithRelations<Record<string, never>>> | LibSQLDatabase<Record<string, never>>

@@ -31,7 +31,7 @@ export function ProfilePassword() {
   return (
     <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
       <div className='grid gap-0.5'>
-        <Label htmlFor='twofa'>Nyt kodeord</Label>
+        <Label>Nyt kodeord</Label>
         <p className='text-sm text-muted-foreground'>Opdater dit kodeord</p>
       </div>
       <PasswordDialog />

@@ -1,113 +1,89 @@
-import { Icons } from "@/components/ui/icons";
-import { UserRole } from "@/data/user.types";
-import { LucideIcon } from "lucide-react";
+import { Icons } from '@/components/ui/icons'
+import { UserRole } from '@/data/user.types'
+import { LucideIcon } from 'lucide-react'
 
 export const siteConfig: SiteConfig = {
-  name: 'Nem Lager',
+  name: 'NemLager',
   description: 'Hold styr på din beholdning',
   logo: Icons.boxes,
-  errorTitle: "Der gik noget galt",
-  successTitle: "Handling fuldført",
+  errorTitle: 'Der gik noget galt',
+  successTitle: 'Handling fuldført',
   navItems: [
     {
       label: 'Oversigt',
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: "/oversigt",
-      roles: []
+      href: '/oversigt',
+      roles: [],
     },
     {
-      label: 'Registrer',
-      roles: ['sysadmin', 'admin', 'bruger'],
+      label: 'Historik',
       isDisabled: false,
-      isDropdown: true,
-      items: [
-        {
-          label: 'Tilgang',
-          description: 'Opret en tilgang til din vare beholdning',
-          href: '/registrer/tilgang',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-        {
-          label: 'Afgang',
-          description: 'Opret en afgang til fra din vare beholdning',
-          href: '/registrer/afgang',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-        {
-          label: 'Regulering',
-          description: 'Opret en regulering for din vare beholdning',
-          href: '/registrer/regulering',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-        {
-          label: 'Flyt',
-          description: 'Flyt en vare fra en placering til en anden placering',
-          href: '/registrer/flyt',
-          roles: [],
-          isExternal: false,
-          isDisabled: true
-        },
-      ]
+      isDropdown: false,
+      isExternal: false,
+      href: '/historik',
+      roles: [],
     },
     {
       label: 'Genbestil',
-      isDisabled: true,
+      isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: "/genbestil",
-      roles: []
+      href: '/genbestil',
+      roles: [],
     },
     {
       label: 'Administration',
-      roles: ['sysadmin', 'admin'],
+      roles: ['sys_admin', 'firma_admin', 'lokal_admin'],
       isDisabled: false,
       isDropdown: true,
       items: [
         {
           label: 'Brugere',
           description: 'Se en oversigt over alle brugere',
-          href: '/sys/kunder',
+          href: '/admin/brugere',
           roles: [],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
+        },
+        {
+          label: 'Produkter',
+          description: 'Se, opret og rediger i dine produkter',
+          href: '/admin/produkter',
+          roles: ['sys_admin', 'firma_admin'],
+          isExternal: false,
+          isDisabled: true,
         },
         {
           label: 'Varegrupper',
           description: 'Se, opret og rediger i dine varegrupper',
-          href: '/sys/brugere',
-          roles: [],
+          href: '/admin/varegrupper',
+          roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: false,
         },
         {
           label: 'Placeringer',
           description: 'Se, opret og rediger i dine placeringer',
-          href: '/sys/fejl',
-          roles: [],
+          href: '/admin/placering',
+          roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: false,
         },
         {
           label: 'Lokationer',
           description: 'Se, opret og rediger i dine lokationer',
-          href: '/sys/fejl',
+          href: '/admin/lokationer',
           roles: [],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
-      ]
+      ],
     },
     {
       label: 'Skancode',
-      roles: ['sysadmin'],
+      roles: ['sys_admin'],
       isDisabled: false,
       isDropdown: true,
       items: [
@@ -115,29 +91,29 @@ export const siteConfig: SiteConfig = {
           label: 'Kunder',
           description: 'Se en oversigt over alle kunder i Nem Lager',
           href: '/sys/kunder',
-          roles: ['sysadmin'],
+          roles: ['sys_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
         {
           label: 'Brugere',
           description: 'Se en oversigt over alle brugere i Nem Lager',
           href: '/sys/brugere',
-          roles: ['sysadmin'],
+          roles: ['sys_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
         {
           label: 'Fejlbeskeder',
           description: 'Se en oversigt over alle fejlbeskeder i Nem Lager',
           href: '/sys/fejl',
-          roles: ['sysadmin'],
+          roles: ['sys_admin'],
           isExternal: false,
-          isDisabled: true
+          isDisabled: true,
         },
-      ]
-    }
-  ]
+      ],
+    },
+  ],
 }
 
 type SiteConfig = {

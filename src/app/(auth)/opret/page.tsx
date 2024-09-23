@@ -1,4 +1,4 @@
-import { CreateCustomerCard } from "@/components/auth/create-customer-card";
+import { CreateCustomer } from "@/components/auth/create-customer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   return (
     <section className="w-full">
-      <CreateCustomerCard />
+      <CreateCustomer />
     </section>
   )
 }

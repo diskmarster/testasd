@@ -12,9 +12,10 @@ export function ThemeToggle() {
       variant="outline"
       size="icon"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+      className="aspect-square"
     >
-      <Icons.sun className="h-[1.5rem] w-[1.3rem] dark:hidden" />
-      <Icons.moon className="hidden h-5 w-5 dark:block" />
+      <Icons.sun className="size-4 dark:hidden" />
+      <Icons.moon className="hidden size-4 dark:block" />
       <span className="sr-only">Skift tema</span>
     </Button>
   );

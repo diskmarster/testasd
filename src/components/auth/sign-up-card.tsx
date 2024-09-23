@@ -53,7 +53,7 @@ function Form({ customer, linkID }: { customer: Customer, linkID: string }) {
     resolver: zodResolver(signUpValidation),
     defaultValues: {
       linkID: linkID,
-      name: 'Administrator',
+      name: 'Firma Admin',
       email: customer.email,
       clientID: customer.id
     }
