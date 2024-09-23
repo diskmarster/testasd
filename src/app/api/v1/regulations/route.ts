@@ -201,7 +201,7 @@ export async function POST(
 
 		return NextResponse.json(
 			{
-				msg: 'Success, not fully implemented',
+				msg: 'Success',
 			},
 			{
 				status: 201,

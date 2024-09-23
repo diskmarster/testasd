@@ -54,7 +54,7 @@ export async function GET(
 
 		return NextResponse.json(
 			{
-				msg: `Error getting products for authenticated user: '${(e as Error).message}'`,
+				msg: `Der skete en fejl da vi skulle hente produkter: '${(e as Error).message}'`,
 			},
 			{
 				status: 500,
