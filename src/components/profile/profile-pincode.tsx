@@ -1,7 +1,7 @@
 'use client'
 
-import { updatePasswordAction, updatePincodeAction } from '@/app/(site)/profil/actions'
-import { updatePasswordValidation, updatePincodeValidation } from '@/app/(site)/profil/validation'
+import { updatePinAction } from '@/app/(site)/profil/actions'
+import { updatePinValidation } from '@/app/(site)/profil/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,28 +27,28 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-export function ProfilePincode() {
+export function ProfilePin() {
   return (
     <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
       <div className='grid gap-0.5'>
         <Label>Ny PIN-kode</Label>
         <p className='text-sm text-muted-foreground'>Opdater din PIN-kode</p>
       </div>
-      <PincodeDialog />
+      <PinDialog />
     </div>
   )
 }
 
-function PincodeDialog() {
+export function PinDialog() {
   const { session } = useSession()
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
   const [open, setOpen] = useState<boolean>(false)
 
   const { handleSubmit, formState, register, reset, watch } = useForm<
-    z.infer<typeof updatePincodeValidation> //lav validation i profil/validation /done
+    z.infer<typeof updatePinValidation>
   >({
-    resolver: zodResolver(updatePincodeValidation), // same / done
+    resolver: zodResolver(updatePinValidation),
   })
 
   const watchedValues = watch()
@@ -80,38 +80,38 @@ function PincodeDialog() {
                 </Alert>
               )}
               <div className='grid gap-2'>
-                <Label htmlFor='currentPincode'>Nuværende PIN-kode</Label>
+                <Label htmlFor='currentPin'>Nuværende PIN-kode</Label>
                 <PasswordInput
-                  id='currentPincode' //current 
-                  {...register('currentPincode')} //register('currentPincode')
+                  id='currentPin' //current
+                  {...register('currentPin')} //register('currentpin')
                 />
-                {formState.errors.currentPincode && (
+                {formState.errors.currentPin && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.currentPincode.message}
+                    {formState.errors.currentPin.message}
                   </p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='newPincode'>Ny PIN-kode</Label>
+                <Label htmlFor='newPin'>Ny PIN-kode</Label>
                 <PasswordInput
-                  id='newPincode'
-                  {...register('newPincode')} //register('newPincode')
+                  id='newPin'
+                  {...register('newPin')} //register('newpin')
                 />
-                {formState.errors.newPincode && (
+                {formState.errors.newPin && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.newPincode.message}
+                    {formState.errors.newPin.message}
                   </p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='confirmPincode'>Bekræft PIN-kode</Label>
+                <Label htmlFor='confirmpin'>Bekræft PIN-kode</Label>
                 <PasswordInput
-                  id='confirmPincode'
-                  {...register('confirmPincode')} //register('confirmPincode')?
+                  id='confirmPin'
+                  {...register('confirmPin')} //register('confirmpin')?
                 />
-                {formState.errors.confirmPincode && (
+                {formState.errors.confirmPin && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.confirmPincode.message}
+                    {formState.errors.confirmPin.message}
                   </p>
                 )}
               </div>
@@ -128,7 +128,7 @@ function PincodeDialog() {
               onClick={handleSubmit(values => {
                 startTransition(async () => {
                   reset()
-                  const res = await updatePincodeAction({ ...values })
+                  const res = await updatePinAction({ ...values })
                   if (res && res.serverError) {
                     setFormError(res.serverError)
                     return

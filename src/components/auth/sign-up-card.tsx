@@ -1,29 +1,39 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
-import { useState, useTransition } from "react";
-import { useForm } from 'react-hook-form'
-import { z } from "zod";
+import { signUpAction } from '@/app/(auth)/registrer/[linkID]/actions'
+import { signUpValidation } from '@/app/(auth)/registrer/[linkID]/validation'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Icons } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Customer } from '@/lib/database/schema/customer'
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Icons } from "@/components/ui/icons";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { PincodeInput } from "@/components/ui/pincode-input";
-import { signUpValidation } from "@/app/(auth)/registrer/[linkID]/validation";
-import { signUpAction } from "@/app/(auth)/registrer/[linkID]/actions";
-import { Customer } from "@/lib/database/schema/customer";
+import Link from 'next/link'
+import { useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-export function SignUpCard({ customer, linkID }: { customer: Customer, linkID: string }) {
+export function SignUpCard({
+  customer,
+  linkID,
+}: {
+  customer: Customer
+  linkID: string
+}) {
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
-        <CardTitle>
-          Velkommen {customer.company}
-        </CardTitle>
+        <CardTitle>Velkommen {customer.company}</CardTitle>
         <CardDescription>
           Før i kan komme i gang, skal i oprette en administrator bruger.
         </CardDescription>
@@ -45,18 +55,20 @@ export function SignUpCard({ customer, linkID }: { customer: Customer, linkID: s
   )
 }
 
-function Form({ customer, linkID }: { customer: Customer, linkID: string }) {
+function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
-  const { handleSubmit, formState, register } = useForm<z.infer<typeof signUpValidation>>({
+  const { handleSubmit, formState, register } = useForm<
+    z.infer<typeof signUpValidation>
+  >({
     resolver: zodResolver(signUpValidation),
     defaultValues: {
       linkID: linkID,
       name: 'Firma Admin',
       email: customer.email,
-      clientID: customer.id
-    }
+      clientID: customer.id,
+    },
   })
 
   async function onSubmit(values: z.infer<typeof signUpValidation>) {
@@ -69,7 +81,9 @@ function Form({ customer, linkID }: { customer: Customer, linkID: string }) {
   }
 
   return (
-    <form className="grid w-full items-start gap-4" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className='grid w-full items-start gap-4'
+      onSubmit={handleSubmit(onSubmit)}>
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
@@ -97,7 +111,7 @@ function Form({ customer, linkID }: { customer: Customer, linkID: string }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='password'>Kodeord</Label>
-        <PincodeInput id='password' {...register('password')} />
+        <pinInput id='password' {...register('password')} />
         {formState.errors.password && (
           <p className='text-sm text-destructive '>
             {formState.errors.password.message}
@@ -106,28 +120,28 @@ function Form({ customer, linkID }: { customer: Customer, linkID: string }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
-        <PincodeInput id='confirmPassword' {...register('confirmPassword')} />
+        <pinInput id='confirmPassword' {...register('confirmPassword')} />
         {formState.errors.confirmPassword && (
           <p className='text-sm text-destructive '>
             {formState.errors.confirmPassword.message}
           </p>
         )}
-        </div>
-        <div className='grid gap-2'>
-        <Label htmlFor='pincode'>PIN-Kode</Label>
-        <PincodeInput id='pincode' {...register('pincode')} />
-        {formState.errors.pincode && (
+      </div>
+      <div className='grid gap-2'>
+        <Label htmlFor='pin'>PIN-Kode</Label>
+        <pinInput id='pin' {...register('pin')} />
+        {formState.errors.pin && (
           <p className='text-sm text-destructive '>
-            {formState.errors.pincode.message}
+            {formState.errors.pin.message}
           </p>
         )}
-        </div>
-        <div className='grid gap-2'>
-        <Label htmlFor='confirmPincode'>Bekræft PIN-Kode</Label>
-        <PincodeInput id='confirmPincode' {...register('confirmPincode')} />
-        {formState.errors.pincode && (
+      </div>
+      <div className='grid gap-2'>
+        <Label htmlFor='confirmpin'>Bekræft PIN-Kode</Label>
+        <pinInput id='confirmpin' {...register('confirmpin')} />
+        {formState.errors.pin && (
           <p className='text-sm text-destructive '>
-            {formState.errors.pincode.message}
+            {formState.errors.pin.message}
           </p>
         )}
       </div>

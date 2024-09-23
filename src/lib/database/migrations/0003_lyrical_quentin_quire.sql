@@ -1,0 +1,1 @@
+ALTER TABLE `nl_user` ADD `pin` text NOT NULL;

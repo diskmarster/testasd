@@ -7,9 +7,10 @@ import {
 } from '@/lib/database/schema/auth'
 import {
   hashPassword,
-  hashPincode,
+  hashPin,
   userDTO,
   verifyPassword,
+  verifyPin,
 } from './user.utils'
 
 export const userService = {
@@ -32,16 +33,16 @@ export const userService = {
     if (!isValid) return undefined
     return userDTO(existingUser)
   },
-   verifyPincode: async function (
+  verifyPin: async function (
     email: string,
-    pincode: string,
+    pin: string,
   ): Promise<UserNoHash | undefined> {
     const existingUser = await user.getByEmail(email)
     if (!existingUser) return undefined
-    const isValid = await this.verifyPincode(existingUser.hash, pincode)
+    const isValid = await verifyPin(existingUser.hash, pin)
     if (!isValid) return undefined
     return userDTO(existingUser)
-  }, 
+  },
   getByID: async function (userID: UserID): Promise<UserNoHash | undefined> {
     const existingUser = await user.getByID(userID)
     if (!existingUser) return undefined
@@ -72,16 +73,16 @@ export const userService = {
     return userDTO(updatedUser)
   },
 
-  updatePincode: async function (
+  updatePin: async function (
     userID: UserID,
-    newPincode: string,
+    newPin: string,
   ): Promise<UserNoHash | undefined> {
-    const hashedPincode = await hashPincode(newPincode)
-    const updatedPincode = await user.updateByID(userID, {
-      hash: hashedPincode,
+    const hashedPin = await hashPin(newPin)
+    const updatedPin = await user.updateByID(userID, {
+      hash: hashedPin,
     })
-    if (!updatedPincode) return undefined
-    return userDTO(updatedPincode)
+    if (!updatedPin) return undefined
+    return userDTO(updatedPin)
   },
 
   deleteByID: async function (userID: UserID): Promise<boolean> {

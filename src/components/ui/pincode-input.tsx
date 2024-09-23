@@ -6,15 +6,15 @@ import { cn } from '@/lib/utils'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { forwardRef, useState } from 'react'
 
-const PincodeInput = forwardRef<HTMLInputElement, InputProps>(
+const pinInput = forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
-    const [showPincode, setShowPincode] = useState(false)
+    const [showPin, setShowpin] = useState(false)
     const disabled = props.disabled
-    console.log(showPincode)
+    console.log(showPin)
     return (
       <div className='relative'>
         <Input
-          type={showPincode ? 'text' : 'password'}
+          type={showPin ? 'text' : 'password'}
           className={cn('hide-password-toggle pr-10', className)}
           ref={ref}
           {...props}
@@ -24,15 +24,15 @@ const PincodeInput = forwardRef<HTMLInputElement, InputProps>(
           variant='ghost'
           size='sm'
           className='absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent'
-          onClick={() => setShowPincode(prev => !prev)}
+          onClick={() => setShowpin(prev => !prev)}
           disabled={disabled}>
-          {showPincode && !disabled ? (
+          {showPin && !disabled ? (
             <EyeIcon className='h-4 w-4' aria-hidden='true' />
           ) : (
             <EyeOffIcon className='h-4 w-4' aria-hidden='true' />
           )}
           <span className='sr-only'>
-            {showPincode ? 'Hide password' : 'Show password'}
+            {showPin ? 'Hide password' : 'Show password'}
           </span>
         </Button>
 
@@ -49,6 +49,6 @@ const PincodeInput = forwardRef<HTMLInputElement, InputProps>(
     )
   },
 )
-PincodeInput.displayName = 'PasswordInput'
+pinInput.displayName = 'PasswordInput'
 
-export { PincodeInput }
+export { pinInput }

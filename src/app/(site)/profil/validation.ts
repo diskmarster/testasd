@@ -41,24 +41,24 @@ export const updatePasswordValidation = z
     }
   })
 
-  export const updatePincodeValidation = z
+export const updatePinValidation = z
   .object({
-    currentPincode: z.string(), 
-    newPincode: z
-      .string()
-      .regex(/^\d{4}$/, {
-        message: 'PIN-koden skal have en længde på 4, og skal være tal',
-      }),
-    confirmPincode: z.string(),
+    currentPin: z.string(),
+    newPin: z.string().regex(/^\d{4}$/, {
+      message: 'PIN-koden skal have en længde på 4, og skal være tal',
+    }),
+    confirmPin: z.string(),
   })
-  .superRefine(({ newPincode, confirmPincode }, ctx) => {
-    if (newPincode !== confirmPincode) {
+  .superRefine(({ newPin, confirmPin }, ctx) => {
+    if (newPin !== confirmPin) {
       ctx.addIssue({
         code: 'custom',
-        message: 'PIN-koderne er ikke ens', 
-        path: ['confirmPincode'],
-      });
+        message: 'PIN-koderne er ikke ens',
+        path: ['confirmPin'],
+      })
     }
-  });
+  })
 
-export const updatePrimaryLocationValidation = z.object({ locationID: z.string() })
+export const updatePrimaryLocationValidation = z.object({
+  locationID: z.string(),
+})

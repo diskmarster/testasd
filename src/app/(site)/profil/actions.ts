@@ -4,7 +4,7 @@ import {
   adminUpdateProfileValidation,
   deleteProfileValidation,
   updatePasswordValidation,
-  updatePincodeValidation,
+  updatePinValidation,
   updatePrimaryLocationValidation,
   updateProfileValidation,
 } from '@/app/(site)/profil/validation'
@@ -90,24 +90,16 @@ export const updatePrimaryLocationAction = privateAction
     revalidatePath('/profil')
   })
 
-export const updatePincodeAction = privateAction
-  .schema(updatePincodeValidation)
-  .action(
-    async ({ parsedInput: { currentPincode, newPincode }, ctx: { user } }) => {
-      const isValidPincode = await userService.verifyPincode(
-        user.email,
-        currentPincode,
-      )
-      if (!isValidPincode) {
-        throw new ActionError('Din PIN-kode er ikke korrekt.')
-      }
-      const updatedPincode = await userService.updatePincode(
-        user.id,
-        newPincode,
-      )
-      if (!updatedPincode) {
-        throw new ActionError('PIN-koden blev ikke opdateret.')
-      }
-      revalidatePath('/profil')
-    },
-  )
+export const updatePinAction = privateAction
+  .schema(updatePinValidation)
+  .action(async ({ parsedInput: { currentPin, newPin }, ctx: { user } }) => {
+    const isValidPin = await userService.verifyPin(user.email, currentPin)
+    if (!isValidPin) {
+      throw new ActionError('Din PIN-kode er ikke korrekt.')
+    }
+    const updatedPin = await userService.updatePin(user.id, newPin)
+    if (!updatedPin) {
+      throw new ActionError('PIN-koden blev ikke opdateret.')
+    }
+    revalidatePath('/profil')
+  })

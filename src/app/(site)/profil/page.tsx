@@ -4,7 +4,7 @@ import { ProfileHeader } from '@/components/profile/profile-header'
 import { ProfileInformation } from '@/components/profile/profile-information'
 import { ProfileLocation } from '@/components/profile/profile-location'
 import { ProfilePassword } from '@/components/profile/profile-password'
-import { ProfilePincode } from '@/components/profile/profile-pincode'
+import { ProfilePin } from '@/components/profile/profile-pincode'
 import { Separator } from '@/components/ui/separator'
 
 export const metadata = {
@@ -20,7 +20,7 @@ export default async function Page() {
       <ProfileLocation />
       <ProfilePassword />
       <ProfileDelete />
-      <ProfilePincode />
+      <ProfilePin />
     </SiteWrapper>
   )
 }

@@ -7,6 +7,6 @@ export const signUpValidation = z.object({
   email: z.string().email({ message: 'Email skal være gyldig' }),
   password: z.string().min(8, { message: 'Kodeord skal minimum være 8 karakterer' }),
   confirmPassword: z.string().min(8, { message: 'Kodeord skal minimum være 8 karakterer' }),
-  pincode: z.string().length(4, { message: "PIN-koden skal være på 4 tal."}),
-  confirmPincode: z.string().length(4, { message: "PIN-koden skal være på 4 tal."}),
+  pin: z.string().length(4, { message: "PIN-koden skal være på 4 tal."}),
+  confirmPin: z.string().length(4, { message: "PIN-koden skal være på 4 tal."}),
 })
