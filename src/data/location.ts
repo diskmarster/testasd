@@ -22,6 +22,10 @@ export const location = {
       .innerJoin(locationTable, eq(locationTable.id, linkLocationToUserTable.locationID))
     return locations
   },
+  getByID: async function(locationID: LocationID, trx: TRX = db): Promise<Location | undefined> {
+    const location = await trx.select().from(locationTable).where(eq(locationTable.id, locationID)) 
+    return location[0]
+  },
   createAccess: async function(newLink: NewLinkLocationToUser, trx: TRX = db): Promise<boolean> {
     const resultSet = await trx.insert(linkLocationToUserTable).values(newLink)
     return resultSet.rowsAffected == 1

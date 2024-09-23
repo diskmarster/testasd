@@ -15,6 +15,13 @@
       "when": 1726127692521,
       "tag": "0001_faithful_gladiator",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1726833089492,
+      "tag": "0002_rich_dracula",
+      "breakpoints": true
     }
   ]
 }

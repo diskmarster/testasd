@@ -27,7 +27,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       label: 'Genbestil',
-      isDisabled: true,
+      isDisabled: false,
       isDropdown: false,
       isExternal: false,
       href: '/genbestil',
@@ -61,15 +61,15 @@ export const siteConfig: SiteConfig = {
           href: '/admin/varegrupper',
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
         {
           label: 'Placeringer',
           description: 'Se, opret og rediger i dine placeringer',
-          href: '/admin/placeringer',
+          href: '/admin/placering',
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
         {
           label: 'Lokationer',
