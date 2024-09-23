@@ -66,6 +66,14 @@ export const siteConfig: SiteConfig = {
           isDisabled: false,
         },
         {
+          label: 'Enheder',
+          description: 'Se, opret og rediger i de enheder kunderne kan vælge',
+          href: '/sys/enheder',
+          roles: ['sys_admin'],
+          isExternal: false,
+          isDisabled: false,
+        },
+        {
           label: 'Placeringer',
           description: 'Se, opret og rediger i dine placeringer',
           href: '/admin/placering',
