@@ -22,6 +22,7 @@ import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { PasswordInput } from '../ui/password-input'
 
 export function SignUpCard({
   customer,
@@ -111,7 +112,7 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='password'>Kodeord</Label>
-        <pinInput id='password' {...register('password')} />
+        <PasswordInput id='password' {...register('password')} />
         {formState.errors.password && (
           <p className='text-sm text-destructive '>
             {formState.errors.password.message}
@@ -120,7 +121,7 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
-        <pinInput id='confirmPassword' {...register('confirmPassword')} />
+        <PasswordInput id='confirmPassword' tabIndex={-1} {...register('confirmPassword')} />
         {formState.errors.confirmPassword && (
           <p className='text-sm text-destructive '>
             {formState.errors.confirmPassword.message}
@@ -129,22 +130,14 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='pin'>PIN-Kode</Label>
-        <pinInput id='pin' {...register('pin')} />
+        <PasswordInput id='pin' {...register('pin')} />
         {formState.errors.pin && (
           <p className='text-sm text-destructive '>
             {formState.errors.pin.message}
           </p>
         )}
       </div>
-      <div className='grid gap-2'>
-        <Label htmlFor='confirmpin'>Bekræft PIN-Kode</Label>
-        <pinInput id='confirmpin' {...register('confirmpin')} />
-        {formState.errors.pin && (
-          <p className='text-sm text-destructive '>
-            {formState.errors.pin.message}
-          </p>
-        )}
-      </div>
+      
       <Button type='submit' className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
         Opret
