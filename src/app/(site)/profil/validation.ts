@@ -40,6 +40,15 @@ export const updatePasswordValidation = z
       })
     }
   })
+  .superRefine(({ newPassword, currentPassword }, ctx) => {
+    if (newPassword == currentPassword) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Dit nuværende Password og dit nye Password er det samme',
+        path: ['confirmPassword'],
+      })
+    }
+  })
 
 export const updatePinValidation = z
   .object({
@@ -54,6 +63,15 @@ export const updatePinValidation = z
       ctx.addIssue({
         code: 'custom',
         message: 'PIN-koderne er ikke ens',
+        path: ['confirmPin'],
+      })
+    }
+  })
+  .superRefine(({ newPin, currentPin }, ctx) => {
+    if (newPin == currentPin) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Din nuværende PIN-kode og din nye PIN-kode er den samme',
         path: ['confirmPin'],
       })
     }
