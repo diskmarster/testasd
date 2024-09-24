@@ -51,23 +51,20 @@ export function PinDialog() {
     resolver: zodResolver(updatePinValidation),
   })
 
-  const watchedValues = watch()
-  console.log('Form Values:', watchedValues)
-
   if (!session) return null
   return (
     <Credenza open={open} onOpenChange={setOpen}>
       <CredenzaTrigger asChild>
         <Button variant='outline' className='hover:text-destructive'>
-          Ny PIN-kode
+          Ny PIN
         </Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <form className='space-y-4'>
           <CredenzaHeader>
-            <CredenzaTitle>Ny PIN-kode</CredenzaTitle>
+            <CredenzaTitle>Ny PIN</CredenzaTitle>
             <CredenzaDescription>
-              Udfyld formularen for at opdatere din PIN-kode
+              Udfyld formularen for at opdatere din PIN
             </CredenzaDescription>
           </CredenzaHeader>
           <CredenzaBody>
@@ -80,11 +77,8 @@ export function PinDialog() {
                 </Alert>
               )}
               <div className='grid gap-2'>
-                <Label htmlFor='currentPin'>Nuværende PIN-kode</Label>
-                <PasswordInput
-                  id='currentPin' //current
-                  {...register('currentPin')} //register('currentpin')
-                />
+                <Label htmlFor='currentPin'>Nuværende PIN</Label>
+                <PasswordInput id='currentPin' {...register('currentPin')} />
                 {formState.errors.currentPin && (
                   <p className='text-sm text-destructive '>
                     {formState.errors.currentPin.message}
@@ -92,11 +86,8 @@ export function PinDialog() {
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='newPin'>Ny PIN-kode</Label>
-                <PasswordInput
-                  id='newPin'
-                  {...register('newPin')} //register('newpin')
-                />
+                <Label htmlFor='newPin'>Ny PIN</Label>
+                <PasswordInput id='newPin' {...register('newPin')} />
                 {formState.errors.newPin && (
                   <p className='text-sm text-destructive '>
                     {formState.errors.newPin.message}
@@ -104,11 +95,8 @@ export function PinDialog() {
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='confirmpin'>Bekræft PIN-kode</Label>
-                <PasswordInput
-                  id='confirmPin'
-                  {...register('confirmPin')} //register('confirmpin')?
-                />
+                <Label htmlFor='confirmPin'>Bekræft PIN</Label>
+                <PasswordInput id='confirmPin' {...register('confirmPin')} />
                 {formState.errors.confirmPin && (
                   <p className='text-sm text-destructive '>
                     {formState.errors.confirmPin.message}
@@ -134,7 +122,7 @@ export function PinDialog() {
                     return
                   }
                   toast(siteConfig.successTitle, {
-                    description: 'PIN-kode blev opdateret',
+                    description: 'PIN blev opdateret',
                   })
                   setOpen(false)
                 })
