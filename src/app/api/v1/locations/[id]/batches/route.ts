@@ -20,12 +20,12 @@ export async function GET(
       )
     }
 
-    const placements = await inventoryService.getActivePlacementsByID(params.id)
+    const batches = await inventoryService.getActiveBatchesByID(params.id)
 
     return NextResponse.json(
       {
         msg: 'Success',
-        data: placements,
+        data: batches,
       },
       {
         status: 200,
