@@ -69,6 +69,20 @@ export const updatePasswordAction = privateAction
     },
   )
 
+export const updatePinAction = privateAction
+  .schema(updatePinValidation)
+  .action(async ({ parsedInput: { currentPin, newPin }, ctx: { user } }) => {
+    const isValidPin = await userService.verifyPin(user.email, currentPin)
+    if (!isValidPin) {
+      throw new ActionError('Din PIN-kode er ikke korrekt. Prøv igen.')
+    }
+    const updatedPin = await userService.updatePin(user.id, newPin)
+    if (!updatedPin) {
+      throw new ActionError('Der skete en fejl, PIN-koden blev ikke opdateret.')
+    }
+    revalidatePath('/profil')
+  })
+
 export const updatePrimaryLocationAction = privateAction
   .schema(updatePrimaryLocationValidation)
   .action(async ({ parsedInput: { locationID }, ctx: { user } }) => {
@@ -87,19 +101,5 @@ export const updatePrimaryLocationAction = privateAction
       throw new ActionError('Din hovedlokation blev ikke opdateret')
     }
 
-    revalidatePath('/profil')
-  })
-
-export const updatePinAction = privateAction
-  .schema(updatePinValidation)
-  .action(async ({ parsedInput: { currentPin, newPin }, ctx: { user } }) => {
-    const isValidPin = await userService.verifyPin(user.email, currentPin)
-    if (!isValidPin) {
-      throw new ActionError('Din PIN-kode er ikke korrekt.')
-    }
-    const updatedPin = await userService.updatePin(user.id, newPin)
-    if (!updatedPin) {
-      throw new ActionError('PIN-koden blev ikke opdateret.')
-    }
     revalidatePath('/profil')
   })
