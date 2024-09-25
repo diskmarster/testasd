@@ -122,7 +122,7 @@ export function PinDialog() {
                     return
                   }
                   toast(siteConfig.successTitle, {
-                    description: 'PIN blev opdateret',
+                    description: 'PIN-koden blev opdateret',
                   })
                   setOpen(false)
                 })
