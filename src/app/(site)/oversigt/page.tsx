@@ -19,11 +19,11 @@ export default async function Home() {
   if (!customer) return signOutAction()
 
   const inventory = await inventoryService.getInventory(location)
-  const units = await inventoryService.getUnits()
-  const groups = await inventoryService.getGroupsByID(customer.id)
-  const placements = await inventoryService.getPlacementsByID(location)
-  const batches = await inventoryService.getBatchesByID(location)
-  const products = await inventoryService.getProductsByID(customer.id)
+  const units = await inventoryService.getActiveUnits()
+  const groups = await inventoryService.getActiveGroupsByID(customer.id)
+  const placements = await inventoryService.getActivePlacementsByID(location)
+  const batches = await inventoryService.getActiveBatchesByID(location)
+  const products = await inventoryService.getActiveProductsByID(customer.id)
 
   return (
     <SiteWrapper
