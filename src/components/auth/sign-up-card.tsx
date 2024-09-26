@@ -121,7 +121,7 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
       </div>
       <div className='grid gap-2'>
         <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
-        <PasswordInput id='confirmPassword' tabIndex={-1} {...register('confirmPassword')} />
+        <PasswordInput id='confirmPassword' {...register('confirmPassword')} />
         {formState.errors.confirmPassword && (
           <p className='text-sm text-destructive '>
             {formState.errors.confirmPassword.message}
