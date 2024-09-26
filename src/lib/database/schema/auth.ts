@@ -8,6 +8,7 @@ export const userTable = sqliteTable("nl_user", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   hash: text("hash").notNull(),
+  pin: text("pin").notNull(),
   role: text("role").$type<UserRole>().notNull().default('bruger'),
   customerID: integer("customer_id").notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   isActive: integer("is_active", { mode: 'boolean' }).notNull().default(false),

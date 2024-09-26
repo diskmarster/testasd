@@ -1,7 +1,7 @@
 'use client'
 
-import { updatePasswordAction } from '@/app/(site)/profil/actions'
-import { updatePasswordValidation } from '@/app/(site)/profil/validation'
+import { updatePinAction } from '@/app/(site)/profil/actions'
+import { updatePinValidation } from '@/app/(site)/profil/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,28 +27,28 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-export function ProfilePassword() {
+export function ProfilePin() {
   return (
     <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
       <div className='grid gap-0.5'>
-        <Label>Nyt kodeord</Label>
-        <p className='text-sm text-muted-foreground'>Opdater dit kodeord</p>
+        <Label>Ny PIN-kode</Label>
+        <p className='text-sm text-muted-foreground'>Opdater din PIN-kode</p>
       </div>
-      <PasswordDialog />
+      <PinDialog />
     </div>
   )
 }
 
-function PasswordDialog() {
+export function PinDialog() {
   const { session } = useSession()
   const [pending, startTransition] = useTransition()
-  const [formError, setFormError] = useState<string | null>(null)
+  const [error, setError] = useState<string>()
   const [open, setOpen] = useState<boolean>(false)
 
-  const { handleSubmit, formState, register, reset } = useForm<
-    z.infer<typeof updatePasswordValidation>
+  const { handleSubmit, formState, register, reset, watch } = useForm<
+    z.infer<typeof updatePinValidation>
   >({
-    resolver: zodResolver(updatePasswordValidation),
+    resolver: zodResolver(updatePinValidation),
   })
 
   if (!session) return null
@@ -56,59 +56,50 @@ function PasswordDialog() {
     <Credenza open={open} onOpenChange={setOpen}>
       <CredenzaTrigger asChild>
         <Button variant='outline' className='hover:text-destructive'>
-          Nyt kodeord
+          Ny PIN
         </Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <form className='space-y-4'>
           <CredenzaHeader>
-            <CredenzaTitle>Nyt kodeord</CredenzaTitle>
+            <CredenzaTitle>Ny PIN</CredenzaTitle>
             <CredenzaDescription>
-              Udfyld formularen for at opdatere dit kodeord
+              Udfyld formularen for at opdatere din PIN
             </CredenzaDescription>
           </CredenzaHeader>
           <CredenzaBody>
             <div className={cn('grid w-full items-start gap-4 md:max-w-lg')}>
-              {formError && (
+              {error && (
                 <Alert variant='destructive'>
                   <Icons.alert className='size-4 !top-3' />
                   <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
-                  <AlertDescription>{formError}</AlertDescription>
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
               <div className='grid gap-2'>
-                <Label htmlFor='currentPassword'>Nuværende kodeord</Label>
-                <PasswordInput
-                  id='currentPassword'
-                  {...register('currentPassword')}
-                />
-                {formState.errors.currentPassword && (
+                <Label htmlFor='currentPin'>Nuværende PIN</Label>
+                <PasswordInput id='currentPin' {...register('currentPin')} />
+                {formState.errors.currentPin && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.currentPassword.message}
+                    {formState.errors.currentPin.message}
                   </p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='newPassword'>Nyt kodeord</Label>
-                <PasswordInput
-                  id='newPassword'
-                  {...register('newPassword')}
-                />
-                {formState.errors.newPassword && (
+                <Label htmlFor='newPin'>Ny PIN</Label>
+                <PasswordInput id='newPin' {...register('newPin')} />
+                {formState.errors.newPin && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.newPassword.message}
+                    {formState.errors.newPin.message}
                   </p>
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
-                <PasswordInput
-                  id='confirmPassword'
-                  {...register('confirmPassword')}
-                />
-                {formState.errors.confirmPassword && (
+                <Label htmlFor='confirmPin'>Bekræft PIN</Label>
+                <PasswordInput id='confirmPin' {...register('confirmPin')} />
+                {formState.errors.confirmPin && (
                   <p className='text-sm text-destructive '>
-                    {formState.errors.confirmPassword.message}
+                    {formState.errors.confirmPin.message}
                   </p>
                 )}
               </div>
@@ -124,15 +115,16 @@ function PasswordDialog() {
               className='flex items-center gap-2'
               onClick={handleSubmit(values => {
                 startTransition(async () => {
-                  reset()
-                  const res = await updatePasswordAction({ ...values })
+                  const res = await updatePinAction({ ...values })
                   if (res && res.serverError) {
-                    setFormError(res.serverError)
+                    setError(res.serverError)
                     return
                   }
                   toast(siteConfig.successTitle, {
-                    description: 'Kodeord blev opdateret',
+                    description: 'PIN-koden blev opdateret',
                   })
+                  setError(undefined)
+                  reset()
                   setOpen(false)
                 })
               })}>
