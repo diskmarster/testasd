@@ -155,8 +155,8 @@ export const productService = {
       if (!updatedProduct) return undefined
       return updatedProduct
     } catch (err) {
-      console.error('Error updating barred status:', err)
-      throw new ActionError('Failed to update product bar status')
+      console.error('Der skete en fejl med spærringen:', err)
+      throw new ActionError('Der skete en fejl med opdatering af produkt spærringen')
     }
   },
 }
