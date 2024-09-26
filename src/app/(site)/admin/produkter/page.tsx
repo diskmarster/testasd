@@ -16,8 +16,8 @@ export default async function Page() {
   if (!customer) {
     return signOutAction()
   }
-  const units = await inventoryService.getUnits()
-  const groups = await inventoryService.getGroupsByID(user.customerID)
+  const units = await inventoryService.getActiveUnits()
+  const groups = await inventoryService.getActiveGroupsByID(user.customerID)
   const products = await productService.getAllByID(user.customerID)
 
   return (
