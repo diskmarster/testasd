@@ -46,25 +46,22 @@ interface Props {
 }
 
 export function UnitOverview({ units, user }: Props) {
-  const LOCALSTORAGE_KEY = 'units_cols'
+  const LOCALSTORAGE_KEY = 'unit_cols'
   const columns = useMemo(() => getTableUnitColumns(), [])
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+    { id: 'isBarred', value: [false] },
+  ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   useEffect(() => {
     const visibility = JSON.parse(
       localStorage.getItem(LOCALSTORAGE_KEY) || '{}',
     )
     setColumnVisibility(visibility)
-  }, [LOCALSTORAGE_KEY, setColumnVisibility])
+  }, [LOCALSTORAGE_KEY])
 
   const handleVisibilityChange = (updaterOrValue: Updater<VisibilityState>) => {
     if (LOCALSTORAGE_KEY) {
@@ -99,6 +96,8 @@ export function UnitOverview({ units, user }: Props) {
     getExpandedRowModel: getExpandedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 
+    groupedColumnMode: 'reorder',
+
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -125,9 +124,7 @@ export function UnitOverview({ units, user }: Props) {
   const filterFields = useMemo(
     () => getTableUnitFilters(table, units),
     [table, units],
-  ) 
-
-  if (!mounted) return null
+  )
 
   return (
     <div>
@@ -168,7 +165,7 @@ export function UnitOverview({ units, user }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  Ingen historik
+                  Ingen enheder
                 </TableCell>
               </TableRow>
             )}
