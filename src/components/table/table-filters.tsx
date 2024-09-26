@@ -19,7 +19,6 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
-import { CaretSortIcon } from '@radix-ui/react-icons'
 import { Table } from '@tanstack/react-table'
 import { format } from 'date-fns'
 
@@ -33,7 +32,9 @@ function TableToolbarFilters<T>({
   filterFields,
 }: TableToolbarFiltersProps<T>) {
   const [open, setOpen] = useState(false)
-  const [selectedFields, setSelectedFields] = useState<FilterField<T>[]>([])
+  const [selectedFields, setSelectedFields] = useState<FilterField<T>[]>(
+    filterFields.filter(f => table.getState().columnFilters.some(cf => cf.id == f.column?.id)),
+  )
   const [activeIndex, setActiveIndex] = useState<number>()
 
   const handleClearAllFilters = () => {
@@ -103,24 +104,24 @@ function FilterPopover<T>({
 }) {
   const filterDisplayValue: string =
     field.type === 'date'
-      ? field.column?.getFilterValue()
-        ? format(
-          new Date(field.column.getFilterValue() as string),
-          'dd/MM/yyyy',
-        )
+    ? field.column?.getFilterValue()
+    ? format(
+      new Date(field.column.getFilterValue() as string),
+      'dd/MM/yyyy',
+    )
         : ''
       : field.type === 'select'
-        ? Array.isArray(field.column?.getFilterValue())
-          // @ts-ignore
-          ? field.column
-            ?.getFilterValue()
-            // @ts-ignore    
-            .map(val => field.options?.find(opt => opt.value == val)?.label)
-            .join(', ')
-          : field.options?.find(
-            opt => opt.label == field.column?.getFilterValue(),
-          )?.label
-        : (field.column?.getFilterValue() as string)
+      ? Array.isArray(field.column?.getFilterValue())
+      // @ts-ignore
+      ? field.column
+        ?.getFilterValue()
+              // @ts-ignore
+              .map(val => field.options?.find(opt => opt.value == val)?.label)
+              .join(', ')
+              : field.options?.find(
+                opt => opt.label == field.column?.getFilterValue(),
+              )?.label
+            : (field.column?.getFilterValue() as string)
 
   return (
     <Popover
@@ -209,7 +210,7 @@ function FilterSelect<T>({ field }: { field: FilterField<T> }) {
                   }
                   field.column?.setFilterValue(
                     Array.from(selectedValues).length
-                      ? Array.from(selectedValues)
+                    ? Array.from(selectedValues)
                       : undefined,
                   )
                 }}>
@@ -269,7 +270,10 @@ function AddFilterPopover<T>({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant='outline' role='combobox' className='capitalize'>
-          <Icons.chevronDownUp className='mr-1 size-3.5 shrink-0' aria-hidden='true' />
+          <Icons.chevronDownUp
+            className='mr-1 size-3.5 shrink-0'
+            aria-hidden='true'
+          />
           Tilføj filter
         </Button>
       </PopoverTrigger>

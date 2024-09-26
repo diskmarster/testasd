@@ -46,7 +46,7 @@ const HISTORY_COLS = getTableColumns(historyTable)
 const REORDER_COLS = getTableColumns(reorderTable)
 
 export const inventory = {
-  getInventoryByLocationID: async function(
+  getInventoryByLocationID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<FormattedInventory[]> {
@@ -152,7 +152,24 @@ export const inventory = {
         ),
       )
   },
-  getInventoryByIDs: async function(
+  getDefaultBatchByID: async function (
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<Batch> {
+    const batches = await trx
+      .select()
+      .from(batchTable)
+      .where(
+        and(
+          eq(batchTable.locationID, locationID),
+          eq(batchTable.isBarred, false),
+          eq(batchTable.batch, '-'),
+        ),
+      )
+
+    return batches[0]
+  },
+  getInventoryByIDs: async function (
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
@@ -170,7 +187,7 @@ export const inventory = {
       )
     return inventory[0]
   },
-  upsertInventory: async function(
+  upsertInventory: async function (
     inventory: NewInventory,
     trx: TRX = db,
   ): Promise<boolean> {
@@ -191,7 +208,7 @@ export const inventory = {
       })
     return resultSet.rowsAffected == 1
   },
-  updateInventory: async function(
+  updateInventory: async function (
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
@@ -212,7 +229,7 @@ export const inventory = {
       )
     return resultSet.rowsAffected == 1
   },
-  createHitoryLog: async function(
+  createHitoryLog: async function (
     historyData: NewHistory,
     trx: TRX = db,
   ): Promise<History | undefined> {
@@ -236,7 +253,7 @@ export const inventory = {
         ),
       )
   },
-  createPlacement: async function(
+  createPlacement: async function (
     placementData: NewPlacement,
     trx: TRX = db,
   ): Promise<Placement> {
@@ -246,14 +263,14 @@ export const inventory = {
       .returning()
     return placement[0]
   },
-  createBatch: async function(
+  createBatch: async function (
     batchData: NewBatch,
     trx: TRX = db,
   ): Promise<Batch> {
     const batch = await trx.insert(batchTable).values(batchData).returning()
     return batch[0]
   },
-  getHistoryByLocationID: async function(
+  getHistoryByLocationID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<FormattedHistory[]> {
@@ -382,5 +399,21 @@ export const inventory = {
       .select()
       .from(inventoryTable)
       .where(eq(inventoryTable.productID, productID))
+  },
+  getDefaultPlacementByID: async function (
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<Placement> {
+    const placement = await trx
+      .select()
+      .from(placementTable)
+      .where(
+        and(
+          eq(placementTable.locationID, locationID),
+          eq(placementTable.isBarred, false),
+          eq(placementTable.name, '-'),
+        ),
+      )
+    return placement[0]
   },
 }
