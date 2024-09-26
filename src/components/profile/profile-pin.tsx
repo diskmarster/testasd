@@ -42,7 +42,7 @@ export function ProfilePin() {
 export function PinDialog() {
   const { session } = useSession()
   const [pending, startTransition] = useTransition()
-  const [formError, setFormError] = useState<string | null>(null)
+  const [error, setError] = useState<string>()
   const [open, setOpen] = useState<boolean>(false)
 
   const { handleSubmit, formState, register, reset, watch } = useForm<
@@ -69,11 +69,11 @@ export function PinDialog() {
           </CredenzaHeader>
           <CredenzaBody>
             <div className={cn('grid w-full items-start gap-4 md:max-w-lg')}>
-              {formError && (
+              {error && (
                 <Alert variant='destructive'>
                   <Icons.alert className='size-4 !top-3' />
                   <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
-                  <AlertDescription>{formError}</AlertDescription>
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
               <div className='grid gap-2'>
@@ -115,15 +115,16 @@ export function PinDialog() {
               className='flex items-center gap-2'
               onClick={handleSubmit(values => {
                 startTransition(async () => {
-                  reset()
                   const res = await updatePinAction({ ...values })
                   if (res && res.serverError) {
-                    setFormError(res.serverError)
+                    setError(res.serverError)
                     return
                   }
                   toast(siteConfig.successTitle, {
                     description: 'PIN-koden blev opdateret',
                   })
+                  setError(undefined)
+                  reset()
                   setOpen(false)
                 })
               })}>
