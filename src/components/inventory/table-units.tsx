@@ -3,7 +3,7 @@
 import {
   getTableUnitColumns,
   getTableUnitFilters,
-} from '@/app/(site)/admin/enheder/columns'
+} from '@/app/(site)/sys/enheder/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -45,7 +45,7 @@ interface Props {
   units: Unit[]
 }
 
-export function TableProductUnits({ units, user }: Props) {
+export function UnitOverview({ units, user }: Props) {
   const LOCALSTORAGE_KEY = 'units_cols'
   const columns = useMemo(() => getTableUnitColumns(), [])
 
@@ -125,7 +125,7 @@ export function TableProductUnits({ units, user }: Props) {
   const filterFields = useMemo(
     () => getTableUnitFilters(table, units),
     [table, units],
-  ) //
+  ) 
 
   if (!mounted) return null
 

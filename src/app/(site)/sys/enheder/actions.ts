@@ -3,11 +3,10 @@ import { privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
+import { createUnitValidation } from './validation'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
-const createUnitValidation = z.object({
-  name: z.string().min(1, 'Enhed er påkrævet'),
-})
+
 export const createUnitAction = privateAction
   .schema(createUnitValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
@@ -21,6 +20,8 @@ export const createUnitAction = privateAction
     if (!newUnit) {
       throw new ActionError('Enheden blev ikke oprettet')
     }
-    revalidatePath('/units')
+    revalidatePath('/sys/enheder')
     return { message: 'Enhed oprettet succesfuldt' }
   })
+
+  //EDIT UNIT ACTION LATER

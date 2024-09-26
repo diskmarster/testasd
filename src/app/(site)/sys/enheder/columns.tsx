@@ -1,3 +1,4 @@
+import { TableReorderActions } from '@/components/inventory/table-reorder-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
@@ -59,8 +60,19 @@ export function getTableUnitColumns(): ColumnDef<Unit>[] {
       viewLabel: 'Opdateret',
     },
   }
+  /* const actionsCol: ColumnDef<Unit> = {
+    accessorKey: 'actions',
+    header: () => null,
+    cell: ({ table, row }) => <TableOverviewActions table={table} row={row} />,
+    enableHiding: false,
+    enableSorting: false,
+    meta: {
+      className: 'justify-end',
+    },
+  } */
+  
 
-  return [unitCol, isBarredCol, insertedCol, updatedCol]
+  return [unitCol, isBarredCol, insertedCol, updatedCol, /* actionsCol ADD AFTER MERGE */]
 }
 
 export function getTableUnitFilters(

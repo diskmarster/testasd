@@ -1,6 +1,6 @@
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalCreateUnitForm } from '@/components/inventory/modal-create-unit'
-import { TableProductUnits } from '@/components/inventory/table-product-units'
+import { UnitOverview } from '@/components/inventory/table-units'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -23,7 +23,7 @@ export default async function Page() {
           <ModalCreateUnitForm />
         </>
       }>
-      <TableProductUnits units={units} user={user} />
+      <UnitOverview units={units} user={user} />
     </SiteWrapper>
   )
 }
