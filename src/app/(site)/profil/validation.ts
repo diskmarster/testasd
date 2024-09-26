@@ -62,7 +62,7 @@ export const updatePinValidation = z
     if (newPin !== confirmPin) {
       ctx.addIssue({
         code: 'custom',
-        message: 'PIN-koderne er ikke ens',
+        message: 'Ny PIN og Bekræft PIN er ikke ens.',
         path: ['confirmPin'],
       })
     }
