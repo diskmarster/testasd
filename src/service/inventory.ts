@@ -20,12 +20,14 @@ import {
   NewReorder,
   NewUnit,
   PartialReorder,
+  PartialUnit,
   Placement,
   PlacementID,
   Product,
   ProductID,
   Reorder,
   Unit,
+  UnitID,
 } from '@/lib/database/schema/inventory'
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
@@ -36,28 +38,28 @@ export const inventoryService = {
   ): Promise<FormattedInventory[]> {
     return await inventory.getInventoryByLocationID(locationID)
   },
-  getActiveUnits: async function(): Promise<Unit[]> {
+  getActiveUnits: async function (): Promise<Unit[]> {
     return inventory.getActiveUnits()
   },
-  getActiveGroupsByID: async function(
+  getActiveGroupsByID: async function (
     customerID: CustomerID,
   ): Promise<Group[]> {
     return await inventory.getActiveGroupsByID(customerID)
   },
-  getAllGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
+  getAllGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
     return await inventory.getAllGroupsByID(customerID)
   },
-  getActivePlacementsByID: async function(
+  getActivePlacementsByID: async function (
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getActivePlacementsByID(locationID)
   },
-  getAllPlacementsByID: async function(
+  getAllPlacementsByID: async function (
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getAllPlacementsByID(locationID)
   },
-  getActiveBatchesByID: async function(
+  getActiveBatchesByID: async function (
     locationID: LocationID,
   ): Promise<Batch[]> {
     return await inventory.getActiveBatchesByID(locationID)
@@ -232,7 +234,7 @@ export const inventoryService = {
 
     return result
   },
-  getActiveProductsByID: async function(
+  getActiveProductsByID: async function (
     customerID: CustomerID,
   ): Promise<Product[]> {
     return await inventory.getActiveProductsByID(customerID)
@@ -250,7 +252,7 @@ export const inventoryService = {
       }
     }
   },
-  createProductGroup: async function(groupData: {
+  createProductGroup: async function (groupData: {
     name: string
     customerID: number
   }): Promise<Group | undefined> {
@@ -260,17 +262,6 @@ export const inventoryService = {
       if (err instanceof LibsqlError) {
         if (err.message.includes('name')) {
           throw new ActionError('Produktgruppenavn findes allerede')
-        }
-      }
-    }
-  },
-  createUnit: async function (unitData: NewUnit): Promise<Unit | undefined> {
-    try {
-      return await inventory.createProductUnit(unitData)
-    } catch (err) {
-      if (err instanceof LibsqlError) {
-        if (err.message.includes('name')) {
-          throw new ActionError('Enhedsnavn findes allerede')
         }
       }
     }
@@ -350,5 +341,44 @@ export const inventoryService = {
     productID: ProductID,
   ): Promise<Inventory[]> => {
     return await inventory.getInventoryByProductID(productID)
+  },
+
+  createUnit: async function (unitData: NewUnit): Promise<Unit | undefined> {
+    try {
+      return await inventory.createUnit(unitData)
+    } catch (err) {
+      if (err instanceof LibsqlError) {
+        if (err.message.includes('name')) {
+          throw new ActionError('Enhedsnavn findes allerede')
+        }
+      }
+    }
+  },
+  updateUnitByID: async function (
+    unitID: UnitID,
+    updatedUnitData: PartialUnit,
+  ): Promise<Unit | undefined> {
+    const updatedUnit = await inventory.updateUnitByID(unitID, updatedUnitData)
+    if (!updatedUnit) return undefined
+    return updatedUnit
+  },
+
+  async updateBarredStatus(
+    unitID: UnitID,
+    isBarred: boolean,
+  ): Promise<Unit | undefined> {
+    try {
+      const updatedUnit = await inventory.updateUnitByID(unitID, { isBarred })
+      if (!updatedUnit) return undefined
+      return updatedUnit
+    } catch (err) {
+      console.error('Der skete en fejl med spærringen:', err)
+      throw new ActionError(
+        'Der skete en fejl med opdatering af produkt spærringen',
+      )
+    }
+  },
+  getAllUnits: async function (): Promise<Unit[]> {
+    return await inventory.getAllUnits();
   },
 }

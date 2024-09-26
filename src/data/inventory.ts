@@ -24,6 +24,7 @@ import {
   NewReorder,
   NewUnit,
   PartialReorder,
+  PartialUnit,
   Placement,
   PlacementID,
   placementTable,
@@ -33,6 +34,7 @@ import {
   Reorder,
   reorderTable,
   Unit,
+  UnitID,
   unitTable,
 } from '@/lib/database/schema/inventory'
 import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm'
@@ -79,13 +81,13 @@ export const inventory = {
 
     return inventory
   },
-  getActiveUnits: async function(trx: TRX = db): Promise<Unit[]> {
+  getActiveUnits: async function (trx: TRX = db): Promise<Unit[]> {
     return await trx
       .select()
       .from(unitTable)
       .where(eq(unitTable.isBarred, false))
   },
-  getActiveGroupsByID: async function(
+  getActiveGroupsByID: async function (
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Group[]> {
@@ -99,15 +101,8 @@ export const inventory = {
         ),
       )
   },
-  
-  createProductUnit: async function (
-    unitData: NewUnit,
-    trx: TRX = db,
-  ): Promise<Unit> {
-    const unit = await trx.insert(unitTable).values(unitData).returning()
-    return unit[0]
-  },
-  getAllGroupsByID: async function(
+
+  getAllGroupsByID: async function (
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Group[]> {
@@ -116,7 +111,7 @@ export const inventory = {
       .from(groupTable)
       .where(eq(groupTable.customerID, customerID))
   },
-  createProductGroup: async function(
+  createProductGroup: async function (
     groupData: NewGroup,
     trx: TRX = db,
   ): Promise<Group> {
@@ -124,7 +119,7 @@ export const inventory = {
     return group[0]
   },
 
-  getActivePlacementsByID: async function(
+  getActivePlacementsByID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Placement[]> {
@@ -138,7 +133,7 @@ export const inventory = {
         ),
       )
   },
-  getAllPlacementsByID: async function(
+  getAllPlacementsByID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Placement[]> {
@@ -147,7 +142,7 @@ export const inventory = {
       .from(placementTable)
       .where(eq(placementTable.locationID, locationID))
   },
-  getActiveBatchesByID: async function(
+  getActiveBatchesByID: async function (
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Batch[]> {
@@ -248,7 +243,7 @@ export const inventory = {
       .returning()
     return history[0]
   },
-  getActiveProductsByID: async function(
+  getActiveProductsByID: async function (
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Product[]> {
@@ -424,5 +419,24 @@ export const inventory = {
         ),
       )
     return placement[0]
+  },
+  createUnit: async function (unitData: NewUnit, trx: TRX = db): Promise<Unit> {
+    const unit = await trx.insert(unitTable).values(unitData).returning()
+    return unit[0]
+  },
+  updateUnitByID: async function (
+    unitID: UnitID,
+    updatedUnitData: PartialUnit,
+    trx: TRX = db,
+  ): Promise<Unit | undefined> {
+    const unit = await trx
+      .update(unitTable)
+      .set({ ...updatedUnitData })
+      .where(eq(unitTable.id, unitID))
+      .returning()
+    return unit[0]
+  },
+  getAllUnits: async function (trx: TRX = db): Promise<Unit[]> {
+    return await trx.select().from(unitTable);
   },
 }
