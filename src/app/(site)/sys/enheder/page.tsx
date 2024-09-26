@@ -13,7 +13,7 @@ export default async function Page() {
   if (!location) redirect('/log-ind')
   const customer = await customerService.getByID(user.customerID)
   if (!customer) redirect('/log-ind')
-  const units = await inventoryService.getUnits()
+  const units = await inventoryService.getAllUnits()
   return (
     <SiteWrapper
       title='Enheder'

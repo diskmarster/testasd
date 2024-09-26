@@ -1,7 +1,6 @@
-import { TableReorderActions } from '@/components/inventory/table-reorder-actions'
+import { TableOverviewActions } from '@/components/inventory/table-units-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
-import { Badge } from '@/components/ui/badge'
 import { Unit } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -20,20 +19,12 @@ export function getTableUnitColumns(): ColumnDef<Unit>[] {
   const isBarredCol: ColumnDef<Unit> = {
     accessorKey: 'isBarred',
     header: ({ column }) => <TableHeader column={column} title='Spærret' />,
-    cell: ({ getValue }) => {
-      const isBarred = getValue<boolean>()
-      return (
-        <Badge variant={isBarred ? 'destructive' : 'outline'}>
-          {isBarred ? 'Ja' : 'Nej'}
-        </Badge>
-      )
+    cell: ({ getValue }) => (getValue<boolean>() ? 'Ja' : 'Nej'),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue<boolean>(id))
     },
     meta: {
       viewLabel: 'Spærret',
-    },
-    filterFn: (row, id, value) => {
-      const isBarredValue = value == 'Ja'
-      return row.getValue(id) === isBarredValue
     },
   }
 
@@ -60,7 +51,7 @@ export function getTableUnitColumns(): ColumnDef<Unit>[] {
       viewLabel: 'Opdateret',
     },
   }
-  /* const actionsCol: ColumnDef<Unit> = {
+  const actionsCol: ColumnDef<Unit> = {
     accessorKey: 'actions',
     header: () => null,
     cell: ({ table, row }) => <TableOverviewActions table={table} row={row} />,
@@ -69,10 +60,8 @@ export function getTableUnitColumns(): ColumnDef<Unit>[] {
     meta: {
       className: 'justify-end',
     },
-  } */
-  
-
-  return [unitCol, isBarredCol, insertedCol, updatedCol, /* actionsCol ADD AFTER MERGE */]
+  }
+  return [unitCol, isBarredCol, insertedCol, updatedCol, actionsCol]
 }
 
 export function getTableUnitFilters(
@@ -98,8 +87,8 @@ export function getTableUnitFilters(
     label: 'Spærret',
     value: '',
     options: [
-      { value: 'Ja', label: 'Ja' },
-      { value: 'Nej', label: 'Nej' },
+      { value: true, label: 'Ja' },
+      { value: false, label: 'Nej' },
     ],
   }
 
