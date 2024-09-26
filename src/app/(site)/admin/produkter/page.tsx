@@ -12,6 +12,7 @@ export default async function Page() {
   if (!session) {
     return signOutAction()
   }
+  
   const customer = await customerService.getByID(user.customerID)
   if (!customer) {
     return signOutAction()
