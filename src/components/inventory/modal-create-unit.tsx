@@ -1,6 +1,7 @@
 'use client'
 
 import { createUnitAction } from '@/app/(site)/sys/enheder/actions'
+import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -38,11 +39,9 @@ export function ModalCreateUnitForm() {
     reset()
     setOpen(open)
   }
-  const onSubmit = async (data: unitForm) => {
+  const onSubmit = async (values: z.infer<typeof createUnitValidation>) => {
     startTransition(async () => {
-      const res = await createUnitAction({
-        name: data.name,
-      })
+      const res = await createUnitAction(values)
       if (res && res.serverError) {
         setError(res.serverError)
         return
@@ -51,7 +50,7 @@ export function ModalCreateUnitForm() {
       reset()
       setOpen(false)
       toast.success('Enheden blev oprettet.', {
-        description: `Ny enhed: ${data.name}`,
+        description: `Ny enhed: ${values.name}`,
       })
     })
   }
