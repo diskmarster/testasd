@@ -1,5 +1,7 @@
 'use client'
-import { createPlacementAction } from '@/app/(site)/admin/placering/actions'
+
+import { createPlacementAction } from '@/app/(site)/admin/placeringer/actions'
+import { createPlacementValidation } from '@/app/(site)/admin/placeringer/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -10,35 +12,22 @@ import {
   CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
-
-const createPlacementValidation = z.object({
-  placementName: z
-    .string()
-    .min(1, 'Placering navn er påkrævet')
-    .max(50, 'Placering navn må ikke være længere end 50 tegn'),
-})
-
-interface CreatePlacementForm {
-  placementName: string
-}
 
 export function ModalCreatePlacement() {
   const [open, setOpen] = useState(false)
+  const [pending, startTransition] = useTransition()
+  const [error, setError] = useState<string | undefined>()
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<CreatePlacementForm>({
+  const { register, handleSubmit, formState, reset } = useForm<
+    z.infer<typeof createPlacementValidation>
+  >({
     resolver: zodResolver(createPlacementValidation),
   })
 
@@ -47,26 +36,22 @@ export function ModalCreatePlacement() {
     setOpen(open)
   }
 
-  const router = useRouter()
-
-  const onSubmit = async (data: CreatePlacementForm) => {
-    try {
-      await createPlacementAction({
-        placementName: data.placementName,
-      })
-
-      toast.success('Placering oprettet', {
-        description: `Ny placering: ${data.placementName}`,
-      })
-
+  const onSubmit = async (
+    values: z.infer<typeof createPlacementValidation>,
+  ) => {
+    startTransition(async () => {
+      const res = await createPlacementAction(values)
+      if (res && res.serverError) {
+        setError(res.serverError)
+        return
+      }
+      setError(undefined)
+      reset()
       setOpen(false)
-
-      router.refresh()
-    } catch (error) {
-      toast.error('Noget gik galt', {
-        description: 'Kunne ikke oprette placeringen. Prøv igen senere.',
+      toast.success('Placeringen blev oprettet.', {
+        description: `Ny placering: ${values.name}`,
       })
-    }
+    })
   }
 
   return (
@@ -84,28 +69,21 @@ export function ModalCreatePlacement() {
           <form
             className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>
+            {error && <p className='text-sm text-destructive'>{error}</p>}
             <div className='grid gap-2'>
-              <Label>Placering navn</Label>
+              <Label>Placering</Label>
               <Input
                 placeholder='Indtast navn for ny placering'
-                {...register('placementName')}
+                {...register('name')}
               />
-              {errors.placementName && (
+              {formState.errors.name && (
                 <p className='text-sm text-destructive'>
-                  {errors.placementName.message}
+                  {formState.errors.name.message}
                 </p>
               )}
             </div>
-            <Button
-              type='submit'
-              size='lg'
-              disabled={isSubmitting}
-              className='w-full'>
-              {isSubmitting ? (
-                <Icons.spinner className='size-4 animate-spin' />
-              ) : (
-                'Opret placering'
-              )}
+            <Button type='submit' disabled={pending || !formState.isValid}>
+              Opret
             </Button>
           </form>
         </CredenzaBody>

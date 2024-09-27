@@ -19,21 +19,16 @@ import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-const unitSchema = z.object({
-  name: z.string().nonempty('Enhedsnavn er påkrævet'),
-})
-type unitForm = z.infer<typeof unitSchema>
-export function ModalCreateUnitForm() {
+
+export function ModalCreateUnit() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
-  const [error, setError] = useState<string | undefined>()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<unitForm>({
-    resolver: zodResolver(unitSchema),
+  const [error, setError] = useState<string>()
+  const { handleSubmit, register, formState, setValue, reset } = useForm<
+    z.infer<typeof createUnitValidation>
+  >({
+    resolver: zodResolver(createUnitValidation),
+    defaultValues: {},
   })
   function onOpenChange(open: boolean) {
     reset()
@@ -76,22 +71,14 @@ export function ModalCreateUnitForm() {
                 placeholder='Indtast navn for ny enhed'
                 {...register('name')}
               />
-              {errors.name && (
+              {formState.errors.name && (
                 <p className='text-sm text-destructive'>
-                  {errors.name.message}
+                  {formState.errors.name.message}
                 </p>
               )}
             </div>
-            <Button
-              type='submit'
-              size='lg'
-              disabled={isSubmitting}
-              className='w-full'>
-              {isSubmitting || pending ? (
-                <Icons.spinner className='size-4 animate-spin' />
-              ) : (
-                'Opret enhed'
-              )}
+            <Button type='submit' disabled={pending || !formState.isValid}>
+              Opret
             </Button>
           </form>
         </CredenzaBody>
