@@ -1,8 +1,9 @@
-import * as jwt from 'jsonwebtoken'
 import { User, UserNoHash } from '@/lib/database/schema/auth'
 import { hash, verify } from '@node-rs/argon2'
+import * as jwt from 'jsonwebtoken'
 import { sessionService } from './session'
 import { Session, User as AuthUser } from 'lucia'
+
 const MEMORY_COST = 19456
 const TIME_COST = 2
 const OUTPUT_LEN = 32
@@ -13,20 +14,24 @@ export async function hashPassword(pw: string): Promise<string> {
     memoryCost: MEMORY_COST,
     timeCost: TIME_COST,
     outputLen: OUTPUT_LEN,
-    parallelism: PARELLELISM
+    parallelism: PARELLELISM,
   })
   return hashed
 }
 
-export async function verifyPassword(hash: string, unhashed: string): Promise<boolean> {
+export async function verifyPassword(
+  hash: string,
+  unhashed: string,
+): Promise<boolean> {
   const valid = await verify(hash, unhashed, {
     memoryCost: MEMORY_COST,
     timeCost: TIME_COST,
     outputLen: OUTPUT_LEN,
-    parallelism: PARELLELISM
+    parallelism: PARELLELISM,
   })
   return valid
 }
+
 
 export function userDTO(u: User): UserNoHash {
   const { hash, ...rest } = u
@@ -35,8 +40,8 @@ export function userDTO(u: User): UserNoHash {
 }
 
 export type JWTObject = {
-  sessionId: string,
-  user: UserNoHash,
+  sessionId: string
+  user: UserNoHash
 }
 
 export function signJwt(payload: JWTObject): string {
@@ -44,28 +49,31 @@ export function signJwt(payload: JWTObject): string {
 }
 
 type JWTFailed = {
-  name: 'TokenExpiredError' | 'JsonWebTokenError' | 'NotBeforeError',
-  message: string,
-  expiredAt?: number,
-  date?: string,
+  name: 'TokenExpiredError' | 'JsonWebTokenError' | 'NotBeforeError'
+  message: string
+  expiredAt?: number
+  date?: string
 }
 
-export type VerifyJWTResponse = {
-  ok: true,
-  data: JWTObject,
-  error?: undefined,
-} | {
-  ok: false,
-  data?: undefined,
-  error: JWTFailed,
-}
+export type VerifyJWTResponse =
+  | {
+      ok: true
+      data: JWTObject
+      error?: undefined
+    }
+  | {
+      ok: false
+      data?: undefined
+      error: JWTFailed
+    }
 export function verifyJWT(jwtString: string): VerifyJWTResponse {
   try {
     const payload = jwt.verify(jwtString, process.env.JWT_SECRET as string)
 
     let jwtObj: JWTObject
-    if (typeof payload == "string") {
-      jwtObj = JSON.parse(payload);
+
+    if (typeof payload == 'string') {
+      jwtObj = JSON.parse(payload)
     } else {
       jwtObj = {
         sessionId: payload.sessionId,

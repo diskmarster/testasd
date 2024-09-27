@@ -47,14 +47,16 @@ export const siteConfig: SiteConfig = {
           isExternal: false,
           isDisabled: true,
         },
+
         {
           label: 'Produkter',
           description: 'Se, opret og rediger i dine produkter',
           href: '/admin/produkter',
-          roles: ['sys_admin', 'firma_admin'],
+          roles: ['sys_admin', 'firma_admin', 'lokal_admin'],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
+
         {
           label: 'Varegrupper',
           description: 'Se, opret og rediger i dine varegrupper',

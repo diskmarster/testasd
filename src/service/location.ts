@@ -1,4 +1,6 @@
+import { inventory } from '@/data/inventory'
 import { location } from '@/data/location'
+import { db } from '@/lib/database'
 import { UserID } from '@/lib/database/schema/auth'
 import {
   Location,
@@ -17,9 +19,26 @@ export const locationService = {
   create: async function(
     locationData: NewLocation,
   ): Promise<Location | undefined> {
-    const newLocation = await location.create(locationData)
-    if (!newLocation) return undefined
-    return newLocation
+    const didCreate = await db.transaction(async trx => {
+      const newLocation = await location.create(locationData, trx)
+      if (!newLocation) return undefined
+
+      const newDefaultPlacement = await inventory.createPlacement(
+        {
+          name: '-',
+          locationID: newLocation.id,
+        },
+        trx,
+      )
+      if (!newDefaultPlacement) return undefined
+      const newBatch = await inventory.createBatch(
+        { batch: '-', locationID: newLocation.id },
+        trx,
+      )
+      if (!newBatch) return undefined
+      return newLocation
+    })
+    return didCreate
   },
   addAccess: async function(newLink: NewLinkLocationToUser): Promise<boolean> {
     return await location.createAccess(newLink)

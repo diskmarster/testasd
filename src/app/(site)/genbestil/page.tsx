@@ -20,10 +20,10 @@ export default async function Page() {
   const customer = await customerService.getByID(user.customerID)
   if (!customer) return signOutAction()
 
-  const products = await inventoryService.getProductsByID(customer.id)
+  const products = await inventoryService.getActiveProductsByID(customer.id)
   const reorders = await inventoryService.getReordersByID(location)
-  const units = await inventoryService.getUnits()
-  const groups = await inventoryService.getGroupsByID(customer.id)
+  const units = await inventoryService.getActiveUnits()
+  const groups = await inventoryService.getActiveGroupsByID(customer.id)
 
   const productsWithNoReorder = products.filter(
     prod => !reorders.some(reorder => prod.id === reorder.productID),

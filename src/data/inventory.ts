@@ -78,13 +78,13 @@ export const inventory = {
 
     return inventory
   },
-  getUnits: async function (trx: TRX = db): Promise<Unit[]> {
+  getActiveUnits: async function(trx: TRX = db): Promise<Unit[]> {
     return await trx
       .select()
       .from(unitTable)
       .where(eq(unitTable.isBarred, false))
   },
-  getGroupsByID: async function (
+  getActiveGroupsByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Group[]> {
@@ -98,7 +98,7 @@ export const inventory = {
         ),
       )
   },
-  getAllGroupsByID: async function (
+  getAllGroupsByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Group[]> {
@@ -107,7 +107,7 @@ export const inventory = {
       .from(groupTable)
       .where(eq(groupTable.customerID, customerID))
   },
-  createProductGroup: async function (
+  createProductGroup: async function(
     groupData: NewGroup,
     trx: TRX = db,
   ): Promise<Group> {
@@ -115,7 +115,7 @@ export const inventory = {
     return group[0]
   },
 
-  getActivePlacementsByID: async function (
+  getActivePlacementsByID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Placement[]> {
@@ -129,7 +129,7 @@ export const inventory = {
         ),
       )
   },
-  getAllPlacementsByID: async function (
+  getAllPlacementsByID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Placement[]> {
@@ -138,7 +138,7 @@ export const inventory = {
       .from(placementTable)
       .where(eq(placementTable.locationID, locationID))
   },
-  getBatchesByID: async function (
+  getActiveBatchesByID: async function(
     locationID: LocationID,
     trx: TRX = db,
   ): Promise<Batch[]> {
@@ -151,6 +151,23 @@ export const inventory = {
           eq(batchTable.isBarred, false),
         ),
       )
+  },
+  getDefaultBatchByID: async function (
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<Batch> {
+    const batches = await trx
+      .select()
+      .from(batchTable)
+      .where(
+        and(
+          eq(batchTable.locationID, locationID),
+          eq(batchTable.isBarred, false),
+          eq(batchTable.batch, '-'),
+        ),
+      )
+
+    return batches[0]
   },
   getInventoryByIDs: async function (
     productID: ProductID,
@@ -222,7 +239,7 @@ export const inventory = {
       .returning()
     return history[0]
   },
-  getProductsByID: async function (
+  getActiveProductsByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Product[]> {
@@ -375,10 +392,28 @@ export const inventory = {
 
     return reorders
   },
-  getInventoryByProductID: async (productID: ProductID): Promise<Inventory[]> => { 
+  getInventoryByProductID: async (
+    productID: ProductID,
+  ): Promise<Inventory[]> => {
     return await db
       .select()
       .from(inventoryTable)
       .where(eq(inventoryTable.productID, productID))
+  },
+  getDefaultPlacementByID: async function (
+    locationID: LocationID,
+    trx: TRX = db,
+  ): Promise<Placement> {
+    const placement = await trx
+      .select()
+      .from(placementTable)
+      .where(
+        and(
+          eq(placementTable.locationID, locationID),
+          eq(placementTable.isBarred, false),
+          eq(placementTable.name, '-'),
+        ),
+      )
+    return placement[0]
   },
 }

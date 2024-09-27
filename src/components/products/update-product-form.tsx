@@ -1,10 +1,10 @@
 'use client'
-import { createProductAction } from '@/app/(site)/produkter/opret/actions'
-import { createProductValidation } from '@/app/(site)/produkter/opret/validation'
+import { updateProductAction } from '@/app/(site)/admin/produkter/actions'
+import { createProductValidation } from '@/app/(site)/admin/produkter/validation'
 import { siteConfig } from '@/config/site'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -12,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
 import { useSession } from '@/context/session'
+import { FormattedProduct } from '@/data/products.types'
 import {
   Credenza,
   CredenzaBody,
@@ -19,7 +20,6 @@ import {
   CredenzaDescription,
   CredenzaHeader,
   CredenzaTitle,
-  CredenzaTrigger,
 } from '../ui/credenza'
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
@@ -32,20 +32,24 @@ import {
   SelectValue,
 } from '../ui/select'
 
-export function FormCreateProducts({
+export function UpdateProductsForm({
   units,
   groups,
+  productToEdit,
+  isOpen,
+  setOpen,
 }: {
   units: Unit[]
   groups: Group[]
+  productToEdit?: FormattedProduct
+  isOpen: boolean
+  setOpen: (open: boolean) => void
 }) {
   const { user } = useSession()
-
   const [pending, startTransition] = useTransition()
-  const [show, setShow] = useState(false)
   const [error, setError] = useState<string>()
 
-  const { handleSubmit, register, formState, setValue, reset } = useForm<
+  const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
     z.infer<typeof createProductValidation>
   >({
     resolver: zodResolver(createProductValidation),
@@ -53,44 +57,64 @@ export function FormCreateProducts({
       customerID: user!.customerID,
       costPrice: 0,
       salesPrice: 0,
+      ...productToEdit,
     },
   })
 
+  const formValues = watch()
+
   async function onSubmit(values: z.infer<typeof createProductValidation>) {
     startTransition(async () => {
-      const response = await createProductAction(values)
+      if (!productToEdit) {
+        setError('No product to edit')
+        return
+      }
+
+      const response = await updateProductAction({
+        productID: productToEdit.id,
+        data: values,
+      })
+
       if (response && response.serverError) {
         setError(response.serverError)
         return
       }
-      setShow(false)
+
       setError(undefined)
-      reset()
+      setOpen(false)
       toast.success(siteConfig.successTitle, {
-        description: 'Produktet er oprettet succesfuldt.',
+        description: 'Produktet er opdateret succesfuldt.',
       })
     })
   }
+
+  useEffect(() => {
+    if (productToEdit) {
+      Object.entries(productToEdit).forEach(([key, value]) => {
+        setValue(key as keyof z.infer<typeof createProductValidation>, value)
+      })
+    }
+  }, [productToEdit, setValue])
+
   function onOpenChange(open: boolean) {
-    setShow(open)
+    setOpen(open)
     reset()
     setError(undefined)
   }
 
   return (
-    <Credenza open={show} onOpenChange={onOpenChange}>
-      <CredenzaTrigger asChild>
-        <button onClick={() => setShow(true)}>Open modal</button>
-      </CredenzaTrigger>
+    <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent>
         <CredenzaHeader>
-          <CredenzaTitle>Opret produkt</CredenzaTitle>
+          <CredenzaTitle>Rediger produkt</CredenzaTitle>
           <CredenzaDescription>
-            Her kan du oprette et produkt.
+            Her kan du redigere et produkt
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
-          <form className='grid gap-4 mb-4' onSubmit={handleSubmit(onSubmit)}>
+          <form
+            className='grid gap-4 mb-4 md:mb-0'
+            onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='!top-3 size-4' />
@@ -133,6 +157,7 @@ export function FormCreateProducts({
                   Varegruppe<span className='text-destructive'> * </span>
                 </Label>
                 <Select
+                  value={formValues.groupID.toString()}
                   onValueChange={(value: string) =>
                     setValue('groupID', parseInt(value), {
                       shouldValidate: true,
@@ -156,6 +181,7 @@ export function FormCreateProducts({
                   Enhed <span className='text-destructive'> * </span>
                 </Label>
                 <Select
+                  value={formValues.unitID.toString()}
                   onValueChange={(value: string) =>
                     setValue('unitID', parseInt(value), {
                       shouldValidate: true,
@@ -260,7 +286,7 @@ export function FormCreateProducts({
               </div>
             </div>
             <Button type='submit' disabled={pending || !formState.isValid}>
-              Opret
+              Opdater
             </Button>
           </form>
         </CredenzaBody>
