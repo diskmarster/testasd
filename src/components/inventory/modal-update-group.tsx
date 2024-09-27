@@ -1,7 +1,9 @@
 'use client'
-import { updateUnitAction } from '@/app/(site)/sys/enheder/actions'
+import { updateGroupAction } from '@/app/(site)/admin/varegrupper/actions'
+import { createGroupValidation } from '@/app/(site)/admin/varegrupper/validation'
 import { siteConfig } from '@/config/site'
-import { Unit } from '@/lib/database/schema/inventory'
+import { useSession } from '@/context/session'
+import { Group } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -9,9 +11,6 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
-
-import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
-import { useSession } from '@/context/session'
 import {
   Credenza,
   CredenzaBody,
@@ -24,12 +23,12 @@ import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 
-export function ModalUpdateUnit({
-  unitToEdit,
+export function ModalUpdateGroup({
+  groupToEdit,
   isOpen,
   setOpen,
 }: {
-  unitToEdit?: Unit ///////
+  groupToEdit?: Group
   isOpen: boolean
   setOpen: (open: boolean) => void
 }) {
@@ -38,25 +37,25 @@ export function ModalUpdateUnit({
   const [error, setError] = useState<string>()
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
-    z.infer<typeof createUnitValidation>
+    z.infer<typeof createGroupValidation>
   >({
-    resolver: zodResolver(createUnitValidation),
+    resolver: zodResolver(createGroupValidation),
     defaultValues: {
-      name: unitToEdit?.name || '',
+      name: groupToEdit?.name || '',
     },
   })
 
   const formValues = watch()
 
-  async function onSubmit(values: z.infer<typeof createUnitValidation>) {
+  async function onSubmit(values: z.infer<typeof createGroupValidation>) {
     startTransition(async () => {
-      if (!unitToEdit) {
-        setError('No unit to edit')
+      if (!groupToEdit) {
+        setError('Ingen varegruppe at redigere')
         return
       }
 
-      const response = await updateUnitAction({
-        unitID: unitToEdit.id,
+      const response = await updateGroupAction({
+        groupID: groupToEdit.id,
         data: values,
       })
 
@@ -68,16 +67,16 @@ export function ModalUpdateUnit({
       setError(undefined)
       setOpen(false)
       toast.success(siteConfig.successTitle, {
-        description: 'Enheden er opdateret succesfuldt.',
+        description: 'Varegruppen er opdateret succesfuldt.',
       })
     })
   }
 
   useEffect(() => {
-    if (unitToEdit) {
-      setValue('name', unitToEdit.name)
+    if (groupToEdit) {
+      setValue('name', groupToEdit.name)
     }
-  }, [unitToEdit, setValue])
+  }, [groupToEdit, setValue])
 
   function onOpenChange(open: boolean) {
     setOpen(open)
@@ -89,9 +88,9 @@ export function ModalUpdateUnit({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent>
         <CredenzaHeader>
-          <CredenzaTitle>Rediger enhed</CredenzaTitle>
+          <CredenzaTitle>Rediger varegruppe</CredenzaTitle>
           <CredenzaDescription>
-            Her kan du redigere en enhed
+            Her kan du redigere en varegruppe
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -109,7 +108,7 @@ export function ModalUpdateUnit({
             <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
-                  Navn på enhed
+                  Navn på varegruppe
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='name' type='text' {...register('name')} />

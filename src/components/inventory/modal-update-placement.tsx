@@ -1,7 +1,9 @@
 'use client'
-import { updateUnitAction } from '@/app/(site)/sys/enheder/actions'
+import { updatePlacementAction } from '@/app/(site)/admin/placeringer/actions'
+import { createPlacementValidation } from '@/app/(site)/admin/placeringer/validation'
 import { siteConfig } from '@/config/site'
-import { Unit } from '@/lib/database/schema/inventory'
+import { useSession } from '@/context/session'
+import { Placement } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -9,9 +11,6 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
-
-import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
-import { useSession } from '@/context/session'
 import {
   Credenza,
   CredenzaBody,
@@ -24,12 +23,12 @@ import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 
-export function ModalUpdateUnit({
-  unitToEdit,
+export function ModalUpdatePlacement({
+  placementToEdit,
   isOpen,
   setOpen,
 }: {
-  unitToEdit?: Unit ///////
+  placementToEdit?: Placement
   isOpen: boolean
   setOpen: (open: boolean) => void
 }) {
@@ -38,25 +37,25 @@ export function ModalUpdateUnit({
   const [error, setError] = useState<string>()
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
-    z.infer<typeof createUnitValidation>
+    z.infer<typeof createPlacementValidation>
   >({
-    resolver: zodResolver(createUnitValidation),
+    resolver: zodResolver(createPlacementValidation),
     defaultValues: {
-      name: unitToEdit?.name || '',
+      name: placementToEdit?.name || '',
     },
   })
 
   const formValues = watch()
 
-  async function onSubmit(values: z.infer<typeof createUnitValidation>) {
+  async function onSubmit(values: z.infer<typeof createPlacementValidation>) {
     startTransition(async () => {
-      if (!unitToEdit) {
-        setError('No unit to edit')
+      if (!placementToEdit) {
+        setError('Ingen placering at redigere')
         return
       }
 
-      const response = await updateUnitAction({
-        unitID: unitToEdit.id,
+      const response = await updatePlacementAction({
+        placementID: placementToEdit.id,
         data: values,
       })
 
@@ -68,16 +67,16 @@ export function ModalUpdateUnit({
       setError(undefined)
       setOpen(false)
       toast.success(siteConfig.successTitle, {
-        description: 'Enheden er opdateret succesfuldt.',
+        description: 'Placeringen er opdateret succesfuldt.',
       })
     })
   }
 
   useEffect(() => {
-    if (unitToEdit) {
-      setValue('name', unitToEdit.name)
+    if (placementToEdit) {
+      setValue('name', placementToEdit.name)
     }
-  }, [unitToEdit, setValue])
+  }, [placementToEdit, setValue])
 
   function onOpenChange(open: boolean) {
     setOpen(open)
@@ -89,9 +88,9 @@ export function ModalUpdateUnit({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent>
         <CredenzaHeader>
-          <CredenzaTitle>Rediger enhed</CredenzaTitle>
+          <CredenzaTitle>Rediger placering</CredenzaTitle>
           <CredenzaDescription>
-            Her kan du redigere en enhed
+            Her kan du redigere en placering
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -109,7 +108,7 @@ export function ModalUpdateUnit({
             <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
-                  Navn på enhed
+                  Navn på placering
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='name' type='text' {...register('name')} />
