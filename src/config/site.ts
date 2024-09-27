@@ -68,7 +68,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Placeringer',
           description: 'Se, opret og rediger i dine placeringer',
-          href: '/admin/placering',
+          href: '/admin/placeringer',
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: false,
