@@ -48,9 +48,12 @@ interface Props {
 export function TableProductGroups({ groups, user }: Props) {
   const LOCALSTORAGE_KEY = 'groups_cols'
   const columns = useMemo(() => getTableGroupColumns(), [])
+  
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+    { id: 'isBarred', value: [false] },
+  ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)

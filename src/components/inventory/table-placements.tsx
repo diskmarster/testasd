@@ -3,7 +3,7 @@
 import {
   getTablePlacementColumns,
   getTablePlacementFilters,
-} from '@/app/(site)/admin/placering/columns'
+} from '@/app/(site)/admin/placeringer/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -47,10 +47,12 @@ interface Props {
 
 export function TablePlacement({ data, user }: Props) {
   const LOCALSTORAGE_KEY = 'placements_cols'
-  const columns = useMemo(() => getTablePlacementColumns(), [user.role])
+  const columns = useMemo(() => getTablePlacementColumns(), [])
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+    { id: 'isBarred', value: [false] },
+  ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)
