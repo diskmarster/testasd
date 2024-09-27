@@ -12,6 +12,7 @@ import {
   Batch,
   BatchID,
   Group,
+  GroupID,
   History,
   Inventory,
   NewBatch,
@@ -19,6 +20,8 @@ import {
   NewPlacement,
   NewReorder,
   NewUnit,
+  PartialGroup,
+  PartialPlacement,
   PartialReorder,
   PartialUnit,
   Placement,
@@ -363,7 +366,7 @@ export const inventoryService = {
     return updatedUnit
   },
 
-  async updateBarredStatus(
+  async updateUnitBarredStatus(
     unitID: UnitID,
     isBarred: boolean,
   ): Promise<Unit | undefined> {
@@ -374,11 +377,59 @@ export const inventoryService = {
     } catch (err) {
       console.error('Der skete en fejl med spærringen:', err)
       throw new ActionError(
-        'Der skete en fejl med opdatering af produkt spærringen',
+        'Der skete en fejl med opdatering af Enheds spærringen',
       )
     }
   },
   getAllUnits: async function (): Promise<Unit[]> {
     return await inventory.getAllUnits();
+  },
+
+  updateGroupByID: async function (
+    groupID: GroupID, updatedGroupData: PartialGroup,
+  ): Promise<Group | undefined> {
+    const updatedGroup = await inventory.updateGroupByID(groupID, updatedGroupData)
+    if (!updatedGroup) return undefined
+    return updatedGroup
+  },
+
+  updatePlacementByID: async function (
+    placementID: PlacementID, updatedPlacementData: PartialPlacement,
+  ): Promise<Placement |undefined> {
+    const updatedPlacement = await inventory.updatePlacementByID(placementID, updatedPlacementData)
+    if (!updatedPlacement) return undefined
+    return updatedPlacement
+  },
+  
+
+  async updateGroupBarredStatus(
+    groupID: GroupID,
+    isBarred: boolean,
+  ): Promise<Group | undefined> {
+    try {
+      const updatedGroup = await inventory.updateGroupByID(groupID, { isBarred })
+      if (!updatedGroup) return undefined
+      return updatedGroup
+    } catch (err) {
+      console.error('Der skete en fejl med spærringen:', err)
+      throw new ActionError(
+        'Der skete en fejl med opdatering af varegruppe spærringen',
+      )
+    }
+  },
+  async updatePlacementBarredStatus(
+    placementID: PlacementID,
+    isBarred: boolean,
+  ): Promise<Placement | undefined> {
+    try {
+      const updatedPlacement = await inventory.updatePlacementByID(placementID, { isBarred })
+      if (!updatedPlacement) return undefined
+      return updatedPlacement
+    } catch (err) {
+      console.error('Der skete en fejl med spærringen:', err)
+      throw new ActionError(
+        'Der skete en fejl med opdatering af placerings spærringen',
+      )
+    }
   },
 }

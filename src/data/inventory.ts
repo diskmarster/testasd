@@ -11,6 +11,7 @@ import {
   BatchID,
   batchTable,
   Group,
+  GroupID,
   groupTable,
   History,
   historyTable,
@@ -23,6 +24,8 @@ import {
   NewPlacement,
   NewReorder,
   NewUnit,
+  PartialGroup,
+  PartialPlacement,
   PartialReorder,
   PartialUnit,
   Placement,
@@ -439,4 +442,30 @@ export const inventory = {
   getAllUnits: async function (trx: TRX = db): Promise<Unit[]> {
     return await trx.select().from(unitTable);
   },
+  updateGroupByID: async function (
+    groupID: GroupID,
+    updatedGroupData: PartialGroup,
+    trx: TRX = db
+  ): Promise<Group | undefined> {
+    const group = await trx
+    .update(groupTable)
+    .set({ ... updatedGroupData })
+    .where(eq(groupTable.id, groupID))
+    .returning()
+    return group[0]
+  },
+
+  updatePlacementByID: async function (
+    placementID: PlacementID,
+    updatedPlacementData: PartialPlacement,
+    trx: TRX = db 
+  ): Promise<Placement | undefined> {
+    const placement = await trx
+    .update(placementTable)
+    .set({ ... updatedPlacementData })
+    .where(eq(placementTable.id, placementID))
+    .returning()
+    return placement[0]
+  },
+  
 }
