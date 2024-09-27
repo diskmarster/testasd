@@ -69,16 +69,26 @@ export async function POST(
         const placements = await inventoryService.getActivePlacementsByID(
           data.locationId,
         )
-        const defaultPlacement = placements.find(p => p.name == '-')
+        let defaultPlacement = placements.find(p => p.name == '-')
         if (defaultPlacement == undefined) {
-          return NextResponse.json(
-            {
-              msg: 'Kunne ikke finde standard placering for denne lokation, opret en ny placering',
-            },
-            {
-              status: 500,
-            },
-          )
+          defaultPlacement = await inventoryService.createPlacement({
+            locationID: data.locationId,
+            name: '-',
+          })
+
+          if (defaultPlacement == undefined) {
+            console.error(
+              `Error creating move: Could not find or create default placement`,
+            )
+            return NextResponse.json(
+              {
+                msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
+              },
+              {
+                status: 500,
+              },
+            )
+          }
         }
         placementId = defaultPlacement.id
       } else {
@@ -106,16 +116,26 @@ export async function POST(
       const placements = await inventoryService.getActivePlacementsByID(
         data.locationId,
       )
-      const defaultPlacement = placements.find(p => p.name == '-')
+      let defaultPlacement = placements.find(p => p.name == '-')
       if (defaultPlacement == undefined) {
-        return NextResponse.json(
-          {
-            msg: 'Kunne ikke finde standard placering for denne lokation, opret en ny placering',
-          },
-          {
-            status: 500,
-          },
-        )
+        defaultPlacement = await inventoryService.createPlacement({
+          locationID: data.locationId,
+          name: '-',
+        })
+
+        if (defaultPlacement == undefined) {
+          console.error(
+            `Error creating move: Could not find or create default placement`,
+          )
+          return NextResponse.json(
+            {
+              msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
+            },
+            {
+              status: 500,
+            },
+          )
+        }
       }
       placementId = defaultPlacement.id
     }
@@ -128,16 +148,26 @@ export async function POST(
         const batches = await inventoryService.getActiveBatchesByID(
           data.locationId,
         )
-        const defaultBatch = batches.find(b => b.batch == '-')
+        let defaultBatch = batches.find(b => b.batch == '-')
         if (defaultBatch == undefined) {
-          return NextResponse.json(
-            {
-              msg: 'Kunne ikke finde standard batchnr. for denne lokation, opret et nyt batch nummer',
-            },
-            {
-              status: 500,
-            },
-          )
+          defaultBatch = await inventoryService.createBatch({
+            locationID: data.locationId,
+            batch: '-',
+          })
+
+          if (defaultBatch == undefined) {
+            console.error(
+              `Error creating move: Could not find or create default batch`,
+            )
+            return NextResponse.json(
+              {
+                msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`,
+              },
+              {
+                status: 500,
+              },
+            )
+          }
         }
         batchId = defaultBatch.id
       } else {
@@ -165,16 +195,26 @@ export async function POST(
       const batches = await inventoryService.getActiveBatchesByID(
         data.locationId,
       )
-      const defaultBatch = batches.find(b => b.batch == '-')
+      let defaultBatch = batches.find(b => b.batch == '-')
       if (defaultBatch == undefined) {
-        return NextResponse.json(
-          {
-            msg: 'Kunne ikke finde standard batchnr. for denne lokation, opret et nyt batch nummer',
-          },
-          {
-            status: 500,
-          },
-        )
+        defaultBatch = await inventoryService.createBatch({
+          locationID: data.locationId,
+          batch: '-',
+        })
+
+        if (defaultBatch == undefined) {
+          console.error(
+            `Error creating move: Could not find or create default batch`,
+          )
+          return NextResponse.json(
+            {
+              msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`,
+            },
+            {
+              status: 500,
+            },
+          )
+        }
       }
       batchId = defaultBatch.id
     }
