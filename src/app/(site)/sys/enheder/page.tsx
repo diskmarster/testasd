@@ -1,5 +1,5 @@
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { ModalCreateUnitForm } from '@/components/inventory/modal-create-unit'
+import { ModalCreateUnit } from '@/components/inventory/modal-create-unit'
 import { UnitOverview } from '@/components/inventory/table-units'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -20,7 +20,7 @@ export default async function Page() {
       description='Se en oversigt over alle Enhederne'
       actions={
         <>
-          <ModalCreateUnitForm />
+          <ModalCreateUnit />
         </>
       }>
       <UnitOverview units={units} user={user} />

@@ -44,7 +44,7 @@ export const createUnitAction = privateAction
     unitID: UnitID,
     isBarred: boolean, 
   ) {
-    const updatedUnit = await inventoryService.updateBarredStatus(
+    const updatedUnit = await inventoryService.updateUnitBarredStatus(
       unitID,
       isBarred,
     )
