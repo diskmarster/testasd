@@ -33,7 +33,6 @@ export const updateProductAction = privateAction
     }
 
     revalidatePath('/admin/produkter')
-    return { success: true, product: updatedProduct }
   })
 
 export async function toggleBarredProductAction(
@@ -52,5 +51,4 @@ export async function toggleBarredProductAction(
   }
 
   revalidatePath('/admin/produkter')
-  return { success: true, product: updatedProduct }
 }
