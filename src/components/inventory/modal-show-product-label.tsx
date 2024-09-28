@@ -30,7 +30,7 @@ export function ModalShowProductLabel({ product }: Props) {
           <Icons.printer className='size-4' />
         </Button>
       </CredenzaTrigger>
-      <CredenzaContent className='max-w-72'>
+      <CredenzaContent className='max-w-sm'>
         <CredenzaHeader>
           <CredenzaTitle>Produkt label</CredenzaTitle>
           <CredenzaDescription>
