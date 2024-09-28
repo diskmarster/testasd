@@ -1,4 +1,3 @@
-'use client'
 import { updateGroupAction } from '@/app/(site)/admin/varegrupper/actions'
 import { createGroupValidation } from '@/app/(site)/admin/varegrupper/validation'
 import { siteConfig } from '@/config/site'
@@ -32,7 +31,6 @@ export function ModalUpdateGroup({
   isOpen: boolean
   setOpen: (open: boolean) => void
 }) {
-  const { user } = useSession()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
@@ -44,8 +42,6 @@ export function ModalUpdateGroup({
       name: groupToEdit?.name || '',
     },
   })
-
-  const formValues = watch()
 
   async function onSubmit(values: z.infer<typeof createGroupValidation>) {
     startTransition(async () => {
