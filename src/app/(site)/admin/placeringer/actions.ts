@@ -6,7 +6,6 @@ import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 import { createPlacementValidation, updatePlacementValidation } from './validation'
 import { PlacementID } from '@/lib/database/schema/inventory'
 
@@ -33,34 +32,33 @@ export const createPlacementAction = privateAction
 
     revalidatePath('/admin/placeringer')
   })
-  export const updatePlacementAction = privateAction
+
+export const updatePlacementAction = privateAction
   .schema(updatePlacementValidation)
   .action(async ({ parsedInput: { placementID, data: updatedPlacementData } }) => {
     const updatedPlacement = await inventoryService.updatePlacementByID(
       placementID,
       updatedPlacementData,
     )
-    
+
     if (!updatedPlacement) {
       throw new ActionError('Der gik noget galt med at opdatere placeringen')
     }
     revalidatePath('/admin/placeringer')
-    return { success: true, placement: updatedPlacement }
   })
 
-  export async function toggleBarredPlacementAction(
-    placementID: PlacementID,
-    isBarred: boolean, 
-  ) {
-    const updatedPlacement = await inventoryService.updatePlacementBarredStatus(
-      placementID,
-      isBarred,
-    )
+export async function toggleBarredPlacementAction(
+  placementID: PlacementID,
+  isBarred: boolean,
+) {
+  const updatedPlacement = await inventoryService.updatePlacementBarredStatus(
+    placementID,
+    isBarred,
+  )
 
-    if (!updatedPlacement) {
-      throw new ActionError('Der gik noget galt med at opdatere spærring på placeringen')
-    }
-    revalidatePath('/admin/placeringer')
-    return { success: true, placement: updatedPlacement }
+  if (!updatedPlacement) {
+    throw new ActionError('Der gik noget galt med at opdatere spærring på placeringen')
   }
+  revalidatePath('/admin/placeringer')
+}
 
