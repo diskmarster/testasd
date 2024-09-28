@@ -1,4 +1,3 @@
-'use client'
 import { updateUnitAction } from '@/app/(site)/sys/enheder/actions'
 import { siteConfig } from '@/config/site'
 import { Unit } from '@/lib/database/schema/inventory'
@@ -11,7 +10,6 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
 import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
-import { useSession } from '@/context/session'
 import {
   Credenza,
   CredenzaBody,
@@ -29,15 +27,14 @@ export function ModalUpdateUnit({
   isOpen,
   setOpen,
 }: {
-  unitToEdit?: Unit ///////
+  unitToEdit?: Unit
   isOpen: boolean
   setOpen: (open: boolean) => void
 }) {
-  const { user } = useSession()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
-  const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
+  const { handleSubmit, register, formState, setValue, reset} = useForm<
     z.infer<typeof createUnitValidation>
   >({
     resolver: zodResolver(createUnitValidation),
@@ -45,8 +42,6 @@ export function ModalUpdateUnit({
       name: unitToEdit?.name || '',
     },
   })
-
-  const formValues = watch()
 
   async function onSubmit(values: z.infer<typeof createUnitValidation>) {
     startTransition(async () => {
