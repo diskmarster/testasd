@@ -14,17 +14,19 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { siteConfig } from '@/config/site'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 
 export function ModalCreateUnit() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
-  const { handleSubmit, register, formState, setValue, reset } = useForm<
+  const { handleSubmit, register, formState, reset } = useForm<
     z.infer<typeof createUnitValidation>
   >({
     resolver: zodResolver(createUnitValidation),
@@ -44,8 +46,8 @@ export function ModalCreateUnit() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success('Enheden blev oprettet.', {
-        description: `Ny enhed: ${values.name}`,
+      toast.success(siteConfig.successTitle, {
+        description: `${values.name} enhed oprettet`,
       })
     })
   }
@@ -64,9 +66,15 @@ export function ModalCreateUnit() {
           <form
             className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>
-            {error && <p className='text-sm text-destructive'>{error}</p>}
+            {error && (
+              <Alert variant='destructive'>
+                <Icons.alert className='size-4 !top-3' />
+                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <div className='grid gap-2'>
-              <Label>Enhed navn:</Label>
+              <Label>Enhed navn</Label>
               <Input
                 placeholder='Indtast navn for ny enhed'
                 {...register('name')}
