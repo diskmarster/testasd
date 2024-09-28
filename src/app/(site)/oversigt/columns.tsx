@@ -1,3 +1,4 @@
+import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
@@ -186,6 +187,9 @@ export function getTableOverviewColumns(
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
+    aggregatedCell: ({ table, row }) => (
+      <ModalShowProductLabel product={row.original.product} />
+    ),
     cell: ({ table, row }) => <TableOverviewActions row={row} table={table} />,
     enableHiding: false,
     enableSorting: false,

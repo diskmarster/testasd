@@ -48,6 +48,7 @@
     "next": "14.2.7",
     "next-safe-action": "7.8.1",
     "next-themes": "^0.3.0",
+    "qrcode.react": "^4.0.1",
     "react": "^18",
     "react-custom-events": "^1.1.1",
     "react-day-picker": "8.10.1",
