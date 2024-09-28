@@ -1,7 +1,6 @@
 import { TableOverviewActions } from '@/components/inventory/table-placement-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
-import { Badge } from '@/components/ui/badge'
 import { Placement } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -52,6 +51,7 @@ export function getTablePlacementColumns(): ColumnDef<Placement>[] {
       viewLabel: 'Opdateret',
     },
   }
+
   const actionsCol: ColumnDef<Placement> = {
     accessorKey: 'actions',
     header: () => null,
@@ -68,7 +68,7 @@ export function getTablePlacementColumns(): ColumnDef<Placement>[] {
 
 export function getTablePlacementFilters(
   table: Table<Placement>,
-  placements: Placement[], // Ensure placements are passed in
+  placements: Placement[],
 ): FilterField<Placement>[] {
   const placementFilter: FilterField<Placement> = {
     column: table.getColumn('name'),
