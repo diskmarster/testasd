@@ -30,7 +30,7 @@ export function ModalShowProductLabel({ product }: Props) {
           <Icons.printer className='size-4' />
         </Button>
       </CredenzaTrigger>
-      <CredenzaContent className='max-w-72'>
+      <CredenzaContent className='max-w-sm'>
         <CredenzaHeader>
           <CredenzaTitle>Produkt label</CredenzaTitle>
           <CredenzaDescription>
@@ -38,19 +38,27 @@ export function ModalShowProductLabel({ product }: Props) {
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody className='space-y-4'>
-          <div ref={ref} className={cn('border rounded-md')}>
-            <div className='m-1.5 space-y-1'>
+          <div
+            ref={ref}
+            className={cn(
+              'border rounded-md',
+              'print:w-[51mm] print:h-[21mm]',
+            )}>
+            <div className='m-1.5 space-y-1.5'>
               <div className='flex flex-col gap-0.5'>
-                <p className='font-bold text-sm truncate max-w-56 print:text-xs'>
+                <p className='font-bold truncate max-w-56 print:text-xs'>
                   {product.text1}
                 </p>
-                <p className='text-sm truncate max-w-56 print:text-xs'>
+                <p className='truncate max-w-56 print:text-xs'>
                   {product.text2}
                 </p>
               </div>
               <div className='flex items-end justify-between'>
-                <p className='print:text-xs text-sm'>Vnr: {product.sku}</p>
-                <QRCodeSVG value={product.barcode} size={40} />
+                <p className='print:text-xs'>Vnr: {product.sku}</p>
+                <QRCodeSVG
+                  value={product.barcode}
+                  className='print:size-10 size-16'
+                />
               </div>
             </div>
           </div>
