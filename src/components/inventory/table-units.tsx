@@ -1,9 +1,9 @@
 'use client'
 
 import {
-  getTableGroupColumns,
-  getTableGroupFilters,
-} from '@/app/(site)/admin/varegrupper/columns'
+  getTableUnitColumns,
+  getTableUnitFilters,
+} from '@/app/(site)/sys/enheder/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Group } from '@/lib/database/schema/inventory'
+import { Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
   flexRender,
@@ -42,13 +42,12 @@ const ROW_PER_PAGE = [100, 250, 500, 1000]
 
 interface Props {
   user: User
-  groups: Group[]
+  units: Unit[]
 }
 
-export function TableProductGroups({ groups, user }: Props) {
-  const LOCALSTORAGE_KEY = 'groups_cols'
-  const columns = useMemo(() => getTableGroupColumns(), [])
-  
+export function UnitOverview({ units, user }: Props) {
+  const LOCALSTORAGE_KEY = 'unit_cols'
+  const columns = useMemo(() => getTableUnitColumns(), [])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -56,18 +55,13 @@ export function TableProductGroups({ groups, user }: Props) {
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   useEffect(() => {
     const visibility = JSON.parse(
       localStorage.getItem(LOCALSTORAGE_KEY) || '{}',
     )
     setColumnVisibility(visibility)
-  }, [LOCALSTORAGE_KEY, setColumnVisibility])
+  }, [LOCALSTORAGE_KEY])
 
   const handleVisibilityChange = (updaterOrValue: Updater<VisibilityState>) => {
     if (LOCALSTORAGE_KEY) {
@@ -90,7 +84,7 @@ export function TableProductGroups({ groups, user }: Props) {
   }
 
   const table = useReactTable({
-    data: groups,
+    data: units, // Fix the missing data parameter
     columns,
 
     getCoreRowModel: getCoreRowModel(),
@@ -101,6 +95,8 @@ export function TableProductGroups({ groups, user }: Props) {
     getGroupedRowModel: getGroupedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+
+    groupedColumnMode: 'reorder',
 
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
@@ -126,11 +122,9 @@ export function TableProductGroups({ groups, user }: Props) {
   })
 
   const filterFields = useMemo(
-    () => getTableGroupFilters(table, groups),
-    [table, groups],
-  ) 
-
-  if (!mounted) return null
+    () => getTableUnitFilters(table, units),
+    [table, units],
+  )
 
   return (
     <div>
@@ -171,7 +165,7 @@ export function TableProductGroups({ groups, user }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  Ingen historik
+                  Ingen enheder
                 </TableCell>
               </TableRow>
             )}

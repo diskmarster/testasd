@@ -1,7 +1,7 @@
 'use client'
 
-import { createPlacementAction } from '@/app/(site)/admin/placeringer/actions'
-import { createPlacementValidation } from '@/app/(site)/admin/placeringer/validation'
+import { createUnitAction } from '@/app/(site)/sys/enheder/actions'
+import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -22,27 +22,23 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 
-export function ModalCreatePlacement() {
+export function ModalCreateUnit() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
-  const [error, setError] = useState<string | undefined>()
-
-  const { register, handleSubmit, formState, reset } = useForm<
-    z.infer<typeof createPlacementValidation>
+  const [error, setError] = useState<string>()
+  const { handleSubmit, register, formState, reset } = useForm<
+    z.infer<typeof createUnitValidation>
   >({
-    resolver: zodResolver(createPlacementValidation),
+    resolver: zodResolver(createUnitValidation),
+    defaultValues: {},
   })
-
   function onOpenChange(open: boolean) {
     reset()
     setOpen(open)
   }
-
-  const onSubmit = async (
-    values: z.infer<typeof createPlacementValidation>,
-  ) => {
+  const onSubmit = async (values: z.infer<typeof createUnitValidation>) => {
     startTransition(async () => {
-      const res = await createPlacementAction(values)
+      const res = await createUnitAction(values)
       if (res && res.serverError) {
         setError(res.serverError)
         return
@@ -51,11 +47,10 @@ export function ModalCreatePlacement() {
       reset()
       setOpen(false)
       toast.success(siteConfig.successTitle, {
-        description: `${values.name} placering oprettet`,
+        description: `${values.name} enhed oprettet`,
       })
     })
   }
-
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
@@ -65,7 +60,7 @@ export function ModalCreatePlacement() {
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret ny placering</CredenzaTitle>
+          <CredenzaTitle>Opret ny Enhed</CredenzaTitle>
         </CredenzaHeader>
         <CredenzaBody>
           <form
@@ -79,9 +74,9 @@ export function ModalCreatePlacement() {
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Placering</Label>
+              <Label>Enhed navn</Label>
               <Input
-                placeholder='Indtast navn for ny placering'
+                placeholder='Indtast navn for ny enhed'
                 {...register('name')}
               />
               {formState.errors.name && (
