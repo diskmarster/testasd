@@ -21,7 +21,7 @@ type FilterOption = {
 
 export type FilterField<TRow> = {
   column: Column<TRow> | undefined
-  type: 'text' | 'date' | 'select'
+  type: 'text' | 'date' | 'select' | 'date-range'
   label: string
   value: any
   placeholder?: string
