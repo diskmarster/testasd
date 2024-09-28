@@ -52,7 +52,7 @@ export function ModalCreateProductGroup() {
       reset()
       setOpen(false)
       toast.success(siteConfig.successTitle, {
-        description: `${values.name} enhed oprettet`,
+        description: `${values.name} varegruppe oprettet`,
       })
     })
   }
