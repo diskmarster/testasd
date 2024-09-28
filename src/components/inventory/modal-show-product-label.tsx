@@ -30,29 +30,28 @@ export function ModalShowProductLabel({ product }: Props) {
           <Icons.printer className='size-4' />
         </Button>
       </CredenzaTrigger>
-      <CredenzaContent className='w-auto'>
+      <CredenzaContent className='max-w-72'>
         <CredenzaHeader>
           <CredenzaTitle>Produkt label</CredenzaTitle>
           <CredenzaDescription>
-            A responsive modal component for shadcn/ui.
+            Print label til dine produkter
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody className='space-y-4'>
-          <div
-            ref={ref}
-            style={{ aspectRatio: '51 / 25' }}
-            className={cn(
-              'border rounded-md mx-auto',
-              // label styles
-              'flex flex-col justify-between p-4',
-            )}>
-            <div className='flex flex-col gap-1'>
-              <p className='font-semibold'>{product.text1}</p>
-              <p className='text-sm'>{product.text2}</p>
-            </div>
-            <div className='flex items-end justify-between'>
-              <p>Vnr: {product.sku}</p>
-              <QRCodeSVG value={product.barcode} size={56} />
+          <div ref={ref} className={cn('border rounded-md')}>
+            <div className='m-1.5 space-y-1'>
+              <div className='flex flex-col gap-0.5'>
+                <p className='font-bold text-sm truncate max-w-56 print:text-xs'>
+                  {product.text1}
+                </p>
+                <p className='text-sm truncate max-w-56 print:text-xs'>
+                  {product.text2}
+                </p>
+              </div>
+              <div className='flex items-end justify-between'>
+                <p className='print:text-xs text-sm'>Vnr: {product.sku}</p>
+                <QRCodeSVG value={product.barcode} size={40} />
+              </div>
             </div>
           </div>
           <ButtonOpenPrint labelRef={ref} />

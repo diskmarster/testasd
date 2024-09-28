@@ -14,7 +14,8 @@ const config: Config = {
         padding: '2rem',
         screens: {
           '2xl': '1600px',
-        },
+          print: { raw: 'print' },
+       },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
