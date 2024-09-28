@@ -1,4 +1,3 @@
-'use client'
 import { updatePlacementAction } from '@/app/(site)/admin/placeringer/actions'
 import { createPlacementValidation } from '@/app/(site)/admin/placeringer/validation'
 import { siteConfig } from '@/config/site'
@@ -32,7 +31,6 @@ export function ModalUpdatePlacement({
   isOpen: boolean
   setOpen: (open: boolean) => void
 }) {
-  const { user } = useSession()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
@@ -44,8 +42,6 @@ export function ModalUpdatePlacement({
       name: placementToEdit?.name || '',
     },
   })
-
-  const formValues = watch()
 
   async function onSubmit(values: z.infer<typeof createPlacementValidation>) {
     startTransition(async () => {
