@@ -19,7 +19,7 @@ export default async function Page() {
   return (
     <SiteWrapper
       title='Enheder'
-      description='Se en oversigt over alle Enhederne'
+      description='Se en oversigt over alle enheder i Nem Lager'
       actions={
         <>
           <ModalCreateUnit />
