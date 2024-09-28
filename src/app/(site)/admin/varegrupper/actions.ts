@@ -32,8 +32,6 @@ export const createGroupAction = privateAction
     }
 
     revalidatePath('/admin/varegrupper')
-
-    return { message: 'Produktgruppe oprettet succesfuldt' }
   })
 
 export const updateGroupAction = privateAction
@@ -47,7 +45,6 @@ export const updateGroupAction = privateAction
       throw new ActionError('Der gik noget galt med at opdatere varegruppen')
     }
     revalidatePath('/admin/varegrupper')
-    return { success: true, group: updatedGroup }
   })
 
 export async function toggleBarredGroupAction(
@@ -64,5 +61,4 @@ export async function toggleBarredGroupAction(
     )
   }
   revalidatePath('/admin/varegrupper')
-  return { success: true, group: updatedGroup }
 }
