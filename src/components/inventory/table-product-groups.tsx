@@ -90,7 +90,7 @@ export function TableProductGroups({ groups, user }: Props) {
   }
 
   const table = useReactTable({
-    data: groups, // Fix the missing data parameter
+    data: groups,
     columns,
 
     getCoreRowModel: getCoreRowModel(),
@@ -128,7 +128,7 @@ export function TableProductGroups({ groups, user }: Props) {
   const filterFields = useMemo(
     () => getTableGroupFilters(table, groups),
     [table, groups],
-  ) // Pass `table` instead of `groups`
+  ) 
 
   if (!mounted) return null
 
