@@ -5,7 +5,6 @@ import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
 import { createUnitValidation, updateUnitValidation } from './validation'
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 import { UnitID } from '@/lib/database/schema/inventory'
 
 export const createUnitAction = privateAction
@@ -22,7 +21,6 @@ export const createUnitAction = privateAction
       throw new ActionError('Enheden blev ikke oprettet')
     }
     revalidatePath('/sys/enheder')
-    return { message: 'Enhed oprettet succesfuldt' }
   })
 
   export const updateUnitAction = privateAction
@@ -37,7 +35,6 @@ export const createUnitAction = privateAction
       throw new ActionError('Der gik noget galt med at opdatere enheden')
     }
     revalidatePath('/sys/enheder')
-    return { success: true, unit: updatedUnit }
   })
 
   export async function toggleBarredUnitAction(
@@ -54,5 +51,4 @@ export const createUnitAction = privateAction
     }
 
     revalidatePath('/sys/enheder')
-    return { success: true, unit: updatedUnit }
   }
