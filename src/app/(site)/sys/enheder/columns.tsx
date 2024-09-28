@@ -1,22 +1,22 @@
-import { TableOverviewActions } from '@/components/inventory/table-group-actions'
+import { TableOverviewActions } from '@/components/inventory/table-units-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
-import { Group } from '@/lib/database/schema/inventory'
+import { Unit } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
 
-export function getTableGroupColumns(): ColumnDef<Group>[] {
-  const groupCol: ColumnDef<Group> = {
+export function getTableUnitColumns(): ColumnDef<Unit>[] {
+  const unitCol: ColumnDef<Unit> = {
     accessorKey: 'name',
-    header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
+    header: ({ column }) => <TableHeader column={column} title='Enhed' />,
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varegruppe',
+      viewLabel: 'Enhed',
     },
   }
 
-  const isBarredCol: ColumnDef<Group> = {
+  const isBarredCol: ColumnDef<Unit> = {
     accessorKey: 'isBarred',
     header: ({ column }) => <TableHeader column={column} title='Spærret' />,
     cell: ({ getValue }) => (getValue<boolean>() ? 'Ja' : 'Nej'),
@@ -28,7 +28,7 @@ export function getTableGroupColumns(): ColumnDef<Group>[] {
     },
   }
 
-  const insertedCol: ColumnDef<Group> = {
+  const insertedCol: ColumnDef<Unit> = {
     accessorKey: 'inserted',
     header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
@@ -40,7 +40,7 @@ export function getTableGroupColumns(): ColumnDef<Group>[] {
     },
   }
 
-  const updatedCol: ColumnDef<Group> = {
+  const updatedCol: ColumnDef<Unit> = {
     accessorKey: 'updated',
     header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
@@ -51,7 +51,7 @@ export function getTableGroupColumns(): ColumnDef<Group>[] {
       viewLabel: 'Opdateret',
     },
   }
-  const actionsCol: ColumnDef<Group> = {
+  const actionsCol: ColumnDef<Unit> = {
     accessorKey: 'actions',
     header: () => null,
     cell: ({ table, row }) => <TableOverviewActions table={table} row={row} />,
@@ -61,28 +61,27 @@ export function getTableGroupColumns(): ColumnDef<Group>[] {
       className: 'justify-end',
     },
   }
-
-  return [groupCol, isBarredCol, insertedCol, updatedCol, actionsCol]
+  return [unitCol, isBarredCol, insertedCol, updatedCol, actionsCol]
 }
 
-export function getTableGroupFilters(
-  table: Table<Group>,
-  groups: Group[],
-): FilterField<Group>[] {
-  const groupFilter: FilterField<Group> = {
+export function getTableUnitFilters(
+  table: Table<Unit>,
+  units: Unit[],
+): FilterField<Unit>[] {
+  const unitFilter: FilterField<Unit> = {
     column: table.getColumn('name'),
     type: 'select',
-    label: 'Varegruppe',
+    label: 'enhed',
     value: '',
     options: [
-      ...groups.map(group => ({
-        value: group.name,
-        label: group.name,
+      ...units.map(unit => ({
+        value: unit.name,
+        label: unit.name,
       })),
     ],
   }
 
-  const isBarredFilter: FilterField<Group> = {
+  const isBarredFilter: FilterField<Unit> = {
     column: table.getColumn('isBarred'),
     type: 'select',
     label: 'Spærret',
@@ -93,19 +92,19 @@ export function getTableGroupFilters(
     ],
   }
 
-  const insertedFilter: FilterField<Group> = {
+  const insertedFilter: FilterField<Unit> = {
     column: table.getColumn('inserted'),
     type: 'date',
     label: 'Oprettet',
     value: '',
   }
 
-  const updatedFilter: FilterField<Group> = {
+  const updatedFilter: FilterField<Unit> = {
     column: table.getColumn('updated'),
     type: 'date',
     label: 'Opdateret',
     value: '',
   }
 
-  return [groupFilter, isBarredFilter, insertedFilter, updatedFilter]
+  return [unitFilter, isBarredFilter, insertedFilter, updatedFilter]
 }

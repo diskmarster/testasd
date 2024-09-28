@@ -1,19 +1,16 @@
 'use server'
 
+import { GroupID } from '@/lib/database/schema/inventory'
 import { privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
+import { createGroupValidation, updateGroupValidation } from './validation'
 
-const createProductGroupValidation = z.object({
-  name: z.string().min(1, 'Produktgruppenavn er påkrævet'),
-})
-
-export const createProductGroupAction = privateAction
-  .schema(createProductGroupValidation)
+export const createGroupAction = privateAction
+  .schema(createGroupValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
     const { session, user } = await sessionService.validate()
     if (!session) {
@@ -34,7 +31,34 @@ export const createProductGroupAction = privateAction
       throw new ActionError('Produktgruppen blev ikke oprettet')
     }
 
-    revalidatePath('/product-groups')
-
-    return { message: 'Produktgruppe oprettet succesfuldt' }
+    revalidatePath('/admin/varegrupper')
   })
+
+export const updateGroupAction = privateAction
+  .schema(updateGroupValidation)
+  .action(async ({ parsedInput: { groupID, data: updatedGroupData } }) => {
+    const updatedGroup = await inventoryService.updateGroupByID(
+      groupID,
+      updatedGroupData,
+    )
+    if (!updatedGroup) {
+      throw new ActionError('Der gik noget galt med at opdatere varegruppen')
+    }
+    revalidatePath('/admin/varegrupper')
+  })
+
+export async function toggleBarredGroupAction(
+  groupID: GroupID,
+  isBarred: boolean,
+) {
+  const updatedGroup = await inventoryService.updateGroupBarredStatus(
+    groupID,
+    isBarred,
+  )
+  if (!updatedGroup) {
+    throw new ActionError(
+      'Der gik noget galt med at opdaterer spærring på varegruppen',
+    )
+  }
+  revalidatePath('/admin/varegrupper')
+}

@@ -1,6 +1,6 @@
+import { TableOverviewActions } from '@/components/inventory/table-placement-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
-import { Badge } from '@/components/ui/badge'
 import { Placement } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -19,20 +19,12 @@ export function getTablePlacementColumns(): ColumnDef<Placement>[] {
   const isBarredCol: ColumnDef<Placement> = {
     accessorKey: 'isBarred',
     header: ({ column }) => <TableHeader column={column} title='Spærret' />,
-    cell: ({ getValue }) => {
-      const isBarred = getValue<boolean>()
-      return (
-        <Badge variant={isBarred ? 'destructive' : 'outline'}>
-          {isBarred ? 'Ja' : 'Nej'}
-        </Badge>
-      )
+    cell: ({ getValue }) => (getValue<boolean>() ? 'Ja' : 'Nej'),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue<boolean>(id))
     },
     meta: {
       viewLabel: 'Spærret',
-    },
-    filterFn: (row, id, value) => {
-      const isBarredValue = value == 'Ja'
-      return row.getValue(id) === isBarredValue
     },
   }
 
@@ -60,12 +52,23 @@ export function getTablePlacementColumns(): ColumnDef<Placement>[] {
     },
   }
 
-  return [placementCol, isBarredCol, insertedCol, updatedCol]
+  const actionsCol: ColumnDef<Placement> = {
+    accessorKey: 'actions',
+    header: () => null,
+    cell: ({ table, row }) => <TableOverviewActions table={table} row={row} />,
+    enableHiding: false,
+    enableSorting: false,
+    meta: {
+      className: 'justify-end',
+    },
+  }
+
+  return [placementCol, isBarredCol, insertedCol, updatedCol, actionsCol]
 }
 
 export function getTablePlacementFilters(
   table: Table<Placement>,
-  placements: Placement[], // Ensure placements are passed in
+  placements: Placement[],
 ): FilterField<Placement>[] {
   const placementFilter: FilterField<Placement> = {
     column: table.getColumn('name'),
@@ -86,8 +89,8 @@ export function getTablePlacementFilters(
     label: 'Spærret',
     value: '',
     options: [
-      { value: 'Ja', label: 'Ja' },
-      { value: 'Nej', label: 'Nej' },
+      { value: true, label: 'Ja' },
+      { value: false, label: 'Nej' },
     ],
   }
 

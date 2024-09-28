@@ -1,13 +1,13 @@
 'use server'
 
 import { ProductID } from '@/lib/database/schema/inventory'
-import { adminAction } from '@/lib/safe-action'
+import { privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
 import { createProductValidation, updateProductValidation } from './validation'
 
-export const createProductAction = adminAction
+export const createProductAction = privateAction
   .schema(createProductValidation)
   .action(async ({ parsedInput, ctx }) => {
     const newProduct = await productService.create(
@@ -20,7 +20,7 @@ export const createProductAction = adminAction
     revalidatePath('/admin/produkter')
   })
 
-export const updateProductAction = adminAction
+export const updateProductAction = privateAction
   .schema(updateProductValidation)
   .action(async ({ parsedInput: { productID, data: updatedProductData } }) => {
     const updatedProduct = await productService.updateByID(
@@ -33,7 +33,6 @@ export const updateProductAction = adminAction
     }
 
     revalidatePath('/admin/produkter')
-    return { success: true, product: updatedProduct }
   })
 
 export async function toggleBarredProductAction(
@@ -52,5 +51,4 @@ export async function toggleBarredProductAction(
   }
 
   revalidatePath('/admin/produkter')
-  return { success: true, product: updatedProduct }
 }

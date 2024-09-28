@@ -1,6 +1,7 @@
 'use client'
 
-import { createProductGroupAction } from '@/app/(site)/admin/varegrupper/actions'
+import { createGroupAction } from '@/app/(site)/admin/varegrupper/actions'
+import { createGroupValidation } from '@/app/(site)/admin/varegrupper/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -13,30 +14,26 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { siteConfig } from '@/config/site'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 
-const productGroupSchema = z.object({
-  name: z.string().nonempty('Produktgruppenavn er påkrævet'),
-})
 
-type ProductGroupForm = z.infer<typeof productGroupSchema>
 
 export function ModalCreateProductGroup() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | undefined>()
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<ProductGroupForm>({
-    resolver: zodResolver(productGroupSchema),
+  const { handleSubmit, register, formState, reset } = useForm<
+    z.infer<typeof createGroupValidation>
+  >({
+    resolver: zodResolver(createGroupValidation),
+    defaultValues: { },
   })
 
   function onOpenChange(open: boolean) {
@@ -44,12 +41,9 @@ export function ModalCreateProductGroup() {
     setOpen(open)
   }
 
-  const onSubmit = async (data: ProductGroupForm) => {
+  const onSubmit = async (values: z.infer<typeof createGroupValidation>) => {
     startTransition(async () => {
-      const res = await createProductGroupAction({
-        name: data.name,
-      })
-
+      const res = await createGroupAction(values)
       if (res && res.serverError) {
         setError(res.serverError)
         return
@@ -57,12 +51,11 @@ export function ModalCreateProductGroup() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success('Varegruppen blev oprettet.', {
-        description: `Ny produktgruppe: ${data.name}`,
+      toast.success(siteConfig.successTitle, {
+        description: `${values.name} varegruppe oprettet`,
       })
     })
   }
-
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
@@ -72,35 +65,33 @@ export function ModalCreateProductGroup() {
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret ny produktgruppe</CredenzaTitle>
+          <CredenzaTitle>Opret ny varegruppe</CredenzaTitle>
         </CredenzaHeader>
         <CredenzaBody>
           <form
             className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>
-            {error && <p className='text-sm text-destructive'>{error}</p>}
+            {error && (
+              <Alert variant='destructive'>
+                <Icons.alert className='size-4 !top-3' />
+                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <div className='grid gap-2'>
-              <Label>Produktgruppenavn</Label>
+              <Label>Varegruppenavn</Label>
               <Input
-                placeholder='Indtast navn for ny produktgruppe'
+                placeholder='Indtast navn for ny varegruppe'
                 {...register('name')}
               />
-              {errors.name && (
+              {formState.errors.name && (
                 <p className='text-sm text-destructive'>
-                  {errors.name.message}
+                  {formState.errors.name.message}
                 </p>
               )}
             </div>
-            <Button
-              type='submit'
-              size='lg'
-              disabled={isSubmitting}
-              className='w-full'>
-              {isSubmitting || pending ? (
-                <Icons.spinner className='size-4 animate-spin' />
-              ) : (
-                'Opret produktgruppe'
-              )}
+            <Button type='submit' disabled={pending || !formState.isValid}>
+              Opret
             </Button>
           </form>
         </CredenzaBody>
