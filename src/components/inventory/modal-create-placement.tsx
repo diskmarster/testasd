@@ -14,11 +14,13 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { siteConfig } from '@/config/site'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 
 export function ModalCreatePlacement() {
   const [open, setOpen] = useState(false)
@@ -48,8 +50,8 @@ export function ModalCreatePlacement() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success('Placeringen blev oprettet.', {
-        description: `Ny placering: ${values.name}`,
+      toast.success(siteConfig.successTitle, {
+        description: `${values.name} placering oprettet`,
       })
     })
   }
@@ -69,7 +71,13 @@ export function ModalCreatePlacement() {
           <form
             className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>
-            {error && <p className='text-sm text-destructive'>{error}</p>}
+            {error && (
+              <Alert variant='destructive'>
+                <Icons.alert className='size-4 !top-3' />
+                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
             <div className='grid gap-2'>
               <Label>Placering</Label>
               <Input
