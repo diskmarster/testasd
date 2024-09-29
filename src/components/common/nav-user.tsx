@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { User } from "lucia";
+import { signOutAction } from '@/app/(auth)/log-ud/actions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,8 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import Link from "next/link";
-import { signOutAction } from "@/app/(auth)/log-ud/actions";
+import { User } from 'lucia'
+import Link from 'next/link'
 
 export function NavUser({ user }: { user: User }) {
   return (
@@ -42,7 +42,11 @@ export function NavUser({ user }: { user: User }) {
           <DropdownMenuItem asChild>
             <Link href='/profil'>Min profil</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>Få hjælp</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href='https://skancode.dk/kontakt/' target='_blank'>
+              Få hjælp
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className='focus:text-destructive' asChild>
