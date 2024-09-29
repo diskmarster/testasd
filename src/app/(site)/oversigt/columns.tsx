@@ -171,9 +171,7 @@ export function getTableOverviewColumns(
 
   const updatedCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'updated',
-    header: ({ column }) => (
-      <TableHeader column={column} title='Sidst opdateret' />
-    ),
+    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
     aggregatedCell: ({ getValue }) => formatDate(getValue<Date[]>()[0]),
     cell: () => null,
     filterFn: (row, id, value: DateRange) => {
@@ -199,7 +197,7 @@ export function getTableOverviewColumns(
       return true
     },
     meta: {
-      viewLabel: 'Sidst opdateret',
+      viewLabel: 'Opdateret',
     },
   }
 
@@ -363,7 +361,7 @@ export function getTableOverviewFilters(
   const updatedFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('updated'),
     type: 'date-range',
-    label: 'Sidst opdateret',
+    label: 'Opdateret',
     value: '',
   }
 
