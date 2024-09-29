@@ -23,7 +23,8 @@ export function TableReorderActions({ table, row }: Props) {
           emitCustomEvent('AddOrderedReorderByIDs', {
             locationID: row.original.locationID,
             productID: row.original.productID,
-            ordered: row.original.recommended,
+            recommended: row.original.recommended,
+            ordered: row.original.ordered,
           })
         }>
         <Icons.plus className='size-4' />

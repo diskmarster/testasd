@@ -33,6 +33,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+  const [alreadyOrdered, setAlreadyOrdered] = useState<number>(0)
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
     z.infer<typeof addOrderedToReorderValidation>
@@ -44,14 +45,15 @@ export function ModalAddOrderedReorder({ products }: Props) {
     setOpen(true)
     setValue('locationID', data.locationID)
     setValue('productID', data.productID)
-    setValue('ordered', data.ordered)
+    setValue('ordered', data.recommended)
+    setAlreadyOrdered(data.ordered)
   })
 
   const formValues = watch()
 
   function increment() {
     // @ts-ignore
-    const nextValue = parseFloat(formValues.minimum) + 1
+    const nextValue = parseFloat(formValues.ordered) + 1
     setValue('ordered', parseFloat(nextValue.toFixed(4)), {
       shouldValidate: true,
     })
@@ -66,7 +68,10 @@ export function ModalAddOrderedReorder({ products }: Props) {
 
   function onSubmit(values: z.infer<typeof addOrderedToReorderValidation>) {
     startTransition(async () => {
-      const res = await addOrderedToReorderAction(values)
+      const res = await addOrderedToReorderAction({
+        ...values,
+        ordered: values.ordered + alreadyOrdered,
+      })
 
       if (res && res.serverError) {
         setError(res.serverError)
@@ -77,7 +82,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
       reset()
       setOpen(false)
       toast.success(siteConfig.successTitle, {
-        description: `Genbestil opdateret for ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+        description: `Bestilling registreret for ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
     })
   }
@@ -130,6 +135,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
                   <Icons.minus className='size-6' />
                 </Button>
                 <Input
+                  step={0.01}
                   type='number'
                   {...register('ordered')}
                   className={cn(

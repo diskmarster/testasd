@@ -6,9 +6,9 @@ export const createReorderValidation = z.object({
   buffer: z.coerce
     .number()
     .positive({ message: 'Buffer rate skal være positiv' }),
-  minimum: z.coerce
-    .number()
-    .min(1, { message: 'Minimums beholdning skal være større end 1' }),
+  minimum: z.coerce.number({
+    message: 'Minimums beholdning skal være større end 0',
+  }),
 })
 
 export const updateReorderValidation = z.object({
@@ -17,9 +17,9 @@ export const updateReorderValidation = z.object({
   buffer: z.coerce
     .number()
     .positive({ message: 'Buffer rate skal være positiv' }),
-  minimum: z.coerce
-    .number()
-    .min(1, { message: 'Minimums beholdning skal være større end 1' }),
+  minimum: z.coerce.number({
+    message: 'Minimums beholdning skal være større end 0',
+  }),
 })
 
 export const deleteReorderValidation = z.object({
@@ -32,5 +32,5 @@ export const addOrderedToReorderValidation = z.object({
   locationID: z.string().min(1),
   ordered: z.coerce
     .number()
-    .min(1, { message: 'Minimums beholdning skal være større end 1' }),
+    .positive({ message: 'Antal skal være større end 0' }),
 })
