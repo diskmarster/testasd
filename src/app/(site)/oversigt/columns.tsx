@@ -231,7 +231,6 @@ export function getTableOverviewColumns(
         unitCol,
         costPriceCol,
         salesPriceCol,
-        updatedCol,
         actionsCol,
       ]
       return liteCols
@@ -248,7 +247,6 @@ export function getTableOverviewColumns(
         costPriceCol,
         salesPriceCol,
         placementCol,
-        updatedCol,
         actionsCol,
       ]
       return plusCols
@@ -266,7 +264,6 @@ export function getTableOverviewColumns(
         unitCol,
         placementCol,
         batchCol,
-        updatedCol,
         actionsCol,
       ]
       return proCols
@@ -381,7 +378,6 @@ export function getTableOverviewFilters(
         text1Filter,
         text2Filter,
         text3Filter,
-        updatedFilter,
       ]
     case 'plus':
       return [
@@ -393,7 +389,6 @@ export function getTableOverviewFilters(
         text2Filter,
         text3Filter,
         placementFilter,
-        updatedFilter,
       ]
     case 'pro':
       return [
@@ -406,7 +401,6 @@ export function getTableOverviewFilters(
         text3Filter,
         placementFilter,
         batchFilter,
-        updatedFilter,
       ]
   }
 }
