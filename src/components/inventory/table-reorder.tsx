@@ -166,6 +166,11 @@ export function TableReorder({ data, user, units, groups }: Props) {
             {table.getRowModel().rows && table.getRowModel().rows.length > 0 ? (
               table.getRowModel().rows.map(row => (
                 <TableRow
+                  className={cn(
+                    row.original.recommended > 0 &&
+                    row.original.ordered < row.original.recommended &&
+                    'bg-red-100 border-b-red-200 hover:bg-red-300',
+                  )}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>
                   <TableGroupedCell row={row} />
