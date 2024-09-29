@@ -11,7 +11,7 @@ import { UserRole } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
-import { isAfter, isBefore } from 'date-fns'
+import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
 export function getTableHistoryColumns(
@@ -25,11 +25,24 @@ export function getTableHistoryColumns(
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
 
-      if (!value.from || !value.to) {
+      if (!value.from && value.to) {
         return true
       }
 
-      return isAfter(rowDate, value.from) && isBefore(rowDate, value.to)
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, new Date(value.from))
+      }
+
+      if (value.from && value.to) {
+        return (
+          (isAfter(rowDate, new Date(value.from)) &&
+            isBefore(rowDate, new Date(value.to))) ||
+          isSameDay(rowDate, new Date(value.from)) ||
+          isSameDay(rowDate, new Date(value.to))
+        )
+      }
+
+      return true
     },
     meta: {
       viewLabel: 'Oprettet',

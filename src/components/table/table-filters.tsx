@@ -128,9 +128,13 @@ function FilterPopover<T>({
     return date ? format(new Date(date), 'dd/MM/yyyy') : 'Vælg dato'
   }
 
-  const getDateRangeDisplayValue = (range: any): string => {
-    if (!range || !range.from || !range.to) return 'Vælg datoer'
-    return `${format(new Date(range.from), 'dd/MM/yyyy')} - ${format(new Date(range.to), 'dd/MM/yyyy')}`
+  const getDateRangeDisplayValue = (range: DateRange): string => {
+    if (!range || (!range.from && !range.to)) return 'Vælg datoer'
+    if (range.from && !range.to)
+      return `${format(new Date(range.from), 'dd/MM/yyyy')}`
+    if (range.from && range.to)
+      return `${format(new Date(range.from), 'dd/MM/yyyy')} - ${format(new Date(range.to), 'dd/MM/yyyy')}`
+    return 'Vælg datoer'
   }
 
   const filterDisplayValue: string = isDate
@@ -138,7 +142,7 @@ function FilterPopover<T>({
     : isSelect
       ? getSelectDisplayValue(value)
       : isDateRange
-        ? getDateRangeDisplayValue(value)
+        ? getDateRangeDisplayValue(value as DateRange)
         : (value as string) || ''
 
   return (
@@ -215,12 +219,17 @@ function FilterDate<T>({ field }: { field: FilterField<T> }) {
 
 /**
   * Remember to include filterFn in columnDef
+  * FilterFn implements filtering by one day or a date range
   *
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
 
-      if (!value.from || !value.to) {
+      if (!value.from && !value.to) {
         return true
+      }
+
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, value.from)
       }
 
       return isAfter(rowDate, value.from) && isBefore(rowDate, value.to)
