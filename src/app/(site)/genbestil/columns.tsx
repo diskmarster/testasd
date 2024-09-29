@@ -6,7 +6,8 @@ import { UserRole } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
-import { isSameDay } from 'date-fns'
+import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { DateRange } from 'react-day-picker'
 
 export function getTableReorderColumns(
   userRole: UserRole,
@@ -139,15 +140,32 @@ export function getTableReorderColumns(
 
   const updatedCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'updated',
-    header: ({ column }) => (
-      <TableHeader column={column} title='Sidst opdateret' />
-    ),
+    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
-    filterFn: (row, id, value) => {
-      return isSameDay(value, row.getValue(id))
+    filterFn: (row, id, value: DateRange) => {
+      const rowDate: string | number | Date = row.getValue(id)
+
+      if (!value.from && value.to) {
+        return true
+      }
+
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, new Date(value.from))
+      }
+
+      if (value.from && value.to) {
+        return (
+          (isAfter(rowDate, new Date(value.from)) &&
+            isBefore(rowDate, new Date(value.to))) ||
+          isSameDay(rowDate, new Date(value.from)) ||
+          isSameDay(rowDate, new Date(value.to))
+        )
+      }
+
+      return true
     },
     meta: {
-      viewLabel: 'Sidst opdateret',
+      viewLabel: 'Opdateret',
     },
   }
 
@@ -247,8 +265,8 @@ export function getTableReorderFilters(
   }
   const updatedFilter: FilterField<FormattedReorder> = {
     column: table.getColumn('updated'),
-    type: 'date',
-    label: 'Sidst opdateret',
+    type: 'date-range',
+    label: 'Opdateret',
     value: '',
   }
 

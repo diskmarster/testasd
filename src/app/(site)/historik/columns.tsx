@@ -11,7 +11,8 @@ import { UserRole } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
-import { isSameDay } from 'date-fns'
+import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { DateRange } from 'react-day-picker'
 
 export function getTableHistoryColumns(
   plan: Plan,
@@ -21,8 +22,27 @@ export function getTableHistoryColumns(
     accessorKey: 'inserted',
     header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
-    filterFn: (row, id, value) => {
-      return isSameDay(value, row.getValue(id))
+    filterFn: (row, id, value: DateRange) => {
+      const rowDate: string | number | Date = row.getValue(id)
+
+      if (!value.from && value.to) {
+        return true
+      }
+
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, new Date(value.from))
+      }
+
+      if (value.from && value.to) {
+        return (
+          (isAfter(rowDate, new Date(value.from)) &&
+            isBefore(rowDate, new Date(value.to))) ||
+          isSameDay(rowDate, new Date(value.from)) ||
+          isSameDay(rowDate, new Date(value.to))
+        )
+      }
+
+      return true
     },
     meta: {
       viewLabel: 'Oprettet',
@@ -304,7 +324,7 @@ export function getTableHistoryFilters(
 ): FilterField<FormattedHistory>[] {
   const insertedFilter: FilterField<FormattedHistory> = {
     column: table.getColumn('inserted'),
-    type: 'date',
+    type: 'date-range',
     label: 'Oprettet',
     value: '',
   }

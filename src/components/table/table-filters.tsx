@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Table } from '@tanstack/react-table'
 import { format } from 'date-fns'
+import { DateRange } from 'react-day-picker'
 
 type TableToolbarFiltersProps<T> = {
   table: Table<T>
@@ -33,7 +34,9 @@ function TableToolbarFilters<T>({
 }: TableToolbarFiltersProps<T>) {
   const [open, setOpen] = useState(false)
   const [selectedFields, setSelectedFields] = useState<FilterField<T>[]>(
-    filterFields.filter(f => table.getState().columnFilters.some(cf => cf.id == f.column?.id)),
+    filterFields.filter(f =>
+      table.getState().columnFilters.some(cf => cf.id == f.column?.id),
+    ),
   )
   const [activeIndex, setActiveIndex] = useState<number>()
 
@@ -102,26 +105,45 @@ function FilterPopover<T>({
   onRemoveField: (field: FilterField<T>) => void
   index: number
 }) {
-  const filterDisplayValue: string =
-    field.type === 'date'
-    ? field.column?.getFilterValue()
-    ? format(
-      new Date(field.column.getFilterValue() as string),
-      'dd/MM/yyyy',
+  const isSelect = field.type === 'select'
+  const isDate = field.type === 'date'
+  const isDateRange = field.type === 'date-range'
+
+  const value = field.column?.getFilterValue()
+
+  const getSelectDisplayValue = (value: any): string => {
+    if (Array.isArray(value)) {
+      return value
+        .map((val: any) => field.options?.find(opt => opt.value === val)?.label)
+        .filter(Boolean)
+        .join(', ')
+    }
+    return (
+      field.options?.find(opt => opt.value === value)?.label ||
+      `Vælg ${field.label.toLowerCase()}`
     )
-        : ''
-      : field.type === 'select'
-      ? Array.isArray(field.column?.getFilterValue())
-      // @ts-ignore
-      ? field.column
-        ?.getFilterValue()
-              // @ts-ignore
-              .map(val => field.options?.find(opt => opt.value == val)?.label)
-              .join(', ')
-              : field.options?.find(
-                opt => opt.label == field.column?.getFilterValue(),
-              )?.label
-            : (field.column?.getFilterValue() as string)
+  }
+
+  const getDateDisplayValue = (date: any): string => {
+    return date ? format(new Date(date), 'dd/MM/yyyy') : 'Vælg dato'
+  }
+
+  const getDateRangeDisplayValue = (range: DateRange): string => {
+    if (!range || (!range.from && !range.to)) return 'Vælg datoer'
+    if (range.from && !range.to)
+      return `${format(new Date(range.from), 'dd/MM/yyyy')}`
+    if (range.from && range.to)
+      return `${format(new Date(range.from), 'dd/MM/yyyy')} - ${format(new Date(range.to), 'dd/MM/yyyy')}`
+    return 'Vælg datoer'
+  }
+
+  const filterDisplayValue: string = isDate
+    ? getDateDisplayValue(value)
+    : isSelect
+      ? getSelectDisplayValue(value)
+      : isDateRange
+        ? getDateRangeDisplayValue(value as DateRange)
+        : (value as string) || ''
 
   return (
     <Popover
@@ -136,7 +158,11 @@ function FilterPopover<T>({
           </div>
           <Button
             variant='outline'
-            className='flex items-center gap-1 max-w-56'
+            className={cn(
+              'flex items-center gap-1 max-w-56',
+              field.type == 'date-range' && 'max-w-72',
+              field.type == 'select' && 'max-w-72',
+            )}
             onClick={() => setActiveIndex(isActive ? undefined : index)}>
             <span>{field.label}:</span>
             <span className='opacity-50 truncate'>{filterDisplayValue}</span>
@@ -147,6 +173,7 @@ function FilterPopover<T>({
         className={cn(
           'space-y-1 p-2 max-w-56',
           field.type === 'date' && 'w-auto p-0 max-w-max',
+          field.type === 'date-range' && 'w-auto p-0 max-w-max',
         )}
         align='center'>
         {field.type === 'text' ? (
@@ -161,6 +188,8 @@ function FilterPopover<T>({
           <FilterSelect field={field} />
         ) : field.type === 'date' ? (
           <FilterDate field={field} />
+        ) : field.type === 'date-range' ? (
+          <FilterDateRange field={field} />
         ) : (
           'Unsupported type'
         )}
@@ -188,6 +217,38 @@ function FilterDate<T>({ field }: { field: FilterField<T> }) {
   )
 }
 
+/**
+  * Remember to include filterFn in columnDef
+  * FilterFn implements filtering by one day or a date range
+  *
+    filterFn: (row, id, value: DateRange) => {
+      const rowDate: string | number | Date = row.getValue(id)
+
+      if (!value.from && !value.to) {
+        return true
+      }
+
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, value.from)
+      }
+
+      return isAfter(rowDate, value.from) && isBefore(rowDate, value.to)
+    },
+  */
+function FilterDateRange<T>({ field }: { field: FilterField<T> }) {
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  })
+  useEffect(() => {
+    field.column?.setFilterValue(date)
+  }, [date, field])
+
+  return (
+    <Calendar mode='range' selected={date} onSelect={setDate} initialFocus />
+  )
+}
+
 function FilterSelect<T>({ field }: { field: FilterField<T> }) {
   const facets = field.column?.getFacetedUniqueValues()
   const selectedValues = new Set(field.column?.getFilterValue() as string[])
@@ -210,7 +271,7 @@ function FilterSelect<T>({ field }: { field: FilterField<T> }) {
                   }
                   field.column?.setFilterValue(
                     Array.from(selectedValues).length
-                    ? Array.from(selectedValues)
+                      ? Array.from(selectedValues)
                       : undefined,
                   )
                 }}>
