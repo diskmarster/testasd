@@ -37,6 +37,8 @@ import {
 } from '@tanstack/react-table'
 import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
+import { TableFloatingBar } from '../table/table-floating-bar'
+import { ExportSelectedButton } from './button-export-selected'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -154,9 +156,9 @@ export function TableReorder({ data, user, units, groups }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -168,8 +170,8 @@ export function TableReorder({ data, user, units, groups }: Props) {
                 <TableRow
                   className={cn(
                     row.original.recommended > 0 &&
-                    row.original.ordered < row.original.recommended &&
-                    'bg-red-100 border-b-red-200 hover:bg-red-300',
+                      row.original.ordered < row.original.recommended &&
+                      'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
                   )}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>
@@ -189,6 +191,11 @@ export function TableReorder({ data, user, units, groups }: Props) {
         </Table>
       </div>
       <TablePagination table={table} pageSizes={ROW_PER_PAGE} />
+      {ROW_SELECTION_ENABLED && (
+        <TableFloatingBar table={table}>
+          {table => <ExportSelectedButton table={table} />}
+        </TableFloatingBar>
+      )}
     </div>
   )
 }

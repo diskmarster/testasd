@@ -1,6 +1,7 @@
 import { TableReorderActions } from '@/components/inventory/table-reorder-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
+import { Checkbox } from '@/components/ui/checkbox'
 import { FormattedReorder } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
@@ -12,6 +13,31 @@ import { DateRange } from 'react-day-picker'
 export function getTableReorderColumns(
   userRole: UserRole,
 ): ColumnDef<FormattedReorder>[] {
+  const selectCol: ColumnDef<FormattedReorder> = {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        className='data-[state=checked]:mt-[13px] data-[state=indeterminate]:mt-[13px]'
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && 'indeterminate')
+        }
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+        aria-label='Select all'
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        className='-translate-y-1 data-[state=checked]:translate-y-0.5'
+        checked={row.getIsSelected()}
+        onCheckedChange={value => row.toggleSelected(!!value)}
+        aria-label='Select row'
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  }
+
   const skuCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'product.sku',
     id: 'sku',
@@ -181,6 +207,7 @@ export function getTableReorderColumns(
   }
 
   return [
+    selectCol,
     skuCol,
     barcodeCol,
     text1Col,
