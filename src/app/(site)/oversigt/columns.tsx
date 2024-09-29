@@ -1,3 +1,4 @@
+import { ModalShowProductCard } from '@/components/inventory/modal-show-product-card'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
@@ -19,9 +20,10 @@ export function getTableOverviewColumns(
     accessorKey: 'product.sku',
     id: 'sku',
     header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
-    cell: ({ getValue }) => getValue<string>(),
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>(),
+    //aggregationFn: 'unique',
+    //aggregatedCell: ({ getValue }) => getValue<string>(),
+    cell: ({ row }) => <ModalShowProductCard product={row.original.product} />,
+    enableHiding: false,
     meta: {
       viewLabel: 'Varenr.',
     },
