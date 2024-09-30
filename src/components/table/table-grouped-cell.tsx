@@ -60,7 +60,7 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
                   cell.column.columnDef.meta.className,
               )}>
               {cell.column.columnDef.aggregationFn && (
-                <div className='truncate'>
+                <div className='truncate flex items-center'>
                   {flexRender(
                     cell.column.columnDef.aggregatedCell ??
                       cell.column.columnDef.cell,
@@ -84,7 +84,7 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
                   // @ts-ignore
                   cell.column.columnDef.meta.className,
               )}>
-              <div className='truncate'>
+              <div className='truncate flex items-center'>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </div>
             </div>
