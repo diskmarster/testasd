@@ -17,7 +17,7 @@ export function getTableReorderColumns(
     id: 'select',
     header: ({ table }) => (
       <Checkbox
-        className='data-[state=checked]:mt-[13px] data-[state=indeterminate]:mt-[13px]'
+        className='data-[state=checked]:mt-[3px] data-[state=indeterminate]:mt-[3px]'
         checked={
           table.getIsAllPageRowsSelected() ||
           (table.getIsSomePageRowsSelected() && 'indeterminate')
@@ -28,7 +28,7 @@ export function getTableReorderColumns(
     ),
     cell: ({ row }) => (
       <Checkbox
-        className='-translate-y-1 data-[state=checked]:translate-y-0.5'
+        className='data-[state=checked]:translate-y-0.5'
         checked={row.getIsSelected()}
         onCheckedChange={value => row.toggleSelected(!!value)}
         aria-label='Select row'
