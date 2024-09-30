@@ -115,7 +115,7 @@ export function getTableOverviewColumns(
 
   const quantityCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'quantity',
-    header: ({ column }) => <TableHeader column={column} title='Beholdning' />,
+    header: ({ column }) => <TableHeader column={column} title='Beh.' />,
     cell: ({ getValue }) => (
       <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
         {formatNumber(getValue<number>())}
@@ -124,7 +124,7 @@ export function getTableOverviewColumns(
     filterFn: 'includesString',
     meta: {
       rightAlign: true,
-      viewLabel: 'Beholdning',
+      viewLabel: 'Beh.',
     },
   }
 
