@@ -16,6 +16,14 @@ export function formatDate(date: Date) {
   }).format(date)
 }
 
+export function formatNumber(num: number): string {
+  if (num % 1 === 0) {
+    return num.toString()
+  } else {
+    return num.toFixed(2)
+  }
+}
+
 const dkCurrencyFormat = new Intl.NumberFormat("da-DK", {
   style: 'currency',
   currency: 'DKK',

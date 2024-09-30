@@ -375,7 +375,7 @@ export const inventory = {
   getAllReordersByID: async function(
     locationID: LocationID,
     trx: TRX = db,
-  ): Promise<Omit<FormattedReorder, 'recommended'>[]> {
+  ): Promise<Omit<FormattedReorder, 'recommended' | 'disposible'>[]> {
     const reorders = await trx
       .select({
         ...REORDER_COLS,

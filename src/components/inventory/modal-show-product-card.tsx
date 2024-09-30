@@ -32,7 +32,7 @@ export function ModalShowProductCard({ product }: Props) {
             </div>
           </CredenzaTitle>
         </CredenzaHeader>
-        <CredenzaBody className='space-y-4'>
+        <CredenzaBody className='space-y-4 pb-4 md:pb-0'>
           <div className='space-y-2'>
             <div>
               <span className='text-sm text-muted-foreground'>Varetekst 2</span>
