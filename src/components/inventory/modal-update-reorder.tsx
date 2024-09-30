@@ -132,6 +132,7 @@ export function ModalUpdateReorder({ products }: Props) {
                 </Button>
                 <Input
                   type='number'
+                  step={0.01}
                   {...register('minimum')}
                   className={cn(
                     'w-full h-14 rounded-none text-center text-2xl z-10',

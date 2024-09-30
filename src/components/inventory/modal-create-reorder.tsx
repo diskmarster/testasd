@@ -162,6 +162,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                 </Button>
                 <Input
                   type='number'
+                  step={0.01}
                   {...register('minimum')}
                   onChange={register('minimum').onChange}
                   className={cn(
