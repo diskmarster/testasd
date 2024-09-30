@@ -1,13 +1,19 @@
-"use client"
+'use client'
 
-import { Column, Table } from "@tanstack/react-table";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/ui/icons";
-import { exportTableToCSV } from "@/lib/export/csv";
-import { useTransition } from "react";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import TableToolbarFilters from "@/components/table/table-filters";
+import TableToolbarFilters from '@/components/table/table-filters'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Icons } from '@/components/ui/icons'
+import { exportTableToCSV } from '@/lib/export/csv'
+import { Column, Table } from '@tanstack/react-table'
+import { useTransition } from 'react'
 
 type ToolbarOptions = {
   showExport?: boolean
@@ -21,7 +27,7 @@ type FilterOption = {
 
 export type FilterField<TRow> = {
   column: Column<TRow> | undefined
-  type: 'text' | 'date' | 'select'
+  type: 'text' | 'date' | 'select' | 'date-range'
   label: string
   value: any
   placeholder?: string
@@ -34,21 +40,20 @@ interface Props<T> {
   filterFields?: FilterField<T>[]
 }
 
-export function TableToolbar<T>({ table, options, filterFields = [] }: Props<T>) {
-
+export function TableToolbar<T>({
+  table,
+  options,
+  filterFields = [],
+}: Props<T>) {
   return (
-    <div className="flex items-center gap-2 py-4">
-      <div className="mr-auto">
+    <div className='flex items-center gap-2 py-4'>
+      <div className='mr-auto'>
         <TableToolbarFilters table={table} filterFields={filterFields} />
       </div>
       {options && (
-        <div className="ml-auto flex items-center gap-2">
-          {options.showExport && (
-            <DownloadButton table={table} />
-          )}
-          {options.showHideShow && (
-            <ViewOptions table={table} />
-          )}
+        <div className='ml-auto flex items-center gap-2'>
+          {options.showExport && <DownloadButton table={table} />}
+          {options.showHideShow && <ViewOptions table={table} />}
         </div>
       )}
     </div>
@@ -58,59 +63,50 @@ export function TableToolbar<T>({ table, options, filterFields = [] }: Props<T>)
 function DownloadButton<T>({ table }: { table: Table<T> }) {
   const [pending, startTransition] = useTransition()
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={250}>
-        <TooltipTrigger asChild>
-          <Button
-            variant='outline'
-            size='icon'
-            onClick={() => {
-              startTransition(() => {
-                // BUG: when table has grouped rows, filter out the grouped row so only leaf rows are exported
-                exportTableToCSV(table, {
-                  excludeColumns: ['select', 'actions'],
-                })
-              })
-            }}>
-            {pending
-              ? <Icons.spinner className="size-4 animate-spin" />
-              : <Icons.download className="size-4" />}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Eksporter alt data</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Button
+      variant='outline'
+      size='icon'
+      onClick={() => {
+        startTransition(() => {
+          // BUG: when table has grouped rows, filter out the grouped row so only leaf rows are exported
+          exportTableToCSV(table, {
+            excludeColumns: ['select', 'actions'],
+          })
+        })
+      }}>
+      {pending ? (
+        <Icons.spinner className='size-4 animate-spin' />
+      ) : (
+        <Icons.download className='size-4' />
+      )}
+    </Button>
   )
 }
 
-export function ViewOptions<T>({ table, }: { table: Table<T>, }) {
+export function ViewOptions<T>({ table }: { table: Table<T> }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon" >
-          <Icons.columns className="size-4" />
+        <Button variant='outline' size='icon'>
+          <Icons.columns className='size-4' />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-auto">
+      <DropdownMenuContent align='end' className='w-auto'>
         <DropdownMenuLabel>Gem/vis kollonner</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
           .filter(
-            (column) =>
-              typeof column.accessorFn !== "undefined" && column.getCanHide()
+            column =>
+              typeof column.accessorFn !== 'undefined' && column.getCanHide(),
           )
-          .map((column) => {
+          .map(column => {
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
-                className="capitalize"
+                className='capitalize'
                 checked={column.getIsVisible()}
-                onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                onCheckedChange={value => column.toggleVisibility(!!value)}
                 onSelect={e => e.preventDefault()}>
                 {/* @ts-ignore */}
                 {column.columnDef.meta?.viewLabel ?? column.id}
@@ -121,4 +117,3 @@ export function ViewOptions<T>({ table, }: { table: Table<T>, }) {
     </DropdownMenu>
   )
 }
-

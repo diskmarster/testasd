@@ -47,7 +47,7 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
           ) : cell.getIsAggregated() ? (
             <div
               className={cn(
-                'flex whitespace-nowrap',
+                'flex max-w-52',
                 typeof cell.getValue() == 'number' && 'justify-end',
                 Array.isArray(cell.getValue<number | number[]>()) &&
                   cell
@@ -60,19 +60,19 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
                   cell.column.columnDef.meta.className,
               )}>
               {cell.column.columnDef.aggregationFn && (
-                <>
+                <div className='truncate flex items-center'>
                   {flexRender(
                     cell.column.columnDef.aggregatedCell ??
                       cell.column.columnDef.cell,
                     cell.getContext(),
                   )}
-                </>
+                </div>
               )}
             </div>
           ) : cell.getIsPlaceholder() ? null : (
             <div
               className={cn(
-                'flex whitespace-nowrap',
+                'flex max-w-52',
                 typeof cell.getValue() == 'number' && 'justify-end',
                 Array.isArray(cell.getValue<number | number[]>()) &&
                   cell
@@ -84,7 +84,9 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
                   // @ts-ignore
                   cell.column.columnDef.meta.className,
               )}>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              <div className='truncate flex items-center'>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </div>
             </div>
           )}
         </TableCell>

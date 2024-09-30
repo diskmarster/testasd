@@ -162,7 +162,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                 </Button>
                 <Input
                   type='number'
+                  step={0.01}
                   {...register('minimum')}
+                  onChange={register('minimum').onChange}
                   className={cn(
                     'w-full h-14 rounded-none text-center text-2xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',

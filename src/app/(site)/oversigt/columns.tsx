@@ -1,3 +1,5 @@
+import { ModalShowProductCard } from '@/components/inventory/modal-show-product-card'
+import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
@@ -5,9 +7,10 @@ import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
-import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
+import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
-import { isSameDay } from 'date-fns'
+import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { DateRange } from 'react-day-picker'
 
 export function getTableOverviewColumns(
   plan: Plan,
@@ -17,9 +20,8 @@ export function getTableOverviewColumns(
     accessorKey: 'product.sku',
     id: 'sku',
     header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
-    cell: ({ getValue }) => getValue<string>(),
-    aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => getValue<string>(),
+    cell: ({ row }) => <ModalShowProductCard product={row.original.product} />,
+    enableHiding: false,
     meta: {
       viewLabel: 'Varenr.',
     },
@@ -113,15 +115,16 @@ export function getTableOverviewColumns(
 
   const quantityCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'quantity',
-    header: ({ column }) => <TableHeader column={column} title='Beholdning' />,
+    header: ({ column }) => <TableHeader column={column} title='Beh.' />,
     cell: ({ getValue }) => (
       <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
-        {getValue<number>()}
+        {formatNumber(getValue<number>())}
       </span>
     ),
+    filterFn: 'includesString',
     meta: {
       rightAlign: true,
-      viewLabel: 'Beholdning',
+      viewLabel: 'Beh.',
     },
   }
 
@@ -146,9 +149,9 @@ export function getTableOverviewColumns(
     accessorKey: 'product.costPrice',
     id: 'costPrice',
     header: ({ column }) => <TableHeader column={column} title='Kostpris' />,
-    aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
+    filterFn: 'includesString',
     meta: {
       rightAlign: true,
       viewLabel: 'Kostpris',
@@ -159,9 +162,9 @@ export function getTableOverviewColumns(
     accessorKey: 'product.salesPrice',
     id: 'salesPrice',
     header: ({ column }) => <TableHeader column={column} title='Salgspris' />,
-    aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
+    filterFn: 'includesString',
     meta: {
       rightAlign: true,
       viewLabel: 'Salgspris',
@@ -170,22 +173,42 @@ export function getTableOverviewColumns(
 
   const updatedCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'updated',
-    header: ({ column }) => (
-      <TableHeader column={column} title='Sidst opdateret' />
-    ),
+    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
     aggregatedCell: ({ getValue }) => formatDate(getValue<Date[]>()[0]),
     cell: () => null,
-    filterFn: (row, id, value) => {
-      return isSameDay(value, row.getValue(id))
+    filterFn: (row, id, value: DateRange) => {
+      const rowDate: string | number | Date = row.getValue(id)
+
+      if (!value.from && value.to) {
+        return true
+      }
+
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, new Date(value.from))
+      }
+
+      if (value.from && value.to) {
+        return (
+          (isAfter(rowDate, new Date(value.from)) &&
+            isBefore(rowDate, new Date(value.to))) ||
+          isSameDay(rowDate, new Date(value.from)) ||
+          isSameDay(rowDate, new Date(value.to))
+        )
+      }
+
+      return true
     },
     meta: {
-      viewLabel: 'Sidst opdateret',
+      viewLabel: 'Opdateret',
     },
   }
 
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
+    aggregatedCell: ({ table, row }) => (
+      <ModalShowProductLabel product={row.original.product} />
+    ),
     cell: ({ table, row }) => <TableOverviewActions row={row} table={table} />,
     enableHiding: false,
     enableSorting: false,
@@ -207,7 +230,6 @@ export function getTableOverviewColumns(
         unitCol,
         costPriceCol,
         salesPriceCol,
-        updatedCol,
         actionsCol,
       ]
       return liteCols
@@ -224,7 +246,6 @@ export function getTableOverviewColumns(
         costPriceCol,
         salesPriceCol,
         placementCol,
-        updatedCol,
         actionsCol,
       ]
       return plusCols
@@ -242,7 +263,6 @@ export function getTableOverviewColumns(
         unitCol,
         placementCol,
         batchCol,
-        updatedCol,
         actionsCol,
       ]
       return proCols
@@ -342,8 +362,8 @@ export function getTableOverviewFilters(
   }
   const updatedFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('updated'),
-    type: 'date',
-    label: 'Sidst opdateret',
+    type: 'date-range',
+    label: 'Opdateret',
     value: '',
   }
 
@@ -357,7 +377,6 @@ export function getTableOverviewFilters(
         text1Filter,
         text2Filter,
         text3Filter,
-        updatedFilter,
       ]
     case 'plus':
       return [
@@ -369,7 +388,6 @@ export function getTableOverviewFilters(
         text2Filter,
         text3Filter,
         placementFilter,
-        updatedFilter,
       ]
     case 'pro':
       return [
@@ -382,7 +400,6 @@ export function getTableOverviewFilters(
         text3Filter,
         placementFilter,
         batchFilter,
-        updatedFilter,
       ]
   }
 }

@@ -1,15 +1,14 @@
-import { historyTypeZodSchema } from '@/data/inventory.types'
 import { inventoryService } from '@/service/inventory'
 import { validateRequest } from '@/service/user.utils'
-import { NextRequest, NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
-const createRegulationSchema = z.object({
+const createMoveSchema = z.object({
   locationId: z.string(),
   productId: z.coerce.number(),
-  placementId: z.string().or(z.coerce.number()).nullable(),
+  fromPlacementId: z.string().or(z.coerce.number()).nullable(),
+  toPlacementId: z.string().or(z.coerce.number()).nullable(),
   batchId: z.string().or(z.coerce.number()).nullable(),
-  type: historyTypeZodSchema,
   quantity: z.coerce.number(),
   reference: z.string().nullable(),
 })
@@ -42,7 +41,7 @@ export async function POST(
       )
     }
 
-    const zodRes = createRegulationSchema.safeParse(await request.json())
+    const zodRes = createMoveSchema.safeParse(await request.json())
 
     if (!zodRes.success) {
       return NextResponse.json(
@@ -61,10 +60,10 @@ export async function POST(
 
     console.log('data received:', JSON.stringify(data, null, 2))
 
-    let placementId: number
-    if (typeof data.placementId == 'string') {
+    let fromPlacementId: number
+    if (typeof data.fromPlacementId == 'string') {
       // Create new placement or fetch default for location
-      if (data.placementId == '') {
+      if (data.fromPlacementId == '') {
         // fetch default
         const placements = await inventoryService.getActivePlacementsByID(
           data.locationId,
@@ -90,11 +89,11 @@ export async function POST(
             )
           }
         }
-        placementId = defaultPlacement.id
+        fromPlacementId = defaultPlacement.id
       } else {
         const res = await inventoryService.createPlacement({
           locationID: data.locationId,
-          name: data.placementId,
+          name: data.fromPlacementId,
         })
         if (res == undefined) {
           return NextResponse.json(
@@ -106,12 +105,12 @@ export async function POST(
             },
           )
         }
-        placementId = res.id
+        fromPlacementId = res.id
       }
-    } else if (typeof data.placementId == 'number') {
-      placementId = data.placementId
+    } else if (typeof data.fromPlacementId == 'number') {
+      fromPlacementId = data.fromPlacementId
     } else {
-      // data.placementId should be undefined
+      // data.fromPlacementId should be undefined
       // Then fetch default placement for location
       const placements = await inventoryService.getActivePlacementsByID(
         data.locationId,
@@ -137,7 +136,86 @@ export async function POST(
           )
         }
       }
-      placementId = defaultPlacement.id
+      fromPlacementId = defaultPlacement.id
+    }
+
+    let toPlacementId: number
+    if (typeof data.toPlacementId == 'string') {
+      // Create new placement or fetch default for location
+      if (data.toPlacementId == '') {
+        // fetch default
+        const placements = await inventoryService.getActivePlacementsByID(
+          data.locationId,
+        )
+        let defaultPlacement = placements.find(p => p.name == '-')
+        if (defaultPlacement == undefined) {
+          defaultPlacement = await inventoryService.createPlacement({
+            locationID: data.locationId,
+            name: '-',
+          })
+
+          if (defaultPlacement == undefined) {
+            console.error(
+              `Error creating move: Could not find or create default placement`,
+            )
+            return NextResponse.json(
+              {
+                msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
+              },
+              {
+                status: 500,
+              },
+            )
+          }
+        }
+        toPlacementId = defaultPlacement.id
+      } else {
+        const res = await inventoryService.createPlacement({
+          locationID: data.locationId,
+          name: data.toPlacementId,
+        })
+        if (res == undefined) {
+          return NextResponse.json(
+            {
+              msg: 'Kunne ikke oprette en ny placering i databasen',
+            },
+            {
+              status: 500,
+            },
+          )
+        }
+        toPlacementId = res.id
+      }
+    } else if (typeof data.toPlacementId == 'number') {
+      toPlacementId = data.toPlacementId
+    } else {
+      // data.toPlacementId should be undefined
+      // Then fetch default placement for location
+      const placements = await inventoryService.getActivePlacementsByID(
+        data.locationId,
+      )
+      let defaultPlacement = placements.find(p => p.name == '-')
+      if (defaultPlacement == undefined) {
+        defaultPlacement = await inventoryService.createPlacement({
+          locationID: data.locationId,
+          name: '-',
+        })
+
+        if (defaultPlacement == undefined) {
+          console.error(
+            `Error creating move: Could not find or create default placement`,
+          )
+          return NextResponse.json(
+            {
+              msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
+            },
+            {
+              status: 500,
+            },
+          )
+        }
+      }
+      toPlacementId = defaultPlacement.id
     }
 
     let batchId: number
@@ -219,29 +297,32 @@ export async function POST(
       batchId = defaultBatch.id
     }
 
-    if (
-      !(await inventoryService.upsertInventory(
-        'app',
+
+    const fromInventoryExists = await inventoryService.getInventoryByIDs(data.productId, fromPlacementId, batchId) != undefined
+
+    if (!fromInventoryExists) {
+      await inventoryService.createInventory(
         user.customerID,
-        user.id,
-        data.locationId,
         data.productId,
-        placementId,
+        data.locationId,
+        fromPlacementId,
         batchId,
-        data.type,
-        data.quantity,
-        data.reference ?? '',
-      ))
-    ) {
-      return NextResponse.json(
-        {
-          msg: `Kunne ikke oprette en ny ${data.type}, prøv igen`,
-        },
-        {
-          status: 500,
-        },
       )
     }
+
+    await inventoryService.moveInventory(
+      'app',
+      user.customerID,
+      user.id,
+      data.locationId,
+      data.productId,
+      fromPlacementId,
+      batchId,
+      toPlacementId,
+      'flyt',
+      data.quantity,
+      data.reference ?? "",
+    )
 
     return NextResponse.json(
       {
@@ -252,13 +333,11 @@ export async function POST(
       },
     )
   } catch (e) {
-    console.error(
-      `Error getting products for authenticated user: '${(e as Error).message}'`,
-    )
+    console.error(`Error creating move: '${(e as Error).message}'`)
 
     return NextResponse.json(
       {
-        msg: `Der skete en fejl under reguleringen: '${(e as Error).message}'`,
+        msg: `Der skete en fejl under flytning: '${(e as Error).message}'`,
       },
       {
         status: 500,

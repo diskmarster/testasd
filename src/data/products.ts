@@ -17,7 +17,7 @@ const GROUP_COLS = getTableColumns(groupTable)
 const PRODUCT_COLS = getTableColumns(productTable)
 
 export const product = {
-  getAllByCustomerID: async function (
+  getAllByCustomerID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<FormattedProduct[]> {
@@ -33,7 +33,7 @@ export const product = {
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
     return product
   },
-  create: async function (
+  create: async function(
     newProduct: NewProduct,
     trx: TRX = db,
   ): Promise<Product | undefined> {
@@ -58,8 +58,8 @@ export const product = {
       .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
       .innerJoin(groupTable, eq(productTable.unitID, groupTable.id))
       .where(eq(productTable.customerID, customerID))
-    },
-  getAllByID: async function (
+  },
+  getAllByID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<Product[]> {
@@ -69,7 +69,7 @@ export const product = {
       .where(eq(productTable.customerID, customerID))
     return product
   },
-  updateByID: async function (
+  updateByID: async function(
     productID: ProductID,
     updatedProductData: PartialProduct,
     trx: TRX = db,
@@ -80,5 +80,22 @@ export const product = {
       .where(eq(productTable.id, productID))
       .returning()
     return product[0]
+  },
+  getByID: async function(
+    id: ProductID,
+    trx: TRX = db,
+  ): Promise<FormattedProduct | undefined> {
+    const res = await trx
+      .select({
+        ...PRODUCT_COLS,
+        unit: UNIT_COLS.name,
+        group: GROUP_COLS.name,
+      })
+      .from(productTable)
+      .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
+      .innerJoin(groupTable, eq(productTable.unitID, groupTable.id))
+      .where(eq(productTable.id, id))
+
+    return res[0]
   },
 }
