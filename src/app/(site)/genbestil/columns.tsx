@@ -70,7 +70,7 @@ export function getTableReorderColumns(
 
   const quantityCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'quantity',
-    header: ({ column }) => <TableHeader column={column} title='Beholdning' />,
+    header: ({ column }) => <TableHeader column={column} title='Beh.' />,
     cell: ({ getValue, row }) => (
       <span
         className={cn(
@@ -81,7 +81,7 @@ export function getTableReorderColumns(
     ),
     filterFn: 'includesString',
     meta: {
-      viewLabel: 'Beholdning',
+      viewLabel: 'Beh.',
       rightAlign: true,
     },
   }
@@ -115,12 +115,12 @@ export function getTableReorderColumns(
   const minimumCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'minimum',
     header: ({ column }) => (
-      <TableHeader column={column} title='Min. beholdning' />
+      <TableHeader column={column} title='Min. beh.' />
     ),
     cell: ({ getValue }) => formatNumber(getValue<number>()),
     filterFn: 'includesString',
     meta: {
-      viewLabel: 'Min. beholdning',
+      viewLabel: 'Min. beh.',
       rightAlign: true,
     },
   }
@@ -128,12 +128,12 @@ export function getTableReorderColumns(
   const disposibleCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'disposible',
     header: ({ column }) => (
-      <TableHeader column={column} title='Disp. beholdning' />
+      <TableHeader column={column} title='Disp. beh.' />
     ),
     cell: ({ getValue }) => formatNumber(getValue<number>()),
     filterFn: 'includesString',
     meta: {
-      viewLabel: 'Disp. beholdning',
+      viewLabel: 'Disp. beh.',
       rightAlign: true,
     },
   }
@@ -141,12 +141,12 @@ export function getTableReorderColumns(
   const recAmountCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'recommended',
     header: ({ column }) => (
-      <TableHeader column={column} title='Anbefalet genbestil' />
+      <TableHeader column={column} title='Anb. gen.' />
     ),
     cell: ({ getValue }) => formatNumber(getValue<number>()),
     filterFn: 'includesString',
     meta: {
-      viewLabel: 'Anbefalet genbestil',
+      viewLabel: 'Anb. gen.',
       rightAlign: true,
       className: 'justify-end',
     },
@@ -284,17 +284,17 @@ export function getTableReorderFilters(
   const quantityFilter: FilterField<FormattedReorder> = {
     column: table.getColumn('quantity'),
     type: 'text',
-    label: 'Beholdning',
+    label: 'Beh.',
     value: '',
-    placeholder: 'Søg i beholdning',
+    placeholder: 'Søg i beh.',
   }
 
   const minimumFilter: FilterField<FormattedReorder> = {
     column: table.getColumn('minimum'),
     type: 'text',
-    label: 'Min. beholdning',
+    label: 'Min. beh.',
     value: '',
-    placeholder: 'Søg i min. beholdning',
+    placeholder: 'Søg i min. beh.',
   }
 
   const text1Filter: FilterField<FormattedReorder> = {
@@ -322,17 +322,17 @@ export function getTableReorderFilters(
   const recAmountFilter: FilterField<FormattedReorder> = {
     column: table.getColumn('recommended'),
     type: 'text',
-    label: 'Anbefalet genbestil',
+    label: 'Anb. gen.',
     value: '',
-    placeholder: 'Søg i anbefalet genbestil',
+    placeholder: 'Søg i anb. gen.',
   }
 
   const disposibleFilter: FilterField<FormattedReorder> = {
     column: table.getColumn('disposible'),
     type: 'text',
-    label: 'Disp. beholdning',
+    label: 'Disp. beh.',
     value: '',
-    placeholder: 'Søg i disp. beholdning',
+    placeholder: 'Søg i disp. beh.',
   }
 
   const factorFilter: FilterField<FormattedReorder> = {
