@@ -1,3 +1,4 @@
+import { ModalShowProductCard } from '@/components/inventory/modal-show-product-card'
 import { TableReorderActions } from '@/components/inventory/table-reorder-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
@@ -5,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { FormattedReorder } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
-import { cn, formatDate } from '@/lib/utils'
+import { cn, formatDate, formatNumber } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { DateRange } from 'react-day-picker'
@@ -40,7 +41,8 @@ export function getTableReorderColumns(
     accessorKey: 'product.sku',
     id: 'sku',
     header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
-    cell: ({ getValue }) => getValue<string>(),
+    cell: ({ row }) => <ModalShowProductCard product={row.original.product} />,
+    enableHiding: false,
     meta: {
       viewLabel: 'Varenr.',
     },
@@ -77,7 +79,7 @@ export function getTableReorderColumns(
         {getValue<number>()}
       </span>
     ),
-    filterFn: 'weakEquals',
+    filterFn: 'includesString',
     meta: {
       viewLabel: 'Beholdning',
       rightAlign: true,
@@ -115,10 +117,23 @@ export function getTableReorderColumns(
     header: ({ column }) => (
       <TableHeader column={column} title='Min. beholdning' />
     ),
-    cell: ({ getValue }) => getValue<number>(),
-    filterFn: 'weakEquals',
+    cell: ({ getValue }) => formatNumber(getValue<number>()),
+    filterFn: 'includesString',
     meta: {
       viewLabel: 'Min. beholdning',
+      rightAlign: true,
+    },
+  }
+
+  const disposibleCol: ColumnDef<FormattedReorder> = {
+    accessorKey: 'disposible',
+    header: ({ column }) => (
+      <TableHeader column={column} title='Disp. beholdning' />
+    ),
+    cell: ({ getValue }) => formatNumber(getValue<number>()),
+    filterFn: 'includesString',
+    meta: {
+      viewLabel: 'Disp. beholdning',
       rightAlign: true,
     },
   }
@@ -128,8 +143,8 @@ export function getTableReorderColumns(
     header: ({ column }) => (
       <TableHeader column={column} title='Anbefalet genbestil' />
     ),
-    cell: ({ getValue }) => getValue<number>().toFixed(2),
-    filterFn: 'weakEquals',
+    cell: ({ getValue }) => formatNumber(getValue<number>()),
+    filterFn: 'includesString',
     meta: {
       viewLabel: 'Anbefalet genbestil',
       rightAlign: true,
@@ -140,7 +155,7 @@ export function getTableReorderColumns(
   const factorCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'buffer',
     header: ({ column }) => <TableHeader column={column} title='Faktor (%)' />,
-    cell: ({ getValue }) => (getValue<number>() * 100).toFixed(2) + '%',
+    cell: ({ getValue }) => (formatNumber(getValue<number>() * 100)) + '%',
     meta: {
       viewLabel: 'Faktor (%)',
       rightAlign: true,
@@ -154,8 +169,8 @@ export function getTableReorderColumns(
   const orderedCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'ordered',
     header: ({ column }) => <TableHeader column={column} title='Bestilt' />,
-    cell: ({ getValue }) => getValue<number>().toFixed(2),
-    filterFn: 'weakEquals',
+    cell: ({ getValue }) => formatNumber(getValue<number>()),
+    filterFn: 'includesString',
     meta: {
       viewLabel: 'Bestilt',
       rightAlign: true,
@@ -213,9 +228,10 @@ export function getTableReorderColumns(
     quantityCol,
     unitCol,
     minimumCol,
-    factorCol,
     recAmountCol,
     orderedCol,
+    disposibleCol,
+    factorCol,
     updatedCol,
     actionsCol,
   ]
@@ -306,9 +322,17 @@ export function getTableReorderFilters(
   const recAmountFilter: FilterField<FormattedReorder> = {
     column: table.getColumn('recommended'),
     type: 'text',
-    label: 'Anbefalet',
+    label: 'Anbefalet genbestil',
     value: '',
     placeholder: 'Søg i anbefalet genbestil',
+  }
+
+  const disposibleFilter: FilterField<FormattedReorder> = {
+    column: table.getColumn('disposible'),
+    type: 'text',
+    label: 'Disp. beholdning',
+    value: '',
+    placeholder: 'Søg i disp. beholdning',
   }
 
   const factorFilter: FilterField<FormattedReorder> = {
@@ -327,9 +351,10 @@ export function getTableReorderFilters(
     quantityFilter,
     unitFilter,
     minimumFilter,
-    factorFilter,
     recAmountFilter,
     orderedFilter,
+    disposibleFilter,
+    factorFilter,
     updatedFilter,
   ]
 }

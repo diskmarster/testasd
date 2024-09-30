@@ -37,7 +37,7 @@ export function ModalShowProductLabel({ product }: Props) {
             Print label til dine produkter
           </CredenzaDescription>
         </CredenzaHeader>
-        <CredenzaBody className='space-y-4'>
+        <CredenzaBody className='space-y-4 pb-4 md:pb-0'>
           <div
             ref={ref}
             className={cn(

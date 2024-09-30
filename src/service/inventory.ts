@@ -334,10 +334,12 @@ export const inventoryService = {
           reorder.minimum * reorder.buffer,
           0,
         )
+      const disposible = reorder.quantity + reorder.ordered
 
       return {
         ...reorder,
         recommended,
+        disposible 
       }
     })
 

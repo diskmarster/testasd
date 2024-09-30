@@ -7,7 +7,7 @@ import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
-import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
+import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { DateRange } from 'react-day-picker'
@@ -20,8 +20,6 @@ export function getTableOverviewColumns(
     accessorKey: 'product.sku',
     id: 'sku',
     header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
-    //aggregationFn: 'unique',
-    //aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: ({ row }) => <ModalShowProductCard product={row.original.product} />,
     enableHiding: false,
     meta: {
@@ -120,9 +118,10 @@ export function getTableOverviewColumns(
     header: ({ column }) => <TableHeader column={column} title='Beholdning' />,
     cell: ({ getValue }) => (
       <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
-        {getValue<number>()}
+        {formatNumber(getValue<number>())}
       </span>
     ),
+    filterFn: 'includesString',
     meta: {
       rightAlign: true,
       viewLabel: 'Beholdning',
@@ -150,9 +149,9 @@ export function getTableOverviewColumns(
     accessorKey: 'product.costPrice',
     id: 'costPrice',
     header: ({ column }) => <TableHeader column={column} title='Kostpris' />,
-    aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
+    filterFn: 'includesString',
     meta: {
       rightAlign: true,
       viewLabel: 'Kostpris',
@@ -163,9 +162,9 @@ export function getTableOverviewColumns(
     accessorKey: 'product.salesPrice',
     id: 'salesPrice',
     header: ({ column }) => <TableHeader column={column} title='Salgspris' />,
-    aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
+    filterFn: 'includesString',
     meta: {
       rightAlign: true,
       viewLabel: 'Salgspris',
