@@ -84,10 +84,16 @@ export const product = {
   getByID: async function(
     id: ProductID,
     trx: TRX = db,
-  ): Promise<Product | undefined> {
+  ): Promise<FormattedProduct | undefined> {
     const res = await trx
-      .select()
+      .select({
+        ...PRODUCT_COLS,
+        unit: UNIT_COLS.name,
+        group: GROUP_COLS.name,
+      })
       .from(productTable)
+      .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
+      .innerJoin(groupTable, eq(productTable.unitID, groupTable.id))
       .where(eq(productTable.id, id))
 
     return res[0]
