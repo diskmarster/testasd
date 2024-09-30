@@ -180,7 +180,7 @@ export const inventoryService = {
         trx,
       )
       if (!didUpdateFrom) {
-        throw new ActionError('Beholdning blev opdatere beholdning')
+        throw new ActionError('Kunne ikke flytte beholdning')
       }
 
       const didUpsertTo = await inventory.upsertInventory(

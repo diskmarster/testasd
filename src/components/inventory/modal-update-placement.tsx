@@ -82,7 +82,7 @@ export function ModalUpdatePlacement({
 
   return (
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
-      <CredenzaContent>
+      <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
           <CredenzaTitle>Rediger placering</CredenzaTitle>
           <CredenzaDescription>
@@ -91,7 +91,7 @@ export function ModalUpdatePlacement({
         </CredenzaHeader>
         <CredenzaBody>
           <form
-            className='grid gap-4 mb-4 md:mb-0'
+            className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
@@ -101,7 +101,7 @@ export function ModalUpdatePlacement({
               </Alert>
             )}
 
-            <div className='grid md:grid-cols-2 gap-4'>
+            <div className='mt-2 mb-2'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
                   Navn på placering
