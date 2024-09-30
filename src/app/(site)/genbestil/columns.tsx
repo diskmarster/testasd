@@ -128,7 +128,7 @@ export function getTableReorderColumns(
     header: ({ column }) => (
       <TableHeader column={column} title='Anbefalet genbestil' />
     ),
-    cell: ({ getValue }) => getValue<string>(),
+    cell: ({ getValue }) => getValue<number>().toFixed(2),
     filterFn: 'weakEquals',
     meta: {
       viewLabel: 'Anbefalet genbestil',
@@ -154,7 +154,7 @@ export function getTableReorderColumns(
   const orderedCol: ColumnDef<FormattedReorder> = {
     accessorKey: 'ordered',
     header: ({ column }) => <TableHeader column={column} title='Bestilt' />,
-    cell: ({ getValue }) => getValue<number>(),
+    cell: ({ getValue }) => getValue<number>().toFixed(2),
     filterFn: 'weakEquals',
     meta: {
       viewLabel: 'Bestilt',
