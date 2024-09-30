@@ -45,7 +45,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
     setOpen(true)
     setValue('locationID', data.locationID)
     setValue('productID', data.productID)
-    setValue('ordered', data.recommended)
+    setValue('ordered', data.recommended.toFixed(2))
     setAlreadyOrdered(data.ordered)
   })
 
@@ -54,14 +54,14 @@ export function ModalAddOrderedReorder({ products }: Props) {
   function increment() {
     // @ts-ignore
     const nextValue = parseFloat(formValues.ordered) + 1
-    setValue('ordered', parseFloat(nextValue.toFixed(4)), {
+    setValue('ordered', parseFloat(nextValue.toFixed(2)), {
       shouldValidate: true,
     })
   }
 
   function decrement() {
     const nextValue = Math.max(0, formValues.ordered - 1)
-    setValue('ordered', parseFloat(nextValue.toFixed(4)), {
+    setValue('ordered', parseFloat(nextValue.toFixed(2)), {
       shouldValidate: true,
     })
   }
