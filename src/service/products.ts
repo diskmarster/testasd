@@ -168,9 +168,21 @@ export const productService = {
       )
     }
   },
-  getByID: async (id: ProductID): Promise<Product | undefined> => {
+  getByID: async (
+    id: ProductID,
+  ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> => {
     try {
-      return await product.getByID(id)
+      const p = await product.getByID(id)
+      if (p == undefined) {
+        return undefined
+      }
+
+      const inventories = await inventoryService.getInventoryByProductID(id)
+
+      return {
+        ...p,
+        inventories,
+      }
     } catch (e) {
       console.error(`ERROR: Trying to get product by id failed: ${e}`)
       throw new ActionError(`Kunne ikke finde produkt med id ${id}`)
