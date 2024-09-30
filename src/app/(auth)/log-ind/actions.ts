@@ -10,7 +10,7 @@ import { sessionService } from "@/service/session"
 export const signInAction = publicAction
   .schema(signInValidation)
   .action(async ({ parsedInput }) => {
-    const existingUser = await userService.verifyPassword(parsedInput.email, parsedInput.password)
+    const existingUser = await userService.verifyPassword(parsedInput.email.toLowerCase(), parsedInput.password)
     if (!existingUser) {
       throw new ActionError("Forkert email eller kodeord")
     }
