@@ -149,6 +149,7 @@ export function getTableOverviewColumns(
     accessorKey: 'product.costPrice',
     id: 'costPrice',
     header: ({ column }) => <TableHeader column={column} title='Kostpris' />,
+    aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
     filterFn: 'includesString',
@@ -161,6 +162,7 @@ export function getTableOverviewColumns(
   const salesPriceCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.salesPrice',
     id: 'salesPrice',
+    aggregationFn: 'unique',
     header: ({ column }) => <TableHeader column={column} title='Salgspris' />,
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
