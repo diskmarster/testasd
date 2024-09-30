@@ -4,7 +4,14 @@ import { product } from '@/data/products'
 import { FormattedProduct } from '@/data/products.types'
 import { db } from '@/lib/database'
 import { CustomerID } from '@/lib/database/schema/customer'
-import { Inventory, NewInventory, NewProduct, PartialProduct, Product, ProductID } from '@/lib/database/schema/inventory'
+import {
+  Inventory,
+  NewInventory,
+  NewProduct,
+  PartialProduct,
+  Product,
+  ProductID,
+} from '@/lib/database/schema/inventory'
 
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
@@ -118,13 +125,13 @@ export const productService = {
       return []
     }
   },
-  getAllByID: async function (
+  getAllByID: async function(
     customerID: CustomerID,
   ): Promise<FormattedProduct[]> {
     return await product.getAllByCustomerID(customerID)
   },
 
-  updateByID: async function (
+  updateByID: async function(
     productID: ProductID,
     updatedProductData: PartialProduct,
   ): Promise<Product | undefined> {
@@ -156,7 +163,29 @@ export const productService = {
       return updatedProduct
     } catch (err) {
       console.error('Der skete en fejl med spærringen:', err)
-      throw new ActionError('Der skete en fejl med opdatering af produkt spærringen')
+      throw new ActionError(
+        'Der skete en fejl med opdatering af produkt spærringen',
+      )
+    }
+  },
+  getByID: async (
+    id: ProductID,
+  ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> => {
+    try {
+      const p = await product.getByID(id)
+      if (p == undefined) {
+        return undefined
+      }
+
+      const inventories = await inventoryService.getInventoryByProductID(id)
+
+      return {
+        ...p,
+        inventories,
+      }
+    } catch (e) {
+      console.error(`ERROR: Trying to get product by id failed: ${e}`)
+      throw new ActionError(`Kunne ikke finde produkt med id ${id}`)
     }
   },
 }
