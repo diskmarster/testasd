@@ -164,7 +164,6 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                   type='number'
                   step={0.01}
                   {...register('minimum')}
-                  onChange={register('minimum').onChange}
                   className={cn(
                     'w-full h-14 rounded-none text-center text-2xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
@@ -212,7 +211,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                         formValues.buffer != 0 &&
                         'rounded-l-none',
                     )}
-                    onClick={() => setValue('buffer', 25)}>
+                    onClick={() =>
+                      setValue('buffer', 25, { shouldValidate: true })
+                    }>
                     25%
                   </Button>
                   <Button
@@ -221,7 +222,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     type='button'
                     variant='outline'
                     className='h-14 w-1/4 rounded-none border-t-0 border-l-0'
-                    onClick={() => setValue('buffer', 50)}>
+                    onClick={() =>
+                      setValue('buffer', 50, { shouldValidate: true })
+                    }>
                     50%
                   </Button>
                   <Button
@@ -230,7 +233,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     type='button'
                     variant='outline'
                     className='h-14 w-1/4 rounded-none border-t-0 border-l-0'
-                    onClick={() => setValue('buffer', 75)}>
+                    onClick={() =>
+                      setValue('buffer', 75, { shouldValidate: true })
+                    }>
                     75%
                   </Button>
                   <Button
@@ -244,7 +249,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                         formValues.buffer != 0 &&
                         'rounded-r-none',
                     )}
-                    onClick={() => setValue('buffer', 100)}>
+                    onClick={() =>
+                      setValue('buffer', 100, { shouldValidate: true })
+                    }>
                     100%
                   </Button>
                 </div>
