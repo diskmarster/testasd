@@ -40,12 +40,12 @@ export const siteConfig: SiteConfig = {
       isDropdown: true,
       items: [
         {
-          label: 'Brugere',
-          description: 'Se en oversigt over alle brugere',
-          href: '/admin/brugere',
+          label: 'Firma',
+          description: 'Se, rediger og slet i alt vedrerønde din firma konto',
+          href: '/admin/firma',
           roles: [],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
 
         {
