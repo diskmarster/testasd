@@ -18,8 +18,8 @@ export default async function Page() {
 
   return (
     <SiteWrapper
-      title='Produktgrupper'
-      description='Se en oversigt over alle dine produktgrupper'
+      title='Varegrupper'
+      description='Se en oversigt over alle dine varegrupper'
       actions={
         <>
           <ModalCreateProductGroup />

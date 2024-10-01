@@ -115,7 +115,7 @@ export function ModalUpdateUnit({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid}>
+            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
               Opdater
             </Button>
           </form>

@@ -59,7 +59,7 @@ export function ModalCreatePlacement() {
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
+        <Button size='icon' variant='outline' className='w-full md:w-auto'>
           <Icons.plus className='size-4' />
         </Button>
       </CredenzaTrigger>
@@ -90,7 +90,10 @@ export function ModalCreatePlacement() {
                 </p>
               )}
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid}>
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto py-3 text-lg'>
               Opret
             </Button>
           </form>
