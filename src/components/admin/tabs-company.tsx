@@ -35,7 +35,6 @@ export function TabsAdmin({ customer }: Props) {
           Brugere
         </TabsTrigger>
         <TabsTrigger
-          disabled={customer.plan != 'pro'}
           onClick={() =>
             router.push(pathName + '?' + createTabParam('lokationer'))
           }
