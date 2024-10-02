@@ -4,6 +4,7 @@ import { SiteWrapper } from '@/components/common/site-wrapper'
 import { customerService } from '@/service/customer'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
+import { userService } from '@/service/user'
 
 export default async function Page() {
   const { session, user } = await sessionService.validate()
@@ -24,11 +25,19 @@ export default async function Page() {
     return
   }
 
+  const locations = await locationService.getByCustomerID(customer.id)
+  const users = await userService.getAllByCustomerID(customer.id)
+
   return (
     <SiteWrapper
       title='Firma'
       description='Se, rediger og slet i alt vedrerønde din firma konto'>
-      <TabsAdmin customer={customer} />
+      <TabsAdmin
+        customer={customer}
+        user={user}
+        locations={locations}
+        users={users}
+      />
     </SiteWrapper>
   )
 }

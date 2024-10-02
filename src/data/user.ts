@@ -6,6 +6,7 @@ import {
   UserID,
   userTable,
 } from '@/lib/database/schema/auth'
+import { CustomerID } from '@/lib/database/schema/customer'
 import { eq } from 'drizzle-orm'
 
 export const user = {
@@ -55,5 +56,8 @@ export const user = {
       .delete(userTable)
       .where(eq(userTable.id, userID))
     return resultSet.rowsAffected == 1
+  },
+  getAllByCustomerID: async function(customerID:CustomerID, trx: TRX = db): Promise<User[]> {
+    return await trx.select().from(userTable).where(eq(userTable.customerID,customerID))
   },
 }

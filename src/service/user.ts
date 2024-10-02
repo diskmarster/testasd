@@ -6,6 +6,7 @@ import {
   UserNoHash,
 } from '@/lib/database/schema/auth'
 import { hashPassword, userDTO, verifyPassword } from './user.utils'
+import { CustomerID } from '@/lib/database/schema/customer'
 
 export const userService = {
   register: async function (
@@ -93,4 +94,8 @@ export const userService = {
   deleteByID: async function (userID: UserID): Promise<boolean> {
     return user.deleteByID(userID)
   },
+  getAllByCustomerID: async function(customerID: CustomerID): Promise<UserNoHash[]> {
+    const users = await user.getAllByCustomerID(customerID)
+    return users.map(u => userDTO(u))
+  }
 }
