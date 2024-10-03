@@ -97,7 +97,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
             tilgang på dette produkt
           </CredenzaDescription>
         </CredenzaHeader>
-        <CredenzaBody className='h-full overflow-y-auto scroll-pb-[100px] overscroll-none'>
+        <CredenzaBody>
           <form
             onSubmit={handleSubmit(onSubmit)}
             className='space-y-4 pb-4 md:pb-0'>

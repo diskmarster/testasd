@@ -155,7 +155,7 @@ export function ModalUpdateInventory({
             Opdater beholdning ved at lave en tilgang eller afgang
           </CredenzaDescription>
         </CredenzaHeader>
-        <CredenzaBody className='h-full overflow-y-auto scroll-pb-[100px] overscroll-none'>
+        <CredenzaBody>
           <form
             className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>

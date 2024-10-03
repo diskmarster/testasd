@@ -104,14 +104,14 @@ export function UpdateProductsForm({
 
   return (
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
-      <CredenzaContent>
+      <CredenzaContent className='md:max-w-lg max-h-screen'>
         <CredenzaHeader>
           <CredenzaTitle>Rediger produkt</CredenzaTitle>
           <CredenzaDescription>
             Her kan du redigere et produkt
           </CredenzaDescription>
         </CredenzaHeader>
-        <CredenzaBody className='h-full overflow-y-auto scroll-pb-[100px] overscroll-none'>
+        <CredenzaBody>
           <form
             className='grid gap-4 mb-4 md:mb-0'
             onSubmit={handleSubmit(onSubmit)}>
