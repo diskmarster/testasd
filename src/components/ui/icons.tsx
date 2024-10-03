@@ -32,6 +32,7 @@ import {
   Type,
   Warehouse,
   X,
+  RotateCcw
 } from 'lucide-react'
 
 export const Icons = {
@@ -68,6 +69,7 @@ export const Icons = {
   boxes: Boxes,
   check: Check,
   infinity: Infinity,
+  refresh: RotateCcw,
   plusMinus: ({ ...props }) => (
     <svg
       xmlns='http://www.w3.org/2000/svg'
