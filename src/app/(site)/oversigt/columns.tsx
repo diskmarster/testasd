@@ -362,12 +362,12 @@ export function getTableOverviewFilters(
       })),
     ],
   }
-  const updatedFilter: FilterField<FormattedInventory> = {
+  /* const updatedFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('updated'),
     type: 'date-range',
     label: 'Opdateret',
     value: '',
-  }
+  } */
 
   switch (plan) {
     case 'lite':
