@@ -19,6 +19,15 @@ export default async function Home() {
   if (!customer) return signOutAction()
 
   const inventory = await inventoryService.getInventory(location)
+  inventory.sort((a, b) => {
+    const skuCompare = a.product.sku.localeCompare(b.product.sku)
+
+    if (skuCompare == 0) {
+      return b.placement.name.localeCompare(a.placement.name)
+    } else {
+      return skuCompare
+    }
+  })
   const units = await inventoryService.getActiveUnits()
   const groups = await inventoryService.getActiveGroupsByID(customer.id)
   const placements = await inventoryService.getActivePlacementsByID(location)
