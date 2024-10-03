@@ -13,3 +13,11 @@ export const changeLocationAction = privateAction
     locationService.setCookie(parsedInput.locationID)
     revalidatePath(parsedInput.revalidatePath)
   })
+
+  export const refreshTableAction = privateAction
+.schema(z.object({pathName: z.string()}))
+.action(async ({ parsedInput }) => {
+
+  revalidatePath(parsedInput.pathName) 
+}
+)
