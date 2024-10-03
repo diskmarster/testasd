@@ -111,7 +111,7 @@ export function UpdateProductsForm({
             Her kan du redigere et produkt
           </CredenzaDescription>
         </CredenzaHeader>
-        <CredenzaBody>
+        <CredenzaBody className='h-full overflow-y-auto scroll-pb-[100px] overscroll-none'>
           <form
             className='grid gap-4 mb-4 md:mb-0'
             onSubmit={handleSubmit(onSubmit)}>

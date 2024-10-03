@@ -84,14 +84,14 @@ export function CreateProductsForm({
           <Icons.plus className='size-5' />
         </Button>
       </CredenzaTrigger>
-      <CredenzaContent>
+      <CredenzaContent className='md:max-w-lg max-h-screen'>
         <CredenzaHeader>
           <CredenzaTitle>Opret produkt</CredenzaTitle>
           <CredenzaDescription>
             Her kan du oprette et produkt.
           </CredenzaDescription>
         </CredenzaHeader>
-        <CredenzaBody>
+        <CredenzaBody className='h-full overflow-y-auto scroll-pb-[100px] overscroll-none'>
           <form
             className='grid gap-4 mb-4 md:mb-0'
             onSubmit={handleSubmit(onSubmit)}>

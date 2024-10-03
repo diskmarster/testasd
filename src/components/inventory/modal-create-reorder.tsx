@@ -115,7 +115,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
             som du selv bestemmer
           </CredenzaDescription>
         </CredenzaHeader>
-        <CredenzaBody>
+        <CredenzaBody className='h-full overflow-y-auto scroll-pb-[100px] overscroll-none'>
           <form
             onSubmit={handleSubmit(onSubmit)}
             className='space-y-4 pb-4 md:pb-0'>
