@@ -5,7 +5,8 @@ import { Customer, Location } from '@/lib/database/schema/customer'
 import { User } from 'lucia'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { TabsAdminUsers } from './tabs-company-users'
+import { ModalInviteUser } from './modal-invite-user'
+import { TableAdminUsers } from './table-company-users'
 
 interface Props {
   user: User
@@ -52,14 +53,14 @@ export function TabsAdmin({ customer, user, users, locations }: Props) {
         </TabsList>
         <div>
           {currentTab == 'brugere' ? (
-            <div>user</div>
+            <ModalInviteUser />
           ) : currentTab == 'lokationer' ? (
             <div>lok</div>
           ) : null}
         </div>
       </div>
       <TabsContent value='brugere'>
-        <TabsAdminUsers data={users} user={user} customer={customer} />
+        <TableAdminUsers data={users} user={user} customer={customer} />
       </TabsContent>
 
       <TabsContent value='lokationer'>Change your password here.</TabsContent>

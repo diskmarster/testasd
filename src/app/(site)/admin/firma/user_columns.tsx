@@ -1,3 +1,4 @@
+import { TableUsersActions } from '@/components/admin/table-users-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
@@ -86,7 +87,7 @@ export function getTableUsersColumns(
       const badgeVariant = status ? 'secondary' : 'outline'
 
       return (
-        <Badge variant={badgeVariant}>{status ? 'Altiv' : 'Deaktiveret'}</Badge>
+        <Badge variant={badgeVariant}>{status ? 'Aktiv' : 'Deaktiveret'}</Badge>
       )
     },
     meta: {
@@ -159,7 +160,7 @@ export function getTableUsersColumns(
   const actionsCol: ColumnDef<UserNoHash> = {
     accessorKey: 'actions',
     header: () => null,
-    //cell: ({ table, row }) => <TableReorderActions row={row} table={table} />,
+    cell: ({ table, row }) => <TableUsersActions row={row} table={table} />,
     enableHiding: false,
     enableSorting: false,
     meta: {
@@ -175,6 +176,7 @@ export function getTableUsersColumns(
     statusCol,
     insertedCol,
     updatedCol,
+    actionsCol,
   ]
 }
 

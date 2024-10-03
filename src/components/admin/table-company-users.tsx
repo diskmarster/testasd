@@ -50,7 +50,7 @@ interface Props {
   customer: Customer
 }
 
-export function TabsAdminUsers({ data, user, customer }: Props) {
+export function TableAdminUsers({ data, user, customer }: Props) {
   const LOCALSTORAGE_KEY = 'users_cols'
   const columns = useMemo(() => getTableUsersColumns(user.role), [user.role])
 
@@ -150,9 +150,9 @@ export function TabsAdminUsers({ data, user, customer }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
