@@ -125,23 +125,26 @@ export function ButtonRefreshOverview() {
   const [pending, startTransition] = useTransition()
   const pathName = usePathname()
 
-  const onSubmit = async () => {
+  const onSubmit = () => {
     startTransition(async () => {
-      
-        await refreshTableAction({ pathName }); 
-    }
-  )
-  };
+      await refreshTableAction({ pathName })
+    })
+  }
   return (
     <>
-          <Button 
-          tabIndex={-1}
-          size='icon'
-          type='button'
-          variant='outline'
-          onClick={onSubmit} disabled={pending}>
-                  {pending ? <Icons.spinner className='animate-spin' /> : <Icons.refresh className='size-5' />}
-          </Button>
+      <Button
+        tabIndex={-1}
+        size='icon'
+        type='button'
+        variant='outline'
+        onClick={onSubmit}
+        disabled={pending}>
+        {pending ? (
+          <Icons.spinner className='animate-spin' />
+        ) : (
+          <Icons.refresh className='size-5' />
+        )}
+      </Button>
     </>
-  );
+  )
 }
