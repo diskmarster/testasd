@@ -257,6 +257,7 @@ export function UpdateProductsForm({
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input
+                  step={0.01}
                   min={0}
                   required
                   id='costPrice'
@@ -273,6 +274,7 @@ export function UpdateProductsForm({
               <div className='grid gap-2'>
                 <Label htmlFor='salesPrice'>Salgspris</Label>
                 <Input
+                  step={0.01}
                   min={0}
                   id='salesPrice'
                   type='number'
