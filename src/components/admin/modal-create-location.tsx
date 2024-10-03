@@ -22,7 +22,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 
-export function ModalInviteUser() {
+export function ModalCreateLocation() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
@@ -55,7 +55,7 @@ export function ModalInviteUser() {
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
         <Button size='icon' variant='outline'>
-          <Icons.userPlus className='size-4' />
+          <Icons.housePlus className='size-4' />
         </Button>
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>

@@ -17,6 +17,7 @@ import {
   Download,
   Ellipsis,
   ExternalLink,
+  HousePlus,
   Infinity,
   List,
   Loader2,
@@ -31,13 +32,16 @@ import {
   Sun,
   Trash,
   Type,
+  UserRoundPlus,
   Warehouse,
   X,
 } from 'lucide-react'
 
 export const Icons = {
   updown: ChevronsUpDown,
+  housePlus: HousePlus,
   arrowDownUp: ArrowDownUp,
+  userPlus: UserRoundPlus,
   arrowLeftRight: ArrowLeftRight,
   chevronDownUp: ChevronsUpDownIcon,
   diff: Diff,
