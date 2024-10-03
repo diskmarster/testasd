@@ -1,5 +1,6 @@
 'use client'
 
+import { refreshTableAction } from '@/app/actions'
 import TableToolbarFilters from '@/components/table/table-filters'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,7 +14,8 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { exportTableToCSV } from '@/lib/export/csv'
 import { Column, Table } from '@tanstack/react-table'
-import { useTransition } from 'react'
+import { usePathname } from 'next/navigation'
+import { useState, useTransition } from 'react'
 
 type ToolbarOptions = {
   showExport?: boolean
@@ -52,6 +54,7 @@ export function TableToolbar<T>({
       </div>
       {options && (
         <div className='ml-auto flex items-center gap-2'>
+          <ButtonRefreshOverview />
           {options.showExport && <DownloadButton table={table} />}
           {options.showHideShow && <ViewOptions table={table} />}
         </div>
@@ -116,4 +119,29 @@ export function ViewOptions<T>({ table }: { table: Table<T> }) {
       </DropdownMenuContent>
     </DropdownMenu>
   )
+}
+export function ButtonRefreshOverview() {
+  const [error, setError] = useState<string | null>(null)
+  const [pending, startTransition] = useTransition()
+  const pathName = usePathname()
+
+  const onSubmit = async () => {
+    startTransition(async () => {
+      
+        await refreshTableAction({ pathName }); 
+    }
+  )
+  };
+  return (
+    <>
+          <Button 
+          tabIndex={-1}
+          size='icon'
+          type='button'
+          variant='outline'
+          onClick={onSubmit} disabled={pending}>
+                  {pending ? <Icons.spinner className='animate-spin' /> : <Icons.refresh className='size-5' />}
+          </Button>
+    </>
+  );
 }
