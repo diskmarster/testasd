@@ -8,6 +8,7 @@ export const updateInventoryValidation = z
     batchID: z.string().or(z.coerce.number()),
     type: historyTypeZodSchema,
     amount: z.coerce.number(),
+    reference: z.string().optional(),
   })
   .superRefine((val, ctx) => {
     if (val.type == 'afgang' || val.type == 'regulering') {
