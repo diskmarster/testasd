@@ -100,6 +100,7 @@ export const moveInventoryAction = privateAction
       parsedInput.toPlacementID,
       'flyt',
       parsedInput.amount,
+      parsedInput.reference,
     )
 
     revalidatePath('/oversigt')
