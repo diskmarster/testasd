@@ -3,7 +3,7 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { UserRole } from '@/data/user.types'
+import { UserRole, userRoles } from '@/data/user.types'
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -84,7 +84,7 @@ export function getTableUsersColumns(
     header: ({ column }) => <TableHeader column={column} title='Status' />,
     cell: ({ getValue }) => {
       const status = getValue<boolean>()
-      const badgeVariant = status ? 'secondary' : 'outline'
+      const badgeVariant = status ? 'secondary' : 'destructive'
 
       return (
         <Badge variant={badgeVariant}>{status ? 'Aktiv' : 'Deaktiveret'}</Badge>
@@ -93,6 +93,9 @@ export function getTableUsersColumns(
     meta: {
       viewLabel: 'Status',
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    }
   }
 
   const updatedCol: ColumnDef<UserNoHash> = {
@@ -183,13 +186,64 @@ export function getTableUsersColumns(
 export function getTableUsersFilters(
   table: Table<UserNoHash>,
 ): FilterField<UserNoHash>[] {
-  const skuFilter: FilterField<UserNoHash> = {
-    column: table.getColumn('sku'),
+  const nameFilter: FilterField<UserNoHash> = {
+    column: table.getColumn('name'),
     type: 'text',
-    label: 'Varenr.',
+    label: 'Navn',
     value: '',
-    placeholder: 'Søg i varenr.',
+    placeholder: 'Søg i navn',
   }
 
-  return [skuFilter]
+  const emailFilter: FilterField<UserNoHash> = {
+    column: table.getColumn('email'),
+    type: 'text',
+    label: 'Email',
+    value: '',
+    placeholder: 'Søg i email',
+  }
+
+  const roleFilter: FilterField<UserNoHash> = {
+    column: table.getColumn('role'),
+    type: 'select',
+    label: 'Brugerrolle',
+    value: '',
+    options: [
+      ...userRoles
+        .filter(role => role != 'sys_admin')
+        .map(role => ({
+          value: role,
+          label: role
+            .split('_')
+            .map(role => `${role.charAt(0).toUpperCase()}${role.substring(1)}`) // could have used capitalize tailwind class but too lazy now
+            .join(' '),
+        })),
+    ],
+  }
+
+  const statusFilter: FilterField<UserNoHash> = {
+    column: table.getColumn('isActive'),
+    type: 'select',
+    label: 'Status',
+    value: '',
+    options: [
+      { value: true, label: 'Aktiv' },
+      { value: false, label: 'Deaktiveret' },
+    ],
+  }
+
+  const insertedFilter: FilterField<UserNoHash> = {
+    column: table.getColumn('inserted'),
+    type: 'date-range',
+    label: 'Oprettet',
+    value: '',
+  }
+
+  const updatedFilter: FilterField<UserNoHash> = {
+    column: table.getColumn('updated'),
+    type: 'date-range',
+    label: 'Opdateret',
+    value: '',
+  }
+
+  return [nameFilter, emailFilter, roleFilter, statusFilter, insertedFilter, updatedFilter]
 }
