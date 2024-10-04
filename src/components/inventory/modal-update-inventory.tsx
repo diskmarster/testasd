@@ -19,7 +19,7 @@ import { Customer } from '@/lib/database/schema/customer'
 import { Batch, Placement, Product } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRef, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -166,7 +166,7 @@ export function ModalUpdateInventory({
         </CredenzaHeader>
         <CredenzaBody>
           <form
-            className='space-y-4 px-1 pb-4 md:pb-0'
+            className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>

@@ -34,7 +34,7 @@ import {
 } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRef, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -188,7 +188,7 @@ export function ModalMoveInventory({
         <CredenzaBody>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4 px-1 pb-4 md:pb-0'>
+            className='space-y-4 pb-4 md:pb-0'>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
