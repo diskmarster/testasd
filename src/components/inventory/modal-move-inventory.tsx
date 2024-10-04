@@ -34,7 +34,7 @@ import {
 } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useTransition } from 'react'
+import { useRef, useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -56,6 +56,7 @@ export function ModalMoveInventory({
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+  const [useReference, setUseReference] = useState(false)
 
   const uniqueProducts = inventory.filter((item, index, self) => {
     return index === self.findIndex(i => i.product.id === item.product.id)
@@ -91,6 +92,7 @@ export function ModalMoveInventory({
     formState,
     register,
     resetField,
+    setFocus,
   } = useForm<z.infer<typeof moveInventoryValidation>>({
     resolver: zodResolver(moveInventoryValidation),
     defaultValues: {
@@ -102,6 +104,7 @@ export function ModalMoveInventory({
   })
 
   const formValues = watch()
+  console.log(formValues)
   const hasProduct = formValues.productID != undefined
 
   const fromInventoryItem = inventory.find(
@@ -127,6 +130,13 @@ export function ModalMoveInventory({
         description: `beholdning flyttet`,
       })
     })
+  }
+
+  function onUseReferenceChange(val: boolean) {
+    setUseReference(val)
+    if (val == true) {
+      setFocus('reference')
+    }
   }
 
   function increment() {
@@ -178,7 +188,7 @@ export function ModalMoveInventory({
         <CredenzaBody>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4 pb-4 md:pb-0'>
+            className='space-y-4 px-1 pb-4 md:pb-0'>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
@@ -380,7 +390,21 @@ export function ModalMoveInventory({
                 </p>
               )}
             </div>
-
+            <div className={cn('relative flex flex-col transition-all', useReference && 'gap-2')}>
+              <div className={cn('w-full flex z-10 transition-all')}>
+                <Label
+                  className='md:text-xs cursor-pointer hover:underline select-none transition-all'
+                  onClick={() => onUseReferenceChange(!useReference)}
+                >
+                  Brug konto/sag
+                </Label>
+              </div>
+              <Input
+                {...register('reference')}
+                placeholder='Indtast Konto/sag'
+                className={cn('transition-all', !useReference ? 'h-0 p-0 border-none' : 'h-[40px]')}
+              />
+            </div>
             <Button
               disabled={!formState.isValid || pending || formState.isSubmitting}
               size='lg'
