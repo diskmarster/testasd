@@ -64,6 +64,10 @@ export function exportTableToCSV<TData>(
             }
           }
 
+          if (typeof cellValue == 'boolean') {
+            return cellValue ? 'Ja' : 'Nej'
+          }
+
           // For non-date columns, return the value as it is or escape quotes in strings
           return typeof cellValue === 'string'
             ? `"${cellValue.replace(/"/g, '""')}"`
