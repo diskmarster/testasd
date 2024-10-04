@@ -53,7 +53,6 @@ export function ModalUpdateInventory({
   const [newPlacement, setNewPlacement] = useState(false)
   const [newBatch, setNewBatch] = useState(false)
   const [useReference, setUseReference] = useState(false)
-  const referenceRef = useRef<HTMLInputElement>(null)
 
   const fallbackPlacementID =
     customer.plan == 'lite'
@@ -73,6 +72,7 @@ export function ModalUpdateInventory({
     watch,
     handleSubmit,
     resetField,
+    setFocus,
   } = useForm<z.infer<typeof updateInventoryValidation>>({
     resolver: zodResolver(updateInventoryValidation),
     defaultValues: {
@@ -118,8 +118,8 @@ export function ModalUpdateInventory({
 
   function onUseReferenceChange(val: boolean) {
     setUseReference(val)
-    if (val == true && referenceRef.current) {
-      referenceRef.current.focus()
+    if (val == true) {
+      setFocus('reference')
     }
   }
 
@@ -373,7 +373,6 @@ export function ModalUpdateInventory({
               </div>
               <Input
                 {...register('reference')}
-                ref={referenceRef}
                 placeholder='Indtast Konto/sag'
                 className={cn('transition-all', !useReference ? 'h-0 p-0 border-none' : 'h-[40px]')}
               />
