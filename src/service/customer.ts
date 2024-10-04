@@ -1,14 +1,9 @@
-import { customer } from '@/data/customer'
-import {
-  Customer,
-  CustomerID,
-  CustomerLink,
-  CustomerLinkID,
-  NewCustomer,
-  NewCustomerLink,
-} from '@/lib/database/schema/customer'
-import { generateIdFromEntropySize } from 'lucia'
-import { isLinkExpired } from './customer.utils'
+import { customer } from "@/data/customer";
+import { Customer, CustomerID, CustomerLink, CustomerLinkID, NewCustomer, NewCustomerLink } from "@/lib/database/schema/customer";
+import { generateIdFromEntropySize } from "lucia";
+import { isLinkExpired } from "./customer.utils";
+import { user } from "@/data/user";
+import { UserLinkID } from "@/lib/database/schema/auth";
 
 const ACTIVATION_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -70,9 +65,13 @@ export const customerService = {
     const existingCustomer = customer.getByID(existingLink.customerID)
     return existingCustomer
   },
-  toggleActivationByID: async function(
-    customerID: CustomerID,
-  ): Promise<boolean> {
+  getByUserLinkID: async function(linkID: UserLinkID): Promise<Customer | undefined> {
+    const existingLink = await user.getUserLinkByID(linkID)
+    if (!existingLink) return undefined
+    const existingCustomer = customer.getByID(existingLink.customerID)
+    return existingCustomer
+  },
+  toggleActivationByID: async function(customerID: CustomerID): Promise<boolean> {
     return await customer.toggleActivationStatusByID(customerID)
   },
 }

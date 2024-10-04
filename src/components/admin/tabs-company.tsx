@@ -1,7 +1,7 @@
 'use client'
 
 import { UserNoHash } from '@/lib/database/schema/auth'
-import { Customer, Location } from '@/lib/database/schema/customer'
+import { Customer, Location, LocationID } from '@/lib/database/schema/customer'
 import { User } from 'lucia'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
@@ -16,9 +16,16 @@ interface Props {
   customer: Customer
   users: UserNoHash[]
   locations: Location[]
+  currentLocationID: LocationID
 }
 
-export function TabsAdmin({ customer, user, users, locations }: Props) {
+export function TabsAdmin({
+  customer,
+  user,
+  users,
+  locations,
+  currentLocationID,
+}: Props) {
   const router = useRouter()
   const pathName = usePathname()
   const searchParams = useSearchParams()
@@ -68,7 +75,11 @@ export function TabsAdmin({ customer, user, users, locations }: Props) {
         </TabsList>
         <div>
           {currentTab() == 'brugere' ? (
-            <ModalInviteUser />
+            <ModalInviteUser
+              user={user}
+              locations={locations}
+              currentLocationID={currentLocationID}
+            />
           ) : currentTab() == 'lokationer' ? (
             <ModalCreateLocation />
           ) : null}

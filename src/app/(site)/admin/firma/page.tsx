@@ -37,6 +37,7 @@ export default async function Page() {
         user={user}
         locations={locations}
         users={users}
+        currentLocationID={location}
       />
     </SiteWrapper>
   )

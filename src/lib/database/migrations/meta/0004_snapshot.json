@@ -48,6 +48,9 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+  "id": "11fc1cbe-e972-43cc-93cf-8798c29b009c",
+  "prevId": "d90bcc90-0f2d-41bc-929c-8fcf17d1d6f9",
+  "tables": {
     "nl_session": {
       "name": "nl_session",
       "columns": {
@@ -92,6 +95,73 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "nl_user_link": {
+      "name": "nl_user_link",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "location_ids": {
+          "name": "location_ids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "inserted": {
+          "name": "inserted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nl_user_link_customer_id_nl_customer_id_fk": {
+          "name": "nl_user_link_customer_id_nl_customer_id_fk",
+          "tableFrom": "nl_user_link",
+          "tableTo": "nl_customer",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+>>>>>>> 42b0793 (can now invite users and they can register)
     "nl_user": {
       "name": "nl_user",
       "columns": {

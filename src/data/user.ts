@@ -1,13 +1,7 @@
-import { db, TRX } from '@/lib/database'
-import {
-  NewUser,
-  PartialUser,
-  User,
-  UserID,
-  userTable,
-} from '@/lib/database/schema/auth'
-import { CustomerID } from '@/lib/database/schema/customer'
-import { eq } from 'drizzle-orm'
+import { db, TRX } from "@/lib/database";
+import { NewUser, NewUserLink, PartialUser, User, UserID, UserLink, UserLinkID, userLinkTable, userTable } from "@/lib/database/schema/auth";
+import { CustomerID } from "@/lib/database/schema/customer";
+import { eq } from "drizzle-orm";
 
 export const user = {
   create: async function(
@@ -60,4 +54,12 @@ export const user = {
   getAllByCustomerID: async function(customerID:CustomerID, trx: TRX = db): Promise<User[]> {
     return await trx.select().from(userTable).where(eq(userTable.customerID,customerID))
   },
+  createUserLink: async function(linkData: NewUserLink, trx: TRX = db): Promise<UserLink | undefined> {
+    const userLinks = await trx.insert(userLinkTable).values(linkData).returning()
+    return userLinks[0]
+  },
+  getUserLinkByID: async function(userLinkID: UserLinkID, trx: TRX = db): Promise<UserLink> {
+    const userLink = await trx.select().from(userLinkTable).where(eq(userLinkTable.id, userLinkID))
+    return userLink[0]
+  }
 }
