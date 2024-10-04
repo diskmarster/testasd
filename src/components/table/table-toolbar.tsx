@@ -141,10 +141,11 @@ export function ButtonRefreshOverview() {
         size='icon'
         type='button'
         variant='outline'
+        className='flex items-center justify-center'
         onClick={onSubmit}
         disabled={pending}>
         <Icons.refresh
-          className={cn('size-5', pending && 'animate-spin-refresh')}
+          className={cn('size-4', pending && 'animate-spin-refresh')}
         />
       </Button>
     </>
