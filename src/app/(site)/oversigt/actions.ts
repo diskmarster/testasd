@@ -15,7 +15,7 @@ export const updateInventoryAction = privateAction
   .schema(updateInventoryValidation)
   .action(
     async ({
-      parsedInput: { productID, placementID, batchID, type, amount },
+      parsedInput: { productID, placementID, batchID, type, amount, reference },
       ctx,
     }) => {
       const location = await locationService.getLastVisited(ctx.user.id)
@@ -70,6 +70,7 @@ export const updateInventoryAction = privateAction
         batchID,
         type,
         type == 'tilgang' ? amount : -amount,
+        reference,
       )
 
       revalidatePath('/oversigt')
