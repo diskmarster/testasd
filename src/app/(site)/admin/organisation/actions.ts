@@ -6,10 +6,12 @@ import { adminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
+import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
 import {
+  createNewLocationValidation,
   inviteNewUserValidation,
   toggleUserStatusValidation,
 } from './validation'
@@ -58,4 +60,33 @@ export const inviteNewUserAction = adminAction
       subject,
       EmailInviteUser({ link: userInviteLink }),
     )
+  })
+
+export const createNewLocationAction = adminAction
+  .schema(createNewLocationValidation)
+  .action(async ({ parsedInput }) => {
+    // 1. does location exist?
+    // 2. create location
+    // 3. create defualt batch and placement for location
+    // 4. create zero-quantaties for every product for new location
+    // 5. add user accesses for userIDs
+    // 6. revalidates pathname
+
+    const existingLocation = await locationService.getByName(
+      parsedInput.name.trim(),
+    )
+    if (existingLocation) {
+      throw new ActionError('Lokation findes allerede')
+    }
+
+    const didCreateLocation = await locationService.createWithAccess(
+      parsedInput.name,
+      parsedInput.customerID,
+      parsedInput.userIDs,
+    )
+    if (!didCreateLocation) {
+      throw new ActionError('Lokationen blev ikke oprettet')
+    }
+
+    revalidatePath(parsedInput.pathname)
   })

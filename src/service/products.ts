@@ -2,7 +2,7 @@ import { inventory } from '@/data/inventory'
 import { location } from '@/data/location'
 import { product } from '@/data/products'
 import { FormattedProduct } from '@/data/products.types'
-import { db } from '@/lib/database'
+import { db, TRX } from '@/lib/database'
 import { CustomerID } from '@/lib/database/schema/customer'
 import {
   Inventory,
@@ -127,6 +127,7 @@ export const productService = {
   },
   getAllByID: async function(
     customerID: CustomerID,
+    trx: TRX = db,
   ): Promise<FormattedProduct[]> {
     return await product.getAllByCustomerID(customerID)
   },

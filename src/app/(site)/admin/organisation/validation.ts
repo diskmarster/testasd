@@ -11,5 +11,16 @@ export const inviteNewUserValidation = z.object({
 
 export const toggleUserStatusValidation = z.object({
   userID: z.coerce.number(),
-  status: z.coerce.boolean()
+  status: z.coerce.boolean(),
+})
+
+export const createNewLocationValidation = z.object({
+  name: z
+    .string()
+    .min(3, { message: 'Lokationsnavn skal være minimum 3 karaktere lang' }),
+  customerID: z.coerce.number(),
+  userIDs: z
+    .array(z.coerce.number())
+    .min(1, { message: 'Minimum en lokation skal vælges' }),
+  pathname: z.string().min(1),
 })

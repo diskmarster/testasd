@@ -172,11 +172,7 @@ export function ModalInviteUser({ user, locations, currentLocationID }: Props) {
                 <span className='text-muted-foreground text-xs tabular-nums'>
                   {formValues.locationIDs.length}
                   {' af '}
-                  {locations.length}{' '}
-                  {formValues.locationIDs.length == 1
-                    ? 'lokation'
-                    : 'lokationer'}{' '}
-                  valgt
+                  {locations.length} lokationer valgt
                 </span>
               </div>
               <ScrollArea

@@ -4,6 +4,8 @@ import { UserNoHash } from '@/lib/database/schema/auth'
 import { Customer, Location, LocationID } from '@/lib/database/schema/customer'
 import { User } from 'lucia'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { Button } from '../ui/button'
+import { Icons } from '../ui/icons'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { FormCompanyEdit } from './form-company-edit'
 import { ModalCreateLocation } from './modal-create-location'
@@ -81,7 +83,11 @@ export function TabsAdmin({
               currentLocationID={currentLocationID}
             />
           ) : currentTab() == 'lokationer' ? (
-            <ModalCreateLocation />
+            <ModalCreateLocation user={user} users={users}>
+              <Button size='icon' variant='outline'>
+                <Icons.housePlus className='size-4' />
+              </Button>
+            </ModalCreateLocation>
           ) : null}
         </div>
       </div>

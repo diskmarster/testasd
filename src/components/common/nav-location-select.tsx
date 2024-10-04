@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { useSession } from "@/context/session";
 import { siteConfig } from "@/config/site";
+import { ModalCreateLocation } from "../admin/modal-create-location";
 
 export function NavLocationSelect({ locations, lastVisitedID }: { locations: LocationWithPrimary[], lastVisitedID: string | undefined }) {
   const { user } = useSession()
@@ -40,10 +41,12 @@ export function NavLocationSelect({ locations, lastVisitedID }: { locations: Loc
           <SelectLabel className="text-sm font-semibold">
             <div className="flex items-center gap-4 justify-between">
               <p>Vælg lokation</p>
-              {user?.role == 'sys_admin' || user?.role == 'firma_admin' && (
-                <Button size='iconSm' variant='outline'>
-                  <Icons.plus className="size-3" />
-                </Button>
+              {user && user.role.includes('admin') && (
+                <ModalCreateLocation user={user}>
+                  <Button size='iconSm' variant='outline'>
+                    <Icons.plus className="size-3" />
+                  </Button>
+                </ModalCreateLocation>
               )}
             </div>
           </SelectLabel>

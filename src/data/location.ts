@@ -1,6 +1,8 @@
 import { db, TRX } from "@/lib/database";
 import { UserID } from "@/lib/database/schema/auth";
 import { CustomerID, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
+import { locationService } from "@/service/location";
+import { functionalUpdate } from "@tanstack/react-table";
 import { eq, and, getTableColumns } from "drizzle-orm";
 
 
@@ -57,5 +59,9 @@ export const location = {
         eq(linkLocationToUserTable.userID, userID)
       ))
     return resultSet.rowsAffected == 1
+  },
+  getByName: async function(name: string, trx: TRX = db): Promise<Location | undefined> {
+    const location = await trx.select().from(locationTable).where(eq(locationTable.name, name))
+    return location[0]
   }
 }
