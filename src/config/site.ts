@@ -40,8 +40,9 @@ export const siteConfig: SiteConfig = {
       isDropdown: true,
       items: [
         {
-          label: 'Firma',
-          description: 'Se, rediger og slet i alt vedrerønde din firma konto',
+          label: 'Organisation',
+          description:
+            'Se og rediger i brugere, lokationer og firmainformation',
           href: '/admin/firma',
           roles: [],
           isExternal: false,
@@ -72,14 +73,6 @@ export const siteConfig: SiteConfig = {
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: false,
-        },
-        {
-          label: 'Lokationer',
-          description: 'Se, opret og rediger i dine lokationer',
-          href: '/admin/lokationer',
-          roles: [],
-          isExternal: false,
-          isDisabled: true,
         },
       ],
     },

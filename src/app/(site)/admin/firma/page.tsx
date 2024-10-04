@@ -1,4 +1,5 @@
 import { signOutAction } from '@/app/(auth)/log-ud/actions'
+import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
 import { TabsAdmin } from '@/components/admin/tabs-company'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { customerService } from '@/service/customer'
@@ -39,6 +40,9 @@ export default async function Page() {
         users={users}
         currentLocationID={location}
       />
+
+      {/* Modals without triggers that we open with custom events from row actions */}
+      <ModalToggleUser users={users} />
     </SiteWrapper>
   )
 }

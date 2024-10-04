@@ -18,13 +18,12 @@ export function TableUsersActions({ table, row }: Props) {
   return (
     <TableActionsWrapper>
       <DropdownMenuItem
-        disabled
         onClick={() => {
-          emitCustomEvent('UpdateReorderByIDs', {
-            foo: 'foo',
+          emitCustomEvent('ToggleUserByID', {
+            userID: row.original.id,
           })
         }}>
-        Deaktiver
+        {row.original.isActive ? 'Deaktiver' : 'Aktiver'}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem

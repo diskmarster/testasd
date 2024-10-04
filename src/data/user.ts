@@ -1,7 +1,7 @@
 import { db, TRX } from "@/lib/database";
 import { NewUser, NewUserLink, PartialUser, User, UserID, UserLink, UserLinkID, userLinkTable, userTable } from "@/lib/database/schema/auth";
 import { CustomerID } from "@/lib/database/schema/customer";
-import { eq } from "drizzle-orm";
+import { eq, not } from "drizzle-orm";
 
 export const user = {
   create: async function(
@@ -66,4 +66,10 @@ export const user = {
     const resultSet = await trx.delete(userLinkTable).where(eq(userLinkTable.id, linkID))
     return resultSet.rowsAffected == 1
   },
+  toggleStatus: async function(userID: UserID, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx.update(userTable).set({
+      isActive: not(userTable.isActive)
+    }).where(eq(userTable.id, userID))
+    return resultSet.rowsAffected == 1
+  }
 }

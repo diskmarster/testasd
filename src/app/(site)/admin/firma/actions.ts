@@ -7,7 +7,21 @@ import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
 import { userService } from '@/service/user'
-import { inviteNewUserValidation } from './validation'
+import { revalidatePath } from 'next/cache'
+import {
+  inviteNewUserValidation,
+  toggleUserStatusValidation,
+} from './validation'
+
+export const toggleUserStatusAction = adminAction
+  .schema(toggleUserStatusValidation)
+  .action(async ({ parsedInput, ctx }) => {
+    const didToggle = await userService.toggleUserStatusByID(parsedInput.userID)
+    if (!didToggle) {
+      throw new ActionError('Brugerens status blev ikke opdateret')
+    }
+    revalidatePath('/admin/firma')
+  })
 
 export const inviteNewUserAction = adminAction
   .schema(inviteNewUserValidation)

@@ -154,4 +154,7 @@ export const userService = {
   deleteUserLink: async function(linkID: UserLinkID): Promise<boolean> {
     return await user.deleteUserLink(linkID)
   },
+  toggleUserStatusByID: async function(userID: UserID): Promise<boolean> {
+    return await user.toggleStatus(userID)
+  }
 }

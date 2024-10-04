@@ -8,3 +8,7 @@ export const inviteNewUserValidation = z.object({
     .array(z.string())
     .min(1, { message: 'Minimum en lokation skal vælges' }),
 })
+
+export const toggleUserStatusValidation = z.object({
+  userID: z.coerce.number()
+})
