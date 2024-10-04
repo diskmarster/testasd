@@ -54,4 +54,5 @@ export const moveInventoryValidation = z.object({
   fromBatchID: z.coerce.number(),
   toPlacementID: z.coerce.number(),
   amount: z.coerce.number().min(1),
+  reference: z.string().optional(),
 })
