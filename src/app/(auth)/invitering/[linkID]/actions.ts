@@ -49,16 +49,7 @@ export const signUpInvitedAction = publicAction
       throw new ActionError('Din bruger blev ikke oprettet')
     }
 
-    if (!existingCustomer.isActive) {
-      const isCustomerToggled = await customerService.toggleActivationByID(
-        existingCustomer.id,
-      )
-      if (!isCustomerToggled) {
-        throw new ActionError('Din firmakonto blev ikke aktiveret')
-      }
-    }
-
-    const isLinkDeleted = await customerService.deleteActivationLink(
+    const isLinkDeleted = await userService.deleteUserLink(
       parsedInput.linkID,
     )
     if (!isLinkDeleted) {

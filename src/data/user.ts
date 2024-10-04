@@ -61,5 +61,9 @@ export const user = {
   getUserLinkByID: async function(userLinkID: UserLinkID, trx: TRX = db): Promise<UserLink> {
     const userLink = await trx.select().from(userLinkTable).where(eq(userLinkTable.id, userLinkID))
     return userLink[0]
-  }
+  },
+  deleteUserLink: async function(linkID: UserLinkID, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx.delete(userLinkTable).where(eq(userLinkTable.id, linkID))
+    return resultSet.rowsAffected == 1
+  },
 }

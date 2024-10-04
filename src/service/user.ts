@@ -120,6 +120,7 @@ export const userService = {
       if (!newUser) return undefined
 
       // Drizzle does apperently not convert locationIDs to a string
+      // despite its type being string[]
       // so we do it manually and typescript does not like that
       // @ts-ignore
       userLinkData.locationIDs = (userLinkData.locationIDs as string).split(',')
@@ -149,5 +150,8 @@ export const userService = {
   },
   validateUserLink: function(insertedDate: Date): boolean {
     return isLinkExpired(insertedDate, LINK_DURATION_HOURS)
+  },
+  deleteUserLink: async function(linkID: UserLinkID): Promise<boolean> {
+    return await user.deleteUserLink(linkID)
   },
 }
