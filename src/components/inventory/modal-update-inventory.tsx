@@ -52,6 +52,7 @@ export function ModalUpdateInventory({
   const [pending, startTransition] = useTransition()
   const [newPlacement, setNewPlacement] = useState(false)
   const [newBatch, setNewBatch] = useState(false)
+  const [useReference, setUseReference] = useState(false)
 
   const fallbackPlacementID =
     customer.plan == 'lite'
@@ -71,6 +72,7 @@ export function ModalUpdateInventory({
     watch,
     handleSubmit,
     resetField,
+    setFocus,
   } = useForm<z.infer<typeof updateInventoryValidation>>({
     resolver: zodResolver(updateInventoryValidation),
     defaultValues: {
@@ -112,6 +114,13 @@ export function ModalUpdateInventory({
     setNewBatch(false)
     setNewPlacement(false)
     setOpen(open)
+  }
+
+  function onUseReferenceChange(val: boolean) {
+    setUseReference(val)
+    if (val == true) {
+      setFocus('reference')
+    }
   }
 
   function onSubmit(values: z.infer<typeof updateInventoryValidation>) {
@@ -352,6 +361,21 @@ export function ModalUpdateInventory({
                   {formState.errors.amount.message}
                 </p>
               )}
+            </div>
+            <div className={cn('relative flex flex-col transition-all', useReference && 'gap-2')}>
+              <div className={cn('w-full flex z-10 transition-all')}>
+                <Label
+                  className='md:text-xs cursor-pointer hover:underline select-none transition-all'
+                  onClick={() => onUseReferenceChange(!useReference)}
+                >
+                  Brug konto/sag
+                </Label>
+              </div>
+              <Input
+                {...register('reference')}
+                placeholder='Indtast Konto/sag'
+                className={cn('transition-all', !useReference ? 'h-0 p-0 border-none' : 'h-[40px]')}
+              />
             </div>
             <Button
               disabled={!formState.isValid || pending || formState.isSubmitting}
