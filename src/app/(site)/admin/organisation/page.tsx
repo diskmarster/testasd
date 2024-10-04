@@ -31,8 +31,8 @@ export default async function Page() {
 
   return (
     <SiteWrapper
-      title='Firma'
-      description='Se, rediger og slet i alt vedrerønde din firma konto'>
+      title='Organisation'
+      description='Se og rediger i brugere, lokationer og firmainformation'>
       <TabsAdmin
         customer={customer}
         user={user}

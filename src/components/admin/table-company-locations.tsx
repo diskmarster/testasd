@@ -3,7 +3,7 @@
 import {
   getTableLocationsColumns,
   getTableLocationFilters as getTableLocationsFilters,
-} from '@/app/(site)/admin/firma/location-columns'
+} from '@/app/(site)/admin/organisation/location-columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'

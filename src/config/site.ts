@@ -43,7 +43,7 @@ export const siteConfig: SiteConfig = {
           label: 'Organisation',
           description:
             'Se og rediger i brugere, lokationer og firmainformation',
-          href: '/admin/firma',
+          href: '/admin/organisation',
           roles: [],
           isExternal: false,
           isDisabled: false,

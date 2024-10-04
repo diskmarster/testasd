@@ -1,7 +1,7 @@
 'use client'
 
-import { inviteNewUserAction } from '@/app/(site)/admin/firma/actions'
-import { inviteNewUserValidation } from '@/app/(site)/admin/firma/validation'
+import { inviteNewUserAction } from '@/app/(site)/admin/organisation/actions'
+import { inviteNewUserValidation } from '@/app/(site)/admin/organisation/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
