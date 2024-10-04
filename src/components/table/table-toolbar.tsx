@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Icons } from '@/components/ui/icons'
 import { exportTableToCSV } from '@/lib/export/csv'
+import { cn } from '@/lib/utils'
 import { Column, Table } from '@tanstack/react-table'
 import { usePathname } from 'next/navigation'
 import { useState, useTransition } from 'react'
@@ -127,7 +128,10 @@ export function ButtonRefreshOverview() {
 
   const onSubmit = () => {
     startTransition(async () => {
+      const start = Date.now()
       await refreshTableAction({ pathName })
+      const end = Date.now()
+      setTimeout(() => {}, 600 - (end - start))
     })
   }
   return (
@@ -137,13 +141,12 @@ export function ButtonRefreshOverview() {
         size='icon'
         type='button'
         variant='outline'
+        className='flex items-center justify-center'
         onClick={onSubmit}
         disabled={pending}>
-        {pending ? (
-          <Icons.spinner className='animate-spin' />
-        ) : (
-          <Icons.refresh className='size-5' />
-        )}
+        <Icons.refresh
+          className={cn('size-4', pending && 'animate-spin-refresh')}
+        />
       </Button>
     </>
   )
