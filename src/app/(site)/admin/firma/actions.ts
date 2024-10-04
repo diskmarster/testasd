@@ -6,6 +6,7 @@ import { adminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
+import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
 import {
@@ -20,6 +21,11 @@ export const toggleUserStatusAction = adminAction
     if (!didToggle) {
       throw new ActionError('Brugerens status blev ikke opdateret')
     }
+
+    if (parsedInput.status) {
+      sessionService.invalidateByID(parsedInput.userID)
+    }
+
     revalidatePath('/admin/firma')
   })
 

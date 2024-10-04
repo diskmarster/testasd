@@ -44,6 +44,7 @@ export function ModalToggleUser({ users }: Props) {
   useCustomEventListener('ToggleUserByID', (data: any) => {
     setOpen(true)
     setValue('userID', data.userID, { shouldValidate: true })
+    setValue('status', data.status, { shouldValidate: true })
   })
 
   function onSubmit(values: z.infer<typeof toggleUserStatusValidation>) {

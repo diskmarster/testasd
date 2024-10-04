@@ -10,5 +10,6 @@ export const inviteNewUserValidation = z.object({
 })
 
 export const toggleUserStatusValidation = z.object({
-  userID: z.coerce.number()
+  userID: z.coerce.number(),
+  status: z.coerce.boolean()
 })

@@ -21,6 +21,7 @@ export function TableUsersActions({ table, row }: Props) {
         onClick={() => {
           emitCustomEvent('ToggleUserByID', {
             userID: row.original.id,
+            status: row.original.isActive,
           })
         }}>
         {row.original.isActive ? 'Deaktiver' : 'Aktiver'}
