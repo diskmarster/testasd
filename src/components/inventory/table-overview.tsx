@@ -44,6 +44,12 @@ const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
 const ROW_PER_PAGE = [100, 250, 500, 1000]
 
+const defaultVisibility = {
+  barcode: false,
+  group: false,
+  text3: false,
+}
+
 interface Props {
   data: FormattedInventory[]
   user: User
@@ -74,7 +80,7 @@ export function TableOverview({
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [grouping, setGrouping] = useState<GroupingState>(['sku'])
   const [expanded, setExpanded] = useState<ExpandedState>({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultVisibility)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -83,9 +89,10 @@ export function TableOverview({
 
   useEffect(() => {
     const visibility = JSON.parse(
-      localStorage.getItem(LOCALSTORAGE_KEY) || '{}',
+      //@ts-ignore
+      localStorage.getItem(LOCALSTORAGE_KEY),
     )
-    setColumnVisibility(visibility)
+    setColumnVisibility(visibility ?? defaultVisibility)
   }, [LOCALSTORAGE_KEY, setColumnVisibility])
 
   const handleVisibilityChange = (updaterOrValue: Updater<VisibilityState>) => {
@@ -175,9 +182,9 @@ export function TableOverview({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
