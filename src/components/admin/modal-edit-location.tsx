@@ -1,7 +1,7 @@
 'use client'
 
-import { createNewLocationAction } from '@/app/(site)/admin/organisation/actions'
-import { createNewLocationValidation } from '@/app/(site)/admin/organisation/validation'
+import { editLocationAction } from '@/app/(site)/admin/organisation/actions'
+import { editLocationValidation } from '@/app/(site)/admin/organisation/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -10,17 +10,17 @@ import {
   CredenzaDescription,
   CredenzaHeader,
   CredenzaTitle,
-  CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
 import { UserNoHash } from '@/lib/database/schema/auth'
+import { LinkLocationToUser } from '@/lib/database/schema/customer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { User } from 'lucia'
-import { usePathname } from 'next/navigation'
 import { useState, useTransition } from 'react'
+import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -31,23 +31,21 @@ import { Switch } from '../ui/switch'
 interface Props {
   users?: UserNoHash[]
   user: User
-  children: React.ReactNode
+  userAccesses: LinkLocationToUser[]
 }
 
-export function ModalCreateLocation({ user, users, children }: Props) {
+export function ModalEditLocation({ user, users, userAccesses }: Props) {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
-  const pathname = usePathname()
 
   const { handleSubmit, register, formState, reset, watch, setValue } = useForm<
-    z.infer<typeof createNewLocationValidation>
+    z.infer<typeof editLocationValidation>
   >({
-    resolver: zodResolver(createNewLocationValidation),
+    resolver: zodResolver(editLocationValidation),
     defaultValues: {
       userIDs: [user.id],
       customerID: user.customerID,
-      pathname: pathname,
     },
   })
 
@@ -58,11 +56,9 @@ export function ModalCreateLocation({ user, users, children }: Props) {
     setOpen(open)
   }
 
-  const onSubmit = async (
-    values: z.infer<typeof createNewLocationValidation>,
-  ) => {
+  const onSubmit = async (values: z.infer<typeof editLocationValidation>) => {
     startTransition(async () => {
-      const res = await createNewLocationAction(values)
+      const res = await editLocationAction(values)
       if (res && res.serverError) {
         setError(res.serverError)
         return
@@ -71,20 +67,31 @@ export function ModalCreateLocation({ user, users, children }: Props) {
       reset()
       setOpen(false)
       toast.success(siteConfig.successTitle, {
-        description: `${values.name} blev oprettet`,
+        description: `${values.name} blev opdateret`,
       })
     })
   }
 
+  useCustomEventListener('EditLocationByID', (data: any) => {
+    setValue('locationID', data.locationID, { shouldValidate: true })
+    setValue('name', data.name, { shouldValidate: true })
+
+    const locationAccesses = userAccesses
+      .filter(access => access.locationID == data.locationID)
+      .map(access => access.userID)
+    setValue('userIDs', locationAccesses, { shouldValidate: true })
+
+    setOpen(true)
+  })
+
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
-      <CredenzaTrigger asChild>{children}</CredenzaTrigger>
       <CredenzaContent className='md:max-w-md'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret ny lokation</CredenzaTitle>
+          <CredenzaTitle>Rediger lokation</CredenzaTitle>
           <CredenzaDescription>
-            Nye lokationer kan tilgås med det samme i dropdown menuen oppe i
-            højre hjørne
+            Her kan du redigere en lokations navn og adgangsrettigheder til dine
+            brugere
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>

@@ -18,10 +18,10 @@ export function TableLocationsActions({ table, row }: Props) {
   return (
     <TableActionsWrapper>
       <DropdownMenuItem
-        disabled
         onClick={() => {
-          emitCustomEvent('UpdateReorderByIDs', {
-            foo: 'foo',
+          emitCustomEvent('EditLocationByID', {
+            locationID: row.original.id,
+            name: row.original.name,
           })
         }}>
         Rediger

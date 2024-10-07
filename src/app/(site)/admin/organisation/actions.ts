@@ -12,6 +12,7 @@ import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
 import {
   createNewLocationValidation,
+  editLocationValidation,
   inviteNewUserValidation,
   toggleUserStatusValidation,
 } from './validation'
@@ -28,7 +29,7 @@ export const toggleUserStatusAction = adminAction
       sessionService.invalidateByID(parsedInput.userID)
     }
 
-    revalidatePath('/admin/firma')
+    revalidatePath('/admin/organisation')
   })
 
 export const inviteNewUserAction = adminAction
@@ -89,4 +90,30 @@ export const createNewLocationAction = adminAction
     }
 
     revalidatePath(parsedInput.pathname)
+  })
+
+export const editLocationAction = adminAction
+  .schema(editLocationValidation)
+  .action(async ({ parsedInput, ctx }) => {
+    // 1. fetch old accesses for location
+    // 2. update location name
+    // 3. create/remove user accesses
+
+    const oldLocationAccesses = await locationService.getAccessesByLocationID(
+      parsedInput.locationID,
+    )
+    const oldUsersAccess = oldLocationAccesses.map(old => old.userID)
+
+    const didUpdateLocation = await locationService.updateLocation(
+      parsedInput.locationID,
+      ctx.user.customerID,
+      parsedInput.name,
+      oldUsersAccess,
+      parsedInput.userIDs,
+    )
+    if (!didUpdateLocation) {
+      throw new ActionError('Lokationen blev ikke opdateret')
+    }
+
+    revalidatePath('/admin/organisation')
   })

@@ -24,3 +24,14 @@ export const createNewLocationValidation = z.object({
     .min(1, { message: 'Minimum en lokation skal vælges' }),
   pathname: z.string().min(1),
 })
+
+export const editLocationValidation = z.object({
+  locationID: z.string().min(1, {message: 'Kunne ikke hente lokationens information. Prøv at luk og åben pop-up vinduet'}),
+  name: z
+    .string()
+    .min(3, { message: 'Lokationsnavn skal være minimum 3 karaktere lang' }),
+  customerID: z.coerce.number(),
+  userIDs: z
+    .array(z.coerce.number())
+    .min(1, { message: 'Minimum en lokation skal vælges' }),
+})

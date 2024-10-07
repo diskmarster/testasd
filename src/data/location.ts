@@ -1,6 +1,6 @@
 import { db, TRX } from "@/lib/database";
 import { UserID } from "@/lib/database/schema/auth";
-import { CustomerID, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
+import { CustomerID, LinkLocationToUser, LinkLocationToUserPK, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation, PartialLocation } from "@/lib/database/schema/customer";
 import { locationService } from "@/service/location";
 import { functionalUpdate } from "@tanstack/react-table";
 import { eq, and, getTableColumns } from "drizzle-orm";
@@ -63,5 +63,34 @@ export const location = {
   getByName: async function(name: string, trx: TRX = db): Promise<Location | undefined> {
     const location = await trx.select().from(locationTable).where(eq(locationTable.name, name))
     return location[0]
-  }
+  },
+  getAccessesByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<LinkLocationToUser[]> {
+    return await trx
+      .select()
+      .from(linkLocationToUserTable)
+      .where(eq(linkLocationToUserTable.customerID, customerID))
+  },
+  getAccessesByLocationID: async function(locationID: LocationID, trx: TRX = db): Promise<LinkLocationToUser[]> {
+    return await trx
+      .select()
+      .from(linkLocationToUserTable)
+      .where(eq(linkLocationToUserTable.locationID, locationID))
+
+  },
+  updateLocation: async function(locationID: LocationID, locationData: PartialLocation, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx
+      .update(locationTable)
+      .set(locationData)
+      .where(eq(locationTable.id, locationID))
+    return resultSet.rowsAffected == 1
+  },
+  removeAccess: async function(linkPK: LinkLocationToUserPK, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx
+      .delete(linkLocationToUserTable)
+      .where(and(
+        eq(linkLocationToUserTable.locationID, linkPK.locationID),
+        eq(linkLocationToUserTable.userID, linkPK.userID)
+      ))
+    return resultSet.rowsAffected == 1
+  },
 }
