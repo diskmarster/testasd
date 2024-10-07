@@ -45,3 +45,5 @@ export const resetPasswordTable = sqliteTable('nl_reset_password', {
     .references(() => userTable.id, { onDelete: 'cascade' }),
   expiresAt: integer('expires_at').notNull(),
 })
+
+export type ResetPasswordID = (typeof resetPasswordTable.$inferSelect)['id']
