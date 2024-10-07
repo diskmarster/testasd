@@ -1,11 +1,13 @@
-import * as dateFns from "date-fns";
 import { db, TRX } from '@/lib/database'
 import {
+  ResetPassword,
   ResetPasswordID,
   resetPasswordTable,
   UserID,
 } from '@/lib/database/schema/auth'
-import { generateId } from "lucia";
+import * as dateFns from 'date-fns'
+import { eq } from 'drizzle-orm'
+import { generateId } from 'lucia'
 
 export const passwordReset = {
   createPasswordReset: async function(
@@ -26,5 +28,16 @@ export const passwordReset = {
       .returning({ id: resetPasswordTable.id })
 
     return res?.id
+  },
+  getPasswordResetById: async function(
+    id: ResetPasswordID,
+    trx: TRX = db,
+  ): Promise<ResetPassword | undefined> {
+    const [res] = await trx
+      .select()
+      .from(resetPasswordTable)
+      .where(eq(resetPasswordTable.id, id))
+
+    return res
   },
 }
