@@ -50,14 +50,17 @@ export function getTableLocationsColumns(
     header: ({ column }) => <TableHeader column={column} title='Status' />,
     cell: ({ getValue }) => {
       const status = getValue<boolean>()
-      const badgeVariant = status ? 'secondary' : 'outline'
+      const badgeVariant = status ? 'destructive' : 'secondary'
 
       return (
-        <Badge variant={badgeVariant}>{status ? 'Aktiv' : 'Deaktiveret'}</Badge>
+        <Badge variant={badgeVariant}>{status ? 'Deaktiveret' : 'Aktiv'}</Badge>
       )
     },
     meta: {
       viewLabel: 'Status',
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue<boolean>(id))
     },
   }
 
@@ -140,13 +143,38 @@ export function getTableLocationsColumns(
 export function getTableLocationFilters(
   table: Table<Location>,
 ): FilterField<Location>[] {
-  const skuFilter: FilterField<Location> = {
-    column: table.getColumn('sku'),
+  const nameFilter: FilterField<Location> = {
+    column: table.getColumn('name'),
     type: 'text',
-    label: 'Varenr.',
+    label: 'Navn',
     value: '',
-    placeholder: 'Søg i varenr.',
+    placeholder: 'Søg i navn',
   }
 
-  return [skuFilter]
+  const statusFilter: FilterField<Location> = {
+    column: table.getColumn('isBarred'),
+    type: 'select',
+    label: 'Status',
+    value: '',
+    options: [
+      { label: 'Deaktiveret', value: true },
+      { label: 'Aktiv', value: false },
+    ],
+  }
+
+  const insertedFilter: FilterField<Location> = {
+    column: table.getColumn('inserted'),
+    type: 'date-range',
+    label: 'Oprettet',
+    value: '',
+  }
+
+  const updatedFilter: FilterField<Location> = {
+    column: table.getColumn('updated'),
+    type: 'date-range',
+    label: 'Opdateret',
+    value: '',
+  }
+
+  return [nameFilter, statusFilter, insertedFilter, updatedFilter]
 }

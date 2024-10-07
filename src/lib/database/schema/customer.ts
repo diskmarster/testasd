@@ -36,7 +36,8 @@ export type PartialCustomerLink = Partial<CustomerLink>
 export const locationTable = sqliteTable('nl_location', {
   id: text("id").notNull().primaryKey(),
   customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
-  name: text('name').notNull()
+  name: text('name').notNull(),
+  isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false)
 })
 
 export type NewLocation = typeof locationTable.$inferInsert
