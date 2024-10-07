@@ -1,6 +1,6 @@
 import { EmailResetPassword } from '@/components/email/email-reset-password'
 import { passwordReset } from '@/data/password-reset'
-import { ResetPassword, ResetPasswordID } from '@/lib/database/schema/auth'
+import { ResetPassword, ResetPasswordID, UserID } from '@/lib/database/schema/auth'
 import { ACTION_ERR_INTERNAL, ActionError } from '@/lib/safe-action/error'
 import { emailService } from './email'
 import { userService } from './user'
@@ -58,13 +58,19 @@ export const passwordResetService = {
   },
   getLinkById: async function(
     id: ResetPasswordID,
-  ): Promise<(ResetPassword & { isExpired: boolean }) | undefined> {
+  ): Promise<(ResetPassword & { isExpired: () => boolean }) | undefined> {
     const link = await passwordReset.getPasswordResetById(id)
     if (!link) return undefined
 
     return {
       ...link,
-      isExpired: isBefore(link.expiresAt, Date.now())
+      isExpired: () => isBefore(link.expiresAt, Date.now())
     }
   },
+  reset: async function(
+    userID: UserID,
+    password: string,
+  ): Promise<boolean> {
+    return false
+  }
 }
