@@ -28,13 +28,13 @@ export function TableLocationsActions({ table, row }: Props) {
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem
-        disabled
         onClick={() => {
-          emitCustomEvent('DeleteReorderByIDs', {
-            foo: 'foo',
+          emitCustomEvent('ToggleLocationByID', {
+            locationID: [row.original.id],
+            status: row.original.isBarred,
           })
         }}>
-        Spær
+        Skift status
       </DropdownMenuItem>
     </TableActionsWrapper>
   )

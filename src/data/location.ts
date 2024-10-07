@@ -3,7 +3,7 @@ import { UserID } from "@/lib/database/schema/auth";
 import { CustomerID, LinkLocationToUser, LinkLocationToUserPK, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation, PartialLocation } from "@/lib/database/schema/customer";
 import { locationService } from "@/service/location";
 import { functionalUpdate } from "@tanstack/react-table";
-import { eq, and, getTableColumns } from "drizzle-orm";
+import { eq, and, getTableColumns, not } from "drizzle-orm";
 
 
 export const location = {
@@ -93,4 +93,11 @@ export const location = {
       ))
     return resultSet.rowsAffected == 1
   },
+  toggleStatus: async function(locationID: LocationID, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx.update(locationTable).set({
+      isBarred: not(locationTable.isBarred)
+    })
+    .where(eq(locationTable.id, locationID))
+    return resultSet.rowsAffected == 1
+  }
 }

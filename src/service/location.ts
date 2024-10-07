@@ -22,7 +22,7 @@ const LAST_LOCATION_COOKIE_NAME = 'nl_last_location'
 const LAST_LOCATION_COOKIE_DURATION_D = 14
 
 export const locationService = {
-  create: async function (
+  create: async function(
     locationData: NewLocation,
   ): Promise<Location | undefined> {
     const didCreate = await db.transaction(async trx => {
@@ -46,25 +46,25 @@ export const locationService = {
     })
     return didCreate
   },
-  addAccess: async function (newLink: NewLinkLocationToUser): Promise<boolean> {
+  addAccess: async function(newLink: NewLinkLocationToUser): Promise<boolean> {
     return await location.createAccess(newLink)
   },
-  getAllByUserID: async function (
+  getAllByUserID: async function(
     userID: UserID,
   ): Promise<LocationWithPrimary[]> {
     return await location.getAllByUserID(userID)
   },
-  setCookie: function (locationID: LocationID): void {
+  setCookie: function(locationID: LocationID): void {
     cookies().set(LAST_LOCATION_COOKIE_NAME, locationID.toString(), {
       httpOnly: true,
       secure: process.env.VERCEL_ENV === 'production',
       expires: addDays(new Date(), LAST_LOCATION_COOKIE_DURATION_D),
     })
   },
-  deleteCookie: function (): void {
+  deleteCookie: function(): void {
     cookies().delete(LAST_LOCATION_COOKIE_NAME)
   },
-  getLastVisited: async function (
+  getLastVisited: async function(
     userID: UserID,
   ): Promise<LocationID | undefined> {
     let defaultLocationID
@@ -90,7 +90,7 @@ export const locationService = {
 
     return defaultLocationID
   },
-  toggleLocationPrimary: async function (
+  toggleLocationPrimary: async function(
     userID: UserID,
     newLocationID: LocationID,
   ): Promise<boolean> {
@@ -100,7 +100,7 @@ export const locationService = {
     )
     return didUpdate
   },
-  getByID: async function (
+  getByID: async function(
     locationID: LocationID,
   ): Promise<Location | undefined> {
     return await location.getByID(locationID)
@@ -110,10 +110,10 @@ export const locationService = {
   ): Promise<Location[]> {
     return await location.getAllByCustomerID(customerID)
   },
-  getByName: async function (name: string): Promise<Location | undefined> {
+  getByName: async function(name: string): Promise<Location | undefined> {
     return await location.getByName(name.trim())
   },
-  createWithAccess: async function (
+  createWithAccess: async function(
     name: string,
     customerID: CustomerID,
     userIDs: number[],
@@ -176,17 +176,17 @@ export const locationService = {
 
     return transaction
   },
-  getAccessesByCustomerID: async function (
+  getAccessesByCustomerID: async function(
     customerID: CustomerID,
   ): Promise<LinkLocationToUser[]> {
     return await location.getAccessesByCustomerID(customerID)
   },
-  getAccessesByLocationID: async function (
+  getAccessesByLocationID: async function(
     locationID: LocationID,
   ): Promise<LinkLocationToUser[]> {
     return await location.getAccessesByLocationID(locationID)
   },
-  updateLocation: async function (
+  updateLocation: async function(
     locationID: LocationID,
     customerID: CustomerID,
     newName: string,
@@ -247,5 +247,8 @@ export const locationService = {
     })
 
     return transaction
+  },
+  updateStatus: async function(locationID: LocationID, isBarred: boolean): Promise<boolean> {
+    return await location.updateLocation(locationID, {isBarred: isBarred})
   },
 }

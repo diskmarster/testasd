@@ -1,5 +1,6 @@
 import { signOutAction } from '@/app/(auth)/log-ud/actions'
 import { ModalEditLocation } from '@/components/admin/modal-edit-location'
+import { ModalToggleLocation } from '@/components/admin/modal-toggle-location'
 import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
 import { TabsAdmin } from '@/components/admin/tabs-company'
 import { SiteWrapper } from '@/components/common/site-wrapper'
@@ -46,6 +47,7 @@ export default async function Page() {
       {/* Modals without triggers that we open with custom events from row actions */}
       <ModalToggleUser users={users} />
       <ModalEditLocation user={user} users={users} userAccesses={userAccesses} />
+      <ModalToggleLocation />
     </SiteWrapper>
   )
 }

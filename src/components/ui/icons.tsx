@@ -35,10 +35,12 @@ import {
   UserRoundPlus,
   Warehouse,
   X,
+  ListTodo
 } from 'lucide-react'
 
 export const Icons = {
   updown: ChevronsUpDown,
+  lisTodo: ListTodo,
   housePlus: HousePlus,
   arrowDownUp: ArrowDownUp,
   userPlus: UserRoundPlus,

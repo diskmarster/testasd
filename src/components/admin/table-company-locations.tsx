@@ -38,6 +38,9 @@ import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
 import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { TableFloatingBar } from '../table/table-floating-bar'
+import { Button } from '../ui/button'
+import { Icons } from '../ui/icons'
+import { ButtonToggleLocations } from './button-toggle-locations'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -154,9 +157,9 @@ export function TableAdminLocations({ data, user, customer }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -186,7 +189,12 @@ export function TableAdminLocations({ data, user, customer }: Props) {
       <TablePagination table={table} pageSizes={ROW_PER_PAGE} />
       {ROW_SELECTION_ENABLED && (
         <TableFloatingBar table={table}>
-          {table => <ExportSelectedButton table={table} />}
+          {table => (
+            <>
+              <ExportSelectedButton table={table} />
+              <ButtonToggleLocations table={table} />
+            </>
+          )}
         </TableFloatingBar>
       )}
     </div>
