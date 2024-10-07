@@ -10,10 +10,11 @@ import { generateId } from "lucia";
 export const passwordReset = {
   createPasswordReset: async function(
     userID: UserID,
+    linkDurationMinutes: number = 30,
     trx: TRX = db,
   ): Promise<ResetPasswordID | undefined> {
     const id = generateId(16)
-    const expiry = dateFns.addMinutes(Date.now(), 30).getTime()
+    const expiry = dateFns.addMinutes(Date.now(), linkDurationMinutes).getTime()
 
     const [res] = await trx
       .insert(resetPasswordTable)
