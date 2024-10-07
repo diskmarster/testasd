@@ -1,9 +1,10 @@
 import { EmailResetPassword } from '@/components/email/email-reset-password'
 import { passwordReset } from '@/data/password-reset'
-import { ResetPasswordID } from '@/lib/database/schema/auth'
+import { ResetPassword, ResetPasswordID } from '@/lib/database/schema/auth'
 import { ACTION_ERR_INTERNAL, ActionError } from '@/lib/safe-action/error'
 import { emailService } from './email'
 import { userService } from './user'
+import { isBefore } from 'date-fns'
 
 const RESET_PASSWORD_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -54,5 +55,16 @@ export const passwordResetService = {
     )
 
     return true
+  },
+  getLinkById: async function(
+    id: ResetPasswordID,
+  ): Promise<(ResetPassword & { isExpired: boolean }) | undefined> {
+    const link = await passwordReset.getPasswordResetById(id)
+    if (!link) return undefined
+
+    return {
+      ...link,
+      isExpired: isBefore(link.expiresAt, Date.now())
+    }
   },
 }
