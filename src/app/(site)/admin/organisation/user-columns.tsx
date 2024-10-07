@@ -87,7 +87,7 @@ export function getTableUsersColumns(
       const badgeVariant = status ? 'secondary' : 'destructive'
 
       return (
-        <Badge variant={badgeVariant}>{status ? 'Aktiv' : 'Deaktiveret'}</Badge>
+        <Badge variant={badgeVariant}>{status ? 'Aktiv' : 'Inaktiv'}</Badge>
       )
     },
     meta: {

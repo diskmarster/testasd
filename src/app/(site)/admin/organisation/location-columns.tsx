@@ -53,7 +53,7 @@ export function getTableLocationsColumns(
       const badgeVariant = status ? 'destructive' : 'secondary'
 
       return (
-        <Badge variant={badgeVariant}>{status ? 'Deaktiveret' : 'Aktiv'}</Badge>
+        <Badge variant={badgeVariant}>{status ? 'Inaktiv' : 'Aktiv'}</Badge>
       )
     },
     meta: {
