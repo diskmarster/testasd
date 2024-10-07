@@ -156,5 +156,17 @@ export const userService = {
   },
   toggleUserStatusByID: async function(userID: UserID): Promise<boolean> {
     return await user.toggleStatus(userID)
-  }
+  },
+  updateStatus: async function(
+    userID: UserID,
+    isActive: boolean
+  ): Promise<UserNoHash | undefined> {
+    const updatedUser = await user.updateByID(userID, {
+      isActive
+    })
+    if (!updatedUser) {
+      return undefined
+    }
+    return userDTO(updatedUser)
+  },
 }

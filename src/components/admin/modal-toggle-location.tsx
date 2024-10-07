@@ -1,6 +1,6 @@
 'use client'
 
-import { toggleLocationAction } from '@/app/(site)/admin/organisation/actions'
+import { changeLocationStatusAction } from '@/app/(site)/admin/organisation/actions'
 import { changeLocationStatusValidation } from '@/app/(site)/admin/organisation/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -50,7 +50,7 @@ export function ModalToggleLocation() {
 
   function onSubmit(values: z.infer<typeof changeLocationStatusValidation>) {
     startTransition(async () => {
-      const res = await toggleLocationAction(values)
+      const res = await changeLocationStatusAction(values)
 
       if (res && res.serverError) {
         setError(res.serverError)

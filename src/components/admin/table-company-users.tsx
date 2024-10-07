@@ -39,6 +39,7 @@ import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
 import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { TableFloatingBar } from '../table/table-floating-bar'
+import { ButtonToggleUsers } from './button-toggle-user'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -182,7 +183,12 @@ export function TableAdminUsers({ data, user, customer }: Props) {
       <TablePagination table={table} pageSizes={ROW_PER_PAGE} />
       {ROW_SELECTION_ENABLED && (
         <TableFloatingBar table={table}>
-          {table => <ExportSelectedButton table={table} />}
+          {table => (
+            <>
+              <ExportSelectedButton table={table} />
+              <ButtonToggleUsers table={table} />
+            </>
+          )}
         </TableFloatingBar>
       )}
     </div>

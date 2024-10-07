@@ -6,7 +6,7 @@ import { emitCustomEvent } from 'react-custom-events'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
 
-export function ButtonToggleLocations<TData>({
+export function ButtonToggleUsers<TData>({
   table,
 }: {
   table: Table<TData>
@@ -23,8 +23,8 @@ export function ButtonToggleLocations<TData>({
       variant='outline'
       className='bg-popover'
       onClick={() => {
-        emitCustomEvent('ToggleLocationByID', {
-          locationIDs: selectedIDs,
+        emitCustomEvent('ToggleUserByID', {
+          userIDs: selectedIDs,
         })
         table.resetRowSelection()
       }}>

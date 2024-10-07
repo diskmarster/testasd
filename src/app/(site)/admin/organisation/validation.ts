@@ -9,9 +9,11 @@ export const inviteNewUserValidation = z.object({
     .min(1, { message: 'Minimum en lokation skal vælges' }),
 })
 
-export const toggleUserStatusValidation = z.object({
-  userID: z.coerce.number(),
-  status: z.coerce.boolean(),
+export const changeUserStatusValidation = z.object({
+  userIDs: z
+    .array(z.coerce.number())
+    .min(1, { message: 'Kunne ikke hente brugernes information. Prøv at luk og åben pop-up vinduet' }),
+  status: z.enum(['active', 'inactive'])
 })
 
 export const createNewLocationValidation = z.object({

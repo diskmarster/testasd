@@ -20,11 +20,10 @@ export function TableUsersActions({ table, row }: Props) {
       <DropdownMenuItem
         onClick={() => {
           emitCustomEvent('ToggleUserByID', {
-            userID: row.original.id,
-            status: row.original.isActive,
+            userIDs: [row.original.id],
           })
         }}>
-        {row.original.isActive ? 'Deaktiver' : 'Aktiver'}
+        Skift status
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem

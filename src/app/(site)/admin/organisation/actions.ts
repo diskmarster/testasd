@@ -12,22 +12,37 @@ import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
 import {
   changeLocationStatusValidation,
+  changeUserStatusValidation,
   createNewLocationValidation,
   editLocationValidation,
   inviteNewUserValidation,
-  toggleUserStatusValidation,
 } from './validation'
 
 export const toggleUserStatusAction = adminAction
-  .schema(toggleUserStatusValidation)
+  .schema(changeUserStatusValidation)
   .action(async ({ parsedInput, ctx }) => {
-    const didToggle = await userService.toggleUserStatusByID(parsedInput.userID)
-    if (!didToggle) {
-      throw new ActionError('Brugerens status blev ikke opdateret')
+    console.log('input', parsedInput)
+    const status = parsedInput.status == 'active' ? true : false
+    const userTogglePromises = parsedInput.userIDs.map(uID => {
+      return userService.updateStatus(uID, status)
+    })
+
+    let userInvalidatePromises: Promise<void>[] = []
+    if (parsedInput.status) {
+      userInvalidatePromises = parsedInput.userIDs.map(uID => {
+        return sessionService.invalidateByID(uID)
+      })
     }
 
-    if (parsedInput.status) {
-      sessionService.invalidateByID(parsedInput.userID)
+    const toggleResponses = await Promise.allSettled([
+      ...userTogglePromises,
+      ...userInvalidatePromises,
+    ])
+
+    for (const resp of toggleResponses) {
+      if (resp.status == 'rejected') {
+        throw new ActionError('Kunne ikke opdatere brugere')
+      }
     }
 
     revalidatePath('/admin/organisation')
@@ -120,7 +135,7 @@ export const editLocationAction = adminAction
     revalidatePath('/admin/organisation')
   })
 
-export const toggleLocationAction = adminAction
+export const changeLocationStatusAction = adminAction
   .schema(changeLocationStatusValidation)
   .action(async ({ parsedInput, ctx }) => {
     // 1. toggle location by ID
