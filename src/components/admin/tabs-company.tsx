@@ -85,7 +85,7 @@ export function TabsAdmin({
           ) : currentTab() == 'lokationer' ? (
             <ModalCreateLocation user={user} users={users}>
               <Button size='icon' variant='outline'>
-                <Icons.housePlus className='size-4' />
+                <Icons.gridPlus className='size-5' />
               </Button>
             </ModalCreateLocation>
           ) : null}
