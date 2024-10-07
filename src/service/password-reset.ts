@@ -1,9 +1,9 @@
+import { EmailResetPassword } from '@/components/email/email-reset-password'
 import { passwordReset } from '@/data/password-reset'
 import { ResetPasswordID } from '@/lib/database/schema/auth'
 import { ACTION_ERR_INTERNAL, ActionError } from '@/lib/safe-action/error'
-import { userService } from './user'
 import { emailService } from './email'
-import { EmailTest } from '@/components/email/email-test'
+import { userService } from './user'
 
 const RESET_PASSWORD_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -42,15 +42,15 @@ export const passwordResetService = {
     }
   },
   createAndSendLink: async function(userEmail: string): Promise<boolean> {
-    const resetPasswordLink = this.createLink(userEmail)
+    const resetPasswordLink = await this.createLink(userEmail)
     if (!resetPasswordLink) {
       return false
     }
 
     await emailService.sendRecursively(
       [userEmail],
-      "Nulstil kodeord",
-      EmailTest()
+      'Nulstil kodeord',
+      EmailResetPassword({ link: resetPasswordLink }),
     )
 
     return true
