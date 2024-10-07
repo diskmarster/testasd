@@ -47,7 +47,7 @@ export const passwordResetService = {
       return false
     }
 
-    emailService.sendRecursively(
+    await emailService.sendRecursively(
       [userEmail],
       "Nulstil kodeord",
       EmailTest()
