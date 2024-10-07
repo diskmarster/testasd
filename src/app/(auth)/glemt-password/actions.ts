@@ -26,7 +26,7 @@ export const resetPasswordAction = publicAction
 			)
 		}
 
-		const pwResat = await passwordResetService.reset(link.userId, password)
+		const pwResat = await passwordResetService.reset(link.id, link.userId, password)
 		if (!pwResat) {
 			throw new ActionError(
 				`${ACTION_ERR_INTERNAL}. Kunne ikke nulstille kodeord`,
