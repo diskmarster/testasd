@@ -7,7 +7,6 @@ import Link from 'next/link'
 
 export default async function Page({ params }: { params: { id: string } }) {
 	const link = await passwordResetService.getLinkById(params.id)
-	console.log(link)
 	if (!link || link.isExpired()) {
 		return (
 			<div className='mx-auto max-w-lg space-y-4 text-center'>
