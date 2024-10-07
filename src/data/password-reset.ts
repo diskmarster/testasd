@@ -40,4 +40,14 @@ export const passwordReset = {
 
     return res
   },
+  deletePasswordReset: async function(
+    id: ResetPasswordID,
+    trx: TRX = db,
+  ): Promise<boolean> {
+    const res = await trx
+      .delete(resetPasswordTable)
+      .where(eq(resetPasswordTable.id, id))
+
+    return res.rowsAffected == 1
+  },
 }
