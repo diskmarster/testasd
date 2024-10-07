@@ -1,11 +1,11 @@
 import { siteConfig } from '@/config/site'
-import { CustomerActivationLink } from '@/service/customer'
+import { ResetPasswordLink } from '@/service/password-reset'
 import { Heading, Link, Section, Tailwind, Text } from '@react-email/components'
 
 export function EmailResetPassword({
   link,
 }: {
-  link: CustomerActivationLink
+  link: ResetPasswordLink
 }) {
   return (
     <Tailwind>
