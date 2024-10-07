@@ -46,4 +46,5 @@ export const resetPasswordTable = sqliteTable('nl_reset_password', {
   expiresAt: integer('expires_at').notNull(),
 })
 
-export type ResetPasswordID = (typeof resetPasswordTable.$inferSelect)['id']
+export type ResetPassword = typeof resetPasswordTable.$inferSelect
+export type ResetPasswordID = ResetPassword['id']
