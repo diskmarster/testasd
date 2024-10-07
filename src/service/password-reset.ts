@@ -68,9 +68,20 @@ export const passwordResetService = {
     }
   },
   reset: async function(
+    linkID: ResetPasswordID,
     userID: UserID,
     password: string,
   ): Promise<boolean> {
-    return false
+    const user = await userService.updatePassword(userID, password)
+    if (!user) {
+      return false
+    }
+
+    return await this.deleteLink(linkID)
+  },
+  deleteLink: async function(
+    id: ResetPasswordID,
+  ): Promise<boolean> {
+    return await passwordReset.deletePasswordReset(id)
   }
 }
