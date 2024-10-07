@@ -28,9 +28,9 @@ export function ResetPasswordCard({ link }: { link: ResetPassword }) {
   if (passwordResat) {
     return (
       <div className='mx-auto max-w-lg space-y-4 text-center'>
-        <Icons.mail className='mx-auto h-12 w-12 animate-bounce text-primary' />
+        <Icons.check className='mx-auto h-12 w-12 animate-bounce text-primary' />
         <h1 className='text-2xl font-bold tracking-tight text-foreground'>
-          Kodord nulstillet
+          Kodeord nulstillet
         </h1>
         <p className='text-md text-foreground'>
           Dit kodeord blev nulstillet korrekt. Gå til log ind siden for at logge
