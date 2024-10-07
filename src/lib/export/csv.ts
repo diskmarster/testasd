@@ -26,22 +26,41 @@ export function exportTableToCSV<TData>(
 
   // Generate CSV headers based on the viewLabel from meta, fallback to column id
   const headers = columns.map(column => {
-    // Assert that the columnDef might contain 'meta' with a 'viewLabel'
-    const viewLabel = (column.columnDef as any).meta?.viewLabel
+    // @ts-ignore
+    const viewLabel = column.columnDef.meta?.viewLabel as string | undefined
     return viewLabel || column.id
   })
 
-  // Generate rows for the CSV file
-  const csvContent = [
-    headers.join(delimiter),
-    ...(onlySelected
-      ? table.getFilteredSelectedRowModel().rows
-      : table.getRowModel().rows
-    ).map(row =>
-      columns
-        .map(column => {
-          const cellValue = row.getValue(column.id)
+  const data = (
+    onlySelected ? table.getSelectedRowModel().rows : table.getRowModel().rows
+  ).map(row => columns.map(column => row.getValue(column.id)))
 
+  // Generate rows for the CSV file
+  const csvContent = generateCsvContent(headers, data, delimiter)
+  // Prepend the BOM for Excel compatibility
+  const csvWithBom = '\uFEFF' + csvContent
+
+  const blob = new Blob([csvWithBom], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.setAttribute('href', url)
+  link.setAttribute('download', `${filename}.csv`)
+  link.style.visibility = 'hidden'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+export function generateCsvContent(
+  headers: string[],
+  data: unknown[][],
+  delimiter: string,
+): string {
+  return [
+    headers.join(delimiter),
+    ...data.map(row =>
+      row
+        .map(cellValue => {
           // Check if cellValue is an array of dates or date-like strings
           if (Array.isArray(cellValue) && cellValue[0] instanceof Date) {
             const validDates = cellValue
@@ -64,6 +83,10 @@ export function exportTableToCSV<TData>(
             }
           }
 
+          if (typeof cellValue == 'boolean') {
+            return cellValue ? 'Ja' : 'Nej'
+          }
+
           // For non-date columns, return the value as it is or escape quotes in strings
           return typeof cellValue === 'string'
             ? `"${cellValue.replace(/"/g, '""')}"`
@@ -72,17 +95,4 @@ export function exportTableToCSV<TData>(
         .join(delimiter),
     ),
   ].join('\n')
-
-  // Prepend the BOM for Excel compatibility
-  const csvWithBom = '\uFEFF' + csvContent
-
-  const blob = new Blob([csvWithBom], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.setAttribute('href', url)
-  link.setAttribute('download', `${filename}.csv`)
-  link.style.visibility = 'hidden'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
 }
