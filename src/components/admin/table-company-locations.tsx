@@ -179,7 +179,7 @@ export function TableAdminLocations({ data, user, customer }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className={cn('h-24 text-center')}>
-                  Ingen min. beholdninger
+                  Ingen lokationer fundet
                 </TableCell>
               </TableRow>
             )}

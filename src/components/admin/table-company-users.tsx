@@ -173,7 +173,7 @@ export function TableAdminUsers({ data, user, customer }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className={cn('h-24 text-center')}>
-                  Ingen min. beholdninger
+                  Ingen brugere fundet
                 </TableCell>
               </TableRow>
             )}
