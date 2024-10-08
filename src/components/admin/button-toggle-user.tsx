@@ -1,22 +1,14 @@
 'use client'
 
-import { Location, LocationID } from '@/lib/database/schema/customer'
+import { UserID, UserNoHash } from '@/lib/database/schema/auth'
 import { Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
-import { UserNoHash } from '@/lib/database/schema/auth'
 
-export function ButtonToggleUsers<TData>({
-  table,
-}: {
-  table: Table<TData>
-}) {
+export function ButtonToggleUsers({ table }: { table: Table<UserNoHash> }) {
   const selectedRows = table.getSelectedRowModel().rows
-  let selectedIDs: LocationID[] = []
-  for (const { original } of selectedRows) {
-    selectedIDs.push((original as UserNoHash).id.toString())
-  }
+  const selectedIDs: UserID[] = selectedRows.map(row => row.original.id)
 
   return (
     <Button

@@ -1,21 +1,14 @@
 'use client'
 
 import { Location, LocationID } from '@/lib/database/schema/customer'
-import { Table } from '@tanstack/react-table'
+import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
 
-export function ButtonToggleLocations<TData>({
-  table,
-}: {
-  table: Table<TData>
-}) {
-  const selectedRows = table.getSelectedRowModel().rows
-  let selectedIDs: LocationID[] = []
-  for (const { original } of selectedRows) {
-    selectedIDs.push((original as Location).id)
-  }
+export function ButtonToggleLocations({ table }: { table: Table<Location> }) {
+  const selectedRows: Row<Location>[] = table.getSelectedRowModel().rows
+  const selectedIDs: LocationID[] = selectedRows.map(row => row.original.id)
 
   return (
     <Button
