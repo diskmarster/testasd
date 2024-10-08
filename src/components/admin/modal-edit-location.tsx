@@ -163,7 +163,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                           />
                         </div>
                       )) : (
-                        <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>Opret flere brugere for at tildele adgangsrettigheder når du redigere lokationer</div>
+                        <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>Opret flere brugere for at tildele adgangsrettigheder når du redigerer lokationer</div>
                       )}
                   </div>
                 </ScrollArea>
