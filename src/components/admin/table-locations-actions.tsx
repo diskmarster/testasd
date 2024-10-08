@@ -30,7 +30,7 @@ export function TableLocationsActions({ table, row }: Props) {
       <DropdownMenuItem
         onClick={() => {
           emitCustomEvent('ToggleLocationByID', {
-            locationID: [row.original.id],
+            locationIDs: [row.original.id],
             status: row.original.isBarred,
           })
         }}>
