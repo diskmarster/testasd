@@ -156,7 +156,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                           />
                         </div>
                       )) : (
-                        <div className='text-center w-full text-muted-foreground text-sm'>Opret flere brugere for at tildele adgangsrettigheder når du opretter nye lokationer</div>
+                        <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>Opret flere brugere for at tildele adgangsrettigheder når du opretter nye lokationer</div>
                       )}
                   </div>
                 </ScrollArea>

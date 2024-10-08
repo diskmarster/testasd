@@ -131,7 +131,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                   className='border p-2 rounded-md'
                   maxHeight='max-h-60'>
                   <div className='space-y-2'>
-                    {users
+                    {users.length > 1 ? users
                       .filter(u => u.id != user.id)
                       .map(u => (
                         <div
@@ -162,7 +162,9 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                             }}
                           />
                         </div>
-                      ))}
+                      )) : (
+                        <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>Opret flere brugere for at tildele adgangsrettigheder når du redigere lokationer</div>
+                      )}
                   </div>
                 </ScrollArea>
                 {formState.errors.userIDs && (
