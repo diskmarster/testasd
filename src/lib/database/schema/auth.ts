@@ -1,7 +1,7 @@
-import { UserRole } from "@/data/user.types";
-import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
-import { customerTable, LocationID } from "@/lib/database/schema/customer";
+import { UserRole } from '@/data/user.types'
+import { customerTable, LocationID } from '@/lib/database/schema/customer'
+import { sql } from 'drizzle-orm'
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 export const userTable = sqliteTable('nl_user', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
@@ -50,12 +50,16 @@ export type ResetPassword = typeof resetPasswordTable.$inferSelect
 export type ResetPasswordID = ResetPassword['id']
 
 export const userLinkTable = sqliteTable('nl_user_link', {
-  id: text("id").notNull().primaryKey(),
-  customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
+  id: text('id').notNull().primaryKey(),
+  customerID: integer('customer_id')
+    .notNull()
+    .references(() => customerTable.id, { onDelete: 'cascade' }),
   email: text('email').notNull(),
   role: text('role').notNull().$type<UserRole>(),
   locationIDs: text('location_ids').notNull().$type<LocationID[]>(),
-  inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  inserted: integer('inserted', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
 })
 
 export type UserLink = typeof userLinkTable.$inferSelect
