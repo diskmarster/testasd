@@ -8,10 +8,7 @@ export default async function LayoutAdmin({
   children: React.ReactNode
 }>) {
   const { session, user } = await sessionService.validate()
-  if (!session) {
-    signOutAction()
-    return
-  }
+  if (!session) return redirect('/log-ind')
   if (user.role == 'bruger') return redirect('/oversigt')
   return <>{children}</>
 }
