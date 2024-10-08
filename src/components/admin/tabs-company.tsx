@@ -2,11 +2,22 @@
 
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { Customer, Location, LocationID } from '@/lib/database/schema/customer'
+import { cn } from '@/lib/utils'
+import {
+  isLocationLimitReached,
+  isUserLimitReached,
+} from '@/service/customer.utils'
 import { User } from 'lucia'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip'
 import { FormCompanyEdit } from './form-company-edit'
 import { ModalCreateLocation } from './modal-create-location'
 import { ModalInviteUser } from './modal-invite-user'
@@ -77,17 +88,71 @@ export function TabsAdmin({
         </TabsList>
         <div>
           {currentTab() == 'brugere' ? (
-            <ModalInviteUser
-              user={user}
-              locations={locations}
-              currentLocationID={currentLocationID}
-            />
+            <div className='flex items-center gap-4'>
+              {isUserLimitReached(customer.plan, 0, users.length) && (
+                <div className='flex items-center gap-2'>
+                  <span className='text-xs font-semibold text-destructive'>
+                    Du har nået brugergrænsen
+                  </span>
+                  <TooltipProvider delayDuration={250}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Icons.alert className='size-[18px] text-destructive' />
+                      </TooltipTrigger>
+                      <TooltipContent className='bg-foreground text-background'>
+                        <p>
+                          Opgrader din plan for at få adgang til flere brugere
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
+              <ModalInviteUser
+                user={user}
+                locations={locations}
+                currentLocationID={currentLocationID}
+                isDisabled={isUserLimitReached(customer.plan, 0, users.length)}
+              />
+            </div>
           ) : currentTab() == 'lokationer' ? (
-            <ModalCreateLocation user={user} users={users}>
-              <Button size='icon' variant='outline'>
-                <Icons.gridPlus className='size-5' />
-              </Button>
-            </ModalCreateLocation>
+            <div className='flex items-center gap-4'>
+              {isLocationLimitReached(customer.plan, locations.length) && (
+                <div className='flex items-center gap-2'>
+                  <span className='text-xs font-semibold text-destructive'>
+                    Du har nået lokationsgrænsen
+                  </span>
+                  <TooltipProvider delayDuration={250}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Icons.alert className='size-[18px] text-destructive' />
+                      </TooltipTrigger>
+                      <TooltipContent className='bg-foreground text-background'>
+                        <p>
+                          Opgrader din plan for at få adgang til flere
+                          lokationer
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
+              <ModalCreateLocation user={user} users={users}>
+                <Button
+                  size='icon'
+                  variant='outline'
+                  disabled={isLocationLimitReached(
+                    customer.plan,
+                    locations.length,
+                  )}
+                  className={cn(
+                    isLocationLimitReached(customer.plan, locations.length) &&
+                    'pointer-events-none',
+                  )}>
+                  <Icons.gridPlus className='size-5' />
+                </Button>
+              </ModalCreateLocation>
+            </div>
           ) : null}
         </div>
       </div>

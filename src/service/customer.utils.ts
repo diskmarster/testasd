@@ -1,7 +1,29 @@
+import { Plan } from '@/data/customer.types'
 import { isBefore, addHours } from 'date-fns'
 
 export function isLinkExpired(inserted: Date, durationHH: number): boolean {
   const expiration = addHours(inserted, durationHH)
   const now = new Date()
   return isBefore(now, expiration)
+}
+
+
+export function isLocationLimitReached(plan: Plan, num: number): boolean {
+  const limits: { [key: string]: number } = {
+    lite: 1,
+    plus: 3,
+    pro: Infinity,
+  }
+
+  return num >= limits[plan]
+}
+
+export function isUserLimitReached(plan: Plan, extra: number, num: number): boolean {
+  const limits: { [key: string]: number } = {
+    lite: 1,
+    plus: 10,
+    pro: 20,
+  }
+
+  return num >= limits[plan] + extra
 }

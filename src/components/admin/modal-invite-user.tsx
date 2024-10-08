@@ -32,9 +32,15 @@ interface Props {
   locations: Location[]
   currentLocationID: string
   user: User
+  isDisabled: boolean
 }
 
-export function ModalInviteUser({ user, locations, currentLocationID }: Props) {
+export function ModalInviteUser({
+  user,
+  locations,
+  currentLocationID,
+  isDisabled,
+}: Props) {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
@@ -74,7 +80,11 @@ export function ModalInviteUser({ user, locations, currentLocationID }: Props) {
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
+        <Button
+          size='icon'
+          variant='outline'
+          disabled={isDisabled}
+          className={cn(isDisabled && 'pointer-events-none')}>
           <Icons.userPlus className='size-4' />
         </Button>
       </CredenzaTrigger>
