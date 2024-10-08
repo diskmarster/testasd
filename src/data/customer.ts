@@ -8,6 +8,7 @@ import {
   customerTable,
   NewCustomer,
   NewCustomerLink,
+  PartialCustomer,
 } from '@/lib/database/schema/customer'
 import { eq, not } from 'drizzle-orm'
 
@@ -84,4 +85,8 @@ export const customer = {
       .where(eq(customerTable.id, customerID))
     return resultSet.rowsAffected == 1
   },
+  updateByID: async function(customerID: CustomerID, customerData: PartialCustomer, trx: TRX =db): Promise<boolean> {
+    const resultSet = await trx.update(customerTable).set(customerData).where(eq(customerTable.id, customerID))
+    return resultSet.rowsAffected == 1
+  }
 }

@@ -44,3 +44,8 @@ export const changeLocationStatusValidation = z.object({
     .min(1, { message: 'Minimum en lokation skal vælges' }),
   status: z.enum(['active', 'inactive'])
 })
+
+export const updateCustomerValidation = z.object({
+  company: z.string().min(2, { message: 'Firmanavn skal være minimum 2 karakterer' }),
+  email: z.string().email({ message: 'Email skal være gyldig' }),
+})

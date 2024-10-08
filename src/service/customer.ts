@@ -1,5 +1,5 @@
 import { customer } from "@/data/customer";
-import { Customer, CustomerID, CustomerLink, CustomerLinkID, NewCustomer, NewCustomerLink } from "@/lib/database/schema/customer";
+import { Customer, CustomerID, CustomerLink, CustomerLinkID, NewCustomer, NewCustomerLink, PartialCustomer } from "@/lib/database/schema/customer";
 import { generateIdFromEntropySize } from "lucia";
 import { isLinkExpired } from "./customer.utils";
 import { user } from "@/data/user";
@@ -74,4 +74,7 @@ export const customerService = {
   toggleActivationByID: async function(customerID: CustomerID): Promise<boolean> {
     return await customer.toggleActivationStatusByID(customerID)
   },
+  updateByID: async function(customerID: CustomerID, customerData: PartialCustomer): Promise<boolean> {
+    return await customer.updateByID(customerID, customerData)
+  }
 }

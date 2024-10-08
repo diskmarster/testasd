@@ -1,7 +1,7 @@
 'use client'
 
-import { updateProfileInformationAction } from '@/app/(site)/profil/actions'
-import { updateProfileValidation } from '@/app/(site)/profil/validation'
+import { updateCustomerAction } from '@/app/(site)/admin/organisation/actions'
+import { updateCustomerValidation } from '@/app/(site)/admin/organisation/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
@@ -25,11 +25,11 @@ export function FormCompanyEdit({ customer }: Props) {
   const [formError, setFormError] = useState<string | null>(null)
 
   const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof updateProfileValidation>
+    z.infer<typeof updateCustomerValidation>
   >({
-    resolver: zodResolver(updateProfileValidation),
+    resolver: zodResolver(updateCustomerValidation),
     defaultValues: {
-      name: customer.company,
+      company: customer.company,
       email: customer.email,
     },
   })
@@ -39,13 +39,13 @@ export function FormCompanyEdit({ customer }: Props) {
       className={cn('grid w-full items-start gap-4 md:max-w-lg mt-4')}
       onSubmit={handleSubmit(values => {
         startTransition(async () => {
-          const res = await updateProfileInformationAction({ ...values })
+          const res = await updateCustomerAction({ ...values })
           if (res && res.serverError) {
             setFormError(res.serverError)
             return
           }
           toast(siteConfig.successTitle, {
-            description: 'Din profil blev opdateret',
+            description: 'Din firmaprofil blev opdateret',
           })
         })
       })}>
@@ -58,10 +58,10 @@ export function FormCompanyEdit({ customer }: Props) {
       )}
       <div className='grid gap-2'>
         <Label htmlFor='name'>Firmanavn</Label>
-        <Input id='name' type='text' {...register('name')} />
-        {formState.errors.name && (
+        <Input id='name' type='text' {...register('company')} />
+        {formState.errors.company && (
           <p className='text-sm text-destructive '>
-            {formState.errors.name.message}
+            {formState.errors.company.message}
           </p>
         )}
       </div>

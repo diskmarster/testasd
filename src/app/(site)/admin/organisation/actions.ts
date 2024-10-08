@@ -20,6 +20,7 @@ import {
   createNewLocationValidation,
   editLocationValidation,
   inviteNewUserValidation,
+  updateCustomerValidation,
 } from './validation'
 
 export const toggleUserStatusAction = adminAction
@@ -180,5 +181,18 @@ export const changeLocationStatusAction = adminAction
       }
     }
 
+    revalidatePath('/admin/organisation')
+  })
+
+export const updateCustomerAction = adminAction
+  .schema(updateCustomerValidation)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    console.log('vals', parsedInput)
+    const updatedCustomer = customerService.updateByID(user.customerID, {
+      ...parsedInput,
+    })
+    if (!updatedCustomer) {
+      throw new ActionError('Firma blev ikke opdateret')
+    }
     revalidatePath('/admin/organisation')
   })
