@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8222370c-ef92-4d5e-b55c-eb9b78f9e02d",
-  "prevId": "d90bcc90-0f2d-41bc-929c-8fcf17d1d6f9",
+  "id": "ca0123b4-624b-45c9-8919-51e3a3d366ff",
+  "prevId": "8222370c-ef92-4d5e-b55c-eb9b78f9e02d",
   "tables": {
     "nl_reset_password": {
       "name": "nl_reset_password",
@@ -81,6 +81,72 @@
           "tableTo": "nl_user",
           "columnsFrom": [
             "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "nl_user_link": {
+      "name": "nl_user_link",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "location_ids": {
+          "name": "location_ids",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "inserted": {
+          "name": "inserted",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "nl_user_link_customer_id_nl_customer_id_fk": {
+          "name": "nl_user_link_customer_id_nl_customer_id_fk",
+          "tableFrom": "nl_user_link",
+          "tableTo": "nl_customer",
+          "columnsFrom": [
+            "customer_id"
           ],
           "columnsTo": [
             "id"
@@ -454,6 +520,14 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "is_barred": {
+          "name": "is_barred",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
         }
       },
       "indexes": {},

@@ -104,7 +104,6 @@ export function ModalMoveInventory({
   })
 
   const formValues = watch()
-  console.log(formValues)
   const hasProduct = formValues.productID != undefined
 
   const fromInventoryItem = inventory.find(

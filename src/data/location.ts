@@ -1,7 +1,9 @@
 import { db, TRX } from "@/lib/database";
 import { UserID } from "@/lib/database/schema/auth";
-import { CustomerID, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation } from "@/lib/database/schema/customer";
-import { eq, and, getTableColumns } from "drizzle-orm";
+import { CustomerID, LinkLocationToUser, LinkLocationToUserPK, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation, PartialLocation } from "@/lib/database/schema/customer";
+import { locationService } from "@/service/location";
+import { functionalUpdate } from "@tanstack/react-table";
+import { eq, and, getTableColumns, not } from "drizzle-orm";
 
 
 export const location = {
@@ -57,5 +59,57 @@ export const location = {
         eq(linkLocationToUserTable.userID, userID)
       ))
     return resultSet.rowsAffected == 1
-  }
+  },
+  getByName: async function(name: string, trx: TRX = db): Promise<Location | undefined> {
+    const location = await trx.select().from(locationTable).where(eq(locationTable.name, name))
+    return location[0]
+  },
+  getAccessesByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<LinkLocationToUser[]> {
+    return await trx
+      .select()
+      .from(linkLocationToUserTable)
+      .where(eq(linkLocationToUserTable.customerID, customerID))
+  },
+  getAccessesByLocationID: async function(locationID: LocationID, trx: TRX = db): Promise<LinkLocationToUser[]> {
+    return await trx
+      .select()
+      .from(linkLocationToUserTable)
+      .where(eq(linkLocationToUserTable.locationID, locationID))
+
+  },
+  updateLocation: async function(locationID: LocationID, locationData: PartialLocation, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx
+      .update(locationTable)
+      .set(locationData)
+      .where(eq(locationTable.id, locationID))
+    return resultSet.rowsAffected == 1
+  },
+  removeAccess: async function(linkPK: LinkLocationToUserPK, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx
+      .delete(linkLocationToUserTable)
+      .where(and(
+        eq(linkLocationToUserTable.locationID, linkPK.locationID),
+        eq(linkLocationToUserTable.userID, linkPK.userID)
+      ))
+    return resultSet.rowsAffected == 1
+  },
+  toggleStatus: async function(locationID: LocationID, trx: TRX = db): Promise<boolean> {
+    const resultSet = await trx.update(locationTable).set({
+      isBarred: not(locationTable.isBarred)
+    })
+    .where(eq(locationTable.id, locationID))
+    return resultSet.rowsAffected == 1
+  },
+  getAllActiveByUserID: async function(userID: UserID, trx: TRX = db): Promise<LocationWithPrimary[]> {
+    const locationCols = getTableColumns(locationTable)
+    const locations = await trx
+      .select({ ...locationCols, isPrimary: linkLocationToUserTable.isPrimary })
+      .from(linkLocationToUserTable)
+      .where(and(
+        eq(linkLocationToUserTable.userID, userID),
+        eq(locationTable.isBarred, false)
+      ))
+      .innerJoin(locationTable, eq(locationTable.id, linkLocationToUserTable.locationID))
+    return locations
+  },
 }

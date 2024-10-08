@@ -17,6 +17,7 @@ const badgeVariants = cva(
         outline: 'text-foreground',
         success: 'bg-success text-success-foreground',
         warning: 'bg-warning text-warning-foreground',
+        wow: 'bg-gradient-to-r from-violet-500 to-purple-500 text-white',
       },
     },
     defaultVariants: {
