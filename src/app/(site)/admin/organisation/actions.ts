@@ -5,6 +5,10 @@ import { siteConfig } from '@/config/site'
 import { adminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
+import {
+  isLocationLimitReached,
+  isUserLimitReached,
+} from '@/service/customer.utils'
 import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
@@ -21,7 +25,6 @@ import {
 export const toggleUserStatusAction = adminAction
   .schema(changeUserStatusValidation)
   .action(async ({ parsedInput, ctx }) => {
-    console.log('input', parsedInput)
     const status = parsedInput.status == 'active' ? true : false
     const userTogglePromises = parsedInput.userIDs.map(uID => {
       return userService.updateStatus(uID, status)
@@ -56,7 +59,16 @@ export const inviteNewUserAction = adminAction
       throw new ActionError('En bruger med den email findes allerede')
     }
 
+    const users = await userService.getAllByCustomerID(ctx.user.customerID)
     const customer = await customerService.getByID(ctx.user.customerID)
+    if (!customer) {
+      throw new ActionError('Kunne ikke finde firmakonto')
+    }
+
+    // TODO: add customers extra users to function below when its added
+    if (isUserLimitReached(customer.plan, 0, users.length)) {
+      throw new ActionError('Du har nået brugergrænsen')
+    }
 
     const userInviteLink = await userService.createUserLink({
       email: parsedInput.email,
@@ -81,13 +93,24 @@ export const inviteNewUserAction = adminAction
 
 export const createNewLocationAction = adminAction
   .schema(createNewLocationValidation)
-  .action(async ({ parsedInput }) => {
-    // 1. does location exist?
-    // 2. create location
-    // 3. create defualt batch and placement for location
-    // 4. create zero-quantaties for every product for new location
-    // 5. add user accesses for userIDs
-    // 6. revalidates pathname
+  .action(async ({ parsedInput, ctx }) => {
+    // 1. is location limit reached?
+    // 2. does location exist?
+    // 3. create location
+    // 4. create defualt batch and placement for location
+    // 5. create zero-quantaties for every product for new location
+    // 6. add user accesses for userIDs
+    // 7. revalidates pathname
+
+    const locations = await locationService.getByCustomerID(ctx.user.customerID)
+    const customer = await customerService.getByID(ctx.user.customerID)
+    if (!customer) {
+      throw new ActionError('Lokation findes allerede')
+    }
+
+    if (isLocationLimitReached(customer.plan, locations.length)) {
+      throw new ActionError('Du har nået lokationsgrænsen')
+    }
 
     const existingLocation = await locationService.getByName(
       parsedInput.name.trim(),
