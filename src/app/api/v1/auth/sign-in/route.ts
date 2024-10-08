@@ -9,9 +9,7 @@ const signInSchema = z.object({
 	email: z
 		.string({ message: 'Email mangler' })
 		.email({ message: 'Email er ugyldig' }),
-	password: z
-		.string({ message: 'Password mangler' })
-		.min(8, { message: 'Kodeord skal være mindst 8 karakterer.' }),
+	password: z.string({ message: 'Password mangler' }),
 })
 
 export async function POST(
@@ -48,17 +46,20 @@ export async function POST(
 
 		const { email, password } = zodRes.data
 
-		const user = await userService.verifyPassword(email, password)
+		let user = await userService.verifyPin(email, password)
 
 		if (user == undefined) {
-			return NextResponse.json(
-				{
-					msg: 'Ugyldig email og password',
-				},
-				{
-					status: 401,
-				},
-			)
+			user = await userService.verifyPassword(email, password)
+			if (user == undefined) {
+				return NextResponse.json(
+					{
+						msg: 'Ugyldig email og password',
+					},
+					{
+						status: 401,
+					},
+				)
+			}
 		}
 		const customer = await customerService.getByID(user.customerID)
 
