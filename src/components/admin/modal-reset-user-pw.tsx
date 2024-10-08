@@ -74,10 +74,9 @@ export function ModalResetUserPW({ users }: Props) {
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-sm'>
         <CredenzaHeader>
-          <CredenzaTitle>Nulstil brugers kodeord</CredenzaTitle>
+          <CredenzaTitle>Nulstil brugerens kodeord</CredenzaTitle>
           <CredenzaDescription>
-            Denne handling sender en email til brugeren med et link hvor de kan
-            skrive et nyt kodeord ind
+            Denne handling sender en email til brugeren med et link hvor de kan nulstille deres kodeord
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
