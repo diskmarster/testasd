@@ -1,7 +1,7 @@
 'use client'
 
 import { signUpInvitedAction } from '@/app/(auth)/invitering/[linkID]/actions'
-import { signUpValidation } from '@/app/(auth)/registrer/[linkID]/validation'
+import { signUpInvitedValidation } from '@/app/(auth)/registrer/[linkID]/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -69,9 +69,9 @@ function Form({
   const [error, setError] = useState<string>()
 
   const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof signUpValidation>
+    z.infer<typeof signUpInvitedValidation>
   >({
-    resolver: zodResolver(signUpValidation),
+    resolver: zodResolver(signUpInvitedValidation),
     defaultValues: {
       linkID: inviteLink.id,
       email: inviteLink.email,
@@ -79,7 +79,7 @@ function Form({
     },
   })
 
-  async function onSubmit(values: z.infer<typeof signUpValidation>) {
+  async function onSubmit(values: z.infer<typeof signUpInvitedValidation>) {
     startTransition(async () => {
       const response = await signUpInvitedAction(values)
       if (response && response.serverError) {

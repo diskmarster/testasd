@@ -1,6 +1,6 @@
 'use server'
 
-import { signUpValidation } from '@/app/(auth)/registrer/[linkID]/validation'
+import { signUpInvitedValidation } from '@/app/(auth)/registrer/[linkID]/validation'
 import { EmailTest } from '@/components/email/email-test'
 import { publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
@@ -12,7 +12,7 @@ import { userService } from '@/service/user'
 import { redirect } from 'next/navigation'
 
 export const signUpInvitedAction = publicAction
-  .schema(signUpValidation)
+  .schema(signUpInvitedValidation)
   .action(async ({ parsedInput }) => {
     const activationLink = await userService.getInviteLinkByID(
       parsedInput.linkID,

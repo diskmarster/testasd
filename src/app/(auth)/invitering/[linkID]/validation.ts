@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const signUpValidation = z
+export const signUpInvitedValidation = z
   .object({
     linkID: z.string(),
     clientID: z.coerce.number(),
