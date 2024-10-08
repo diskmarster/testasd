@@ -89,6 +89,7 @@ export function TabsAdmin({
         <div>
           {currentTab() == 'brugere' ? (
             <div className='flex items-center gap-4'>
+              {/* TODO: add customers extra users to function below when its added */}
               {isUserLimitReached(customer.plan, 0, users.length) && (
                 <div className='flex items-center gap-2'>
                   <span className='text-xs font-semibold text-destructive'>
