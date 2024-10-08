@@ -161,7 +161,6 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
->>>>>>> 42b0793 (can now invite users and they can register)
     "nl_user": {
       "name": "nl_user",
       "columns": {

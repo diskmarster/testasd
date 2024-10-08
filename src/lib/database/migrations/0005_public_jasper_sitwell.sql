@@ -1,1 +1,0 @@
-ALTER TABLE `nl_location` ADD `is_barred` integer DEFAULT false NOT NULL;
