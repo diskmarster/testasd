@@ -1,7 +1,7 @@
 'use client'
 
 import { signUpInvitedAction } from '@/app/(auth)/invitering/[linkID]/actions'
-import { signUpInvitedValidation } from '@/app/(auth)/registrer/[linkID]/validation'
+import { signUpInvitedValidation } from '@/app/(auth)/invitering/[linkID]/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {

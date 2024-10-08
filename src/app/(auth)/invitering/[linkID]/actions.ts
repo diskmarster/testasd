@@ -1,6 +1,6 @@
 'use server'
 
-import { signUpInvitedValidation } from '@/app/(auth)/registrer/[linkID]/validation'
+import { signUpInvitedValidation } from '@/app/(auth)/invitering/[linkID]/validation'
 import { EmailTest } from '@/components/email/email-test'
 import { publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
