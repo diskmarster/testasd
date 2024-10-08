@@ -5,6 +5,7 @@ import { Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
+import { UserNoHash } from '@/lib/database/schema/auth'
 
 export function ButtonToggleUsers<TData>({
   table,
@@ -14,7 +15,7 @@ export function ButtonToggleUsers<TData>({
   const selectedRows = table.getSelectedRowModel().rows
   let selectedIDs: LocationID[] = []
   for (const { original } of selectedRows) {
-    selectedIDs.push((original as Location).id)
+    selectedIDs.push((original as UserNoHash).id.toString())
   }
 
   return (
