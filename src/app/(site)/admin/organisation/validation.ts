@@ -49,3 +49,8 @@ export const updateCustomerValidation = z.object({
   company: z.string().min(2, { message: 'Firmanavn skal være minimum 2 karakterer' }),
   email: z.string().email({ message: 'Email skal være gyldig' }),
 })
+
+export const resetUserPasswordValidation = z.object({
+  userID: z.coerce.number(),
+  email: z.string().email()
+})

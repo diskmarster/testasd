@@ -3,7 +3,7 @@
 import { EmailInviteUser } from '@/components/email/email-invite-user'
 import { siteConfig } from '@/config/site'
 import { adminAction } from '@/lib/safe-action'
-import { ActionError } from '@/lib/safe-action/error'
+import { ACTION_ERR_INTERNAL, ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import {
   isLocationLimitReached,
@@ -20,8 +20,10 @@ import {
   createNewLocationValidation,
   editLocationValidation,
   inviteNewUserValidation,
+  resetUserPasswordValidation,
   updateCustomerValidation,
 } from './validation'
+import { passwordResetService } from '@/service/password-reset'
 
 export const toggleUserStatusAction = adminAction
   .schema(changeUserStatusValidation)
@@ -187,7 +189,6 @@ export const changeLocationStatusAction = adminAction
 export const updateCustomerAction = adminAction
   .schema(updateCustomerValidation)
   .action(async ({ parsedInput, ctx: { user } }) => {
-    console.log('vals', parsedInput)
     const updatedCustomer = customerService.updateByID(user.customerID, {
       ...parsedInput,
     })
@@ -196,3 +197,14 @@ export const updateCustomerAction = adminAction
     }
     revalidatePath('/admin/organisation')
   })
+
+export const resetUserPasswordAction = adminAction
+  .schema(resetUserPasswordValidation)
+  .action(async ({parsedInput}) => {
+		const linkCreated = await passwordResetService.createAndSendLink(parsedInput.email)
+		if (!linkCreated) {
+			throw new ActionError(
+				`${ACTION_ERR_INTERNAL}. Kunne ikke oprette nulstillings link`,
+			)
+		}
+})

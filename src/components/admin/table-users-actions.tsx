@@ -27,10 +27,10 @@ export function TableUsersActions({ table, row }: Props) {
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem
-        disabled
         onClick={() => {
-          emitCustomEvent('DeleteReorderByIDs', {
-            foo: 'foo',
+          emitCustomEvent('ResetUserPasswordByID', {
+            userID: row.original.id,
+            email: row.original.email,
           })
         }}>
         Nulstil kodeord
