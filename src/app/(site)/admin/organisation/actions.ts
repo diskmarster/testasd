@@ -206,5 +206,5 @@ export const resetUserPasswordAction = adminAction
 			throw new ActionError(
 				`${ACTION_ERR_INTERNAL}. Kunne ikke oprette nulstillings link`,
 			)
-		}
-})
+    }
+  })
