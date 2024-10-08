@@ -49,11 +49,11 @@ export const signUpInvitedAction = publicAction
       throw new ActionError('Din bruger blev ikke oprettet')
     }
 
-    const isLinkDeleted = await userService.deleteUserLink(
-      parsedInput.linkID,
-    )
+    const isLinkDeleted = await userService.deleteUserLink(parsedInput.linkID)
     if (!isLinkDeleted) {
-      // NOTE: What to do?
+      console.error(
+        `inviterings link blev ikke slettet for brugerID ${newUser.id}`,
+      )
     }
 
     locationService.setCookie(activationLink.locationIDs[0])
