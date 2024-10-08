@@ -59,7 +59,7 @@ export const signUpInvitedAction = publicAction
     locationService.setCookie(activationLink.locationIDs[0])
     await sessionService.create(newUser.id)
 
-    emailService.sendRecursively(
+    await emailService.sendRecursively(
       [parsedInput.email],
       'Velkommen til Nem Lager',
       EmailTest(),
