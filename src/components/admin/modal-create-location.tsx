@@ -124,7 +124,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                   className='border p-2 rounded-md'
                   maxHeight='max-h-60'>
                   <div className='space-y-2'>
-                    {users
+                    {users.length > 1 ? users
                       .filter(u => u.id != user.id)
                       .map(u => (
                         <div
@@ -155,7 +155,9 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                             }}
                           />
                         </div>
-                      ))}
+                      )) : (
+                        <div className='text-center w-full text-muted-foreground text-sm'>Opret flere brugere for at tildele adgangsrettigheder når du opretter nye lokationer</div>
+                      )}
                   </div>
                 </ScrollArea>
                 {formState.errors.userIDs && (
