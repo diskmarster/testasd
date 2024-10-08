@@ -29,6 +29,7 @@ export const emailService = {
     if (error) {
       if (attempt >= MAX_ATTEMPTS) {
         // do like a tree and leave (get it? leaf...)
+        console.error(`Failed to send email recursively after max attempts`)
       } else {
         const nextWaitMs = Math.min(waitMs * 2, MAX_WAIT)
         const nextAttempt = attempt + 1
@@ -36,6 +37,7 @@ export const emailService = {
       }
     } else {
       // do like the sun and shine
+      console.log(`Email send successfully after ${attempt} attempts`)
     }
   }
 }

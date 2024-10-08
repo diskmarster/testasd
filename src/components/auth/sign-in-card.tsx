@@ -1,28 +1,33 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
-import { useState, useTransition } from "react";
-import { useForm } from 'react-hook-form'
-import { z } from "zod";
+import { signInAction } from '@/app/(auth)/log-ind/actions'
+import { signInValidation } from '@/app/(auth)/log-ind/validation'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Icons } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/password-input'
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Icons } from "@/components/ui/icons";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
-import { signInAction } from "@/app/(auth)/log-ind/actions";
-import { signInValidation } from "@/app/(auth)/log-ind/validation";
+import Link from 'next/link'
+import { useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 export function SignInCard() {
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
-        <CardTitle>
-          Velkommen tilbage
-        </CardTitle>
+        <CardTitle>Velkommen tilbage</CardTitle>
         <CardDescription>
           Udfyld dine informationer for at starte
         </CardDescription>
@@ -48,7 +53,9 @@ function Form() {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
-  const { handleSubmit, formState, register } = useForm<z.infer<typeof signInValidation>>({
+  const { handleSubmit, formState, register } = useForm<
+    z.infer<typeof signInValidation>
+  >({
     resolver: zodResolver(signInValidation),
   })
 
@@ -62,7 +69,9 @@ function Form() {
   }
 
   return (
-    <form className="grid w-full items-start gap-4" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className='grid w-full items-start gap-4'
+      onSubmit={handleSubmit(onSubmit)}>
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
@@ -80,7 +89,15 @@ function Form() {
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='password'>Kodeord</Label>
+        <div className='flex justify-between'>
+          <Label htmlFor='password'>Kodeord</Label>
+          <Link
+            className={'hover:underline text-xs font-medium text-muted-foreground'}
+            href={'/glemt-password'}>
+            Glemt kodeord?
+          </Link>
+        </div>
+
         <PasswordInput id='password' {...register('password')} />
         {formState.errors.password && (
           <p className='text-sm text-destructive '>
