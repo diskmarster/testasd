@@ -99,5 +99,17 @@ export const location = {
     })
     .where(eq(locationTable.id, locationID))
     return resultSet.rowsAffected == 1
-  }
+  },
+  getAllActiveByUserID: async function(userID: UserID, trx: TRX = db): Promise<LocationWithPrimary[]> {
+    const locationCols = getTableColumns(locationTable)
+    const locations = await trx
+      .select({ ...locationCols, isPrimary: linkLocationToUserTable.isPrimary })
+      .from(linkLocationToUserTable)
+      .where(and(
+        eq(linkLocationToUserTable.userID, userID),
+        eq(locationTable.isBarred, false)
+      ))
+      .innerJoin(locationTable, eq(locationTable.id, linkLocationToUserTable.locationID))
+    return locations
+  },
 }

@@ -251,4 +251,9 @@ export const locationService = {
   updateStatus: async function(locationID: LocationID, isBarred: boolean): Promise<boolean> {
     return await location.updateLocation(locationID, {isBarred: isBarred})
   },
+  getAllActiveByUserID: async function(
+    userID: UserID,
+  ): Promise<LocationWithPrimary[]> {
+    return await location.getAllActiveByUserID(userID)
+  },
 }
