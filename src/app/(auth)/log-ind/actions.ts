@@ -17,6 +17,8 @@ export const signInAction = publicAction
     if (!existingUser.isActive) {
       throw new ActionError("Brugeren er inaktiv")
     }
+
+    await sessionService.invalidateByID(existingUser.id)
     const newSessionID = await sessionService.create(existingUser.id)
 
     redirect("/oversigt")

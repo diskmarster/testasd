@@ -40,12 +40,13 @@ export const siteConfig: SiteConfig = {
       isDropdown: true,
       items: [
         {
-          label: 'Brugere',
-          description: 'Se en oversigt over alle brugere',
-          href: '/admin/brugere',
+          label: 'Organisation',
+          description:
+            'Se og rediger i brugere, lokationer og firmainformation',
+          href: '/admin/organisation',
           roles: [],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
 
         {
@@ -72,14 +73,6 @@ export const siteConfig: SiteConfig = {
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: false,
-        },
-        {
-          label: 'Lokationer',
-          description: 'Se, opret og rediger i dine lokationer',
-          href: '/admin/lokationer',
-          roles: [],
-          isExternal: false,
-          isDisabled: true,
         },
       ],
     },

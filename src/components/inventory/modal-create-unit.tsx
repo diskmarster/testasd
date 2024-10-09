@@ -85,7 +85,7 @@ export function ModalCreateUnit() {
                 </p>
               )}
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid}>
+            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
               Opret
             </Button>
           </form>

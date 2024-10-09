@@ -8,6 +8,7 @@ export const updateInventoryValidation = z
     batchID: z.string().or(z.coerce.number()),
     type: historyTypeZodSchema,
     amount: z.coerce.number(),
+    reference: z.string().optional(),
   })
   .superRefine((val, ctx) => {
     if (val.type == 'afgang' || val.type == 'regulering') {
@@ -53,4 +54,5 @@ export const moveInventoryValidation = z.object({
   fromBatchID: z.coerce.number(),
   toPlacementID: z.coerce.number(),
   amount: z.coerce.number().min(1),
+  reference: z.string().optional(),
 })

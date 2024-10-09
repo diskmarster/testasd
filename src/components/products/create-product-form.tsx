@@ -84,7 +84,7 @@ export function CreateProductsForm({
           <Icons.plus className='size-5' />
         </Button>
       </CredenzaTrigger>
-      <CredenzaContent>
+      <CredenzaContent className='md:max-w-lg max-h-screen'>
         <CredenzaHeader>
           <CredenzaTitle>Opret produkt</CredenzaTitle>
           <CredenzaDescription>

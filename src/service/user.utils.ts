@@ -3,6 +3,7 @@ import { hash, verify } from '@node-rs/argon2'
 import * as jwt from 'jsonwebtoken'
 import { sessionService } from './session'
 import { Session, User as AuthUser } from 'lucia'
+import { Plan } from '@/data/customer.types'
 
 const MEMORY_COST = 19456
 const TIME_COST = 2

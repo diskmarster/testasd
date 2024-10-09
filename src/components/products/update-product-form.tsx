@@ -104,7 +104,7 @@ export function UpdateProductsForm({
 
   return (
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
-      <CredenzaContent>
+      <CredenzaContent className='md:max-w-lg max-h-screen'>
         <CredenzaHeader>
           <CredenzaTitle>Rediger produkt</CredenzaTitle>
           <CredenzaDescription>

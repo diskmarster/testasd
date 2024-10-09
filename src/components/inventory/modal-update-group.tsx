@@ -82,7 +82,7 @@ export function ModalUpdateGroup({
 
   return (
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
-      <CredenzaContent>
+      <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
           <CredenzaTitle>Rediger varegruppe</CredenzaTitle>
           <CredenzaDescription>
@@ -91,7 +91,7 @@ export function ModalUpdateGroup({
         </CredenzaHeader>
         <CredenzaBody>
           <form
-            className='grid gap-4 mb-4 md:mb-0'
+            className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
@@ -101,8 +101,8 @@ export function ModalUpdateGroup({
               </Alert>
             )}
 
-            <div className='grid md:grid-cols-2 gap-4'>
-              <div className='grid gap-2'>
+            <div className='mt-2 mb-2'>
+              <div className=''>
                 <Label htmlFor='sku'>
                   Navn på varegruppe
                   <span className='text-destructive'> * </span>
@@ -115,7 +115,7 @@ export function ModalUpdateGroup({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid}>
+            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto' >
               Opdater
             </Button>
           </form>

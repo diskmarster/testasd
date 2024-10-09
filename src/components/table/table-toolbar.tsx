@@ -1,5 +1,6 @@
 'use client'
 
+import { refreshTableAction } from '@/app/actions'
 import TableToolbarFilters from '@/components/table/table-filters'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,8 +13,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Icons } from '@/components/ui/icons'
 import { exportTableToCSV } from '@/lib/export/csv'
+import { cn } from '@/lib/utils'
 import { Column, Table } from '@tanstack/react-table'
-import { useTransition } from 'react'
+import { usePathname } from 'next/navigation'
+import { useState, useTransition } from 'react'
 
 type ToolbarOptions = {
   showExport?: boolean
@@ -47,11 +50,12 @@ export function TableToolbar<T>({
 }: Props<T>) {
   return (
     <div className='flex items-center gap-2 py-4'>
-      <div className='mr-auto'>
+      <div className='mr-auto overflow-y-auto'>
         <TableToolbarFilters table={table} filterFields={filterFields} />
       </div>
       {options && (
         <div className='ml-auto flex items-center gap-2'>
+          <ButtonRefreshOverview />
           {options.showExport && <DownloadButton table={table} />}
           {options.showHideShow && <ViewOptions table={table} />}
         </div>
@@ -115,5 +119,35 @@ export function ViewOptions<T>({ table }: { table: Table<T> }) {
           })}
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+}
+export function ButtonRefreshOverview() {
+  const [error, setError] = useState<string | null>(null)
+  const [pending, startTransition] = useTransition()
+  const pathName = usePathname()
+
+  const onSubmit = () => {
+    startTransition(async () => {
+      const start = Date.now()
+      await refreshTableAction({ pathName })
+      const end = Date.now()
+      setTimeout(() => {}, 600 - (end - start))
+    })
+  }
+  return (
+    <>
+      <Button
+        tabIndex={-1}
+        size='icon'
+        type='button'
+        variant='outline'
+        className='flex items-center justify-center'
+        onClick={onSubmit}
+        disabled={pending}>
+        <Icons.refresh
+          className={cn('size-4', pending && 'animate-spin-refresh')}
+        />
+      </Button>
+    </>
   )
 }

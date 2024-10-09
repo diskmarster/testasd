@@ -34,7 +34,7 @@ export function ModalUpdateUnit({
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
-  const { handleSubmit, register, formState, setValue, reset} = useForm<
+  const { handleSubmit, register, formState, setValue, reset } = useForm<
     z.infer<typeof createUnitValidation>
   >({
     resolver: zodResolver(createUnitValidation),
@@ -82,7 +82,7 @@ export function ModalUpdateUnit({
 
   return (
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
-      <CredenzaContent>
+      <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
           <CredenzaTitle>Rediger enhed</CredenzaTitle>
           <CredenzaDescription>
@@ -91,7 +91,7 @@ export function ModalUpdateUnit({
         </CredenzaHeader>
         <CredenzaBody>
           <form
-            className='grid gap-4 mb-4 md:mb-0'
+            className='space-y-4 pb-4 md:pb-0'
             onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
@@ -101,7 +101,7 @@ export function ModalUpdateUnit({
               </Alert>
             )}
 
-            <div className='grid md:grid-cols-2 gap-4'>
+            <div className='mt-2 mb-2'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
                   Navn på enhed
@@ -115,7 +115,7 @@ export function ModalUpdateUnit({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid}>
+            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
               Opdater
             </Button>
           </form>

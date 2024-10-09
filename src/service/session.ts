@@ -1,3 +1,4 @@
+import { UserID } from "@/lib/database/schema/auth";
 import { lucia } from "@/lib/lucia";
 import { Session, User } from "lucia";
 import { cookies } from "next/headers";
@@ -50,5 +51,8 @@ export const sessionService = {
     await lucia.invalidateSession(sessionID)
     const blankCookie = lucia.createBlankSessionCookie()
     cookies().set(blankCookie.name, blankCookie.value, blankCookie.attributes)
+  },
+  invalidateByID: async function(userID: UserID): Promise<void> {
+    await lucia.invalidateUserSessions(userID)
   }
 }

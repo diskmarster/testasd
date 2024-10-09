@@ -338,36 +338,37 @@ export function getTableOverviewFilters(
     value: '',
     placeholder: 'Søg i varetekst 3',
   }
-  const placementFilter: FilterField<FormattedInventory> = {
-    column: table.getColumn('placement'),
-    type: 'select',
-    label: 'Placering',
-    value: '',
-    options: [
-      ...placements.map(placement => ({
-        value: placement.name,
-        label: placement.name,
-      })),
-    ],
-  }
-  const batchFilter: FilterField<FormattedInventory> = {
-    column: table.getColumn('batch'),
-    type: 'select',
-    label: 'Batchnr.',
-    value: '',
-    options: [
-      ...batches.map(batch => ({
-        value: batch.batch,
-        label: batch.batch,
-      })),
-    ],
-  }
-  const updatedFilter: FilterField<FormattedInventory> = {
-    column: table.getColumn('updated'),
-    type: 'date-range',
-    label: 'Opdateret',
-    value: '',
-  }
+  const placementFilter: FilterField<FormattedInventory> | null =
+    plan === 'plus' || plan === 'pro'
+      ? {
+          column: table.getColumn('placement'),
+          type: 'select',
+          label: 'Placering',
+          value: '',
+          options: [
+            ...placements.map(placement => ({
+              value: placement.name,
+              label: placement.name,
+            })),
+          ],
+        }
+      : null
+
+  const batchFilter: FilterField<FormattedInventory> | null =
+    plan === 'pro'
+      ? {
+          column: table.getColumn('batch'),
+          type: 'select',
+          label: 'Batchnr.',
+          value: '',
+          options: [
+            ...batches.map(batch => ({
+              value: batch.batch,
+              label: batch.batch,
+            })),
+          ],
+        }
+      : null
 
   switch (plan) {
     case 'lite':
@@ -390,7 +391,9 @@ export function getTableOverviewFilters(
         text2Filter,
         text3Filter,
         placementFilter,
-      ]
+      ].filter(
+        (filter): filter is FilterField<FormattedInventory> => filter !== null,
+      )
     case 'pro':
       return [
         skuFilter,
@@ -402,6 +405,8 @@ export function getTableOverviewFilters(
         text3Filter,
         placementFilter,
         batchFilter,
-      ]
+      ].filter(
+        (filter): filter is FilterField<FormattedInventory> => filter !== null,
+      )
   }
 }
