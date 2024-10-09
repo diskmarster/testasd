@@ -7,7 +7,7 @@ import {
   updatePinValidation,
   updatePrimaryLocationValidation,
   updateProfileValidation,
-} from '@/app/(site)/profil/validation'
+} from '@/app/[lng]/(site)/profil/validation'
 import { adminAction, privateAction } from '@/lib/safe-action'
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
 import { locationService } from '@/service/location'

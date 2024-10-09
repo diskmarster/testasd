@@ -1,4 +1,4 @@
-import { signOutAction } from '@/app/(auth)/log-ud/actions'
+import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalImportProducts } from '@/components/inventory/modal-import-products'
 import { CreateProductsForm } from '@/components/products/create-product-form'

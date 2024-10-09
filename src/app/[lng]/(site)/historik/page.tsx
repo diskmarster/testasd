@@ -6,7 +6,11 @@ import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
 
-export default async function Page() {
+export default async function Page({ params: { lng } }: {
+  params: {
+    lng: string;
+  };
+}) {
   const { session, user } = await sessionService.validate()
   if (!session) redirect('/log-ind')
 

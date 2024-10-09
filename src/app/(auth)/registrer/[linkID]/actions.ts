@@ -1,44 +1,54 @@
-"use server"
+'use server'
 
-import { publicAction } from "@/lib/safe-action"
-import { userService } from "@/service/user"
-import { signUpValidation } from "@/app/(auth)/registrer/[linkID]/validation"
-import { ActionError } from "@/lib/safe-action/error"
-import { sessionService } from "@/service/session"
-import { redirect } from "next/navigation"
-import { emailService } from "@/service/email"
-import { EmailTest } from "@/components/email/email-test"
-import { customerService } from "@/service/customer"
-import { locationService } from "@/service/location"
-import { isUserLimitReached } from "@/service/customer.utils"
+import { signUpValidation } from '@/app/(auth)/registrer/[linkID]/validation'
+import { EmailTest } from '@/components/email/email-test'
+import { publicAction } from '@/lib/safe-action'
+import { ActionError } from '@/lib/safe-action/error'
+import { customerService } from '@/service/customer'
+import { isUserLimitReached } from '@/service/customer.utils'
+import { emailService } from '@/service/email'
+import { locationService } from '@/service/location'
+import { sessionService } from '@/service/session'
+import { userService } from '@/service/user'
+import { redirect } from 'next/navigation'
 
 export const signUpAction = publicAction
   .metadata({actionName: 'signUp'})
   .schema(signUpValidation)
   .action(async ({ parsedInput }) => {
-    const activationLink = await customerService.getActivationLinkByID(parsedInput.linkID)
+    const activationLink = await customerService.getActivationLinkByID(
+      parsedInput.linkID,
+    )
     if (!activationLink) {
-      throw new ActionError("Dit aktiveringslink findes ikke længere")
+      throw new ActionError('Dit aktiveringslink findes ikke længere')
     }
 
-    const isLinkValid = customerService.validateActivationLink(activationLink.inserted)
+    const isLinkValid = customerService.validateActivationLink(
+      activationLink.inserted,
+    )
     if (!isLinkValid) {
-      throw new ActionError("Dit aktiveringslink er ikke længere gyldigt")
+      throw new ActionError('Dit aktiveringslink er ikke længere gyldigt')
     }
 
     const users = await userService.getAllByCustomerID(parsedInput.clientID)
     const existingCustomer = await customerService.getByID(parsedInput.clientID)
     if (!existingCustomer) {
-      throw new ActionError("Din firmakonto findes ikke")
+      throw new ActionError('Din firmakonto findes ikke')
     }
 
-    if (isUserLimitReached(existingCustomer.plan, existingCustomer.extraUsers, users.length)) {
-      throw new ActionError("Dit firma har nået brugergrænsen")
+    if (
+      isUserLimitReached(
+        existingCustomer.plan,
+        existingCustomer.extraUsers,
+        users.length,
+      )
+    ) {
+      throw new ActionError('Dit firma har nået brugergrænsen')
     }
 
     const existingUser = await userService.getByEmail(parsedInput.email)
     if (existingUser) {
-      throw new ActionError("En bruger med den email findes allerede")
+      throw new ActionError('En bruger med den email findes allerede')
     }
 
     const newUser = await userService.register({
@@ -48,16 +58,18 @@ export const signUpAction = publicAction
       hash: parsedInput.password,
       pin: parsedInput.pin,
       role: activationLink.role,
-      isActive: true
+      isActive: true,
     })
     if (!newUser) {
-      throw new ActionError("Din bruger blev ikke oprettet")
+      throw new ActionError('Din bruger blev ikke oprettet')
     }
 
     if (!existingCustomer.isActive) {
-      const isCustomerToggled = await customerService.toggleActivationByID(existingCustomer.id)
+      const isCustomerToggled = await customerService.toggleActivationByID(
+        existingCustomer.id,
+      )
       if (!isCustomerToggled) {
-        throw new ActionError("Din firmakonto blev ikke aktiveret")
+        throw new ActionError('Din firmakonto blev ikke aktiveret')
       }
     }
 
@@ -65,13 +77,17 @@ export const signUpAction = publicAction
       userID: newUser.id,
       locationID: activationLink.locationID,
       customerID: existingCustomer.id,
-      isPrimary: true
+      isPrimary: true,
     })
     if (!isAccessAdded) {
-      throw new ActionError("Der gik noget galt med at give brugeren tilladelse til lokation")
+      throw new ActionError(
+        'Der gik noget galt med at give brugeren tilladelse til lokation',
+      )
     }
 
-    const isLinkDeleted = await customerService.deleteActivationLink(parsedInput.linkID)
+    const isLinkDeleted = await customerService.deleteActivationLink(
+      parsedInput.linkID,
+    )
     if (!isLinkDeleted) {
       // NOTE: What to do?
     }
@@ -81,9 +97,9 @@ export const signUpAction = publicAction
 
     emailService.sendRecursively(
       [parsedInput.email],
-      "Velkommen til Nem Lager",
-      EmailTest()
+      'Velkommen til Nem Lager',
+      EmailTest(),
     )
 
-    redirect("/oversigt")
+    redirect('/oversigt')
   })

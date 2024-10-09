@@ -1,4 +1,4 @@
-import { signOutAction } from '@/app/(auth)/log-ud/actions'
+import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalAddOrderedReorder } from '@/components/inventory/modal-add-ordered-modal'
 import { ModalCreateReorder } from '@/components/inventory/modal-create-reorder'
