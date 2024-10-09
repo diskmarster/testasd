@@ -1,7 +1,9 @@
 'use client'
+'use client'
 
-import { signInAction } from '@/app/(auth)/log-ind/actions'
-import { signInValidation } from '@/app/(auth)/log-ind/validation'
+import { signInAction } from '@/app/[lng]/(auth)/log-ind/actions'
+import { signInValidation } from '@/app/[lng]/(auth)/log-ind/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -23,17 +25,21 @@ import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-export function SignInCard() {
+interface SignInCardProps {
+  lng: string;
+}
+
+export function SignInCard({ lng }: SignInCardProps) {
+  const { t } = useTranslation(lng, 'log-ind');
+
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
-        <CardTitle>Velkommen tilbage</CardTitle>
-        <CardDescription>
-          Udfyld dine informationer for at starte
-        </CardDescription>
+      <CardTitle>{t('title')}</CardTitle>
+      <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form />
+        <Form t={t} />
       </CardContent>
       <CardFooter>
         <Link
@@ -41,18 +47,25 @@ export function SignInCard() {
             buttonVariants({ variant: 'link' }),
             'mx-auto h-auto p-0',
           )}
-          href={'/opret'}>
-          Er du ikke kunde i Nem Lager?
+          href={`/${lng}/opret`}>
+          {t('opret-en-bruger')}
         </Link>
       </CardFooter>
     </Card>
   )
 }
 
-function Form() {
+interface FormProps {
+  t: (key: string) => string;
+}
+
+function Form({ t }: FormProps) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
+  const { handleSubmit, formState, register } = useForm<
+    z.infer<typeof signInValidation>
+  >({
   const { handleSubmit, formState, register } = useForm<
     z.infer<typeof signInValidation>
   >({
@@ -72,10 +85,13 @@ function Form() {
     <form
       className='grid w-full items-start gap-4'
       onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className='grid w-full items-start gap-4'
+      onSubmit={handleSubmit(onSubmit)}>
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>Der skete en fejl</AlertTitle>
+          <AlertTitle>{t('error-title')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -90,7 +106,7 @@ function Form() {
       </div>
       <div className='grid gap-2'>
         <div className='flex justify-between'>
-          <Label htmlFor='password'>Kodeord</Label>
+          <Label htmlFor='password'>{t('password')}</Label>
           <Link
             className={'hover:underline text-xs font-medium text-muted-foreground'}
             href={'/glemt-password'}>
@@ -107,7 +123,7 @@ function Form() {
       </div>
       <Button type='submit' className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        Log ind
+        {t('login')}
       </Button>
     </form>
   )
