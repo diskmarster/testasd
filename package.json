@@ -60,6 +60,7 @@
     "qrcode.react": "^4.0.1",
     "react": "^18",
     "react-cookie": "^7.2.0",
+    "react-country-flag": "^3.1.0",
     "react-custom-events": "^1.1.1",
     "react-day-picker": "8.10.1",
     "react-dom": "^18",
