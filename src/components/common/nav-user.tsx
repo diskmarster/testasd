@@ -1,6 +1,6 @@
 'use client'
 
-import { signOutAction } from '@/app/(auth)/log-ud/actions'
+import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {

@@ -3,7 +3,7 @@
 import {
   getProductOverviewColumns,
   getProductTableOverviewFilters,
-} from '@/app/(site)/admin/produkter/columns'
+} from '@/app/[lng]/(site)/admin/produkter/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import {
