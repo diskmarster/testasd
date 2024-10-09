@@ -1,7 +1,6 @@
-import { updateGroupAction } from '@/app/(site)/admin/varegrupper/actions'
-import { createGroupValidation } from '@/app/(site)/admin/varegrupper/validation'
+import { updateGroupAction } from '@/app/[lng]/(site)/admin/varegrupper/actions'
+import { createGroupValidation } from '@/app/[lng]/(site)/admin/varegrupper/validation'
 import { siteConfig } from '@/config/site'
-import { useSession } from '@/context/session'
 import { Group } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState, useTransition } from 'react'
@@ -115,7 +114,10 @@ export function ModalUpdateGroup({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto' >
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
               Opdater
             </Button>
           </form>

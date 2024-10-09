@@ -1,6 +1,6 @@
 'use client'
-import { updateProductAction } from '@/app/(site)/admin/produkter/actions'
-import { createProductValidation } from '@/app/(site)/admin/produkter/validation'
+import { updateProductAction } from '@/app/[lng]/(site)/admin/produkter/actions'
+import { createProductValidation } from '@/app/[lng]/(site)/admin/produkter/validation'
 import { siteConfig } from '@/config/site'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'

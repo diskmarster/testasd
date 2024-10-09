@@ -1,7 +1,7 @@
 'use client'
 
-import { createGroupAction } from '@/app/(site)/admin/varegrupper/actions'
-import { createGroupValidation } from '@/app/(site)/admin/varegrupper/validation'
+import { createGroupAction } from '@/app/[lng]/(site)/admin/varegrupper/actions'
+import { createGroupValidation } from '@/app/[lng]/(site)/admin/varegrupper/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -22,8 +22,6 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 
-
-
 export function ModalCreateProductGroup() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
@@ -33,7 +31,7 @@ export function ModalCreateProductGroup() {
     z.infer<typeof createGroupValidation>
   >({
     resolver: zodResolver(createGroupValidation),
-    defaultValues: { },
+    defaultValues: {},
   })
 
   function onOpenChange(open: boolean) {
@@ -90,7 +88,10 @@ export function ModalCreateProductGroup() {
                 </p>
               )}
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto' >
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
               Opret
             </Button>
           </form>

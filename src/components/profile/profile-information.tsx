@@ -1,7 +1,7 @@
 'use client'
 
-import { updateProfileInformationAction } from '@/app/(site)/profil/actions'
-import { updateProfileValidation } from '@/app/(site)/profil/validation'
+import { updateProfileInformationAction } from '@/app/[lng]/(site)/profil/actions'
+import { updateProfileValidation } from '@/app/[lng]/(site)/profil/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'

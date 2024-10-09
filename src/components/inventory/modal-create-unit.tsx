@@ -1,7 +1,7 @@
 'use client'
 
-import { createUnitAction } from '@/app/(site)/sys/enheder/actions'
-import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
+import { createUnitAction } from '@/app/[lng]/(site)/sys/enheder/actions'
+import { createUnitValidation } from '@/app/[lng]/(site)/sys/enheder/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -85,7 +85,10 @@ export function ModalCreateUnit() {
                 </p>
               )}
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
               Opret
             </Button>
           </form>

@@ -1,7 +1,7 @@
 'use client'
 
-import { updatePasswordAction } from '@/app/(site)/profil/actions'
-import { updatePasswordValidation } from '@/app/(site)/profil/validation'
+import { updatePasswordAction } from '@/app/[lng]/(site)/profil/actions'
+import { updatePasswordValidation } from '@/app/[lng]/(site)/profil/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -90,10 +90,7 @@ function PasswordDialog() {
               </div>
               <div className='grid gap-2'>
                 <Label htmlFor='newPassword'>Nyt kodeord</Label>
-                <PasswordInput
-                  id='newPassword'
-                  {...register('newPassword')}
-                />
+                <PasswordInput id='newPassword' {...register('newPassword')} />
                 {formState.errors.newPassword && (
                   <p className='text-sm text-destructive '>
                     {formState.errors.newPassword.message}

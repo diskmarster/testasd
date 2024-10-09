@@ -3,7 +3,7 @@
 import {
   getTableUnitColumns,
   getTableUnitFilters,
-} from '@/app/(site)/sys/enheder/columns'
+} from '@/app/[lng]/(site)/sys/enheder/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'

@@ -1,7 +1,7 @@
 'use client'
 
-import { createReorderAction } from '@/app/(site)/genbestil/actions'
-import { createReorderValidation } from '@/app/(site)/genbestil/validation'
+import { createReorderAction } from '@/app/[lng]/(site)/genbestil/actions'
+import { createReorderValidation } from '@/app/[lng]/(site)/genbestil/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {

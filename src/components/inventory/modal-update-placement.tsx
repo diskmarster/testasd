@@ -1,7 +1,6 @@
-import { updatePlacementAction } from '@/app/(site)/admin/placeringer/actions'
-import { createPlacementValidation } from '@/app/(site)/admin/placeringer/validation'
+import { updatePlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
+import { createPlacementValidation } from '@/app/[lng]/(site)/admin/placeringer/validation'
 import { siteConfig } from '@/config/site'
-import { useSession } from '@/context/session'
 import { Placement } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState, useTransition } from 'react'
@@ -115,7 +114,10 @@ export function ModalUpdatePlacement({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
               Opdater
             </Button>
           </form>

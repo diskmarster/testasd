@@ -3,7 +3,7 @@
 import {
   getTableHistoryColumns,
   getTableHistoryFilters,
-} from '@/app/(site)/historik/columns'
+} from '@/app/[lng]/(site)/historik/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -164,9 +164,9 @@ export function TableHistory({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>

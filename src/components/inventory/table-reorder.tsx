@@ -3,7 +3,7 @@
 import {
   getTableReorderColumns,
   getTableReorderFilters,
-} from '@/app/(site)/genbestil/columns'
+} from '@/app/[lng]/(site)/genbestil/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'

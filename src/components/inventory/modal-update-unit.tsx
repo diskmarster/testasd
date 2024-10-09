@@ -1,4 +1,4 @@
-import { updateUnitAction } from '@/app/(site)/sys/enheder/actions'
+import { updateUnitAction } from '@/app/[lng]/(site)/sys/enheder/actions'
 import { siteConfig } from '@/config/site'
 import { Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,7 +9,7 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
-import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
+import { createUnitValidation } from '@/app/[lng]/(site)/sys/enheder/validation'
 import {
   Credenza,
   CredenzaBody,
@@ -115,7 +115,10 @@ export function ModalUpdateUnit({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
               Opdater
             </Button>
           </form>

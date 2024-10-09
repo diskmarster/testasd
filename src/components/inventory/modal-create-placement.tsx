@@ -1,7 +1,7 @@
 'use client'
 
-import { createPlacementAction } from '@/app/(site)/admin/placeringer/actions'
-import { createPlacementValidation } from '@/app/(site)/admin/placeringer/validation'
+import { createPlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
+import { createPlacementValidation } from '@/app/[lng]/(site)/admin/placeringer/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,

@@ -1,7 +1,7 @@
 'use client'
 
-import { deleteReorderAction } from '@/app/(site)/genbestil/actions'
-import { deleteReorderValidation } from '@/app/(site)/genbestil/validation'
+import { deleteReorderAction } from '@/app/[lng]/(site)/genbestil/actions'
+import { deleteReorderValidation } from '@/app/[lng]/(site)/genbestil/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {

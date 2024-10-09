@@ -1,4 +1,4 @@
-import { toggleBarredUnitAction } from '@/app/(site)/sys/enheder/actions'
+import { toggleBarredUnitAction } from '@/app/[lng]/(site)/sys/enheder/actions'
 import { ModalUpdateUnit } from '@/components/inventory/modal-update-unit'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'

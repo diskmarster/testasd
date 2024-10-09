@@ -1,4 +1,4 @@
-import { toggleBarredProductAction } from '@/app/(site)/admin/produkter/actions'
+import { toggleBarredProductAction } from '@/app/[lng]/(site)/admin/produkter/actions'
 import { UpdateProductsForm } from '@/components/products/update-product-form'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'

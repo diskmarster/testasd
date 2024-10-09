@@ -3,7 +3,7 @@
 import {
   getTableGroupColumns,
   getTableGroupFilters,
-} from '@/app/(site)/admin/varegrupper/columns'
+} from '@/app/[lng]/(site)/admin/varegrupper/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -48,7 +48,6 @@ interface Props {
 export function TableProductGroups({ groups, user }: Props) {
   const LOCALSTORAGE_KEY = 'groups_cols'
   const columns = useMemo(() => getTableGroupColumns(), [])
-
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([

@@ -1,7 +1,7 @@
 'use client'
 
-import { updatePinAction } from '@/app/(site)/profil/actions'
-import { updatePinValidation } from '@/app/(site)/profil/validation'
+import { updatePinAction } from '@/app/[lng]/(site)/profil/actions'
+import { updatePinValidation } from '@/app/[lng]/(site)/profil/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {

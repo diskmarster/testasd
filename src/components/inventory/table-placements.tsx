@@ -3,7 +3,7 @@
 import {
   getTablePlacementColumns,
   getTablePlacementFilters,
-} from '@/app/(site)/admin/placeringer/columns'
+} from '@/app/[lng]/(site)/admin/placeringer/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'

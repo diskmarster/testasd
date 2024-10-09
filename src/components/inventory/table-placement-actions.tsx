@@ -1,4 +1,4 @@
-import { toggleBarredPlacementAction } from '@/app/(site)/admin/placeringer/actions'
+import { toggleBarredPlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
 import { ModalUpdatePlacement } from '@/components/inventory/modal-update-placement'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'

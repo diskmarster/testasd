@@ -1,24 +1,44 @@
-"use client"
+'use client'
 
-import { updatePrimaryLocationValidation } from "@/app/(site)/profil/validation"
-import { useSession } from "@/context/session"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useState, useTransition } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Credenza, CredenzaBody, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "../ui/credenza"
-import { Button } from "../ui/button"
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
-import { Icons } from "../ui/icons"
-import { Label } from "../ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { updatePrimaryLocationAction } from "@/app/(site)/profil/actions"
-import { siteConfig } from "@/config/site"
-import { LocationID, LocationWithPrimary } from "@/lib/database/schema/customer"
-import { cn } from "@/lib/utils"
-import { toast } from "sonner"
+import { updatePrimaryLocationAction } from '@/app/[lng]/(site)/profil/actions'
+import { updatePrimaryLocationValidation } from '@/app/[lng]/(site)/profil/validation'
+import { siteConfig } from '@/config/site'
+import { useSession } from '@/context/session'
+import { LocationID, LocationWithPrimary } from '@/lib/database/schema/customer'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState, useTransition } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { Button } from '../ui/button'
+import {
+  Credenza,
+  CredenzaBody,
+  CredenzaClose,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
+} from '../ui/credenza'
+import { Icons } from '../ui/icons'
+import { Label } from '../ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 
-export function LocationDialog({ locations }: { locations: LocationWithPrimary[] }) {
+export function LocationDialog({
+  locations,
+}: {
+  locations: LocationWithPrimary[]
+}) {
   const { session } = useSession()
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
@@ -31,8 +51,8 @@ export function LocationDialog({ locations }: { locations: LocationWithPrimary[]
   >({
     resolver: zodResolver(updatePrimaryLocationValidation),
     defaultValues: {
-      locationID: primaryLocation?.id
-    }
+      locationID: primaryLocation?.id,
+    },
   })
 
   if (!session) return null
@@ -64,18 +84,24 @@ export function LocationDialog({ locations }: { locations: LocationWithPrimary[]
                 <Label htmlFor='role'>Lokation</Label>
                 <Select
                   defaultValue={getValues().locationID}
-                  onValueChange={value => setValue('locationID', value as LocationID, { shouldValidate: true })}>
+                  onValueChange={value =>
+                    setValue('locationID', value as LocationID, {
+                      shouldValidate: true,
+                    })
+                  }>
                   <SelectTrigger id='role'>
-                    <SelectValue placeholder='Vælg lokation' className='capitalize' />
+                    <SelectValue
+                      placeholder='Vælg lokation'
+                      className='capitalize'
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {locations.map((loc, i) => (
                       <SelectItem key={i} value={loc.id} className='capitalize'>
-                        <div
-                          className="flex items-center gap-1">
+                        <div className='flex items-center gap-1'>
                           <p>{loc.name}</p>
                           {loc.isPrimary && (
-                            <Icons.star className="size-3 fill-warning text-warning" />
+                            <Icons.star className='size-3 fill-warning text-warning' />
                           )}
                         </div>
                       </SelectItem>
@@ -95,7 +121,10 @@ export function LocationDialog({ locations }: { locations: LocationWithPrimary[]
               <Button variant='link'>Luk</Button>
             </CredenzaClose>
             <Button
-              disabled={!getValues().locationID || getValues().locationID == primaryLocation?.id}
+              disabled={
+                !getValues().locationID ||
+                getValues().locationID == primaryLocation?.id
+              }
               type='submit'
               className='flex items-center gap-2'
               onClick={handleSubmit(values => {

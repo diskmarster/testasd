@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteProfileAction } from '@/app/(site)/profil/actions'
+import { deleteProfileAction } from '@/app/[lng]/(site)/profil/actions'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -60,7 +60,9 @@ function DeleteDialog({ user: profileUser }: { user?: UserNoHash }) {
             className='flex items-center gap-2'
             onClick={() => {
               startTransition(async () => {
-                const res = await deleteProfileAction({ userId: profileUser ? profileUser.id : user.id })
+                const res = await deleteProfileAction({
+                  userId: profileUser ? profileUser.id : user.id,
+                })
                 if (res && res.serverError)
                   toast.error(siteConfig.errorTitle, {
                     description: res.serverError,
