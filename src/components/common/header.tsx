@@ -5,15 +5,15 @@ import { NavDesktop } from "./nav-desktop";
 import { NavMobile } from "./nav-mobile";
 import { NavLocation } from "./nav-location";
 
-export async function Header() {
+export async function Header({lng}: {lng: string}) {
   const { session, user } = await sessionService.validate()
   if (!session) return null
 
   return (
     <header className='sticky top-0 z-40 w-full border-b bg-background shadow-sm'>
       <div className='container flex h-16 items-center md:space-x-4 sm:justify-between'>
-        <NavDesktop user={user} />
-        <NavMobile user={user} />
+        <NavDesktop user={user} lng={lng} />
+        <NavMobile user={user} lng={lng}/>
         <div className='flex flex-1 items-center justify-end space-x-4'>
           <nav className='flex items-center space-x-2'>
             <NavLocation />

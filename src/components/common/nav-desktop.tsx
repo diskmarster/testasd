@@ -8,11 +8,11 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export function NavDesktop({ user }: { user: User }) {
+export function NavDesktop({ user, lng }: { user: User, lng: string }) {
   const pathname = usePathname()
   return (
     <div className='hidden gap-6 md:flex md:gap-10'>
-      <Link href='/' className='flex items-center space-x-2'>
+      <Link href={`/${lng}/oversigt`} className='flex items-center space-x-2'>
         <siteConfig.logo className="size-6" strokeWidth={1.5} />
         <span className='inline-block font-semibold'>
           {siteConfig.name}
@@ -21,7 +21,7 @@ export function NavDesktop({ user }: { user: User }) {
 
       <NavigationMenu>
         <NavigationMenuList>
-          {siteConfig.navItems
+          {siteConfig.navItems(lng)
             .filter(
               item => item.roles.includes(user.role) || item.roles.length == 0,
             )

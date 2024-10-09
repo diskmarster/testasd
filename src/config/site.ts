@@ -8,13 +8,13 @@ export const siteConfig: SiteConfig = {
   logo: Icons.boxes,
   errorTitle: 'Der gik noget galt',
   successTitle: 'Handling fuldført',
-  navItems: [
+  navItems: (lng: string = 'dk') => [
     {
       label: 'Oversigt',
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: '/oversigt',
+      href: `/${lng}/oversigt`,
       roles: [],
     },
     {
@@ -22,7 +22,7 @@ export const siteConfig: SiteConfig = {
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: '/historik',
+      href: `/${lng}/historik`,
       roles: [],
     },
     {
@@ -30,7 +30,7 @@ export const siteConfig: SiteConfig = {
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: '/genbestil',
+      href: `/${lng}/genbestil`,
       roles: [],
     },
     {
@@ -52,7 +52,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Produkter',
           description: 'Se, opret og rediger i dine produkter',
-          href: '/admin/produkter',
+          href: `/${lng}/admin/produkter`,
           roles: ['sys_admin', 'firma_admin', 'lokal_admin'],
           isExternal: false,
           isDisabled: false,
@@ -61,7 +61,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Varegrupper',
           description: 'Se, opret og rediger i dine varegrupper',
-          href: '/admin/varegrupper',
+          href: `/${lng}/admin/varegrupper`,
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: false,
@@ -69,7 +69,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Placeringer',
           description: 'Se, opret og rediger i dine placeringer',
-          href: '/admin/placeringer',
+          href: `/${lng}/admin/placeringer`,
           roles: ['sys_admin', 'firma_admin'],
           isExternal: false,
           isDisabled: false,
@@ -93,7 +93,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Kunder',
           description: 'Se en oversigt over alle kunder i Nem Lager',
-          href: '/sys/kunder',
+          href: `/${lng}/sys/kunder`,
           roles: ['sys_admin'],
           isExternal: false,
           isDisabled: true,
@@ -101,7 +101,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Brugere',
           description: 'Se en oversigt over alle brugere i Nem Lager',
-          href: '/sys/brugere',
+          href: `/${lng}/sys/brugere`,
           roles: ['sys_admin'],
           isExternal: false,
           isDisabled: true,
@@ -109,7 +109,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Enheder',
           description: 'Se, opret og rediger i de enheder kunderne kan vælge',
-          href: '/sys/enheder',
+          href: `/${lng}/sys/enheder`,
           roles: ['sys_admin'],
           isExternal: false,
           isDisabled: false,
@@ -117,7 +117,7 @@ export const siteConfig: SiteConfig = {
         {
           label: 'Fejlbeskeder',
           description: 'Se en oversigt over alle fejlbeskeder i Nem Lager',
-          href: '/sys/fejl',
+          href: `/${lng}/sys/fejl`,
           roles: ['sys_admin'],
           isExternal: false,
           isDisabled: true,
@@ -133,7 +133,7 @@ type SiteConfig = {
   logo: LucideIcon
   errorTitle: string
   successTitle: string
-  navItems: NavItem[]
+  navItems: (lng?: string) => NavItem[]
 }
 
 export type NavItem = NavItemNoDropdown | NavItemDropdown
