@@ -1,7 +1,8 @@
 'use client'
 
-import { updateInventoryAction } from '@/app/(site)/oversigt/actions'
-import { updateInventoryValidation } from '@/app/(site)/oversigt/validation'
+import { updateInventoryAction } from '@/app/[lng]/(site)/oversigt/actions'
+import { updateInventoryValidation } from '@/app/[lng]/(site)/oversigt/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -40,6 +41,7 @@ interface Props {
   products: Product[]
   placements: Placement[]
   batches: Batch[]
+  lng: string
 }
 
 export function ModalUpdateInventory({
@@ -47,6 +49,7 @@ export function ModalUpdateInventory({
   products,
   placements,
   batches,
+  lng,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
@@ -57,6 +60,7 @@ export function ModalUpdateInventory({
   const [searchProduct, setSearchProduct] = useState<string>('')
   const [searchBatch, setSearchBatch] = useState<string>('')
   const [searchPlacement, setSearchPlacement] = useState<string>('')
+  const { t } = useTranslation(lng, 'oversigt')
 
   const productOptions = products
     .filter(prod =>
@@ -171,7 +175,7 @@ export function ModalUpdateInventory({
       setNewPlacement(false)
       setUseReference(false)
       toast.success(siteConfig.successTitle, {
-        description: `${isIncoming ? 'Tilgang' : 'Afgang'} blev oprettet`,
+        description: `${isIncoming ? t('incoming') : t('outgoing')} blev oprettet`,
       })
     })
   }
@@ -195,9 +199,9 @@ export function ModalUpdateInventory({
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opdater beholdning</CredenzaTitle>
+          <CredenzaTitle>{t('update-inventory')}</CredenzaTitle>
           <CredenzaDescription>
-            Opdater beholdning ved at lave en tilgang eller afgang
+            {t('update-inventory-description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -212,7 +216,7 @@ export function ModalUpdateInventory({
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Produkt</Label>
+            <Label>{t('product')}</Label>
               <AutoComplete
                 autoFocus={false}
                 placeholder='Søg i produkter...'
@@ -237,7 +241,7 @@ export function ModalUpdateInventory({
               <div className='flex flex-col gap-4 md:flex-row'>
                 <div className='grid gap-2 w-full'>
                   <div className='flex items-center justify-between h-4'>
-                    <Label>Placering</Label>
+                    <Label>{t('placement')}</Label>
                     <span
                       className={cn(
                         'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
@@ -247,21 +251,21 @@ export function ModalUpdateInventory({
                         resetField('placementID')
                         setNewPlacement(prev => !prev)
                       }}>
-                      {newPlacement ? 'Brug eksisterende' : 'Opret ny'}
+                      {newPlacement ? t('use-existing') : t('create-new')}
                     </span>
                   </div>
                   {newPlacement ? (
                     <Input
                       autoFocus
-                      placeholder='Skriv ny placering'
+                      placeholder={t('new-placement-placeholder')}
                       {...register('placementID')}
                     />
                   ) : (
                     <AutoComplete
                       disabled={!hasProduct}
                       autoFocus={false}
-                      placeholder='Søg i placeringer...'
-                      emptyMessage='Ingen placeringer fundet'
+                      placeholder={t('placement-placeholder')}
+                      emptyMessage={t('autocomplete-empty-message')}
                       items={placementOptions}
                       onSelectedValueChange={value =>
                         setValue('placementID', parseInt(value), { shouldValidate: true })
@@ -287,21 +291,21 @@ export function ModalUpdateInventory({
                           resetField('batchID')
                           setNewBatch(prev => !prev)
                         }}>
-                        {newBatch ? 'Brug eksisterende' : 'Opret ny'}
+                        {newBatch ? t('use-existing') : t('create-new')}
                       </span>
                     </div>
                     {newBatch ? (
                       <Input
                         autoFocus
-                        placeholder='Skriv ny batchnr.'
+                        placeholder={t('new-batch-placeholder')}
                         {...register('batchID')}
                       />
                     ) : (
                       <AutoComplete
                         disabled={!hasPlacement}
                         autoFocus={false}
-                        placeholder='Søg i batchnr...'
-                        emptyMessage='Ingen batchnr. fundet'
+                        placeholder={t('batch-placeholder')}
+                        emptyMessage={t('autocomplete-empty-message')}
                         items={batchOptions}
                         onSelectedValueChange={value =>
                           setValue('batchID', parseInt(value), { shouldValidate: true })
@@ -325,7 +329,7 @@ export function ModalUpdateInventory({
                 onClick={() =>
                   setValue('type', 'tilgang', { shouldValidate: true })
                 }>
-                Tilgang
+                {t('incoming')}
               </Button>
               <Button
                 type='button'
@@ -340,7 +344,7 @@ export function ModalUpdateInventory({
                   }
                   setValue('type', 'afgang', { shouldValidate: true })
                 }}>
-                Afgang
+                {t('outgoing')}
               </Button>
             </div>
             <div className='pt-2 flex flex-col gap-2'>
@@ -376,19 +380,25 @@ export function ModalUpdateInventory({
                 </p>
               )}
             </div>
-            <div className={cn('relative flex flex-col transition-all', useReference && 'gap-2')}>
+            <div
+              className={cn(
+                'relative flex flex-col transition-all',
+                useReference && 'gap-2',
+              )}>
               <div className={cn('w-full flex z-10 transition-all')}>
                 <Label
                   className='md:text-xs cursor-pointer hover:underline select-none transition-all'
-                  onClick={() => onUseReferenceChange(!useReference)}
-                >
-                  Brug konto/sag
+                  onClick={() => onUseReferenceChange(!useReference)}>
+                  {t('use-account-case')}
                 </Label>
               </div>
               <Input
                 {...register('reference')}
-                placeholder='Indtast Konto/sag'
-                className={cn('transition-all', !useReference ? 'h-0 p-0 border-none' : 'h-[40px]')}
+                placeholder={t('use-account-case-placeholder')}
+                className={cn(
+                  'transition-all',
+                  !useReference ? 'h-0 p-0 border-none' : 'h-[40px]',
+                )}
               />
             </div>
             <Button
@@ -396,7 +406,7 @@ export function ModalUpdateInventory({
               size='lg'
               className='w-full gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opret {isIncoming ? 'tilgang' : 'afgang'}
+              {t('create-button')} {isIncoming ? t('incoming') : t('outgoing')}
             </Button>
           </form>
         </CredenzaBody>

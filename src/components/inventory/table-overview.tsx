@@ -3,7 +3,8 @@
 import {
   getTableOverviewColumns,
   getTableOverviewFilters,
-} from '@/app/(site)/oversigt/columns'
+} from '@/app/[lng]/(site)/oversigt/columns'
+import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -58,6 +59,7 @@ interface Props {
   groups: Group[]
   placements: Placement[]
   batches: Batch[]
+  lng: string
 }
 
 export function TableOverview({
@@ -68,6 +70,7 @@ export function TableOverview({
   groups,
   placements,
   batches,
+  lng,
 }: Props) {
   const LOCALSTORAGE_KEY = 'inventory_cols'
   const columns = useMemo(
@@ -75,12 +78,14 @@ export function TableOverview({
     [user.role, plan],
   )
 
+  const { t } = useTranslation(lng, 'oversigt')
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [grouping, setGrouping] = useState<GroupingState>(['sku'])
   const [expanded, setExpanded] = useState<ExpandedState>({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultVisibility)
+  const [columnVisibility, setColumnVisibility] =
+    useState<VisibilityState>(defaultVisibility)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -204,7 +209,7 @@ export function TableOverview({
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  Ingen beholdning
+                  {t('inventory')}
                 </TableCell>
               </TableRow>
             )}

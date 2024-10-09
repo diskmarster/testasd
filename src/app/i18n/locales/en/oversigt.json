@@ -1,0 +1,36 @@
+{
+  "overview": "Overview",
+  "overview-description": "See an overview of your inventory",
+
+  "modal-update-inventory.translations": "",
+  "update-inventory": "Update inventory",
+  "update-inventory-description": "Update your inventory by making an incoming or outgoing transaction",
+  "incoming": "Incoming",
+  "outgoing": "Outgoing",
+  "product": "Product",
+  "product-placeholder": "Select a product",
+  "use-existing": "Use existing",
+  "create-new": "Create new",
+  "placement": "Placement",
+  "placement-placeholder": "Select a placement",
+  "new-placement-placeholder": "Write new placement",
+  "batch-placeholder": "Select a batchnr",
+  "new-batch-placeholder": "Write new batchnr",
+  "use-account-case": "Use account/case?",
+  "use-account-case-placeholder": "Write account/case",
+  "create-button": "Create",
+
+  "modal-move-inventory-translations": "",
+  "inventory-moved": "Quantity moved",
+  "move-inventory": "Move quantity",
+  "move-inventory-description": "Update quantity by moving a quantity to another placement",
+  "from-placement": "From placement",
+  "to-placement": "To placement",
+  "from-batch": "From batch",
+  "moveable-quantity": "Moveable quantity:",
+  "moveable-quantity-must-be-picked": "A quantity must be picked before you can move it.",
+  "move-button": "Move",
+
+  "overview-table-translations": "",
+  "inventory": "No inventory"
+}
