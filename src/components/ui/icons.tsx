@@ -35,11 +35,15 @@ import {
   UserRoundPlus,
   Warehouse,
   X,
-  ListTodo
+  ListTodo,
+  Sheet,
+  CloudUpload
 } from 'lucide-react'
 
 export const Icons = {
   updown: ChevronsUpDown,
+  sheet: Sheet,
+  cloudUpload: CloudUpload,
   lisTodo: ListTodo,
   housePlus: HousePlus,
   arrowDownUp: ArrowDownUp,
