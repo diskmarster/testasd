@@ -1,7 +1,8 @@
 'use client'
 
-import { signUpAction } from '@/app/(auth)/registrer/[linkID]/actions'
-import { signUpValidation } from '@/app/(auth)/registrer/[linkID]/validation'
+import { signUpAction } from '@/app/[lng]/(auth)/registrer/[linkID]/actions'
+import { signUpValidation } from '@/app/[lng]/(auth)/registrer/[linkID]/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -24,23 +25,30 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { PasswordInput } from '../ui/password-input'
 
+interface CreateCustomerCardProps {
+  lng: string
+}
+
 export function SignUpCard({
   customer,
   linkID,
+  lng,
 }: {
   customer: Customer
   linkID: string
+  lng: string
 }) {
+  const { t } = useTranslation(lng, 'registrer')
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
-        <CardTitle>Velkommen {customer.company}</CardTitle>
-        <CardDescription>
-          Før i kan komme i gang, skal i oprette en administrator bruger.
-        </CardDescription>
+        <CardTitle>
+          {t('title')} {customer.company}
+        </CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form customer={customer} linkID={linkID} />
+        <Form customer={customer} linkID={linkID} t={t} />
       </CardContent>
       <CardFooter>
         <Link
@@ -48,15 +56,23 @@ export function SignUpCard({
             buttonVariants({ variant: 'link' }),
             'mx-auto h-auto p-0',
           )}
-          href={'/log-ind'}>
-          Har du allerede en bruger?
+          href={`/${lng}/log-ind`}>
+          {t('customer?')}
         </Link>
       </CardFooter>
     </Card>
   )
 }
 
-function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
+function Form({
+  customer,
+  linkID,
+  t,
+}: {
+  customer: Customer
+  linkID: string
+  t: (key: string) => string
+}) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 
@@ -88,12 +104,12 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>Der skete en fejl</AlertTitle>
+          <AlertTitle>{t('error-msg')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       <div className='grid gap-2'>
-        <Label htmlFor='name'>Navn</Label>
+        <Label htmlFor='name'>{t('name')}</Label>
         <Input id='name' type='text' {...register('name')} />
         {formState.errors.name && (
           <p className='text-sm text-destructive '>
@@ -111,7 +127,7 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='password'>Kodeord</Label>
+        <Label htmlFor='password'>{t('password')}</Label>
         <PasswordInput id='password' {...register('password')} />
         {formState.errors.password && (
           <p className='text-sm text-destructive '>
@@ -120,7 +136,7 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
+        <Label htmlFor='confirmPassword'>{t('confirm-password')}</Label>
         <PasswordInput id='confirmPassword' {...register('confirmPassword')} />
         {formState.errors.confirmPassword && (
           <p className='text-sm text-destructive '>
@@ -129,7 +145,7 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='pin'>PIN-Kode</Label>
+        <Label htmlFor='pin'>{t('pin')}</Label>
         <PasswordInput id='pin' {...register('pin')} />
         {formState.errors.pin && (
           <p className='text-sm text-destructive '>
@@ -137,10 +153,10 @@ function Form({ customer, linkID }: { customer: Customer; linkID: string }) {
           </p>
         )}
       </div>
-      
+
       <Button type='submit' className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        Opret
+        {t('create-button')}
       </Button>
     </form>
   )

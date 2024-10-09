@@ -1,0 +1,12 @@
+{
+  "title": "Welcome",
+  "description": "Before you can begin using NemLager, you have to create an admin account.",
+  "customer?": "Already a customer? Log in",
+  "name": "Name",
+  "password": "Password",
+  "confirm-password": "Confirm Password",
+  "pin": "PIN-Code",
+  "create-button": "Create",
+  "default-admin-name": "Company Admin",
+  "error-msg": "An error occurred. Please try again."
+}
