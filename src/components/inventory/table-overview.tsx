@@ -72,13 +72,13 @@ export function TableOverview({
   batches,
   lng,
 }: Props) {
+  const { t } = useTranslation(lng, 'oversigt')
   const LOCALSTORAGE_KEY = 'inventory_cols'
   const columns = useMemo(
-    () => getTableOverviewColumns(plan, user.role),
-    [user.role, plan],
+    () => getTableOverviewColumns(plan, user.role, lng, t),
+    [user.role, plan, lng, t],
   )
 
-  const { t } = useTranslation(lng, 'oversigt')
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})

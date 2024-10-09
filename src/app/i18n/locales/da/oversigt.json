@@ -32,5 +32,17 @@
   "move-button": "Flyt",
 
   "overview-table-translations": "",
-  "inventory": "Ingen lagerbeholdning"
+  "inventory": "Ingen lagerbeholdning",
+
+  "columns": "",
+  "barcode": "Stregkode",
+  "product-No.": "Varenr.",
+  "product-group": "Varegruppe",
+  "product-text1": "Varetekst 1",
+  "product-text2": "Varetekst 2",
+  "product-text3": "Varetekst 3",
+  "cost-price": "Kostprice",
+  "sales-price": "Salgsprice",
+  "quantity": "Beh.",
+  "unit": "Enhed"
 }

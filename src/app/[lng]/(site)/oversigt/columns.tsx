@@ -15,107 +15,113 @@ import { DateRange } from 'react-day-picker'
 export function getTableOverviewColumns(
   plan: Plan,
   userRole: UserRole,
+  lng: string,
+  t: (key: string) => string,
 ): ColumnDef<FormattedInventory>[] {
   const skuCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.sku',
     id: 'sku',
-    header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-No.')} />
+    ),
     cell: ({ row }) => <ModalShowProductCard product={row.original.product} />,
     enableHiding: false,
     meta: {
-      viewLabel: 'Varenr.',
+      viewLabel: t('product-No.'),
     },
   }
 
   const barcodeCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.barcode',
     id: 'barcode',
-    header: ({ column }) => <TableHeader column={column} title='Stregkode' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('barcode')} />
+    ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
     meta: {
-      viewLabel: 'Stregkode',
+      viewLabel: t('barcode'),
     },
   }
 
   const groupCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.group',
     id: 'group',
-    header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
+    header: ({ column }) => <TableHeader column={column} title={t('product-group')} />,
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
     meta: {
-      viewLabel: 'Varegruppe',
+      viewLabel: t('product-group'),
     },
   }
 
   const text1Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text1',
     id: 'text1',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 1' />,
+    header: ({ column }) => <TableHeader column={column} title={t('product-text1')} />,
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
     meta: {
-      viewLabel: 'Varetekst 1',
+      viewLabel: t('product-text1'),
     },
   }
 
   const text2Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text2',
     id: 'text2',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 2' />,
+    header: ({ column }) => <TableHeader column={column} title={t('product-text2')} />,
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
     meta: {
-      viewLabel: 'Varetekst 2',
+      viewLabel: t('product-text2'),
     },
   }
 
   const text3Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text3',
     id: 'text3',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 3' />,
+    header: ({ column }) => <TableHeader column={column} title={t('product-text3')} />,
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
     meta: {
-      viewLabel: 'Varetekst 3',
+      viewLabel: t('product-text3'),
     },
   }
 
   const placementCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'placement.name',
     id: 'placement',
-    header: ({ column }) => <TableHeader column={column} title='Placering' />,
+    header: ({ column }) => <TableHeader column={column} title={t('placement')} />,
     cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
     meta: {
-      viewLabel: 'Placering',
+      viewLabel: t('placement'),
     },
   }
 
   const batchCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'batch.batch',
     id: 'batch',
-    header: ({ column }) => <TableHeader column={column} title='Batchnr.' />,
+    header: ({ column }) => <TableHeader column={column} title={t('batch')} />,
     cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
     meta: {
-      viewLabel: 'Batchnr.',
+      viewLabel: t('batch'),
     },
   }
 
   const quantityCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'quantity',
-    header: ({ column }) => <TableHeader column={column} title='Beh.' />,
+    header: ({ column }) => <TableHeader column={column} title={t('quantity')} />,
     cell: ({ getValue }) => (
       <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
         {formatNumber(getValue<number>())}
@@ -124,14 +130,14 @@ export function getTableOverviewColumns(
     filterFn: 'includesString',
     meta: {
       rightAlign: true,
-      viewLabel: 'Beh.',
+      viewLabel: t('quantity'),
     },
   }
 
   const unitCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.unit',
     id: 'unit',
-    header: ({ column }) => <TableHeader column={column} title='Enhed' />,
+    header: ({ column }) => <TableHeader column={column} title={t('unit')} />,
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: ({ getValue }) => (
@@ -141,21 +147,21 @@ export function getTableOverviewColumns(
       return value.includes(row.getValue(id))
     },
     meta: {
-      viewLabel: 'Enhed',
+      viewLabel: t('unit'),
     },
   }
 
   const costPriceCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.costPrice',
     id: 'costPrice',
-    header: ({ column }) => <TableHeader column={column} title='Kostpris' />,
+    header: ({ column }) => <TableHeader column={column} title={t('cost-price')} />,
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
     filterFn: 'includesString',
     meta: {
       rightAlign: true,
-      viewLabel: 'Kostpris',
+      viewLabel: t('cost-price'),
     },
   }
 
@@ -163,13 +169,13 @@ export function getTableOverviewColumns(
     accessorKey: 'product.salesPrice',
     id: 'salesPrice',
     aggregationFn: 'unique',
-    header: ({ column }) => <TableHeader column={column} title='Salgspris' />,
+    header: ({ column }) => <TableHeader column={column} title={t('sales-price')} />,
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
     filterFn: 'includesString',
     meta: {
       rightAlign: true,
-      viewLabel: 'Salgspris',
+      viewLabel: t('sales-price'),
     },
   }
 

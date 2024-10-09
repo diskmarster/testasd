@@ -281,7 +281,7 @@ export function ModalUpdateInventory({
                 {customer.plan == 'pro' && (
                   <div className='grid gap-2 w-full'>
                     <div className='flex items-center justify-between h-4'>
-                      <Label>Batchnr.</Label>
+                      <Label>{t('batch')}</Label>
                       <span
                         className={cn(
                           'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
