@@ -1,0 +1,17 @@
+{
+  "choose-plan": "Choose Plan",
+  "thank-you": "Thank you for signing up",
+  "activation-email": "We have sent an activation link to your email address. Please check your inbox and click the link to activate your account.",
+  "check-spam": "If you don't see the email, please check your spam folder.",
+  "go-to-login": "Go to login page",
+  "see-less": "See less",
+  "see-more": "See more",
+  "title": "Create Your Account",
+  "description": "Please fill in the details below to create your account.",
+  "company-name": "Company Name",
+  "email": "Email",
+  "email-confirm-msg": "You will receive a confirmation email where you can activate your account and create your first user.",
+  "create-button": "Create Account",
+  "customer?": "Already a customer? Log in"
+
+}

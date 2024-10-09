@@ -1,7 +1,8 @@
 'use client'
 
-import { createCustomerAction } from '@/app/(auth)/opret/actions'
-import { createCustomerValidation } from '@/app/(auth)/opret/validation'
+import { createCustomerAction } from '@/app/[lng]/(auth)/opret/actions'
+import { createCustomerValidation } from '@/app/[lng]/(auth)/opret/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -34,7 +35,12 @@ import {
 } from 'react-hook-form'
 import { z } from 'zod'
 
-export function CreateCustomer() {
+interface CreateCustomerCardProps {
+  lng: string
+}
+
+export function CreateCustomer({ lng }: CreateCustomerCardProps) {
+  const { t } = useTranslation(lng, 'opret')
   const [emailSent, setEmailSent] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [pending, startTransition] = useTransition()
@@ -65,17 +71,12 @@ export function CreateCustomer() {
       <div className='mx-auto max-w-lg space-y-4 text-center'>
         <Icons.mail className='mx-auto h-12 w-12 animate-bounce text-primary' />
         <h1 className='text-2xl font-bold tracking-tight text-foreground'>
-          Tak for din tilmelding
+          {t('thank-you')}
         </h1>
-        <p className='text-md text-foreground'>
-          Vi har sendt et aktiveringslink til din e-mailadresse. Tjek venligst
-          din indbakke og klik på linket for at aktivere din konto.
-        </p>
-        <p className='text-sm text-muted-foreground'>
-          Hvis du ikke kan se e-mailen, så tjek venligst din spam-mappe.
-        </p>
+        <p className='text-md text-foreground'>{t('activation-email')}</p>
+        <p className='text-sm text-muted-foreground'>{t('check-spam')}</p>
         <Button asChild className='w-full'>
-          <Link href='/log-ind'>Gå til log ind siden</Link>
+          <Link href={`${lng}/log-ind`}>{t('go-to-login')}</Link>
         </Button>
       </div>
     )
@@ -84,7 +85,7 @@ export function CreateCustomer() {
   return (
     <div className='flex flex-col items-center'>
       <Badge variant={'default'} className='mb-5 text-primary-foreground'>
-        Vælg en plan
+        {t('choose-plan')}
       </Badge>
       <div className='grid w-full grid-cols-1 gap-6 md:w-fit md:grid-cols-3'>
         {plansConfig.map((plan, index) => (
@@ -96,6 +97,7 @@ export function CreateCustomer() {
               setValue('plan', plan, { shouldValidate: true })
             }}
             isSelected={getValues().plan == plan.plan}
+            t={t}
           />
         ))}
       </div>
@@ -107,10 +109,8 @@ export function CreateCustomer() {
       </Button>
       <Card className='relative mx-auto w-full max-w-sm'>
         <CardHeader>
-          <CardTitle>Opret dig som kunde</CardTitle>
-          <CardDescription>
-            Udfyld dine informationer for at starte
-          </CardDescription>
+          <CardTitle>{t('title')}</CardTitle>
+          <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <FormCard
@@ -122,6 +122,7 @@ export function CreateCustomer() {
             formValues={watch()}
             setValue={setValue}
             pending={pending}
+            t={t}
           />
         </CardContent>
         <CardFooter>
@@ -130,8 +131,8 @@ export function CreateCustomer() {
               buttonVariants({ variant: 'link' }),
               'mx-auto h-auto p-0',
             )}
-            href={'/log-ind'}>
-            Er du allerede kunde i Nem Lager?
+            href={`/${lng}/log-ind`}>
+            {t('customer?')}
           </Link>
         </CardFooter>
       </Card>
@@ -144,11 +145,13 @@ function ExpandableCard({
   isExpanded,
   setPlan: setValue,
   isSelected,
+  t,
 }: {
   plan: PlanConfig
   isExpanded: boolean
   setPlan: (value: 'lite' | 'plus' | 'pro') => void
   isSelected: boolean
+  t: (key: string) => string
 }) {
   return (
     <Card
@@ -168,7 +171,7 @@ function ExpandableCard({
         <CardDescription className='mt-2 text-2xl font-semibold text-primary'>
           {plan.price}{' '}
           <span className='text-xs text-muted-foreground opacity-50'>
-            DKK / måned
+            {t('price-per-month')}
           </span>
         </CardDescription>
         <p className='mt-1 text-xs font-semibold text-muted-foreground'>
@@ -219,6 +222,7 @@ function FormCard({
   setValue,
   formValues,
   pending,
+  t,
 }: {
   handleSubmit: UseFormHandleSubmit<z.infer<typeof createCustomerValidation>>
   onSubmit: SubmitHandler<z.infer<typeof createCustomerValidation>>
@@ -233,6 +237,7 @@ function FormCard({
   }>
   formValues: { extraUsers: number; plan: Plan }
   pending: boolean
+  t: (key: string) => string
 }) {
   function increment() {
     const nextValue = parseFloat(formValues.extraUsers.toString()) + 1
@@ -382,7 +387,7 @@ function FormCard({
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='company'>Firmanavn</Label>
+        <Label htmlFor='company'>{t('company-name')}</Label>
         <Input id='company' type='text' {...register('company')} />
         {formState.errors.company && (
           <p className='text-sm text-destructive'>
@@ -399,8 +404,7 @@ function FormCard({
           </p>
         )}
         <p className='text-sm text-muted-foreground'>
-          Du vil modtage en mail med et link til at aktivere din virksomhed og
-          oprette din første bruger.
+          {t('email-confirm-msg')}
         </p>
       </div>
       <Button
@@ -408,7 +412,7 @@ function FormCard({
         disabled={pending || !formState.isValid}
         className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        Opret
+        {t('create-button')}
       </Button>
     </form>
   )
