@@ -30,14 +30,19 @@ const importFileValidation = z.array(
       text2: z.string().optional().default(''),
       text3: z.string().optional().default(''),
       sku: z.coerce.string().min(1, { message: 'Varenr. skal være udfyldt' }),
-      date: z.coerce.date(),
-      costPrice: z.coerce.number(),
+      date: z.coerce.date({
+        invalid_type_error: 'Kan ikke læse datoen',
+        message: 'Dato skal være udfyldt',
+      }),
+      costPrice: z.coerce
+        .number({ invalid_type_error: 'Kostpris skal være et nummer' })
+        .default(0),
       unit: z.preprocess(
         // @ts-ignore - string is not the same as the value in units bla bla shut up typescript
         (val: string) => val.trim().toLowerCase(),
         z.enum(units, {
-          invalid_type_error: 'Forkert enhed modtager i unit',
-          message: 'Forkert enhed modtager i unit',
+          invalid_type_error: `Ukendt enhed. Brug f.eks. ${units.join(', ')}`,
+          message: `Ukendt enhed. Brug f.eks. ${units.join(', ')}`,
         }),
       ),
       barred: z
@@ -49,12 +54,12 @@ const importFileValidation = z.array(
             value === 'ja' ||
             value === 'nej',
           {
-            message: 'Value must be a boolean',
+            message: 'Ukendt værdi i spærret. Brug true, false, ja eller nej',
           },
         )
         .transform(value => value === 'true' || value === 'ja'),
     })
-    .strict(),
+    .strict({ message: 'Ukendt kolonne' }),
 )
 
 export function ModalImportInventory() {
@@ -91,6 +96,7 @@ export function ModalImportInventory() {
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
         '.xlsx',
       ],
+      'application/vnd.ms-excel': ['.xls'],
     },
   })
 
@@ -109,7 +115,7 @@ export function ModalImportInventory() {
           <Icons.cloudUpload className='size-[18px]' />
         </Button>
       </DialogTrigger>
-      <DialogContent className='max-w-lg'>
+      <DialogContent className='max-w-xl'>
         <DialogHeader>
           <DialogTitle>Import beholdning</DialogTitle>
           <DialogDescription>
@@ -167,11 +173,20 @@ export function ModalImportInventory() {
           {errors && (
             <div className='flex flex-col gap-1 text-destructive text-sm'>
               <p className='font-semibold'>{siteConfig.errorTitle}</p>
-              {errors.issues.slice(0, 5).map((issue, i) => (
-                <div key={i}>
-                  <p>{`Fejl på række ${Number(issue.path[0]) + 1}: ${issue.message}`}</p>
-                </div>
-              ))}
+              {errors.issues.slice(0, 5).map((issue, i) => {
+                const rowNumber = Number(issue.path[0])
+                const rowKey =
+                  issue.code == 'unrecognized_keys'
+                    ? issue.keys[0]
+                    : issue.path[1]
+                const rowMsg = issue.message
+
+                return (
+                  <div key={i}>
+                    <p>{`Fejl på række ${rowNumber} i ${rowKey}: ${rowMsg}`}</p>
+                  </div>
+                )
+              })}
             </div>
           )}
           <Button
