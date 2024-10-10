@@ -32,7 +32,7 @@ export const signUpAction = publicAction
     }
 
     if (isUserLimitReached(existingCustomer.plan, existingCustomer.extraUsers, users.length)) {
-      throw new ActionError("Dit firma har nået kundegrænsen")
+      throw new ActionError("Dit firma har nået brugergrænsen")
     }
 
     const existingUser = await userService.getByEmail(parsedInput.email)
