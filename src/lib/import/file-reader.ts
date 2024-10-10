@@ -18,6 +18,7 @@ type ReadAndValidateFileResponse<T extends z.ZodTypeAny> =
 const SUPPORTED_TYPES: { [key: string]: string } = {
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   xls: 'application/vnd.ms-excel',
+  csv: 'text/csv',
 }
 
 export function readAndValidateFileData<T extends z.ZodTypeAny>(
@@ -34,18 +35,20 @@ export function readAndValidateFileData<T extends z.ZodTypeAny>(
 
         switch (file.type) {
           case SUPPORTED_TYPES['xlsx']:
-            data = readXLSXFile(reader)
           case SUPPORTED_TYPES['xls']:
-            data = readXLSXFile(reader)
+          case SUPPORTED_TYPES['csv']:
+            data = readWithXLSX(reader)
+            break
+          default:
+            console.error('wrong import file type')
+            return
         }
 
         const parseRes = schema.safeParse(data)
 
         if (debug) {
           console.log('read and validate debugging enabled')
-          console.log('file type', file.type)
-          console.log('sheet data', data)
-          console.log('parse res', parseRes)
+          console.log({ fileType: file.type, sheetData: data, parseRes })
         }
 
         if (!parseRes.success) {
@@ -78,7 +81,7 @@ export function readAndValidateFileData<T extends z.ZodTypeAny>(
   })
 }
 
-function readXLSXFile(reader: FileReader): unknown[] {
+function readWithXLSX(reader: FileReader): Record<string, any>[] {
   const workbook = XLSX.read(reader.result, { type: 'binary' })
   const sheetName = workbook.SheetNames[0]
   const sheet = workbook.Sheets[sheetName]
@@ -88,7 +91,6 @@ function readXLSXFile(reader: FileReader): unknown[] {
   })
 
   // lowercasing first letter of the headers value in case users capitalizes it
-  console.time('lowercase')
   const lowercasedKeysArray = sheetData.map((row: any) => {
     return Object.keys(row as Record<string, any>).reduce(
       (acc, key) => {
@@ -99,7 +101,6 @@ function readXLSXFile(reader: FileReader): unknown[] {
       {} as Record<string, any>,
     )
   })
-  console.timeEnd('lowercase')
 
   return lowercasedKeysArray
 }
