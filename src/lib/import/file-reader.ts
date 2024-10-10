@@ -15,6 +15,11 @@ type ReadAndValidateFileResponse<T extends z.ZodTypeAny> =
   | ReadAndValidateFileSuccess<T>
   | ReadAndValidateFileError<T>
 
+const SUPPORTED_TYPES: { [key: string]: string } = {
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  xls: 'application/vnd.ms-excel',
+}
+
 export function readAndValidateFileData<T extends z.ZodTypeAny>(
   file: File,
   schema: z.ZodArray<T>,
@@ -25,16 +30,21 @@ export function readAndValidateFileData<T extends z.ZodTypeAny>(
 
     reader.onload = () => {
       try {
-        const workbook = XLSX.read(reader.result, { type: 'binary' })
-        const sheetName = workbook.SheetNames[0]
-        const sheet = workbook.Sheets[sheetName]
-        const sheetData = XLSX.utils.sheet_to_json(sheet)
+        let data
 
-        const parseRes = schema.safeParse(sheetData)
+        switch (file.type) {
+          case SUPPORTED_TYPES['xlsx']:
+            data = readXLSXFile(reader)
+          case SUPPORTED_TYPES['xls']:
+            data = readXLSXFile(reader)
+        }
+
+        const parseRes = schema.safeParse(data)
 
         if (debug) {
           console.log('read and validate debugging enabled')
-          console.log('sheet data', sheetData)
+          console.log('file type', file.type)
+          console.log('sheet data', data)
           console.log('parse res', parseRes)
         }
 
@@ -66,4 +76,30 @@ export function readAndValidateFileData<T extends z.ZodTypeAny>(
 
     reader.readAsArrayBuffer(file)
   })
+}
+
+function readXLSXFile(reader: FileReader): unknown[] {
+  const workbook = XLSX.read(reader.result, { type: 'binary' })
+  const sheetName = workbook.SheetNames[0]
+  const sheet = workbook.Sheets[sheetName]
+  const sheetData = XLSX.utils.sheet_to_json(sheet, {
+    blankrows: true,
+    defval: '',
+  })
+
+  // lowercasing first letter of the headers value in case users capitalizes it
+  console.time('lowercase')
+  const lowercasedKeysArray = sheetData.map((row: any) => {
+    return Object.keys(row as Record<string, any>).reduce(
+      (acc, key) => {
+        const lowercasedKey = key.charAt(0).toLowerCase() + key.slice(1)
+        acc[lowercasedKey] = row[key]
+        return acc
+      },
+      {} as Record<string, any>,
+    )
+  })
+  console.timeEnd('lowercase')
+
+  return lowercasedKeysArray
 }
