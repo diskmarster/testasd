@@ -1,11 +1,11 @@
 import { Plan } from '@/data/customer.types'
 import { addHours, isBefore } from 'date-fns'
 
-export const planUserLimits: { [Property in Plan]: number } = {
+export const planUserLimits: { readonly [Property in Plan]: number } = Object.freeze({
   lite: 1,
   plus: 10,
   pro: 20,
-}
+})
 
 export function isLinkExpired(inserted: Date, durationHH: number): boolean {
   const expiration = addHours(inserted, durationHH)
