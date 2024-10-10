@@ -97,6 +97,7 @@ export function ModalImportInventory() {
         '.xlsx',
       ],
       'application/vnd.ms-excel': ['.xls'],
+      'text/csv': ['.csv'],
     },
   })
 
