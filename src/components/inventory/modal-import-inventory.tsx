@@ -1,5 +1,6 @@
 'use client'
 
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,6 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Icons } from '@/components/ui/icons'
+import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
 import { useMediaQuery } from '@/hooks/use-media-query'
 import { readAndValidateFileData } from '@/lib/import/file-reader'
@@ -15,9 +18,6 @@ import Link from 'next/link'
 import { useCallback, useState, useTransition } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { z, ZodError } from 'zod'
-import { Button, buttonVariants } from '../ui/button'
-import { Icons } from '../ui/icons'
-import { Label } from '../ui/label'
 
 const units = ['stk', 'kg', 'kasse'] as const
 
@@ -29,24 +29,52 @@ const importFileValidation = z.array(
         .min(1, { message: 'Varetekst 1 skal være minimum 1 karakter lang' }),
       text2: z.string().optional().default(''),
       text3: z.string().optional().default(''),
-      sku: z.coerce.string().min(1, { message: 'Varenr. skal være udfyldt' }),
-      date: z.coerce.date({
-        invalid_type_error: 'Kan ikke læse datoen',
-        message: 'Dato skal være udfyldt',
-      }),
-      costPrice: z.coerce
-        .number({ invalid_type_error: 'Kostpris skal være et nummer' })
-        .default(0),
+      sku: z.coerce
+        .string({ required_error: 'Varenr. skal være udfyldt' })
+        .min(1, { message: 'Varenr. skal være minimum 1 karakter lang' }),
+      barcode: z.coerce
+        .string({ required_error: 'Stregkode skal være udfyldt' })
+        .min(1, { message: 'Stregkode skal være minimum 1 karakter lang' }),
+      group: z.coerce
+        .string({ required_error: 'Varegruppe skal være udfyldt' })
+        .min(1, { message: 'Varegruppe skal være minimum 1 karakter lang' }),
       unit: z.preprocess(
-        // @ts-ignore - string is not the same as the value in units bla bla shut up typescript
+        //@ts-ignore - string is not the same as the value in units bla bla shut up typescript
         (val: string) => val.trim().toLowerCase(),
         z.enum(units, {
           invalid_type_error: `Ukendt enhed. Brug f.eks. ${units.join(', ')}`,
           message: `Ukendt enhed. Brug f.eks. ${units.join(', ')}`,
         }),
       ),
+      costPrice: z.coerce
+        .number({
+          invalid_type_error: 'Kostpris kan ikke være andet end et nummer',
+        })
+        .default(0),
+      salesPrice: z.coerce
+        .number({
+          invalid_type_error: 'Salgspris kan ikke være andet end et nummer',
+        })
+        .optional()
+        .default(0),
+      quantity: z.coerce
+        .number({
+          invalid_type_error: 'Beholdning kan ikke være andet end et nummer',
+        })
+        .optional()
+        .default(0),
+      placement: z.string().optional().default(''),
+      batch: z.string().optional().default(''),
+      expiry: z.coerce
+        .date({
+          invalid_type_error: 'Kan ikke læse datoen',
+          message: 'Dato skal være udfyldt',
+        })
+        .optional(),
       barred: z
         .string()
+        .optional()
+        .default('false')
         .refine(
           value =>
             value === 'true' ||
@@ -59,7 +87,16 @@ const importFileValidation = z.array(
         )
         .transform(value => value === 'true' || value === 'ja'),
     })
-    .strict({ message: 'Ukendt kolonne' }),
+    .strict({ message: 'Ukendt kolonne' })
+    .superRefine((val, ctx) => {
+      if (val.expiry && !val.batch) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Batchnr. skal være udfyld hvis udløbsdato er udfyldt',
+          path: ['batch'],
+        })
+      }
+    }),
 )
 
 export function ModalImportInventory() {
@@ -135,7 +172,7 @@ export function ModalImportInventory() {
             <p className='text-muted-foreground text-sm'>
               Er du i tvivl om hvordan du skal skrive dine værdier, så se
               venligst på vores F.A.Q under{' '}
-              <Link href={'/faq'} target='_blank' className='underline'>
+              <Link href={'/faq#1'} className='underline'>
                 &quot;Hvordan formaterer jeg min import fil til
                 beholdning?&quot;
               </Link>

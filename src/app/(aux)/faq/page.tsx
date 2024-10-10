@@ -1,4 +1,3 @@
-import { signOutAction } from '@/app/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import {
   Accordion,
@@ -6,27 +5,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { locationService } from '@/service/location'
-import { sessionService } from '@/service/session'
 
 export default async function Page() {
-  const { session, user } = await sessionService.validate()
-  if (!session) {
-    signOutAction()
-    return
-  }
-
-  const location = await locationService.getLastVisited(user.id)
-  if (!location) {
-    signOutAction()
-    return
-  }
-
   return (
     <SiteWrapper
       title='Oftest stillede spørgsmål'
       description='Her kan du få svar på nogle af de oftest stillede spørgsmål til Nem Lager'>
       <div className='lg:w-1/2'>
+        <div className='h-[200vh]' />
         <QandA
           id='1'
           question='Hvordan formaterer jeg min import fil til beholdning?'
