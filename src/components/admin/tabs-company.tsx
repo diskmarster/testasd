@@ -90,7 +90,7 @@ export function TabsAdmin({
           {currentTab() == 'brugere' ? (
             <div className='flex items-center gap-4'>
               {/* TODO: add customers extra users to function below when its added */}
-              {isUserLimitReached(customer.plan, 0, users.length) && (
+              {isUserLimitReached(customer.plan, customer.extraUsers, users.length) && (
                 <div className='flex items-center gap-2'>
                   <span className='text-xs font-semibold text-destructive'>
                     Du har nået brugergrænsen
@@ -113,7 +113,7 @@ export function TabsAdmin({
                 user={user}
                 locations={locations}
                 currentLocationID={currentLocationID}
-                isDisabled={isUserLimitReached(customer.plan, 0, users.length)}
+                isDisabled={isUserLimitReached(customer.plan, customer.extraUsers, users.length)}
               />
             </div>
           ) : currentTab() == 'lokationer' ? (

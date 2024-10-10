@@ -43,6 +43,13 @@
       "when": 1728379858636,
       "tag": "0005_zippy_surge",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1728555154332,
+      "tag": "0006_old_vengeance",
+      "breakpoints": true
     }
   ]
 }

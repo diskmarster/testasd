@@ -151,6 +151,7 @@ export const productTable = sqliteTable(
     isBarred: integer('is_barred', { mode: 'boolean' })
       .notNull()
       .default(false),
+    note: text('note').notNull().default(''),
   },
   t => ({
     unqSku: unique().on(t.customerID, t.sku),

@@ -69,7 +69,7 @@ export const inviteNewUserAction = adminAction
     }
 
     // TODO: add customers extra users to function below when its added
-    if (isUserLimitReached(customer.plan, 0, users.length)) {
+    if (isUserLimitReached(customer.plan, customer.extraUsers, users.length)) {
       throw new ActionError('Du har nået brugergrænsen')
     }
 
