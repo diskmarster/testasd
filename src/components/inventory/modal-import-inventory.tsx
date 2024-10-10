@@ -161,13 +161,17 @@ export function ModalImportInventory() {
           </div>
           <div
             {...getRootProps()}
-            className='border-dashed border-2 rounded-md px-6 py-12 hover:border-primary transition-colors cursor-pointer'>
+            className='border-dashed border-2 rounded-md px-6 py-10 hover:border-primary transition-colors cursor-pointer'>
             <input {...getInputProps()} />
             <div className='text-muted-foreground text-sm grid place-items-center'>
-              {isDragActive ? (
-                <p>Træk og slip din import fil her</p>
+              {rows.length > 0 ? (
+                <p>Indlæst og klartgjort {rows.length} rækker til upload</p>
               ) : (
-                <p>Træk og slip din import fil her, eller klik for at vælge</p>
+                <p>
+                  {isDragActive
+                    ? 'Træk og slip din import fil her'
+                    : 'Træk og slip din import fil her, eller klik for at vælge'}
+                </p>
               )}
             </div>
           </div>
@@ -196,7 +200,7 @@ export function ModalImportInventory() {
             size='lg'
             className='w-full gap-2'>
             {pending && <Icons.spinner className='size-4 animate-spin' />}
-            Importer
+            Upload
           </Button>
         </div>
       </DialogContent>
