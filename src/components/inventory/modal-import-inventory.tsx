@@ -135,8 +135,9 @@ export function ModalImportInventory() {
             <p className='text-muted-foreground text-sm'>
               Er du i tvivl om hvordan du skal skrive dine værdier, så se
               venligst på vores F.A.Q under{' '}
-              <Link href={'/fag'} className='underline'>
-                &quot;Hvordan formaterer jeg min import fil?&quot;
+              <Link href={'/faq'} target='_blank' className='underline'>
+                &quot;Hvordan formaterer jeg min import fil til
+                beholdning?&quot;
               </Link>
             </p>
           </div>
