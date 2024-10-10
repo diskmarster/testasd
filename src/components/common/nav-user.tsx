@@ -47,6 +47,9 @@ export function NavUser({ user }: { user: User }) {
               Få hjælp
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href='/faq'>F.A.Q</Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className='focus:text-destructive' asChild>
