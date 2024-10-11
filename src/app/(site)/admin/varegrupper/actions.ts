@@ -10,6 +10,7 @@ import { revalidatePath } from 'next/cache'
 import { createGroupValidation, updateGroupValidation } from './validation'
 
 export const createGroupAction = privateAction
+  .metadata({actionName: 'createGroup'})
   .schema(createGroupValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
     const { session, user } = await sessionService.validate()
@@ -35,6 +36,7 @@ export const createGroupAction = privateAction
   })
 
 export const updateGroupAction = privateAction
+  .metadata({actionName: 'updateGroup'})
   .schema(updateGroupValidation)
   .action(async ({ parsedInput: { groupID, data: updatedGroupData } }) => {
     const updatedGroup = await inventoryService.updateGroupByID(

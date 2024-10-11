@@ -13,6 +13,7 @@ import { locationService } from "@/service/location"
 import { isUserLimitReached } from "@/service/customer.utils"
 
 export const signUpAction = publicAction
+  .metadata({actionName: 'signUp'})
   .schema(signUpValidation)
   .action(async ({ parsedInput }) => {
     const activationLink = await customerService.getActivationLinkByID(parsedInput.linkID)

@@ -12,6 +12,7 @@ import { userService } from '@/service/user'
 import { redirect } from 'next/navigation'
 
 export const signUpInvitedAction = publicAction
+  .metadata({actionName: 'signUpInvite'})
   .schema(signUpInvitedValidation)
   .action(async ({ parsedInput }) => {
     const activationLink = await userService.getInviteLinkByID(

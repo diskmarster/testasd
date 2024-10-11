@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache'
 import { createProductValidation, updateProductValidation } from './validation'
 
 export const createProductAction = privateAction
+  .metadata({actionName: 'createProduct'})
   .schema(createProductValidation)
   .action(async ({ parsedInput, ctx }) => {
     const newProduct = await productService.create(
@@ -21,6 +22,7 @@ export const createProductAction = privateAction
   })
 
 export const updateProductAction = privateAction
+  .metadata({actionName: 'updateProduct'})
   .schema(updateProductValidation)
   .action(async ({ parsedInput: { productID, data: updatedProductData } }) => {
     const updatedProduct = await productService.updateByID(

@@ -8,8 +8,9 @@ import { redirect } from "next/navigation"
 import { sessionService } from "@/service/session"
 
 export const signInAction = publicAction
+  .metadata({actionName: 'signIn'})
   .schema(signInValidation)
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx }) => {
     const existingUser = await userService.verifyPassword(parsedInput.email.toLowerCase(), parsedInput.password)
     if (!existingUser) {
       throw new ActionError("Forkert email eller kodeord")
@@ -20,6 +21,8 @@ export const signInAction = publicAction
 
     await sessionService.invalidateByID(existingUser.id)
     const newSessionID = await sessionService.create(existingUser.id)
+
+    ctx.user = existingUser
 
     redirect("/oversigt")
   })
