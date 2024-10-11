@@ -4,13 +4,14 @@ import { createProductValidation } from '@/app/[lng]/(site)/admin/produkter/vali
 import { siteConfig } from '@/config/site'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useTransition } from 'react'
+import { useContext, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
+import { useTranslation } from '@/app/i18n/client'
 import { useSession } from '@/context/session'
 import {
   Credenza,
@@ -31,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { LanguageContext } from '@/context/language'
 
 export function CreateProductsForm({
   units,
@@ -39,8 +41,9 @@ export function CreateProductsForm({
   units: Unit[]
   groups: Group[]
 }) {
+  const lng = useContext(LanguageContext)
   const { user } = useSession()
-
+  const { t } = useTranslation(lng, 'produkter')
   const [pending, startTransition] = useTransition()
   const [show, setShow] = useState(false)
   const [error, setError] = useState<string>()
@@ -67,7 +70,7 @@ export function CreateProductsForm({
       setError(undefined)
       reset()
       toast.success(siteConfig.successTitle, {
-        description: 'Produktet er oprettet succesfuldt.',
+        description: t('toast-success'),
       })
     })
   }
@@ -86,9 +89,9 @@ export function CreateProductsForm({
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg max-h-screen'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret produkt</CredenzaTitle>
+          <CredenzaTitle>{t('product-modal-title')}</CredenzaTitle>
           <CredenzaDescription>
-            Her kan du oprette et produkt.
+            {t('product-modal-description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -106,7 +109,7 @@ export function CreateProductsForm({
             <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
-                  Varenr.
+                  {t('product-No.')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='sku' type='text' {...register('sku')} />
@@ -119,7 +122,7 @@ export function CreateProductsForm({
 
               <div className='grid gap-2'>
                 <Label htmlFor='barcode'>
-                  Stregkode
+                  {t('barcode')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='barcode' type='text' {...register('barcode')} />
@@ -134,7 +137,8 @@ export function CreateProductsForm({
             <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='groupID'>
-                  Varegruppe<span className='text-destructive'> * </span>
+                  {t('product-group')}
+                  <span className='text-destructive'> * </span>
                 </Label>
                 <Select
                   onValueChange={(value: string) =>
@@ -143,7 +147,7 @@ export function CreateProductsForm({
                     })
                   }>
                   <SelectTrigger>
-                    <SelectValue placeholder='Vælg en varegruppe' />
+                    <SelectValue placeholder={t('product-group-placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {groups.map(group => (
@@ -157,7 +161,7 @@ export function CreateProductsForm({
 
               <div className='grid gap-2'>
                 <Label htmlFor='unitID'>
-                  Enhed <span className='text-destructive'> * </span>
+                  {t('unit')} <span className='text-destructive'> * </span>
                 </Label>
                 <Select
                   onValueChange={(value: string) =>
@@ -166,7 +170,7 @@ export function CreateProductsForm({
                     })
                   }>
                   <SelectTrigger>
-                    <SelectValue placeholder='Vælg en enhed' />
+                    <SelectValue placeholder={t('unit-placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {units.map(unit => (
@@ -182,7 +186,8 @@ export function CreateProductsForm({
             <div className='grid gap-5'>
               <div className='grid gap-2'>
                 <Label htmlFor='text1'>
-                  Varetekst 1 <span className='text-destructive'> * </span>
+                  {t('product-text1')}{' '}
+                  <span className='text-destructive'> * </span>
                 </Label>
                 <Input
                   id='text1'
@@ -198,7 +203,7 @@ export function CreateProductsForm({
               </div>
 
               <div className='grid gap-2'>
-                <Label htmlFor='text2'>Varetekst 2</Label>
+                <Label htmlFor='text2'>{t('product-text2')}</Label>
                 <Input
                   id='text2'
                   type='text'
@@ -213,7 +218,7 @@ export function CreateProductsForm({
               </div>
 
               <div className='grid gap-2'>
-                <Label htmlFor='text3'>Varetekst 3</Label>
+                <Label htmlFor='text3'>{t('product-text3')}</Label>
                 <Input
                   id='text3'
                   type='text'
@@ -231,7 +236,7 @@ export function CreateProductsForm({
             <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='costPrice'>
-                  Kostpris
+                  {t('cost-price')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input
@@ -250,7 +255,7 @@ export function CreateProductsForm({
               </div>
 
               <div className='grid gap-2'>
-                <Label htmlFor='salesPrice'>Salgspris</Label>
+                <Label htmlFor='salesPrice'>{t('sales-price')}</Label>
                 <Input
                   step={0.01}
                   min={0}
@@ -266,7 +271,7 @@ export function CreateProductsForm({
               </div>
             </div>
             <Button type='submit' disabled={pending || !formState.isValid}>
-              Opret
+              {t('create-button')}
             </Button>
           </form>
         </CredenzaBody>

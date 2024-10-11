@@ -1,7 +1,9 @@
 import { toggleBarredProductAction } from '@/app/[lng]/(site)/admin/produkter/actions'
+import { useTranslation } from '@/app/i18n/client'
 import { UpdateProductsForm } from '@/components/products/update-product-form'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { FormattedProduct } from '@/data/products.types'
 import { Row, Table } from '@tanstack/react-table'
 import { useState, useTransition } from 'react'
@@ -16,6 +18,8 @@ interface Props {
 export function TableOverviewActions({ table, row }: Props) {
   const [open, setOpen] = useState<boolean>(false)
   const [_, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'produkter')
 
   const handleToggleBar = () => {
     startTransition(async () => {
@@ -48,10 +52,10 @@ export function TableOverviewActions({ table, row }: Props) {
     <>
       <TableActionsWrapper>
         <DropdownMenuItem onClick={() => setOpen(true)}>
-          Redigér produkt
+          {t('update-product')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleToggleBar}>
-          {row.original.isBarred ? 'Ophæv spærring' : 'Spær'}
+          {row.original.isBarred ? t('unbar-this') : t('bar-this')}
         </DropdownMenuItem>
       </TableActionsWrapper>
 

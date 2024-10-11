@@ -13,29 +13,37 @@ import { DateRange } from 'react-day-picker'
 export function getProductOverviewColumns(
   plan: Plan,
   userRole: UserRole,
+  lng: string,
+  t: (key: string) => string,
 ): ColumnDef<FormattedProduct>[] {
   const skuCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'sku',
-    header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-No.')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varenr.',
+      viewLabel: t('product-No.'),
     },
   }
   const barcodeCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'barcode',
-    header: ({ column }) => <TableHeader column={column} title='Stregkode' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('barcode')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Stregkode',
+      viewLabel: t('barcode'),
     },
   }
   const groupCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'group',
-    header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-group')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varegruppe',
+      viewLabel: t('product-group'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -44,66 +52,78 @@ export function getProductOverviewColumns(
 
   const text1Col: ColumnDef<FormattedProduct> = {
     accessorKey: 'text1',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 1' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-text1')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varetekst 1',
+      viewLabel: t('product-text1'),
     },
   }
 
   const text2Col: ColumnDef<FormattedProduct> = {
     accessorKey: 'text2',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 2' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-text2')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varetekst 2',
+      viewLabel: t('product-text2'),
     },
   }
 
   const text3Col: ColumnDef<FormattedProduct> = {
     accessorKey: 'text3',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 3' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-text3')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varetekst 3',
+      viewLabel: t('product-text3'),
     },
   }
   const unitCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'unit',
-    header: ({ column }) => <TableHeader column={column} title='Enhed' />,
+    header: ({ column }) => <TableHeader column={column} title={t('unit')} />,
     cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
     meta: {
-      viewLabel: 'Enhed',
+      viewLabel: t('unit'),
     },
   }
 
   const costPriceCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'costPrice',
-    header: ({ column }) => <TableHeader column={column} title='Kostpris' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('cost-price')} />
+    ),
     cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     filterFn: 'includesString',
     meta: {
       rightAlign: true,
-      viewLabel: 'Kostpris',
+      viewLabel: t('cost-price'),
     },
   }
 
   const salesPriceCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'salesPrice',
-    header: ({ column }) => <TableHeader column={column} title='Salgspris' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('sales-price')} />
+    ),
     cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     filterFn: 'includesString',
     meta: {
       rightAlign: true,
-      viewLabel: 'Salgspris',
+      viewLabel: t('sales-price'),
     },
   }
   const updatedCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('updated-time')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -128,14 +148,15 @@ export function getProductOverviewColumns(
       return true
     },
     meta: {
-      viewLabel: 'Opdateret',
+      viewLabel: t('updated-time'),
     },
   }
 
   const isBarredCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'isBarred',
     header: ({ column }) => <TableHeader column={column} title='Status' />,
-    cell: ({ getValue }) => (getValue<boolean>() ? 'Spærret' : 'Aktiv'),
+    cell: ({ getValue }) =>
+      getValue<boolean>() ? t('barred-status-yes') : t('barred-status-no'),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<boolean>(id))
     },
@@ -174,25 +195,27 @@ export function getProductTableOverviewFilters(
   units: Unit[],
   groups: Group[],
   table: Table<FormattedProduct>,
+  ing: string,
+  t: (key: string) => string,
 ): FilterField<FormattedProduct>[] {
   const skuFilter: FilterField<FormattedProduct> = {
     column: table.getColumn('sku'),
     type: 'text',
-    label: 'Varenr.',
+    label: t('product-No.'),
     value: '',
     placeholder: 'Søg i varenr.',
   }
   const barcodeFilter: FilterField<FormattedProduct> = {
     column: table.getColumn('barcode'),
     type: 'text',
-    label: 'Stregkode',
+    label: t('barcode'),
     value: '',
     placeholder: 'Søg i stregkode',
   }
   const unitFilter: FilterField<FormattedProduct> = {
     column: table.getColumn('unit'),
     type: 'select',
-    label: 'Enhed',
+    label: t('unit'),
     value: '',
     options: [
       ...units.map(unit => ({
@@ -204,7 +227,7 @@ export function getProductTableOverviewFilters(
   const groupFilter: FilterField<FormattedProduct> = {
     column: table.getColumn('group'),
     type: 'select',
-    label: 'Varegruppe',
+    label: t('product-group'),
     value: '',
     options: [
       ...groups.map(group => ({
@@ -216,41 +239,41 @@ export function getProductTableOverviewFilters(
   const text1Filter: FilterField<FormattedProduct> = {
     column: table.getColumn('text1'),
     type: 'text',
-    label: 'Varetekst 1',
+    label: t('product-text1'),
     value: '',
     placeholder: 'Søg i varetekst 1',
   }
   const text2Filter: FilterField<FormattedProduct> = {
     column: table.getColumn('text2'),
     type: 'text',
-    label: 'Varetekst 2',
+    label: t('product-text2'),
     value: '',
     placeholder: 'Søg i varetekst 2',
   }
   const text3Filter: FilterField<FormattedProduct> = {
     column: table.getColumn('text3'),
     type: 'text',
-    label: 'Varetekst 3',
+    label: t('product-text3'),
     value: '',
     placeholder: 'Søg i varetekst 3',
   }
   const updatedFilter: FilterField<FormattedProduct> = {
     column: table.getColumn('updated'),
     type: 'date-range',
-    label: 'Opdateret',
+    label: t('updated-time'),
     value: '',
   }
   const costPriceFilter: FilterField<FormattedProduct> = {
     column: table.getColumn('costPrice'),
     type: 'text',
-    label: 'Kostpris',
+    label: t('cost-price'),
     value: '',
     placeholder: 'Søg i kostpris.',
   }
   const salesPriceFilter: FilterField<FormattedProduct> = {
     column: table.getColumn('salesPrice'),
     type: 'text',
-    label: 'Salgspris',
+    label: t('sales-price'),
     value: '',
     placeholder: 'Søg i salgspris.',
   }
@@ -260,8 +283,8 @@ export function getProductTableOverviewFilters(
     label: 'Status',
     value: '',
     options: [
-      { value: true, label: 'Spærret' },
-      { value: false, label: 'Aktiv' },
+      { value: true, label: t('barred-status-yes') },
+      { value: false, label: t('barred-status-no') },
     ],
   }
 

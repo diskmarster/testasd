@@ -1,4 +1,5 @@
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
+import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalImportProducts } from '@/components/inventory/modal-import-products'
 import { CreateProductsForm } from '@/components/products/create-product-form'
@@ -8,13 +9,20 @@ import { inventoryService } from '@/service/inventory'
 import { productService } from '@/service/products'
 import { sessionService } from '@/service/session'
 
+interface PageProps {
+  params: {
+    lng: string
+  }
+}
 export const maxDuration = 60
 
-export default async function Page() {
+export default async function Page({ params: { lng } }: PageProps) {
   const { session, user } = await sessionService.validate()
   if (!session) {
     return signOutAction()
   }
+
+  const { t } = await serverTranslation(lng, 'produkter')
 
   const customer = await customerService.getByID(user.customerID)
   if (!customer) {
@@ -26,8 +34,8 @@ export default async function Page() {
 
   return (
     <SiteWrapper
-      title='Opret produkt'
-      description='Her kan du oprette et produkt'
+      title={t('product-title')}
+      description={t('product-description')}
       actions={
         <>
           <ModalImportProducts />
