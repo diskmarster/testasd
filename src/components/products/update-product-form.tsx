@@ -4,13 +4,15 @@ import { createProductValidation } from '@/app/[lng]/(site)/admin/produkter/vali
 import { siteConfig } from '@/config/site'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState, useTransition } from 'react'
+import { useContext, useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
+import { useTranslation } from '@/app/i18n/client'
+import { LanguageContext } from '@/context/language'
 import { useSession } from '@/context/session'
 import { FormattedProduct } from '@/data/products.types'
 import {
@@ -48,6 +50,8 @@ export function UpdateProductsForm({
   const { user } = useSession()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useContext(LanguageContext)
+  const { t } = useTranslation(lng, 'produkter')
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
     z.infer<typeof createProductValidation>
@@ -106,9 +110,11 @@ export function UpdateProductsForm({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-lg max-h-screen'>
         <CredenzaHeader>
-          <CredenzaTitle>Rediger produkt</CredenzaTitle>
+          <CredenzaTitle>
+            {t('update-product-modal.update-product-modal-title')}
+          </CredenzaTitle>
           <CredenzaDescription>
-            Her kan du redigere et produkt
+            {t('update-product-modal.update-product-modal-description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -126,7 +132,7 @@ export function UpdateProductsForm({
             <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
-                  Varenr.
+                  {t('product-No.')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='sku' type='text' {...register('sku')} />
@@ -139,7 +145,7 @@ export function UpdateProductsForm({
 
               <div className='grid gap-2'>
                 <Label htmlFor='barcode'>
-                  Stregkode
+                  {t('barcode')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='barcode' type='text' {...register('barcode')} />
@@ -154,7 +160,8 @@ export function UpdateProductsForm({
             <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='groupID'>
-                  Varegruppe<span className='text-destructive'> * </span>
+                  {t('product-group')}
+                  <span className='text-destructive'> * </span>
                 </Label>
                 <Select
                   value={formValues.groupID.toString()}
@@ -164,7 +171,7 @@ export function UpdateProductsForm({
                     })
                   }>
                   <SelectTrigger>
-                    <SelectValue placeholder='Vælg en varegruppe' />
+                    <SelectValue placeholder={t('product-group-placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {groups.map(group => (
@@ -178,7 +185,7 @@ export function UpdateProductsForm({
 
               <div className='grid gap-2'>
                 <Label htmlFor='unitID'>
-                  Enhed <span className='text-destructive'> * </span>
+                  {t('unit')} <span className='text-destructive'> * </span>
                 </Label>
                 <Select
                   value={formValues.unitID.toString()}
@@ -188,7 +195,7 @@ export function UpdateProductsForm({
                     })
                   }>
                   <SelectTrigger>
-                    <SelectValue placeholder='Vælg en enhed' />
+                    <SelectValue placeholder={t('unit-placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {units.map(unit => (
@@ -204,7 +211,8 @@ export function UpdateProductsForm({
             <div className='grid gap-5'>
               <div className='grid gap-2'>
                 <Label htmlFor='text1'>
-                  Varetekst 1 <span className='text-destructive'> * </span>
+                  {t('product-text1')}
+                  <span className='text-destructive'> * </span>
                 </Label>
                 <Input
                   id='text1'
@@ -220,7 +228,7 @@ export function UpdateProductsForm({
               </div>
 
               <div className='grid gap-2'>
-                <Label htmlFor='text2'>Varetekst 2</Label>
+                <Label htmlFor='text2'>{t('product-text2')}</Label>
                 <Input
                   id='text2'
                   type='text'
@@ -235,7 +243,7 @@ export function UpdateProductsForm({
               </div>
 
               <div className='grid gap-2'>
-                <Label htmlFor='text3'>Varetekst 3</Label>
+                <Label htmlFor='text3'>{t('product-text3')}</Label>
                 <Input
                   id='text3'
                   type='text'
@@ -253,7 +261,7 @@ export function UpdateProductsForm({
             <div className='grid md:grid-cols-2 gap-4'>
               <div className='grid gap-2'>
                 <Label htmlFor='costPrice'>
-                  Kostpris
+                  {t('cost-price')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input
@@ -272,7 +280,7 @@ export function UpdateProductsForm({
               </div>
 
               <div className='grid gap-2'>
-                <Label htmlFor='salesPrice'>Salgspris</Label>
+                <Label htmlFor='salesPrice'>{t('sales-price')}</Label>
                 <Input
                   step={0.01}
                   min={0}
@@ -288,7 +296,7 @@ export function UpdateProductsForm({
               </div>
             </div>
             <Button type='submit' disabled={pending || !formState.isValid}>
-              Opdater
+              {t('update-product-modal.update-button')}
             </Button>
           </form>
         </CredenzaBody>

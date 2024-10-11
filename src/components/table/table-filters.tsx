@@ -132,18 +132,20 @@ function FilterPopover<T>({
     }
 
     return value
-      .map((val: any) => field.options?.find(opt => opt.value === val)?.label)
+      .map((val: any) => field.options?.find(opt => opt.value === val)?.label ||
+      `${t('table-filters.choose')} ${field.label.toLowerCase()}`)
       .filter(Boolean)
       .join(', ')
   }
 
   const getDateRangeDisplayValue = (range: DateRange): string => {
-    if (!range || (!range.from && !range.to)) return 'Vælg datoer'
+    if (!range || (!range.from && !range.to))
+      return t('table-filters.choose-dates')
     if (range.from && !range.to)
       return `${format(range.from, 'dd/MM/yyyy')}`
     if (range.from && range.to)
       return `${format(range.from, 'dd/MM/yyyy')} - ${format(range.to, 'dd/MM/yyyy')}`
-    return 'Vælg datoer'
+      return t('table-filters.choose-dates')
   }
 
   const filterDisplayValue: string = isSelect

@@ -19,11 +19,16 @@
 
   "toast-success": "Product created successfully",
 
-
   "update-product": "Edit Product",
   "bar-this": "Bar the product",
   "unbar-this": "Unbar the product",
   "barred-status-yes": "Barred",
-  "barred-status-no": "Active"
+  "barred-status-no": "Active",
 
+  "update-product-modal": {
+    "update-product": "Update product",
+    "update-product-modal-title": "Update product",
+    "update-product-modal-description": "Here you can update a product",
+    "update-button": "Update"
+  }
 }

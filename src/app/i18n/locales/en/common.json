@@ -10,7 +10,9 @@
     "clear-filter": "Remove Filter",
     "no-fitler-choice": "No filter choices",
     "add-filter": "Add filter",
-    "no-filter-found": "No filter found"
+    "no-filter-found": "No filter found",
+    "choose": "Choose",
+    "choose-dates": "Choose dates"
   },
 
   "language-switcher": {
@@ -21,6 +23,9 @@
 
   "theme-toggle": {
     "theme": "Theme"
-  }
+  },
 
+  "table-toolbar": {
+    "show-hide-columns": "Save/show columns"
+  }
 }
