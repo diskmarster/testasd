@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useLanguage } from '@/context/language'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
@@ -39,7 +40,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -59,7 +60,6 @@ interface Props {
   groups: Group[]
   placements: Placement[]
   batches: Batch[]
-  lng: string
 }
 
 export function TableOverview({
@@ -70,8 +70,8 @@ export function TableOverview({
   groups,
   placements,
   batches,
-  lng,
 }: Props) {
+  const lng = useLanguage()
   const { t } = useTranslation(lng, 'oversigt')
   const LOCALSTORAGE_KEY = 'inventory_cols'
   const columns = useMemo(

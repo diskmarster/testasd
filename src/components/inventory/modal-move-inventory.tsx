@@ -17,14 +17,8 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { siteConfig } from '@/config/site'
+import { LanguageContext } from '@/context/language'
 import { FormattedInventory } from '@/data/inventory.types'
 import { Customer } from '@/lib/database/schema/customer'
 import {
@@ -35,7 +29,7 @@ import {
 } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useTransition } from 'react'
+import { useContext, useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -47,7 +41,6 @@ interface Props {
   placements: Placement[]
   batches: Batch[]
   inventory: FormattedInventory[]
-  lng: string
 }
 
 export function ModalMoveInventory({
@@ -55,7 +48,6 @@ export function ModalMoveInventory({
   placements,
   inventory,
   batches,
-  lng,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
@@ -65,6 +57,7 @@ export function ModalMoveInventory({
   const [searchFromPlacement, setSearchFromPlacement] = useState<string>('')
   const [searchFromBatch, setSearchFromBatch] = useState<string>('')
   const [searchToPlacement, setSearchToPlacement] = useState<string>('')
+  const lng = useContext(LanguageContext)
   const { t } = useTranslation(lng, 'oversigt')
 
   const uniqueProducts = inventory.filter((item, index, self) => {
@@ -72,9 +65,13 @@ export function ModalMoveInventory({
   })
 
   const productOptions = uniqueProducts
-    .filter(prod =>
-      prod.product.text1.toLowerCase().includes(searchProduct.toLowerCase())
-      || prod.product.sku.toLowerCase().includes(searchProduct.toLowerCase()))
+    .filter(
+      prod =>
+        prod.product.text1
+          .toLowerCase()
+          .includes(searchProduct.toLowerCase()) ||
+        prod.product.sku.toLowerCase().includes(searchProduct.toLowerCase()),
+    )
     .map(prod => ({
       label: prod.product.text1,
       value: prod.product.id.toString(),
@@ -87,23 +84,30 @@ export function ModalMoveInventory({
           index ===
           self.findIndex(
             i =>
-              i.product.id === productID && i.placement.id === item.placement.id,
+              i.product.id === productID &&
+              i.placement.id === item.placement.id,
           )
         )
       })
       .filter(p =>
-        p.placement.name.toLowerCase().includes(searchFromPlacement.toLowerCase()))
+        p.placement.name
+          .toLowerCase()
+          .includes(searchFromPlacement.toLowerCase()),
+      )
       .map(prod => ({
         label: prod.placement.name,
         value: prod.placement.id.toString(),
       }))
 
   const batchesForProduct = (productID: ProductID, placementID: PlacementID) =>
-    inventory.filter(
-      item =>
-        item.product.id === productID && item.placement.id === placementID,
-    ).filter(p =>
-      p.batch.batch.toLowerCase().includes(searchFromBatch.toLowerCase()))
+    inventory
+      .filter(
+        item =>
+          item.product.id === productID && item.placement.id === placementID,
+      )
+      .filter(p =>
+        p.batch.batch.toLowerCase().includes(searchFromBatch.toLowerCase()),
+      )
       .map(p => ({
         label: p.batch.batch,
         value: p.batch.id.toString(),
@@ -234,7 +238,7 @@ export function ModalMoveInventory({
               </Alert>
             )}
             <div className='grid gap-2'>
-            <Label>{t('product')}</Label>
+              <Label>{t('product')}</Label>
               <AutoComplete
                 autoFocus={false}
                 placeholder='Søg i produkter...'
@@ -244,9 +248,10 @@ export function ModalMoveInventory({
                   resetField('fromPlacementID')
                   resetField('fromBatchID')
                   resetField('amount')
-                  setValue('productID', parseInt(value), { shouldValidate: true })
-                }
-                }
+                  setValue('productID', parseInt(value), {
+                    shouldValidate: true,
+                  })
+                }}
                 onSearchValueChange={setSearchProduct}
                 selectedValue={
                   formValues.productID ? formValues.productID.toString() : ''
@@ -272,36 +277,43 @@ export function ModalMoveInventory({
                     items={placementsForProduct(formValues.productID)}
                     onSelectedValueChange={value => {
                       resetField('fromBatchID')
-                      setValue('fromPlacementID', parseInt(value), { shouldValidate: true })
-                    }
-                    }
+                      setValue('fromPlacementID', parseInt(value), {
+                        shouldValidate: true,
+                      })
+                    }}
                     onSearchValueChange={setSearchFromPlacement}
                     selectedValue={
-                      formValues.fromPlacementID ? formValues.fromPlacementID.toString() : ''
+                      formValues.fromPlacementID
+                        ? formValues.fromPlacementID.toString()
+                        : ''
                     }
                     searchValue={searchFromPlacement}
                   />
                 </div>
                 {customer.plan == 'pro' && (
                   <div className='grid gap-2 w-full'>
-                   <Label>{t('from-batch')}</Label>
+                    <Label>{t('from-batch')}</Label>
                     <AutoComplete
                       className='bg-background'
                       disabled={!hasProduct}
                       autoFocus={false}
                       placeholder='Søg i placeringer...'
                       emptyMessage='Ingen placeringer fundet'
-                      items={batchesForProduct(formValues.productID, formValues.fromPlacementID)}
+                      items={batchesForProduct(
+                        formValues.productID,
+                        formValues.fromPlacementID,
+                      )}
                       onSelectedValueChange={value => {
                         //resetField('batchID')
                         setValue('fromBatchID', parseInt(value), {
                           shouldValidate: true,
                         })
-                      }
-                      }
+                      }}
                       onSearchValueChange={setSearchFromBatch}
                       selectedValue={
-                        formValues.fromBatchID ? formValues.fromBatchID.toString() : ''
+                        formValues.fromBatchID
+                          ? formValues.fromBatchID.toString()
+                          : ''
                       }
                       searchValue={searchFromBatch}
                     />
@@ -319,26 +331,35 @@ export function ModalMoveInventory({
 
               <div className='flex flex-col gap-4 md:flex-row bg-muted border border-dashed p-4 rounded-md'>
                 <div className='grid gap-2 w-full'>
-                <Label>{t('to-placement')}</Label>
+                  <Label>{t('to-placement')}</Label>
                   <AutoComplete
                     className='bg-background'
                     disabled={!hasProduct}
                     autoFocus={false}
                     placeholder='Søg i placeringer...'
                     emptyMessage='Ingen placeringer fundet'
-                    items={placements.filter(p => p.id != formValues.fromPlacementID && p.name.toLowerCase().includes(searchToPlacement.toLowerCase())).map(p => ({
-                      label: p.name,
-                      value: p.id.toString()
-                    }))}
+                    items={placements
+                      .filter(
+                        p =>
+                          p.id != formValues.fromPlacementID &&
+                          p.name
+                            .toLowerCase()
+                            .includes(searchToPlacement.toLowerCase()),
+                      )
+                      .map(p => ({
+                        label: p.name,
+                        value: p.id.toString(),
+                      }))}
                     onSelectedValueChange={value => {
                       setValue('toPlacementID', parseInt(value), {
                         shouldValidate: true,
                       })
-                    }
-                    }
+                    }}
                     onSearchValueChange={setSearchToPlacement}
                     selectedValue={
-                      formValues.toPlacementID ? formValues.toPlacementID.toString() : ''
+                      formValues.toPlacementID
+                        ? formValues.toPlacementID.toString()
+                        : ''
                     }
                     searchValue={searchToPlacement}
                   />

@@ -62,7 +62,6 @@ export default async function Home({ params: { lng } }: PageProps) {
               customer={customer}
               inventory={inventory}
               batches={batches}
-              lng={lng}
             />
           )}
         </>
@@ -75,7 +74,6 @@ export default async function Home({ params: { lng } }: PageProps) {
         groups={groups}
         placements={placements}
         batches={batches}
-        lng={lng}
       />
     </SiteWrapper>
   )
