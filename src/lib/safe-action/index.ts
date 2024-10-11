@@ -1,9 +1,13 @@
-import { createSafeActionClient } from "next-safe-action";
+import { createSafeActionClient, MiddlewareFn, MiddlewareResult } from "next-safe-action";
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from "@/lib/safe-action/error";
 import { sessionService } from "@/service/session";
+import { Session, User } from "lucia";
+import { z, ZodType, ZodTypeDef } from "zod";
+
+type ActionContexType = {session?: Session, user?: User}
 
 // public action client for unauthorized requests
-export const publicAction = createSafeActionClient({
+export const publicAction = createSafeActionClient<undefined, string, ZodType<any, ZodTypeDef, any>>({
   handleServerErrorLog(err, utils) {
     // TODO: implement third party logger or just insert into error table
 
@@ -18,7 +22,33 @@ export const publicAction = createSafeActionClient({
       return err.message
     }
     return "Ukendt fejl opstået"
+  },
+  defineMetadataSchema() {
+    return z.object({
+      actionName: z.string().optional(),
+    })
+  },
+})
+.metadata({})
+.use(async (input) => {
+  const start = performance.now()
+
+  const res: MiddlewareResult<string, ActionContexType> = await input.next<ActionContexType>()
+
+  const end = performance.now()
+
+  if (res.success 
+      && input.metadata.actionName
+      && res.ctx 
+      // @ts-ignore -- TS apparently doesn't know that user can exist on ctx, even though we tell it the type of res...
+      && res.ctx.user
+  ) {
+    console.log('meta ->', input.metadata)
+    console.log('res ->', res)
+    console.log(`execution time: ${end - start} ms`)
   }
+
+  return res
 })
 
 // private action client for all authorized requests
