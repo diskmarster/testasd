@@ -84,11 +84,11 @@ export const productService = {
       }
     }
   },
-  getAllProductsWithInventories: async (
+  getAllProductsWithInventories: async function (
     customerID: CustomerID,
   ): Promise<
     (Product & { unit: string; group: string; inventories: Inventory[] })[]
-  > => {
+  > {
     try {
       const products = await product.getAllByCustomerID(customerID)
 
@@ -140,7 +140,7 @@ export const productService = {
       }
     }
   },
-  async updateBarredStatus(
+  updateBarredStatus: async function (
     productID: ProductID,
     isBarred: boolean,
   ): Promise<Product | undefined> {
@@ -155,9 +155,9 @@ export const productService = {
       )
     }
   },
-  getByID: async (
+  getByID: async function (
     id: ProductID,
-  ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> => {
+  ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> {
     try {
       const p = await product.getByID(id)
       if (p == undefined) {
