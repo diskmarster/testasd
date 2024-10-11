@@ -7,31 +7,52 @@ import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
-export function getTableGroupColumns(): ColumnDef<Group>[] {
+export function getTableGroupColumns(
+  lng: string,
+  t: (key: string) => string,
+): ColumnDef<Group>[] {
   const groupCol: ColumnDef<Group> = {
     accessorKey: 'name',
-    header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
+    header: ({ column }) => (
+      <TableHeader
+        column={column}
+        title={t('product-group-columns.product-group')}
+      />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varegruppe',
+      viewLabel: t('product-group-columns.product-group'),
     },
   }
 
   const isBarredCol: ColumnDef<Group> = {
     accessorKey: 'isBarred',
-    header: ({ column }) => <TableHeader column={column} title='Spærret' />,
-    cell: ({ getValue }) => (getValue<boolean>() ? 'Ja' : 'Nej'),
+    header: ({ column }) => (
+      <TableHeader
+        column={column}
+        title={t('product-group-columns.product-group-barred')}
+      />
+    ),
+    cell: ({ getValue }) =>
+      getValue<boolean>()
+        ? t('product-group-columns.product-group-barred-yes')
+        : t('product-group-columns.product-group-barred-no'),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<boolean>(id))
     },
     meta: {
-      viewLabel: 'Spærret',
+      viewLabel: t('product-group-columns.product-group-barred'),
     },
   }
 
   const insertedCol: ColumnDef<Group> = {
     accessorKey: 'inserted',
-    header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
+    header: ({ column }) => (
+      <TableHeader
+        column={column}
+        title={t('product-group-columns.product-group-created')}
+      />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -56,13 +77,18 @@ export function getTableGroupColumns(): ColumnDef<Group>[] {
       return true
     },
     meta: {
-      viewLabel: 'Oprettet',
+      viewLabel: t('product-group-columns.product-group-created'),
     },
   }
 
   const updatedCol: ColumnDef<Group> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
+    header: ({ column }) => (
+      <TableHeader
+        column={column}
+        title={t('product-group-columns.product-group-updated')}
+      />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -87,7 +113,7 @@ export function getTableGroupColumns(): ColumnDef<Group>[] {
       return true
     },
     meta: {
-      viewLabel: 'Opdateret',
+      viewLabel: t('product-group-columns.product-group-updated'),
     },
   }
   const actionsCol: ColumnDef<Group> = {
@@ -107,11 +133,13 @@ export function getTableGroupColumns(): ColumnDef<Group>[] {
 export function getTableGroupFilters(
   table: Table<Group>,
   groups: Group[],
+  lng: string,
+  t: (key: string) => string,
 ): FilterField<Group>[] {
   const groupFilter: FilterField<Group> = {
     column: table.getColumn('name'),
     type: 'select',
-    label: 'Varegruppe',
+    label: t('product-group-columns.product-group'),
     value: '',
     options: [
       ...groups.map(group => ({
@@ -124,25 +152,31 @@ export function getTableGroupFilters(
   const isBarredFilter: FilterField<Group> = {
     column: table.getColumn('isBarred'),
     type: 'select',
-    label: 'Spærret',
+    label: t('product-group-columns.product-group-barred'),
     value: '',
     options: [
-      { value: true, label: 'Ja' },
-      { value: false, label: 'Nej' },
+      {
+        value: true,
+        label: t('product-group-columns.product-group-barred-yes'),
+      },
+      {
+        value: false,
+        label: t('product-group-columns.product-group-barred-no'),
+      },
     ],
   }
 
   const insertedFilter: FilterField<Group> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
-    label: 'Oprettet',
+    label: t('product-group-columns.product-group-created'),
     value: '',
   }
 
   const updatedFilter: FilterField<Group> = {
     column: table.getColumn('updated'),
     type: 'date-range',
-    label: 'Opdateret',
+    label: t('product-group-columns.product-group-updated'),
     value: '',
   }
 

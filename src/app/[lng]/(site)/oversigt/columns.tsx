@@ -48,7 +48,9 @@ export function getTableOverviewColumns(
   const groupCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.group',
     id: 'group',
-    header: ({ column }) => <TableHeader column={column} title={t('product-group')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-group')} />
+    ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
@@ -60,7 +62,9 @@ export function getTableOverviewColumns(
   const text1Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text1',
     id: 'text1',
-    header: ({ column }) => <TableHeader column={column} title={t('product-text1')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-text1')} />
+    ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
@@ -72,7 +76,9 @@ export function getTableOverviewColumns(
   const text2Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text2',
     id: 'text2',
-    header: ({ column }) => <TableHeader column={column} title={t('product-text2')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-text2')} />
+    ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
@@ -84,7 +90,9 @@ export function getTableOverviewColumns(
   const text3Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text3',
     id: 'text3',
-    header: ({ column }) => <TableHeader column={column} title={t('product-text3')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('product-text3')} />
+    ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
@@ -96,7 +104,9 @@ export function getTableOverviewColumns(
   const placementCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'placement.name',
     id: 'placement',
-    header: ({ column }) => <TableHeader column={column} title={t('placement')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('placement')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -121,7 +131,9 @@ export function getTableOverviewColumns(
 
   const quantityCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'quantity',
-    header: ({ column }) => <TableHeader column={column} title={t('quantity')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('quantity')} />
+    ),
     cell: ({ getValue }) => (
       <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
         {formatNumber(getValue<number>())}
@@ -154,7 +166,9 @@ export function getTableOverviewColumns(
   const costPriceCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.costPrice',
     id: 'costPrice',
-    header: ({ column }) => <TableHeader column={column} title={t('cost-price')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('cost-price')} />
+    ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
@@ -169,7 +183,9 @@ export function getTableOverviewColumns(
     accessorKey: 'product.salesPrice',
     id: 'salesPrice',
     aggregationFn: 'unique',
-    header: ({ column }) => <TableHeader column={column} title={t('sales-price')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('sales-price')} />
+    ),
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
     filterFn: 'includesString',

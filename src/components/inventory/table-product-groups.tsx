@@ -4,6 +4,7 @@ import {
   getTableGroupColumns,
   getTableGroupFilters,
 } from '@/app/[lng]/(site)/admin/varegrupper/columns'
+import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -15,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useLanguage } from '@/context/language'
 import { Group } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
@@ -46,8 +48,10 @@ interface Props {
 }
 
 export function TableProductGroups({ groups, user }: Props) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'varegrupper')
   const LOCALSTORAGE_KEY = 'groups_cols'
-  const columns = useMemo(() => getTableGroupColumns(), [])
+  const columns = useMemo(() => getTableGroupColumns(lng, t), [lng, t])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -125,8 +129,8 @@ export function TableProductGroups({ groups, user }: Props) {
   })
 
   const filterFields = useMemo(
-    () => getTableGroupFilters(table, groups),
-    [table, groups],
+    () => getTableGroupFilters(table, groups, lng, t),
+    [table, groups, lng, t],
   )
 
   if (!mounted) return null

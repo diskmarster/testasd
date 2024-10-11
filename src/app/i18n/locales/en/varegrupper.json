@@ -1,0 +1,37 @@
+{
+  "product-group-page": {
+    "title": "Product Groups",
+    "description": "Here you can view your product groups"
+  },
+
+  "create-product-group-modal": {
+    "title": "Create new Product Group",
+    "name": "Product group name",
+    "name-placeholder": "Enter a name for the product group",
+    "create-button": "Create"
+  },
+
+  "update-product-group-modal": {
+    "title": "Update Product Group",
+    "name": "Product group name",
+    "description": "Here you can update a product group",
+    "update-button": "Update",
+    "no-product-group": "No product group to edit",
+    "product-group-success": "Product group updated successfully"
+  },
+
+  "product-group-actions": {
+    "update": "Update Product Group",
+    "bar-product-group": "Bar the Product Group",
+    "unbar-product-group": "Unbar the Product Group"
+  },
+
+  "product-group-columns": {
+    "product-group": "Product Group",
+    "product-group-barred": "Barred",
+    "product-group-barred-yes": "Yes",
+    "product-group-barred-no": "No",
+    "product-group-created": "Created",
+    "product-group-updated": "Updated"
+  }
+}
