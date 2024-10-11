@@ -1,13 +1,16 @@
-import { createSafeActionClient, MiddlewareFn, MiddlewareResult } from "next-safe-action";
+import { createSafeActionClient, MiddlewareResult } from "next-safe-action";
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from "@/lib/safe-action/error";
 import { sessionService } from "@/service/session";
 import { Session, User } from "lucia";
-import { z, ZodType, ZodTypeDef } from "zod";
+import { z } from "zod";
 
 type ActionContexType = {session?: Session, user?: User}
+const metadataSchema = z.object({
+  actionName: z.string().optional(),
+})
 
 // public action client for unauthorized requests
-export const publicAction = createSafeActionClient<undefined, string, ZodType<any, ZodTypeDef, any>>({
+export const publicAction = createSafeActionClient<undefined, string, typeof metadataSchema>({
   handleServerErrorLog(err, utils) {
     // TODO: implement third party logger or just insert into error table
 
@@ -24,9 +27,7 @@ export const publicAction = createSafeActionClient<undefined, string, ZodType<an
     return "Ukendt fejl opstået"
   },
   defineMetadataSchema() {
-    return z.object({
-      actionName: z.string().optional(),
-    })
+    return metadataSchema
   },
 })
 .metadata({})
