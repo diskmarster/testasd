@@ -1,72 +1,83 @@
 'use client'
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { useTranslation } from '@/app/i18n/client'
 import { usePathname } from 'next/navigation'
 import ReactCountryFlag from 'react-country-flag'
 import { languages } from '../../app/i18n/settings'
+import {
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from '../ui/dropdown-menu'
 
 interface LanguageSwitcherProps {
   lng: string
 }
 
-const languageData: { [key: string]: { name: string; code: string } } = {
-  da: { name: 'DK', code: 'DK' },
-  en: { name: 'EN', code: 'GB' },
-}
-
 export const LanguageSwitcher = ({ lng }: LanguageSwitcherProps) => {
   const pathname = usePathname()
+  const { t } = useTranslation(lng, 'common')
+
+  const languageData: {
+    [key: string]: { name: string; fullName: string; code: string }
+  } = {
+    da: {
+      name: 'DK',
+      fullName: t('language-switcher.full-lang-name-da'),
+      code: 'DK',
+    },
+    en: {
+      name: 'EN',
+      fullName: t('language-switcher.full-lang-name-en'),
+      code: 'GB',
+    },
+  }
 
   const createNewPath = (newLang: string) => {
     return `/${newLang}${pathname.replace(`/${lng}`, '')}`
   }
 
   return (
-    <Select
-      defaultValue={lng}
-      onValueChange={(value: string) => {
-        window.location.href = createNewPath(value)
-      }}>
-      <SelectTrigger className='max-w-44'>
-        <SelectValue placeholder='Vælg sprog' />
-      </SelectTrigger>
-      <SelectContent align='end'>
-        <SelectGroup>
-          <SelectLabel className='text-sm font-semibold'>
-            <div className='flex items-center gap-4 justify-between'>
-              <p>Vælg sprog</p>
-            </div>
-          </SelectLabel>
-          <SelectSeparator />
+    <>
+      <DropdownMenuSubTrigger className='flex items-center'>
+        <ReactCountryFlag
+          countryCode={languageData[lng].code}
+          svg
+          style={{
+            width: '17px',
+            height: '17px',
+            borderRadius: '6px',
+            marginLeft: '8px',
+          }}
+          title={languageData[lng].name}
+        />
+        <span className='ml-2'>{t('language-switcher.language')}</span>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuSubContent>
           {languages.map(language => (
-            <SelectItem key={language} value={language}>
-              <div className='flex items-center gap-2'>
-                <ReactCountryFlag
-                  countryCode={languageData[language].code}
-                  svg
-                  style={{
-                    width: '1.5em',
-                    height: '1.5em',
-                  }}
-                  title={languageData[language].name}
-                />
-                <p>{languageData[language].name}</p>
-              </div>
-            </SelectItem>
+            <DropdownMenuItem
+              key={language}
+              onClick={() => {
+                window.location.href = createNewPath(language)
+              }}>
+              <ReactCountryFlag
+                countryCode={languageData[language].code}
+                svg
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '6px',
+                }}
+                title={languageData[language].name}
+                className='mr-2'
+              />
+              <span>{languageData[language].fullName}</span>
+            </DropdownMenuItem>
           ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+        </DropdownMenuSubContent>
+      </DropdownMenuPortal>
+    </>
   )
 }
-
-export default LanguageSwitcher

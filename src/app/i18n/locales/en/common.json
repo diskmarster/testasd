@@ -1,0 +1,26 @@
+{
+  "table-pagination": {
+    "rows-per-page": "Rows per page:",
+    "go-to-previous-page": "Go to previous page",
+    "go-to-next-page": "Go to next page"
+  },
+
+  "table-filters": {
+    "clear": "Reset",
+    "clear-filter": "Remove Filter",
+    "no-fitler-choice": "No filter choices",
+    "add-filter": "Add filter",
+    "no-filter-found": "No filter found"
+  },
+
+  "language-switcher": {
+    "language": "Language",
+    "full-lang-name-da": "Danish",
+    "full-lang-name-en": "English"
+  },
+
+  "theme-toggle": {
+    "theme": "Theme"
+  }
+
+}
