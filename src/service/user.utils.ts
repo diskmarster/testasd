@@ -3,7 +3,6 @@ import { hash, verify } from '@node-rs/argon2'
 import * as jwt from 'jsonwebtoken'
 import { sessionService } from './session'
 import { Session, User as AuthUser } from 'lucia'
-import { Plan } from '@/data/customer.types'
 
 const MEMORY_COST = 19456
 const TIME_COST = 2
@@ -35,7 +34,7 @@ export async function verifyPassword(
 
 
 export function userDTO(u: User): UserNoHash {
-  const { hash, ...rest } = u
+  const { hash, pin, ...rest } = u
   const user = { ...rest }
   return user
 }
