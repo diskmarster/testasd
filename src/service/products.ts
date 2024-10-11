@@ -84,26 +84,13 @@ export const productService = {
       }
     }
   },
-  getAllProducts: async (
-    customerID: CustomerID,
-  ): Promise<(Product & { unit: string; group: string })[]> => {
-    try {
-      return await product.getAllProducts(customerID)
-    } catch (e) {
-      console.error(e)
-      Promise.reject(
-        `Error getting products from database ${JSON.stringify(e, null, 2)}`,
-      )
-      return []
-    }
-  },
-  getAllProductsWithInventories: async (
+  getAllProductsWithInventories: async function (
     customerID: CustomerID,
   ): Promise<
     (Product & { unit: string; group: string; inventories: Inventory[] })[]
-  > => {
+  > {
     try {
-      const products = await product.getAllProducts(customerID)
+      const products = await product.getAllByCustomerID(customerID)
 
       return await Promise.all(
         products.map(async p => {
@@ -125,13 +112,12 @@ export const productService = {
       return []
     }
   },
-  getAllByID: async function(
+  getAllByCustomerID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<FormattedProduct[]> {
-    return await product.getAllByCustomerID(customerID)
+    return await product.getAllByCustomerID(customerID, trx)
   },
-
   updateByID: async function(
     productID: ProductID,
     updatedProductData: PartialProduct,
@@ -154,7 +140,7 @@ export const productService = {
       }
     }
   },
-  async updateBarredStatus(
+  updateBarredStatus: async function (
     productID: ProductID,
     isBarred: boolean,
   ): Promise<Product | undefined> {
@@ -169,9 +155,9 @@ export const productService = {
       )
     }
   },
-  getByID: async (
+  getByID: async function (
     id: ProductID,
-  ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> => {
+  ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> {
     try {
       const p = await product.getByID(id)
       if (p == undefined) {

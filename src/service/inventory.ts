@@ -345,9 +345,9 @@ export const inventoryService = {
 
     return reordersWithRecommended
   },
-  getInventoryByProductID: async (
+  getInventoryByProductID: async function (
     productID: ProductID,
-  ): Promise<Inventory[]> => {
+  ): Promise<Inventory[]> {
     return await inventory.getInventoryByProductID(productID)
   },
 
@@ -371,7 +371,7 @@ export const inventoryService = {
     return updatedUnit
   },
 
-  async updateUnitBarredStatus(
+  updateUnitBarredStatus: async function(
     unitID: UnitID,
     isBarred: boolean,
   ): Promise<Unit | undefined> {
@@ -414,7 +414,7 @@ export const inventoryService = {
     return updatedPlacement
   },
 
-  async updateGroupBarredStatus(
+  updateGroupBarredStatus: async function(
     groupID: GroupID,
     isBarred: boolean,
   ): Promise<Group | undefined> {
@@ -431,7 +431,7 @@ export const inventoryService = {
       )
     }
   },
-  async updatePlacementBarredStatus(
+  updatePlacementBarredStatus: async function(
     placementID: PlacementID,
     isBarred: boolean,
   ): Promise<Placement | undefined> {

@@ -19,7 +19,7 @@ export default async function Page() {
   }
   const units = await inventoryService.getActiveUnits()
   const groups = await inventoryService.getActiveGroupsByID(user.customerID)
-  const products = await productService.getAllByID(user.customerID)
+  const products = await productService.getAllByCustomerID(user.customerID)
 
   return (
     <SiteWrapper

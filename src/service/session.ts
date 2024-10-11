@@ -12,7 +12,7 @@ export const sessionService = {
     return session.id
   },
   validate: cache(
-    async (): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
+    async function(): Promise<{ user: User; session: Session } | { user: null; session: null }> {
       const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null;
       if (!sessionId) {
         return {
@@ -36,7 +36,7 @@ export const sessionService = {
       return result;
     }
   ),
-  validateSessionId: async (sessionId: string): Promise<{ user: User; session: Session } | { user: null; session: null }> => {
+  validateSessionId: async function(sessionId: string): Promise<{ user: User; session: Session } | { user: null; session: null }> {
     try {
       return await lucia.validateSession(sessionId);
     } catch(e) {
