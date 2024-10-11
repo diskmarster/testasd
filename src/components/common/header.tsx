@@ -5,6 +5,7 @@ import { NavLocation } from './nav-location'
 import { NavMobile } from './nav-mobile'
 import { NavUser } from './nav-user'
 import { ThemeToggle } from './theme-toggle'
+import { NavSettings } from './nav-settings'
 
 export async function Header({ lng }: { lng: string }) {
   const { session, user } = await sessionService.validate()
@@ -17,9 +18,8 @@ export async function Header({ lng }: { lng: string }) {
         <NavMobile user={user} lng={lng} />
         <div className='flex flex-1 items-center justify-end space-x-4'>
           <nav className='flex items-center space-x-2'>
-            <LanguageSwitcher lng={lng} />
             <NavLocation />
-            <ThemeToggle />
+            <NavSettings lng={lng} />
             <NavUser user={user} />
           </nav>
         </div>
