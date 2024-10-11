@@ -28,6 +28,7 @@ import {
   Plus,
   Printer,
   RefreshCcw,
+  Settings,
   Star,
   Sun,
   Trash,
@@ -82,6 +83,7 @@ export const Icons = {
   check: Check,
   infinity: Infinity,
   refresh: RefreshCcw,
+  settings: Settings,
 
   plusMinus: ({ ...props }) => (
     <svg
