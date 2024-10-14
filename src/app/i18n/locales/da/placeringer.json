@@ -1,3 +1,42 @@
 {
-    "placeholder": "Search for placeringer"
-}
+    "placement-page": {
+      "title": "Placeringer",
+      "description": "Se et overblik over alle dine placeringer her."
+    },
+  
+    "table-placements": {
+      "no-placements": "Ingen placeringer"
+    },
+  
+    "placement-columns": {
+      "placement": "Placering",
+      "is-barred": "Spærret",
+      "is-barred-yes": "Ja",
+      "is-barred-no": "Nej",
+      "inserted": "Indsat",
+      "updated": "Opdateret"
+    },
+  
+    "table-placement-actions": {
+      "update": "Opdater",
+      "bar": "Spær placeringen",
+      "unbar": "Fjern spærring"
+    },
+  
+    "modal-create-placement": {
+      "title": "Opret ny placering",
+      "description": "Her kan du oprette en ny placering.",
+      "placement": "Placering",
+      "placement-placeholder": "Indtast navn på ny placering",
+      "create-button": "Opret"
+    },
+  
+    "modal-update-placement": {
+      "title": "Opdater placering",
+      "description": "Her kan du opdatere en placering.",
+      "placement": "Placering",
+      "placement-placeholder": "Indtast navn på placering",
+      "update-button": "Opdater"
+    }
+  }
+  
