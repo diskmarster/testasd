@@ -1,3 +1,5 @@
+"use client"
+
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import {
   Accordion,
@@ -5,42 +7,76 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { cn } from '@/lib/utils'
+import { useSearchParams } from 'next/navigation'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 
-export default async function Page() {
+export default function Page() {
+  const searchParams = useSearchParams()
+  const questionParam = searchParams.get("spørgsmål")
+
+  const [accordionValue, setAccordionValue] = useState<string>()
+
+  const questionRefs = useRef<Array<HTMLDivElement | null>>([])
+
+  const questions: { question: string, answer: string | React.ReactNode }[] = [
+    {
+      question: "Hvordan opretter jeg en vare?",
+      answer: "Du opretter den"
+    },
+    {
+      question: 'Hvordan formaterer jeg min import fil til beholdning?',
+      answer: <AnswerImportInventory />
+    }
+  ]
+
+  const questionIndex = questions.findIndex(q => q.question == questionParam)
+
+  useEffect(() => {
+    if (questionParam) {
+      if (questionRefs.current[questionIndex]) {
+        setAccordionValue(`q-${questionIndex}`)
+        questionRefs.current[questionIndex]?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+          inline: 'end'
+        })
+      } else {
+        console.warn("no ref at index")
+      }
+    }
+  }, [questionParam])
+
   return (
     <SiteWrapper
       title='Oftest stillede spørgsmål'
       description='Her kan du få svar på nogle af de oftest stillede spørgsmål til Nem Lager'>
       <div className='lg:w-1/2'>
-        <div className='h-[200vh]' />
-        <QandA
-          id='1'
-          question='Hvordan formaterer jeg min import fil til beholdning?'
-          answer={<AnswerImportInventory />}
-        />
+        <Accordion type='single' value={accordionValue} onValueChange={(value) => setAccordionValue(value)} collapsible className='space-y-4'>
+          {questions.map((q, i) => (
+            <QandA
+              key={i}
+              // @ts-ignore
+              ref={(el) => (questionRefs.current[i] = el)}
+              question={q.question}
+              answer={q.answer}
+              index={i}
+            />
+          ))}
+        </Accordion>
       </div>
     </SiteWrapper>
   )
 }
 
-function QandA({
-  question,
-  answer,
-  id,
-}: {
-  question: string
-  answer: string | React.ReactNode
-  id: string
-}) {
+const QandA = forwardRef<HTMLDivElement, { question: string, answer: string | React.ReactNode, index: number }>(function QandA({ question, answer, index }, ref) {
   return (
-    <Accordion id={id} type='single' collapsible>
-      <AccordionItem value='item-1'>
-        <AccordionTrigger>{question}</AccordionTrigger>
-        <AccordionContent>{answer}</AccordionContent>
-      </AccordionItem>
-    </Accordion>
+    <AccordionItem ref={ref} value={`q-${index}`}>
+      <AccordionTrigger>{question}</AccordionTrigger>
+      <AccordionContent>{answer}</AccordionContent>
+    </AccordionItem>
   )
-}
+})
 
 function AnswerImportInventory() {
   return (
