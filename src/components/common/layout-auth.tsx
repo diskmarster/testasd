@@ -20,11 +20,11 @@ export default async function LayoutAuth({
         </Link>
         <Link
           className={buttonVariants({ variant: 'ghost' })}
-          href={'/log-ind'}>
+          href={'/faq'}>
           F.A.Q
         </Link>
       </div>
-      <div className='flex w-full items-center justify-center h-[calc(100dvh-56px)] py-12'>
+      <div className='flex w-full items-center justify-center min-h-[calc(100dvh-56px)] py-12'>
         {children}
       </div>
     </div>
