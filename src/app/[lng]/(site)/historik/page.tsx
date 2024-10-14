@@ -1,3 +1,4 @@
+import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { TableHistory } from '@/components/inventory/table-history'
 import { customerService } from '@/service/customer'
@@ -6,30 +7,31 @@ import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
 
-export default async function Page({ params: { lng } }: {
+export default async function Page({
+  params: { lng },
+}: {
   params: {
-    lng: string;
-  };
+    lng: string
+  }
 }) {
   const { session, user } = await sessionService.validate()
-  if (!session) redirect('/log-ind')
+  if (!session) redirect(`/${lng}/log-ind`)
 
   const location = await locationService.getLastVisited(user.id!)
-  if (!location) redirect('/log-ind')
+  if (!location) redirect(`/${lng}/log-ind`)
 
   const history = await inventoryService.getHistoryByLocationID(location)
   const customer = await customerService.getByID(user.customerID)
-  if (!customer) redirect('/log-ind')
+  if (!customer) redirect(`/${lng}/log-ind`)
 
   const units = await inventoryService.getActiveUnits()
   const groups = await inventoryService.getActiveGroupsByID(customer.id)
   const placements = await inventoryService.getActivePlacementsByID(location)
   const batches = await inventoryService.getActiveBatchesByID(location)
+  const { t } = await serverTranslation(lng, 'historik')
 
   return (
-    <SiteWrapper
-      title='Historik'
-      description='Se en oversigt over alle dine vare bevægelser'>
+    <SiteWrapper title={t('page.title')} description={t('page.description')}>
       <TableHistory
         data={history}
         user={user}

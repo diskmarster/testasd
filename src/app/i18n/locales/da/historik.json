@@ -1,0 +1,42 @@
+{
+  "page": {
+    "title": "Historik",
+    "description": "Se en historik over alle dine varebevægelser"
+  },
+
+  "table-history": {
+    "no-history": "Ingen historik"
+  },
+
+  "history-columns": {
+    "created": "Oprettet",
+    "productNo": "Varenr.",
+    "barcode": "Stregkode",
+    "product-group": "Varegruppe",
+    "text1": "Tekst1",
+    "text2": "Tekst2",
+    "text3": "Tekst3",
+    "cost-price": "Kostpris",
+    "unit": "Enhed",
+    "quantity": "Antal",
+    "placement": "Placering",
+    "batchNo": "Batchnr.",
+    "type": "Ukendt",
+    "type_tilgang": "Tilgang",
+    "type_afgang": "Afgang",
+    "type_regulering": "Regulering",
+    "type_flyt": "Flyt",
+    "type_import": "Import",
+    "reference": "Konto/sag",
+    "user": "Bruger",
+
+    "placeholders": {
+      "productNo": "Søg i varenr.",
+      "barcode": "Søg i stregkode",
+      "text1": "Søg i tekst1",
+      "text2": "Søg i tekst2",
+      "text3": "Søg i tekst3",
+      "reference": "Søg i konto/sag"
+    }
+  }
+}

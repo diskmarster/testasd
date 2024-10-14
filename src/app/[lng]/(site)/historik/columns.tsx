@@ -12,15 +12,20 @@ import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/in
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { TFunction } from 'i18next'
 import { DateRange } from 'react-day-picker'
 
 export function getTableHistoryColumns(
   plan: Plan,
   userRole: UserRole,
+lng: string,
+  t: TFunction<'historik', undefined>,
 ): ColumnDef<History>[] {
   const insertedCol: ColumnDef<History> = {
     accessorKey: 'inserted',
-    header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.created')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -45,37 +50,43 @@ export function getTableHistoryColumns(
       return true
     },
     meta: {
-      viewLabel: 'Oprettet',
+      viewLabel: t('history-columns.created'),
     },
   }
 
   const skuCol: ColumnDef<History> = {
     accessorKey: 'productSku',
     id: 'sku',
-    header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.productNo')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varenr.',
+      viewLabel: t('history-columns.productNo'),
     },
   }
 
   const barcodeCol: ColumnDef<History> = {
     accessorKey: 'productBarcode',
     id: 'barcode',
-    header: ({ column }) => <TableHeader column={column} title='Stregkode' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.barcode')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Stregkode',
+      viewLabel: t('history-columns.barcode'),
     },
   }
 
   const groupCol: ColumnDef<History> = {
     accessorKey: 'productGroupName',
     id: 'group',
-    header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.product-group')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varegruppe',
+      viewLabel: t('history-columns.product-group'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -85,40 +96,48 @@ export function getTableHistoryColumns(
   const text1Col: ColumnDef<History> = {
     accessorKey: 'productText1',
     id: 'text1',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 1' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.text1')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varetekst 1',
+      viewLabel: t('history-columns.text1'),
     },
   }
 
   const text2Col: ColumnDef<History> = {
     accessorKey: 'productText2',
     id: 'text2',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 2' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.text2')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varetekst 2',
+      viewLabel: t('history-columns.text2'),
     },
   }
 
   const text3Col: ColumnDef<History> = {
     accessorKey: 'productText3',
     id: 'text3',
-    header: ({ column }) => <TableHeader column={column} title='Varetekst 3' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.text3')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Varetekst 3',
+      viewLabel: t('history-columns.text3'),
     },
   }
 
   const costPriceCol: ColumnDef<History> = {
     accessorKey: 'productCostPrice',
     id: 'costPrice',
-    header: ({ column }) => <TableHeader column={column} title='Kostpris' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.cost-price')} />
+    ),
     cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     meta: {
-      viewLabel: 'Kostpris',
+      viewLabel: t('history-columns.cost-price'),
       rightAlign: true,
     },
     filterFn: 'weakEquals',
@@ -127,10 +146,12 @@ export function getTableHistoryColumns(
   const unitCol: ColumnDef<History> = {
     accessorKey: 'productUnit',
     id: 'unit',
-    header: ({ column }) => <TableHeader column={column} title='Enhed' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.unit')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Enhed',
+      viewLabel: t('history-columns.unit'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -151,7 +172,7 @@ export function getTableHistoryColumns(
 
       return (
         <Badge className='capitalize' variant={variant}>
-          {type}
+          {t('history-columns.type', { context: type })}
         </Badge>
       )
     },
@@ -165,7 +186,9 @@ export function getTableHistoryColumns(
 
   const amountCol: ColumnDef<History> = {
     accessorKey: 'amount',
-    header: ({ column }) => <TableHeader column={column} title='Antal' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.quantity')} />
+    ),
     cell: ({ getValue }) => {
       const amount = getValue<number>()
 
@@ -176,7 +199,7 @@ export function getTableHistoryColumns(
       )
     },
     meta: {
-      viewLabel: 'Antal',
+      viewLabel: t('history-columns.quantity'),
       rightAlign: true,
     },
     filterFn: 'weakEquals',
@@ -185,10 +208,12 @@ export function getTableHistoryColumns(
   const placementCol: ColumnDef<History> = {
     accessorKey: 'placementName',
     id: 'placement',
-    header: ({ column }) => <TableHeader column={column} title='Placering' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.placement')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Placering',
+      viewLabel: t('history-columns.placement'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -198,10 +223,12 @@ export function getTableHistoryColumns(
   const batchCol: ColumnDef<History> = {
     accessorKey: 'batchName',
     id: 'batch',
-    header: ({ column }) => <TableHeader column={column} title='Batchnr.' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.batchNo')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Batchnr.',
+      viewLabel: t('history-columns.batchNo'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -231,22 +258,26 @@ export function getTableHistoryColumns(
 
   const refCol: ColumnDef<History> = {
     accessorKey: 'reference',
-    header: ({ column }) => <TableHeader column={column} title='Konto/sag' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.reference')} />
+    ),
     cell: ({ getValue }) => (
       <span className='max-w-48 truncate'>{getValue<string>()}</span>
     ),
     meta: {
-      viewLabel: 'Konto/sag',
+      viewLabel: t('history-columns.reference'),
     },
   }
 
   const userCol: ColumnDef<History> = {
     accessorKey: 'userName',
     id: 'user',
-    header: ({ column }) => <TableHeader column={column} title='Bruger' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.user')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Bruger',
+      viewLabel: t('history-columns.user'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -321,34 +352,36 @@ export function getTableHistoryFilters(
   groups: Group[],
   placements: Placement[],
   batches: Batch[],
+lng: string,
+t: (key: string) => string,
 ): FilterField<History>[] {
   const insertedFilter: FilterField<History> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
-    label: 'Oprettet',
+    label: t('history-columns.created'),
     value: '',
   }
 
   const skuFilter: FilterField<History> = {
     column: table.getColumn('sku'),
     type: 'text',
-    label: 'Varenr.',
+    label: t('history-columns.productNo'),
     value: '',
-    placeholder: 'Søg i varenr.',
+    placeholder: t('history-columns.placeholders.productNo'),
   }
 
   const barcodeFilter: FilterField<History> = {
     column: table.getColumn('barcode'),
     type: 'text',
-    label: 'Stregkode',
+    label: t('history-columns.barcode'),
     value: '',
-    placeholder: 'Søg i stregkode',
+    placeholder: t('history-columns.placeholders.barcode'),
   }
 
   const groupFilter: FilterField<History> = {
     column: table.getColumn('group'),
     type: 'select',
-    label: 'Varegruppe',
+    label: t('history-columns.product-group'),
     value: '',
     options: [
       ...groups.map(group => ({
@@ -361,38 +394,38 @@ export function getTableHistoryFilters(
   const text1Filter: FilterField<History> = {
     column: table.getColumn('text1'),
     type: 'text',
-    label: 'Varetekst 1',
+    label: t('history-columns.text1'),
     value: '',
-    placeholder: 'Søg i varetekst 1',
+    placeholder: t('history-columns.placeholders.text1'),
   }
 
   const text2Filter: FilterField<History> = {
     column: table.getColumn('text2'),
     type: 'text',
-    label: 'Varetekst 2',
+    label: t('history-columns.text2'),
     value: '',
-    placeholder: 'Søg i varetekst 2',
+    placeholder: t('history-columns.placeholders.text2'),
   }
 
   const text3Filter: FilterField<History> = {
     column: table.getColumn('text3'),
     type: 'text',
-    label: 'Varetekst 3',
+    label: t('history-columns.text3'),
     value: '',
-    placeholder: 'Søg i varetekst 3',
+    placeholder: t('history-columns.placeholders.text3'),
   }
 
   const costPriceFilter: FilterField<History> = {
     column: table.getColumn('costPrice'),
     type: 'text',
-    label: 'Kostpris',
+    label: t('history-columns.cost-price'),
     value: '',
   }
 
   const unitFilter: FilterField<History> = {
     column: table.getColumn('unit'),
     type: 'select',
-    label: 'Enhed',
+    label: t('history-columns.unit'),
     value: '',
     options: [
       ...units.map(unit => ({
@@ -408,24 +441,24 @@ export function getTableHistoryFilters(
     label: 'Type',
     value: '',
     options: [
-      { value: 'tilgang', label: 'Tilgang' },
-      { value: 'afgang', label: 'Afgang' },
-      { value: 'regulering', label: 'Regulering' },
-      { value: 'flyt', label: 'Flyt' },
+      { value: 'tilgang', label: t('history-columns.type.incoming') },
+      { value: 'afgang', label: t('history-columns.type.outgoing') },
+      { value: 'regulering', label: t('history-columns.type.regulation') },
+      { value: 'flyt', label: t('history-columns.type.move') },
     ],
   }
 
   const amountFilter: FilterField<History> = {
     column: table.getColumn('amount'),
     type: 'text',
-    label: 'Antal',
+    label: t('history-columns.quantity'),
     value: '',
   }
 
   const placementFilter: FilterField<History> = {
     column: table.getColumn('placement'),
     type: 'select',
-    label: 'Placering',
+    label: t('history-columns.placement'),
     value: '',
     options: [
       ...placements.map(placement => ({
@@ -437,7 +470,7 @@ export function getTableHistoryFilters(
   const batchFilter: FilterField<History> = {
     column: table.getColumn('batch'),
     type: 'select',
-    label: 'Batchnr.',
+    label: t('history-columns.batchNo'),
     value: '',
     options: [
       ...batches.map(batch => ({
@@ -450,8 +483,8 @@ export function getTableHistoryFilters(
   const refFilter: FilterField<History> = {
     column: table.getColumn('reference'),
     type: 'text',
-    label: 'Konto/sag',
-    placeholder: 'Søg i konto/sag',
+    label: t('history-columns.reference'),
+    placeholder: t('history-columns.placeholders.reference'),
     value: '',
   }
 
