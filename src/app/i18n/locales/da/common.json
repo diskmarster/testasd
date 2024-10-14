@@ -28,5 +28,10 @@
 
   "table-toolbar": {
     "show-hide-columns": "Gem/vis Kolonner"
+  },
+  "nav-user": {
+    "my-profile": "Min profil",
+    "get-help": "Få hjælp",
+    "log-out": "Log ud"
   }
 }

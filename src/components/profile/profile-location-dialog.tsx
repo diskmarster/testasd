@@ -2,7 +2,9 @@
 
 import { updatePrimaryLocationAction } from '@/app/[lng]/(site)/profil/actions'
 import { updatePrimaryLocationValidation } from '@/app/[lng]/(site)/profil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import { LocationID, LocationWithPrimary } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
@@ -39,6 +41,8 @@ export function LocationDialog({
 }: {
   locations: LocationWithPrimary[]
 }) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'profil')
   const { session } = useSession()
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
@@ -60,15 +64,15 @@ export function LocationDialog({
     <Credenza open={open} onOpenChange={setOpen}>
       <CredenzaTrigger asChild>
         <Button variant='outline' className='hover:text-destructive'>
-          Skift hovedlokation
+          {t('profile-location-dialog.title')}
         </Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <form className='space-y-4'>
           <CredenzaHeader>
-            <CredenzaTitle>Skift hovedlokation</CredenzaTitle>
+            <CredenzaTitle>{t('profile-location-dialog.title')}</CredenzaTitle>
             <CredenzaDescription>
-              Skifter hovedlokation for din bruger
+              {t('profile-location-dialog.description')}
             </CredenzaDescription>
           </CredenzaHeader>
           <CredenzaBody>
@@ -81,7 +85,9 @@ export function LocationDialog({
                 </Alert>
               )}
               <div className='grid gap-2'>
-                <Label htmlFor='role'>Lokation</Label>
+                <Label htmlFor='role'>
+                  {t('profile-location-dialog.location')}
+                </Label>
                 <Select
                   defaultValue={getValues().locationID}
                   onValueChange={value =>
@@ -91,7 +97,9 @@ export function LocationDialog({
                   }>
                   <SelectTrigger id='role'>
                     <SelectValue
-                      placeholder='Vælg lokation'
+                      placeholder={t(
+                        'profile-location-dialog.location-placeholder',
+                      )}
                       className='capitalize'
                     />
                   </SelectTrigger>
@@ -118,7 +126,9 @@ export function LocationDialog({
           </CredenzaBody>
           <CredenzaFooter>
             <CredenzaClose asChild>
-              <Button variant='link'>Luk</Button>
+              <Button variant='link'>
+                {t('profile-location-dialog.cancel-button')}
+              </Button>
             </CredenzaClose>
             <Button
               disabled={
@@ -143,7 +153,7 @@ export function LocationDialog({
                 })
               })}>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opdater
+              {t('profile-location-dialog.update-button')}
             </Button>
           </CredenzaFooter>
         </form>

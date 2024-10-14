@@ -27,5 +27,12 @@
 
   "table-toolbar": {
     "show-hide-columns": "Save/show columns"
+  },
+
+  "nav-user": {
+
+    "my-profile": "My Profile",
+    "get-help": "Get Help",
+    "log-out": "Log Out"
   }
 }

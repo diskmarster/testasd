@@ -2,11 +2,13 @@
 
 import { updateProfileInformationAction } from '@/app/[lng]/(site)/profil/actions'
 import { updateProfileValidation } from '@/app/[lng]/(site)/profil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -20,6 +22,10 @@ export function ProfileInformation() {
   const { session, user } = useSession()
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
+  
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'profil')
+
 
   const { handleSubmit, formState, register } = useForm<
     z.infer<typeof updateProfileValidation>
@@ -55,7 +61,7 @@ export function ProfileInformation() {
         </Alert>
       )}
       <div className='grid gap-2'>
-        <Label htmlFor='name'>Navn</Label>
+        <Label htmlFor='name'>{t('profile-information.name')}</Label>
         <Input id='name' type='text' {...register('name')} />
         {formState.errors.name && (
           <p className='text-sm text-destructive '>
@@ -78,7 +84,7 @@ export function ProfileInformation() {
         type='submit'
         className='flex items-center gap-2 md:w-fit'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        Opdater
+        {t('profile-information.update-button')}
       </Button>
     </form>
   )

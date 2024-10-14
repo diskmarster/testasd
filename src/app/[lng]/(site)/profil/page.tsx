@@ -7,17 +7,27 @@ import { ProfilePassword } from '@/components/profile/profile-password'
 import { ProfilePin } from '@/components/profile/profile-pin'
 import { Separator } from '@/components/ui/separator'
 
+interface PageProps {
+  params: {
+    lng: string
+  }
+}
+
 export const metadata = {
   title: 'Min profil',
 }
 
-export default async function Page() {
+export default async function Page({ params: { lng } }: PageProps) {
   return (
     <SiteWrapper>
       <ProfileHeader />
       <Separator className='my-4' />
       <ProfileInformation />
-      <ProfileLocation />
+      <ProfileLocation
+        params={{
+          lng: lng,
+        }}
+      />
       <ProfilePassword />
       <ProfileDelete />
       <ProfilePin />

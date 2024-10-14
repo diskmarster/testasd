@@ -2,6 +2,7 @@
 
 import { updatePinAction } from '@/app/[lng]/(site)/profil/actions'
 import { updatePinValidation } from '@/app/[lng]/(site)/profil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +20,7 @@ import { Icons } from '@/components/ui/icons'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,11 +30,15 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 export function ProfilePin() {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'profil')
   return (
     <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
       <div className='grid gap-0.5'>
-        <Label>Ny PIN-kode</Label>
-        <p className='text-sm text-muted-foreground'>Opdater din PIN-kode</p>
+        <Label>{t('profile-pin.pin')}</Label>
+        <p className='text-sm text-muted-foreground'>
+          {t('profile-pin.update-pin')}
+        </p>
       </div>
       <PinDialog />
     </div>
@@ -44,6 +50,8 @@ export function PinDialog() {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
   const [open, setOpen] = useState<boolean>(false)
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'profil')
 
   const { handleSubmit, formState, register, reset, watch } = useForm<
     z.infer<typeof updatePinValidation>
@@ -56,15 +64,15 @@ export function PinDialog() {
     <Credenza open={open} onOpenChange={setOpen}>
       <CredenzaTrigger asChild>
         <Button variant='outline' className='hover:text-destructive'>
-          Ny PIN
+          {t('profile-pin-dialog.title')}
         </Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <form className='space-y-4'>
           <CredenzaHeader>
-            <CredenzaTitle>Ny PIN</CredenzaTitle>
+            <CredenzaTitle>{t('profile-pin-dialog.new-pin')}</CredenzaTitle>
             <CredenzaDescription>
-              Udfyld formularen for at opdatere din PIN
+              {t('profile-pin-dialog.description')}
             </CredenzaDescription>
           </CredenzaHeader>
           <CredenzaBody>
@@ -77,7 +85,9 @@ export function PinDialog() {
                 </Alert>
               )}
               <div className='grid gap-2'>
-                <Label htmlFor='currentPin'>Nuværende PIN</Label>
+                <Label htmlFor='currentPin'>
+                  {t('profile-pin-dialog.current-pin')}
+                </Label>
                 <PasswordInput id='currentPin' {...register('currentPin')} />
                 {formState.errors.currentPin && (
                   <p className='text-sm text-destructive '>
@@ -86,7 +96,9 @@ export function PinDialog() {
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='newPin'>Ny PIN</Label>
+                <Label htmlFor='newPin'>
+                  {t('profile-pin-dialog.new-pin')}
+                </Label>
                 <PasswordInput id='newPin' {...register('newPin')} />
                 {formState.errors.newPin && (
                   <p className='text-sm text-destructive '>
@@ -95,7 +107,9 @@ export function PinDialog() {
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='confirmPin'>Bekræft PIN</Label>
+                <Label htmlFor='confirmPin'>
+                  {t('profile-pin-dialog.confirm-pin')}
+                </Label>
                 <PasswordInput id='confirmPin' {...register('confirmPin')} />
                 {formState.errors.confirmPin && (
                   <p className='text-sm text-destructive '>
@@ -107,7 +121,9 @@ export function PinDialog() {
           </CredenzaBody>
           <CredenzaFooter>
             <CredenzaClose asChild>
-              <Button variant='link'>Luk</Button>
+              <Button variant='link'>
+                {t('profile-pin-dialog.cancel-button')}
+              </Button>
             </CredenzaClose>
             <Button
               disabled={!formState.isDirty}
@@ -129,7 +145,7 @@ export function PinDialog() {
                 })
               })}>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opdater
+              {t('profile-pin-dialog.update-button')}
             </Button>
           </CredenzaFooter>
         </form>

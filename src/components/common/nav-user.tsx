@@ -1,6 +1,7 @@
 'use client'
 
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
+import { useTranslation } from '@/app/i18n/client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,10 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useLanguage } from '@/context/language'
 import { User } from 'lucia'
 import Link from 'next/link'
 
 export function NavUser({ user }: { user: User }) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'common')
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,11 +45,11 @@ export function NavUser({ user }: { user: User }) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href='/profil'>Min profil</Link>
+            <Link href={`/${lng}/profil`}>{t('nav-user.my-profile')}</Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href='https://skancode.dk/kontakt/' target='_blank'>
-              Få hjælp
+              {t('nav-user.get-help')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
@@ -55,7 +60,7 @@ export function NavUser({ user }: { user: User }) {
         <DropdownMenuItem className='focus:text-destructive' asChild>
           <form action={() => signOutAction()}>
             <button className='w-full text-left' type='submit'>
-              Log ud
+              {t('nav-user.log-out')}
             </button>
           </form>
         </DropdownMenuItem>

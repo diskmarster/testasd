@@ -2,6 +2,7 @@
 
 import { updatePasswordAction } from '@/app/[lng]/(site)/profil/actions'
 import { updatePasswordValidation } from '@/app/[lng]/(site)/profil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +20,7 @@ import { Icons } from '@/components/ui/icons'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,11 +30,15 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 export function ProfilePassword() {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'profil')
   return (
     <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
       <div className='grid gap-0.5'>
-        <Label>Nyt kodeord</Label>
-        <p className='text-sm text-muted-foreground'>Opdater dit kodeord</p>
+        <Label>{t('profile-password.new-password')}</Label>
+        <p className='text-sm text-muted-foreground'>
+          {t('profile-password.update-button')}
+        </p>
       </div>
       <PasswordDialog />
     </div>
@@ -40,6 +46,8 @@ export function ProfilePassword() {
 }
 
 function PasswordDialog() {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'profil')
   const { session } = useSession()
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
@@ -56,15 +64,17 @@ function PasswordDialog() {
     <Credenza open={open} onOpenChange={setOpen}>
       <CredenzaTrigger asChild>
         <Button variant='outline' className='hover:text-destructive'>
-          Nyt kodeord
+          {t('profile-password-dialog.title')}
         </Button>
       </CredenzaTrigger>
       <CredenzaContent>
         <form className='space-y-4'>
           <CredenzaHeader>
-            <CredenzaTitle>Nyt kodeord</CredenzaTitle>
+            <CredenzaTitle>
+              {t('profile-password-dialog.new-password')}
+            </CredenzaTitle>
             <CredenzaDescription>
-              Udfyld formularen for at opdatere dit kodeord
+              {t('profile-password-dialog.description')}
             </CredenzaDescription>
           </CredenzaHeader>
           <CredenzaBody>
@@ -77,7 +87,9 @@ function PasswordDialog() {
                 </Alert>
               )}
               <div className='grid gap-2'>
-                <Label htmlFor='currentPassword'>Nuværende kodeord</Label>
+                <Label htmlFor='currentPassword'>
+                  {t('profile-password-dialog.current-password')}
+                </Label>
                 <PasswordInput
                   id='currentPassword'
                   {...register('currentPassword')}
@@ -89,7 +101,9 @@ function PasswordDialog() {
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='newPassword'>Nyt kodeord</Label>
+                <Label htmlFor='newPassword'>
+                  {t('profile-password-dialog.new-password')}
+                </Label>
                 <PasswordInput id='newPassword' {...register('newPassword')} />
                 {formState.errors.newPassword && (
                   <p className='text-sm text-destructive '>
@@ -98,7 +112,9 @@ function PasswordDialog() {
                 )}
               </div>
               <div className='grid gap-2'>
-                <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
+                <Label htmlFor='confirmPassword'>
+                  {t('profile-password-dialog.confirm-password')}
+                </Label>
                 <PasswordInput
                   id='confirmPassword'
                   {...register('confirmPassword')}
@@ -113,7 +129,9 @@ function PasswordDialog() {
           </CredenzaBody>
           <CredenzaFooter>
             <CredenzaClose asChild>
-              <Button variant='link'>Luk</Button>
+              <Button variant='link'>
+                {t('profile-password-dialog.cancel-button')}
+              </Button>
             </CredenzaClose>
             <Button
               disabled={!formState.isDirty}
@@ -134,7 +152,7 @@ function PasswordDialog() {
                 })
               })}>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opdater
+              {t('profile-password-dialog.update-button')}
             </Button>
           </CredenzaFooter>
         </form>

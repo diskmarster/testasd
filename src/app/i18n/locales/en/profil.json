@@ -1,0 +1,60 @@
+{
+  "profile-information": {
+    "name": "Name",
+    "update-button": "Update"
+  },
+
+  "profile-location": {
+    "primary-location": "Change primary location",
+    "primary-location-description": "Change which location is your primary"
+  },
+
+  "profile-location-dialog": {
+    "title": "Change primary location",
+    "description": "Select a location to set as your primary location",
+    "location": "Location",
+    "location-placeholder": "Select a location",
+
+    "cancel-button": "Cancel",
+    "update-button": "Update"
+  },
+
+  "profile-password": {
+    "new-password": "New Password",
+    "update-button": "Update your password"
+  },
+
+  "profile-password-dialog": {
+    "title": "Change password",
+    "description": "Enter your new password",
+    "current-password": "Current Password",
+    "new-password": "New password",
+    "confirm-password": "Confirm password",
+
+    "cancel-button": "Cancel",
+    "update-button": "Update"
+  },
+  "profile-delete": {
+    "delete-user": "Delete user",
+    "delete-description": "Delete your user account"
+  },
+  "profile-delete-dialog": {
+    "delete-user-alert": "This action is permanent and cannot be undone. Are you sure you want to delete your user account?",
+    "cancel-button": "Cancel",
+    "delete-button": "Delete"
+  },
+  "profile-pin": {
+    "pin": "PIN",
+    "update-pin": "Update your PIN"
+  },
+
+  "profile-pin-dialog": {
+    "title": "Change PIN",
+    "description": "Enter your new PIN",
+    "current-pin": "Current PIN",
+    "new-pin": "New PIN",
+    "confirm-pin": "Confirm PIN",
+    "cancel-button": "Cancel",
+    "update-button": "Update"
+  }
+}
