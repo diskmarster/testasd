@@ -1,0 +1,82 @@
+{
+  "reorder-page": {
+    "title": "Restock",
+    "description": "Get an overview of which items are below a minimum stock quantity"
+  },
+
+  "table-reorder": {
+    "no-minimum-stock": "No min. stock"
+  },
+
+  "table-reorder-actions": {
+    "update": "Update",
+    "delete": "Delete"
+    
+  },
+
+  "reorder-columns": {
+    "productNo": "Product No",
+    "barcode": "Barcode",
+    "text1": "Text 1",
+    "quantity": "Qty.",
+    "unit": "Unit",
+    "product-group": "Product group",
+    "minimum-stock": "Min. qty/stock",
+    "disposible-stock": "Disp. qty/stock",
+    "recommended": "Rec. reord.",
+    "buffer": "Factor (%)",
+    "ordered": "Ordered",
+    "updated": "Updated"
+  },
+
+  "filter-placeholders": {
+    "productNo": "Search product no",
+    "barcode": "Search barcode",
+    "text1": "Search text 1",
+    "quantity": "Search quantity",
+    "minimum-stock": "Search min. qty/stock",
+    "disposible-stock": "Search disp. qty/stock",
+    "recommended": "Search rec. reord.",
+    "buffer": "Search factor (%)",
+    "ordered": "Search ordered"
+  },
+  "modal-create-reorder": {
+    "title": "Create minimum stock",
+    "description": "Get notified when an item falls below a selected minimum threshold",
+    "product": "Product",
+    "product-placeholder": "Select a product",
+    "product-emptymessage": "No products found",
+    "minimum-stock": "Minimum stock",
+    "restock-factor": "Restock factor (%)",
+    "restock-factor-description": "This is used to calculate the recommended restock quantity.",
+    "recommended-reorder-calculation1": "Recommended Restock:",
+    "recommended-reorder-calculation2": "over the minimum stock",
+    "create-button": "Create"
+  },
+
+  "modal-update-reorder": {
+    "title": "Update minimum stock",
+    "description": "Get notified when an item falls below a selected minimum threshold",
+    "product": "Product",
+    "minimum-stock": "Minimum stock",
+    "restock-factor": "Restock factor (%)",
+    "restock-factor-description": "This is used to calculate the recommended restock quantity.",
+    "recommended-reorder-calculation1": "Recommended restock:",
+    "recommended-reorder-calculation2": "over the minimum stock",
+    "update-button": "Update"
+  },
+
+  "modal-delete-reorder": {
+    "title": "Delete minimum stock",
+    "description": "This action is permanent and cannot be undone. If there is an ordered quantity recorded, it will no longer be updated.",
+    "cancel-button": "Cancel",
+    "delete-button": "Delete"
+  },
+  "modal-add-ordered-reorder": {
+    "title": "Add ordered quantity",
+    "description": "The ordered quantity will be automatically updated when there is an incoming stock for this product.",
+    "product": "Product",
+    "ordered-quantity": "Ordered quantity",
+    "add-button": "Add"
+  }
+}

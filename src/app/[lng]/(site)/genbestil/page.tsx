@@ -1,4 +1,5 @@
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
+import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalAddOrderedReorder } from '@/components/inventory/modal-add-ordered-modal'
 import { ModalCreateReorder } from '@/components/inventory/modal-create-reorder'
@@ -10,7 +11,12 @@ import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 
-export default async function Page() {
+interface PageProps {
+  params: {
+    lng: string
+  }
+}
+export default async function Page( { params: { lng } }: PageProps ) {
   const { session, user } = await sessionService.validate()
   if (!session) return signOutAction()
 
@@ -24,6 +30,7 @@ export default async function Page() {
   const reorders = await inventoryService.getReordersByID(location)
   const units = await inventoryService.getActiveUnits()
   const groups = await inventoryService.getActiveGroupsByID(customer.id)
+  const { t } = await serverTranslation(lng, 'genbestil')
 
   const productsWithNoReorder = products.filter(
     prod => !reorders.some(reorder => prod.id === reorder.productID),
@@ -31,8 +38,8 @@ export default async function Page() {
 
   return (
     <SiteWrapper
-      title='Genbestil'
-      description='Få et overblik over hvilke vare der er under en minimums beholdning'
+      title={t('reorder-page.title')}
+      description={t('reorder-page.description')}
       actions={
         <>
           <ModalCreateReorder

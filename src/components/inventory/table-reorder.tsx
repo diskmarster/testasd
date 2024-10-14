@@ -36,9 +36,11 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
-import { useEffect, useMemo, useState } from 'react'
+import { use, useEffect, useMemo, useState } from 'react'
 import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -49,11 +51,14 @@ interface Props {
   user: User
   units: Unit[]
   groups: Group[]
+
 }
 
 export function TableReorder({ data, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'reorder_cols'
-  const columns = useMemo(() => getTableReorderColumns(user.role), [user.role])
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'genbestil')
+  const columns = useMemo(() => getTableReorderColumns(user.role, lng, t), [user.role, lng, t])
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'recommended', desc: true },
@@ -133,8 +138,8 @@ export function TableReorder({ data, user, units, groups }: Props) {
   })
 
   const filterFields = useMemo(
-    () => getTableReorderFilters(table, units, groups),
-    [table, units, groups],
+    () => getTableReorderFilters(table, units, groups, lng, t),
+    [table, units, groups, lng, t],
   )
 
   if (!mounted) return null

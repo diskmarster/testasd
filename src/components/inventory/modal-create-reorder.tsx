@@ -2,6 +2,7 @@
 
 import { createReorderAction } from '@/app/[lng]/(site)/genbestil/actions'
 import { createReorderValidation } from '@/app/[lng]/(site)/genbestil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { LocationID } from '@/lib/database/schema/customer'
 import { Product } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
@@ -37,6 +39,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   const [error, setError] = useState<string>()
   const [searchValue, setSearchValue] = useState<string>('')
   const [pending, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'genbestil')
 
   const productOptions = products
     .map(prod => ({
@@ -109,10 +113,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret minimums beholdning</CredenzaTitle>
+          <CredenzaTitle>{t('modal-create-reorder.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Bliv gjort opmærksom på når en vare kommer under en minimums grænse
-            som du selv bestemmer
+            {t('modal-create-reorder.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -127,11 +130,11 @@ export function ModalCreateReorder({ locationID, products }: Props) {
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Produkt</Label>
+              <Label>{t('modal-create-reorder.product')}</Label>
               <AutoComplete
                 autoFocus={false}
-                placeholder='Søg i produkter...'
-                emptyMessage='Ingen produkter fundet'
+                placeholder={t('modal-create-reorder.product-placeholder')}
+                emptyMessage={t('modal-create-reorder.product-emptymessage')}
                 items={productOptions}
                 onSelectedValueChange={value =>
                   setValue('productID', parseInt(value))
@@ -149,7 +152,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Minimums beholdning</Label>
+              <Label>{t('modal-create-reorder.minimum-stock')}</Label>
               <div className='flex'>
                 <Button
                   tabIndex={-1}
@@ -186,9 +189,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Genbestillingsfaktor (%)</Label>
+              <Label>{t('modal-create-reorder.restock-factor')}</Label>
               <p className='text-sm text-muted-foreground -mt-1.5'>
-                Dette bruges til at udregne en anbefalet genbestillings antal.
+                {t('modal-create-reorder.restock-factor-description')}
               </p>
               <div className='flex flex-col'>
                 <Input
@@ -262,11 +265,15 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                   )}>
                   {formValues.minimum != 0 && formValues.buffer != 0 && (
                     <p className='text-center'>
-                      Anbefalet genbestilling:{' '}
+                      {t(
+                        'modal-create-reorder.recommended-reorder-calculation1',
+                      )}{' '}
                       {(formValues.minimum * (formValues.buffer / 100)).toFixed(
                         2,
                       )}{' '}
-                      over minimumsbeholdningen
+                      {t(
+                        'modal-create-reorder.recommended-reorder-calculation2',
+                      )}
                     </p>
                   )}
                 </div>
@@ -282,7 +289,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
               size='lg'
               className='w-full gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opret
+              {t('modal-create-reorder.create-button')}
             </Button>
           </form>
         </CredenzaBody>

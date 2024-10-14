@@ -2,6 +2,7 @@
 
 import { updateReorderAction } from '@/app/[lng]/(site)/genbestil/actions'
 import { updateReorderValidation } from '@/app/[lng]/(site)/genbestil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +15,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { Product } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -33,6 +35,8 @@ export function ModalUpdateReorder({ products }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'genbestil')
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
     z.infer<typeof updateReorderValidation>
@@ -87,10 +91,9 @@ export function ModalUpdateReorder({ products }: Props) {
     <Credenza open={open} onOpenChange={setOpen}>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opdater minimums beholdning</CredenzaTitle>
+          <CredenzaTitle>{t('modal-update-reorder.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Bliv gjort opmærksom på når en vare kommer under en minimums grænse
-            som du selv bestemmer
+            {t('modal-update-reorder.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -105,7 +108,7 @@ export function ModalUpdateReorder({ products }: Props) {
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Produkt</Label>
+              <Label>{t('modal-update-reorder.product')}</Label>
               <Input
                 defaultValue={
                   products.find(prod => prod.id === formValues.productID)?.text1
@@ -119,7 +122,7 @@ export function ModalUpdateReorder({ products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Minimums beholdning</Label>
+              <Label>{t('modal-update-reorder.minimum-stock')}</Label>
               <div className='flex'>
                 <Button
                   tabIndex={-1}
@@ -156,10 +159,9 @@ export function ModalUpdateReorder({ products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Buffer rate (%)</Label>
+              <Label>{t('modal-update-reorder.restock-factor')}</Label>
               <p className='text-sm text-muted-foreground -mt-1.5'>
-                Buffer raten bruges til at udregne en anbefalet genbestillings
-                antal.
+                {t('modal-update-reorder.restock-factor-description')}
               </p>
               <div className='flex flex-col'>
                 <Input
@@ -177,7 +179,12 @@ export function ModalUpdateReorder({ products }: Props) {
                     size='icon'
                     type='button'
                     variant='outline'
-                    className='h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0'
+                    className={cn(
+                      'h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0',
+                      formValues.minimum != 0 &&
+                        formValues.buffer != 0 &&
+                        'rounded-1-none',
+                    )}
                     onClick={() => setValue('buffer', 25)}>
                     25%
                   </Button>
@@ -204,10 +211,34 @@ export function ModalUpdateReorder({ products }: Props) {
                     size='icon'
                     type='button'
                     variant='outline'
-                    className='h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none'
+                    className={cn(
+                      'h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
+                      formValues.minimum != 0 &&
+                        formValues.buffer != 0 &&
+                        'rounded-1-none',
+                    )}
                     onClick={() => setValue('buffer', 100)}>
                     100%
                   </Button>
+                </div>
+                <div
+                  className={cn(
+                    'bg-border rounded-b-md text-sm h-0 transition-all text-muted-foreground flex items-center gap-2 justify-center',
+                    formValues.minimum && formValues.buffer && 'h-12 md:h-9',
+                  )}>
+                  {formValues.minimum != 0 && formValues.buffer != 0 && (
+                    <p className='text-center'>
+                      {t(
+                        'modal-update-reorder.recommended-reorder-calculation1',
+                      )}{' '}
+                      {(formValues.minimum * (formValues.buffer / 100)).toFixed(
+                        2,
+                      )}{' '}
+                      {t(
+                        'modal-update-reorder.recommended-reorder-calculation2',
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
               {formState.errors.minimum && (
@@ -221,7 +252,7 @@ export function ModalUpdateReorder({ products }: Props) {
               size='lg'
               className='w-full gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opdater
+              {t('modal-update-reorder.update-button')}
             </Button>
           </form>
         </CredenzaBody>

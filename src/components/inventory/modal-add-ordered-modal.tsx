@@ -2,6 +2,7 @@
 
 import { addOrderedToReorderAction } from '@/app/[lng]/(site)/genbestil/actions'
 import { addOrderedToReorderValidation } from '@/app/[lng]/(site)/genbestil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +15,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { Product } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -34,6 +36,8 @@ export function ModalAddOrderedReorder({ products }: Props) {
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
   const [alreadyOrdered, setAlreadyOrdered] = useState<number>(0)
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'genbestil')
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
     z.infer<typeof addOrderedToReorderValidation>
@@ -91,10 +95,9 @@ export function ModalAddOrderedReorder({ products }: Props) {
     <Credenza open={open} onOpenChange={setOpen}>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Tilføj bestilt antal</CredenzaTitle>
+          <CredenzaTitle>{t('modal-add-ordered-reorder.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Det bestilte antal vil automatisk blive opdateret når der laves en
-            tilgang på dette produkt
+            {t('modal-add-ordered-reorder.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -109,7 +112,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Produkt</Label>
+              <Label>{t('modal-add-ordered-reorder.product')}</Label>
               <Input
                 defaultValue={
                   products.find(prod => prod.id === formValues.productID)?.text1
@@ -123,7 +126,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Antal bestilt</Label>
+              <Label>{t('modal-add-ordered-reorder.ordered-quantity')}</Label>
               <div className='flex'>
                 <Button
                   tabIndex={-1}
@@ -164,7 +167,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
               size='lg'
               className='w-full gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Tilføj
+              {t('modal-add-ordered-reorder.add-button')}
             </Button>
           </form>
         </CredenzaBody>

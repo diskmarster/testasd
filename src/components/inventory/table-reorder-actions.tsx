@@ -1,6 +1,8 @@
 'use client'
 
+import { useTranslation } from '@/app/i18n/client'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { useLanguage } from '@/context/language'
 import { FormattedReorder } from '@/data/inventory.types'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
@@ -14,6 +16,9 @@ interface Props {
 }
 
 export function TableReorderActions({ table, row }: Props) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'genbestil')
+
   return (
     <div className='flex items-center gap-2'>
       <Button
@@ -40,7 +45,7 @@ export function TableReorderActions({ table, row }: Props) {
               buffer: row.original.buffer * 100,
             })
           }}>
-          Rediger
+          {t('table-reorder-actions.update')}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
@@ -49,7 +54,7 @@ export function TableReorderActions({ table, row }: Props) {
               productID: row.original.productID,
             })
           }}>
-          Slet
+          {t('table-reorder-actions.delete')}
         </DropdownMenuItem>
       </TableActionsWrapper>
     </div>
