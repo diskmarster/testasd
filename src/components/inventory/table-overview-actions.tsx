@@ -1,11 +1,13 @@
 'use client'
 
+import { useTranslation } from '@/app/i18n/client'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { useLanguage } from '@/context/language'
+import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
-import { Plan } from '@/data/customer.types'
 
 interface Props {
   table: Table<FormattedInventory>
@@ -14,6 +16,9 @@ interface Props {
 }
 
 export function TableOverviewActions({ table, row, plan }: Props) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'oversigt')
+
   return (
     <TableActionsWrapper>
       <DropdownMenuItem
@@ -24,10 +29,10 @@ export function TableOverviewActions({ table, row, plan }: Props) {
             placementID: row.original.placement.id,
             placementName: row.original.placement.name,
             batchID: row.original.batch.id,
-            batchName: row.original.batch.batch
+            batchName: row.original.batch.batch,
           })
         }}>
-        Opdater beholdning
+        {t('update-inventory')}
       </DropdownMenuItem>
       {plan != 'lite' && (
         <DropdownMenuItem
@@ -38,10 +43,10 @@ export function TableOverviewActions({ table, row, plan }: Props) {
               placementID: row.original.placement.id,
               placementName: row.original.placement.name,
               batchID: row.original.batch.id,
-              batchName: row.original.batch.batch
+              batchName: row.original.batch.batch,
             })
           }}>
-          Flyt beholdning
+          {t('move-inventory')}{' '}
         </DropdownMenuItem>
       )}
     </TableActionsWrapper>

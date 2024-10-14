@@ -105,7 +105,7 @@ export function CreateCustomer({ lng }: CreateCustomerCardProps) {
         variant='outline'
         onClick={() => setIsExpanded(!isExpanded)}
         className='my-6'>
-        {isExpanded ? 'Se mindre' : 'Se mere'}
+        {isExpanded ? t('see-less') : t('see-more')}
       </Button>
       <Card className='relative mx-auto w-full max-w-sm'>
         <CardHeader>

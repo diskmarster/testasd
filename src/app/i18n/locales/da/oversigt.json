@@ -3,8 +3,8 @@
   "overview-description": "Se en oversigt over din varebeholdning",
 
   "modal-update-inventory.translations": "",
-  "update-inventory": "Opdater lager",
-  "update-inventory-description": "Opdater dit lager ved at lave en tilgang eller afgang",
+  "update-inventory": "Opdater beholdning",
+  "update-inventory-description": "Opdater din beholdning ved at lave en tilgang eller afgang",
   "incoming": "Tilgang",
   "outgoing": "Afgang",
   "product": "Vare",
@@ -44,5 +44,9 @@
   "cost-price": "Kostpris",
   "sales-price": "Salgspris",
   "quantity": "Beh.",
-  "unit": "Enhed"
+  "unit": "Enhed",
+
+  "overview-table-actions": "",
+  "update": "Opdater beholdning",
+  "move": "Flyt beholdning"
 }
