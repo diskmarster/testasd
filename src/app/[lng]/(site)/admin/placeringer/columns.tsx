@@ -7,31 +7,41 @@ import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 
-export function getTablePlacementColumns(): ColumnDef<Placement>[] {
+export function getTablePlacementColumns(
+  lng: string,
+  t: (key: string) => string,
+): ColumnDef<Placement>[] {
   const placementCol: ColumnDef<Placement> = {
     accessorKey: 'name',
-    header: ({ column }) => <TableHeader column={column} title='Placering' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('placement-columns.placement')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Placering',
+      viewLabel: t('placement-columns.placement'),
     },
   }
 
   const isBarredCol: ColumnDef<Placement> = {
     accessorKey: 'isBarred',
-    header: ({ column }) => <TableHeader column={column} title='Spærret' />,
-    cell: ({ getValue }) => (getValue<boolean>() ? 'Ja' : 'Nej'),
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('placement-columns.is-barred')} />
+    ),
+    cell: ({ getValue }) =>
+      getValue<boolean>()
+        ? t('placement-columns.is-barred-yes')
+        : t('placement-columns.is-barred-no'),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<boolean>(id))
     },
     meta: {
-      viewLabel: 'Spærret',
+      viewLabel: t('placement-columns.is-barred'),
     },
   }
 
   const insertedCol: ColumnDef<Placement> = {
     accessorKey: 'inserted',
-    header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
+    header: ({ column }) => <TableHeader column={column} title={t('placement-columns.inserted')} />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -56,13 +66,13 @@ export function getTablePlacementColumns(): ColumnDef<Placement>[] {
       return true
     },
     meta: {
-      viewLabel: 'Oprettet',
+      viewLabel: t('placement-columns.inserted'),
     },
   }
 
   const updatedCol: ColumnDef<Placement> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
+    header: ({ column }) => <TableHeader column={column} title={t('placement-columns.updated')} />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -87,7 +97,7 @@ export function getTablePlacementColumns(): ColumnDef<Placement>[] {
       return true
     },
     meta: {
-      viewLabel: 'Opdateret',
+      viewLabel: t('placement-columns.updated'),
     },
   }
 
@@ -108,11 +118,13 @@ export function getTablePlacementColumns(): ColumnDef<Placement>[] {
 export function getTablePlacementFilters(
   table: Table<Placement>,
   placements: Placement[],
+  lng: string,
+  t: (key: string) => string,
 ): FilterField<Placement>[] {
   const placementFilter: FilterField<Placement> = {
     column: table.getColumn('name'),
     type: 'select',
-    label: 'Placering',
+    label: t('placement-columns.placement'),
     value: '',
     options: [
       ...placements.map(placement => ({
@@ -125,25 +137,25 @@ export function getTablePlacementFilters(
   const isBarredFilter: FilterField<Placement> = {
     column: table.getColumn('isBarred'),
     type: 'select',
-    label: 'Spærret',
+    label: t('placement-columns.is-barred'),
     value: '',
     options: [
-      { value: true, label: 'Ja' },
-      { value: false, label: 'Nej' },
+      { value: true, label: t('placement-columns.is-barred-yes') },
+      { value: false, label: t('placement-columns.is-barred-no') },
     ],
   }
 
   const insertedFilter: FilterField<Placement> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
-    label: 'Oprettet',
+    label: t('placement-columns.inserted'),
     value: '',
   }
 
   const updatedFilter: FilterField<Placement> = {
     column: table.getColumn('updated'),
     type: 'date-range',
-    label: 'Opdateret',
+    label: t('placement-columns.updated'),
     value: '',
   }
 

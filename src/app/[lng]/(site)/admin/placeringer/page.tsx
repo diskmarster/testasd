@@ -1,3 +1,4 @@
+import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalCreatePlacement } from '@/components/inventory/modal-create-placement'
 import { TablePlacement } from '@/components/inventory/table-placements'
@@ -7,7 +8,13 @@ import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
 
-export default async function Page() {
+interface PageProps {
+  params: {
+    lng: string
+  }
+}
+
+export default async function Page({ params: { lng } }: PageProps) {
   const { session, user } = await sessionService.validate()
   if (!session) redirect('/log-ind')
 
@@ -18,11 +25,14 @@ export default async function Page() {
   if (!customer) redirect('/log-ind')
 
   const allPlacement = await inventoryService.getAllPlacementsByID(location)
+  const batches = await inventoryService.getActiveBatchesByID(location)
+  const products = await inventoryService.getActiveProductsByID(customer.id)
+  const { t } = await serverTranslation(lng, 'placeringer')
 
   return (
     <SiteWrapper
-      title='Placeringer'
-      description='Se en oversigt over alle dine placeringer'
+      title={t('placement-page.title')}
+      description={t('placement-page.description')}
       actions={
         <>
           <ModalCreatePlacement />

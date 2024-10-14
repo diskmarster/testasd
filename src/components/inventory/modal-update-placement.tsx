@@ -1,6 +1,8 @@
 import { updatePlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
 import { createPlacementValidation } from '@/app/[lng]/(site)/admin/placeringer/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { Placement } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState, useTransition } from 'react'
@@ -32,6 +34,8 @@ export function ModalUpdatePlacement({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'placeringer')
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
     z.infer<typeof createPlacementValidation>
@@ -83,9 +87,9 @@ export function ModalUpdatePlacement({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Rediger placering</CredenzaTitle>
+          <CredenzaTitle>{t('modal-update-placement.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Her kan du redigere en placering
+            {t('modal-update-placement.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -103,7 +107,7 @@ export function ModalUpdatePlacement({
             <div className='mt-2 mb-2'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
-                  Navn på placering
+                  {t('modal-update-placement.placement')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='name' type='text' {...register('name')} />
@@ -118,7 +122,7 @@ export function ModalUpdatePlacement({
               type='submit'
               disabled={pending || !formState.isValid}
               className='w-full md:w-auto'>
-              Opdater
+              {t('modal-update-placement.update-button')}
             </Button>
           </form>
         </CredenzaBody>

@@ -1,7 +1,9 @@
 import { toggleBarredPlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
+import { useTranslation } from '@/app/i18n/client'
 import { ModalUpdatePlacement } from '@/components/inventory/modal-update-placement'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { Placement } from '@/lib/database/schema/inventory'
 import { Row } from '@tanstack/react-table'
 import { useState, useTransition } from 'react'
@@ -13,6 +15,9 @@ interface Props {
 }
 
 export function TableOverviewActions({ row }: Props) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'placeringer')
+
   const [open, setOpen] = useState<boolean>(false)
   const [_, startTransition] = useTransition()
   const handleToggleBar = () => {
@@ -40,10 +45,12 @@ export function TableOverviewActions({ row }: Props) {
     <>
       <TableActionsWrapper>
         <DropdownMenuItem onClick={() => setOpen(true)}>
-          Rediger placering
+          {t('table-placement-actions.update')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleToggleBar}>
-          {row.original.isBarred ? 'Ophæv spærring' : 'Spær'}
+          {row.original.isBarred
+            ? t('table-placement-actions.unbar')
+            : t('table-placement-actions.bar')}
         </DropdownMenuItem>
       </TableActionsWrapper>
 
