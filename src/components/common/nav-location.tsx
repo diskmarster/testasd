@@ -1,7 +1,6 @@
 import { sessionService } from "@/service/session";
 import { locationService } from "@/service/location";
 import { NavLocationSelect } from "./nav-location-select";
-import { LocationWithPrimary } from "@/lib/database/schema/customer";
 
 export async function NavLocation() {
   const { session, user } = await sessionService.validate()
