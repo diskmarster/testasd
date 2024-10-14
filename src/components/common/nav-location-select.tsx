@@ -59,6 +59,9 @@ export function NavLocationSelect({ locations, lastVisitedID }: { locations: Loc
                 {loc.isPrimary && (
                   <Icons.star className="size-3 fill-warning text-warning" />
                 )}
+                {loc.isBarred && (
+                  <div className="text-xs bg-muted text-muted-foreground py-0.5 px-1.5 rounded-sm">Inaktiv</div>
+                )}
               </div>
             </SelectItem>
           ))}

@@ -37,11 +37,13 @@ import {
   X,
   ListTodo,
   Sheet,
-  CloudUpload
+  CloudUpload,
+  TriangleAlert
 } from 'lucide-react'
 
 export const Icons = {
   updown: ChevronsUpDown,
+  triangleAlert: TriangleAlert,
   sheet: Sheet,
   cloudUpload: CloudUpload,
   lisTodo: ListTodo,
