@@ -1,6 +1,6 @@
 import { signOutAction } from '@/app/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { ModalImportInventory } from '@/components/inventory/modal-import-inventory'
+import { ModalImportProducts } from '@/components/inventory/modal-import-inventory'
 import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
 import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
 import { TableOverview } from '@/components/inventory/table-overview'
@@ -41,7 +41,6 @@ export default async function Home() {
       description='Se en oversigt over din vare beholdning'
       actions={
         <>
-          <ModalImportInventory />
           <ModalUpdateInventory
             customer={customer}
             products={products}
