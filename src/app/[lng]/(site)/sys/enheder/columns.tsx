@@ -6,49 +6,63 @@ import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isSameDay } from 'date-fns'
 
-export function getTableUnitColumns(): ColumnDef<Unit>[] {
+export function getTableUnitColumns(
+  lng: string,
+  t: (key: string) => string,
+): ColumnDef<Unit>[] {
   const unitCol: ColumnDef<Unit> = {
     accessorKey: 'name',
-    header: ({ column }) => <TableHeader column={column} title='Enhed' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('unit-columns-unit')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Enhed',
+      viewLabel: t('unit-columns-unit'),
     },
   }
 
   const isBarredCol: ColumnDef<Unit> = {
     accessorKey: 'isBarred',
-    header: ({ column }) => <TableHeader column={column} title='Spærret' />,
-    cell: ({ getValue }) => (getValue<boolean>() ? 'Ja' : 'Nej'),
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('unit-columns.is-barred')} />
+    ),
+    cell: ({ getValue }) =>
+      getValue<boolean>()
+        ? t('unit-columns.is-barred-yes')
+        : t('unit-columns.is-barred-no'),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<boolean>(id))
     },
     meta: {
-      viewLabel: 'Spærret',
+      viewLabel: t('unit-columns.is-barred'),
     },
   }
 
   const insertedCol: ColumnDef<Unit> = {
     accessorKey: 'inserted',
-    header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('unit-columns.created-at')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value) => {
       return isSameDay(value, row.getValue(id))
     },
     meta: {
-      viewLabel: 'Oprettet',
+      viewLabel: t('unit-columns.created-at'),
     },
   }
 
   const updatedCol: ColumnDef<Unit> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('unit-columns.updated-at')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value) => {
       return isSameDay(value, row.getValue(id))
     },
     meta: {
-      viewLabel: 'Opdateret',
+      viewLabel: t('unit-columns.updated-at'),
     },
   }
   const actionsCol: ColumnDef<Unit> = {
@@ -67,11 +81,13 @@ export function getTableUnitColumns(): ColumnDef<Unit>[] {
 export function getTableUnitFilters(
   table: Table<Unit>,
   units: Unit[],
+  lng: string,
+  t: (key: string) => string,
 ): FilterField<Unit>[] {
   const unitFilter: FilterField<Unit> = {
     column: table.getColumn('name'),
     type: 'select',
-    label: 'enhed',
+    label: t('unit-columns.unit'),
     value: '',
     options: [
       ...units.map(unit => ({
@@ -84,25 +100,25 @@ export function getTableUnitFilters(
   const isBarredFilter: FilterField<Unit> = {
     column: table.getColumn('isBarred'),
     type: 'select',
-    label: 'Spærret',
+    label: t('unit-columns.is-barred'),
     value: '',
     options: [
-      { value: true, label: 'Ja' },
-      { value: false, label: 'Nej' },
+      { value: true, label: t('unit-columns.is-barred-yes') },
+      { value: false, label: t('unit-columns.is-barred-no') },
     ],
   }
 
   const insertedFilter: FilterField<Unit> = {
     column: table.getColumn('inserted'),
     type: 'date',
-    label: 'Oprettet',
+    label: t('unit-columns.created-at'),
     value: '',
   }
 
   const updatedFilter: FilterField<Unit> = {
     column: table.getColumn('updated'),
     type: 'date',
-    label: 'Opdateret',
+    label: t('unit-columns.updated-at'),
     value: '',
   }
 

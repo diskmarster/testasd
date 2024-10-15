@@ -1,0 +1,35 @@
+{
+  "unit-page": {
+    "unit-title": "Units",
+    "unit-description": "Here you can create and update units"
+  },
+  "unit-columns": {
+    "unit": "Unit",
+    "is-barred": "Barred",
+    "is-barred-yes": "Yes",
+    "is-barred-no": "No",
+    "created-at": "Created",
+    "updated-at": "Updated"
+  },
+  "modal-create-unit": {
+    "create-unit-title": "Create Unit",
+    "create-unit-description": "Here you can create a new unit",
+    "unit-name": "Unit name",
+    "unit-name-placeholder": "Enter unit name",
+    "create-button": "Create"
+  },
+
+  "modal-update-unit": {
+    "update-unit-title": "Update Unit",
+    "update-unit-description": "Here you can update a unit",
+    "unit-name": "Unit name",
+    "update-button": "Update"
+  },
+
+  "table-units-actions": {
+    "update": "Update",
+    "bar": "Bar the unit",
+    "unbar": "Unbar the unit"
+
+  }
+}

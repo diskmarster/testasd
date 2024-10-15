@@ -10,6 +10,8 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
 import { createUnitValidation } from '@/app/[lng]/(site)/sys/enheder/validation'
+import { useTranslation } from '@/app/i18n/client'
+import { useLanguage } from '@/context/language'
 import {
   Credenza,
   CredenzaBody,
@@ -33,6 +35,8 @@ export function ModalUpdateUnit({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'enheder')
 
   const { handleSubmit, register, formState, setValue, reset } = useForm<
     z.infer<typeof createUnitValidation>
@@ -84,9 +88,11 @@ export function ModalUpdateUnit({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Rediger enhed</CredenzaTitle>
+          <CredenzaTitle>
+            {t('modal-update-unit.update-unit-title')}
+          </CredenzaTitle>
           <CredenzaDescription>
-            Her kan du redigere en enhed
+            {t('modal-update-unit.update-unit-description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -104,7 +110,7 @@ export function ModalUpdateUnit({
             <div className='mt-2 mb-2'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
-                  Navn på enhed
+                  {t('modal-update-unit.unit-name')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='name' type='text' {...register('name')} />
@@ -119,7 +125,7 @@ export function ModalUpdateUnit({
               type='submit'
               disabled={pending || !formState.isValid}
               className='w-full md:w-auto'>
-              Opdater
+              {t('modal-update-unit.update-button')}
             </Button>
           </form>
         </CredenzaBody>

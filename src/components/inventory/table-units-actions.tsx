@@ -1,7 +1,9 @@
 import { toggleBarredUnitAction } from '@/app/[lng]/(site)/sys/enheder/actions'
+import { useTranslation } from '@/app/i18n/client'
 import { ModalUpdateUnit } from '@/components/inventory/modal-update-unit'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { Unit } from '@/lib/database/schema/inventory'
 import { Row, Table } from '@tanstack/react-table'
 import { useState, useTransition } from 'react'
@@ -15,6 +17,8 @@ interface Props {
 
 export function TableOverviewActions({ table, row }: Props) {
   const [open, setOpen] = useState<boolean>(false)
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'enheder')
   const [_, startTransition] = useTransition()
   const handleToggleBar = () => {
     startTransition(async () => {
@@ -41,10 +45,12 @@ export function TableOverviewActions({ table, row }: Props) {
     <>
       <TableActionsWrapper>
         <DropdownMenuItem onClick={() => setOpen(true)}>
-          Rediger enhed
+          {t('table-units-actions.update')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleToggleBar}>
-          {row.original.isBarred ? 'Ophæv spærring' : 'Spær'}
+          {row.original.isBarred
+            ? t('table-units-actions.unbar')
+            : t('table-units-actions.bar')}
         </DropdownMenuItem>
       </TableActionsWrapper>
 

@@ -7,6 +7,7 @@ import {
   Credenza,
   CredenzaBody,
   CredenzaContent,
+  CredenzaDescription,
   CredenzaHeader,
   CredenzaTitle,
   CredenzaTrigger,
@@ -21,11 +22,15 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 
 export function ModalCreateUnit() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'enheder')
   const { handleSubmit, register, formState, reset } = useForm<
     z.infer<typeof createUnitValidation>
   >({
@@ -60,7 +65,10 @@ export function ModalCreateUnit() {
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret ny Enhed</CredenzaTitle>
+          <CredenzaTitle>{t('modal-create-unit.create-unit-title')}</CredenzaTitle>
+          <CredenzaDescription>
+            {t('modal-create-unit.create-unit-description')}
+          </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
           <form
@@ -74,9 +82,9 @@ export function ModalCreateUnit() {
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Enhed navn</Label>
+              <Label>{t('modal-create-unit.unit-name')}</Label>
               <Input
-                placeholder='Indtast navn for ny enhed'
+                placeholder={t('modal-create-unit.unit-name-placeholder')}
                 {...register('name')}
               />
               {formState.errors.name && (
@@ -89,7 +97,7 @@ export function ModalCreateUnit() {
               type='submit'
               disabled={pending || !formState.isValid}
               className='w-full md:w-auto'>
-              Opret
+              {t('modal-create-unit.create-button')}
             </Button>
           </form>
         </CredenzaBody>
