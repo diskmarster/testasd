@@ -1,11 +1,11 @@
 'use server'
 
 import { ProductID } from '@/lib/database/schema/inventory'
-import { privateAction } from '@/lib/safe-action'
+import { adminAction, privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
-import { createProductValidation, updateProductValidation } from './validation'
+import { createProductValidation, importProductsValidation, updateProductValidation } from './validation'
 
 export const createProductAction = privateAction
   .metadata({actionName: 'createProduct'})
@@ -54,3 +54,16 @@ export async function toggleBarredProductAction(
 
   revalidatePath('/admin/produkter')
 }
+
+export const importProductsAction = adminAction
+  //.metadata({actionName: "importProductAction"})
+  .schema(importProductsValidation)
+  .action(async ({parsedInput, ctx}) => {
+
+  const didImport = await productService.importProducts(
+    ctx.user.customerID,
+    parsedInput
+  )
+
+  revalidatePath("/admin/produkter")
+})
