@@ -30,9 +30,28 @@
   },
 
   "nav-user": {
-
     "my-profile": "My Profile",
     "get-help": "Get Help",
     "log-out": "Log Out"
+  },
+
+  "create-customer-action": {
+    "primary-location": "Primary Location",
+    "welcome-email": "Welcome to Nem Lager",
+    "email-exist-customer": "Email already exists for a customer",
+    "email-exist-user": "Email already exists for a user",
+    "create-customer-error": "Something went wrong while creating you as a customer.",
+    "create-location-error": "Something went wrong while creating location",
+    "actvation-email-error": "Something went wrong while sending activation email"
+  },
+
+  "signup-action": {
+    "activation-link-no-longer-exists": "The activation link no longer exists.",
+    "activation-link-expired": "The activation link has expired and is no longer valid.",
+    "company-account-no-exist": "Your company account does not exist.",
+    "existing-email": "A user with this email already exists.",
+    "user-wasnt-created": "Your user account was not created.",
+    "company-account-wasnt-activated": "Your company account was not activated.",
+    "location-access-error": "There was an error granting the user access to the location."
   }
 }

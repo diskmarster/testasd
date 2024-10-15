@@ -33,5 +33,23 @@
     "my-profile": "Min profil",
     "get-help": "Få hjælp",
     "log-out": "Log ud"
+  },
+  "create-customer-action": {
+    "primary-location": "Hovedlokation",
+    "welcome-email": "Velkommen til Nem Lager",
+    "email-exist-customer": "Denne Email eksisterer allerede for en kunde",
+    "email-exist-user": "Denne Email eksisterer allerede for en bruger",
+    "create-customer-error": "Der gik noget galt med at oprette dig som kunde.",
+    "create-location-error": "Der gik noget galt med at oprette lokationen.",
+    "actvation-email-error": "Der gik noget galt med at sende aktiveringsmailen."
+  },
+  "signup-action": {
+    "activation-link-no-longer-exists": "Aktiveringslinket eksisterer ikke længere.",
+    "activation-link-expired": "Aktiveringslinket er udløbet og er ikke længere gyldigt.",
+    "company-account-no-exist": "Din firmakonto eksisterer ikke.",
+    "existing-email": "En bruger med denne email eksisterer allerede.",
+    "user-wasnt-created": "Din bruger blev ikke oprettet.",
+    "company-account-wasnt-activated": "Din firmakonto blev ikke aktiveret.",
+    "location-access-error": "Der skete en fejl med at give brugeren tilladelse til lokationen."
   }
 }
