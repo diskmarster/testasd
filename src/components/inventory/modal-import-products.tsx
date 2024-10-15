@@ -1,5 +1,6 @@
 'use client'
 
+import { importProductsAction } from '@/app/(site)/admin/produkter/actions'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Dialog,
@@ -18,106 +19,36 @@ import Link from 'next/link'
 import { useCallback, useState, useTransition } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { z, ZodError } from 'zod'
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { productsDataValidation } from '@/app/(site)/admin/produkter/validation'
 
-const units = ['stk', 'kg', 'kasse'] as const
 
-const importFileValidation = z.array(
-  z
-    .object({
-      text1: z
-        .string({ required_error: 'Varetekst 1 skal være udfyldt' })
-        .min(1, { message: 'Varetekst 1 skal være minimum 1 karakter lang' }),
-      text2: z.string().optional().default(''),
-      text3: z.string().optional().default(''),
-      sku: z.coerce
-        .string({ required_error: 'Varenr. skal være udfyldt' })
-        .min(1, { message: 'Varenr. skal være minimum 1 karakter lang' }),
-      barcode: z.coerce
-        .string({ required_error: 'Stregkode skal være udfyldt' })
-        .min(1, { message: 'Stregkode skal være minimum 1 karakter lang' }),
-      group: z.coerce
-        .string({ required_error: 'Varegruppe skal være udfyldt' })
-        .min(1, { message: 'Varegruppe skal være minimum 1 karakter lang' }),
-      unit: z.preprocess(
-        //@ts-ignore - string is not the same as the value in units bla bla shut up typescript
-        (val: string) => val.trim().toLowerCase(),
-        z.enum(units, {
-          invalid_type_error: `Ukendt enhed. Brug f.eks. ${units.join(', ')}`,
-          message: `Ukendt enhed. Brug f.eks. ${units.join(', ')}`,
-        }),
-      ),
-      costPrice: z.coerce
-        .number({
-          invalid_type_error: 'Kostpris kan ikke være andet end et nummer',
-        })
-        .default(0),
-      salesPrice: z.coerce
-        .number({
-          invalid_type_error: 'Salgspris kan ikke være andet end et nummer',
-        })
-        .optional()
-        .default(0),
-      quantity: z.coerce
-        .number({
-          invalid_type_error: 'Beholdning kan ikke være andet end et nummer',
-        })
-        .optional()
-        .default(0),
-      placement: z.string().optional().default(''),
-      batch: z.string().optional().default(''),
-      expiry: z.coerce
-        .date({
-          invalid_type_error: 'Kan ikke læse datoen',
-          message: 'Dato skal være udfyldt',
-        })
-        .optional(),
-      barred: z
-        .string()
-        .optional()
-        .default('false')
-        .refine(
-          value =>
-            value === 'true' ||
-            value === 'false' ||
-            value === 'ja' ||
-            value === 'nej',
-          {
-            message: 'Ukendt værdi i spærret. Brug true, false, ja eller nej',
-          },
-        )
-        .transform(value => value === 'true' || value === 'ja'),
-    })
-    .strict({ message: 'Ukendt kolonne' })
-    .superRefine((val, ctx) => {
-      if (val.expiry && !val.batch) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Batchnr. skal være udfyld hvis udløbsdato er udfyldt',
-          path: ['batch'],
-        })
-      }
-    }),
-)
-
-export function ModalImportInventory() {
+export function ModalImportProducts() {
   const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
-  const [rows, setRows] = useState<z.infer<typeof importFileValidation>>([])
+  const [isReading, setIsReading] = useState(false)
+  const [serverError, setServerError] = useState<string>()
+
+
+  const [rows, setRows] = useState<z.infer<typeof productsDataValidation>>([])
   const [errors, setErrors] = useState<
-    ZodError<typeof importFileValidation> | undefined
+    ZodError<typeof productsDataValidation> | undefined
   >(undefined)
   const desktop = '(min-width: 768px)'
   const isDesktop = useMediaQuery(desktop)
 
   const onDrop = useCallback(async (files: File[]) => {
+    setIsReading(true)
+    setServerError(undefined)
     setErrors(undefined)
     setRows([])
 
     const dataRes = await readAndValidateFileData(
       files[0],
-      importFileValidation,
+      productsDataValidation,
       true,
     )
+    setIsReading(false)
 
     if (!dataRes.success) {
       setErrors(dataRes.errors)
@@ -141,7 +72,25 @@ export function ModalImportInventory() {
   function onOpenChange(open: boolean) {
     setOpen(open)
     setRows([])
+    setServerError(undefined)
     setErrors(undefined)
+  }
+
+  function onSubmit(values: z.infer<typeof productsDataValidation>) {
+    setServerError(undefined)
+    setErrors(undefined)
+
+    startTransition(async () => {
+      console.log("vals", values)
+      const res = await importProductsAction(values)
+
+      if (res && res.serverError) {
+        setServerError(res.serverError)
+        return
+      }
+
+      setOpen(false)
+    })
   }
 
   if (!isDesktop) return null
@@ -155,14 +104,13 @@ export function ModalImportInventory() {
       </DialogTrigger>
       <DialogContent className='max-w-xl'>
         <DialogHeader>
-          <DialogTitle>Import beholdning</DialogTitle>
+          <DialogTitle>Import varekartotek</DialogTitle>
           <DialogDescription>
-            Når du importere din beholdning, opretter vi automatisk nye
-            varegrupper, produkter, placeringer og batchnumre hvis de er angivet
-            i import filen
+            Når du importerer et varekartotek, oprettes der automatisk en nul-beholdning for alle jeres lokationer, hvis et produkt ikke allerede findes. Hvis produktet allerede eksisterer, vil det blive opdateret. Eventuelle nye varegrupper, der er angivet, vil også automatisk blive oprettet.
           </DialogDescription>
         </DialogHeader>
         <div className='flex flex-col gap-4'>
+
           <div className='grid gap-2'>
             <Label>Før du uploader</Label>
             <p className='text-muted-foreground text-sm'>
@@ -172,16 +120,16 @@ export function ModalImportInventory() {
             <p className='text-muted-foreground text-sm'>
               Er du i tvivl om hvordan du skal skrive dine værdier, så se
               venligst på vores F.A.Q under{' '}
-              <Link href={'/faq#1'} className='underline'>
+              <Link href={'/faq?spørgsmål=Hvordan formaterer jeg min import fil til varekartoteket?'} target='_blank' className='underline'>
                 &quot;Hvordan formaterer jeg min import fil til
-                beholdning?&quot;
+                varekartoteket?&quot;
               </Link>
             </p>
           </div>
           <div className='border rounded-md p-4 flex items-center justify-between gap-4'>
             <div className='flex flex-col gap-1'>
               <div className='flex items-center gap-2'>
-                <Icons.sheet className='size-[18px]' />
+                <Icons.sheet className='size-[18px] text-primary' />
 
                 <p className='text-sm'>Fil eksempel</p>
               </div>
@@ -202,7 +150,12 @@ export function ModalImportInventory() {
             className='border-dashed border-2 rounded-md px-6 py-10 hover:border-primary transition-colors cursor-pointer'>
             <input {...getInputProps()} />
             <div className='text-muted-foreground text-sm grid place-items-center'>
-              {rows.length > 0 ? (
+              {isReading ? (
+                <div className='flex gap-2 items-center'>
+                  <p>Indlæser filen</p>
+                  <Icons.spinner className='animate-spin size-3' />
+                </div>
+              ) : rows.length > 0 ? (
                 <p>Indlæst og klartgjort {rows.length} rækker til upload</p>
               ) : (
                 <p>
@@ -232,13 +185,21 @@ export function ModalImportInventory() {
               })}
             </div>
           )}
+          {serverError && (
+            <Alert variant='destructive'>
+              <Icons.alert className='size-4 !top-3' />
+              <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+              <AlertDescription>{serverError}</AlertDescription>
+            </Alert>
+          )}
           <Button
             disabled={pending || rows.length == 0}
             variant='default'
             size='lg'
-            className='w-full gap-2'>
+            className='w-full gap-2'
+            onClick={() => onSubmit(rows)}>
             {pending && <Icons.spinner className='size-4 animate-spin' />}
-            Upload
+            Upload data
           </Button>
         </div>
       </DialogContent>
