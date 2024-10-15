@@ -5,6 +5,7 @@ import { EmailTest } from '@/components/email/email-test'
 import { publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
+import { isUserLimitReached } from '@/service/customer.utils'
 import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
@@ -12,6 +13,7 @@ import { userService } from '@/service/user'
 import { redirect } from 'next/navigation'
 
 export const signUpAction = publicAction
+  .metadata({ actionName: 'signUp' })
   .schema(signUpValidation)
   .action(async ({ parsedInput, ctx }) => {
     const activationLink = await customerService.getActivationLinkByID(
@@ -28,9 +30,20 @@ export const signUpAction = publicAction
       throw new ActionError('Dit aktiveringslink er ikke længere gyldigt')
     }
 
+    const users = await userService.getAllByCustomerID(parsedInput.clientID)
     const existingCustomer = await customerService.getByID(parsedInput.clientID)
     if (!existingCustomer) {
       throw new ActionError('Din firmakonto findes ikke')
+    }
+
+    if (
+      isUserLimitReached(
+        existingCustomer.plan,
+        existingCustomer.extraUsers,
+        users.length,
+      )
+    ) {
+      throw new ActionError('Dit firma har nået brugergrænsen')
     }
 
     const existingUser = await userService.getByEmail(parsedInput.email)

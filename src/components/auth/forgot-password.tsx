@@ -1,7 +1,7 @@
 'use client'
 
-import { forgotPasswordAction } from '@/app/(auth)/glemt-password/actions'
-import { forgotPasswordValidation } from '@/app/(auth)/glemt-password/validation'
+import { forgotPasswordAction } from '@/app/[lng]/(auth)/glemt-password/actions'
+import { forgotPasswordValidation } from '@/app/[lng]/(auth)/glemt-password/validation'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
@@ -32,8 +32,9 @@ export function ForgotPasswordCard() {
           Vi har modtaget din forespørgsel
         </h1>
         <p className='text-md text-foreground'>
-          Vi har sendt en mail til din e-mailadresse, som viser dig hvordan du kan nulstille dit kodeord. Tjek venligst
-          din indbakke, for at fortsætte.
+          Vi har sendt en mail til din e-mailadresse, som viser dig hvordan du
+          kan nulstille dit kodeord. Tjek venligst din indbakke, for at
+          fortsætte.
         </p>
         <p className='text-sm text-muted-foreground'>
           Hvis du ikke kan se e-mailen, tjek venligst din spam-mappe.
@@ -44,7 +45,6 @@ export function ForgotPasswordCard() {
       </div>
     )
   }
-
 
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
@@ -71,7 +71,11 @@ export function ForgotPasswordCard() {
   )
 }
 
-function ForgotPasswordForm({setEmailSent}: {setEmailSent: (val: boolean) => void}) {
+function ForgotPasswordForm({
+  setEmailSent,
+}: {
+  setEmailSent: (val: boolean) => void
+}) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
 

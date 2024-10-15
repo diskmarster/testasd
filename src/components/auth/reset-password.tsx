@@ -1,7 +1,7 @@
 'use client'
 
-import { resetPasswordAction } from '@/app/(auth)/glemt-password/actions'
-import { resetPasswordValidation } from '@/app/(auth)/glemt-password/validation'
+import { resetPasswordAction } from '@/app/[lng]/(auth)/glemt-password/actions'
+import { resetPasswordValidation } from '@/app/[lng]/(auth)/glemt-password/validation'
 import { ResetPassword } from '@/lib/database/schema/auth'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -106,9 +106,7 @@ function ResetPasswordForm({
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
           <AlertTitle>Der skete en fejl</AlertTitle>
-          <AlertDescription className='flex flex-col'>
-            {error}
-          </AlertDescription>
+          <AlertDescription className='flex flex-col'>{error}</AlertDescription>
         </Alert>
       )}
       <div className='grid gap-2'>
