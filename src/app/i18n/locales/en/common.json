@@ -53,5 +53,71 @@
     "user-wasnt-created": "Your user account was not created.",
     "company-account-wasnt-activated": "Your company account was not activated.",
     "location-access-error": "There was an error granting the user access to the location."
+  },
+
+  "plans": {
+    "plan-lite": "Lite",
+    "plan-plus": "Plus",
+    "plan-pro": "Pro",
+    "description-lite": "To the single user companies",
+    "description-plus": "To the small businesses",
+    "description-pro": "To the large businesses",
+    "feature-lite-1": "1 user",
+    "feature-lite-2": "Inventory management",
+    "feature-lite-3": "Import/export",
+    "feature-lite-4": "Product-text 1, 2, 3",
+    "feature-lite-5": "Storage list",
+    "feature-lite-6": "Product groups",
+    "feature-lite-7": "Account/case numbers",
+    "feature-lite-8": "Print barcodes/labels",
+    "feature-lite-9": "Scanner-app",
+    "feature-lite-10": "Reports through history",
+    "feature-lite-11": "1 location",
+    "feature-plus-everything": "Everything in Lite",
+    "feature-plus-1": "10 users",
+    "feature-plus-2": "Placement management",
+    "feature-plus-3": "Restock",
+    "feature-plus-4": "3 locations",
+    "feature-pro-everything": "Everything in Plus",
+    "feature-pro-1": "20 users",
+    "feature-pro-2": "Batch number",
+    "feature-pro-3": "Serial number",
+    "feature-pro-4": "Unlimited locations"
+  },
+
+  "site-config": {
+    "site-name": "Nem Lager",
+    "site-description": "Keep track of your inventory.",
+    "error-title": "Something went wrong",
+    "success-title": "Action completed",
+
+    "overview": "Overview",
+    "history": "History",
+    "restock": "Restock",
+    "administration": "Administration",
+
+    "administration-dropdown": {
+      "users": "Users",
+      "users-description": "Here you can create and update users",
+      "products": "Products",
+      "products-description": "Here you can create and update products",
+      "product groups": "Product groups",
+      "product groups-description": "Here you can create and update product groups",
+      "placements": "Placements",
+      "placements-description": "Here you can create and update placements",
+      "locations": "Locations",
+      "locations-description": "Here you can create and update locations"
+    },
+
+    "sys-admin-dropdown": {
+      "customers": "Customers",
+      "customers-description": "See an overview of all customers in Nem Lager",
+      "adminusers": "Admin Users",
+      "adminusers-description": "See an overview of all users in Nem Lager",
+      "units": "Units",
+      "units-description": "Here you can create and update units",
+      "errorMessags": "Error messages",
+      "errorMessags-description": "Here you can see a list of all error messages in Nem Lager"
+    }
   }
 }

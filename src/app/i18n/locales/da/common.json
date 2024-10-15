@@ -51,5 +51,71 @@
     "user-wasnt-created": "Din bruger blev ikke oprettet.",
     "company-account-wasnt-activated": "Din firmakonto blev ikke aktiveret.",
     "location-access-error": "Der skete en fejl med at give brugeren tilladelse til lokationen."
+  },
+
+  "plans": {
+    "plan-lite": "Lite",
+    "plan-plus": "Plus",
+    "plan-pro": "Pro",
+    "description-lite": "Til enkeltmandsvirksomheder",
+    "description-plus": "Til små virksomheder",
+    "description-pro": "Til store virksomheder",
+    "feature-lite-1": "1 bruger",
+    "feature-lite-2": "Beholdningsstyring",
+    "feature-lite-3": "Import/eksport",
+    "feature-lite-4": "Varebeskrivelser 1, 2, 3",
+    "feature-lite-5": "Lagerliste",
+    "feature-lite-6": "Varegrupper",
+    "feature-lite-7": "Konto/sagsstyring",
+    "feature-lite-8": "Print stregkoder/etiketter",
+    "feature-lite-9": "Scanner-app",
+    "feature-lite-10": "Rapporter via historik",
+    "feature-lite-11": "1 lokation",
+    "feature-plus-everything": "Alt fra Lite",
+    "feature-plus-1": "10 brugere",
+    "feature-plus-2": "Placeringsstyring",
+    "feature-plus-3": "Genbestilling",
+    "feature-plus-4": "3 lokationer",
+    "feature-pro-everything": "Alt fra Plus",
+    "feature-pro-1": "20 brugere",
+    "feature-pro-2": "Batchnummer",
+    "feature-pro-3": "Serienummer",
+    "feature-pro-4": "Ubegrænsede lokationer"
+  },
+
+  "site-config": {
+    "site-name": "Nem Lager",
+    "site-description": "Hold styr på dit lager.",
+    "error-title": "Noget gik galt",
+    "success-title": "Handling fuldført",
+
+    "overview": "Oversigt",
+    "history": "Historik",
+    "restock": "Genbestil",
+    "administration": "Administration",
+
+    "administration-dropdown": {
+      "users": "Brugere",
+      "users-description": "Her kan du oprette og opdatere brugere.",
+      "products": "Produkter",
+      "products-description": "Her kan du oprette og opdatere produkter.",
+      "product-groups": "Varegrupper",
+      "product-groups-description": "Her kan du oprette og opdatere varegrupper.",
+      "placements": "Placeringssteder",
+      "placements-description": "Her kan du oprette og opdatere placeringer.",
+      "locations": "Lokationer",
+      "locations-description": "Her kan du oprette og opdatere lokationer."
+    },
+
+    "sys-admin-dropdown": {
+      "customers": "Kunder",
+      "customers-description": "Se en oversigt over alle kunder i Nem Lager.",
+      "admin-users": "Admin Brugere",
+      "admin-users-description": "Se en oversigt over alle brugere i Nem Lager.",
+      "units": "Enheder",
+      "units-description": "Her kan du oprette og opdatere enheder.",
+      "error-messages": "Fejlmeddelelser",
+      "error-messages-description": "Her kan du se en liste over alle fejlmeddelelser i Nem Lager."
+    }
   }
 }
