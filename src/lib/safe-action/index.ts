@@ -3,8 +3,9 @@ import { ACTION_ERR_UNAUTHORIZED, ActionError } from "@/lib/safe-action/error";
 import { sessionService } from "@/service/session";
 import { Session, User } from "lucia";
 import { z } from "zod";
+import { analyticsService } from "@/service/analytics";
 
-type ActionContexType = {session?: Session, user?: User}
+type ActionContextType = {session?: Session, user?: User}
 const metadataSchema = z.object({
   actionName: z.string().optional(),
 })
@@ -31,22 +32,30 @@ export const publicAction = createSafeActionClient<undefined, string, typeof met
   },
 })
 .metadata({})
-.use(async (input) => {
+.use(async ({next, metadata}) => {
   const start = performance.now()
 
-  const res: MiddlewareResult<string, ActionContexType> = await input.next<ActionContexType>()
+  const res: MiddlewareResult<string, ActionContextType> = await next<ActionContextType>()
 
   const end = performance.now()
 
+  const ctx: ActionContextType | undefined = res.ctx
   if (res.success 
-      && input.metadata.actionName
-      && res.ctx 
-      // @ts-ignore -- TS apparently doesn't know that user can exist on ctx, even though we tell it the type of res...
-      && res.ctx.user
+      && metadata.actionName
+      && ctx 
+      && ctx.user
+      && ctx.user.id
+      && ctx.user.customerID
   ) {
-    console.log('meta ->', input.metadata)
-    console.log('res ->', res)
-    console.log(`execution time: ${end - start} ms`)
+    const user: User = ctx.user as User
+    analyticsService.createAnalytic('action', {
+      userID: user.id,
+      customerID: user.customerID,
+      sessionID: ctx.session?.id,
+      actionName: metadata.actionName,
+      executionTimeMS: end - start,
+      platform: 'web',
+    })
   }
 
   return res
