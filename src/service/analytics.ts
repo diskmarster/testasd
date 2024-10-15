@@ -30,7 +30,7 @@ export const analyticsService = {
       const formattedDate = dateFns.format(date, "yyyy-MM-dd")
 
       activeUser.push({
-        date: dateFns.format(date, "dd-MM-yyyy"),
+        date: formattedDate,
         desktopUsers: desktopUsers.find(d => d.date == formattedDate)?.users ?? 0,
         appUsers: appUsers.find(a => a.date == formattedDate)?.users ?? 0,
       })
