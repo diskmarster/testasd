@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "be4f85cd-711d-499b-8a97-2704b8034326",
+  "id": "a9eaba34-6567-400b-9e92-550d4ee3efb2",
   "prevId": "ab15c037-9111-4f03-9704-3e78d1d7d451",
   "tables": {
     "nl_action_analytics": {
@@ -35,9 +35,23 @@
           "notNull": true,
           "autoincrement": false
         },
-        "execution_time": {
-          "name": "execution_time",
+        "session_id": {
+          "name": "session_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "execution_time_ms": {
+          "name": "execution_time_ms",
           "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "platform": {
+          "name": "platform",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
