@@ -5,17 +5,20 @@ import { FormattedProduct } from '@/data/products.types'
 import { db, TRX } from '@/lib/database'
 import { CustomerID } from '@/lib/database/schema/customer'
 import {
+    Group,
   Inventory,
   NewInventory,
   NewProduct,
   PartialProduct,
   Product,
   ProductID,
+  Unit,
 } from '@/lib/database/schema/inventory'
 
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
+import { ImportProducts } from '@/app/(site)/admin/produkter/validation'
 
 export const productService = {
   create: async function(
@@ -174,5 +177,86 @@ export const productService = {
       console.error(`ERROR: Trying to get product by id failed: ${e}`)
       throw new ActionError(`Kunne ikke finde produkt med id ${id}`)
     }
+  },
+  importProducts: async function(customerID: CustomerID, products: ImportProducts): Promise<boolean> {
+    const transaction = await db.transaction(async trx => {
+
+      const units = await inventory.getAllUnits(trx)
+
+      const groups = await inventory.getAllGroupsByID(customerID, trx)
+      const newGroups = products.filter(p => !groups.some(g => g.name == p.group))
+      const unqNewGroups = newGroups.filter((g, index, self) => {
+        return index === self.findIndex(i => i.group === g.group)
+      }).map(g => g.group)
+
+      for (const group of unqNewGroups) {
+        const newGroup = await inventory.createProductGroup({
+          name: group,
+          customerID: customerID
+        }, trx)
+        if (newGroup) {
+          groups.push(newGroup)
+        }
+      }
+
+      const locations = await location.getAllByCustomerID(customerID, trx)
+
+      console.log({
+        groups: groups,
+        newGroups: unqNewGroups,
+        locations: locations
+      })
+
+      for (const location of locations) {
+        const defaultPlacement = await inventory.getDefaultPlacementByID(
+          location.id,
+          trx,
+        )
+        const defaultBatch = await inventory.getDefaultBatchByID(
+          location.id,
+          trx,
+        )
+
+        let placementID = defaultPlacement?.id
+        let batchID = defaultBatch?.id
+
+        if (!defaultPlacement) {
+          const newDefaultPlacement = await inventory.createPlacement(
+            {
+              name: '-',
+              locationID: location.id,
+            },
+            trx,
+          )
+          placementID = newDefaultPlacement.id
+        }
+        if (!defaultBatch) {
+          const newBatch = await inventory.createBatch(
+            { batch: '-', locationID: location.id },
+            trx,
+          )
+          batchID = newBatch.id
+        }
+
+        for (const p of products) {
+          await product.upsertProduct({
+            customerID: customerID,
+            groupID: groups.find(g => g.name == p.group)?.id ?? groups[0].id,
+            unitID: units.find(u => u.name == p.unit)?.id ?? units[0].id,
+            text1: p.text1,
+            sku: p.sku,
+            barcode: p.barcode,
+            costPrice: p.costPrice,
+            isBarred: p.isBarred,
+            text2: p.text2,
+            text3: p.text3,
+            salesPrice: p.salesPrice
+          }, trx)
+        }
+      }
+
+      return true
+    })
+    return transaction
   },
 }
