@@ -16,13 +16,13 @@ interface PageProps {
 
 export default async function Page({ params: { lng } }: PageProps) {
   const { session, user } = await sessionService.validate()
-  if (!session) redirect('/log-ind')
+  if (!session) redirect(`/${lng}/log-ind`)
 
   const location = await locationService.getLastVisited(user.id!)
-  if (!location) redirect('/log-ind')
+  if (!location) redirect(`/${lng}/log-ind`)
 
   const customer = await customerService.getByID(user.customerID)
-  if (!customer) redirect('/log-ind')
+  if (!customer) redirect(`/${lng}/log-ind`)
 
   const allPlacement = await inventoryService.getAllPlacementsByID(location)
   const batches = await inventoryService.getActiveBatchesByID(location)

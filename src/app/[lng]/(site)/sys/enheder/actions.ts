@@ -5,7 +5,11 @@ import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
 import { revalidatePath } from 'next/cache'
-import { createUnitValidation, toggleBarredUnitValidation, updateUnitValidation } from './validation'
+import {
+  createUnitValidation,
+  toggleBarredUnitValidation,
+  updateUnitValidation,
+} from './validation'
 
 export const createUnitAction = privateAction
   .metadata({ actionName: 'createUnit' })
@@ -21,13 +25,13 @@ export const createUnitAction = privateAction
     if (!newUnit) {
       throw new ActionError('Enheden blev ikke oprettet')
     }
-    revalidatePath('/sys/enheder')
+    revalidatePath(`/${ctx.lang}/sys/enheder`)
   })
 
 export const updateUnitAction = privateAction
   .metadata({ actionName: 'updateUnit' })
   .schema(updateUnitValidation)
-  .action(async ({ parsedInput: { unitID, data: updatedUnitData } }) => {
+  .action(async ({ parsedInput: { unitID, data: updatedUnitData }, ctx }) => {
     const updatedUnit = await inventoryService.updateUnitByID(
       unitID,
       updatedUnitData,
@@ -36,7 +40,7 @@ export const updateUnitAction = privateAction
     if (!updatedUnit) {
       throw new ActionError('Der gik noget galt med at opdatere enheden')
     }
-    revalidatePath('/sys/enheder')
+    revalidatePath(`/${ctx.lang}/sys/enheder`)
   })
 
 export const toggleBarredUnitAction = privateAction

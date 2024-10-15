@@ -35,13 +35,13 @@ export const createGroupAction = privateAction
       throw new ActionError('Produktgruppen blev ikke oprettet')
     }
 
-    revalidatePath('/admin/varegrupper')
+    revalidatePath(`/${ctx.lang}/admin/varegrupper`)
   })
 
 export const updateGroupAction = privateAction
   .metadata({ actionName: 'updateGroup' })
   .schema(updateGroupValidation)
-  .action(async ({ parsedInput: { groupID, data: updatedGroupData } }) => {
+  .action(async ({ parsedInput: { groupID, data: updatedGroupData }, ctx }) => {
     const updatedGroup = await inventoryService.updateGroupByID(
       groupID,
       updatedGroupData,
@@ -49,13 +49,13 @@ export const updateGroupAction = privateAction
     if (!updatedGroup) {
       throw new ActionError('Der gik noget galt med at opdatere varegruppen')
     }
-    revalidatePath('/admin/varegrupper')
+    revalidatePath(`/${ctx.lang}/admin/varegrupper`)
   })
 
 export const toggleBarredGroupAction = privateAction
   .metadata({ actionName: 'groupToggleBarred' })
   .schema(groupToggleBarredValidation)
-  .action(async ({ parsedInput: { groupID, isBarred } }) => {
+  .action(async ({ parsedInput: { groupID, isBarred }, ctx }) => {
     const updatedGroup = await inventoryService.updateGroupBarredStatus(
       groupID,
       isBarred,
@@ -65,5 +65,5 @@ export const toggleBarredGroupAction = privateAction
         'Der gik noget galt med at opdaterer spærring på varegruppen',
       )
     }
-    revalidatePath('/admin/varegrupper')
+    revalidatePath(`/${ctx.lang}/admin/varegrupper`)
   })

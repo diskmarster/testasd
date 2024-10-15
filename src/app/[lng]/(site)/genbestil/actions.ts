@@ -32,7 +32,7 @@ export const createReorderAction = privateAction
       throw new ActionError('Minimums beholdning blev ikke oprettet')
     }
 
-    revalidatePath('/genbestil')
+    revalidatePath(`/${ctx.lang}/genbestil`)
   })
 
 export const updateReorderAction = privateAction
@@ -60,7 +60,7 @@ export const updateReorderAction = privateAction
       throw new ActionError('Minimums beholdning blev ikke opdateret')
     }
 
-    revalidatePath('/genbestil')
+    revalidatePath(`/${ctx.lang}/genbestil`)
   })
 
 export const deleteReorderAction = privateAction
@@ -84,7 +84,7 @@ export const deleteReorderAction = privateAction
       throw new ActionError('Minimums beholdning blev ikke slettet')
     }
 
-    revalidatePath('/genbestil')
+    revalidatePath(`/${ctx.lang}/genbestil`)
   })
 
 export const addOrderedToReorderAction = privateAction
@@ -111,5 +111,5 @@ export const addOrderedToReorderAction = privateAction
       throw new ActionError('Minimums beholdning blev ikke opdateret')
     }
 
-    revalidatePath('/genbestil')
+    revalidatePath(`/${ctx.lang}/genbestil`)
   })

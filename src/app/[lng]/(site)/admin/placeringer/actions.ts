@@ -34,14 +34,17 @@ export const createPlacementAction = privateAction
       throw new ActionError('Placering blev ikke oprettet')
     }
 
-    revalidatePath('/admin/placeringer')
+    revalidatePath(`/${ctx.lang}/admin/placeringer`)
   })
 
 export const updatePlacementAction = privateAction
   .metadata({ actionName: 'updatePlacement' })
   .schema(updatePlacementValidation)
   .action(
-    async ({ parsedInput: { placementID, data: updatedPlacementData } }) => {
+    async ({
+      parsedInput: { placementID, data: updatedPlacementData },
+      ctx,
+    }) => {
       const updatedPlacement = await inventoryService.updatePlacementByID(
         placementID,
         updatedPlacementData,
@@ -50,14 +53,14 @@ export const updatePlacementAction = privateAction
       if (!updatedPlacement) {
         throw new ActionError('Der gik noget galt med at opdatere placeringen')
       }
-      revalidatePath('/admin/placeringer')
+      revalidatePath(`/${ctx.lang}/admin/placeringer`)
     },
   )
 
 export const toggleBarredPlacementAction = privateAction
   .metadata({ actionName: 'placementToggleBarred' })
   .schema(toggleBarredPlacementValidation)
-  .action(async ({ parsedInput: { placementID, isBarred } }) => {
+  .action(async ({ parsedInput: { placementID, isBarred }, ctx }) => {
     const updatedPlacement = await inventoryService.updatePlacementBarredStatus(
       placementID,
       isBarred,
@@ -68,5 +71,5 @@ export const toggleBarredPlacementAction = privateAction
         'Der gik noget galt med at opdatere spærring på placeringen',
       )
     }
-    revalidatePath('/admin/placeringer')
+    revalidatePath(`/${ctx.lang}/admin/placeringer`)
   })

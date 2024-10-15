@@ -23,7 +23,7 @@ export const createProductAction = privateAction
     if (!newProduct) {
       throw new ActionError('Der gik noget galt med at oprette produktet')
     }
-    revalidatePath('/admin/produkter')
+    revalidatePath(`/${ctx.lang}/admin/produkter`)
   })
 
 export const updateProductAction = privateAction
@@ -31,7 +31,7 @@ export const updateProductAction = privateAction
   .schema(updateProductValidation)
   .action(
     async ({
-      ctx: { user },
+      ctx: { user, lang },
       parsedInput: { productID, data: updatedProductData },
     }) => {
       const updatedProduct = await productService.updateByID(
@@ -44,28 +44,30 @@ export const updateProductAction = privateAction
         throw new ActionError('Der gik noget galt med at opdatere produktet')
       }
 
-      revalidatePath('/admin/produkter')
+      revalidatePath(`/${lang}/admin/produkter`)
     },
   )
 
 export const toggleBarredProductAction = privateAction
   .metadata({ actionName: 'productToggleBarred' })
   .schema(productToggleBarredValidation)
-  .action(async ({ parsedInput: { productID, isBarred }, ctx: { user } }) => {
-    const updatedProduct = await productService.updateBarredStatus(
-      productID,
-      isBarred,
-      user.id,
-    )
-
-    if (!updatedProduct) {
-      throw new ActionError(
-        'Der gik noget galt med at opdatere spærring statusen.',
+  .action(
+    async ({ parsedInput: { productID, isBarred }, ctx: { user, lang } }) => {
+      const updatedProduct = await productService.updateBarredStatus(
+        productID,
+        isBarred,
+        user.id,
       )
-    }
 
-    revalidatePath('/admin/produkter')
-  })
+      if (!updatedProduct) {
+        throw new ActionError(
+          'Der gik noget galt med at opdatere spærring statusen.',
+        )
+      }
+
+      revalidatePath(`/${lang}/admin/produkter`)
+    },
+  )
 
 export const importProductsAction = adminAction
   .schema(importProductsValidation)
@@ -76,7 +78,7 @@ export const importProductsAction = adminAction
       importedData,
     )
 
-    revalidatePath('/admin/produkter')
+    revalidatePath(`/${ctx.lang}/admin/produkter`)
   })
 
 export const finishProductsAction = adminAction

@@ -76,7 +76,7 @@ export function CreateCustomer({ lng }: CreateCustomerCardProps) {
         <p className='text-md text-foreground'>{t('activation-email')}</p>
         <p className='text-sm text-muted-foreground'>{t('check-spam')}</p>
         <Button asChild className='w-full'>
-          <Link href={`${lng}/log-ind`}>{t('go-to-login')}</Link>
+          <Link href={`/${lng}/log-ind`}>{t('go-to-login')}</Link>
         </Button>
       </div>
     )

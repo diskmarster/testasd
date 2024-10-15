@@ -73,7 +73,7 @@ export const updateInventoryAction = privateAction
         reference,
       )
 
-      revalidatePath('/oversigt')
+      revalidatePath(`/${ctx.lang}/oversigt`)
     },
   )
 
@@ -103,5 +103,5 @@ export const moveInventoryAction = privateAction
       parsedInput.reference,
     )
 
-    revalidatePath('/oversigt')
+    revalidatePath(`/${ctx.lang}/oversigt`)
   })
