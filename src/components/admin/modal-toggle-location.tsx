@@ -1,7 +1,7 @@
 'use client'
 
-import { changeLocationStatusAction } from '@/app/(site)/admin/organisation/actions'
-import { changeLocationStatusValidation } from '@/app/(site)/admin/organisation/validation'
+import { changeLocationStatusAction } from '@/app/[lng]/(site)/admin/organisation/actions'
+import { changeLocationStatusValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {

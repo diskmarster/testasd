@@ -1,7 +1,7 @@
 'use client'
 
-import { updateCustomerAction } from '@/app/(site)/admin/organisation/actions'
-import { updateCustomerValidation } from '@/app/(site)/admin/organisation/validation'
+import { updateCustomerAction } from '@/app/[lng]/(site)/admin/organisation/actions'
+import { updateCustomerValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'

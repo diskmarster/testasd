@@ -1,7 +1,7 @@
 'use client'
 
-import { createNewLocationAction } from '@/app/(site)/admin/organisation/actions'
-import { createNewLocationValidation } from '@/app/(site)/admin/organisation/validation'
+import { createNewLocationAction } from '@/app/[lng]/(site)/admin/organisation/actions'
+import { createNewLocationValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,

@@ -3,7 +3,7 @@
 import {
   getTableUsersColumns,
   getTableUsersFilters,
-} from '@/app/(site)/admin/organisation/user-columns'
+} from '@/app/[lng]/(site)/admin/organisation/user-columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'

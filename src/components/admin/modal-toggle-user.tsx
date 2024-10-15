@@ -1,7 +1,7 @@
 'use client'
 
-import { toggleUserStatusAction } from '@/app/(site)/admin/organisation/actions'
-import { changeUserStatusValidation } from '@/app/(site)/admin/organisation/validation'
+import { toggleUserStatusAction } from '@/app/[lng]/(site)/admin/organisation/actions'
+import { changeUserStatusValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {

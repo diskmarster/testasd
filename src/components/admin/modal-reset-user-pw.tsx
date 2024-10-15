@@ -1,7 +1,7 @@
 'use client'
 
-import { resetUserPasswordAction } from '@/app/(site)/admin/organisation/actions'
-import { resetUserPasswordValidation } from '@/app/(site)/admin/organisation/validation'
+import { resetUserPasswordAction } from '@/app/[lng]/(site)/admin/organisation/actions'
+import { resetUserPasswordValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
