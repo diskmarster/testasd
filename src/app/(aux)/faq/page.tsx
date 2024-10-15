@@ -7,7 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { cn } from '@/lib/utils'
 import { useSearchParams } from 'next/navigation'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 
@@ -25,7 +24,7 @@ export default function Page() {
       answer: "Du opretter den"
     },
     {
-      question: 'Hvordan formaterer jeg min import fil til beholdning?',
+      question: 'Hvordan formaterer jeg min import fil til varekartoteket?',
       answer: <AnswerImportInventory />
     }
   ]
