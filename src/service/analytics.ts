@@ -6,6 +6,16 @@ import {
 } from '@/lib/database/schema/analytics'
 import * as dateFns from 'date-fns'
 
+export type Duration = {
+  seconds?: number
+  minutes?: number
+  hours?: number
+  days?: number
+  months?: number
+  weeks?: number
+  years?: number
+}
+
 export const analyticsService = {
   createAnalytic: async function(
     type: AnalyticsCategory,
@@ -17,25 +27,101 @@ export const analyticsService = {
       console.error(`tried to create analytic of unknown type '${type}'`)
     }
   },
-  getDailyActiveUserOneWeek: async function(): Promise<ActiveUser[]> {
+  /**
+   * @param start - Indicates the date from where the data will start default value is 6 days from current time
+   * @param end - Indicates the date where the data will end. If not specified, current time is used
+   */
+  getActiveUsers: async function(
+    start: Duration = { days: 6 },
+    end?: Duration,
+    groupBy: 'date' | 'week' | 'month' | 'year' = 'date',
+  ): Promise<ActiveUser[]> {
+    let dateFilter: {
+      from: Date
+      to: Date
+    }
     const now = Date.now()
-    const startDate = dateFns.subDays(now, 7)
 
-    const desktopUsers = await analytics.getDailyActiveUsers({ date: startDate, platform: 'web' })
-    const appUsers = await analytics.getDailyActiveUsers({ date: startDate, platform: 'app' })
+    dateFilter = {
+      from: dateFns.sub(now, start),
+      to: new Date(now),
+    }
 
-    const activeUser: ActiveUser[] = []
+    if (end) {
+      dateFilter.to = dateFns.add(now, end)
+    }
 
-    for (let date = startDate; !dateFns.isAfter(date, now); date = dateFns.addDays(date, 1)) {
-      const formattedDate = dateFns.format(date, "yyyy-MM-dd")
+    const desktopUsers = await analytics.getActiveUsers(
+      {
+        date: dateFilter,
+        platform: 'web',
+      },
+      groupBy,
+    )
+    const appUsers = await analytics.getActiveUsers(
+      {
+        date: dateFilter,
+        platform: 'app',
+      },
+      groupBy,
+    )
 
-      activeUser.push({
-        date: formattedDate,
-        desktopUsers: desktopUsers.find(d => d.date == formattedDate)?.users ?? 0,
-        appUsers: appUsers.find(a => a.date == formattedDate)?.users ?? 0,
+    console.log(groupBy, desktopUsers, appUsers)
+
+    const duration = stringToDuration(groupBy)
+    const dateFormat = stringToDateFormat(groupBy)
+
+    const activeUsers: ActiveUser[] = []
+    for (
+      let date = dateFilter.from;
+      !dateFns.isAfter(date, dateFilter.to);
+      date = dateFns.add(date, duration)
+    ) {
+      const formattedDate = dateFns.format(date, dateFormat)
+
+      activeUsers.push({
+        label: formattedDate,
+        desktopUsers: desktopUsers
+          .filter(d => d.date == formattedDate)
+          .reduce<number>((agg, cur) => agg + cur.users, 0),
+        appUsers: appUsers
+          .filter(d => d.date == formattedDate)
+          .reduce<number>((agg, cur) => agg + cur.users, 0),
       })
     }
 
-    return activeUser
+    return activeUsers
   },
+}
+
+function stringToDateFormat(
+  val: 'date' | 'week' | 'month' | 'year' = 'date',
+) : string {
+  switch (val) {
+    case 'week':
+      return 'II'
+    case 'month':
+      return 'MM'
+    case 'year':
+      return 'yyyy'
+
+    default:
+      return 'yyyy-MM-dd'
+  }
+}
+
+function stringToDuration(
+  val: 'date' | 'week' | 'month' | 'year' = 'date',
+): Duration {
+  switch (val) {
+    case 'week':
+      return { weeks: 1 }
+    case 'month':
+      return { months: 1 }
+    case 'year':
+      return { years: 1 }
+
+    default:
+      return { days: 1 }
+  }
 }
