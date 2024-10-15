@@ -1,3 +1,4 @@
+import { fallbackLng } from '@/app/i18n/settings'
 import { customer } from '@/data/customer'
 import { user } from '@/data/user'
 import { UserLinkID } from '@/lib/database/schema/auth'
@@ -20,7 +21,7 @@ const ACTIVATION_LINK_BASEURL =
       ? 'stage.lager.nemunivers.app'
       : 'http://localhost:3000'
 export type CustomerActivationLink =
-  `${typeof ACTIVATION_LINK_BASEURL}/registrer/${CustomerLinkID}`
+  `${typeof ACTIVATION_LINK_BASEURL}/${string}/registrer/${CustomerLinkID}`
 const LINK_DURATION_HOURS = 1
 
 export const customerService = {
@@ -49,7 +50,7 @@ export const customerService = {
       id: id,
     })
     if (!newCustomerLink) return undefined
-    return `${ACTIVATION_LINK_BASEURL}/registrer/${newCustomerLink.id}`
+    return `${ACTIVATION_LINK_BASEURL}/${fallbackLng}/registrer/${newCustomerLink.id}`
   },
   getActivationLinkByID: async function (
     linkID: CustomerLinkID,
