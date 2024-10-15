@@ -4,7 +4,7 @@ export type AnalyticsCategory = 'action'
 export type ActiveUser = {
   desktopUsers: number,
   appUsers: number,
-  date: string,
+  label: string,
 }
 
 export type ActivePlatformUser = {

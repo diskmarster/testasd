@@ -19,11 +19,32 @@ export const analytics = {
 
     return res
   },
-  getDailyActiveUsers: async function(
+  getActiveUsers: async function(
     filter?: AnalyticsFilter,
+    groupBy: 'date' | 'week' | 'month' | 'year' = 'date',
     trx: TRX = db,
   ): Promise<ActivePlatformUser[]> {
     const whereClauses: SQLWrapper[] = []
+
+    let dateFormat: string
+
+    switch (groupBy) {
+      case 'date':
+        dateFormat = '%F'
+        break
+      case 'month':
+        dateFormat = '%m'
+        break
+      case 'week':
+        dateFormat = '%W'
+        break
+      case 'year':
+        dateFormat = '%Y'
+        break
+
+      default:
+        return []
+    }
 
     if (filter) {
       if (filter.date instanceof Date) {
@@ -41,7 +62,7 @@ export const analytics = {
     return trx
       .select({
         users: countDistinct(actionAnalyticsTable.userID),
-        date: sql<string>`date(${actionAnalyticsTable.inserted}, 'unixepoch') as date`,
+        date: sql<string>`strftime(${dateFormat}, ${actionAnalyticsTable.inserted}, 'unixepoch') as date`,
       })
       .from(actionAnalyticsTable)
       .where(and(...whereClauses))
