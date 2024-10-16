@@ -21,6 +21,8 @@ import { useDropzone } from 'react-dropzone'
 import { z, ZodError } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { productsDataValidation } from '@/app/(site)/admin/produkter/validation'
+import { chunkArray } from '@/lib/utils'
+import { Progress } from '../ui/progress'
 
 
 export function ModalImportProducts() {
@@ -28,6 +30,9 @@ export function ModalImportProducts() {
   const [open, setOpen] = useState(false)
   const [isReading, setIsReading] = useState(false)
   const [serverError, setServerError] = useState<string>()
+  const [uploadedAmount, setUploadedAmount] = useState(0)
+  const [responseErrors, setResponseErrors] = useState<string[]>([])
+  const [isDone, setIsDone] = useState(false)
 
 
   const [rows, setRows] = useState<z.infer<typeof productsDataValidation>>([])
@@ -42,6 +47,7 @@ export function ModalImportProducts() {
     setServerError(undefined)
     setErrors(undefined)
     setRows([])
+    setIsDone(false)
 
     const dataRes = await readAndValidateFileData(
       files[0],
@@ -53,7 +59,7 @@ export function ModalImportProducts() {
     if (!dataRes.success) {
       setErrors(dataRes.errors)
     } else {
-      setRows(dataRes.data)
+      setRows(dataRes.data.slice(0, 2000))
     }
   }, [])
 
@@ -70,27 +76,42 @@ export function ModalImportProducts() {
   })
 
   function onOpenChange(open: boolean) {
+    if (pending) return
     setOpen(open)
     setRows([])
     setServerError(undefined)
     setErrors(undefined)
+    setResponseErrors([])
+    setUploadedAmount(0)
+    setIsDone(false)
   }
 
   function onSubmit(values: z.infer<typeof productsDataValidation>) {
     setServerError(undefined)
     setErrors(undefined)
+    setIsDone(false)
 
     startTransition(async () => {
-      console.log("vals", values)
-      const res = await importProductsAction(values)
+      const CHUNK_SIZE = 50
 
-      if (res && res.serverError) {
-        setServerError(res.serverError)
-        return
+      const chunkedArray = chunkArray(values, CHUNK_SIZE)
+
+      for (const chunk of chunkedArray) {
+        const fallbackMsg = `Der gik noget galt med rækkerne fra ${uploadedAmount + 1} til ${uploadedAmount + CHUNK_SIZE}`
+        const res = await importProductsAction(chunk)
+
+        if (res && res.serverError) {
+          setResponseErrors(prev => [res.serverError ?? fallbackMsg, ...prev])
+          continue
+        }
+
+        setUploadedAmount(prev => prev + CHUNK_SIZE)
+
       }
-
-      setOpen(false)
+      setIsDone(true)
     })
+
+    setRows([])
   }
 
   if (!isDesktop) return null
@@ -139,7 +160,7 @@ export function ModalImportProducts() {
             </div>
             <a
               className={buttonVariants({ size: 'sm', variant: 'outline' })}
-              href={'/import_example.csv'}
+              href={'/product-import-example.xlsx'}
               rel='noopener noreferrer'
               download>
               Download
@@ -185,6 +206,14 @@ export function ModalImportProducts() {
               })}
             </div>
           )}
+          {responseErrors.length > 0 && (
+            <div>
+              <p className='font-semibold'>{siteConfig.errorTitle}</p>
+              {responseErrors.map((e, i) => (
+                <p key={i}>{e}</p>
+              ))}
+            </div>
+          )}
           {serverError && (
             <Alert variant='destructive'>
               <Icons.alert className='size-4 !top-3' />
@@ -192,14 +221,23 @@ export function ModalImportProducts() {
               <AlertDescription>{serverError}</AlertDescription>
             </Alert>
           )}
+          {isDone && (
+            <Alert variant='default' className='border-success'>
+              <Icons.check className='size-4 !top-3 text-success' />
+              <AlertTitle className='text-success'>Importering fuldført</AlertTitle>
+              <AlertDescription className='text-success'>Importering af dit varekartotek er nu færdigt</AlertDescription>
+            </Alert>
+          )}
+          {pending && (
+            <Progress max={100} value={uploadedAmount / rows.length * 100} />
+          )}
           <Button
             disabled={pending || rows.length == 0}
             variant='default'
             size='lg'
             className='w-full gap-2'
             onClick={() => onSubmit(rows)}>
-            {pending && <Icons.spinner className='size-4 animate-spin' />}
-            Upload data
+            {pending ? `${uploadedAmount} uploaded af ${rows.length}` : 'Upload til varekartotek'}
           </Button>
         </div>
       </DialogContent>

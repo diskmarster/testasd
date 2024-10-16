@@ -6,6 +6,7 @@ import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
 import { createProductValidation, importProductsValidation, updateProductValidation } from './validation'
+import { chunkArray } from '@/lib/utils'
 
 export const createProductAction = privateAction
   .metadata({actionName: 'createProduct'})
@@ -58,11 +59,11 @@ export async function toggleBarredProductAction(
 export const importProductsAction = adminAction
   //.metadata({actionName: "importProductAction"})
   .schema(importProductsValidation)
-  .action(async ({parsedInput, ctx}) => {
+  .action(async ({parsedInput: importedData, ctx}) => {
 
   const didImport = await productService.importProducts(
     ctx.user.customerID,
-    parsedInput
+    importedData
   )
 
   revalidatePath("/admin/produkter")

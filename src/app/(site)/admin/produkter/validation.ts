@@ -1,4 +1,5 @@
 import { units } from '@/data/products.types'
+import { convertENotationToNumber } from '@/lib/utils'
 import { z } from 'zod'
 
 export const createProductValidation = z
@@ -50,12 +51,19 @@ export const updateProductValidation = z.object({
 export const productsDataValidation = z.array(
   z
     .object({
-      sku: z.coerce
+      // @ts-ignore
+      sku: z.preprocess(val => val.toString(),
+      z.coerce
         .string({ required_error: 'Varenr. skal være udfyldt' })
-        .min(1, { message: 'Varenr. skal være minimum 1 karakter lang' }),
-      barcode: z.coerce
+        .min(1, { message: 'Varenr. skal være minimum 1 karakter lang' })
+      ),
+      barcode:
+      z.preprocess(
+        (val) => convertENotationToNumber(val),
+      z.coerce
         .string({ required_error: 'Stregkode skal være udfyldt' })
         .min(1, { message: 'Stregkode skal være minimum 1 karakter lang' }),
+      ),
       group: z.coerce
         .string({ required_error: 'Varegruppe skal være udfyldt' })
         .min(1, { message: 'Varegruppe skal være minimum 1 karakter lang' }),
@@ -67,11 +75,19 @@ export const productsDataValidation = z.array(
           message: `Ukendt enhed. Brug f.eks. ${units.join(', ')}`,
         }),
       ),
-      text1: z
-        .string({ required_error: 'Varetekst 1 skal være udfyldt' })
-        .min(1, { message: 'Varetekst 1 skal være minimum 1 karakter lang' }),
-      text2: z.string().optional().default(''),
-      text3: z.string().optional().default(''),
+      // @ts-ignore
+      text1: z.preprocess(val => val.toString(), 
+        z.string({ required_error: 'Varetekst 1 skal være udfyldt' })
+        .min(1, { message: 'Varetekst 1 skal være minimum 1 karakter lang' })
+      ),
+      // @ts-ignore
+      text2: z.preprocess(val => val.toString(),
+      z.string().optional().default('')
+      ),
+      // @ts-ignore
+      text3: z.preprocess(val => val.toString(),
+      z.string().optional().default('')
+      ),
       costPrice: z.coerce
         .number({
           invalid_type_error: 'Kostpris kan ikke være andet end et nummer',

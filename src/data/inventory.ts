@@ -54,6 +54,8 @@ const REORDER_COLS = getTableColumns(reorderTable)
 export const inventory = {
   getInventoryByLocationID: async function(
     locationID: LocationID,
+    pageSize: number = 5000,
+    page: number = 1,
     trx: TRX = db,
   ): Promise<FormattedInventory[]> {
     const inventory: FormattedInventory[] = await trx
@@ -81,6 +83,8 @@ export const inventory = {
       .innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+      .limit(pageSize)
+      .offset((page-1) * pageSize)
 
     return inventory
   },
@@ -474,5 +478,18 @@ export const inventory = {
   ): Promise<Inventory | undefined> {
     const res = await trx.insert(inventoryTable).values(inventory).returning()
     return res[0]
+  },
+  getAllProductsByID: async function(
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<Product[]> {
+    return await trx
+      .select()
+      .from(productTable)
+      .where(
+        and(
+          eq(productTable.customerID, customerID),
+        ),
+      )
   },
 }

@@ -81,8 +81,7 @@ function AnswerImportInventory() {
   return (
     <div className='flex flex-col gap-4'>
       <p>
-        For at kunnne importerer en import fil til at opdaterer din lager
-        beholdning, skal filen opfylde disse kritirier.
+        For at kunnne importerer en import fil til at opdaterer dit varekartotek, skal filen opfylde disse kritirier.
       </p>
       <p>
         Tabel dataen skal være opbygget, i ingen vigtig rækkefølge, og indeholde
@@ -90,17 +89,21 @@ function AnswerImportInventory() {
       </p>
       <ol className='space-y-2'>
         <li>
-          <span className='font-semibold'>Text1 </span>
+          <span className='font-semibold'>Sku </span>
           <span className=''>
-            må ikke kun indeholde tal. F.eks. 34567 skal have minimum et
-            bogstav.
+            må indeholde både tal og bogstaver
           </span>
         </li>
         <li>
-          <span className='font-semibold'>CostPrice </span>
-          <span>
-            skal skilles med et komma (,) ved decimaler. Tusinde separator kan
-            benyttes med et punktum (.) men dette er ikke nødvendigt.
+          <span className='font-semibold'>Barcode </span>
+          <span className=''>
+            må indeholde både tal og bogstaver
+          </span>
+        </li>
+        <li>
+          <span className='font-semibold'>Group</span>
+          <span className=''>
+            må indeholde både tal og bogstaver
           </span>
         </li>
         <li>
@@ -111,17 +114,45 @@ function AnswerImportInventory() {
           </span>
         </li>
         <li>
+          <span className='font-semibold'>Text1 </span>
+          <span className=''>
+            må ikke kun indeholde tal. F.eks. 34567 skal have minimum et
+            bogstav.
+          </span>
+        </li>
+        <li>
+          <span className='font-semibold'>Text2 </span>
+          <span className=''>
+            må ikke kun indeholde tal. F.eks. 34567 skal have minimum et
+            bogstav. Er valgfri.
+          </span>
+        </li>
+        <li>
+          <span className='font-semibold'>Text3 </span>
+          <span className=''>
+            må ikke kun indeholde tal. F.eks. 34567 skal have minimum et
+            bogstav. Er valgfri.
+          </span>
+        </li>
+        <li>
+          <span className='font-semibold'>CostPrice </span>
+          <span>
+            skal skilles med et komma (,) ved decimaler. Tusinde separator kan
+            benyttes med et punktum (.) men dette er ikke nødvendigt.
+          </span>
+        </li>
+        <li>
+          <span className='font-semibold'>SalesPrice </span>
+          <span>
+            skal skilles med et komma (,) ved decimaler. Tusinde separator kan
+            benyttes med et punktum (.) men dette er ikke nødvendigt.
+          </span>
+        </li>
+        <li>
           <span className='font-semibold'>Barred </span>
           <span>
             skal skrives som enten true, false, ja eller nej. Truthy værdier er
             true og ja. Falsy værdier er false og nej.
-          </span>
-        </li>
-        <li>
-          <span className='font-semibold'>Inserted </span>
-          <span>
-            skal skrives således det matcher dd-MM-yyyy. F.eks. 01-06-2024 for
-            at skrive 1. juni 2024.
           </span>
         </li>
       </ol>

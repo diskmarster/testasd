@@ -83,6 +83,7 @@ export const product = {
         target: [
           productTable.customerID,
           productTable.sku,
+          productTable.barcode
         ],
         set: { ...newProductData },
       })

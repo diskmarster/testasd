@@ -39,7 +39,21 @@ export const inventoryService = {
   getInventory: async function(
     locationID: LocationID,
   ): Promise<FormattedInventory[]> {
-    return await inventory.getInventoryByLocationID(locationID)
+    const rows: FormattedInventory[] = []
+    let page = 1
+    const pageSize = 5000
+    let receivedPageSize = 0
+
+    do {
+      const temp = await inventory.getInventoryByLocationID(locationID, pageSize, page)
+
+      rows.push(...temp)
+
+      receivedPageSize = temp.length
+      page += 1
+    } while (receivedPageSize == pageSize)
+
+    return  rows
   },
   getActiveUnits: async function(): Promise<Unit[]> {
     return inventory.getActiveUnits()

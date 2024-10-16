@@ -8,6 +8,8 @@ import { inventoryService } from '@/service/inventory'
 import { productService } from '@/service/products'
 import { sessionService } from '@/service/session'
 
+export const maxDuration = 60
+
 export default async function Page() {
   const { session, user } = await sessionService.validate()
   if (!session) {

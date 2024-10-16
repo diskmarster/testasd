@@ -178,85 +178,154 @@ export const productService = {
       throw new ActionError(`Kunne ikke finde produkt med id ${id}`)
     }
   },
-  importProducts: async function(customerID: CustomerID, products: ImportProducts): Promise<boolean> {
+  importProducts: async function(customerID: CustomerID, importedProducts: ImportProducts): Promise<boolean> {
+    const start = performance.now()
     const transaction = await db.transaction(async trx => {
 
-      const units = await inventory.getAllUnits(trx)
+      const [units, groups, products, locations] = await Promise.all([
+        inventory.getAllUnits(trx),
+        inventory.getAllGroupsByID(customerID, trx),
+        inventory.getAllProductsByID(customerID, trx),
+        location.getAllByCustomerID(customerID, trx)
+      ])
 
-      const groups = await inventory.getAllGroupsByID(customerID, trx)
-      const newGroups = products.filter(p => !groups.some(g => g.name == p.group))
-      const unqNewGroups = newGroups.filter((g, index, self) => {
-        return index === self.findIndex(i => i.group === g.group)
-      }).map(g => g.group)
+      const productsMap = new Map<string, Product>(products.map(p => [p.sku, p]))
+      let existingProductsPromises = []
+      let newProductsPromises = []
 
-      for (const group of unqNewGroups) {
-        const newGroup = await inventory.createProductGroup({
-          name: group,
-          customerID: customerID
-        }, trx)
-        if (newGroup) {
-          groups.push(newGroup)
-        }
-      }
+      const groupsMap = new Map<string, Group>(groups.map(g => [g.name, g]))
 
-      const locations = await location.getAllByCustomerID(customerID, trx)
+      const defaultPlacementMap = new Map<string, number>()
+      let newDefaultPlacementPromises = []
 
-      console.log({
-        groups: groups,
-        newGroups: unqNewGroups,
-        locations: locations
-      })
+      const defaultBatchMap = new Map<string, number>()
+      let newDefaultBatchPromises = []
 
-      for (const location of locations) {
-        const defaultPlacement = await inventory.getDefaultPlacementByID(
-          location.id,
-          trx,
-        )
-        const defaultBatch = await inventory.getDefaultBatchByID(
-          location.id,
-          trx,
-        )
+      for (const loc of locations) {
+        const [defaultPlacement, defaultBatch] = await Promise.all([
+          inventory.getDefaultPlacementByID(loc.id, trx),
+          inventory.getDefaultBatchByID(loc.id, trx)
+        ])
 
-        let placementID = defaultPlacement?.id
-        let batchID = defaultBatch?.id
-
-        if (!defaultPlacement) {
-          const newDefaultPlacement = await inventory.createPlacement(
+        if (defaultPlacement) {
+          defaultPlacementMap.set(loc.id, defaultPlacement.id)
+        } else {
+          newDefaultPlacementPromises.push(inventory.createPlacement(
             {
               name: '-',
-              locationID: location.id,
+              locationID: loc.id,
             },
             trx,
-          )
-          placementID = newDefaultPlacement.id
-        }
-        if (!defaultBatch) {
-          const newBatch = await inventory.createBatch(
-            { batch: '-', locationID: location.id },
-            trx,
-          )
-          batchID = newBatch.id
+          ))
         }
 
-        for (const p of products) {
-          await product.upsertProduct({
-            customerID: customerID,
-            groupID: groups.find(g => g.name == p.group)?.id ?? groups[0].id,
-            unitID: units.find(u => u.name == p.unit)?.id ?? units[0].id,
-            text1: p.text1,
-            sku: p.sku,
-            barcode: p.barcode,
-            costPrice: p.costPrice,
-            isBarred: p.isBarred,
-            text2: p.text2,
-            text3: p.text3,
-            salesPrice: p.salesPrice
-          }, trx)
+        if (defaultBatch) {
+          defaultBatchMap.set(loc.id, defaultBatch.id)
+        } else {
+          newDefaultBatchPromises.push(inventory.createBatch(
+            {
+              batch: '-',
+              locationID: loc.id,
+            },
+            trx,
+          ))
         }
       }
+
+      const [newDefaultPlacements, newDefaultBatches] = await Promise.all([
+        Promise.all(newDefaultPlacementPromises),
+        Promise.all(newDefaultBatchPromises)
+      ])
+
+      newDefaultPlacements.forEach(p => defaultPlacementMap.set(p.locationID, p.id))
+      newDefaultBatches.forEach(b => defaultBatchMap.set(b.locationID, b.id))
+
+      for (const p of importedProducts) {
+
+        if (!groupsMap.has(p.group)) {
+          const newGroup = await inventory.createProductGroup({
+            name: p.group,
+            customerID: customerID
+          }, trx)
+          groups.push(newGroup)
+          groupsMap.set(newGroup.name, newGroup)
+        }
+
+        if (productsMap.has(p.sku)) {
+          
+          existingProductsPromises.push(
+            product.upsertProduct({
+              customerID: customerID,
+              groupID: groupsMap.get(p.group)?.id!,
+              unitID: units.find(u => u.name == p.unit)?.id ?? units[0].id,
+              text1: p.text1,
+              sku: p.sku,
+              barcode: p.barcode,
+              costPrice: p.costPrice,
+              isBarred: p.isBarred,
+              text2: p.text2,
+              text3: p.text3,
+              salesPrice: p.salesPrice
+            }, trx)
+          )
+
+        } else {
+
+          newProductsPromises.push(
+            product.upsertProduct({
+              customerID: customerID,
+              groupID: groupsMap.get(p.group)?.id!,
+              unitID: units.find(u => u.name == p.unit)?.id ?? units[0].id,
+              text1: p.text1,
+              sku: p.sku,
+              barcode: p.barcode,
+              costPrice: p.costPrice,
+              isBarred: p.isBarred,
+              text2: p.text2,
+              text3: p.text3,
+              salesPrice: p.salesPrice
+            }, trx)
+          )
+
+        }
+      }
+
+      const [newProductsResponses, ] = await Promise.all([
+        Promise.all(newProductsPromises),
+        Promise.all(existingProductsPromises)
+      ])
+
+      const zeroInventoryPromises = []
+
+      for (const loc of locations) {
+        for (const prod of newProductsResponses) {
+          zeroInventoryPromises.push(
+            inventory.upsertInventory({
+              customerID,
+              productID: prod.id,
+              locationID: loc.id,
+              placementID: defaultPlacementMap.get(loc.id)!,
+              batchID: defaultBatchMap.get(loc.id)!,
+              quantity: 0
+            }, trx)
+          )
+        }
+      }
+
+      const zeroInventoryResponses = await Promise.all(zeroInventoryPromises)
+
+      const dbCalls: number = 
+        newDefaultBatchPromises.length
+        + newDefaultPlacementPromises.length
+        + existingProductsPromises.length
+        + newProductsPromises.length
+        + zeroInventoryPromises.length
+
+      console.log("db calls: ~", dbCalls)
 
       return true
     })
+    console.log("time spent", performance.now() - start)
     return transaction
   },
 }
