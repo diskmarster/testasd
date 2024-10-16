@@ -1,0 +1,10 @@
+{
+    "email-reset-password": {
+        "email-header": "Forgot password!",
+        "email-text": "We have received a request to reset your password on ",
+        "follow-link": "Please follow the link",
+        "to-reset": "To reset your password",
+        "reset-password": "Reset password"
+
+    }
+}

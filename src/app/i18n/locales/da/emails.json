@@ -1,0 +1,6 @@
+{
+    "email": {
+        "subject": "Hej {{name}}",
+        "body": "Hej {{name}},\n\nDette er en test email.\n\nHilsen,\n{{company}}"
+    }
+}
