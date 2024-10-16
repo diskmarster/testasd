@@ -1,7 +1,6 @@
 'use client'
 
 import { ActiveUser } from '@/data/analytics.types'
-import { getDay } from 'date-fns'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import {
@@ -12,6 +11,7 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from '../ui/chart'
+import { Skeleton } from '../ui/skeleton'
 
 const chartConfig = {
 	desktopUsers: {
@@ -24,11 +24,17 @@ const chartConfig = {
 	},
 } satisfies ChartConfig
 
-const days = ['Søn', 'Man', 'Tir', 'Ons', 'Tor', 'Fre', 'Lør']
-
-export function DailyActiveUsersChart({ data }: { data: ActiveUser[] }) {
-	console.log(data)
-
+export function DailyActiveUsersChart({
+	data,
+	title,
+	tickFormatter,
+	loading,
+}: {
+	data: ActiveUser[]
+	title: string
+	tickFormatter?: (val: string) => string
+	loading: boolean
+}) {
 	const horizontalLineValues: number[] = ((maxData: number) => {
 		if (maxData == 0) return []
 
@@ -41,21 +47,24 @@ export function DailyActiveUsersChart({ data }: { data: ActiveUser[] }) {
 		}
 
 		return res
-	})(data.reduce((agg, cur) => {
-		let localMax = cur.desktopUsers
-		if (cur.appUsers > localMax) localMax = cur.appUsers
+	})(
+		data.reduce((agg, cur) => {
+			let localMax = cur.desktopUsers
+			if (cur.appUsers > localMax) localMax = cur.appUsers
 
-		if (localMax > agg) agg = localMax
+			if (localMax > agg) agg = localMax
 
-		return agg
-	}, 0))
+			return agg
+		}, 0),
+	)
 
 	return (
-		<Card className='max-w-[450px]'>
+		<Card>
 			<CardHeader>
-				<CardTitle>Daglige aktive brugere de seneste 7 dage</CardTitle>
+				<CardTitle>{title}</CardTitle>
 			</CardHeader>
 			<CardContent>
+				{loading ? (<ChartSkeleton />): (
 				<ChartContainer config={chartConfig} className='min-h-[200px] w-full'>
 					<BarChart
 						accessibilityLayer
@@ -64,18 +73,18 @@ export function DailyActiveUsersChart({ data }: { data: ActiveUser[] }) {
 							left: 12,
 							right: 12,
 						}}>
-						<CartesianGrid vertical={false} horizontalValues={horizontalLineValues} />
+						<CartesianGrid
+							vertical={false}
+							horizontalValues={horizontalLineValues}
+						/>
 						<XAxis
 							dataKey='label'
 							tickLine={false}
 							axisLine={false}
 							tickMargin={10}
-							tickFormatter={value => days[getDay(new Date(value))]}
+							tickFormatter={tickFormatter}
 						/>
-						<YAxis
-							domain={['dataMin', 'dataMax']}
-							hide
-						/>
+						<YAxis domain={['dataMin', 'dataMax']} hide />
 						<ChartTooltip content={<ChartTooltipContent />} />
 						<ChartLegend content={<ChartLegendContent />} />
 						<Bar
@@ -94,7 +103,27 @@ export function DailyActiveUsersChart({ data }: { data: ActiveUser[] }) {
 						/>
 					</BarChart>
 				</ChartContainer>
+				)}
 			</CardContent>
 		</Card>
+	)
+}
+
+function ChartSkeleton() {
+	return (
+		<div className="h-[225px] w-full flex flex-col items-center gap-4" >
+			<div className='relative h-4/5 w-full flex items-end justify-evenly'>
+				<Skeleton className='w-1/12 h-3/5' />
+				<Skeleton className='w-1/12 h-full' />
+				<Skeleton className='w-1/12 h-2/5' />
+				<Skeleton className='w-1/12 h-4/5' />
+				<Skeleton className='w-1/12 h-3/5' />
+				<div className='absolute flex justify-between'>
+					
+				</div>
+			</div>
+			<Skeleton className='w-[95%] h-[12px]' />
+			<Skeleton className='w-[50%] h-[12px]' />
+		</div>
 	)
 }
