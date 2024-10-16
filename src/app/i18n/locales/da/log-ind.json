@@ -1,9 +1,36 @@
 {
-    
+  "sign-in-card": {
     "title": "Velkommen tilbage",
     "description": "Udfyld dine informationer for at starte",
     "opret-en-bruger": "Er du ikke kunde i NemLager?",
+    "email": "Email",
     "password": "Kodeord",
+    "forgot-password": "Glemt kodeord?",
     "login": "Log ind",
     "error-title": "Der skete en fejl"
+  },
+
+  "forgot-password-card": {
+    "title": "Glemt kodeord",
+    "description": "Skriv din e-mail for at nulstille dit kodeord",
+    "we-received-your-request": "Vi har modtaget din anmodning",
+    "we-sent-you-an-email": "Vi har sendt dig en mail med, hvordan du kan nulstille dit kodeord. Tjek din indbakke for at komme videre",
+    "check-spam-folder": "Kan du ikke finde mailen? Tjek lige din spam-mappe",
+    "back-to-login": "Tilbage til login",
+    "reset-password": "Nulstil kodeord"
+  },
+
+  "reset-password-card": {
+    "password-reset": "Kodeord nulstillet",
+    "password-reset-description": "Dit kodeord er nu nulstillet. Gå tilbage til login-siden for at logge ind med dit nye kodeord",
+    "back-to-login": "Tilbage til login",
+    "reset-password": "Nulstil kodeord",
+    "new-password": "Indtast et nyt kodeord for at nulstille"
+  },
+
+  "reset-password-page": {
+    "something-went-wrong": "Noget gik galt",
+    "this-link-is-invalid": "Dette link er enten ugyldigt eller udløbet. Anmod om et nyt link for at nulstille dit kodeord",
+    "back-to-login": "Tilbage til login"
   }
+}

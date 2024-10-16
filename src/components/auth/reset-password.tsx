@@ -2,6 +2,8 @@
 
 import { resetPasswordAction } from '@/app/[lng]/(auth)/glemt-password/actions'
 import { resetPasswordValidation } from '@/app/[lng]/(auth)/glemt-password/validation'
+import { useTranslation } from '@/app/i18n/client'
+import { useLanguage } from '@/context/language'
 import { ResetPassword } from '@/lib/database/schema/auth'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,19 +27,22 @@ import { PasswordInput } from '../ui/password-input'
 
 export function ResetPasswordCard({ link }: { link: ResetPassword }) {
   const [passwordResat, setPasswordResat] = useState<boolean>(false)
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'emails')
   if (passwordResat) {
     return (
       <div className='mx-auto max-w-lg space-y-4 text-center'>
         <Icons.check className='mx-auto h-12 w-12 animate-bounce text-primary' />
         <h1 className='text-2xl font-bold tracking-tight text-foreground'>
-          Kodeord nulstillet
+          {t('reset-password-card.password-reset')}
         </h1>
         <p className='text-md text-foreground'>
-          Dit kodeord blev nulstillet korrekt. Gå til log ind siden for at logge
-          ind.
+          {t('reset-password-card.password-reset-description')}
         </p>
         <Button asChild className='w-full'>
-          <Link href='/log-ind'>Gå til log ind siden</Link>
+          <Link href={`/${lng}/log-ind`}>
+            {t('reset-password-card.back-to-login')}
+          </Link>
         </Button>
       </div>
     )
@@ -46,9 +51,9 @@ export function ResetPasswordCard({ link }: { link: ResetPassword }) {
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
-        <CardTitle>Nulstil kodeord</CardTitle>
+        <CardTitle>{t('reset-password-card.reset-password')}</CardTitle>
         <CardDescription>
-          Udfyld dit nye kodeord, for at nulstille
+          {t('reset-password-card.new-password')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -56,12 +61,12 @@ export function ResetPasswordCard({ link }: { link: ResetPassword }) {
       </CardContent>
       <CardFooter>
         <Link
-          href={'/log-ind'}
+          href={`/${lng}/log-ind`}
           className={cn(
             buttonVariants({ variant: 'link' }),
             'mx-auto h-auto p-0',
           )}>
-          Til log ind side
+          {t('reset-password-card.back-to-login')}
         </Link>
       </CardFooter>
     </Card>

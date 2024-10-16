@@ -18,6 +18,7 @@ import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
+import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
@@ -26,17 +27,17 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 interface SignInCardProps {
-  lng: string;
+  lng: string
 }
 
 export function SignInCard({ lng }: SignInCardProps) {
-  const { t } = useTranslation(lng, 'log-ind');
+  const { t } = useTranslation(lng, 'log-ind')
 
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
-      <CardTitle>{t('title')}</CardTitle>
-      <CardDescription>{t('description')}</CardDescription>
+        <CardTitle>{t('sign-in-card.title')}</CardTitle>
+        <CardDescription>{t('sign-in-card.description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form t={t} />
@@ -48,7 +49,7 @@ export function SignInCard({ lng }: SignInCardProps) {
             'mx-auto h-auto p-0',
           )}
           href={`/${lng}/opret`}>
-          {t('opret-en-bruger')}
+          {t('sign-in-card.opret-en-bruger')}
         </Link>
       </CardFooter>
     </Card>
@@ -56,16 +57,14 @@ export function SignInCard({ lng }: SignInCardProps) {
 }
 
 interface FormProps {
-  t: (key: string) => string;
+  t: (key: string) => string
 }
 
 function Form({ t }: FormProps) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
 
-  const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof signInValidation>
-  >({
   const { handleSubmit, formState, register } = useForm<
     z.infer<typeof signInValidation>
   >({
@@ -85,9 +84,6 @@ function Form({ t }: FormProps) {
     <form
       className='grid w-full items-start gap-4'
       onSubmit={handleSubmit(onSubmit)}>
-    <form
-      className='grid w-full items-start gap-4'
-      onSubmit={handleSubmit(onSubmit)}>
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
@@ -96,7 +92,7 @@ function Form({ t }: FormProps) {
         </Alert>
       )}
       <div className='grid gap-2'>
-        <Label htmlFor='email'>Email</Label>
+        <Label htmlFor='email'>{t('sign-in-card.email')}</Label>
         <Input id='email' type='email' {...register('email')} />
         {formState.errors.email && (
           <p className='text-sm text-destructive '>
@@ -106,11 +102,13 @@ function Form({ t }: FormProps) {
       </div>
       <div className='grid gap-2'>
         <div className='flex justify-between'>
-          <Label htmlFor='password'>{t('password')}</Label>
+          <Label htmlFor='password'>{t('sign-in-card.password')}</Label>
           <Link
-            className={'hover:underline text-xs font-medium text-muted-foreground'}
-            href={'/glemt-password'}>
-            Glemt kodeord?
+            className={
+              'hover:underline text-xs font-medium text-muted-foreground'
+            }
+            href={`/${lng}/glemt-password`}>
+            {t('sign-in-card.forgot-password')}
           </Link>
         </div>
 
@@ -123,7 +121,7 @@ function Form({ t }: FormProps) {
       </div>
       <Button type='submit' className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        {t('login')}
+        {t('sign-in-card.login')}
       </Button>
     </form>
   )

@@ -2,8 +2,11 @@
 
 import { forgotPasswordAction } from '@/app/[lng]/(auth)/glemt-password/actions'
 import { forgotPasswordValidation } from '@/app/[lng]/(auth)/glemt-password/validation'
+import { useTranslation } from '@/app/i18n/client'
+import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { t } from 'i18next'
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -23,24 +26,26 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 
 export function ForgotPasswordCard() {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'log-ind')
   const [emailSent, setEmailSent] = useState<boolean>(false)
   if (emailSent) {
     return (
       <div className='mx-auto max-w-lg space-y-4 text-center'>
         <Icons.mail className='mx-auto h-12 w-12 animate-bounce text-primary' />
         <h1 className='text-2xl font-bold tracking-tight text-foreground'>
-          Vi har modtaget din forespørgsel
+          {t('forgot-password-card.we-received-your-request')}
         </h1>
         <p className='text-md text-foreground'>
-          Vi har sendt en mail til din e-mailadresse, som viser dig hvordan du
-          kan nulstille dit kodeord. Tjek venligst din indbakke, for at
-          fortsætte.
+          {t('forgot-password-card.we-sent-you-an-email')}
         </p>
         <p className='text-sm text-muted-foreground'>
-          Hvis du ikke kan se e-mailen, tjek venligst din spam-mappe.
+          {t('forgot-password-card.check-spam-folder')}
         </p>
         <Button asChild className='w-full'>
-          <Link href='/log-ind'>Gå til log ind siden</Link>
+          <Link href={`/${lng}/log-ind`}>
+            {t('forgot-password-card.back-to-login')}
+          </Link>
         </Button>
       </div>
     )
@@ -49,9 +54,9 @@ export function ForgotPasswordCard() {
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
-        <CardTitle>Glemt kodeord</CardTitle>
+        <CardTitle>{t('forgot-password-card.title')}</CardTitle>
         <CardDescription>
-          Udfyld din email for at nulstille dit kodeord
+          {t('forgot-password-card.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -63,8 +68,8 @@ export function ForgotPasswordCard() {
             buttonVariants({ variant: 'link' }),
             'mx-auto h-auto p-0',
           )}
-          href={'/log-ind'}>
-          Tilbage til log ind
+          href={`/${lng}/log-ind`}>
+          {t('forgot-password-card.back-to-login')}
         </Link>
       </CardFooter>
     </Card>
@@ -78,6 +83,8 @@ function ForgotPasswordForm({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'log-ind')
 
   const { register, formState, handleSubmit } = useForm<
     z.infer<typeof forgotPasswordValidation>
@@ -118,7 +125,7 @@ function ForgotPasswordForm({
       </div>
       <Button type='submit' className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        Nulstil kodeord
+        {t('forgot-password-card.reset-password')}
       </Button>
     </form>
   )
