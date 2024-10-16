@@ -1,16 +1,25 @@
-import { signOutAction } from '@/app/(auth)/log-ud/actions'
+import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
+import { serverTranslation } from '@/app/i18n'
 import { ModalEditLocation } from '@/components/admin/modal-edit-location'
 import { ModalResetUserPW } from '@/components/admin/modal-reset-user-pw'
 import { ModalToggleLocation } from '@/components/admin/modal-toggle-location'
 import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
 import { TabsAdmin } from '@/components/admin/tabs-company'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { useLanguage } from '@/context/language'
 import { customerService } from '@/service/customer'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
 
-export default async function Page() {
+interface PageProps {
+  params: {
+    lng: string
+  }
+}
+
+export default async function Page( { params: { lng } }: PageProps ) {
+  const { t } = await serverTranslation(lng, 'organisation')
   const { session, user } = await sessionService.validate()
   if (!session) {
     signOutAction()
@@ -35,8 +44,8 @@ export default async function Page() {
 
   return (
     <SiteWrapper
-      title='Organisation'
-      description='Se og rediger i brugere, lokationer og firmainformation'>
+      title={t('organisation-page.title')}
+      description={t('organisation-page.description')}>
       <TabsAdmin
         customer={customer}
         user={user}

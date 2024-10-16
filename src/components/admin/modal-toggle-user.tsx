@@ -2,6 +2,7 @@
 
 import { toggleUserStatusAction } from '@/app/[lng]/(site)/admin/organisation/actions'
 import { changeUserStatusValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
@@ -39,6 +41,8 @@ export function ModalToggleUser({ users }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
 
   const { setValue, handleSubmit, formState, watch, reset } = useForm<
     z.infer<typeof changeUserStatusValidation>
@@ -79,11 +83,11 @@ export function ModalToggleUser({ users }: Props) {
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-sm'>
         <CredenzaHeader>
-          <CredenzaTitle>Skift bruger status</CredenzaTitle>
+          <CredenzaTitle>{t('modal-toggle-user.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Denne handling er ikke permanent. Aktiverer du en bruger, kan denne
-            logge ind på ${siteConfig.name} igen. Deaktiverer du en bruger vil
-            brugeren blive logget af og kan ikke logge ind igen før aktiveret
+            {t('modal-toggle-user.description1')}
+            {siteConfig.name}
+            {t('modal-toggle-user.description2')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -99,7 +103,7 @@ export function ModalToggleUser({ users }: Props) {
             )}
 
             <div className='grid gap-2'>
-              <Label htmlFor='groupID'>Status</Label>
+              <Label htmlFor='groupID'>{t('modal-toggle-user.status')}</Label>
               <Select
                 onValueChange={(value: 'active' | 'inactive') =>
                   setValue('status', value, {
@@ -107,11 +111,17 @@ export function ModalToggleUser({ users }: Props) {
                   })
                 }>
                 <SelectTrigger>
-                  <SelectValue placeholder='Vælg en status' />
+                  <SelectValue
+                    placeholder={t('modal-toggle-user.choose-status')}
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='active'>Aktiv</SelectItem>
-                  <SelectItem value='inactive'>Inaktiv</SelectItem>
+                  <SelectItem value='active'>
+                    {t('modal-toggle-user.active')}
+                  </SelectItem>
+                  <SelectItem value='inactive'>
+                    {t('modal-toggle-user.inactive')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -122,7 +132,7 @@ export function ModalToggleUser({ users }: Props) {
                   size='lg'
                   variant='secondary'
                   className='w-full'>
-                  Luk
+                  {t('modal-toggle-user.cancel-button')}
                 </Button>
               </CredenzaClose>
               <Button
@@ -133,7 +143,7 @@ export function ModalToggleUser({ users }: Props) {
                 size='lg'
                 className='w-full gap-2'>
                 {pending && <Icons.spinner className='size-4 animate-spin' />}
-                Opdater
+                {t('modal-toggle-user.update-button')}
               </Button>
             </div>
           </form>

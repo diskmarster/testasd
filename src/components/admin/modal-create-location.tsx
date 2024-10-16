@@ -2,6 +2,7 @@
 
 import { createNewLocationAction } from '@/app/[lng]/(site)/admin/organisation/actions'
 import { createNewLocationValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -16,6 +17,7 @@ import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { User } from 'lucia'
@@ -38,6 +40,8 @@ export function ModalCreateLocation({ user, users, children }: Props) {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
   const pathname = usePathname()
 
   const { handleSubmit, register, formState, reset, watch, setValue } = useForm<
@@ -81,10 +85,9 @@ export function ModalCreateLocation({ user, users, children }: Props) {
       <CredenzaTrigger asChild>{children}</CredenzaTrigger>
       <CredenzaContent className='md:max-w-md'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret ny lokation</CredenzaTitle>
+          <CredenzaTitle>{t('modal-create-location.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Nye lokationer kan tilgås med det samme i dropdown menuen oppe i
-            højre hjørne
+            {t('modal-create-location.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -99,9 +102,11 @@ export function ModalCreateLocation({ user, users, children }: Props) {
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Lokationsnavn</Label>
+              <Label>{t('modal-create-location.location-name')}</Label>
               <Input
-                placeholder='Indtast navn for ny lokation'
+                placeholder={t(
+                  'modal-create-location.location-name-placeholder',
+                )}
                 {...register('name')}
               />
               {formState.errors.name && (
@@ -113,51 +118,55 @@ export function ModalCreateLocation({ user, users, children }: Props) {
             {users && (
               <div className='grid gap-2'>
                 <div className='flex items-center justify-between'>
-                  <Label>Adgangsrettigheder</Label>
+                  <Label>{t('modal-create-location.access-level')}</Label>
                   <span className='text-muted-foreground text-xs tabular-nums'>
                     {formValues.userIDs.length - 1}
-                    {' af '}
-                    {users.length - 1} brugere valgt
+                    {t('modal-create-location.of')}
+                    {users.length - 1} {t('modal-create-location.users-chosen')}
                   </span>
                 </div>
                 <ScrollArea
                   className='border p-2 rounded-md'
                   maxHeight='max-h-60'>
                   <div className='space-y-2'>
-                    {users.length > 1 ? users
-                      .filter(u => u.id != user.id)
-                      .map(u => (
-                        <div
-                          key={u.id}
-                          className='border rounded-sm p-2 flex items-center justify-between'>
-                          <div className='flex flex-col'>
-                            <span className='text-muted-foreground text-sm font-semibold'>
-                              {u.name}
-                            </span>
-                            <span className='text-xs text-muted-foreground'>
-                              {u.email}
-                            </span>
+                    {users.length > 1 ? (
+                      users
+                        .filter(u => u.id != user.id)
+                        .map(u => (
+                          <div
+                            key={u.id}
+                            className='border rounded-sm p-2 flex items-center justify-between'>
+                            <div className='flex flex-col'>
+                              <span className='text-muted-foreground text-sm font-semibold'>
+                                {u.name}
+                              </span>
+                              <span className='text-xs text-muted-foreground'>
+                                {u.email}
+                              </span>
+                            </div>
+                            <Switch
+                              checked={formValues.userIDs.includes(u.id)}
+                              onCheckedChange={(checked: boolean) => {
+                                let users = formValues.userIDs
+
+                                if (checked) {
+                                  users.push(u.id)
+                                } else {
+                                  users = users.filter(us => us != u.id)
+                                }
+
+                                setValue('userIDs', users, {
+                                  shouldValidate: true,
+                                })
+                              }}
+                            />
                           </div>
-                          <Switch
-                            checked={formValues.userIDs.includes(u.id)}
-                            onCheckedChange={(checked: boolean) => {
-                              let users = formValues.userIDs
-
-                              if (checked) {
-                                users.push(u.id)
-                              } else {
-                                users = users.filter(us => us != u.id)
-                              }
-
-                              setValue('userIDs', users, {
-                                shouldValidate: true,
-                              })
-                            }}
-                          />
-                        </div>
-                      )) : (
-                        <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>Opret flere brugere for at tildele adgangsrettigheder når du opretter nye lokationer</div>
-                      )}
+                        ))
+                    ) : (
+                      <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>
+                        {t('modal-create-location.create-more-users')}
+                      </div>
+                    )}
                   </div>
                 </ScrollArea>
                 {formState.errors.userIDs && (
@@ -172,7 +181,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
               type='submit'
               disabled={pending || !formState.isValid}>
               {pending && <Icons.spinner className='animate-spin size-4' />}
-              Opret
+              {t('modal-create-location.create-button')}
             </Button>
           </form>
         </CredenzaBody>

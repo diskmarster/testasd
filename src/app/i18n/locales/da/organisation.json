@@ -1,0 +1,117 @@
+{
+    "organisation-page": {
+      "title": "Organisation",
+      "description": "Her kan du administrere din organisations brugere, lokationer og firma oplysninger."
+    },
+    "tabs-admin": {
+      "users": "Brugere",
+      "locations": "Lokationer",
+      "company": "Firma",
+      "user-limit-reached": "Du har nået det maksimale antal brugere for din plan.",
+      "user-upgrade-plan": "Opgrader din plan for at tilføje flere brugere.",
+      "location-limit-reached": "Du har nået det maksimale antal lokationer for din plan.",
+      "location-upgrade-plan": "Opgrader din plan for at tilføje flere lokationer."
+    },
+    "modal-toggle-user": {
+      "title": "Skift brugerstatus",
+      "description1": "Denne handling er ikke permanent. Hvis du aktiverer en bruger, vil de kunne logge ind på ",
+      "description2": " igen. Hvis du deaktiverer en bruger, vil de blive logget af og vil ikke kunne logge ind igen, før de er genaktiveret.",
+      "status": "Status",
+      "choose-status": "Vælg status",
+      "cancel-button": "Luk",
+      "update-button": "Opdater",
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "modal-reset-userpw": {
+      "title": "Nulstil brugerens adgangskode",
+      "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres adgangskode.",
+      "cancel-button": "Luk",
+      "reset-button": "Nulstil"
+    },
+    "modal-edit-location": {
+      "title": "Rediger lokation",
+      "description": "Her kan du redigere en lokations navn og adgangsniveau for dine brugere.",
+      "location-name": "Lokationsnavn",
+      "location-name-placeholder": "Indtast lokationsnavn",
+      "access-level": "Adgangsniveau",
+      "users-chosen": "Valgte brugere",
+      "create-button": "Opret",
+      "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder, når du redigerer lokationer."
+    },
+    "modal-toggle-location": {
+      "title": "Skift lokationsstatus",
+      "description": "Denne handling er ikke permanent. Hvis du aktiverer en lokation, kan den tilgås igen. Hvis du deaktiverer en lokation, kan den ikke længere tilgås, før den er genaktiveret.",
+      "status": "Status",
+      "choose-status": "Vælg status",
+      "cancel-button": "Luk",
+      "update-button": "Opdater",
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "table-admin-locations": {
+      "no-locations-found": "Ingen lokationer fundet"
+    },
+    "location-columns": {
+      "location-name": "Lokationsnavn",
+      "location-name-placeholder": "Søg efter lokationsnavn",
+      "status": "Status",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "updated": "Opdateret",
+      "created": "Oprettet"
+    },
+    "user-columns": {
+      "user-name": "Navn",
+      "user-name-placeholder": "Søg efter brugernavn",
+      "email": "E-mail",
+      "email-placeholder": "Søg efter e-mail",
+      "user-role": "Rolle",
+      "status": "Status",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "updated": "Opdateret",
+      "created": "Oprettet"
+    },
+    "table-locations-actions": {
+      "update": "Opdater",
+      "toggle-status": "Skift status"
+    },
+    "table-users-actions": {
+      "toggle-status": "Skift status",
+      "reset-password": "Nulstil adgangskode",
+      "reset-pin": "Nulstil PIN"
+    },
+    "form-company-edit": {
+      "company-name": "Firma navn",
+      "email": "E-mail",
+      "update-button": "Opdater"
+    },
+    "modal-invite-user": {
+      "title": "Inviter ny bruger",
+      "description": "Send en aktiveringsmail til en af dine medarbejdere for hurtigt at få dem i gang med at bruge ",
+      "email": "Brugerens e-mail",
+      "email-placeholder": "Skriv e-mail til den nye bruger",
+      "role": "Rolle",
+      "role-placeholder": "Vælg rolle",
+      "user": "Bruger",
+      "local-admin": "Lokal Admin",
+      "company-admin": "Firma Admin",
+      "location-access": "Lokationsadgang",
+      "of": " af ",
+      "locations-chosen": "Valgte lokationer",
+      "send-invite": "Send invitation"
+    },
+    "modal-create-location": {
+      "title": "Opret ny lokation",
+      "description": "Nye lokationer kan tilgås med det samme i den samme dropdown-menu i øverste højre hjørne",
+      "location-name": "Lokationsnavn",
+      "location-name-placeholder": "Indtast lokationsnavn",
+      "access-level": "Adgangsniveau",
+      "of": " af ",
+      "users-chosen": "Valgte brugere",
+      "create-button": "Opret",
+      "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder, når du opretter lokationer."
+    }
+  }
+  

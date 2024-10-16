@@ -12,6 +12,8 @@ import { DateRange } from 'react-day-picker'
 
 export function getTableLocationsColumns(
   userRole: UserRole,
+  lng: string,
+  t: (key: string) => string,
 ): ColumnDef<Location>[] {
   const selectCol: ColumnDef<Location> = {
     id: 'select',
@@ -38,26 +40,37 @@ export function getTableLocationsColumns(
 
   const nameCol: ColumnDef<Location> = {
     accessorKey: 'name',
-    header: ({ column }) => <TableHeader column={column} title='Navn' />,
+    header: ({ column }) => (
+      <TableHeader
+        column={column}
+        title={t('location-columns.location-name')}
+      />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Navn',
+      viewLabel: t('location-columns.location-name'),
     },
   }
 
   const statusCol: ColumnDef<Location> = {
     accessorKey: 'isBarred',
-    header: ({ column }) => <TableHeader column={column} title='Status' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('location-columns.status')} />
+    ),
     cell: ({ getValue }) => {
       const status = getValue<boolean>()
       const badgeVariant = status ? 'destructive' : 'secondary'
 
       return (
-        <Badge variant={badgeVariant}>{status ? 'Inaktiv' : 'Aktiv'}</Badge>
+        <Badge variant={badgeVariant}>
+          {status
+            ? t('location-columns.inactive')
+            : t('location-columns.active')}
+        </Badge>
       )
     },
     meta: {
-      viewLabel: 'Status',
+      viewLabel: t('location-columns.status'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<boolean>(id))
@@ -66,7 +79,9 @@ export function getTableLocationsColumns(
 
   const updatedCol: ColumnDef<Location> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('location-columns.updated')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -91,13 +106,15 @@ export function getTableLocationsColumns(
       return true
     },
     meta: {
-      viewLabel: 'Opdateret',
+      viewLabel: t('location-columns.updated'),
     },
   }
 
   const insertedCol: ColumnDef<Location> = {
     accessorKey: 'inserted',
-    header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('location-columns.created')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -122,7 +139,7 @@ export function getTableLocationsColumns(
       return true
     },
     meta: {
-      viewLabel: 'Oprettet',
+      viewLabel: t('location-columns.created'),
     },
   }
 
@@ -142,37 +159,39 @@ export function getTableLocationsColumns(
 
 export function getTableLocationFilters(
   table: Table<Location>,
+  lng: string,
+  t: (key: string) => string,
 ): FilterField<Location>[] {
   const nameFilter: FilterField<Location> = {
     column: table.getColumn('name'),
     type: 'text',
-    label: 'Navn',
+    label: t('location-columns.location-name'),
     value: '',
-    placeholder: 'Søg i navn',
+    placeholder: t('location-columns.location-name-placeholder'),
   }
 
   const statusFilter: FilterField<Location> = {
     column: table.getColumn('isBarred'),
     type: 'select',
-    label: 'Status',
+    label: t('location-columns.status'),
     value: '',
     options: [
-      { label: 'Deaktiveret', value: true },
-      { label: 'Aktiv', value: false },
+      { label: t('location-columns.inactive'), value: true },
+      { label: t('location-columns.active'), value: false },
     ],
   }
 
   const insertedFilter: FilterField<Location> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
-    label: 'Oprettet',
+    label: t('location-columns.created'),
     value: '',
   }
 
   const updatedFilter: FilterField<Location> = {
     column: table.getColumn('updated'),
     type: 'date-range',
-    label: 'Opdateret',
+    label: t('location-columns.updated'),
     value: '',
   }
 

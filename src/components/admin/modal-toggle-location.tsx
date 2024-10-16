@@ -2,6 +2,7 @@
 
 import { changeLocationStatusAction } from '@/app/[lng]/(site)/admin/organisation/actions'
 import { changeLocationStatusValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -34,6 +36,8 @@ export function ModalToggleLocation() {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
 
   const { setValue, handleSubmit, formState, watch, reset } = useForm<
     z.infer<typeof changeLocationStatusValidation>
@@ -74,11 +78,9 @@ export function ModalToggleLocation() {
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-sm'>
         <CredenzaHeader>
-          <CredenzaTitle>Skift lokation status</CredenzaTitle>
+          <CredenzaTitle>{t('modal-toggle-location.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Denne handling er ikke permanent. Aktiverer du en lokation, kan
-            denne tilgås igen. Deaktiverer du en lokation, kan denne ikke
-            længere tilgås, før den er aktiveret igen
+            {t('modal-toggle-location.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -94,7 +96,9 @@ export function ModalToggleLocation() {
             )}
 
             <div className='grid gap-2'>
-              <Label htmlFor='groupID'>Status</Label>
+              <Label htmlFor='groupID'>
+                {t('modal-toggle-location.status')}
+              </Label>
               <Select
                 onValueChange={(value: 'active' | 'inactive') =>
                   setValue('status', value, {
@@ -102,11 +106,17 @@ export function ModalToggleLocation() {
                   })
                 }>
                 <SelectTrigger>
-                  <SelectValue placeholder='Vælg en status' />
+                  <SelectValue
+                    placeholder={t('modal-toggle-location.choose-status')}
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='active'>Aktiv</SelectItem>
-                  <SelectItem value='inactive'>Inaktiv</SelectItem>
+                  <SelectItem value='active'>
+                    {t('modal-toggle-location.active')}
+                  </SelectItem>
+                  <SelectItem value='inactive'>
+                    {t('modal-toggle-location.inactive')}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -117,7 +127,7 @@ export function ModalToggleLocation() {
                   size='lg'
                   variant='secondary'
                   className='w-full'>
-                  Luk
+                  {t('modal-toggle-location.cancel-button')}
                 </Button>
               </CredenzaClose>
               <Button
@@ -128,7 +138,7 @@ export function ModalToggleLocation() {
                 size='lg'
                 className='w-full gap-2'>
                 {pending && <Icons.spinner className='size-4 animate-spin' />}
-                Opdater
+                {t('modal-toggle-location.update-button')}
               </Button>
             </div>
           </form>

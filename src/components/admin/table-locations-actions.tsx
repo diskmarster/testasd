@@ -8,13 +8,17 @@ import { Location } from '@/lib/database/schema/customer'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
-
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 interface Props {
   table: Table<Location>
   row: Row<Location>
 }
 
 export function TableLocationsActions({ table, row }: Props) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
+
   return (
     <TableActionsWrapper>
       <DropdownMenuItem
@@ -24,7 +28,7 @@ export function TableLocationsActions({ table, row }: Props) {
             name: row.original.name,
           })
         }}>
-        Rediger
+        {t('table-locations-actions.update')}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem
@@ -34,7 +38,7 @@ export function TableLocationsActions({ table, row }: Props) {
             status: row.original.isBarred,
           })
         }}>
-        Skift status
+        {t('table-locations-actions.toggle-status')}
       </DropdownMenuItem>
     </TableActionsWrapper>
   )

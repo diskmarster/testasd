@@ -27,6 +27,8 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 
 interface Props {
   locations: Location[]
@@ -44,6 +46,8 @@ export function ModalInviteUser({
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
 
   const { handleSubmit, register, formState, reset, watch, setValue } = useForm<
     z.infer<typeof inviteNewUserValidation>
@@ -90,10 +94,9 @@ export function ModalInviteUser({
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-md'>
         <CredenzaHeader>
-          <CredenzaTitle>Inviter ny bruger</CredenzaTitle>
+          <CredenzaTitle>{t('modal-invite-user.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Send et aktiveringslink til dine ansatte, og få dem hurtigt i gang
-            med at bruge {siteConfig.name}
+            {t('modal-invite-user.description')}{siteConfig.name}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -108,9 +111,9 @@ export function ModalInviteUser({
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Brugerens email</Label>
+              <Label>{t('modal-invite-user.email')}</Label>
               <Input
-                placeholder='Indtast email for ny bruger'
+                placeholder={t('modal-invite-user.email-placeholder')}
                 {...register('email')}
               />
               {formState.errors.email && (
@@ -121,7 +124,7 @@ export function ModalInviteUser({
             </div>
             <div className='flex flex-col gap-2'>
               <div className='grid gap-2'>
-                <Label>Brugerrolle</Label>
+                <Label>{t('modal-invite-user.role')}</Label>
                 <div className='flex items-center'>
                   <Button
                     type='button'
@@ -136,7 +139,7 @@ export function ModalInviteUser({
                       'flex items-center gap-2 w-full px-2',
                       'rounded-r-none border-r-0',
                     )}>
-                    Bruger
+                    {t('modal-invite-user.user')}
                   </Button>
                   <Button
                     type='button'
@@ -152,7 +155,7 @@ export function ModalInviteUser({
                       'rounded-r-none rounded-l-none',
                       user.role == 'lokal_admin' && 'rounded-r-md border-r-1',
                     )}>
-                    Lokal Admin
+                    {t('modal-invite-user.local-admin')}
                   </Button>
                   {user.role != 'lokal_admin' && (
                     <Button
@@ -170,7 +173,7 @@ export function ModalInviteUser({
                         'flex items-center gap-2 w-full px-2',
                         'rounded-l-none border-l-0',
                       )}>
-                      Firma Admin
+                      {t('modal-invite-user.company-admin')}
                     </Button>
                   )}
                 </div>
@@ -178,11 +181,11 @@ export function ModalInviteUser({
             </div>
             <div className='grid gap-2'>
               <div className='flex items-center justify-between'>
-                <Label>Lokations adgang</Label>
+                <Label>{t('modal-invite-user.location-access')}</Label>
                 <span className='text-muted-foreground text-xs tabular-nums'>
                   {formValues.locationIDs.length}
-                  {' af '}
-                  {locations.length} lokationer valgt
+                  {t('modal-invite-user.of')}
+                  {locations.length} {t('modal-invite-user.locations-chosen')}
                 </span>
               </div>
               <ScrollArea
@@ -229,7 +232,7 @@ export function ModalInviteUser({
               type='submit'
               disabled={pending || !formState.isValid}>
               {pending && <Icons.spinner className='animate-spin size-4' />}
-              Send
+              {t('modal-invite-user.send-invite')}
             </Button>
           </form>
         </CredenzaBody>

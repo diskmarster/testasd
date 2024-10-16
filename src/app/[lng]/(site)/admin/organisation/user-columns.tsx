@@ -8,10 +8,13 @@ import { UserNoHash } from '@/lib/database/schema/auth'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { t } from 'i18next'
 import { DateRange } from 'react-day-picker'
 
 export function getTableUsersColumns(
   userRole: UserRole,
+  lng: string,
+  t: (key: string) => string,
 ): ColumnDef<UserNoHash>[] {
   const selectCol: ColumnDef<UserNoHash> = {
     id: 'select',
@@ -38,25 +41,25 @@ export function getTableUsersColumns(
 
   const nameCol: ColumnDef<UserNoHash> = {
     accessorKey: 'name',
-    header: ({ column }) => <TableHeader column={column} title='Navn' />,
+    header: ({ column }) => <TableHeader column={column} title={t('user-columns.user-name')} />,
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Navn',
+      viewLabel: t('user-columns.user-name'),
     },
   }
 
   const emailCol: ColumnDef<UserNoHash> = {
     accessorKey: 'email',
-    header: ({ column }) => <TableHeader column={column} title='Email' />,
+    header: ({ column }) => <TableHeader column={column} title={t('user-columns.email')} />,
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: 'Email',
+      viewLabel: t('user-columns.email'),
     },
   }
 
   const roleCol: ColumnDef<UserNoHash> = {
     accessorKey: 'role',
-    header: ({ column }) => <TableHeader column={column} title='Brugerrolle' />,
+    header: ({ column }) => <TableHeader column={column} title={t('user-columns.user-role')} />,
     cell: ({ getValue }) => {
       const role = getValue<UserRole>()
       const badgeVariant =
@@ -75,7 +78,7 @@ export function getTableUsersColumns(
       )
     },
     meta: {
-      viewLabel: 'Brugerrolle',
+      viewLabel: t('user-columns.user-role'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -84,17 +87,17 @@ export function getTableUsersColumns(
 
   const statusCol: ColumnDef<UserNoHash> = {
     accessorKey: 'isActive',
-    header: ({ column }) => <TableHeader column={column} title='Status' />,
+    header: ({ column }) => <TableHeader column={column} title={t('user-columns.status')} />,
     cell: ({ getValue }) => {
       const status = getValue<boolean>()
       const badgeVariant = status ? 'secondary' : 'destructive'
 
       return (
-        <Badge variant={badgeVariant}>{status ? 'Aktiv' : 'Inaktiv'}</Badge>
+        <Badge variant={badgeVariant}>{status ? t('user-columns.active') : t('user-columns.inactive')}</Badge>
       )
     },
     meta: {
-      viewLabel: 'Status',
+      viewLabel: t('user-columns.status'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -103,7 +106,7 @@ export function getTableUsersColumns(
 
   const updatedCol: ColumnDef<UserNoHash> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
+    header: ({ column }) => <TableHeader column={column} title={t('user-columns.updated')} />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -128,13 +131,13 @@ export function getTableUsersColumns(
       return true
     },
     meta: {
-      viewLabel: 'Opdateret',
+      viewLabel: t('user-columns.updated'),
     },
   }
 
   const insertedCol: ColumnDef<UserNoHash> = {
     accessorKey: 'inserted',
-    header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
+    header: ({ column }) => <TableHeader column={column} title={t('user-columns.created')} />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -159,7 +162,7 @@ export function getTableUsersColumns(
       return true
     },
     meta: {
-      viewLabel: 'Oprettet',
+      viewLabel: t('user-columns.created'),
     },
   }
 
@@ -188,27 +191,29 @@ export function getTableUsersColumns(
 
 export function getTableUsersFilters(
   table: Table<UserNoHash>,
+  lng: string,
+  t: (key: string) => string,
 ): FilterField<UserNoHash>[] {
   const nameFilter: FilterField<UserNoHash> = {
     column: table.getColumn('name'),
     type: 'text',
-    label: 'Navn',
+    label: t('user-columns.user-name'),
     value: '',
-    placeholder: 'Søg i navn',
+    placeholder: t('user-columns.user-name-placeholder'),
   }
 
   const emailFilter: FilterField<UserNoHash> = {
     column: table.getColumn('email'),
     type: 'text',
-    label: 'Email',
+    label: t('user-columns.email'),
     value: '',
-    placeholder: 'Søg i email',
+    placeholder: t('user-columns.email-placeholder'),
   }
 
   const roleFilter: FilterField<UserNoHash> = {
     column: table.getColumn('role'),
     type: 'select',
-    label: 'Brugerrolle',
+    label: t('user-columns.user-role'),
     value: '',
     options: [
       ...userRoles
@@ -226,25 +231,25 @@ export function getTableUsersFilters(
   const statusFilter: FilterField<UserNoHash> = {
     column: table.getColumn('isActive'),
     type: 'select',
-    label: 'Status',
+    label: t('user-columns.status'),
     value: '',
     options: [
-      { value: true, label: 'Aktiv' },
-      { value: false, label: 'Deaktiveret' },
+      { value: true, label: t('user-columns.active') },
+      { value: false, label: t('user-columns.inactive') },
     ],
   }
 
   const insertedFilter: FilterField<UserNoHash> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
-    label: 'Oprettet',
+    label: t('user-columns.created'), 
     value: '',
   }
 
   const updatedFilter: FilterField<UserNoHash> = {
     column: table.getColumn('updated'),
     type: 'date-range',
-    label: 'Opdateret',
+    label: t('user-columns.updated'),
     value: '',
   }
 

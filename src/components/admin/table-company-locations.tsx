@@ -41,6 +41,8 @@ import { TableFloatingBar } from '../table/table-floating-bar'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
 import { ButtonToggleLocations } from './button-toggle-locations'
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -54,9 +56,11 @@ interface Props {
 
 export function TableAdminLocations({ data, user, customer }: Props) {
   const LOCALSTORAGE_KEY = 'users_cols'
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
   const columns = useMemo(
-    () => getTableLocationsColumns(user.role),
-    [user.role],
+    () => getTableLocationsColumns(user.role, lng, t),
+    [user.role, lng, t],
   )
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -136,7 +140,7 @@ export function TableAdminLocations({ data, user, customer }: Props) {
     },
   })
 
-  const filterFields = useMemo(() => getTableLocationsFilters(table), [table])
+  const filterFields = useMemo(() => getTableLocationsFilters(table, lng, t), [table, lng, t])
 
   if (!mounted) return null
 
@@ -179,7 +183,7 @@ export function TableAdminLocations({ data, user, customer }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className={cn('h-24 text-center')}>
-                  Ingen lokationer fundet
+                  {t('table-admin-locations.no-locations-found')}
                 </TableCell>
               </TableRow>
             )}

@@ -8,6 +8,8 @@ import { UserNoHash } from '@/lib/database/schema/auth'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 
 interface Props {
   table: Table<UserNoHash>
@@ -15,6 +17,8 @@ interface Props {
 }
 
 export function TableUsersActions({ table, row }: Props) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
   return (
     <TableActionsWrapper>
       <DropdownMenuItem
@@ -23,7 +27,7 @@ export function TableUsersActions({ table, row }: Props) {
             userIDs: [row.original.id],
           })
         }}>
-        Skift status
+        {t('table-users-actions.toggle-status')}
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem
@@ -33,7 +37,7 @@ export function TableUsersActions({ table, row }: Props) {
             email: row.original.email,
           })
         }}>
-        Nulstil kodeord
+        {t('table-users-actions.reset-password')}
       </DropdownMenuItem>
       <DropdownMenuItem
         disabled
@@ -42,7 +46,7 @@ export function TableUsersActions({ table, row }: Props) {
             foo: 'foo',
           })
         }}>
-        Nulstil PIN
+        {t('table-users-actions.reset-pin')}
       </DropdownMenuItem>
     </TableActionsWrapper>
   )

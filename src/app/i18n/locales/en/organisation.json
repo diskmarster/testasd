@@ -1,0 +1,126 @@
+{
+  "organisation-page": {
+    "title": "Organisation",
+    "description": "Here you can manage your organisation's users, locations, and company information."
+  },
+  "tabs-admin": {
+    "users": "Users",
+    "locations": "Locations",
+    "company": "Company",
+    "user-limit-reached": "You've reached the maximum number of users for your plan.",
+    "user-upgrade-plan": "Upgrade your plan to add more users.",
+    "location-limit-reached": "You've reached the maximum number of locations for your plan.",
+    "location-upgrade-plan": "Upgrade your plan to add more locations."
+  },
+  "modal-toggle-user": {
+    "title": "Change user status",
+    "description1": "This action is not permanent. If you activate a user, they will be able to log in to ",
+    "description2": " again. If you deactivate a user, they will be logged out and will not be able to log in again until reactivated.",
+    "status": "Status",
+    "choose-status": "Choose status",
+    "cancel-button": "Cancel",
+    "update-button": "Update",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "modal-reset-userpw": {
+    "title": "Reset user password",
+    "description": "This action sends a mail to the user, with a link to reset their password.",
+    "cancel-button": "Cancel",
+    "reset-button": "Reset"
+  },
+  "modal-edit-location": {
+    "title": "Edit location",
+    "description": "Here you can edit a location's name and access-level for your users.",
+    "location-name": "Location name",
+    "location-name-placeholder": "Enter location name",
+    "access-level": "Access level",
+    "users-chosen": "Users chosen",
+    "create-button": "Create",
+    "create-more-users": "Create more users to assign access rights when editing locations."
+  },
+  "modal-toggle-location":{
+    "title": "Change location status",
+    "description": "This action is not permanent. If you activate a location, it can be accessed again. If you deactivate a location, it can no longer be accessed until it is reactivated.",
+    
+    "status": "Status",
+    "choose-status": "Choose Status",
+    "cancel-button": "Cancel",
+    "update-button": "Update",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+
+  "table-admin-locations": {
+    "no-locations-found": "No locations found"
+  },
+
+  "location-columns": {
+    "location-name": "Location name",
+    "location-name-placeholder": "Search Location name",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "updated": "Updated",
+    "created": "Created"
+
+  },
+  "user-columns": {
+    "user-name": "Name",
+    "user-name-placeholder": "Search user name",
+    "email": "Email",
+    "email-placeholder": "Search email",
+    "user-role": "Role",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "updated": "Updated",
+    "created": "Created"
+  },
+  "table-locations-actions": {
+    "update": "Update",
+    "toggle-status": "Change Status"
+  },
+
+  "table-users-actions": {
+    "toggle-status": "Change Status",
+    "reset-password": "Reset Password",
+    "reset-pin": "Reset PIN"
+  },
+
+  "form-company-edit": {
+    "company-name": "Company name",
+    "email": "Email",
+    "update-button": "Update"
+
+  },
+
+  "modal-invite-user": {
+    "title": "Invite new user",
+    "description": "Send an activation email to one of your employees to quickly get them started using ",
+    "email": "User's email",
+    "email-placeholder": "Write email for the new user",
+    "role": "Role",
+    "role-placeholder": "Select role",
+    "user": "User",
+    "local-admin": "Local Admin",
+    "company-admin": "Company Admin",
+    "location-access": "Location Access",
+    "of": " of ",
+    "locations-chosen": "Locations chosen",
+    "send-invite": "Send invite"
+  },
+
+  "modal-create-location": {
+    "title": "Create new location",
+    "description": "New locations can be accessed immediately in the same dropdown menu in the top right corner",
+    "location-name": "Location name",
+    "location-name-placeholder": "Enter location name",
+    "access-level": "Access level",
+    "of": " of ",
+    "users-chosen": "Users chosen",
+    "create-button": "Create",
+    "create-more-users": "Create more users to assign access rights when creating locations."
+  }
+  
+}
