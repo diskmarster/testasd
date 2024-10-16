@@ -14,7 +14,7 @@ import { redirect } from 'next/navigation'
 export const signUpInvitedAction = publicAction
   .metadata({actionName: 'signUpInvite'})
   .schema(signUpInvitedValidation)
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx }) => {
     const activationLink = await userService.getInviteLinkByID(
       parsedInput.linkID,
     )
@@ -66,5 +66,5 @@ export const signUpInvitedAction = publicAction
       EmailTest(),
     )
 
-    redirect('/oversigt')
+    redirect(`/${ctx.lang}/oversigt`)
   })

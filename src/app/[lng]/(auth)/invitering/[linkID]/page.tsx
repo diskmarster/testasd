@@ -8,11 +8,17 @@ export const metadata: Metadata = {
   title: 'Invitering',
 }
 
-export default async function Page({ params }: { params: { linkID: string } }) {
+interface PageProps {
+  params: {
+    lng: string
+  }
+}
+
+export default async function Page({ params }: { params: { linkID: string, lng: string } }) {
   const customer = await customerService.getByUserLinkID(params.linkID)
   const inviteLink = await userService.getInviteLinkByID(params.linkID)
 
-  if (!customer || !inviteLink) redirect('/log-ind')
+  if (!customer || !inviteLink) redirect(`/${params.lng}/log-ind`)
 
   return (
     <section className='w-full'>

@@ -19,23 +19,25 @@ import { redirect } from 'next/navigation'
 export const updateProfileInformationAction = privateAction
   .metadata({actionName: 'updateProfileInformation'})
   .schema(updateProfileValidation)
-  .action(async ({ parsedInput, ctx: { user } }) => {
+  .action(async ({ parsedInput, ctx: { user, lang } }) => {
     const updatedUser = userService.updateByID(user.id, { ...parsedInput })
     if (!updatedUser) {
       throw new ActionError('Profil blev ikke opdateret')
     }
-    revalidatePath('/profil')
+    revalidatePath(`${lang}/profil`)
   })
 
 export const adminUpdateProfileInformationAction = adminAction
   .metadata({actionName: 'adminUpdateProfileInformation'})
   .schema(adminUpdateProfileValidation)
-  .action(async ({ parsedInput: { userId, ...userInfo }, ctx: { user } }) => {})
+  .action(
+    async ({ parsedInput: { userId, ...userInfo }, ctx: { user, lang } }) => {},
+  )
 
 export const deleteProfileAction = privateAction
   .metadata({actionName: 'deleteProfile'})
   .schema(deleteProfileValidation)
-  .action(async ({ parsedInput: { userId }, ctx: { session, user } }) => {
+  .action(async ({ parsedInput: { userId }, ctx: { session, user, lang } }) => {
     const isSameUser = userId === user.id
     if (!isSameUser) {
       throw new ActionError(ACTION_ERR_UNAUTHORIZED)
@@ -45,7 +47,7 @@ export const deleteProfileAction = privateAction
       throw new ActionError('Der gik noget galt med sletningen')
     }
     await sessionService.delete(session.id)
-    redirect('/log-ind')
+    redirect(`${lang}/log-ind`)
   })
 
 export const updatePasswordAction = privateAction
@@ -54,7 +56,7 @@ export const updatePasswordAction = privateAction
   .action(
     async ({
       parsedInput: { currentPassword, newPassword },
-      ctx: { user },
+      ctx: { user, lang },
     }) => {
       const isValidPassword = await userService.verifyPassword(
         user.email,
@@ -69,29 +71,33 @@ export const updatePasswordAction = privateAction
         throw new ActionError('Kodeord blev ikke opdateret')
       }
       const sessionID = await sessionService.create(updatedUser.id)
-      revalidatePath('/profil')
+      revalidatePath(`${lang}/profil`)
     },
   )
 
 export const updatePinAction = privateAction
   .metadata({actionName: 'updatePin'})
   .schema(updatePinValidation)
-  .action(async ({ parsedInput: { currentPin, newPin }, ctx: { user } }) => {
-    const isValidPin = await userService.verifyPin(user.email, currentPin)
-    if (!isValidPin) {
-      throw new ActionError('Din PIN-kode er ikke korrekt. Prøv igen.')
-    }
-    const updatedPin = await userService.updatePin(user.id, newPin)
-    if (!updatedPin) {
-      throw new ActionError('Der skete en fejl, PIN-koden blev ikke opdateret.')
-    }
-    revalidatePath('/profil')
-  })
+  .action(
+    async ({ parsedInput: { currentPin, newPin }, ctx: { user, lang } }) => {
+      const isValidPin = await userService.verifyPin(user.email, currentPin)
+      if (!isValidPin) {
+        throw new ActionError('Din PIN-kode er ikke korrekt. Prøv igen.')
+      }
+      const updatedPin = await userService.updatePin(user.id, newPin)
+      if (!updatedPin) {
+        throw new ActionError(
+          'Der skete en fejl, PIN-koden blev ikke opdateret.',
+        )
+      }
+      revalidatePath(`${lang}/profil`)
+    },
+  )
 
 export const updatePrimaryLocationAction = privateAction
   .metadata({actionName: 'updatePrimaryLocation'})
   .schema(updatePrimaryLocationValidation)
-  .action(async ({ parsedInput: { locationID }, ctx: { user } }) => {
+  .action(async ({ parsedInput: { locationID }, ctx: { user, lang } }) => {
     console.log('locID', locationID)
     const locations = await locationService.getAllByUserID(user.id)
 
@@ -107,5 +113,5 @@ export const updatePrimaryLocationAction = privateAction
       throw new ActionError('Din hovedlokation blev ikke opdateret')
     }
 
-    revalidatePath('/profil')
+    revalidatePath(`${lang}/profil`)
   })

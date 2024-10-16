@@ -1,7 +1,7 @@
+import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
-import { redirect } from 'next/navigation'
 import { Label } from '../ui/label'
 import { LocationDialog } from './profile-location-dialog'
 
@@ -13,7 +13,7 @@ interface PageProps {
 
 export async function ProfileLocation({ params: { lng } }: PageProps) {
   const { session, user } = await sessionService.validate()
-  if (!session) return redirect(`${lng}/log-ind`)
+  if (!session) return signOutAction()
   const locations = await locationService.getAllByUserID(user.id)
   const { t } = await serverTranslation(lng, 'profil')
 
