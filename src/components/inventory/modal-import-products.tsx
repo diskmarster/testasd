@@ -109,9 +109,9 @@ export function ModalImportProducts() {
 
       }
       setIsDone(true)
+      setRows([])
     })
 
-    setRows([])
   }
 
   if (!isDesktop) return null
