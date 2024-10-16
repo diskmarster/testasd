@@ -66,8 +66,6 @@ export const analyticsService = {
       groupBy,
     )
 
-    console.log(groupBy, desktopUsers, appUsers)
-
     const duration = stringToDuration(groupBy)
     const dateFormat = stringToDateFormat(groupBy)
 
@@ -96,7 +94,7 @@ export const analyticsService = {
 
 function stringToDateFormat(
   val: 'date' | 'week' | 'month' | 'year' = 'date',
-) : string {
+): string {
   switch (val) {
     case 'week':
       return 'II'
