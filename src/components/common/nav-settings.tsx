@@ -28,9 +28,9 @@ export function NavSettings({ lng }: NavSettingsProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-48' align='end'>
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
+          <DropdownMenuSub>
             <ThemeToggle />
-          </DropdownMenuItem>
+          </DropdownMenuSub>
           <DropdownMenuSeparator />
           <DropdownMenuSub>
             <LanguageSwitcher lng={lng} />

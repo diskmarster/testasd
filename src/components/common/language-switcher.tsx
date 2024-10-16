@@ -10,6 +10,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '../ui/dropdown-menu'
+import { Icons } from '../ui/icons'
 
 interface LanguageSwitcherProps {
   lng: string
@@ -48,7 +49,6 @@ export const LanguageSwitcher = ({ lng }: LanguageSwitcherProps) => {
             width: '17px',
             height: '17px',
             borderRadius: '6px',
-            marginLeft: '8px',
           }}
           title={languageData[lng].name}
         />
@@ -74,6 +74,7 @@ export const LanguageSwitcher = ({ lng }: LanguageSwitcherProps) => {
                 className='mr-2'
               />
               <span>{languageData[language].fullName}</span>
+              {language === lng && <Icons.check className='ml-4 h-4 w-4' />}
             </DropdownMenuItem>
           ))}
         </DropdownMenuSubContent>
