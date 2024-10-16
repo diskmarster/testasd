@@ -82,6 +82,8 @@ function ResetPasswordForm({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'log-ind')
 
   const { register, formState, handleSubmit } = useForm<
     z.infer<typeof resetPasswordValidation>
@@ -110,12 +112,12 @@ function ResetPasswordForm({
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>Der skete en fejl</AlertTitle>
+          <AlertTitle>{t('reset-password-card.error-occured')}</AlertTitle>
           <AlertDescription className='flex flex-col'>{error}</AlertDescription>
         </Alert>
       )}
       <div className='grid gap-2'>
-        <Label htmlFor='password'>Nyt kodeord</Label>
+        <Label htmlFor='password'>{t('reset-password-card.new-password')}</Label>
         <PasswordInput {...register('password')} />
         {formState.errors.password && (
           <p className='text-sm text-destructive '>
@@ -124,7 +126,7 @@ function ResetPasswordForm({
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='confirmPassword'>Bekræft nyt kodeord</Label>
+        <Label htmlFor='confirmPassword'>{t('reset-password-card.confirm-new-password')}</Label>
         <PasswordInput {...register('confirmPassword')} />
         {formState.errors.confirmPassword && (
           <p className='text-sm text-destructive '>
@@ -134,7 +136,7 @@ function ResetPasswordForm({
       </div>
       <Button type='submit' className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        Nulstil kodeord
+        {t('reset-password-card.reset-password')}
       </Button>
     </form>
   )

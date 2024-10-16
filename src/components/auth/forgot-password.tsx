@@ -6,7 +6,6 @@ import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { t } from 'i18next'
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -110,7 +109,7 @@ function ForgotPasswordForm({
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>Der skete en fejl</AlertTitle>
+          <AlertTitle>{t('forgot-password-card.error-occured')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}

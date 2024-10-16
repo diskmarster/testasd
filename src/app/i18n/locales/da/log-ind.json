@@ -17,17 +17,21 @@
     "we-sent-you-an-email": "Vi har sendt dig en mail med, hvordan du kan nulstille dit kodeord. Tjek din indbakke for at komme videre",
     "check-spam-folder": "Kan du ikke finde mailen? Tjek lige din spam-mappe",
     "back-to-login": "Tilbage til login",
-    "reset-password": "Nulstil kodeord"
+    "reset-password": "Nulstil kodeord",
+    "error-occured": "Der skete en fejl"
   },
 
   "reset-password-card": {
     "password-reset": "Kodeord nulstillet",
     "password-reset-description": "Dit kodeord er nu nulstillet. Gå tilbage til login-siden for at logge ind med dit nye kodeord",
     "back-to-login": "Tilbage til login",
-    "reset-password": "Nulstil kodeord",
-    "new-password": "Indtast et nyt kodeord for at nulstille"
-  },
+    "error-occured": "Der skete en fejl",
 
+    "reset-password": "Nulstil kodeord",
+    "new-password": "Indtast et nyt kodeord for at nulstille",
+    "confirm-new-password": "Bekræft nyt kodeord"
+  },
+  
   "reset-password-page": {
     "something-went-wrong": "Noget gik galt",
     "this-link-is-invalid": "Dette link er enten ugyldigt eller udløbet. Anmod om et nyt link for at nulstille dit kodeord",

@@ -265,8 +265,10 @@ function FormCard({
       )}
       <div className='grid gap-2'>
         <div className='flex justify-between'>
-          <Label htmlFor='extraUsers'>Ekstra brugere</Label>
-          <p className='text-xs text-muted-foreground'>49,- kr pr. bruger/md</p>
+          <Label htmlFor='extraUsers'>{t('extra-users')}</Label>
+          <p className='text-xs text-muted-foreground'>
+            {t('extra-users-price')}
+          </p>
         </div>
         <div>
           <div className='flex'>
@@ -311,8 +313,8 @@ function FormCard({
               className={cn(
                 'h-10 w-1/4 rounded-tl-none rounded-r-none border-t-0 border-r-0',
                 formValues.extraUsers &&
-                  formValues.plan &&
-                  'rounded-l-none shadow-none',
+                formValues.plan &&
+                'rounded-l-none shadow-none',
               )}
               onClick={() =>
                 setValue('extraUsers', 5, { shouldValidate: true })
@@ -355,8 +357,8 @@ function FormCard({
               className={cn(
                 'h-10 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
                 formValues.extraUsers &&
-                  formValues.plan &&
-                  'rounded-r-none shadow-none',
+                formValues.plan &&
+                'rounded-r-none shadow-none',
               )}
               onClick={() =>
                 setValue('extraUsers', 20, { shouldValidate: true })
@@ -368,14 +370,13 @@ function FormCard({
             className={cn(
               'bg-border rounded-b-md text-sm h-0 transition-all text-muted-foreground flex items-center gap-2 justify-center',
               formValues.extraUsers &&
-                formValues.plan &&
-                'shadow-sm h-12 md:h-9',
+              formValues.plan &&
+              'shadow-sm h-12 md:h-9',
             )}>
             {formValues.extraUsers != 0 && formValues.plan && (
               <p className='text-center'>
-                Total antal brugere:{' '}
-                {Number(formValues.extraUsers) +
-                  Number(planUserLimits[formValues.plan])}
+                {t('total-user-amount')}{' '}
+                {Number(formValues.extraUsers) + Number(planUserLimits[formValues.plan])}{' '}
               </p>
             )}
           </div>
