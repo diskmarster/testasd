@@ -22,7 +22,9 @@
   },
 
   "theme-toggle": {
-    "theme": "Theme"
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark"
   },
 
   "table-toolbar": {

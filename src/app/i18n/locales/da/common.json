@@ -23,7 +23,9 @@
   },
 
   "theme-toggle": {
-    "theme": "Tema"
+    "theme": "Tema",
+    "light": "Lyst",
+    "dark": "Mørkt"
   },
 
   "table-toolbar": {
