@@ -183,8 +183,6 @@ function FilterPopover<T>({
           <FilterText field={field} search={value} setSearched={setSearched} />
         ) : field.type === 'select' ? (
           <FilterSelect field={field} setSelectedValues={setSelectValue} selectedValues={selectValue} />
-        ) : field.type === 'date' ? (
-          <FilterDate field={field} />
         ) : field.type === 'date-range' ? (
           <FilterDateRange field={field} />
         ) : (
