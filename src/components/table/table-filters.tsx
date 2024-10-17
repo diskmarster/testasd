@@ -298,7 +298,10 @@ function FilterSelect<T>({ field, selectedValues, setSelectedValues }: { field: 
             <CommandSeparator />
             <CommandGroup>
               <CommandItem
-                onSelect={() => field.column?.setFilterValue(undefined)}
+                onSelect={() => {
+                  debouncedSetFilter(undefined)
+                  setSelectedValues([])
+                }}
                 className='justify-center text-center'>
                 Nulstil filter
               </CommandItem>
