@@ -1,6 +1,6 @@
 'use client'
 
-import { importProductsAction } from '@/app/(site)/admin/produkter/actions'
+import { finishProductsAction, importProductsAction } from '@/app/(site)/admin/produkter/actions'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Dialog,
@@ -97,19 +97,19 @@ export function ModalImportProducts() {
       const chunkedArray = chunkArray(values, CHUNK_SIZE)
 
       for (const chunk of chunkedArray) {
-        const fallbackMsg = `Der gik noget galt med rækkerne fra ${uploadedAmount + 1} til ${uploadedAmount + CHUNK_SIZE}`
+        const errorMsg = `Der gik noget galt med rækkerne fra ${uploadedAmount + 1} til ${uploadedAmount + CHUNK_SIZE}`
         const res = await importProductsAction(chunk)
 
         if (res && res.serverError) {
-          setResponseErrors(prev => [res.serverError ?? fallbackMsg, ...prev])
+          setResponseErrors(prev => [errorMsg, ...prev])
           continue
         }
 
         setUploadedAmount(prev => prev + CHUNK_SIZE)
-
       }
       setIsDone(true)
       setRows([])
+      await finishProductsAction()
     })
 
   }
