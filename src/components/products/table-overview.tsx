@@ -69,7 +69,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
 
   useEffect(() => {
     setMounted(true)
-  })
+  }, [])
 
   useEffect(() => {
     const visibility = JSON.parse(
