@@ -208,8 +208,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     className={cn(
                       'h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0',
                       formValues.minimum != 0 &&
-                        formValues.buffer != 0 &&
-                        'rounded-l-none',
+                      formValues.buffer != 0 &&
+                      'rounded-l-none',
                     )}
                     onClick={() =>
                       setValue('buffer', 25, { shouldValidate: true })
@@ -246,8 +246,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     className={cn(
                       'h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
                       formValues.minimum != 0 &&
-                        formValues.buffer != 0 &&
-                        'rounded-r-none',
+                      formValues.buffer != 0 &&
+                      'rounded-r-none',
                     )}
                     onClick={() =>
                       setValue('buffer', 100, { shouldValidate: true })

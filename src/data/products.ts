@@ -72,4 +72,22 @@ export const product = {
 
     return res[0]
   },
+  upsertProduct: async function(
+    newProductData: NewProduct,
+    trx: TRX = db,
+  ): Promise<Product> {
+    const product = await trx
+      .insert(productTable)
+      .values({ ...newProductData })
+      .onConflictDoUpdate({
+        target: [
+          productTable.customerID,
+          productTable.sku,
+          productTable.barcode
+        ],
+        set: { ...newProductData },
+      })
+      .returning()
+    return product[0]
+  },
 }

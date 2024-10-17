@@ -1,16 +1,13 @@
+import { buttonVariants } from '@/components/ui/button'
 import { siteConfig } from '@/config/site'
-import { sessionService } from '@/service/session'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { buttonVariants } from '../ui/button'
+import { ThemeToggle } from './theme-toggle'
 
-export default async function LayoutAuth({
+export default async function AuxLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
-  const { session } = await sessionService.validate()
-  if (session) redirect('/oversigt')
+}) {
   return (
     <div className='w-full md:min-h-screen'>
       <div className='container pt-4 flex items-center h-14 justify-between'>
@@ -18,13 +15,18 @@ export default async function LayoutAuth({
           <siteConfig.logo className='size-6' strokeWidth={1.5} />
           <span className='inline-block font-semibold'>{siteConfig.name}</span>
         </Link>
-        <Link
-          className={buttonVariants({ variant: 'ghost' })}
-          href={'/faq'}>
-          F.A.Q
-        </Link>
+        <div className='flex items-center gap-2'>
+
+          <ThemeToggle />
+          <Link
+            className={buttonVariants({ variant: 'default' })}
+            href={'/log-ind'}>
+            Log ind eller opret dig
+          </Link>
+        </div>
       </div>
-      <div className='flex w-full items-center justify-center min-h-[calc(100dvh-56px)] py-12'>
+      <div className='flex w-full justify-center min-h-[calc(100dvh-56px)]'>
+
         {children}
       </div>
     </div>

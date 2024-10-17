@@ -82,7 +82,7 @@ export function CreateCustomer() {
   }
 
   return (
-    <div className='my-6 flex flex-col items-center p-6'>
+    <div className='flex flex-col items-center'>
       <Badge variant={'default'} className='mb-5 text-primary-foreground'>
         Vælg en plan
       </Badge>
@@ -153,7 +153,7 @@ function ExpandableCard({
   return (
     <Card
       className={cn(
-        'group flex w-full transform cursor-pointer flex-col rounded-lg border-2 border-muted transition-transform duration-300 ease-in-out hover:scale-105 md:w-60',
+        'group flex w-full transform cursor-pointer flex-col rounded-lg border-2 border-muted transition-transform duration-300 ease-in-out hover:scale-[1.03] md:w-60',
         isSelected && 'border-primary',
       )}
       onClick={() => setValue(plan.plan)}>
