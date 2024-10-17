@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { SetStateAction, useEffect, useState } from 'react'
 
 import { Command as CommandPrimitive } from 'cmdk'
 import { useDebounce, useDebouncedCallback } from 'use-debounce'
@@ -111,9 +111,12 @@ function FilterPopover<T>({
 }) {
   const [value, setSearched] = useState<string>('')
   const [selectValue, setSelectValue] = useState<string[]>((field.column?.getFilterValue() ?? []) as any[])
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  })
 
   const isSelect = field.type === 'select'
-  const isDate = field.type === 'date'
   const isDateRange = field.type === 'date-range'
 
   const getSelectDisplayValue = (value: any[]): string => {
@@ -127,10 +130,6 @@ function FilterPopover<T>({
       .join(', ')
   }
 
-  const getDateDisplayValue = (date: any): string => {
-    return date ? format(new Date(date), 'dd/MM/yyyy') : 'Vælg dato'
-  }
-
   const getDateRangeDisplayValue = (range: DateRange): string => {
     if (!range || (!range.from && !range.to)) return 'Vælg datoer'
     if (range.from && !range.to)
@@ -140,13 +139,11 @@ function FilterPopover<T>({
     return 'Vælg datoer'
   }
 
-  const filterDisplayValue: string = isDate
-    ? getDateDisplayValue(value)
-    : isSelect
-      ? getSelectDisplayValue(selectValue)
-      : isDateRange
-        ? getDateRangeDisplayValue(value as DateRange)
-        : (value as string) || ''
+  const filterDisplayValue: string = isSelect
+    ? getSelectDisplayValue(selectValue)
+    : isDateRange
+      ? getDateRangeDisplayValue(date as DateRange)
+      : (value as string) || ''
 
   return (
     <Popover
@@ -184,7 +181,7 @@ function FilterPopover<T>({
         ) : field.type === 'select' ? (
           <FilterSelect field={field} setSelectedValues={setSelectValue} selectedValues={selectValue} />
         ) : field.type === 'date-range' ? (
-          <FilterDateRange field={field} />
+          <FilterDateRange field={field} date={date} setDate={setDate} />
         ) : (
           'Unsupported type'
         )}
@@ -230,11 +227,7 @@ function FilterText<T>({ field, search, setSearched }: { field: FilterField<T>, 
       return isAfter(rowDate, value.from) && isBefore(rowDate, value.to)
     },
   */
-function FilterDateRange<T>({ field }: { field: FilterField<T> }) {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: undefined,
-    to: undefined,
-  })
+function FilterDateRange<T>({ field, date, setDate }: { field: FilterField<T>, date: DateRange | undefined, setDate: React.Dispatch<SetStateAction<DateRange | undefined>> }) {
   const debouncedCallback = useDebouncedCallback(val => field.column?.setFilterValue(val), 500)
 
   return (
