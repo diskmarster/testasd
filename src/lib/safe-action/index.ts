@@ -70,7 +70,7 @@ const baseClient = createSafeActionClient<
 
 // public action client for unauthorized requests
 export const publicAction = baseClient.use(async ({ next }) => {
-  const lang = cookies().get('lang')?.value ?? fallbackLng
+  const lang = cookies().get('i18next')?.value ?? fallbackLng
 
   return next({ ctx: { lang } })
 })
