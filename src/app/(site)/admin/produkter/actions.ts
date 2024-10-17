@@ -57,7 +57,6 @@ export async function toggleBarredProductAction(
 }
 
 export const importProductsAction = adminAction
-  //.metadata({actionName: "importProductAction"})
   .schema(importProductsValidation)
   .action(async ({parsedInput: importedData, ctx}) => {
 
@@ -67,4 +66,11 @@ export const importProductsAction = adminAction
   )
 
   revalidatePath("/admin/produkter")
+})
+
+
+export const finishProductsAction = adminAction
+  .metadata({actionName: "importProductAction"})
+  .action(async ({ctx}) => {
+    console.log(`imported products finished for ${ctx.user.customerID} by ${ctx.user.name}`) 
 })
