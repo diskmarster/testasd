@@ -302,7 +302,7 @@ export const inventoryService = {
   },
   getHistoryByLocationID: async function(
     locationID: LocationID,
-  ): Promise<FormattedHistory[]> {
+  ): Promise<History[]> {
     return await inventory.getHistoryByLocationID(locationID)
   },
   createReorder: async function(

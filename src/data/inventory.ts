@@ -1,10 +1,8 @@
 import {
-  FormattedHistory,
   FormattedInventory,
   FormattedReorder,
 } from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
-import { userTable } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
@@ -47,7 +45,6 @@ const PLACEMENT_COLS = getTableColumns(placementTable)
 const BATCH_COLS = getTableColumns(batchTable)
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
-const { hash, ...USER_COLS } = getTableColumns(userTable)
 const HISTORY_COLS = getTableColumns(historyTable)
 const REORDER_COLS = getTableColumns(reorderTable)
 
@@ -284,30 +281,13 @@ export const inventory = {
   getHistoryByLocationID: async function(
     locationID: LocationID,
     trx: TRX = db,
-  ): Promise<FormattedHistory[]> {
+  ): Promise<History[]> {
     const history = await trx
       .select({
-        ...HISTORY_COLS,
-        product: {
-          ...PRODUCT_COLS,
-          unit: UNIT_COLS.name,
-          group: GROUP_COLS.name,
-        },
-        placement: { ...PLACEMENT_COLS },
-        batch: { ...BATCH_COLS },
-        user: { ...USER_COLS },
+        ...HISTORY_COLS
       })
       .from(historyTable)
       .where(eq(historyTable.locationID, locationID))
-      .innerJoin(productTable, eq(productTable.id, historyTable.productID))
-      .innerJoin(userTable, eq(userTable.id, historyTable.userID))
-      .innerJoin(
-        placementTable,
-        eq(placementTable.id, historyTable.placementID),
-      )
-      .innerJoin(batchTable, eq(batchTable.id, historyTable.batchID))
-      .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
-      .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .orderBy(desc(historyTable.inserted))
 
     return history

@@ -8,7 +8,7 @@ import {
   HistoryType,
 } from '@/data/inventory.types'
 import { UserRole } from '@/data/user.types'
-import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
+import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
@@ -17,8 +17,8 @@ import { DateRange } from 'react-day-picker'
 export function getTableHistoryColumns(
   plan: Plan,
   userRole: UserRole,
-): ColumnDef<FormattedHistory>[] {
-  const insertedCol: ColumnDef<FormattedHistory> = {
+): ColumnDef<History>[] {
+  const insertedCol: ColumnDef<History> = {
     accessorKey: 'inserted',
     header: ({ column }) => <TableHeader column={column} title='Oprettet' />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
@@ -49,8 +49,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const skuCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.sku',
+  const skuCol: ColumnDef<History> = {
+    accessorKey: 'productSku',
     id: 'sku',
     header: ({ column }) => <TableHeader column={column} title='Varenr.' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -59,8 +59,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const barcodeCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.barcode',
+  const barcodeCol: ColumnDef<History> = {
+    accessorKey: 'productBarcode',
     id: 'barcode',
     header: ({ column }) => <TableHeader column={column} title='Stregkode' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -69,8 +69,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const groupCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.group',
+  const groupCol: ColumnDef<History> = {
+    accessorKey: 'productGroupName',
     id: 'group',
     header: ({ column }) => <TableHeader column={column} title='Varegruppe' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -82,8 +82,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const text1Col: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.text1',
+  const text1Col: ColumnDef<History> = {
+    accessorKey: 'productText1',
     id: 'text1',
     header: ({ column }) => <TableHeader column={column} title='Varetekst 1' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -92,8 +92,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const text2Col: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.text2',
+  const text2Col: ColumnDef<History> = {
+    accessorKey: 'productText2',
     id: 'text2',
     header: ({ column }) => <TableHeader column={column} title='Varetekst 2' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -102,8 +102,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const text3Col: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.text3',
+  const text3Col: ColumnDef<History> = {
+    accessorKey: 'productText3',
     id: 'text3',
     header: ({ column }) => <TableHeader column={column} title='Varetekst 3' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -112,8 +112,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const costPriceCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.costPrice',
+  const costPriceCol: ColumnDef<History> = {
+    accessorKey: 'productCostPrice',
     id: 'costPrice',
     header: ({ column }) => <TableHeader column={column} title='Kostpris' />,
     cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
@@ -124,8 +124,8 @@ export function getTableHistoryColumns(
     filterFn: 'weakEquals',
   }
 
-  const unitCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'product.unit',
+  const unitCol: ColumnDef<History> = {
+    accessorKey: 'productUnit',
     id: 'unit',
     header: ({ column }) => <TableHeader column={column} title='Enhed' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -137,7 +137,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const typeCol: ColumnDef<FormattedHistory> = {
+  const typeCol: ColumnDef<History> = {
     accessorKey: 'type',
     header: ({ column }) => <TableHeader column={column} title='Type' />,
     cell: ({ getValue }) => {
@@ -163,7 +163,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const amountCol: ColumnDef<FormattedHistory> = {
+  const amountCol: ColumnDef<History> = {
     accessorKey: 'amount',
     header: ({ column }) => <TableHeader column={column} title='Antal' />,
     cell: ({ getValue }) => {
@@ -182,8 +182,8 @@ export function getTableHistoryColumns(
     filterFn: 'weakEquals',
   }
 
-  const placementCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'placement.name',
+  const placementCol: ColumnDef<History> = {
+    accessorKey: 'placementName',
     id: 'placement',
     header: ({ column }) => <TableHeader column={column} title='Placering' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -195,8 +195,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const batchCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'batch.batch',
+  const batchCol: ColumnDef<History> = {
+    accessorKey: 'batchName',
     id: 'batch',
     header: ({ column }) => <TableHeader column={column} title='Batchnr.' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -208,7 +208,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const platformCol: ColumnDef<FormattedHistory> = {
+  const platformCol: ColumnDef<History> = {
     accessorKey: 'platform',
     header: ({ column }) => <TableHeader column={column} title='Platform' />,
     cell: ({ getValue }) => {
@@ -229,7 +229,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const refCol: ColumnDef<FormattedHistory> = {
+  const refCol: ColumnDef<History> = {
     accessorKey: 'reference',
     header: ({ column }) => <TableHeader column={column} title='Konto/sag' />,
     cell: ({ getValue }) => (
@@ -240,8 +240,8 @@ export function getTableHistoryColumns(
     },
   }
 
-  const userCol: ColumnDef<FormattedHistory> = {
-    accessorKey: 'user.name',
+  const userCol: ColumnDef<History> = {
+    accessorKey: 'userName',
     id: 'user',
     header: ({ column }) => <TableHeader column={column} title='Bruger' />,
     cell: ({ getValue }) => getValue<string>(),
@@ -316,20 +316,20 @@ export function getTableHistoryColumns(
 
 export function getTableHistoryFilters(
   plan: Plan,
-  table: Table<FormattedHistory>,
+  table: Table<History>,
   units: Unit[],
   groups: Group[],
   placements: Placement[],
   batches: Batch[],
-): FilterField<FormattedHistory>[] {
-  const insertedFilter: FilterField<FormattedHistory> = {
+): FilterField<History>[] {
+  const insertedFilter: FilterField<History> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
     label: 'Oprettet',
     value: '',
   }
 
-  const skuFilter: FilterField<FormattedHistory> = {
+  const skuFilter: FilterField<History> = {
     column: table.getColumn('sku'),
     type: 'text',
     label: 'Varenr.',
@@ -337,7 +337,7 @@ export function getTableHistoryFilters(
     placeholder: 'Søg i varenr.',
   }
 
-  const barcodeFilter: FilterField<FormattedHistory> = {
+  const barcodeFilter: FilterField<History> = {
     column: table.getColumn('barcode'),
     type: 'text',
     label: 'Stregkode',
@@ -345,7 +345,7 @@ export function getTableHistoryFilters(
     placeholder: 'Søg i stregkode',
   }
 
-  const groupFilter: FilterField<FormattedHistory> = {
+  const groupFilter: FilterField<History> = {
     column: table.getColumn('group'),
     type: 'select',
     label: 'Varegruppe',
@@ -358,7 +358,7 @@ export function getTableHistoryFilters(
     ],
   }
 
-  const text1Filter: FilterField<FormattedHistory> = {
+  const text1Filter: FilterField<History> = {
     column: table.getColumn('text1'),
     type: 'text',
     label: 'Varetekst 1',
@@ -366,7 +366,7 @@ export function getTableHistoryFilters(
     placeholder: 'Søg i varetekst 1',
   }
 
-  const text2Filter: FilterField<FormattedHistory> = {
+  const text2Filter: FilterField<History> = {
     column: table.getColumn('text2'),
     type: 'text',
     label: 'Varetekst 2',
@@ -374,7 +374,7 @@ export function getTableHistoryFilters(
     placeholder: 'Søg i varetekst 2',
   }
 
-  const text3Filter: FilterField<FormattedHistory> = {
+  const text3Filter: FilterField<History> = {
     column: table.getColumn('text3'),
     type: 'text',
     label: 'Varetekst 3',
@@ -382,14 +382,14 @@ export function getTableHistoryFilters(
     placeholder: 'Søg i varetekst 3',
   }
 
-  const costPriceFilter: FilterField<FormattedHistory> = {
+  const costPriceFilter: FilterField<History> = {
     column: table.getColumn('costPrice'),
     type: 'text',
     label: 'Kostpris',
     value: '',
   }
 
-  const unitFilter: FilterField<FormattedHistory> = {
+  const unitFilter: FilterField<History> = {
     column: table.getColumn('unit'),
     type: 'select',
     label: 'Enhed',
@@ -402,7 +402,7 @@ export function getTableHistoryFilters(
     ],
   }
 
-  const typeFilter: FilterField<FormattedHistory> = {
+  const typeFilter: FilterField<History> = {
     column: table.getColumn('type'),
     type: 'select',
     label: 'Type',
@@ -415,14 +415,14 @@ export function getTableHistoryFilters(
     ],
   }
 
-  const amountFilter: FilterField<FormattedHistory> = {
+  const amountFilter: FilterField<History> = {
     column: table.getColumn('amount'),
     type: 'text',
     label: 'Antal',
     value: '',
   }
 
-  const placementFilter: FilterField<FormattedHistory> = {
+  const placementFilter: FilterField<History> = {
     column: table.getColumn('placement'),
     type: 'select',
     label: 'Placering',
@@ -434,7 +434,7 @@ export function getTableHistoryFilters(
       })),
     ],
   }
-  const batchFilter: FilterField<FormattedHistory> = {
+  const batchFilter: FilterField<History> = {
     column: table.getColumn('batch'),
     type: 'select',
     label: 'Batchnr.',
@@ -447,7 +447,7 @@ export function getTableHistoryFilters(
     ],
   }
 
-  const refFilter: FilterField<FormattedHistory> = {
+  const refFilter: FilterField<History> = {
     column: table.getColumn('reference'),
     type: 'text',
     label: 'Konto/sag',
@@ -455,7 +455,7 @@ export function getTableHistoryFilters(
     value: '',
   }
 
-  const platformFilter: FilterField<FormattedHistory> = {
+  const platformFilter: FilterField<History> = {
     column: table.getColumn('platform'),
     type: 'select',
     label: 'Platform',

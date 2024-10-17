@@ -16,8 +16,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Plan } from '@/data/customer.types'
-import { FormattedHistory } from '@/data/inventory.types'
-import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
+import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
   flexRender,
@@ -43,7 +42,7 @@ const COLUMN_FILTERS_ENABLED = true
 const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
-  data: FormattedHistory[]
+  data: History[]
   user: User
   plan: Plan
   units: Unit[]
