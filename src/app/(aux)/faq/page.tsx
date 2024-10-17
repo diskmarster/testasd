@@ -20,10 +20,6 @@ export default function Page() {
 
   const questions: { question: string, answer: string | React.ReactNode }[] = [
     {
-      question: "Hvordan opretter jeg en vare?",
-      answer: "Du opretter den"
-    },
-    {
       question: 'Hvordan formaterer jeg min import fil til varekartoteket?',
       answer: <AnswerImportInventory />
     }
