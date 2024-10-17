@@ -52,14 +52,13 @@ export function ModalImportProducts() {
     const dataRes = await readAndValidateFileData(
       files[0],
       productsDataValidation,
-      true,
     )
     setIsReading(false)
 
     if (!dataRes.success) {
       setErrors(dataRes.errors)
     } else {
-      setRows(dataRes.data.slice(0, 2000))
+      setRows(dataRes.data)
     }
   }, [])
 

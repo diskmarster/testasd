@@ -179,7 +179,6 @@ export const productService = {
     }
   },
   importProducts: async function(customerID: CustomerID, importedProducts: ImportProducts): Promise<boolean> {
-    const start = performance.now()
     const transaction = await db.transaction(async trx => {
 
       const [units, groups, products, locations] = await Promise.all([
@@ -312,20 +311,10 @@ export const productService = {
         }
       }
 
-      const zeroInventoryResponses = await Promise.all(zeroInventoryPromises)
-
-      const dbCalls: number = 
-        newDefaultBatchPromises.length
-        + newDefaultPlacementPromises.length
-        + existingProductsPromises.length
-        + newProductsPromises.length
-        + zeroInventoryPromises.length
-
-      console.log("db calls: ~", dbCalls)
+      await Promise.all(zeroInventoryPromises)
 
       return true
     })
-    console.log("time spent", performance.now() - start)
     return transaction
   },
 }
