@@ -1,7 +1,4 @@
-import {
-  FormattedInventory,
-  FormattedReorder,
-} from '@/data/inventory.types'
+import { FormattedInventory, FormattedReorder } from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
@@ -81,7 +78,7 @@ export const inventory = {
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .limit(pageSize)
-      .offset((page-1) * pageSize)
+      .offset((page - 1) * pageSize)
 
     return inventory
   },
@@ -237,7 +234,7 @@ export const inventory = {
       )
     return resultSet.rowsAffected == 1
   },
-  createHitoryLog: async function(
+  createHistoryLog: async function(
     historyData: NewHistory,
     trx: TRX = db,
   ): Promise<History | undefined> {
@@ -284,7 +281,7 @@ export const inventory = {
   ): Promise<History[]> {
     const history = await trx
       .select({
-        ...HISTORY_COLS
+        ...HISTORY_COLS,
       })
       .from(historyTable)
       .where(eq(historyTable.locationID, locationID))
@@ -466,10 +463,28 @@ export const inventory = {
     return await trx
       .select()
       .from(productTable)
-      .where(
-        and(
-          eq(productTable.customerID, customerID),
-        ),
-      )
+      .where(and(eq(productTable.customerID, customerID)))
+  },
+  getPlacementByID: async function(
+    placementID: PlacementID,
+    trx: TRX = db,
+  ): Promise<Placement | undefined> {
+    const [res] = await trx
+      .select()
+      .from(placementTable)
+      .where(eq(placementTable.id, placementID))
+
+    return res
+  },
+  getBatchByID: async function(
+    batchID: BatchID,
+    trx: TRX = db,
+  ): Promise<Batch | undefined> {
+    const [res] = await trx
+      .select()
+      .from(batchTable)
+      .where(eq(batchTable.id, batchID))
+
+    return res
   },
 }

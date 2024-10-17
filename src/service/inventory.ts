@@ -1,11 +1,10 @@
 import { inventory } from '@/data/inventory'
 import {
-  FormattedHistory,
   FormattedInventory,
   FormattedReorder,
   HistoryType,
 } from '@/data/inventory.types'
-import { db } from '@/lib/database'
+import { db, TRX } from '@/lib/database'
 import { UserID } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
@@ -34,6 +33,8 @@ import {
 } from '@/lib/database/schema/inventory'
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
+import { productService } from './products'
+import { userService } from './user'
 
 export const inventoryService = {
   getInventory: async function(
@@ -45,7 +46,11 @@ export const inventoryService = {
     let receivedPageSize = 0
 
     do {
-      const temp = await inventory.getInventoryByLocationID(locationID, pageSize, page)
+      const temp = await inventory.getInventoryByLocationID(
+        locationID,
+        pageSize,
+        page,
+      )
 
       rows.push(...temp)
 
@@ -53,7 +58,7 @@ export const inventoryService = {
       page += 1
     } while (receivedPageSize == pageSize)
 
-    return  rows
+    return rows
   },
   getActiveUnits: async function(): Promise<Unit[]> {
     return inventory.getActiveUnits()
@@ -89,9 +94,62 @@ export const inventoryService = {
     return await inventory.getInventoryByIDs(productID, placementID, batchID)
   },
   createHistoryLog: async function(
-    historyData: NewHistory,
+    historyData: {
+      customerID: CustomerID
+      locationID: LocationID
+      productID: ProductID
+      placementID: PlacementID
+      batchID: BatchID
+      userID: UserID
+      type: 'tilgang' | 'afgang' | 'regulering' | 'flyt'
+      platform: 'web' | 'app'
+      amount: number
+      reference: string | undefined
+    },
+    trx?: TRX,
   ): Promise<History | undefined> {
-    return await inventory.createHitoryLog(historyData)
+    const historyLogData: NewHistory = {
+      ...historyData,
+    }
+
+    // fetch product info
+    const productPromise = productService
+      .getByID(historyData.productID)
+      .then(product => {
+        historyLogData.productSku = product?.sku
+        historyLogData.productText1 = product?.text1
+        historyLogData.productText2 = product?.text2
+        historyLogData.productText3 = product?.text3
+        historyLogData.productBarcode = product?.barcode
+        historyLogData.productUnitName = product?.unit
+        historyLogData.productGroupName = product?.group
+        historyLogData.productCostPrice = product?.costPrice
+        historyLogData.productSalesPrice = product?.salesPrice
+      })
+    // fetch user info
+    const userPromise = userService.getByID(historyData.userID).then(user => {
+      historyLogData.userName = user?.name
+      historyLogData.userRole = user?.role
+    })
+    // fetch placement info
+    const placementPromise = this.getPlacementByID(
+      historyData.placementID,
+    ).then(placement => {
+      historyLogData.placementName = placement?.name
+    })
+    // fetch batch info
+    const batchPromise = this.getBatchByID(historyData.batchID).then(batch => {
+      historyLogData.batchName = batch?.batch
+    })
+
+    await Promise.all([
+      productPromise,
+      userPromise,
+      placementPromise,
+      batchPromise,
+    ])
+
+    return await inventory.createHistoryLog(historyLogData, trx)
   },
   upsertInventory: async function(
     platform: 'web' | 'app',
@@ -148,7 +206,7 @@ export const inventoryService = {
         throw new ActionError('Beholdning blev ikke opdateret')
       }
 
-      const historyLog = await inventory.createHitoryLog(
+      const historyLog = await this.createHistoryLog(
         {
           customerID,
           locationID,
@@ -213,7 +271,7 @@ export const inventoryService = {
         throw new ActionError('Kunne ikke flytte beholdning til placering')
       }
 
-      const fromHistoryLog = await inventory.createHitoryLog(
+      const fromHistoryLog = await this.createHistoryLog(
         {
           customerID,
           locationID,
@@ -229,7 +287,7 @@ export const inventoryService = {
         trx,
       )
 
-      const toHistoryLog = await inventory.createHitoryLog(
+      const toHistoryLog = await this.createHistoryLog(
         {
           customerID,
           locationID,
@@ -353,13 +411,13 @@ export const inventoryService = {
       return {
         ...reorder,
         recommended,
-        disposible 
+        disposible,
       }
     })
 
     return reordersWithRecommended
   },
-  getInventoryByProductID: async function (
+  getInventoryByProductID: async function(
     productID: ProductID,
   ): Promise<Inventory[]> {
     return await inventory.getInventoryByProductID(productID)
@@ -478,5 +536,13 @@ export const inventoryService = {
       batchID,
       quantity: 0,
     })
+  },
+  getPlacementByID: async function(
+    placementID: PlacementID,
+  ): Promise<Placement | undefined> {
+    return await inventory.getPlacementByID(placementID)
+  },
+  getBatchByID: async function(batchID: BatchID): Promise<Batch | undefined> {
+    return await inventory.getBatchByID(batchID)
   },
 }
