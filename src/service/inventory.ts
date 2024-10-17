@@ -39,7 +39,21 @@ export const inventoryService = {
   getInventory: async function(
     locationID: LocationID,
   ): Promise<FormattedInventory[]> {
-    return await inventory.getInventoryByLocationID(locationID)
+    const rows: FormattedInventory[] = []
+    let page = 1
+    const pageSize = 5000
+    let receivedPageSize = 0
+
+    do {
+      const temp = await inventory.getInventoryByLocationID(locationID, pageSize, page)
+
+      rows.push(...temp)
+
+      receivedPageSize = temp.length
+      page += 1
+    } while (receivedPageSize == pageSize)
+
+    return  rows
   },
   getActiveUnits: async function(): Promise<Unit[]> {
     return inventory.getActiveUnits()
@@ -345,9 +359,9 @@ export const inventoryService = {
 
     return reordersWithRecommended
   },
-  getInventoryByProductID: async (
+  getInventoryByProductID: async function (
     productID: ProductID,
-  ): Promise<Inventory[]> => {
+  ): Promise<Inventory[]> {
     return await inventory.getInventoryByProductID(productID)
   },
 
@@ -371,7 +385,7 @@ export const inventoryService = {
     return updatedUnit
   },
 
-  async updateUnitBarredStatus(
+  updateUnitBarredStatus: async function(
     unitID: UnitID,
     isBarred: boolean,
   ): Promise<Unit | undefined> {
@@ -414,7 +428,7 @@ export const inventoryService = {
     return updatedPlacement
   },
 
-  async updateGroupBarredStatus(
+  updateGroupBarredStatus: async function(
     groupID: GroupID,
     isBarred: boolean,
   ): Promise<Group | undefined> {
@@ -431,7 +445,7 @@ export const inventoryService = {
       )
     }
   },
-  async updatePlacementBarredStatus(
+  updatePlacementBarredStatus: async function(
     placementID: PlacementID,
     isBarred: boolean,
   ): Promise<Placement | undefined> {

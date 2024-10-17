@@ -32,3 +32,37 @@ const dkCurrencyFormat = new Intl.NumberFormat("da-DK", {
 export function numberToDKCurrency(val: number): string {
   return dkCurrencyFormat.format(val)
 }
+
+export function convertENotationToNumber(num: unknown) {
+  // thank god for stackoverflow
+  if (typeof num == 'string') {
+    const str = num.toString()
+    const match = str.match(/^(\d+)(\.(\d+))?[eE]([-\+]?\d+)$/)
+    if (!match) return str //number was not e notation or toString converted
+    // we parse the e notation as (integer).(tail)e(exponent)
+    const [, integer,, tail, exponentStr ] = match
+    const exponent = Number(exponentStr)
+    const realInteger = integer + (tail || '')
+    if(exponent > 0) {
+        const realExponent = Math.abs(exponent + integer.length)
+        return realInteger.padEnd(realExponent, '0')
+    } else {
+        const realExponent = Math.abs(exponent - (tail?.length || 0))
+        return '0.'+ realInteger.padStart(realExponent, '0')
+    }
+  } else {
+    return num
+  }
+}
+
+export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  let arrayLength = array.length
+  let tmpArray = []
+
+  for (let index = 0; index < arrayLength; index += chunkSize) {
+    const chunk = array.slice(index, index + chunkSize)
+    tmpArray.push(chunk)
+  }
+
+  return tmpArray
+}

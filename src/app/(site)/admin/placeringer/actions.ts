@@ -10,6 +10,7 @@ import { createPlacementValidation, updatePlacementValidation } from './validati
 import { PlacementID } from '@/lib/database/schema/inventory'
 
 export const createPlacementAction = privateAction
+  .metadata({actionName: 'createPlacement'})
   .schema(createPlacementValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
     const location = await locationService.getLastVisited(ctx.user.id)
@@ -34,6 +35,7 @@ export const createPlacementAction = privateAction
   })
 
 export const updatePlacementAction = privateAction
+  .metadata({actionName: 'updatePlacement'})
   .schema(updatePlacementValidation)
   .action(async ({ parsedInput: { placementID, data: updatedPlacementData } }) => {
     const updatedPlacement = await inventoryService.updatePlacementByID(

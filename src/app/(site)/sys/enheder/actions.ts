@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache'
 import { UnitID } from '@/lib/database/schema/inventory'
 
 export const createUnitAction = privateAction
+  .metadata({actionName: 'createUnit'})
   .schema(createUnitValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
     const { session, user } = await sessionService.validate()
@@ -24,6 +25,7 @@ export const createUnitAction = privateAction
   })
 
   export const updateUnitAction = privateAction
+  .metadata({actionName: 'updateUnit'})
   .schema(updateUnitValidation)
   .action(async ({ parsedInput: { unitID, data: updatedUnitData}}) => {
     const updatedUnit = await inventoryService.updateUnitByID(

@@ -43,32 +43,6 @@ export const product = {
       .returning()
     return product[0]
   },
-  getAllProducts: async (
-    customerID: CustomerID,
-  ): Promise<(Product & { unit: string; group: string })[]> => {
-    const cols = getTableColumns(productTable)
-
-    return await db
-      .select({
-        ...cols,
-        unit: unitTable.name,
-        group: groupTable.name,
-      })
-      .from(productTable)
-      .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
-      .innerJoin(groupTable, eq(productTable.unitID, groupTable.id))
-      .where(eq(productTable.customerID, customerID))
-  },
-  getAllByID: async function(
-    customerID: CustomerID,
-    trx: TRX = db,
-  ): Promise<Product[]> {
-    const product = await trx
-      .select()
-      .from(productTable)
-      .where(eq(productTable.customerID, customerID))
-    return product
-  },
   updateByID: async function(
     productID: ProductID,
     updatedProductData: PartialProduct,
@@ -97,5 +71,23 @@ export const product = {
       .where(eq(productTable.id, id))
 
     return res[0]
+  },
+  upsertProduct: async function(
+    newProductData: NewProduct,
+    trx: TRX = db,
+  ): Promise<Product> {
+    const product = await trx
+      .insert(productTable)
+      .values({ ...newProductData })
+      .onConflictDoUpdate({
+        target: [
+          productTable.customerID,
+          productTable.sku,
+          productTable.barcode
+        ],
+        set: { ...newProductData },
+      })
+      .returning()
+    return product[0]
   },
 }

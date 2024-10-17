@@ -1,13 +1,15 @@
 'use server'
 
 import { ProductID } from '@/lib/database/schema/inventory'
-import { privateAction } from '@/lib/safe-action'
+import { adminAction, privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
-import { createProductValidation, updateProductValidation } from './validation'
+import { createProductValidation, importProductsValidation, updateProductValidation } from './validation'
+import { chunkArray } from '@/lib/utils'
 
 export const createProductAction = privateAction
+  .metadata({actionName: 'createProduct'})
   .schema(createProductValidation)
   .action(async ({ parsedInput, ctx }) => {
     const newProduct = await productService.create(
@@ -21,6 +23,7 @@ export const createProductAction = privateAction
   })
 
 export const updateProductAction = privateAction
+  .metadata({actionName: 'updateProduct'})
   .schema(updateProductValidation)
   .action(async ({ parsedInput: { productID, data: updatedProductData } }) => {
     const updatedProduct = await productService.updateByID(
@@ -52,3 +55,22 @@ export async function toggleBarredProductAction(
 
   revalidatePath('/admin/produkter')
 }
+
+export const importProductsAction = adminAction
+  .schema(importProductsValidation)
+  .action(async ({parsedInput: importedData, ctx}) => {
+
+  const didImport = await productService.importProducts(
+    ctx.user.customerID,
+    importedData
+  )
+
+  revalidatePath("/admin/produkter")
+})
+
+
+export const finishProductsAction = adminAction
+  .metadata({actionName: "importProductAction"})
+  .action(async ({ctx}) => {
+    console.log(`imported products finished for ${ctx.user.customerID} by ${ctx.user.name}`) 
+})

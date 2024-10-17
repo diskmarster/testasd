@@ -1,9 +1,17 @@
-import { createSafeActionClient } from "next-safe-action";
+import { createSafeActionClient, MiddlewareResult } from "next-safe-action";
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from "@/lib/safe-action/error";
 import { sessionService } from "@/service/session";
+import { Session, User } from "lucia";
+import { z } from "zod";
+import { analyticsService } from "@/service/analytics";
+
+type ActionContextType = {session?: Session, user?: User}
+const metadataSchema = z.object({
+  actionName: z.string().optional(),
+})
 
 // public action client for unauthorized requests
-export const publicAction = createSafeActionClient({
+export const publicAction = createSafeActionClient<undefined, string, typeof metadataSchema>({
   handleServerErrorLog(err, utils) {
     // TODO: implement third party logger or just insert into error table
 
@@ -18,7 +26,39 @@ export const publicAction = createSafeActionClient({
       return err.message
     }
     return "Ukendt fejl opstået"
+  },
+  defineMetadataSchema() {
+    return metadataSchema
+  },
+})
+.metadata({})
+.use(async ({next, metadata}) => {
+  const start = performance.now()
+
+  const res: MiddlewareResult<string, ActionContextType> = await next<ActionContextType>()
+
+  const end = performance.now()
+
+  const ctx: ActionContextType | undefined = res.ctx
+  if (res.success 
+      && metadata.actionName
+      && ctx 
+      && ctx.user
+      && ctx.user.id
+      && ctx.user.customerID
+  ) {
+    const user: User = ctx.user as User
+    analyticsService.createAnalytic('action', {
+      userID: user.id,
+      customerID: user.customerID,
+      sessionID: ctx.session?.id,
+      actionName: metadata.actionName,
+      executionTimeMS: end - start,
+      platform: 'web',
+    })
   }
+
+  return res
 })
 
 // private action client for all authorized requests

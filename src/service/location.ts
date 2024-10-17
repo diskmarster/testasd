@@ -143,7 +143,7 @@ export const locationService = {
         trx,
       )
 
-      const products = await productService.getAllByID(customerID, trx)
+      const products = await productService.getAllByCustomerID(customerID, trx)
 
       const productPromises = products.map(product => {
         const newInventoryData: NewInventory = {

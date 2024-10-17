@@ -1,8 +1,6 @@
 import { db, TRX } from "@/lib/database";
 import { UserID } from "@/lib/database/schema/auth";
 import { CustomerID, LinkLocationToUser, LinkLocationToUserPK, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation, PartialLocation } from "@/lib/database/schema/customer";
-import { locationService } from "@/service/location";
-import { functionalUpdate } from "@tanstack/react-table";
 import { eq, and, getTableColumns, not } from "drizzle-orm";
 
 

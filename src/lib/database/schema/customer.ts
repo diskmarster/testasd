@@ -7,6 +7,7 @@ import { UserRole } from "@/data/user.types";
 export const customerTable = sqliteTable("nl_customer", {
   id: integer("id").notNull().primaryKey({ autoIncrement: true }),
   plan: text("plan").notNull().$type<Plan>(),
+  extraUsers: integer("extra_users").notNull().default(0),
   company: text("company").notNull(),
   email: text("email").notNull().unique(),
   isActive: integer("is_active", { mode: 'boolean' }).notNull().default(false),

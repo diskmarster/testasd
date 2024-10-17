@@ -1,5 +1,10 @@
 'use client'
 
+import { createCustomerAction } from '@/app/(auth)/opret/actions'
+import { createCustomerValidation } from '@/app/(auth)/opret/validation'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -8,7 +13,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Icons } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { PlanConfig, plansConfig } from '@/config/plan'
+import { siteConfig } from '@/config/site'
+import { Plan } from '@/data/customer.types'
 import { cn } from '@/lib/utils'
+import { planUserLimits } from '@/service/customer.utils'
+import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import {
@@ -17,19 +30,9 @@ import {
   useForm,
   UseFormHandleSubmit,
   UseFormRegister,
+  UseFormSetValue,
 } from 'react-hook-form'
 import { z } from 'zod'
-import { createCustomerValidation } from '@/app/(auth)/opret/validation'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { Icons } from '@/components/ui/icons'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { createCustomerAction } from '@/app/(auth)/opret/actions'
-import { PlanConfig, plansConfig } from '@/config/plan'
-import { siteConfig } from '@/config/site'
 
 export function CreateCustomer() {
   const [emailSent, setEmailSent] = useState(false)
@@ -39,6 +42,9 @@ export function CreateCustomer() {
   const { handleSubmit, formState, register, setValue, getValues, watch } =
     useForm<z.infer<typeof createCustomerValidation>>({
       resolver: zodResolver(createCustomerValidation),
+      defaultValues: {
+        extraUsers: 0,
+      },
     })
 
   watch('plan')
@@ -76,7 +82,7 @@ export function CreateCustomer() {
   }
 
   return (
-    <div className='my-6 flex flex-col items-center p-6'>
+    <div className='flex flex-col items-center'>
       <Badge variant={'default'} className='mb-5 text-primary-foreground'>
         Vælg en plan
       </Badge>
@@ -113,6 +119,8 @@ export function CreateCustomer() {
             error={error}
             formState={formState}
             register={register}
+            formValues={watch()}
+            setValue={setValue}
             pending={pending}
           />
         </CardContent>
@@ -145,7 +153,7 @@ function ExpandableCard({
   return (
     <Card
       className={cn(
-        'group flex w-full transform cursor-pointer flex-col rounded-lg border-2 border-muted transition-transform duration-300 ease-in-out hover:scale-105 md:w-60',
+        'group flex w-full transform cursor-pointer flex-col rounded-lg border-2 border-muted transition-transform duration-300 ease-in-out hover:scale-[1.03] md:w-60',
         isSelected && 'border-primary',
       )}
       onClick={() => setValue(plan.plan)}>
@@ -175,25 +183,28 @@ function ExpandableCard({
             : 'max-h-0 py-0 opacity-0',
         )}>
         <CardContent className='flex-grow px-6'>
-  <p className='mb-2 text-xl font-semibold'>Features:</p>
-  <ul className='space-y-2'>
-    {plan.features.map((feature, index) => {
-      const isFirstFeature = (plan.plan === 'plus' && index === 0) || (plan.plan === 'pro' && index === 0);
-      return (
-        <li key={index} className='flex text-xl'>
-          {!isFirstFeature && (
-          <div className='mr-2'>
-            <Icons.check className='h-5 w-5 text-success' />
-          </div>
-          )}
-          <span className={`text-sm ${isFirstFeature ? 'font-bold' : ''}`}>
-            {feature}
-          </span>
-        </li>
-      );
-    })}
-  </ul>
-</CardContent>
+          <p className='mb-2 text-xl font-semibold'>Features:</p>
+          <ul className='space-y-2'>
+            {plan.features.map((feature, index) => {
+              const isFirstFeature =
+                (plan.plan === 'plus' && index === 0) ||
+                (plan.plan === 'pro' && index === 0)
+              return (
+                <li key={index} className='flex text-xl'>
+                  {!isFirstFeature && (
+                    <div className='mr-2'>
+                      <Icons.check className='h-5 w-5 text-success' />
+                    </div>
+                  )}
+                  <span
+                    className={`text-sm ${isFirstFeature ? 'font-bold' : ''}`}>
+                    {feature}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </CardContent>
       </div>
     </Card>
   )
@@ -205,6 +216,8 @@ function FormCard({
   error,
   formState,
   register,
+  setValue,
+  formValues,
   pending,
 }: {
   handleSubmit: UseFormHandleSubmit<z.infer<typeof createCustomerValidation>>
@@ -212,8 +225,30 @@ function FormCard({
   error: string | undefined
   formState: FormState<z.infer<typeof createCustomerValidation>>
   register: UseFormRegister<z.infer<typeof createCustomerValidation>>
+  setValue: UseFormSetValue<{
+    company: string
+    email: string
+    plan: 'lite' | 'plus' | 'pro'
+    extraUsers: number
+  }>
+  formValues: { extraUsers: number, plan: Plan }
   pending: boolean
 }) {
+  function increment() {
+    // @ts-ignore
+    const nextValue = parseFloat(formValues.extraUsers) + 1
+    setValue('extraUsers', parseFloat(nextValue.toFixed(4)), {
+      shouldValidate: true,
+    })
+  }
+
+  function decrement() {
+    const nextValue = Math.max(0, formValues.extraUsers - 1)
+    setValue('extraUsers', parseFloat(nextValue.toFixed(4)), {
+      shouldValidate: true,
+    })
+  }
+
   return (
     <form
       className='grid w-full items-start gap-4'
@@ -225,7 +260,118 @@ function FormCard({
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-
+      <div className='grid gap-2'>
+        <div className='flex justify-between'>
+          <Label htmlFor='extraUsers'>Ekstra brugere</Label>
+          <p className='text-xs text-muted-foreground'>49,- kr pr. bruger/md</p>
+        </div>
+        <div>
+          <div className='flex'>
+            <Button
+              tabIndex={-1}
+              size='icon'
+              type='button'
+              variant='outline'
+              className='h-14 w-1/4 border-r-0 rounded-r-none rounded-bl-none'
+              onClick={decrement}>
+              <Icons.minus className='size-6' />
+            </Button>
+            <Input
+              type='number'
+              step={1}
+              {...register('extraUsers')}
+              className={cn(
+                'w-1/2 h-14 rounded-none text-center text-2xl z-10 shadow-none',
+                '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+              )}
+            />
+            <Button
+              tabIndex={-1}
+              size='icon'
+              type='button'
+              variant='outline'
+              className='h-14 w-1/4 border-l-0 rounded-l-none rounded-br-none'
+              onClick={increment}>
+              <Icons.plus className='size-6' />
+            </Button>
+          </div>
+          <div className='flex'>
+            <Button
+              tabIndex={-1}
+              size='icon'
+              type='button'
+              variant='outline'
+              className={cn(
+                'h-10 w-1/4 rounded-tl-none rounded-r-none border-t-0 border-r-0',
+                formValues.extraUsers && formValues.plan && 'rounded-l-none shadow-none',
+              )}
+              onClick={() =>
+                setValue('extraUsers', 5, { shouldValidate: true })
+              }>
+              5
+            </Button>
+            <Button
+              tabIndex={-1}
+              size='icon'
+              type='button'
+              variant='outline'
+              className={cn(
+                'h-10 w-1/4 rounded-none border-t-0',
+                formValues.extraUsers && formValues.plan && 'shadow-none',
+              )}
+              onClick={() =>
+                setValue('extraUsers', 10, { shouldValidate: true })
+              }>
+              10
+            </Button>
+            <Button
+              tabIndex={-1}
+              size='icon'
+              type='button'
+              variant='outline'
+              className={cn(
+                'h-10 w-1/4 rounded-none border-t-0 border-l-0',
+                formValues.extraUsers && formValues.plan && 'shadow-none',
+              )}
+              onClick={() =>
+                setValue('extraUsers', 15, { shouldValidate: true })
+              }>
+              15
+            </Button>
+            <Button
+              tabIndex={-1}
+              size='icon'
+              type='button'
+              variant='outline'
+              className={cn(
+                'h-10 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
+                formValues.extraUsers && formValues.plan && 'rounded-r-none shadow-none',
+              )}
+              onClick={() =>
+                setValue('extraUsers', 20, { shouldValidate: true })
+              }>
+              20
+            </Button>
+          </div>
+          <div
+            className={cn(
+              'bg-border rounded-b-md text-sm h-0 transition-all text-muted-foreground flex items-center gap-2 justify-center',
+              formValues.extraUsers && formValues.plan && 'shadow-sm h-12 md:h-9',
+            )}>
+            {formValues.extraUsers != 0 && formValues.plan && (
+              <p className='text-center'>
+                Total antal brugere:{' '}
+                {formValues.extraUsers + planUserLimits[formValues.plan]}{' '}
+              </p>
+            )}
+          </div>
+        </div>
+        {formState.errors.extraUsers && (
+          <p className='text-sm text-destructive'>
+            {formState.errors.extraUsers.message}
+          </p>
+        )}
+      </div>
       <div className='grid gap-2'>
         <Label htmlFor='company'>Firmanavn</Label>
         <Input id='company' type='text' {...register('company')} />

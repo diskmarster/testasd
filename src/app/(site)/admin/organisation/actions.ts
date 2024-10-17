@@ -26,6 +26,7 @@ import {
 import { passwordResetService } from '@/service/password-reset'
 
 export const toggleUserStatusAction = adminAction
+  .metadata({actionName: 'toggleUserStatus'})
   .schema(changeUserStatusValidation)
   .action(async ({ parsedInput, ctx }) => {
     const status = parsedInput.status == 'active' ? true : false
@@ -55,6 +56,7 @@ export const toggleUserStatusAction = adminAction
   })
 
 export const inviteNewUserAction = adminAction
+  .metadata({actionName: 'inviteNewUser'})
   .schema(inviteNewUserValidation)
   .action(async ({ parsedInput, ctx }) => {
     const existingUser = await userService.getByEmail(parsedInput.email)
@@ -69,7 +71,7 @@ export const inviteNewUserAction = adminAction
     }
 
     // TODO: add customers extra users to function below when its added
-    if (isUserLimitReached(customer.plan, 0, users.length)) {
+    if (isUserLimitReached(customer.plan, customer.extraUsers, users.length)) {
       throw new ActionError('Du har nået brugergrænsen')
     }
 
@@ -95,6 +97,7 @@ export const inviteNewUserAction = adminAction
   })
 
 export const createNewLocationAction = adminAction
+  .metadata({actionName: 'createNewLocation'})
   .schema(createNewLocationValidation)
   .action(async ({ parsedInput, ctx }) => {
     // 1. is location limit reached?
@@ -135,6 +138,7 @@ export const createNewLocationAction = adminAction
   })
 
 export const editLocationAction = adminAction
+  .metadata({actionName: 'editLocation'})
   .schema(editLocationValidation)
   .action(async ({ parsedInput, ctx }) => {
     // 1. fetch old accesses for location
@@ -162,6 +166,7 @@ export const editLocationAction = adminAction
   })
 
 export const changeLocationStatusAction = adminAction
+  .metadata({actionName: 'changeLocation'})
   .schema(changeLocationStatusValidation)
   .action(async ({ parsedInput, ctx }) => {
     // 1. toggle location by ID
@@ -187,6 +192,7 @@ export const changeLocationStatusAction = adminAction
   })
 
 export const updateCustomerAction = adminAction
+  .metadata({actionName: 'updateCustomer'})
   .schema(updateCustomerValidation)
   .action(async ({ parsedInput, ctx: { user } }) => {
     const updatedCustomer = customerService.updateByID(user.customerID, {
@@ -199,12 +205,13 @@ export const updateCustomerAction = adminAction
   })
 
 export const resetUserPasswordAction = adminAction
+  .metadata({actionName: 'resetUserPassword'})
   .schema(resetUserPasswordValidation)
   .action(async ({parsedInput}) => {
-		const linkCreated = await passwordResetService.createAndSendLink(parsedInput.email)
-		if (!linkCreated) {
-			throw new ActionError(
-				`${ACTION_ERR_INTERNAL}. Kunne ikke oprette nulstillings link`,
-			)
+    const linkCreated = await passwordResetService.createAndSendLink(parsedInput.email)
+    if (!linkCreated) {
+      throw new ActionError(
+        `${ACTION_ERR_INTERNAL}. Kunne ikke oprette nulstillings link`,
+      )
     }
   })
