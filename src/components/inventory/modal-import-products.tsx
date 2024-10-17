@@ -29,7 +29,6 @@ export function ModalImportProducts() {
   const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const [isReading, setIsReading] = useState(false)
-  const [serverError, setServerError] = useState<string>()
   const [uploadedAmount, setUploadedAmount] = useState(0)
   const [responseErrors, setResponseErrors] = useState<string[]>([])
   const [isDone, setIsDone] = useState(false)
@@ -44,7 +43,6 @@ export function ModalImportProducts() {
 
   const onDrop = useCallback(async (files: File[]) => {
     setIsReading(true)
-    setServerError(undefined)
     setErrors(undefined)
     setRows([])
     setIsDone(false)
@@ -78,7 +76,6 @@ export function ModalImportProducts() {
     if (pending) return
     setOpen(open)
     setRows([])
-    setServerError(undefined)
     setErrors(undefined)
     setResponseErrors([])
     setUploadedAmount(0)
@@ -86,7 +83,6 @@ export function ModalImportProducts() {
   }
 
   function onSubmit(values: z.infer<typeof productsDataValidation>) {
-    setServerError(undefined)
     setErrors(undefined)
     setIsDone(false)
 
@@ -100,7 +96,7 @@ export function ModalImportProducts() {
         const res = await importProductsAction(chunk)
 
         if (res && res.serverError) {
-          setResponseErrors(prev => [errorMsg, ...prev])
+          setResponseErrors(prev => [res.serverError ?? errorMsg, ...prev])
           continue
         }
 
@@ -212,13 +208,6 @@ export function ModalImportProducts() {
                 <p key={i}>{e}</p>
               ))}
             </div>
-          )}
-          {serverError && (
-            <Alert variant='destructive'>
-              <Icons.alert className='size-4 !top-3' />
-              <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
-              <AlertDescription>{serverError}</AlertDescription>
-            </Alert>
           )}
           {isDone && (
             <Alert variant='default' className='border-success'>
