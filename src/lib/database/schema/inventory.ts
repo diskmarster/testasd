@@ -210,16 +210,29 @@ export type PartialInventory = Partial<Inventory>
 
 export const historyTable = sqliteTable('nl_history', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-  userID: integer('user_id').notNull(),
   customerID: integer('customer_id')
     .notNull()
     .references(() => customerTable.id, { onDelete: 'cascade' }),
   locationID: text('location_id')
     .notNull()
     .references(() => locationTable.id, { onDelete: 'cascade' }),
+  userID: integer('user_id'),
+  userName: text('user_name'),
+  userRole: text('user_role'),
   productID: integer('product_id').notNull(),
-  placementID: integer('placement_id').notNull(),
-  batchID: integer('batch_id').notNull(),
+	productGroupID: integer('product_group_id'),
+	productUnitID: integer('product_unit_id'),
+	productText1: text('product_text_1'),
+	productText2: text('product_text_2'),
+	productText3: text('product_text_3'),
+	productSku: text('product_sku'),
+	productBarcode: text('product_barcode'),
+	productCostPrice: real('product_cost_price'),
+	productSalesPrice: real('product_sales_price'),
+  placementID: integer('placement_id'),
+  placementName: integer('placement_name'),
+  batchID: integer('batch_id'),
+  batchName: text('batch_name'),
   type: text('type').notNull().$type<HistoryType>(),
   platform: text('platform').notNull().$type<HistoryPlatform>(),
   amount: real('amount').notNull(),
