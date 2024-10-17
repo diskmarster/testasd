@@ -12,6 +12,7 @@ import {
 } from './validation'
 
 export const updateInventoryAction = privateAction
+  .metadata({actionName: 'updateInventory'})
   .schema(updateInventoryValidation)
   .action(
     async ({
@@ -78,6 +79,7 @@ export const updateInventoryAction = privateAction
   )
 
 export const moveInventoryAction = privateAction
+  .metadata({actionName: 'moveInventory'})
   .schema(moveInventoryValidation)
   .action(async ({ parsedInput, ctx }) => {
     const location = await locationService.getLastVisited(ctx.user.id)

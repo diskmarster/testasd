@@ -17,6 +17,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 export const updateProfileInformationAction = privateAction
+  .metadata({actionName: 'updateProfileInformation'})
   .schema(updateProfileValidation)
   .action(async ({ parsedInput, ctx: { user } }) => {
     const updatedUser = userService.updateByID(user.id, { ...parsedInput })
@@ -27,10 +28,12 @@ export const updateProfileInformationAction = privateAction
   })
 
 export const adminUpdateProfileInformationAction = adminAction
+  .metadata({actionName: 'adminUpdateProfileInformation'})
   .schema(adminUpdateProfileValidation)
   .action(async ({ parsedInput: { userId, ...userInfo }, ctx: { user } }) => {})
 
 export const deleteProfileAction = privateAction
+  .metadata({actionName: 'deleteProfile'})
   .schema(deleteProfileValidation)
   .action(async ({ parsedInput: { userId }, ctx: { session, user } }) => {
     const isSameUser = userId === user.id
@@ -46,6 +49,7 @@ export const deleteProfileAction = privateAction
   })
 
 export const updatePasswordAction = privateAction
+  .metadata({actionName: 'updatePassword'})
   .schema(updatePasswordValidation)
   .action(
     async ({
@@ -70,6 +74,7 @@ export const updatePasswordAction = privateAction
   )
 
 export const updatePinAction = privateAction
+  .metadata({actionName: 'updatePin'})
   .schema(updatePinValidation)
   .action(async ({ parsedInput: { currentPin, newPin }, ctx: { user } }) => {
     const isValidPin = await userService.verifyPin(user.email, currentPin)
@@ -84,6 +89,7 @@ export const updatePinAction = privateAction
   })
 
 export const updatePrimaryLocationAction = privateAction
+  .metadata({actionName: 'updatePrimaryLocation'})
   .schema(updatePrimaryLocationValidation)
   .action(async ({ parsedInput: { locationID }, ctx: { user } }) => {
     console.log('locID', locationID)

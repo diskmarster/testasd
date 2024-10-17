@@ -28,7 +28,7 @@ export type User = typeof userTable.$inferSelect
 export type UserID = User['id']
 export type NewUser = typeof userTable.$inferInsert
 export type PartialUser = Partial<User>
-export type UserNoHash = Omit<User, 'hash'>
+export type UserNoHash = Omit<User, 'hash' | 'pin'>
 
 export const sessionTable = sqliteTable('nl_session', {
   id: text('id').notNull().primaryKey(),

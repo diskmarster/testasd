@@ -13,6 +13,7 @@ import {
 } from './validation'
 
 export const createReorderAction = privateAction
+  .metadata({actionName: 'createReorder'})
   .schema(createReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
     const existsLocation = await locationService.getByID(parsedInput.locationID)
@@ -35,6 +36,7 @@ export const createReorderAction = privateAction
   })
 
 export const updateReorderAction = privateAction
+  .metadata({actionName: 'updateReorder'})
   .schema(updateReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
     const existsLocation = await locationService.getByID(parsedInput.locationID)
@@ -62,6 +64,7 @@ export const updateReorderAction = privateAction
   })
 
 export const deleteReorderAction = privateAction
+  .metadata({actionName: 'deleteReorder'})
   .schema(deleteReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
     const existsLocation = await locationService.getByID(parsedInput.locationID)
@@ -85,6 +88,7 @@ export const deleteReorderAction = privateAction
   })
 
 export const addOrderedToReorderAction = privateAction
+  .metadata({actionName: 'addOrderedToReorderAction'})
   .schema(addOrderedToReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
     const existsLocation = await locationService.getByID(parsedInput.locationID)

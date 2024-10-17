@@ -83,6 +83,14 @@ export const siteConfig: SiteConfig = {
       isDropdown: true,
       items: [
         {
+          label: 'Analytics',
+          description: 'Se en oversigt over hvordan systemet bruges',
+          href: '/sys/analytics',
+          roles: ['sys_admin'],
+          isExternal: false,
+          isDisabled: false,
+        },
+        {
           label: 'Kunder',
           description: 'Se en oversigt over alle kunder i Nem Lager',
           href: '/sys/kunder',

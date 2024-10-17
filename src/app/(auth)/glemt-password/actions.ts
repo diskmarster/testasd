@@ -7,6 +7,7 @@ import { forgotPasswordValidation, resetPasswordValidation } from './validation'
 import { isBefore } from 'date-fns'
 
 export const forgotPasswordAction = publicAction
+	.metadata({actionName: "forgotPassword"})
 	.schema(forgotPasswordValidation)
 	.action(async ({ parsedInput: { email } }) => {
 		const linkCreated = await passwordResetService.createAndSendLink(email)
@@ -18,6 +19,7 @@ export const forgotPasswordAction = publicAction
 	})
 
 export const resetPasswordAction = publicAction
+	.metadata({actionName: "resetPassword"})
 	.schema(resetPasswordValidation)
 	.action(async ({ parsedInput: { link, password } }) => {
 		if (isBefore(link.expiresAt, Date.now())) {

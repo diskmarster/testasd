@@ -11,6 +11,7 @@ import { locationService } from "@/service/location"
 import { generateIdFromEntropySize } from "lucia"
 
 export const createCustomerAction = publicAction
+  .metadata({actionName: 'createCustomer'})
   .schema(createCustomerValidation)
   .action(async ({ parsedInput }) => {
     const existingCustomer = await customerService.getByEmail(parsedInput.email)
