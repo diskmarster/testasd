@@ -56,7 +56,7 @@ export function ModalImportProducts() {
     if (!dataRes.success) {
       setErrors(dataRes.errors)
     } else {
-      setRows(dataRes.data)
+      setRows(dataRes.data.slice(0, 3000))
     }
   }, [])
 
@@ -113,7 +113,7 @@ export function ModalImportProducts() {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button size='icon' variant='outline' onClick={() => setOpen(true)}>
           <Icons.cloudUpload className='size-[18px]' />
         </Button>

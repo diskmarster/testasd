@@ -36,12 +36,12 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { TableToolbar } from '../table/table-toolbar'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [100, 250, 500, 1000]
+const ROW_PER_PAGE = [25, 50, 75, 100]
 interface Props {
   data: FormattedProduct[]
   plan: Plan
@@ -64,6 +64,12 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  })
 
   useEffect(() => {
     const visibility = JSON.parse(
@@ -139,6 +145,8 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     [plan, units, groups, table],
   )
 
+  if (!mounted) return null
+
   return (
     <div>
       <TableToolbar
@@ -156,9 +164,9 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
