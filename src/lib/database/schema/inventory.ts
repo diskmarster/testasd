@@ -1,4 +1,4 @@
-import { HistoryPlatform, HistoryType } from '@/data/inventory.types'
+import { HistoryPlatform, HistoryType, ProductHistoryType } from '@/data/inventory.types'
 import { customerTable, locationTable } from '@/lib/database/schema/customer'
 import { sql } from 'drizzle-orm'
 import {
@@ -222,15 +222,15 @@ export const historyTable = sqliteTable('nl_history', {
   userName: text('user_name'),
   userRole: text('user_role'),
   productID: integer('product_id'),
-	productGroupName: text('product_group_name'),
-	productUnitName: text('product_unit_name'),
-	productText1: text('product_text_1'),
-	productText2: text('product_text_2'),
-	productText3: text('product_text_3'),
-	productSku: text('product_sku'),
-	productBarcode: text('product_barcode'),
-	productCostPrice: real('product_cost_price'),
-	productSalesPrice: real('product_sales_price'),
+  productGroupName: text('product_group_name'),
+  productUnitName: text('product_unit_name'),
+  productText1: text('product_text_1'),
+  productText2: text('product_text_2'),
+  productText3: text('product_text_3'),
+  productSku: text('product_sku'),
+  productBarcode: text('product_barcode'),
+  productCostPrice: real('product_cost_price'),
+  productSalesPrice: real('product_sales_price'),
   placementID: integer('placement_id'),
   placementName: text('placement_name'),
   batchID: integer('batch_id'),
@@ -283,3 +283,35 @@ export const reorderTable = sqliteTable(
 export type Reorder = typeof reorderTable.$inferSelect
 export type NewReorder = typeof reorderTable.$inferInsert
 export type PartialReorder = Partial<Reorder>
+
+export const productHistoryTable = sqliteTable('nl_product_history', {
+  id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+  customerID: integer('customer_id')
+    .notNull()
+    .references(() => customerTable.id, { onDelete: 'cascade' }),
+  userID: integer('user_id').notNull(),
+  userName: text('user_name').notNull(),
+  userRole: text('user_role').notNull(),
+  productID: integer('product_id').notNull(),
+  productGroupName: text('product_group_name').notNull(),
+  productUnitName: text('product_unit_name').notNull(),
+  productText1: text('product_text_1').notNull(),
+  productText2: text('product_text_2').notNull(),
+  productText3: text('product_text_3').notNull(),
+  productSku: text('product_sku').notNull(),
+  productBarcode: text('product_barcode').notNull(),
+  productCostPrice: real('product_cost_price').notNull(),
+  productSalesPrice: real('product_sales_price').notNull(),
+  productNote: real('product_sales_price').notNull(),
+  type: text('type').notNull().$type<ProductHistoryType>(),
+  isImport: integer('is_import', { mode: 'boolean' })
+    .notNull(),
+  inserted: integer('inserted', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+})
+
+export type ProductHistory = typeof productHistoryTable.$inferSelect
+export type NewProductHistory = typeof productHistoryTable.$inferInsert
+export type PartialProductHistory = Partial<ProductHistory>
+export type ProductHistoryID = ProductHistory['id']

@@ -24,6 +24,15 @@ export type HistoryPlatform = z.infer<typeof historyPlatformZodSchema>
 export const platformTypes =
   historyPlatformZodSchema.options as readonly HistoryPlatform[]
 
+export const productHistoryTypeZodSchema = z.enum([
+  'oprettelse',
+  'opdatering',
+  'spærring',
+])
+export type ProductHistoryType = z.infer<typeof productHistoryTypeZodSchema>
+export const productHistoryTypes =
+  productHistoryTypeZodSchema.options as readonly ProductHistoryType[]
+
 export type FormattedInventory = {
   inserted: Date
   updated: Date
