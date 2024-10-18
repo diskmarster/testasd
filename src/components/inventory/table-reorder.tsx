@@ -42,7 +42,7 @@ import { ExportSelectedButton } from './button-export-selected'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [100, 250, 500, 1000]
+const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
   data: FormattedReorder[]
@@ -156,9 +156,9 @@ export function TableReorder({ data, user, units, groups }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -170,8 +170,8 @@ export function TableReorder({ data, user, units, groups }: Props) {
                 <TableRow
                   className={cn(
                     row.original.recommended > 0 &&
-                      row.original.ordered < row.original.recommended &&
-                      'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
+                    row.original.ordered < row.original.recommended &&
+                    'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
                   )}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>

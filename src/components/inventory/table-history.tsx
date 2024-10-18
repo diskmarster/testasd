@@ -40,7 +40,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [100, 250, 500, 1000]
+const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
   data: FormattedHistory[]

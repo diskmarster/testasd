@@ -38,7 +38,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [100, 250, 500, 1000]
+const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
   user: User
@@ -48,7 +48,7 @@ interface Props {
 export function TableProductGroups({ groups, user }: Props) {
   const LOCALSTORAGE_KEY = 'groups_cols'
   const columns = useMemo(() => getTableGroupColumns(), [])
-  
+
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -128,7 +128,7 @@ export function TableProductGroups({ groups, user }: Props) {
   const filterFields = useMemo(
     () => getTableGroupFilters(table, groups),
     [table, groups],
-  ) 
+  )
 
   if (!mounted) return null
 
@@ -149,9 +149,9 @@ export function TableProductGroups({ groups, user }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
