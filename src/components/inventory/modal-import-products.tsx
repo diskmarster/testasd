@@ -23,6 +23,7 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { productsDataValidation } from '@/app/(site)/admin/produkter/validation'
 import { chunkArray } from '@/lib/utils'
 import { Progress } from '../ui/progress'
+import { ScrollArea } from '../ui/scroll-area'
 
 
 export function ModalImportProducts() {
@@ -84,6 +85,8 @@ export function ModalImportProducts() {
 
   function onSubmit(values: z.infer<typeof productsDataValidation>) {
     setErrors(undefined)
+    setResponseErrors([])
+    setUploadedAmount(0)
     setIsDone(false)
 
     startTransition(async () => {
@@ -91,12 +94,14 @@ export function ModalImportProducts() {
 
       const chunkedArray = chunkArray(values, CHUNK_SIZE)
 
-      for (const chunk of chunkedArray) {
-        const errorMsg = `Der gik noget galt med rækkerne fra ${uploadedAmount + 1} til ${uploadedAmount + CHUNK_SIZE}`
+      for (let i = 0; i < chunkedArray.length; i++) {
+        const chunk = chunkedArray[i]
+        const start = i * CHUNK_SIZE
+        const errorMsg = `Der gik noget galt med rækkerne fra ${start + 1} til ${start + CHUNK_SIZE}.`
         const res = await importProductsAction(chunk)
 
         if (res && res.serverError) {
-          setResponseErrors(prev => [res.serverError ?? errorMsg, ...prev])
+          setResponseErrors(prev => [`${errorMsg} ${res.serverError}`, ...prev])
           continue
         }
 
@@ -186,7 +191,7 @@ export function ModalImportProducts() {
             <div className='flex flex-col gap-1 text-destructive text-sm'>
               <p className='font-semibold'>{siteConfig.errorTitle}</p>
               {errors.issues.slice(0, 5).map((issue, i) => {
-                const rowNumber = Number(issue.path[0])
+                const rowNumber = Number(issue.path[0]) + 1
                 const rowKey =
                   issue.code == 'unrecognized_keys'
                     ? issue.keys[0]
@@ -199,17 +204,21 @@ export function ModalImportProducts() {
                   </div>
                 )
               })}
+              {errors.issues.length > 5 && <p className='text-foreground'>{errors.issues.length - 5} fejl mere...</p>}
             </div>
           )}
           {responseErrors.length > 0 && (
-            <div>
-              <p className='font-semibold'>{siteConfig.errorTitle}</p>
-              {responseErrors.map((e, i) => (
-                <p key={i}>{e}</p>
-              ))}
-            </div>
+            <Alert variant='destructive' className='border-destructive'>
+              <Icons.alert className='size-4 !top-3 ' />
+              <AlertTitle className=''>{siteConfig.errorTitle}</AlertTitle>
+              <ScrollArea maxHeight='max-h-[140px]'>
+                {responseErrors.map((e, i) => (
+                  <AlertDescription key={i}>{e}</AlertDescription>
+                ))}
+              </ScrollArea>
+            </Alert>
           )}
-          {isDone && (
+          {isDone && responseErrors.length == 0 && (
             <Alert variant='default' className='border-success'>
               <Icons.check className='size-4 !top-3 text-success' />
               <AlertTitle className='text-success'>Importering fuldført</AlertTitle>
@@ -225,7 +234,7 @@ export function ModalImportProducts() {
             size='lg'
             className='w-full gap-2'
             onClick={() => onSubmit(rows)}>
-            {pending ? `${uploadedAmount} uploaded af ${rows.length}` : 'Upload til varekartotek'}
+            {pending ? `${uploadedAmount} uploadet af ${rows.length}` : 'Upload til varekartotek'}
           </Button>
         </div>
       </DialogContent>

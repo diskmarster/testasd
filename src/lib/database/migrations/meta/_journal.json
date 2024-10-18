@@ -71,6 +71,13 @@
       "when": 1729156039241,
       "tag": "0009_hesitant_zarda",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1729232339897,
+      "tag": "0010_clammy_kate_bishop",
+      "breakpoints": true
     }
   ]
 }

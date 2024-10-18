@@ -154,7 +154,9 @@ export const productTable = sqliteTable(
     note: text('note').notNull().default(''),
   },
   t => ({
-    unqBarcode: unique().on(t.customerID, t.barcode, t.sku),
+    unqBarcodeSku: unique().on(t.customerID, t.barcode, t.sku),
+    unqBarcode: unique().on(t.customerID, t.barcode),
+    unqSku: unique().on(t.customerID, t.sku),
   }),
 )
 

@@ -487,4 +487,10 @@ export const inventory = {
 
     return res
   },
+  createMany: async function(
+    inventories: NewInventory[],
+    trx: TRX = db,
+  ): Promise<Inventory[]> {
+    return await trx.insert(inventoryTable).values(inventories).returning()
+  }
 }

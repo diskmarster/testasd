@@ -6,7 +6,6 @@ import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
 import { createProductValidation, importProductsValidation, updateProductValidation } from './validation'
-import { chunkArray } from '@/lib/utils'
 
 export const createProductAction = privateAction
   .metadata({actionName: 'createProduct'})

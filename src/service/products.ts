@@ -5,20 +5,19 @@ import { FormattedProduct } from '@/data/products.types'
 import { db, TRX } from '@/lib/database'
 import { CustomerID } from '@/lib/database/schema/customer'
 import {
-    Group,
+  Group,
   Inventory,
   NewInventory,
   NewProduct,
   PartialProduct,
   Product,
   ProductID,
-  Unit,
 } from '@/lib/database/schema/inventory'
 
+import { ImportProducts } from '@/app/(site)/admin/produkter/validation'
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
-import { ImportProducts } from '@/app/(site)/admin/produkter/validation'
 
 export const productService = {
   create: async function(
@@ -87,7 +86,7 @@ export const productService = {
       }
     }
   },
-  getAllProductsWithInventories: async function (
+  getAllProductsWithInventories: async function(
     customerID: CustomerID,
   ): Promise<
     (Product & { unit: string; group: string; inventories: Inventory[] })[]
@@ -143,7 +142,7 @@ export const productService = {
       }
     }
   },
-  updateBarredStatus: async function (
+  updateBarredStatus: async function(
     productID: ProductID,
     isBarred: boolean,
   ): Promise<Product | undefined> {
@@ -158,7 +157,7 @@ export const productService = {
       )
     }
   },
-  getByID: async function (
+  getByID: async function(
     id: ProductID,
   ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> {
     try {
@@ -178,17 +177,22 @@ export const productService = {
       throw new ActionError(`Kunne ikke finde produkt med id ${id}`)
     }
   },
-  importProducts: async function(customerID: CustomerID, importedProducts: ImportProducts): Promise<boolean> {
+  importProducts: async function(
+    customerID: CustomerID,
+    importedProducts: ImportProducts,
+  ): Promise<boolean> {
+    const start = performance.now()
     const transaction = await db.transaction(async trx => {
-
       const [units, groups, products, locations] = await Promise.all([
         inventory.getAllUnits(trx),
         inventory.getAllGroupsByID(customerID, trx),
         inventory.getAllProductsByID(customerID, trx),
-        location.getAllByCustomerID(customerID, trx)
+        location.getAllByCustomerID(customerID, trx),
       ])
 
-      const productsMap = new Map<string, Product>(products.map(p => [p.sku, p]))
+      const productsMap = new Map<string, Product>(
+        products.map(p => [p.sku, p]),
+      )
       let existingProductsPromises = []
       let newProductsPromises = []
 
@@ -203,111 +207,145 @@ export const productService = {
       for (const loc of locations) {
         const [defaultPlacement, defaultBatch] = await Promise.all([
           inventory.getDefaultPlacementByID(loc.id, trx),
-          inventory.getDefaultBatchByID(loc.id, trx)
+          inventory.getDefaultBatchByID(loc.id, trx),
         ])
 
         if (defaultPlacement) {
           defaultPlacementMap.set(loc.id, defaultPlacement.id)
         } else {
-          newDefaultPlacementPromises.push(inventory.createPlacement(
-            {
-              name: '-',
-              locationID: loc.id,
-            },
-            trx,
-          ))
+          newDefaultPlacementPromises.push(
+            inventory.createPlacement(
+              {
+                name: '-',
+                locationID: loc.id,
+              },
+              trx,
+            ),
+          )
         }
 
         if (defaultBatch) {
           defaultBatchMap.set(loc.id, defaultBatch.id)
         } else {
-          newDefaultBatchPromises.push(inventory.createBatch(
-            {
-              batch: '-',
-              locationID: loc.id,
-            },
-            trx,
-          ))
+          newDefaultBatchPromises.push(
+            inventory.createBatch(
+              {
+                batch: '-',
+                locationID: loc.id,
+              },
+              trx,
+            ),
+          )
         }
       }
 
       const [newDefaultPlacements, newDefaultBatches] = await Promise.all([
         Promise.all(newDefaultPlacementPromises),
-        Promise.all(newDefaultBatchPromises)
+        Promise.all(newDefaultBatchPromises),
       ])
 
-      newDefaultPlacements.forEach(p => defaultPlacementMap.set(p.locationID, p.id))
+      newDefaultPlacements.forEach(p =>
+        defaultPlacementMap.set(p.locationID, p.id),
+      )
       newDefaultBatches.forEach(b => defaultBatchMap.set(b.locationID, b.id))
 
       for (const p of importedProducts) {
-
         if (!groupsMap.has(p.group)) {
-          const newGroup = await inventory.createProductGroup({
-            name: p.group,
-            customerID: customerID
-          }, trx)
+          const newGroup = await inventory.createProductGroup(
+            {
+              name: p.group,
+              customerID: customerID,
+            },
+            trx,
+          )
           groups.push(newGroup)
           groupsMap.set(newGroup.name, newGroup)
         }
 
         if (productsMap.has(p.sku)) {
-          
+          console.log(p.sku, 'is known')
           existingProductsPromises.push(
-            product.upsertProduct({
-              customerID: customerID,
-              groupID: groupsMap.get(p.group)?.id!,
-              unitID: units.find(u => u.name.toLowerCase() == p.unit.toLowerCase())?.id ?? units[0].id,
-              text1: p.text1,
-              sku: p.sku,
-              barcode: p.barcode,
-              costPrice: p.costPrice,
-              isBarred: p.isBarred,
-              text2: p.text2,
-              text3: p.text3,
-              salesPrice: p.salesPrice
-            }, trx)
+            product.updateByID(
+              productsMap.get(p.sku)?.id!,
+              {
+                customerID: customerID,
+                groupID: groupsMap.get(p.group)?.id!,
+                unitID: units.find(u => u.name.toLowerCase() == p.unit.toLowerCase())?.id ?? units[0].id,
+                text1: p.text1,
+                sku: p.sku,
+                barcode: p.barcode,
+                costPrice: p.costPrice,
+                isBarred: p.isBarred,
+                text2: p.text2,
+                text3: p.text3,
+                salesPrice: p.salesPrice,
+              },
+              trx,
+            ),
           )
-
         } else {
+          console.log(p.sku, 'is unknown')
 
           newProductsPromises.push(
-            product.upsertProduct({
-              customerID: customerID,
-              groupID: groupsMap.get(p.group)?.id!,
-              unitID: units.find(u => u.name.toLowerCase() == p.unit.toLowerCase())?.id ?? units[0].id,
-              text1: p.text1,
-              sku: p.sku,
-              barcode: p.barcode,
-              costPrice: p.costPrice,
-              isBarred: p.isBarred,
-              text2: p.text2,
-              text3: p.text3,
-              salesPrice: p.salesPrice
-            }, trx)
-          )
+            product
+              .create(
+                {
+                  customerID: customerID,
+                  groupID: groupsMap.get(p.group)?.id!,
+                  unitID: units.find(u => u.name == p.unit)?.id ?? units[0].id,
+                  text1: p.text1,
+                  sku: p.sku,
+                  barcode: p.barcode,
+                  costPrice: p.costPrice,
+                  isBarred: p.isBarred,
+                  text2: p.text2,
+                  text3: p.text3,
+                  salesPrice: p.salesPrice,
+                },
+                trx,
+              )
+              .catch(e => {
+                if (e instanceof LibsqlError) {
+                  if (e.message.includes('barcode')) {
+                    throw new ActionError(
+                      `Stregkoden '${p.barcode}' findes allerede`,
+                    )
+                  }
+                  if (e.message.includes('sku')) {
+                    throw new ActionError(`Varenr. '${p.sku}' findes allerede`)
+                  }
+                }
 
+                throw new ActionError(
+                  `Kunne ikke oprette produkt med varenr. '${p.sku}'`,
+                )
+              }),
+          )
         }
       }
 
-      const [newProductsResponses, ] = await Promise.all([
+      const [newProductsResponses] = await Promise.all([
         Promise.all(newProductsPromises),
-        Promise.all(existingProductsPromises)
+        Promise.all(existingProductsPromises),
       ])
+
+      const newProducts = newProductsResponses.filter(p => p != undefined)
 
       const zeroInventoryPromises = []
 
-      for (const loc of locations) {
-        for (const prod of newProductsResponses) {
-          zeroInventoryPromises.push(
-            inventory.upsertInventory({
-              customerID,
-              productID: prod.id,
-              locationID: loc.id,
-              placementID: defaultPlacementMap.get(loc.id)!,
-              batchID: defaultBatchMap.get(loc.id)!,
-              quantity: 0
-            }, trx)
-          )
+      if (newProducts.length > 0) {
+        for (const loc of locations) {
+          const placementID = defaultPlacementMap.get(loc.id)!
+          const batchID = defaultBatchMap.get(loc.id)!
+
+          const inventories: NewInventory[] = newProducts.map(prod => ({
+            customerID,
+            productID: prod.id,
+            locationID: loc.id,
+            placementID,
+            batchID,
+          }))
+          zeroInventoryPromises.push(inventory.createMany(inventories, trx))
         }
       }
 
@@ -315,6 +353,7 @@ export const productService = {
 
       return true
     })
+    console.log(`${performance.now() - start} ms execution time`)
     return transaction
   },
 }

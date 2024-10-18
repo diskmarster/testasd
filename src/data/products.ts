@@ -9,7 +9,7 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { eq, getTableColumns } from 'drizzle-orm'
+import { eq, getTableColumns, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
 
 const UNIT_COLS = getTableColumns(unitTable)
@@ -39,7 +39,11 @@ export const product = {
   ): Promise<Product | undefined> {
     const product = await trx
       .insert(productTable)
-      .values(newProduct)
+      .values({
+        ...newProduct,
+        sku: sql`upper(${newProduct.sku})`,
+        barcode: sql`upper(${newProduct.barcode})`,
+      })
       .returning()
     return product[0]
   },
@@ -50,7 +54,11 @@ export const product = {
   ): Promise<Product | undefined> {
     const product = await trx
       .update(productTable)
-      .set({ ...updatedProductData })
+      .set({
+        ...updatedProductData,
+        sku: sql`upper(${updatedProductData.sku})`,
+        barcode: sql`upper(${updatedProductData.barcode})`,
+      })
       .where(eq(productTable.id, productID))
       .returning()
     return product[0]
@@ -78,14 +86,22 @@ export const product = {
   ): Promise<Product> {
     const product = await trx
       .insert(productTable)
-      .values({ ...newProductData })
+      .values({
+        ...newProductData,
+        sku: sql`upper(${newProductData.sku})`,
+        barcode: sql`upper(${newProductData.barcode})`,
+      })
       .onConflictDoUpdate({
         target: [
           productTable.customerID,
           productTable.sku,
           productTable.barcode
         ],
-        set: { ...newProductData },
+        set: {
+          ...newProductData,
+          sku: sql`upper(${newProductData.sku})`,
+          barcode: sql`upper(${newProductData.barcode})`,
+        },
       })
       .returning()
     return product[0]
