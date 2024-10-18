@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { AutoComplete } from '../ui/autocomplete'
 
 interface Props {
   customer: Customer
@@ -53,6 +54,16 @@ export function ModalUpdateInventory({
   const [newPlacement, setNewPlacement] = useState(false)
   const [newBatch, setNewBatch] = useState(false)
   const [useReference, setUseReference] = useState(false)
+  const [searchValue, setSearchValue] = useState<string>('')
+
+  const productOptions = products
+    //.filter(prod =>
+    //  prod.text1.toLowerCase().includes(searchValue.toLowerCase())
+    //  || prod.sku.toLowerCase().includes(searchValue.toLowerCase()))
+    .map(prod => ({
+      label: prod.text1,
+      value: prod.id.toString(),
+    }))
 
   const fallbackPlacementID =
     customer.plan == 'lite'
@@ -145,9 +156,10 @@ export function ModalUpdateInventory({
 
   useCustomEventListener('UpdateInventoryByIDs', (data: any) => {
     setOpen(true)
-    setValue('productID', data.productID)
-    setValue('placementID', data.placementID)
-    setValue('batchID', data.batchID)
+    setSearchValue(data.productName)
+    setValue('productID', data.productID, { shouldValidate: true })
+    setValue('placementID', data.placementID, { shouldValidate: true })
+    setValue('batchID', data.batchID, { shouldValidate: true })
   })
 
   return (
@@ -175,34 +187,27 @@ export function ModalUpdateInventory({
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <div className='grid gap-2 flex-grow'>
+            <div className='grid gap-2'>
               <Label>Produkt</Label>
-              <Select
-                value={productID ? productID.toString() : undefined}
-                onValueChange={(value: string) => {
-                  setValue('productID', parseInt(value), {
-                    shouldValidate: true,
-                  })
-                }}>
-                <SelectTrigger className='h-[58px]'>
-                  <SelectValue placeholder='Vælg vare' />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map((p, i) => (
-                    <SelectItem
-                      key={i}
-                      value={p.id.toString()}
-                      className='capitalize'>
-                      <div className='flex flex-col gap items-start'>
-                        <span className='font-semibold'>{p.text1}</span>
-                        <span className='text-muted-foreground text-sm'>
-                          {p.sku}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <AutoComplete
+                autoFocus={false}
+                placeholder='Søg i produkter...'
+                emptyMessage='Ingen produkter fundet'
+                items={productOptions}
+                onSelectedValueChange={value =>
+                  setValue('productID', parseInt(value))
+                }
+                onSearchValueChange={setSearchValue}
+                selectedValue={
+                  productID ? productID.toString() : ''
+                }
+                searchValue={searchValue}
+              />
+              {formState.errors.productID && (
+                <p className='text-sm text-destructive'>
+                  {formState.errors.productID.message}
+                </p>
+              )}
             </div>
             {customer.plan != 'lite' && (
               <div className='flex flex-col gap-4 md:flex-row'>

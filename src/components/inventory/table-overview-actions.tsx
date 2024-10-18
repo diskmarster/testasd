@@ -17,6 +17,7 @@ export function TableOverviewActions({ table, row }: Props) {
       <DropdownMenuItem
         onClick={() => {
           emitCustomEvent('UpdateInventoryByIDs', {
+            productName: row.original.product.text1,
             productID: row.original.product.id,
             placementID: row.original.placement.id,
             batchID: row.original.batch.id,
@@ -27,6 +28,7 @@ export function TableOverviewActions({ table, row }: Props) {
       <DropdownMenuItem
         onClick={() => {
           emitCustomEvent('MoveInventoryByIDs', {
+            productName: row.original.product.text1,
             productID: row.original.product.id,
             placementID: row.original.placement.id,
             batchID: row.original.batch.id,

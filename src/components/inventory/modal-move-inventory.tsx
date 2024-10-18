@@ -39,6 +39,7 @@ import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { AutoComplete } from '../ui/autocomplete'
 
 interface Props {
   customer: Customer
@@ -57,10 +58,20 @@ export function ModalMoveInventory({
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
   const [useReference, setUseReference] = useState(false)
+  const [searchValue, setSearchValue] = useState<string>('')
 
   const uniqueProducts = inventory.filter((item, index, self) => {
     return index === self.findIndex(i => i.product.id === item.product.id)
   })
+
+  const productOptions = uniqueProducts
+    .map(prod => ({
+      label: prod.product.text1,
+      value: prod.product.id.toString(),
+    }))
+    .filter(prod =>
+      prod.label.toLowerCase().includes(searchValue.toLowerCase()),
+    )
 
   const placementsForProduct = (productID: ProductID) =>
     inventory.filter((item, index, self) => {
@@ -164,9 +175,10 @@ export function ModalMoveInventory({
 
   useCustomEventListener('MoveInventoryByIDs', (data: any) => {
     setOpen(true)
-    setValue('productID', data.productID)
-    setValue('fromPlacementID', data.placementID)
-    setValue('fromBatchID', data.batchID)
+    setSearchValue(data.productName)
+    setValue('productID', data.productID, { shouldValidate: true })
+    setValue('fromPlacementID', data.placementID, { shouldValidate: true })
+    setValue('fromBatchID', data.batchID, { shouldValidate: true })
   })
 
   return (
@@ -195,41 +207,31 @@ export function ModalMoveInventory({
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <div className='grid gap-2 flex-grow'>
+            <div className='grid gap-2'>
               <Label>Produkt</Label>
-              <Select
-                value={
-                  formValues.productID
-                    ? formValues.productID.toString()
-                    : undefined
-                }
-                onValueChange={(value: string) => {
+              <AutoComplete
+                autoFocus={false}
+                placeholder='Søg i produkter...'
+                emptyMessage='Ingen produkter fundet'
+                items={productOptions}
+                onSelectedValueChange={value => {
                   resetField('fromPlacementID')
                   resetField('fromBatchID')
                   resetField('amount')
-                  setValue('productID', parseInt(value), {
-                    shouldValidate: true,
-                  })
-                }}>
-                <SelectTrigger className='h-[58px]'>
-                  <SelectValue placeholder='Vælg vare' />
-                </SelectTrigger>
-                <SelectContent>
-                  {uniqueProducts.map((p, i) => (
-                    <SelectItem
-                      key={i}
-                      value={p.product.id.toString()}
-                      className='capitalize'>
-                      <div className='flex flex-col gap items-start'>
-                        <span className='font-semibold'>{p.product.text1}</span>
-                        <span className='text-muted-foreground text-sm'>
-                          {p.product.sku}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                  setValue('productID', parseInt(value), { shouldValidate: true })
+                }
+                }
+                onSearchValueChange={setSearchValue}
+                selectedValue={
+                  formValues.productID ? formValues.productID.toString() : ''
+                }
+                searchValue={searchValue}
+              />
+              {formState.errors.productID && (
+                <p className='text-sm text-destructive'>
+                  {formState.errors.productID.message}
+                </p>
+              )}
             </div>
             <div>
               <div className='flex flex-col gap-4 md:flex-row bg-muted border-dashed border p-4 rounded-md'>
