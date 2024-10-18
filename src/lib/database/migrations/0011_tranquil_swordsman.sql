@@ -14,6 +14,8 @@ CREATE TABLE `nl_product_history` (
 	`product_barcode` text NOT NULL,
 	`product_cost_price` real NOT NULL,
 	`product_sales_price` real NOT NULL,
+	`product_is_barred` integer NOT NULL,
+	`product_note` text NOT NULL,
 	`type` text NOT NULL,
 	`is_import` integer NOT NULL,
 	`inserted` integer DEFAULT (unixepoch()) NOT NULL,

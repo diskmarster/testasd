@@ -302,7 +302,8 @@ export const productHistoryTable = sqliteTable('nl_product_history', {
   productBarcode: text('product_barcode').notNull(),
   productCostPrice: real('product_cost_price').notNull(),
   productSalesPrice: real('product_sales_price').notNull(),
-  productNote: real('product_sales_price').notNull(),
+  productIsBarred: integer('product_is_barred', { mode: 'boolean' }).notNull(),
+  productNote: text('product_note').notNull(),
   type: text('type').notNull().$type<ProductHistoryType>(),
   isImport: integer('is_import', { mode: 'boolean' })
     .notNull(),
