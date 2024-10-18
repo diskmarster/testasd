@@ -36,7 +36,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { TableToolbar } from '../table/table-toolbar'
 
 const ROW_SELECTION_ENABLED = true
@@ -61,7 +61,6 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     { id: 'isBarred', value: [false] },
   ])
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
@@ -114,7 +113,6 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     groupedColumnMode: 'reorder',
 
     onColumnFiltersChange: setColumnFilters,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,
@@ -127,7 +125,6 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
 
     state: {
       columnFilters,
-      rowSelection,
       sorting,
       expanded,
       columnVisibility,
