@@ -3,13 +3,16 @@ import { CustomerID } from '@/lib/database/schema/customer'
 import {
   groupTable,
   NewProduct,
+  NewProductHistory,
   PartialProduct,
   Product,
+  ProductHistory,
+  productHistoryTable,
   ProductID,
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { eq, getTableColumns, sql } from 'drizzle-orm'
+import { and, eq, getTableColumns, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
 
 const UNIT_COLS = getTableColumns(unitTable)
@@ -95,7 +98,7 @@ export const product = {
         target: [
           productTable.customerID,
           productTable.sku,
-          productTable.barcode
+          productTable.barcode,
         ],
         set: {
           ...newProductData,
@@ -105,5 +108,40 @@ export const product = {
       })
       .returning()
     return product[0]
+  },
+  createHistoryLog: async function(
+    newProductLog: NewProductHistory,
+    trx: TRX = db,
+  ): Promise<ProductHistory | undefined> {
+    const history = await trx
+      .insert(productHistoryTable)
+      .values(newProductLog)
+      .returning()
+
+    return history[0]
+  },
+  getHistoryLogsForCustomer: async function(
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<ProductHistory[]> {
+    return await trx
+      .select()
+      .from(productHistoryTable)
+      .where(eq(productHistoryTable.customerID, customerID))
+  },
+  getHistoryLogs: async function(
+    customerID: CustomerID,
+    productID: ProductID,
+    trx: TRX = db,
+  ): Promise<ProductHistory[]> {
+    return await trx
+      .select()
+      .from(productHistoryTable)
+      .where(
+        and(
+          eq(productHistoryTable.customerID, customerID),
+          eq(productHistoryTable.productID, productID),
+        ),
+      )
   },
 }

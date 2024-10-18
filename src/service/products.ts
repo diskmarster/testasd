@@ -9,8 +9,10 @@ import {
   Inventory,
   NewInventory,
   NewProduct,
+  NewProductHistory,
   PartialProduct,
   Product,
+  ProductHistory,
   ProductID,
 } from '@/lib/database/schema/inventory'
 
@@ -356,4 +358,22 @@ export const productService = {
     console.log(`${performance.now() - start} ms execution time`)
     return transaction
   },
+  createHistoryLog: async function(
+    newProductLog: NewProductHistory,
+  ): Promise<ProductHistory | undefined> {
+    return await product.createHistoryLog(newProductLog)
+  },
+  getHistoryLogs: async function(
+    customerID: CustomerID,
+    productID?: ProductID,
+  ): Promise<ProductHistory[]> {
+    if (productID != undefined) {
+      return product.getHistoryLogs(
+        customerID,
+        productID,
+      )
+    } else {
+      return product.getHistoryLogsForCustomer(customerID)
+    }
+  }
 }
