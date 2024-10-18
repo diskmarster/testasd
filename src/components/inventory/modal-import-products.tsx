@@ -105,10 +105,9 @@ export function ModalImportProducts() {
           continue
         }
 
-        setUploadedAmount(prev => prev + CHUNK_SIZE)
+        setUploadedAmount(prev => prev + chunk.length)
       }
       setIsDone(true)
-      setRows([])
       await finishProductsAction()
     })
 

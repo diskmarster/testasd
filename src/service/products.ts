@@ -17,7 +17,13 @@ import {
 } from '@/lib/database/schema/inventory'
 
 import { ImportProducts } from '@/app/(site)/admin/produkter/validation'
-import { ActionError } from '@/lib/safe-action/error'
+import { user as userData } from '@/data/user'
+import { UserID } from '@/lib/database/schema/auth'
+import {
+  ACTION_ERR_INTERNAL,
+  ACTION_ERR_UNAUTHORIZED,
+  ActionError,
+} from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
 
@@ -25,9 +31,16 @@ export const productService = {
   create: async function(
     productData: NewProduct,
     customerID: CustomerID,
+    userID: UserID,
   ): Promise<Product | undefined> {
     try {
       const transaction = await db.transaction(async trx => {
+        const userUnitAndGroupPromise = Promise.all([
+          userData.getByID(userID, trx),
+          inventory.getUnitByID(productData.unitID, trx),
+          inventory.getGroupByID(productData.groupID, trx),
+        ])
+
         const newProduct = await product.create(productData, trx)
         if (!newProduct) return undefined
         const locations = await location.getAllByCustomerID(customerID, trx)
@@ -73,6 +86,33 @@ export const productService = {
             trx,
           )
         }
+
+        const [user, unit, group] = await userUnitAndGroupPromise
+
+        await product.createHistoryLog(
+          {
+            userID: user?.id!,
+            userName: user?.name!,
+            userRole: user?.role!,
+            customerID,
+            productID: newProduct.id,
+            productUnitName: unit?.name!,
+            productGroupName: group?.name!,
+            productText1: newProduct.text1,
+            productSku: newProduct.sku,
+            productBarcode: newProduct.barcode,
+            productCostPrice: newProduct.costPrice,
+            productIsBarred: newProduct.isBarred,
+            productText2: newProduct.text2,
+            productText3: newProduct.text3,
+            productSalesPrice: newProduct.salesPrice,
+            productNote: newProduct.note,
+            type: 'oprettelse',
+            isImport: false,
+          },
+          trx,
+        )
+
         return newProduct
       })
 
@@ -125,39 +165,108 @@ export const productService = {
   updateByID: async function(
     productID: ProductID,
     updatedProductData: PartialProduct,
+    userID: UserID,
   ): Promise<Product | undefined> {
-    try {
-      const updatedProduct = await product.updateByID(
-        productID,
-        updatedProductData,
-      )
-      if (!updatedProduct) return undefined
-      return updatedProduct
-    } catch (err) {
-      if (err instanceof LibsqlError) {
-        if (err.message.includes('barcode')) {
-          throw new ActionError('Stregkoden findes allerede')
+    return await db.transaction(async trx => {
+      try {
+        const updatedProduct = await product.updateByID(
+          productID,
+          updatedProductData,
+          trx,
+        )
+        if (!updatedProduct) return undefined
+
+        const [user, unit, group] = await Promise.all([
+          userData.getByID(userID, trx),
+          inventory.getUnitByID(updatedProduct.unitID, trx),
+          inventory.getGroupByID(updatedProduct.groupID, trx),
+        ])
+
+        await product.createHistoryLog(
+          {
+            userID: user?.id!,
+            userName: user?.name!,
+            userRole: user?.role!,
+            customerID: user?.customerID!,
+            productID: updatedProduct.id,
+            productUnitName: unit?.name!,
+            productGroupName: group?.name!,
+            productText1: updatedProduct.text1,
+            productSku: updatedProduct.sku,
+            productBarcode: updatedProduct.barcode,
+            productCostPrice: updatedProduct.costPrice,
+            productIsBarred: updatedProduct.isBarred,
+            productText2: updatedProduct.text2,
+            productText3: updatedProduct.text3,
+            productSalesPrice: updatedProduct.salesPrice,
+            productNote: updatedProduct.note,
+            type: 'opdatering',
+            isImport: false,
+          },
+          trx,
+        )
+
+        return updatedProduct
+      } catch (err) {
+        console.error(err)
+        if (err instanceof LibsqlError) {
+          if (err.message.includes('barcode')) {
+            throw new ActionError('Stregkoden findes allerede')
+          }
+          if (err.message.includes('sku')) {
+            throw new ActionError('Varenr. findes allerede')
+          }
         }
-        if (err.message.includes('sku')) {
-          throw new ActionError('Varenr. findes allerede')
-        }
+        throw new ActionError(ACTION_ERR_INTERNAL)
       }
-    }
+    })
   },
   updateBarredStatus: async function(
     productID: ProductID,
     isBarred: boolean,
+    userID: UserID,
   ): Promise<Product | undefined> {
-    try {
-      const updatedProduct = await product.updateByID(productID, { isBarred })
-      if (!updatedProduct) return undefined
-      return updatedProduct
-    } catch (err) {
-      console.error('Der skete en fejl med spærringen:', err)
-      throw new ActionError(
-        'Der skete en fejl med opdatering af produkt spærringen',
-      )
-    }
+    return await db.transaction(async trx => {
+      try {
+        const updatedProduct = await product.updateByID(productID, { isBarred })
+        if (!updatedProduct) return undefined
+        const [user, unit, group] = await Promise.all([
+          userData.getByID(userID, trx),
+          inventory.getUnitByID(updatedProduct.unitID, trx),
+          inventory.getGroupByID(updatedProduct.groupID, trx),
+        ])
+
+        await product.createHistoryLog(
+          {
+            userID: user?.id!,
+            userName: user?.name!,
+            userRole: user?.role!,
+            customerID: user?.customerID!,
+            productID: updatedProduct.id,
+            productUnitName: unit?.name!,
+            productGroupName: group?.name!,
+            productText1: updatedProduct.text1,
+            productSku: updatedProduct.sku,
+            productBarcode: updatedProduct.barcode,
+            productCostPrice: updatedProduct.costPrice,
+            productIsBarred: updatedProduct.isBarred,
+            productText2: updatedProduct.text2,
+            productText3: updatedProduct.text3,
+            productSalesPrice: updatedProduct.salesPrice,
+            productNote: updatedProduct.note,
+            type: 'spærring',
+            isImport: false,
+          },
+          trx,
+        )
+        return updatedProduct
+      } catch (err) {
+        console.error('Der skete en fejl med spærringen:', err)
+        throw new ActionError(
+          'Der skete en fejl med opdatering af produkt spærringen',
+        )
+      }
+    })
   },
   getByID: async function(
     id: ProductID,
@@ -181,19 +290,26 @@ export const productService = {
   },
   importProducts: async function(
     customerID: CustomerID,
+    userID: UserID,
     importedProducts: ImportProducts,
   ): Promise<boolean> {
     const start = performance.now()
     const transaction = await db.transaction(async trx => {
-      const [units, groups, products, locations] = await Promise.all([
-        inventory.getAllUnits(trx),
-        inventory.getAllGroupsByID(customerID, trx),
-        inventory.getAllProductsByID(customerID, trx),
-        location.getAllByCustomerID(customerID, trx),
-      ])
+      const [units, groups, products, locations, importingUser] =
+        await Promise.all([
+          inventory.getAllUnits(trx),
+          inventory.getAllGroupsByID(customerID, trx),
+          inventory.getAllProductsByID(customerID, trx),
+          location.getAllByCustomerID(customerID, trx),
+          userData.getByID(userID, trx),
+        ])
+
+      if (!importingUser) {
+        throw new ActionError(ACTION_ERR_UNAUTHORIZED)
+      }
 
       const productsMap = new Map<string, Product>(
-        products.map(p => [p.sku, p]),
+        products.map(p => [p.sku.toUpperCase(), p]),
       )
       let existingProductsPromises = []
       let newProductsPromises = []
@@ -265,10 +381,10 @@ export const productService = {
         }
 
         if (productsMap.has(p.sku)) {
-          console.log(p.sku, 'is known')
+          const currentProd = productsMap.get(p.sku)!
           existingProductsPromises.push(
             product.updateByID(
-              productsMap.get(p.sku)?.id!,
+              currentProd.id!,
               {
                 customerID: customerID,
                 groupID: groupsMap.get(p.group)?.id!,
@@ -286,8 +402,6 @@ export const productService = {
             ),
           )
         } else {
-          console.log(p.sku, 'is unknown')
-
           newProductsPromises.push(
             product
               .create(
@@ -326,13 +440,73 @@ export const productService = {
         }
       }
 
-      const [newProductsResponses] = await Promise.all([
-        Promise.all(newProductsPromises),
-        Promise.all(existingProductsPromises),
-      ])
+      const [newProductsResponses, existingProductsResponses] =
+        await Promise.all([
+          Promise.all(newProductsPromises),
+          Promise.all(existingProductsPromises),
+        ])
 
       const newProducts = newProductsResponses.filter(p => p != undefined)
+      const updatedProducts = existingProductsResponses.filter(
+        p => p != undefined,
+      )
 
+      const productHistoryPromises = [
+        ...updatedProducts.map(p => {
+          const unit = units.find(u => (u.id = p.unitID))!
+          const group = groups.find(g => (g.id = p.groupID))!
+          return product.createHistoryLog(
+            {
+              userID: importingUser.id,
+              userName: importingUser.name,
+              userRole: importingUser.role,
+              customerID,
+              productID: p.id,
+              productUnitName: unit.name,
+              productGroupName: group.name,
+              productText1: p.text1,
+              productSku: p.sku,
+              productBarcode: p.barcode,
+              productCostPrice: p.costPrice,
+              productIsBarred: p.isBarred,
+              productText2: p.text2,
+              productText3: p.text3,
+              productSalesPrice: p.salesPrice,
+              productNote: p.note,
+              type: 'opdatering',
+              isImport: true,
+            },
+            trx,
+          )
+        }),
+        ...newProducts.map(p => {
+          const unit = units.find(u => (u.id = p.unitID))!
+          const group = groups.find(g => (g.id = p.groupID))!
+          return product.createHistoryLog(
+            {
+              userID: importingUser.id,
+              userName: importingUser.name,
+              userRole: importingUser.role,
+              customerID,
+              productID: p.id,
+              productUnitName: unit.name,
+              productGroupName: group.name,
+              productText1: p.text1,
+              productSku: p.sku,
+              productBarcode: p.barcode,
+              productCostPrice: p.costPrice,
+              productIsBarred: p.isBarred,
+              productText2: p.text2,
+              productText3: p.text3,
+              productSalesPrice: p.salesPrice,
+              productNote: p.note,
+              type: 'oprettelse',
+              isImport: true,
+            },
+            trx,
+          )
+        }),
+      ]
       const zeroInventoryPromises = []
 
       if (newProducts.length > 0) {
@@ -351,7 +525,7 @@ export const productService = {
         }
       }
 
-      await Promise.all(zeroInventoryPromises)
+      await Promise.all([zeroInventoryPromises, productHistoryPromises])
 
       return true
     })
@@ -368,12 +542,9 @@ export const productService = {
     productID?: ProductID,
   ): Promise<ProductHistory[]> {
     if (productID != undefined) {
-      return product.getHistoryLogs(
-        customerID,
-        productID,
-      )
+      return product.getHistoryLogs(customerID, productID)
     } else {
       return product.getHistoryLogsForCustomer(customerID)
     }
-  }
+  },
 }

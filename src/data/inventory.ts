@@ -492,5 +492,19 @@ export const inventory = {
     trx: TRX = db,
   ): Promise<Inventory[]> {
     return await trx.insert(inventoryTable).values(inventories).returning()
-  }
+  },
+  getUnitByID: async function(
+    unitID: UnitID,
+    trx: TRX = db,
+  ): Promise<Unit | undefined> {
+    const [res] = await trx.select().from(unitTable).where(eq(unitTable.id, unitID))
+    return res
+  },
+  getGroupByID: async function(
+    groupID: GroupID,
+    trx: TRX = db,
+  ): Promise<Group | undefined> {
+    const [res] = await trx.select().from(groupTable).where(eq(groupTable.id, groupID))
+    return res
+  },
 }

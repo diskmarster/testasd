@@ -1,3 +1,4 @@
+import { product } from '@/data/products'
 import { units } from '@/data/products.types'
 import { convertENotationToNumber } from '@/lib/utils'
 import { z } from 'zod'
@@ -48,21 +49,32 @@ export const updateProductValidation = z.object({
   }),
 })
 
+export const productToggleBarredValidation = z.object({
+  productID: z.coerce.number(),
+  isBarred: z.coerce.boolean(),
+})
+
 export const productsDataValidation = z.array(
   z
     .object({
-      // @ts-ignore
-      sku: z.preprocess(val => val.toString(),
-      z.coerce
-        .string({ required_error: 'Varenr. skal være udfyldt' })
-        .min(1, { message: 'Varenr. skal være minimum 1 karakter lang' })
+      sku: z.preprocess(
+        // @ts-ignore
+        val => val.toString().toUpperCase(),
+        z.coerce
+          .string({ required_error: 'Varenr. skal være udfyldt' })
+          .min(1, { message: 'Varenr. skal være minimum 1 karakter lang' }),
       ),
-      barcode:
-      z.preprocess(
-        (val) => convertENotationToNumber(val),
-      z.coerce
-        .string({ required_error: 'Stregkode skal være udfyldt' })
-        .min(1, { message: 'Stregkode skal være minimum 1 karakter lang' }),
+      barcode: z.preprocess(
+        val => {
+          if (typeof val == 'string') {
+            return convertENotationToNumber(val).toUpperCase()
+          } else {
+            return val
+          }
+        },
+        z.coerce
+          .string({ required_error: 'Stregkode skal være udfyldt' })
+          .min(1, { message: 'Stregkode skal være minimum 1 karakter lang' }),
       ),
       group: z.coerce
         .string({ required_error: 'Varegruppe skal være udfyldt' })
@@ -75,18 +87,22 @@ export const productsDataValidation = z.array(
           message: `Ukendt enhed. Brug f.eks. ${units.join(', ')}`,
         }),
       ),
-      // @ts-ignore
-      text1: z.preprocess(val => val.toString(), 
-        z.string({ required_error: 'Varetekst 1 skal være udfyldt' })
-        .min(1, { message: 'Varetekst 1 skal være minimum 1 karakter lang' })
+      text1: z.preprocess(
+        // @ts-ignore
+        val => val.toString(),
+        z
+          .string({ required_error: 'Varetekst 1 skal være udfyldt' })
+          .min(1, { message: 'Varetekst 1 skal være minimum 1 karakter lang' }),
       ),
-      // @ts-ignore
-      text2: z.preprocess(val => val.toString(),
-      z.string().optional().default('')
+      text2: z.preprocess(
+        // @ts-ignore
+        val => val.toString(),
+        z.string().optional().default(''),
       ),
-      // @ts-ignore
-      text3: z.preprocess(val => val.toString(),
-      z.string().optional().default('')
+      text3: z.preprocess(
+        // @ts-ignore
+        val => val.toString(),
+        z.string().optional().default(''),
       ),
       costPrice: z.coerce
         .number({
@@ -100,7 +116,13 @@ export const productsDataValidation = z.array(
         .optional()
         .default(0),
       isBarred: z
-        .preprocess((val) => val == "" ? "false" : val, z.string({invalid_type_error: 'Ukendt værdi i spærret. Brug true, false, ja eller nej'}))
+        .preprocess(
+          val => (val == '' ? 'false' : val),
+          z.string({
+            invalid_type_error:
+              'Ukendt værdi i spærret. Brug true, false, ja eller nej',
+          }),
+        )
         .transform(val => val.trim().toLowerCase())
         .refine(
           value =>
@@ -131,6 +153,6 @@ export const importProductsValidation = z.array(
     text3: z.string(),
     costPrice: z.coerce.number(),
     salesPrice: z.coerce.number(),
-    isBarred: z.coerce.boolean()
-  })
+    isBarred: z.coerce.boolean(),
+  }),
 )

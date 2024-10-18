@@ -12,7 +12,7 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, eq, getTableColumns, sql } from 'drizzle-orm'
+import { and, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
 
 const UNIT_COLS = getTableColumns(unitTable)
@@ -55,13 +55,33 @@ export const product = {
     updatedProductData: PartialProduct,
     trx: TRX = db,
   ): Promise<Product | undefined> {
+    const data: Partial<{
+      isBarred: boolean | SQL<unknown>
+      customerID: number | SQL<unknown>
+      groupID: number | SQL<unknown>
+      unitID: number | SQL<unknown>
+      text1: string | SQL<unknown>
+      text2: string | SQL<unknown>
+      text3: string | SQL<unknown>
+      sku: string | SQL<unknown>
+      barcode: string | SQL<unknown>
+      costPrice: number | SQL<unknown>
+      salesPrice: number | SQL<unknown>
+      note: string | SQL<unknown>
+    }> = {
+      ...updatedProductData
+    }
+
+    if (updatedProductData.sku != undefined) {
+      data.sku = sql`upper(${updatedProductData.sku})`
+    }
+    if (updatedProductData.barcode != undefined) {
+      data.barcode = sql`upper(${updatedProductData.barcode})`
+    }
+
     const product = await trx
       .update(productTable)
-      .set({
-        ...updatedProductData,
-        sku: sql`upper(${updatedProductData.sku})`,
-        barcode: sql`upper(${updatedProductData.barcode})`,
-      })
+      .set(data)
       .where(eq(productTable.id, productID))
       .returning()
     return product[0]
