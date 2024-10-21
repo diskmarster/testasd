@@ -1,6 +1,6 @@
 export const fallbackLng = 'da'
 export const languages: ('da' | 'en')[] = [fallbackLng, 'en']
-export const defaultNS = 'translation'
+export const defaultNS = ['common']
 export const cookieName = 'i18next'
 
 export function getOptions(

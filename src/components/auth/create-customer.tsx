@@ -23,6 +23,7 @@ import { Plan } from '@/data/customer.types'
 import { cn } from '@/lib/utils'
 import { planUserLimits } from '@/service/customer.utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { TFunction } from 'i18next'
 import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import {
@@ -151,7 +152,7 @@ function ExpandableCard({
   isExpanded: boolean
   setPlan: (value: 'lite' | 'plus' | 'pro') => void
   isSelected: boolean
-  t: (key: string) => string
+  t: TFunction<'opret', undefined>
 }) {
   return (
     <Card
@@ -166,7 +167,7 @@ function ExpandableCard({
           isExpanded && 'rounded-b-none',
         )}>
         <CardTitle className='text-2xl capitalize transition-colors duration-150'>
-          {plan.plan}
+          {t('common:plans.plan', { context: plan.plan })}
         </CardTitle>
         <CardDescription className='mt-2 text-2xl font-semibold text-primary'>
           {plan.price}{' '}
@@ -175,7 +176,9 @@ function ExpandableCard({
           </span>
         </CardDescription>
         <p className='mt-1 text-xs font-semibold text-muted-foreground'>
-          {plan.description}
+          {t('common:plans.description', {
+            context: plan.plan,
+          })}
         </p>
       </CardHeader>
       <div
@@ -188,7 +191,12 @@ function ExpandableCard({
         <CardContent className='flex-grow px-6'>
           <p className='mb-2 text-xl font-semibold'>Features:</p>
           <ul className='space-y-2'>
-            {plan.features.map((feature, index) => {
+            {(
+              t('common:plans.feature', {
+                returnObjects: true,
+                context: plan.plan,
+              }) as string[]
+            ).map((feature, index) => {
               const isFirstFeature =
                 (plan.plan === 'plus' && index === 0) ||
                 (plan.plan === 'pro' && index === 0)

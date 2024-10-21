@@ -60,33 +60,40 @@
   },
 
   "plans": {
-    "plan-lite": "Lite",
-    "plan-plus": "Plus",
-    "plan-pro": "Pro",
-    "description-lite": "Til enkeltmandsvirksomheder",
-    "description-plus": "Til små virksomheder",
-    "description-pro": "Til store virksomheder",
-    "feature-lite-1": "1 bruger",
-    "feature-lite-2": "Beholdningsstyring",
-    "feature-lite-3": "Import/eksport",
-    "feature-lite-4": "Varebeskrivelser 1, 2, 3",
-    "feature-lite-5": "Lagerliste",
-    "feature-lite-6": "Varegrupper",
-    "feature-lite-7": "Konto/sagsstyring",
-    "feature-lite-8": "Print stregkoder/etiketter",
-    "feature-lite-9": "Scanner-app",
-    "feature-lite-10": "Rapporter via historik",
-    "feature-lite-11": "1 lokation",
-    "feature-plus-everything": "Alt fra Lite",
-    "feature-plus-1": "10 brugere",
-    "feature-plus-2": "Placeringsstyring",
-    "feature-plus-3": "Genbestilling",
-    "feature-plus-4": "3 lokationer",
-    "feature-pro-everything": "Alt fra Plus",
-    "feature-pro-1": "20 brugere",
-    "feature-pro-2": "Batchnummer",
-    "feature-pro-3": "Serienummer",
-    "feature-pro-4": "Ubegrænsede lokationer"
+    "plan_lite": "Lite",
+    "plan_plus": "Plus",
+    "plan_pro": "Pro",
+    "description": "",
+    "description_lite": "Til enkeltmandsvirksomheder",
+    "description_plus": "Til små virksomheder",
+    "description_pro": "Til store virksomheder",
+    "feature_lite": [
+      "1 bruger",
+      "Beholdningsstyring",
+      "Import/eksport",
+      "Varebeskrivelser 1, 2, 3",
+      "Lagerliste",
+      "Varegrupper",
+      "Konto/sagsstyring",
+      "Print stregkoder/etiketter",
+      "Scanner-app",
+      "Rapporter via historik",
+      "1 lokation"
+    ],
+    "feature_plus": [
+      "Alt fra Lite",
+      "10 brugere",
+      "Placeringsstyring",
+      "Genbestilling",
+      "3 lokationer"
+    ],
+    "feature_pro": [
+      "Alt fra Plus",
+      "20 brugere",
+      "Batchnummer",
+      "Serienummer",
+      "Ubegrænsede lokationer"
+    ]
   },
 
   "site-config": {
