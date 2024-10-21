@@ -33,5 +33,9 @@
     "product-group-barred-no": "No",
     "product-group-created": "Created",
     "product-group-updated": "Updated"
+  },
+  "toasts": {
+    "create-group": "product group created",
+    "update-group": "product group updated"
   }
 }

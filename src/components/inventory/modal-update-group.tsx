@@ -65,8 +65,8 @@ export function ModalUpdateGroup({
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: t('update-product-group-modal.product-group-success'),
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.update-group')}`,
       })
     })
   }

@@ -33,5 +33,9 @@
     "product-group-barred-no": "Nej",
     "product-group-created": "Oprettet",
     "product-group-updated": "Opdateret"
+  },
+  "toasts": {
+    "create-group": "varegruppe oprettet",
+    "update-group": "varegruppe opdateret"
   }
 }

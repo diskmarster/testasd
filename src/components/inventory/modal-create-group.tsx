@@ -53,8 +53,8 @@ export function ModalCreateProductGroup() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${values.name} varegruppe oprettet`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.create-group')}}`,
       })
     })
   }
@@ -76,8 +76,8 @@ export function ModalCreateProductGroup() {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
+                <AlertTitle>{toast.error(t(`common:${siteConfig.errorTitle}`))}</AlertTitle>
+                <AlertDescription></AlertDescription>
               </Alert>
             )}
             <div className='grid gap-2'>
