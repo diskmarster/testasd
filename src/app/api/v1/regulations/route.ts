@@ -1,4 +1,5 @@
 import { historyTypeZodSchema } from '@/data/inventory.types'
+import { analyticsService } from '@/service/analytics'
 import { inventoryService } from '@/service/inventory'
 import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
@@ -19,6 +20,7 @@ export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<unknown>> {
   try {
+    const start = performance.now()
     const { session, user } = await validateRequest()
 
     if (session == null || user == null) {
@@ -243,6 +245,18 @@ export async function POST(
         },
       )
     }
+
+		const end = performance.now()
+
+		await analyticsService.createAnalytic('action', {
+			actionName: 'regulateInventory',
+			userID: user.id,
+			customerID: user.customerID,
+			sessionID: session.id,
+			executionTimeMS: end - start,
+			platform: 'app',
+		})
+
 
     return NextResponse.json(
       {

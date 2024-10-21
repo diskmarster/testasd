@@ -1,3 +1,4 @@
+import { analyticsService } from '@/service/analytics'
 import { customerService } from '@/service/customer'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
@@ -16,6 +17,7 @@ const signInSchema = z.object({
 export async function POST(
 	request: NextRequest,
 ): Promise<NextResponse<unknown>> {
+	const start = performance.now()
 	try {
 		if (headers().get('content-type') != 'application/json') {
 			return NextResponse.json(
@@ -69,6 +71,17 @@ export async function POST(
 		const jwt = signJwt({
 			sessionId: sessionId,
 			user: user,
+		})
+
+		const end = performance.now()
+
+		await analyticsService.createAnalytic('action', {
+			actionName: 'signIn',
+      userID: user.id,
+      customerID: user.customerID,
+      sessionID: sessionId,
+      executionTimeMS: end - start,
+      platform: 'app',
 		})
 
 		return NextResponse.json(
