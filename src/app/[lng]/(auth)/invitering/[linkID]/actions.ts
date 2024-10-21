@@ -49,6 +49,9 @@ export const signUpInvitedAction = publicAction
       pin: parsedInput.pin,
       role: activationLink.role,
       isActive: true,
+      webAccess: activationLink.webAccess,
+      appAccess: activationLink.appAccess,
+      priceAccess: activationLink.priceAccess
     })
     if (!newUser) {
       throw new ActionError(t('invited-user-action.user-not-created'))
