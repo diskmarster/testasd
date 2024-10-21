@@ -214,7 +214,7 @@ export function getTableOverviewColumns(
     aggregatedCell: ({ table, row }) => (
       <ModalShowProductLabel product={row.original.product} />
     ),
-    cell: ({ table, row }) => <TableOverviewActions row={row} table={table} />,
+    cell: ({ table, row }) => <TableOverviewActions row={row} table={table} plan={plan} />,
     enableHiding: false,
     enableSorting: false,
     meta: {
