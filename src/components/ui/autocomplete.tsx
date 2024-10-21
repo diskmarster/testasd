@@ -133,6 +133,7 @@ export function AutoComplete<T extends string>({
                       option => (
                         <CommandItem
                           key={option.value}
+                          className='capitalize'
                           value={option.value}
                           onMouseDown={e => e.preventDefault()}
                           onSelect={onSelectItem}>
