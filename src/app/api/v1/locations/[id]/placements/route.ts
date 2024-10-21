@@ -21,6 +21,17 @@ export async function GET(
       )
     }
 
+		if (!user.appAccess) {
+      return NextResponse.json(
+        {
+          msg: 'Bruger har ikke app adgang',
+        },
+        {
+          status: 401,
+        },
+      )
+    }
+
     const placements = await inventoryService.getActivePlacementsByID(params.id)
 
     return NextResponse.json(

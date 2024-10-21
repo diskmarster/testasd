@@ -21,6 +21,17 @@ export async function GET(
 
 	try {
 
+		if (!user.appAccess) {
+      return NextResponse.json(
+        {
+          msg: 'Bruger har ikke app adgang',
+        },
+        {
+          status: 401,
+        },
+      )
+    }
+
 		const products = await productService
 			.getAllProductsWithInventories(user.customerID)
 			.catch(e => {

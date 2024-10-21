@@ -33,7 +33,18 @@ export async function POST(
       )
     }
 
-    if (headers().get('content-type') != 'application/json') {
+		if (!user.appAccess) {
+      return NextResponse.json(
+        {
+          msg: 'Bruger har ikke app adgang',
+        },
+        {
+          status: 401,
+        },
+      )
+    }
+
+    if (request.headers.get('content-type') != 'application/json') {
       return NextResponse.json(
         {
           msg: 'Request body skal være json format',

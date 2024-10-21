@@ -1,10 +1,9 @@
 import { locationService } from '@/service/location'
 import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
 export async function GET(
-	request: NextRequest,
 ): Promise<NextResponse<unknown>> {
 	const { session, user } = await validateRequest(headers())
 
@@ -20,6 +19,30 @@ export async function GET(
 	}
 
 	try {
+		const { session, user } = await validateRequest(headers())
+
+		if (session == null || user == null) {
+			return NextResponse.json(
+				{
+					msg: 'Du har ikke adgang til denne ressource',
+				},
+				{
+					status: 401,
+				},
+			)
+		}
+
+		if (!user.appAccess) {
+      return NextResponse.json(
+        {
+          msg: 'Bruger har ikke app adgang',
+        },
+        {
+          status: 401,
+        },
+      )
+    }
+
 		const locations = await locationService.getAllByUserID(user.id)
 
 		return NextResponse.json(

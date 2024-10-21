@@ -20,6 +20,17 @@ export async function GET(
 			)
 		}
 
+		if (!user.appAccess) {
+      return NextResponse.json(
+        {
+          msg: 'Bruger har ikke app adgang',
+        },
+        {
+          status: 401,
+        },
+      )
+    }
+
 		const productID = parseInt(id)
 
 		const product = await productService.getByID(productID)
