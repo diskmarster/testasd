@@ -19,8 +19,8 @@ export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<unknown>> {
   try {
-		const start = performance.now()
-    const { session, user } = await validateRequest()
+    const start = performance.now()
+    const { session, user } = await validateRequest(headers())
 
     if (session == null || user == null) {
       return NextResponse.json(
@@ -327,16 +327,16 @@ export async function POST(
       data.reference ?? "",
     )
 
-		const end = performance.now()
+    const end = performance.now()
 
-		await analyticsService.createAnalytic('action', {
-			actionName: 'moveInventory',
-			userID: user.id,
-			customerID: user.customerID,
-			sessionID: session.id,
-			executionTimeMS: end - start,
-			platform: 'app',
-		})
+    await analyticsService.createAnalytic('action', {
+      actionName: 'moveInventory',
+      userID: user.id,
+      customerID: user.customerID,
+      sessionID: session.id,
+      executionTimeMS: end - start,
+      platform: 'app',
+    })
 
     return NextResponse.json(
       {

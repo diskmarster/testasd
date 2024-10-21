@@ -21,7 +21,7 @@ export async function POST(
 ): Promise<NextResponse<unknown>> {
   try {
     const start = performance.now()
-    const { session, user } = await validateRequest()
+    const { session, user } = await validateRequest(headers())
 
     if (session == null || user == null) {
       return NextResponse.json(

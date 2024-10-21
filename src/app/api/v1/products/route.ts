@@ -1,11 +1,12 @@
 import { productService } from '@/service/products'
 import { validateRequest } from '@/service/user.utils'
+import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function GET(
 ): Promise<NextResponse<unknown>> {
 	try {
-		const { session, user } = await validateRequest()
+		const { session, user } = await validateRequest(headers())
 
 		if (session == null || user == null) {
 			return NextResponse.json(

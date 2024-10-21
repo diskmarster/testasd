@@ -3,7 +3,7 @@ import { hash, verify } from '@node-rs/argon2'
 import * as jwt from 'jsonwebtoken'
 import { sessionService } from './session'
 import { Session, User as AuthUser } from 'lucia'
-import { headers } from 'next/headers'
+import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers'
 
 const MEMORY_COST = 19456
 const TIME_COST = 2
@@ -94,9 +94,9 @@ export function verifyJWT(jwtString: string): VerifyJWTResponse {
   }
 }
 
-export async function validateRequest(): Promise<{ session: Session, user: AuthUser } | { session: null, user: null }> {
+export async function validateRequest(headers: ReadonlyHeaders): Promise<{ session: Session, user: AuthUser } | { session: null, user: null }> {
   try {
-    const authHeader = headers().get("Authorization")
+    const authHeader = headers.get("Authorization")
     if (!authHeader) {
       console.error("No authentication header found")
       return {

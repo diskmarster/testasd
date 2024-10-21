@@ -1,10 +1,11 @@
 import { locationService } from '@/service/location'
 import { validateRequest } from '@/service/user.utils'
 import { NextResponse } from 'next/server'
+import { headers } from 'next/headers'
 
 export async function GET(): Promise<NextResponse<unknown>> {
 	try {
-		const { session, user } = await validateRequest()
+		const { session, user } = await validateRequest(headers())
 
 		if (session == null || user == null) {
 			return NextResponse.json(
