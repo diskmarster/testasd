@@ -63,6 +63,9 @@ export const userLinkTable = sqliteTable('nl_user_link', {
   inserted: integer('inserted', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),
+  webAccess: integer('web_access', {mode: 'boolean'}).notNull().default(true),
+  appAccess: integer('app_access', {mode: 'boolean'}).notNull().default(true),
+  priceAccess: integer('price_access', {mode: 'boolean'}).notNull().default(true),
 })
 
 export type UserLink = typeof userLinkTable.$inferSelect
