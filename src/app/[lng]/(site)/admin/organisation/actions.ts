@@ -75,7 +75,6 @@ export const inviteNewUserAction = adminAction
       )
     }
 
-    // TODO: add customers extra users to function below when its added
     if (isUserLimitReached(customer.plan, customer.extraUsers, users.length)) {
       throw new ActionError(t('organisation-action.company-user-limit-reached'))
     }
@@ -85,6 +84,9 @@ export const inviteNewUserAction = adminAction
       role: parsedInput.role,
       customerID: ctx.user.customerID,
       locationIDs: parsedInput.locationIDs,
+      webAccess: parsedInput.webAccess,
+      appAccess: parsedInput.appAccess,
+      priceAccess: parsedInput.priceAccess
     })
     if (!userInviteLink) {
       throw new ActionError(
