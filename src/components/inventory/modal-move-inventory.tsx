@@ -58,37 +58,52 @@ export function ModalMoveInventory({
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
   const [useReference, setUseReference] = useState(false)
-  const [searchValue, setSearchValue] = useState<string>('')
+  const [searchProduct, setSearchProduct] = useState<string>('')
+  const [searchFromPlacement, setSearchFromPlacement] = useState<string>('')
+  const [searchFromBatch, setSearchFromBatch] = useState<string>('')
+  const [searchToPlacement, setSearchToPlacement] = useState<string>('')
 
   const uniqueProducts = inventory.filter((item, index, self) => {
     return index === self.findIndex(i => i.product.id === item.product.id)
   })
 
   const productOptions = uniqueProducts
+    .filter(prod =>
+      prod.product.text1.toLowerCase().includes(searchProduct.toLowerCase())
+      || prod.product.sku.toLowerCase().includes(searchProduct.toLowerCase()))
     .map(prod => ({
       label: prod.product.text1,
       value: prod.product.id.toString(),
     }))
-    .filter(prod =>
-      prod.label.toLowerCase().includes(searchValue.toLowerCase()),
-    )
 
   const placementsForProduct = (productID: ProductID) =>
-    inventory.filter((item, index, self) => {
-      return (
-        index ===
-        self.findIndex(
-          i =>
-            i.product.id === productID && i.placement.id === item.placement.id,
+    inventory
+      .filter((item, index, self) => {
+        return (
+          index ===
+          self.findIndex(
+            i =>
+              i.product.id === productID && i.placement.id === item.placement.id,
+          )
         )
-      )
-    })
+      })
+      .filter(p =>
+        p.placement.name.toLowerCase().includes(searchFromPlacement.toLowerCase()))
+      .map(prod => ({
+        label: prod.placement.name,
+        value: prod.placement.id.toString(),
+      }))
 
   const batchesForProduct = (productID: ProductID, placementID: PlacementID) =>
     inventory.filter(
       item =>
         item.product.id === productID && item.placement.id === placementID,
-    )
+    ).filter(p =>
+      p.batch.batch.toLowerCase().includes(searchFromBatch.toLowerCase()))
+      .map(p => ({
+        label: p.batch.batch,
+        value: p.batch.id.toString(),
+      }))
 
   const fallbackBatchID =
     customer.plan == 'plus'
@@ -170,15 +185,23 @@ export function ModalMoveInventory({
   function onOpenChange(open: boolean) {
     reset()
     setError(undefined)
+    setUseReference(false)
+    setSearchProduct('')
+    setSearchFromPlacement('')
+    setSearchFromBatch('')
+    setSearchToPlacement('')
     setOpen(open)
   }
 
   useCustomEventListener('MoveInventoryByIDs', (data: any) => {
     setOpen(true)
-    setSearchValue(data.productName)
+    setSearchProduct(data.productName)
     setValue('productID', data.productID, { shouldValidate: true })
+    setSearchProduct(data.productName)
     setValue('fromPlacementID', data.placementID, { shouldValidate: true })
+    setSearchFromPlacement(data.placementName)
     setValue('fromBatchID', data.batchID, { shouldValidate: true })
+    setSearchFromBatch(data.batchName)
   })
 
   return (
@@ -221,11 +244,11 @@ export function ModalMoveInventory({
                   setValue('productID', parseInt(value), { shouldValidate: true })
                 }
                 }
-                onSearchValueChange={setSearchValue}
+                onSearchValueChange={setSearchProduct}
                 selectedValue={
                   formValues.productID ? formValues.productID.toString() : ''
                 }
-                searchValue={searchValue}
+                searchValue={searchProduct}
               />
               {formState.errors.productID && (
                 <p className='text-sm text-destructive'>
@@ -237,69 +260,48 @@ export function ModalMoveInventory({
               <div className='flex flex-col gap-4 md:flex-row bg-muted border-dashed border p-4 rounded-md'>
                 <div className='grid gap-2 w-full'>
                   <Label>Fra placering</Label>
-                  <Select
-                    value={
-                      formValues.fromPlacementID
-                        ? formValues.fromPlacementID.toString()
-                        : undefined
-                    }
+                  <AutoComplete
+                    className='bg-background'
                     disabled={!hasProduct}
-                    onValueChange={(value: string) => {
+                    autoFocus={false}
+                    placeholder='Søg i placeringer...'
+                    emptyMessage='Ingen placeringer fundet'
+                    items={placementsForProduct(formValues.productID)}
+                    onSelectedValueChange={value => {
                       resetField('fromBatchID')
-                      setValue('fromPlacementID', parseInt(value), {
-                        shouldValidate: true,
-                      })
-                    }}>
-                    <SelectTrigger className='bg-background'>
-                      <SelectValue placeholder='Vælg placering' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {placementsForProduct(formValues.productID).map(
-                        (p, i) => (
-                          <SelectItem
-                            key={i}
-                            value={p.placement.id.toString()}
-                            className='capitalize'>
-                            {p.placement.name}
-                          </SelectItem>
-                        ),
-                      )}
-                    </SelectContent>
-                  </Select>
+                      setValue('fromPlacementID', parseInt(value), { shouldValidate: true })
+                    }
+                    }
+                    onSearchValueChange={setSearchFromPlacement}
+                    selectedValue={
+                      formValues.fromPlacementID ? formValues.fromPlacementID.toString() : ''
+                    }
+                    searchValue={searchFromPlacement}
+                  />
                 </div>
                 {customer.plan == 'pro' && (
                   <div className='grid gap-2 w-full'>
                     <Label>Fra batch</Label>
-                    <Select
-                      value={
-                        formValues.fromBatchID
-                          ? formValues.fromBatchID.toString()
-                          : undefined
-                      }
+                    <AutoComplete
+                      className='bg-background'
                       disabled={!hasProduct}
-                      onValueChange={(value: string) => {
+                      autoFocus={false}
+                      placeholder='Søg i placeringer...'
+                      emptyMessage='Ingen placeringer fundet'
+                      items={batchesForProduct(formValues.productID, formValues.fromPlacementID)}
+                      onSelectedValueChange={value => {
                         //resetField('batchID')
                         setValue('fromBatchID', parseInt(value), {
                           shouldValidate: true,
                         })
-                      }}>
-                      <SelectTrigger className='bg-background'>
-                        <SelectValue placeholder='Vælg batchnr.' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {batchesForProduct(
-                          formValues.productID,
-                          formValues.fromPlacementID,
-                        ).map((p, i) => (
-                          <SelectItem
-                            key={i}
-                            value={p.batch.id.toString()}
-                            className='capitalize'>
-                            {p.batch.batch}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      }
+                      }
+                      onSearchValueChange={setSearchFromBatch}
+                      selectedValue={
+                        formValues.fromBatchID ? formValues.fromBatchID.toString() : ''
+                      }
+                      searchValue={searchFromBatch}
+                    />
                   </div>
                 )}
               </div>
@@ -315,38 +317,31 @@ export function ModalMoveInventory({
               <div className='flex flex-col gap-4 md:flex-row bg-muted border border-dashed p-4 rounded-md'>
                 <div className='grid gap-2 w-full'>
                   <Label>Til placering</Label>
-                  <Select
-                    value={
-                      formValues.toPlacementID
-                        ? formValues.toPlacementID.toString()
-                        : undefined
-                    }
+                  <AutoComplete
+                    className='bg-background'
                     disabled={!hasProduct}
-                    onValueChange={(value: string) => {
+                    autoFocus={false}
+                    placeholder='Søg i placeringer...'
+                    emptyMessage='Ingen placeringer fundet'
+                    items={placements.filter(p => p.id != formValues.fromPlacementID && p.name.toLowerCase().includes(searchToPlacement.toLowerCase())).map(p => ({
+                      label: p.name,
+                      value: p.id.toString()
+                    }))}
+                    onSelectedValueChange={value => {
                       setValue('toPlacementID', parseInt(value), {
                         shouldValidate: true,
                       })
-                    }}>
-                    <SelectTrigger className='bg-background'>
-                      <SelectValue placeholder='Vælg placering' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {placements
-                        .filter(item => item.id != formValues.fromPlacementID)
-                        .map((p, i) => (
-                          <SelectItem
-                            key={i}
-                            value={p.id.toString()}
-                            className='capitalize'>
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
+                    }
+                    }
+                    onSearchValueChange={setSearchToPlacement}
+                    selectedValue={
+                      formValues.toPlacementID ? formValues.toPlacementID.toString() : ''
+                    }
+                    searchValue={searchToPlacement}
+                  />
                 </div>
               </div>
             </div>
-
             <div className='pt-2 flex flex-col'>
               <div className='p-4 border border-b-0 rounded-t-md text-sm text-muted-foreground flex items-center gap-2 justify-center'>
                 {fromInventoryItem ? (

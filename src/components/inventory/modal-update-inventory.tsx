@@ -54,15 +54,33 @@ export function ModalUpdateInventory({
   const [newPlacement, setNewPlacement] = useState(false)
   const [newBatch, setNewBatch] = useState(false)
   const [useReference, setUseReference] = useState(false)
-  const [searchValue, setSearchValue] = useState<string>('')
+  const [searchProduct, setSearchProduct] = useState<string>('')
+  const [searchBatch, setSearchBatch] = useState<string>('')
+  const [searchPlacement, setSearchPlacement] = useState<string>('')
 
   const productOptions = products
-    //.filter(prod =>
-    //  prod.text1.toLowerCase().includes(searchValue.toLowerCase())
-    //  || prod.sku.toLowerCase().includes(searchValue.toLowerCase()))
+    .filter(prod =>
+      prod.text1.toLowerCase().includes(searchProduct.toLowerCase())
+      || prod.sku.toLowerCase().includes(searchProduct.toLowerCase()))
     .map(prod => ({
       label: prod.text1,
       value: prod.id.toString(),
+    }))
+
+  const placementOptions = placements
+    .filter(placement =>
+      placement.name.toLowerCase().includes(searchPlacement.toLowerCase()))
+    .map(placement => ({
+      label: placement.name,
+      value: placement.id.toString(),
+    }))
+
+  const batchOptions = batches
+    .filter(batch =>
+      batch.batch.toLowerCase().includes(searchBatch.toLowerCase()))
+    .map(batch => ({
+      label: batch.batch,
+      value: batch.id.toString(),
     }))
 
   const fallbackPlacementID =
@@ -124,6 +142,9 @@ export function ModalUpdateInventory({
     setError(undefined)
     setNewBatch(false)
     setNewPlacement(false)
+    setSearchProduct('')
+    setSearchPlacement('')
+    setSearchBatch('')
     setOpen(open)
   }
 
@@ -148,6 +169,7 @@ export function ModalUpdateInventory({
       setOpen(false)
       setNewBatch(false)
       setNewPlacement(false)
+      setUseReference(false)
       toast.success(siteConfig.successTitle, {
         description: `${isIncoming ? 'Tilgang' : 'Afgang'} blev oprettet`,
       })
@@ -156,7 +178,9 @@ export function ModalUpdateInventory({
 
   useCustomEventListener('UpdateInventoryByIDs', (data: any) => {
     setOpen(true)
-    setSearchValue(data.productName)
+    setSearchProduct(data.productName)
+    setSearchPlacement(data.placementName)
+    setSearchBatch(data.batchName)
     setValue('productID', data.productID, { shouldValidate: true })
     setValue('placementID', data.placementID, { shouldValidate: true })
     setValue('batchID', data.batchID, { shouldValidate: true })
@@ -197,11 +221,11 @@ export function ModalUpdateInventory({
                 onSelectedValueChange={value =>
                   setValue('productID', parseInt(value))
                 }
-                onSearchValueChange={setSearchValue}
+                onSearchValueChange={setSearchProduct}
                 selectedValue={
                   productID ? productID.toString() : ''
                 }
-                searchValue={searchValue}
+                searchValue={searchProduct}
               />
               {formState.errors.productID && (
                 <p className='text-sm text-destructive'>
@@ -233,29 +257,21 @@ export function ModalUpdateInventory({
                       {...register('placementID')}
                     />
                   ) : (
-                    <Select
-                      value={placementID ? placementID.toString() : undefined}
+                    <AutoComplete
                       disabled={!hasProduct}
-                      onValueChange={(value: string) => {
-                        //resetField('batchID')
-                        setValue('placementID', parseInt(value), {
-                          shouldValidate: true,
-                        })
-                      }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Vælg placering' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {placements.map((p, i) => (
-                          <SelectItem
-                            key={i}
-                            value={p.id.toString()}
-                            className='capitalize'>
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      autoFocus={false}
+                      placeholder='Søg i placeringer...'
+                      emptyMessage='Ingen placeringer fundet'
+                      items={placementOptions}
+                      onSelectedValueChange={value =>
+                        setValue('placementID', parseInt(value), { shouldValidate: true })
+                      }
+                      onSearchValueChange={setSearchPlacement}
+                      selectedValue={
+                        placementID ? placementID.toString() : ''
+                      }
+                      searchValue={searchPlacement}
+                    />
                   )}
                 </div>
                 {customer.plan == 'pro' && (
@@ -281,28 +297,21 @@ export function ModalUpdateInventory({
                         {...register('batchID')}
                       />
                     ) : (
-                      <Select
-                        value={batchID ? batchID.toString() : undefined}
+                      <AutoComplete
                         disabled={!hasPlacement}
-                        onValueChange={(value: string) =>
-                          setValue('batchID', parseInt(value), {
-                            shouldValidate: true,
-                          })
-                        }>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Vælg batchnr.' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {batches.map((p, i) => (
-                            <SelectItem
-                              key={i}
-                              value={p.id.toString()}
-                              className='capitalize'>
-                              {p.batch}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        autoFocus={false}
+                        placeholder='Søg i batchnr...'
+                        emptyMessage='Ingen batchnr. fundet'
+                        items={batchOptions}
+                        onSelectedValueChange={value =>
+                          setValue('batchID', parseInt(value), { shouldValidate: true })
+                        }
+                        onSearchValueChange={setSearchBatch}
+                        selectedValue={
+                          batchID ? batchID.toString() : ''
+                        }
+                        searchValue={searchBatch}
+                      />
                     )}
                   </div>
                 )}
