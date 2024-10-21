@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/app/i18n/client'
 import { Icons } from '@/components/ui/icons'
 import {
   NavigationMenu,
@@ -18,6 +19,7 @@ import { usePathname } from 'next/navigation'
 
 export function NavDesktop({ user, lng }: { user: User; lng: string }) {
   const pathname = usePathname()
+  const { t } = useTranslation(lng, 'common')
   return (
     <div className='hidden gap-6 md:flex md:gap-10'>
       <Link href={`/${lng}/oversigt`} className='flex items-center space-x-2'>
@@ -33,7 +35,7 @@ export function NavDesktop({ user, lng }: { user: User; lng: string }) {
               item => item.roles.includes(user.role) || item.roles.length == 0,
             )
             .map((item, index) => (
-              <Item key={index} pathname={pathname} item={item} user={user} />
+              <Item key={index} pathname={pathname} item={item} user={user} t={t} />
             ))}
         </NavigationMenuList>
       </NavigationMenu>
@@ -45,10 +47,12 @@ export function Item({
   item,
   pathname,
   user,
+  t
 }: {
   item: NavItem
   pathname: string
   user: User
+  t: (key: string) => string
 }) {
   function isActive(path: string): boolean {
     return pathname === path
@@ -63,7 +67,7 @@ export function Item({
             'pointer-events-none cursor-not-allowed select-none opacity-60',
         )}>
         <NavigationMenuTrigger className='gap-1.5 p-2 text-muted-foreground'>
-          {item.label}
+          {t(item.label)}
         </NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul className='grid gap-2 p-2 md:w-[250px]'>
@@ -85,14 +89,14 @@ export function Item({
                       )}>
                       <div className='space-y-1.5'>
                         <div className='flex items-center gap-1.5 text-sm font-semibold leading-none'>
-                          {link.label}
+                          {t(link.label)}
                           {link.isExternal && (
                             <Icons.external className='size-3' />
                           )}
                         </div>
                         {link.description && (
                           <p className='line-clamp-2 w-full text-xs leading-snug text-muted-foreground'>
-                            {link.description}
+                            {t(link.description)}
                           </p>
                         )}
                       </div>
@@ -119,7 +123,7 @@ export function Item({
               'gap-1.5 p-2 text-muted-foreground',
               isActive(item.href) && 'bg-muted',
             )}>
-            {item.label}
+            {t(item.label)}
             {item.isExternal && <Icons.external className='size-3' />}
           </NavigationMenuLink>
         </Link>

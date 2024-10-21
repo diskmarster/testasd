@@ -37,6 +37,10 @@
     "log-out": "Log Out"
   },
 
+  "nav-location-select": {
+    "select-location": "Select Location"
+  },
+
   "create-customer-action": {
     "primary-location": "Primary Location",
     "welcome-email": "Welcome to Nem Lager",
@@ -90,8 +94,8 @@
   "site-config": {
     "site-name": "Nem Lager",
     "site-description": "Keep track of your inventory.",
-    "error-title": "Something went wrong",
     "success-title": "Action completed",
+    "error-title": "Something went wrong",
 
     "overview": "Overview",
     "history": "History",
@@ -103,23 +107,28 @@
       "users-description": "Here you can create and update users",
       "products": "Products",
       "products-description": "Here you can create and update products",
-      "product groups": "Product groups",
-      "product groups-description": "Here you can create and update product groups",
+      "product-groups": "Product groups",
+      "product-groups-description": "Here you can create and update product groups",
       "placements": "Placements",
       "placements-description": "Here you can create and update placements",
-      "locations": "Locations",
-      "locations-description": "Here you can create and update locations"
+      "organisation": "Organisation",
+      "organisation-description": "View and edit users, locations, and company information."
     },
 
     "sys-admin-dropdown": {
       "customers": "Customers",
       "customers-description": "See an overview of all customers in Nem Lager",
-      "adminusers": "Admin Users",
+      "adminusers": "Users",
       "adminusers-description": "See an overview of all users in Nem Lager",
       "units": "Units",
       "units-description": "Here you can create and update units",
-      "errorMessags": "Error messages",
-      "errorMessags-description": "Here you can see a list of all error messages in Nem Lager"
+      "errorMessages": "Error messages",
+      "errorMessages-description": "Here you can see a list of all error messages in Nem Lager"
     }
+  },
+
+  "toasts": {
+    "location-select": "Changed location to ",
+    "unnamed": "Unnamed"
   }
 }

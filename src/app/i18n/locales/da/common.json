@@ -36,6 +36,10 @@
     "get-help": "Få hjælp",
     "log-out": "Log ud"
   },
+  "nav-location-select": {
+    "select-location": "Vælg Lokation"
+  },
+
   "create-customer-action": {
     "primary-location": "Hovedlokation",
     "welcome-email": "Velkommen til Nem Lager",
@@ -105,8 +109,8 @@
       "product-groups-description": "Her kan du oprette og opdatere varegrupper.",
       "placements": "Placeringssteder",
       "placements-description": "Her kan du oprette og opdatere placeringer.",
-      "locations": "Lokationer",
-      "locations-description": "Her kan du oprette og opdatere lokationer."
+      "organisation": "Lokationer",
+      "organisation-description": "Her kan du oprette og opdatere lokationer."
     },
 
     "sys-admin-dropdown": {
@@ -119,5 +123,10 @@
       "error-messages": "Fejlmeddelelser",
       "error-messages-description": "Her kan du se en liste over alle fejlmeddelelser i Nem Lager."
     }
+  },
+
+  "toasts": {
+    "location-select": "Skiftet lokation til ",
+    "unnamed": "Unnavngivet"
   }
 }
