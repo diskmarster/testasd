@@ -7,6 +7,9 @@ export const inviteNewUserValidation = z.object({
   locationIDs: z
     .array(z.string())
     .min(1, { message: 'Minimum en lokation skal vælges' }),
+  webAccess: z.coerce.boolean(),
+  appAccess: z.coerce.boolean(),
+  priceAccess: z.coerce.boolean(),
 })
 
 export const changeUserStatusValidation = z.object({
