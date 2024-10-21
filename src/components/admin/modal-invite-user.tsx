@@ -19,7 +19,6 @@ import { siteConfig } from '@/config/site'
 import { Location } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { User } from 'lucia'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -29,16 +28,18 @@ import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
+import { AutoComplete } from '../ui/autocomplete'
+import { UserRole, userRoles } from '@/data/user.types'
+import Link from 'next/link'
+import { Checkbox } from '../ui/checkbox'
 
 interface Props {
   locations: Location[]
   currentLocationID: string
-  user: User
   isDisabled: boolean
 }
 
 export function ModalInviteUser({
-  user,
   locations,
   currentLocationID,
   isDisabled,
@@ -48,6 +49,17 @@ export function ModalInviteUser({
   const [error, setError] = useState<string>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
+  const [searchRoles, setSearchRoles] = useState('Bruger')
+
+  const rolesOptions = userRoles
+    .filter(
+      role => role != 'system_administrator'
+        && role.toLowerCase().includes(searchRoles.toLowerCase())
+    )
+    .map(role => ({
+      label: role.replace("_", " "),
+      value: role
+    }))
 
   const { handleSubmit, register, formState, reset, watch, setValue } = useForm<
     z.infer<typeof inviteNewUserValidation>
@@ -56,6 +68,9 @@ export function ModalInviteUser({
     defaultValues: {
       locationIDs: [currentLocationID],
       role: 'bruger',
+      webAccess: true,
+      appAccess: true,
+      priceAccess: true
     },
   })
 
@@ -92,7 +107,7 @@ export function ModalInviteUser({
           <Icons.userPlus className='size-4' />
         </Button>
       </CredenzaTrigger>
-      <CredenzaContent className='md:max-w-md'>
+      <CredenzaContent className='md:max-w-3xl'>
         <CredenzaHeader>
           <CredenzaTitle>{t('modal-invite-user.title')}</CredenzaTitle>
           <CredenzaDescription>
@@ -101,7 +116,7 @@ export function ModalInviteUser({
         </CredenzaHeader>
         <CredenzaBody>
           <form
-            className='space-y-6 pb-4 md:pb-0'
+            className='flex flex-col gap-4 pb-4 md:pb-0 justify-between'
             onSubmit={handleSubmit(onSubmit)}>
             {error && (
               <Alert variant='destructive'>
@@ -110,122 +125,163 @@ export function ModalInviteUser({
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <div className='grid gap-2'>
-              <Label>{t('modal-invite-user.email')}</Label>
-              <Input
-                placeholder={t('modal-invite-user.email-placeholder')}
-                {...register('email')}
-              />
-              {formState.errors.email && (
-                <p className='text-sm text-destructive'>
-                  {formState.errors.email.message}
-                </p>
-              )}
-            </div>
-            <div className='flex flex-col gap-2'>
-              <div className='grid gap-2'>
-                <Label>{t('modal-invite-user.role')}</Label>
-                <div className='flex items-center'>
-                  <Button
-                    type='button'
-                    size='lg'
-                    onClick={() =>
-                      setValue('role', 'bruger', { shouldValidate: true })
-                    }
-                    variant={
-                      formValues.role == 'bruger' ? 'default' : 'outline'
-                    }
-                    className={cn(
-                      'flex items-center gap-2 w-full px-2',
-                      'rounded-r-none border-r-0',
-                    )}>
-                    {t('modal-invite-user.user')}
-                  </Button>
-                  <Button
-                    type='button'
-                    size='lg'
-                    onClick={() =>
-                      setValue('role', 'lokal_admin', { shouldValidate: true })
-                    }
-                    variant={
-                      formValues.role == 'lokal_admin' ? 'default' : 'outline'
-                    }
-                    className={cn(
-                      'flex items-center gap-2 w-full px-2',
-                      'rounded-r-none rounded-l-none',
-                      user.role == 'lokal_admin' && 'rounded-r-md border-r-1',
-                    )}>
-                    {t('modal-invite-user.local-admin')}
-                  </Button>
-                  {user.role != 'lokal_admin' && (
-                    <Button
-                      type='button'
-                      size='lg'
-                      onClick={() =>
-                        setValue('role', 'firma_admin', {
-                          shouldValidate: true,
-                        })
-                      }
-                      variant={
-                        formValues.role == 'firma_admin' ? 'default' : 'outline'
-                      }
-                      className={cn(
-                        'flex items-center gap-2 w-full px-2',
-                        'rounded-l-none border-l-0',
-                      )}>
-                      {t('modal-invite-user.company-admin')}
-                    </Button>
+            <div className='flex gap-4 h-[inherit] flex-col md:flex-row'>
+              <div className='w-full space-y-4'>
+                <div className='grid gap-2'>
+                  <Label>Email</Label>
+                  <Input
+                    placeholder='Indtast email for ny bruger'
+                    {...register('email')}
+                  />
+                  {formState.errors.email && (
+                    <p className='text-sm text-destructive'>
+                      {formState.errors.email.message}
+                    </p>
                   )}
                 </div>
-              </div>
-            </div>
-            <div className='grid gap-2'>
-              <div className='flex items-center justify-between'>
-                <Label>{t('modal-invite-user.location-access')}</Label>
-                <span className='text-muted-foreground text-xs tabular-nums'>
-                  {formValues.locationIDs.length}
-                  {t('modal-invite-user.of')}
-                  {locations.length} {t('modal-invite-user.locations-chosen')}
-                </span>
-              </div>
-              <ScrollArea
-                className='border p-2 rounded-md'
-                maxHeight='max-h-56'>
-                <div className='space-y-2'>
-                  {locations.map(loc => (
-                    <div
-                      key={loc.id}
-                      className='border rounded-sm p-2 flex items-center justify-between'>
-                      <span className='text-muted-foreground text-sm'>
-                        {loc.name}
-                      </span>
-                      <Switch
-                        checked={formValues.locationIDs.includes(loc.id)}
-                        onCheckedChange={(checked: boolean) => {
-                          let locations = formValues.locationIDs
+                <div className='flex flex-col gap-2'>
+                  <div className='grid gap-2'>
+                    <Label>Rolle</Label>
+                    <AutoComplete
+                      autoFocus={false}
+                      placeholder='Søg i roller...'
+                      emptyMessage='Ingen roller fundet'
+                      items={rolesOptions}
+                      onSelectedValueChange={value => {
+                        const role = value as UserRole
 
-                          if (checked) {
-                            locations.push(loc.id)
-                          } else {
-                            locations = locations.filter(
-                              locID => locID != loc.id,
-                            )
-                          }
+                        switch (role) {
+                          case 'admininstrator':
+                          case 'moderator':
+                          case 'bruger':
+                            setValue('webAccess', true, { shouldValidate: true })
+                            setValue('appAccess', true, { shouldValidate: true })
+                            setValue('priceAccess', true, { shouldValidate: true })
+                            break;
+                          case 'afgang':
+                            setValue('webAccess', false, { shouldValidate: true })
+                            setValue('appAccess', true, { shouldValidate: true })
+                            setValue('priceAccess', false, { shouldValidate: true })
+                            break;
+                          case 'læseadgang':
+                            setValue('webAccess', true, { shouldValidate: true })
+                            setValue('appAccess', false, { shouldValidate: true })
+                            setValue('priceAccess', false, { shouldValidate: true })
+                            break;
+                        }
 
-                          setValue('locationIDs', locations, {
-                            shouldValidate: true,
-                          })
-                        }}
-                      />
+                        setValue('role', role, { shouldValidate: true })
+                      }}
+                      onSearchValueChange={setSearchRoles}
+                      selectedValue={
+                        formValues.role ? formValues.role.toString() : ''
+                      }
+                      searchValue={searchRoles}
+                    />
+                    <div className='flex items-center gap-1 text-xs text-muted-foreground'>
+                      <p>Hvad kan rollerne? Læs mere mere på vores{" "}
+                        <Link className='underline' href={'/faq?spørgsmål="hvad kan brugerrollerne?"'} target="_blank">F.A.Q. side</Link>
+                      </p>
                     </div>
-                  ))}
+                  </div>
                 </div>
-              </ScrollArea>
-              {formState.errors.locationIDs && (
-                <p className='text-sm text-destructive'>
-                  {formState.errors.locationIDs.message}
-                </p>
-              )}
+                {formValues.role == 'bruger' && (
+                  <div className='flex flex-col gap-2'>
+                    <Label>Rettigheder</Label>
+                    <div className='space-y-1'>
+                      <div className='flex items-center gap-2'>
+                        <Checkbox
+                          checked={formValues.webAccess}
+                          onCheckedChange={(checked: boolean) => {
+                            setValue('webAccess', checked, {
+                              shouldValidate: true,
+                            })
+                          }}
+                        />
+                        <span className='text-muted-foreground text-sm'>
+                          Bruger skal have adgang til web
+                        </span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <Checkbox
+                          checked={formValues.appAccess}
+                          onCheckedChange={(checked: boolean) => {
+                            setValue('appAccess', checked, {
+                              shouldValidate: true,
+                            })
+                          }}
+                        />
+                        <span className='text-muted-foreground text-sm'>
+                          Bruger skal have adgang til app
+                        </span>
+                      </div>
+                      <div className='flex items-center gap-2'>
+                        <Checkbox
+                          checked={formValues.priceAccess}
+                          onCheckedChange={(checked: boolean) => {
+                            setValue('priceAccess', checked, {
+                              shouldValidate: true,
+                            })
+                          }}
+                        />
+                        <span className='text-muted-foreground text-sm'>
+                          Bruger skal have adgang til at se priser
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className='flex w-px bg-border' />
+              <div className='grid gap-2 w-full'>
+                <div className='flex items-center justify-between'>
+                  <Label>Lokations adgang</Label>
+                  <span className='text-muted-foreground text-xs tabular-nums leading-[14px]'>
+                    {formValues.locationIDs.length}
+                    {' af '}
+                    {locations.length} lokationer valgt
+                  </span>
+                </div>
+                <ScrollArea
+                  className='h-[314px]'
+                  maxHeight='max-h-[314px]'
+                >
+                  <div className='space-y-2'>
+                    {locations.map(loc => (
+                      <div
+                        key={loc.id}
+                        className={cn('border rounded-sm py-2 px-3 flex items-center justify-between transition-colors', formValues.locationIDs.includes(loc.id) && 'bg-primary/5')}>
+                        <span className='text-muted-foreground text-sm'>
+                          {loc.name}
+                        </span>
+                        <Switch
+                          checked={formValues.locationIDs.includes(loc.id)}
+                          onCheckedChange={(checked: boolean) => {
+                            let locations = formValues.locationIDs
+
+                            if (checked) {
+                              locations.push(loc.id)
+                            } else {
+                              locations = locations.filter(
+                                locID => locID != loc.id,
+                              )
+                            }
+
+                            setValue('locationIDs', locations, {
+                              shouldValidate: true,
+                            })
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+                {formState.errors.locationIDs && (
+                  <p className='text-sm text-destructive'>
+                    {formState.errors.locationIDs.message}
+                  </p>
+                )}
+              </div>
             </div>
             <Button
               className='w-full flex items-center gap-2'
