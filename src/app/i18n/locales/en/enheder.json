@@ -31,5 +31,9 @@
     "bar": "Bar the unit",
     "unbar": "Unbar the unit"
 
+  },
+  "toasts": {
+    "unit-created": " unit created successfully",
+    "unit-updated": " unit updated successfully"
   }
 }
