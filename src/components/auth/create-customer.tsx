@@ -231,7 +231,7 @@ function FormCard({
     plan: 'lite' | 'plus' | 'pro'
     extraUsers: number
   }>
-  formValues: { extraUsers: number, plan: Plan }
+  formValues: { extraUsers: number; plan: Plan }
   pending: boolean
 }) {
   function increment() {
@@ -280,6 +280,10 @@ function FormCard({
               type='number'
               step={1}
               {...register('extraUsers')}
+              onChange={e => {
+                const value = parseInt(e.target.value, 10) || 0
+                setValue('extraUsers', value, { shouldValidate: true })
+              }}
               className={cn(
                 'w-1/2 h-14 rounded-none text-center text-2xl z-10 shadow-none',
                 '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
@@ -303,7 +307,9 @@ function FormCard({
               variant='outline'
               className={cn(
                 'h-10 w-1/4 rounded-tl-none rounded-r-none border-t-0 border-r-0',
-                formValues.extraUsers && formValues.plan && 'rounded-l-none shadow-none',
+                formValues.extraUsers &&
+                  formValues.plan &&
+                  'rounded-l-none shadow-none',
               )}
               onClick={() =>
                 setValue('extraUsers', 5, { shouldValidate: true })
@@ -345,7 +351,9 @@ function FormCard({
               variant='outline'
               className={cn(
                 'h-10 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
-                formValues.extraUsers && formValues.plan && 'rounded-r-none shadow-none',
+                formValues.extraUsers &&
+                  formValues.plan &&
+                  'rounded-r-none shadow-none',
               )}
               onClick={() =>
                 setValue('extraUsers', 20, { shouldValidate: true })
@@ -356,7 +364,9 @@ function FormCard({
           <div
             className={cn(
               'bg-border rounded-b-md text-sm h-0 transition-all text-muted-foreground flex items-center gap-2 justify-center',
-              formValues.extraUsers && formValues.plan && 'shadow-sm h-12 md:h-9',
+              formValues.extraUsers &&
+                formValues.plan &&
+                'shadow-sm h-12 md:h-9',
             )}>
             {formValues.extraUsers != 0 && formValues.plan && (
               <p className='text-center'>
