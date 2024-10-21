@@ -55,8 +55,8 @@ export function ModalCreatePlacement() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${values.name} placering oprettet`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.placement-created')}`,
       })
     })
   }

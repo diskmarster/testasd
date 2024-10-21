@@ -26,7 +26,7 @@ export function TableOverviewActions({ row }: Props) {
       const updatedBarredStatus = !isCurrentlyBarred
       const res = await toggleBarredPlacementAction({
         placementID: row.original.id,
-        isBarred: updatedBarredStatus,
+        isBarred: updatedBarredStatus
       })
       if (res && res.serverError) {
         toast.error(siteConfig.errorTitle, {

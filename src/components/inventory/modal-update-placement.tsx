@@ -65,8 +65,8 @@ export function ModalUpdatePlacement({
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: 'Placeringen er opdateret succesfuldt.',
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.placement-updated')}`,
       })
     })
   }

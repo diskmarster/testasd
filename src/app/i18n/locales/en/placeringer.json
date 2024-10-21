@@ -37,5 +37,9 @@
     "placement": "Placement",
     "placement-placeholder": "Enter name for placement",
     "update-button": "Update"
-  }
+  },
+  "toasts":{
+      "placement-created": " placement created successfully",
+      "placement-updated": " placement updated successfully"
+    }
 }

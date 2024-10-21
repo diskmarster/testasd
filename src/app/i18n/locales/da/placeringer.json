@@ -37,6 +37,11 @@
       "placement": "Placering",
       "placement-placeholder": "Indtast navn på placering",
       "update-button": "Opdater"
+    },
+
+    "toasts":{
+      "placement-created": " placering oprettet succesfuldt",
+      "placement-updated": " placering opdateret succesfuldt"
     }
   }
   
