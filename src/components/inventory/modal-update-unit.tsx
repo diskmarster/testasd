@@ -66,8 +66,8 @@ export function ModalUpdateUnit({
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: 'Enheden er opdateret succesfuldt.',
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.unit-updated')}`,
       })
     })
   }

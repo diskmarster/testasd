@@ -51,8 +51,8 @@ export function ModalCreateUnit() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${values.name} enhed oprettet`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.create-unit')}`,
       })
     })
   }

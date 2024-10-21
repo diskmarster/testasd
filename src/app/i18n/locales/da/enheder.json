@@ -1,35 +1,38 @@
 {
-    "unit-page": {
-      "unit-title": "Enheder",
-      "unit-description": "Her kan du oprette og opdatere enheder"
-    },
-    "unit-columns": {
-      "unit": "Enhed",
-      "is-barred": "Spærret",
-      "is-barred-yes": "Ja",
-      "is-barred-no": "Nej",
-      "created-at": "Oprettet",
-      "updated-at": "Opdateret"
-    },
-    "modal-create-unit": {
-      "create-unit-title": "Opret Enhed",
-      "create-unit-description": "Her kan du oprette en ny enhed",
-      "unit-name": "Enhedsnavn",
-      "unit-name-placeholder": "Indtast enhedsnavn",
-      "create-button": "Opret"
-    },
-  
-    "modal-update-unit": {
-      "update-unit-title": "Opdater Enhed",
-      "update-unit-description": "Her kan du opdatere en enhed",
-      "unit-name": "Enhedsnavn",
-      "update-button": "Opdater"
-    },
-  
-    "table-units-actions": {
-      "update": "Opdater",
-      "bar": "Spær enheden",
-      "unbar": "Fjern spærring af enheden"
-    }
+  "unit-page": {
+    "unit-title": "Enheder",
+    "unit-description": "Her kan du oprette og opdatere enheder"
+  },
+  "unit-columns": {
+    "unit": "Enhed",
+    "is-barred": "Spærret",
+    "is-barred-yes": "Ja",
+    "is-barred-no": "Nej",
+    "created-at": "Oprettet",
+    "updated-at": "Opdateret"
+  },
+  "modal-create-unit": {
+    "create-unit-title": "Opret Enhed",
+    "create-unit-description": "Her kan du oprette en ny enhed",
+    "unit-name": "Enhedsnavn",
+    "unit-name-placeholder": "Indtast enhedsnavn",
+    "create-button": "Opret"
+  },
+
+  "modal-update-unit": {
+    "update-unit-title": "Opdater Enhed",
+    "update-unit-description": "Her kan du opdatere en enhed",
+    "unit-name": "Enhedsnavn",
+    "update-button": "Opdater"
+  },
+
+  "table-units-actions": {
+    "update": "Opdater",
+    "bar": "Spær enheden",
+    "unbar": "Fjern spærring af enheden"
+  },
+  "toasts": {
+    "unit-created": " enhed oprettet succesfuldt",
+    "unit-updated": " enhed opdateret succesfuldt"
   }
-  
+}
