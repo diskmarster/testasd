@@ -25,6 +25,8 @@ type Props<T extends string> = {
   placeholder?: string
   onSelectSearchValue?: 'value' | 'label'
   autoFocus?: boolean
+  disabled?: boolean
+  className?: string
 }
 
 export function AutoComplete<T extends string>({
@@ -38,6 +40,8 @@ export function AutoComplete<T extends string>({
   placeholder = 'Søg...',
   onSelectSearchValue = 'label',
   autoFocus = false,
+  disabled = false,
+  className = ''
 }: Props<T>) {
   const [open, setOpen] = useState(false)
 
@@ -54,6 +58,7 @@ export function AutoComplete<T extends string>({
   )
 
   const reset = () => {
+    setOpen(false)
     onSelectedValueChange('' as T)
     onSearchValueChange('')
   }
@@ -88,12 +93,14 @@ export function AutoComplete<T extends string>({
           <PopoverAnchor asChild>
             <CommandPrimitive.Input
               asChild
+              className={cn('', className)}
+              disabled={disabled}
               value={searchValue}
               onValueChange={onSearchValueChange}
-              onKeyDown={e => setOpen(e.key !== 'Escape')}
+              onKeyDown={e => setOpen(e.key != 'Escape' && e.key != 'Tab')}
               onMouseDown={() => setOpen(open => !!searchValue || !open)}
               //onFocus={() => setOpen(true)}
-              onBlur={onInputBlur}
+              //onBlur={onInputBlur}
               autoFocus={autoFocus}>
               <Input placeholder={placeholder} autoFocus={autoFocus} />
             </CommandPrimitive.Input>
@@ -145,7 +152,7 @@ export function AutoComplete<T extends string>({
                 </ScrollArea>
               ) : null}
               {!isLoading ? (
-                <CommandEmpty>{emptyMessage ?? 'No items.'}</CommandEmpty>
+                <CommandEmpty>{emptyMessage ?? 'Ingen valgmuligheder'}</CommandEmpty>
               ) : null}
             </CommandList>
           </PopoverContent>
