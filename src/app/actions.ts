@@ -11,6 +11,7 @@ const changeLocationValidation = z.object({
 })
 
 export const changeLocationAction = privateAction
+  .metadata({ actionName: 'changeLocation' })
   .schema(changeLocationValidation)
   .action(async ({ parsedInput }) => {
     locationService.setCookie(parsedInput.locationID)
