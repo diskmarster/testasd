@@ -11,17 +11,19 @@ import {
   deleteReorderValidation,
   updateReorderValidation,
 } from './validation'
+import { serverTranslation } from '@/app/i18n'
 
 export const createReorderAction = privateAction
   .metadata({actionName: 'createReorder'})
   .schema(createReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
     if (!existsLocation) {
-      throw new ActionError('Firma lokation findes ikke i databasen')
+      throw new ActionError(t('restock-action.company-location-not-found'))
     }
     if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError('Firma lokation tilhører dit firma')
+      throw new ActionError(t('restock-action.company-location-belongs-to-your-company'))
     }
 
     const newReorder = await inventoryService.createReorder({
@@ -29,7 +31,7 @@ export const createReorderAction = privateAction
       customerID: ctx.user.customerID,
     })
     if (!newReorder) {
-      throw new ActionError('Minimums beholdning blev ikke oprettet')
+      throw new ActionError(t('minimum-stock-action.minimum-stock-not-created'))
     }
 
     revalidatePath(`/${ctx.lang}/genbestil`)
@@ -39,12 +41,13 @@ export const updateReorderAction = privateAction
   .metadata({actionName: 'updateReorder'})
   .schema(updateReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
     if (!existsLocation) {
-      throw new ActionError('Firma lokation findes ikke i databasen')
+      throw new ActionError(t('restock-action.company-location-not-found'))
     }
     if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError('Firma lokation tilhører dit firma')
+      throw new ActionError(t('restock-action.company-location-belongs-to-your-company'))
     }
 
     const newReorder = await inventoryService.updateReorderByIDs(
@@ -57,7 +60,7 @@ export const updateReorderAction = privateAction
       },
     )
     if (!newReorder) {
-      throw new ActionError('Minimums beholdning blev ikke opdateret')
+      throw new ActionError(t('minimum-stock-action.minimum-stock-not-updated'))
     }
 
     revalidatePath(`/${ctx.lang}/genbestil`)
@@ -67,12 +70,13 @@ export const deleteReorderAction = privateAction
   .metadata({actionName: 'deleteReorder'})
   .schema(deleteReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
     if (!existsLocation) {
-      throw new ActionError('Firma lokation findes ikke i databasen')
+      throw new ActionError(t('restock-action.company-location-not-found'))
     }
     if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError('Firma lokation tilhører dit firma')
+      throw new ActionError(t('restock-action.company-location-belongs-to-your-company'))
     }
 
     const didDelete = await inventoryService.deleteReorderByIDs(
@@ -81,7 +85,7 @@ export const deleteReorderAction = privateAction
       ctx.user.customerID,
     )
     if (!didDelete) {
-      throw new ActionError('Minimums beholdning blev ikke slettet')
+      throw new ActionError(t('minimum-stock-action.minimum-stock-not-deleted'))
     }
 
     revalidatePath(`/${ctx.lang}/genbestil`)
@@ -91,12 +95,13 @@ export const addOrderedToReorderAction = privateAction
   .metadata({actionName: 'addOrderedToReorderAction'})
   .schema(addOrderedToReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
     if (!existsLocation) {
-      throw new ActionError('Firma lokation findes ikke i databasen')
+      throw new ActionError(t('restock-action.company-location-not-found'))
     }
     if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError('Firma lokation tilhører dit firma')
+      throw new ActionError(t('restock-action.company-location-belongs-to-your-company'))
     }
 
     const newReorder = await inventoryService.updateReorderByIDs(
@@ -108,7 +113,7 @@ export const addOrderedToReorderAction = privateAction
       },
     )
     if (!newReorder) {
-      throw new ActionError('Minimums beholdning blev ikke opdateret')
+      throw new ActionError(t('minimum-stock-action.minimum-stock-not-updated'))
     }
 
     revalidatePath(`/${ctx.lang}/genbestil`)

@@ -1,5 +1,6 @@
 'use server'
 
+import { serverTranslation } from '@/app/i18n'
 import { EmailInviteUser } from '@/components/email/email-invite-user'
 import { siteConfig } from '@/config/site'
 import { adminAction } from '@/lib/safe-action'
@@ -11,6 +12,7 @@ import {
 } from '@/service/customer.utils'
 import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
+import { passwordResetService } from '@/service/password-reset'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
@@ -23,12 +25,12 @@ import {
   resetUserPasswordValidation,
   updateCustomerValidation,
 } from './validation'
-import { passwordResetService } from '@/service/password-reset'
 
 export const toggleUserStatusAction = adminAction
-  .metadata({actionName: 'toggleUserStatus'})
+  .metadata({ actionName: 'toggleUserStatus' })
   .schema(changeUserStatusValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const status = parsedInput.status == 'active' ? true : false
     const userTogglePromises = parsedInput.userIDs.map(uID => {
       return userService.updateStatus(uID, status)
@@ -48,31 +50,34 @@ export const toggleUserStatusAction = adminAction
 
     for (const resp of toggleResponses) {
       if (resp.status == 'rejected') {
-        throw new ActionError('Kunne ikke opdatere brugere')
+        throw new ActionError(t('organisation-action.couldnt-update-users'))
       }
     }
 
-    revalidatePath('/admin/organisation')
+    revalidatePath(`/${ctx.lang}/admin/organisation`)
   })
 
 export const inviteNewUserAction = adminAction
-  .metadata({actionName: 'inviteNewUser'})
+  .metadata({ actionName: 'inviteNewUser' })
   .schema(inviteNewUserValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existingUser = await userService.getByEmail(parsedInput.email)
     if (existingUser) {
-      throw new ActionError('En bruger med den email findes allerede')
+      throw new ActionError(t('organisation-action.existing-user-mail'))
     }
 
     const users = await userService.getAllByCustomerID(ctx.user.customerID)
     const customer = await customerService.getByID(ctx.user.customerID)
     if (!customer) {
-      throw new ActionError('Kunne ikke finde firmakonto')
+      throw new ActionError(
+        t('organisation-action.company-account-doesnt-exist'),
+      )
     }
 
     // TODO: add customers extra users to function below when its added
     if (isUserLimitReached(customer.plan, customer.extraUsers, users.length)) {
-      throw new ActionError('Du har nået brugergrænsen')
+      throw new ActionError(t('organisation-action.company-user-limit-reached'))
     }
 
     const userInviteLink = await userService.createUserLink({
@@ -82,7 +87,9 @@ export const inviteNewUserAction = adminAction
       locationIDs: parsedInput.locationIDs,
     })
     if (!userInviteLink) {
-      throw new ActionError('Kunne ikke sende et aktiveringslink')
+      throw new ActionError(
+        t('organisation-action.couldnt-send-activation-link'),
+      )
     }
 
     const subject = customer
@@ -97,9 +104,10 @@ export const inviteNewUserAction = adminAction
   })
 
 export const createNewLocationAction = adminAction
-  .metadata({actionName: 'createNewLocation'})
+  .metadata({ actionName: 'createNewLocation' })
   .schema(createNewLocationValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     // 1. is location limit reached?
     // 2. does location exist?
     // 3. create location
@@ -111,18 +119,20 @@ export const createNewLocationAction = adminAction
     const locations = await locationService.getByCustomerID(ctx.user.customerID)
     const customer = await customerService.getByID(ctx.user.customerID)
     if (!customer) {
-      throw new ActionError('Lokation findes allerede')
+      throw new ActionError(t('organisation-action.location-already-exists'))
     }
 
     if (isLocationLimitReached(customer.plan, locations.length)) {
-      throw new ActionError('Du har nået lokationsgrænsen')
+      throw new ActionError(
+        t('organisation-action.company-location-limit-reached'),
+      )
     }
 
     const existingLocation = await locationService.getByName(
       parsedInput.name.trim(),
     )
     if (existingLocation) {
-      throw new ActionError('Lokation findes allerede')
+      throw new ActionError(t('organisation-action.location-already-exists'))
     }
 
     const didCreateLocation = await locationService.createWithAccess(
@@ -131,16 +141,17 @@ export const createNewLocationAction = adminAction
       parsedInput.userIDs,
     )
     if (!didCreateLocation) {
-      throw new ActionError('Lokationen blev ikke oprettet')
+      throw new ActionError(t('organisation-action.location-not-created'))
     }
 
     revalidatePath(parsedInput.pathname)
   })
 
 export const editLocationAction = adminAction
-  .metadata({actionName: 'editLocation'})
+  .metadata({ actionName: 'editLocation' })
   .schema(editLocationValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     // 1. fetch old accesses for location
     // 2. update location name
     // 3. create/remove user accesses
@@ -157,18 +168,20 @@ export const editLocationAction = adminAction
       parsedInput.name,
       oldUsersAccess,
       parsedInput.userIDs,
+      ctx.lang,
     )
     if (!didUpdateLocation) {
-      throw new ActionError('Lokationen blev ikke opdateret')
+      throw new ActionError(t('organisation-action.location-not-updated'))
     }
 
-    revalidatePath('/admin/organisation')
+    revalidatePath(`/${ctx.lang}/admin/organisation`)
   })
 
 export const changeLocationStatusAction = adminAction
-  .metadata({actionName: 'changeLocation'})
+  .metadata({ actionName: 'changeLocation' })
   .schema(changeLocationStatusValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     // 1. toggle location by ID
     // 2. revalidate path
 
@@ -181,37 +194,42 @@ export const changeLocationStatusAction = adminAction
 
     for (const resp of toggleResponses) {
       if (resp.status == 'rejected') {
-        throw new ActionError('Kunne ikke opdatere lokationer')
+        throw new ActionError(t('organisation-action.couldnt-update-locations'))
       }
       if (resp.status == 'fulfilled' && resp.value == false) {
-        throw new ActionError('Kunne ikke opdatere lokationer')
+        throw new ActionError(t('organisation-action.couldnt-update-locations'))
       }
     }
 
-    revalidatePath('/admin/organisation')
+    revalidatePath(`/${ctx.lang}/admin/organisation`)
   })
 
 export const updateCustomerAction = adminAction
-  .metadata({actionName: 'updateCustomer'})
+  .metadata({ actionName: 'updateCustomer' })
   .schema(updateCustomerValidation)
-  .action(async ({ parsedInput, ctx: { user } }) => {
+  .action(async ({ parsedInput, ctx: { user, lang } }) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
     const updatedCustomer = customerService.updateByID(user.customerID, {
       ...parsedInput,
     })
     if (!updatedCustomer) {
-      throw new ActionError('Firma blev ikke opdateret')
+      throw new ActionError(t('organisation-action.customer-wasnt-updated'))
     }
-    revalidatePath('/admin/organisation')
+    revalidatePath(`/${lang}/admin/organisation`)
   })
 
 export const resetUserPasswordAction = adminAction
-  .metadata({actionName: 'resetUserPassword'})
+  .metadata({ actionName: 'resetUserPassword' })
   .schema(resetUserPasswordValidation)
-  .action(async ({parsedInput}) => {
-    const linkCreated = await passwordResetService.createAndSendLink(parsedInput.email)
+  .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
+    const linkCreated = await passwordResetService.createAndSendLink(
+      parsedInput.email,
+      ctx.lang,
+    )
     if (!linkCreated) {
       throw new ActionError(
-        `${ACTION_ERR_INTERNAL}. Kunne ikke oprette nulstillings link`,
+        `${ACTION_ERR_INTERNAL}. ${t('organisation-action.couldnt-create-reset-link')}`,
       )
     }
   })

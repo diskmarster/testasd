@@ -1,6 +1,7 @@
 'use server'
 
 import { signInValidation } from '@/app/[lng]/(auth)/log-ind/validation'
+import { serverTranslation } from '@/app/i18n'
 import { publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { sessionService } from '@/service/session'
@@ -11,15 +12,16 @@ export const signInAction = publicAction
   .metadata({ actionName: 'signIn' })
   .schema(signInValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existingUser = await userService.verifyPassword(
       parsedInput.email.toLowerCase(),
       parsedInput.password,
     )
     if (!existingUser) {
-      throw new ActionError('Forkert email eller kodeord')
+      throw new ActionError(t('log-in-action.wrong-credentials'))
     }
     if (!existingUser.isActive) {
-      throw new ActionError('Brugeren er inaktiv')
+      throw new ActionError(t('log-in-action.user-inactive'))
     }
 
     await sessionService.invalidateByID(existingUser.id)

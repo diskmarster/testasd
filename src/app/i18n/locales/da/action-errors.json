@@ -1,0 +1,141 @@
+{
+  "forgot-password-action": {
+    "link-create-failed": "Kunne ikke oprette et nulstillingslink",
+    "expired": "Nulstillingslinket er udløbet",
+    "pw-reset": "Kunne ikke nulstille adgangskoden"
+  },
+
+  "invited-user-action": {
+    "link-no-longer-exist": "Invitationslinket eksisterer ikke længere",
+    "expired-link": "Invitationslinket er udløbet",
+    "company-account-doesnt-exist": "Virksomhedskontoen eksisterer ikke",
+    "existing-user-mail": "E-mailen er allerede i brug",
+    "user-not-created": "Kunne ikke oprette brugeren",
+    "invitation-link-not-deleted": "Kunne ikke slette invitationslinket for brugerID"
+  },
+
+  "log-in-action": {
+    "wrong-credentials": "Forkert e-mail eller adgangskode",
+    "user-inactive": "Brugeren er inaktiv"
+  },
+
+  "create-action": {
+    "customer-email-exists": "En kunde med denne e-mail eksisterer allerede",
+    "user-email-exists": "En bruger med denne e-mail eksisterer allerede",
+    "customer-not-created": "Noget gik galt under oprettelsen af kunden",
+    "location-not-created": "Noget gik galt under oprettelsen af lokationen",
+    "activation-mail-not-sent": "Noget gik galt under afsendelsen af aktiveringsmailen"
+  },
+
+  "register-action": {
+    "link-no-longer-exist": "Registreringslinket eksisterer ikke længere",
+    "expired-link": "Registreringslinket er udløbet",
+    "company-account-doesnt-exist": "Virksomhedskontoen eksisterer ikke",
+    "company-user-limit-reached": "Virksomheden har nået brugergrænsen",
+    "existing-user-mail": "E-mailen er allerede i brug",
+    "user-not-created": "Kunne ikke oprette brugeren",
+    "company-account-not-activated": "Virksomhedskontoen blev ikke aktiveret",
+    "user-no-location-access": "Noget gik galt med at give brugeren adgang til lokationen"
+  },
+
+  "organisation-action": {
+    "couldnt-update-users": "Kunne ikke opdatere brugerne",
+    "existing-user-mail": "E-mailen er allerede i brug",
+    "company-account-doesnt-exist": "Virksomhedskontoen eksisterer ikke",
+    "company-user-limit-reached": "Virksomheden har nået brugergrænsen",
+    "couldnt-send-activation-link": "Kunne ikke sende aktiveringslinket",
+    "location-already-exists": "Lokationen eksisterer allerede",
+    "company-location-limit-reached": "Virksomheden har nået lokationsgrænsen",
+    "location-not-created": "Noget gik galt under oprettelsen af lokationen",
+    "location-not-updated": "Noget gik galt under opdateringen af lokationen",
+    "couldnt-update-locations": "Kunne ikke opdatere lokationerne",
+    "company-wasnt-updated": "Noget gik galt under opdateringen af virksomheden",
+    "couldnt-create-reset-link": "Kunne ikke oprette et nulstillingslink"
+  },
+
+  "placement-action": {
+    "location-not-found": "Kunne ikke finde din lokation",
+    "customer-not-found": "Virksomhedskontoen eksisterer ikke",
+    "placement-not-created": "Noget gik galt under oprettelsen af placeringen",
+    "placement-not-updated": "Noget gik galt under opdateringen af placeringen",
+    "placement-not-updated-barred": "Noget gik galt under spærringen af placeringen"
+  },
+
+  "product-action": {
+    "product-not-created": "Noget gik galt under oprettelsen af produktet",
+    "product-not-updated": "Noget gik galt under opdateringen af produktet",
+    "product-not-updated-barred": "Noget gik galt under spærringen af produktet"
+  },
+
+  "product-group-action": {
+    "user-not-logged-in": "Bruger ikke logget ind",
+    "company-not-found": "Virksomhedskontoen eksisterer ikke",
+    "product-group-not-created": "Noget gik galt under oprettelsen af produktgruppen",
+    "product-group-not-updated": "Noget gik galt under opdateringen af produktgruppen",
+    "product-group-not-updated-barred": "Noget gik galt under spærringen af produktgruppen"
+  },
+
+  "restock-action": {
+    "company-location-not-found": "Virksomhedslokationen blev ikke fundet",
+    "company-location-belongs-to-your-company": "Virksomhedslokationen tilhører din virksomhed",
+    "minimum-stock-quantity-not-created": "Noget gik galt under oprettelsen af minimum lagerbeholdningen",
+    "minimum-stock-quantity-not-deleted": "Noget gik galt under sletningen af minimum lagerbeholdningen",
+    "minimum-stock-quantity-not-updated": "Noget gik galt under opdateringen af minimum lagerbeholdningen"
+  },
+  "overview-action": {
+    "location-not-found": "Kunne ikke finde din lokation",
+    "customer-not-found": "Virksomhedskontoen eksisterer ikke",
+    "placement-not-created": "Noget gik galt under oprettelsen af placeringen",
+    "batch-not-created": "Noget gik galt under oprettelsen af batchen",
+    "exact-inventory-not-found": "Kunne ikke finde det præcise lager"
+  },
+
+  "profile-action": {
+    "profile-not-updated": "Noget gik galt under opdateringen af profilen",
+    "profile-not-deleted": "Noget gik galt under sletningen af profilen",
+    "password-not-correct": "Adgangskoden er forkert",
+    "password-not-updated": "Noget gik galt under opdateringen af adgangskoden",
+    "pin-not-correct": "PIN-koden er forkert, prøv igen",
+    "pin-not-updated": "Noget gik galt under opdateringen af PIN-koden",
+    "no-access-to-location": "Du har ikke adgang til denne lokation",
+    "primary-location-not-updated": "Noget gik galt under opdateringen af din primære lokation"
+  },
+
+  "unit-action": {
+    "user-not-logged-in": "Bruger ikke logget ind",
+    "unit-not-created": "Noget gik galt under oprettelsen af enheden",
+    "unit-not-updated": "Noget gik galt under opdateringen af enheden",
+    "unit-not-updated-barred": "Noget gik galt under spærringen af enheden"
+  },
+
+  "inventory-service-action": {
+    "restock-not-updated": "Noget gik galt under opdateringen af genopfyldningen",
+    "inventory-not-updated": "Noget gik galt under opdateringen af lageret",
+    "couldnt-move-inventory": "Kunne ikke flytte lageret",
+    "couldnt-move-inventory-to-placement": "Kunne ikke flytte lageret til placeringen",
+    "couldnt-update-history": "Kunne ikke opdatere historikken",
+    "placement-already-exists": "Placeringen eksisterer allerede",
+    "product-group-name-already-exists": "Produktgruppenavnet eksisterer allerede",
+    "batch-already-exists": "Batchen eksisterer allerede",
+    "unit-name-already-exists": "Enhedsnavnet eksisterer allerede",
+    "unit-barring-failed": "Noget gik galt under spærringen af enheden",
+    "product-group-barring-failed": "Noget gik galt under spærringen af produktgruppen",
+    "placement-barring-failed": "Noget gik galt under spærringen af placeringen"
+  },
+
+  "product-service-action": {
+    "barcode-already-exists": "Stregkoden eksisterer allerede",
+    "sku-already-exists": "Produktnummeret eksisterer allerede",
+    "product-barring-failed": "Noget gik galt under spærringen af produktet",
+    "product-id-not-found": "Kunne ikke finde produktet efter id"
+  },
+
+  "location-service-action": {
+    "location-didnt-update": "Noget gik galt under opdateringen af lokationsnavnet"
+  },
+
+  "password-reset-action": {
+    "no-user-with-email": "Ingen bruger med denne e-mail fundet",
+    "couldnt-create-link": "Kunne ikke oprette et nulstillingslink"
+  }
+}

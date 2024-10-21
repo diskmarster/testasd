@@ -16,7 +16,9 @@ import {
   ProductID,
 } from '@/lib/database/schema/inventory'
 
-import { ImportProducts } from '@/app/(site)/admin/produkter/validation'
+import { ImportProducts } from '@/app/[lng]/(site)/admin/produkter/validation'
+import { serverTranslation } from '@/app/i18n'
+import { fallbackLng } from '@/app/i18n/settings'
 import { user as userData } from '@/data/user'
 import { UserID } from '@/lib/database/schema/auth'
 import {
@@ -28,11 +30,13 @@ import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
 
 export const productService = {
-  create: async function(
+  create: async function (
     productData: NewProduct,
     customerID: CustomerID,
     userID: UserID,
+    lang: string = fallbackLng,
   ): Promise<Product | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     try {
       const transaction = await db.transaction(async trx => {
         const userUnitAndGroupPromise = Promise.all([
@@ -120,15 +124,18 @@ export const productService = {
     } catch (err) {
       if (err instanceof LibsqlError) {
         if (err.message.includes('barcode')) {
-          throw new ActionError('Stregkoden findes allerede')
+          throw new ActionError(
+            t('product-service-action-barcode-already-exists'),
+          )
         }
         if (err.message.includes('sku')) {
-          throw new ActionError('Varenr. findes allerede')
+          throw new ActionError(t('product-service-action-sku-already-exists'))
         }
       }
+      throw new ActionError(ACTION_ERR_INTERNAL)
     }
   },
-  getAllProductsWithInventories: async function(
+  getAllProductsWithInventories: async function (
     customerID: CustomerID,
   ): Promise<
     (Product & { unit: string; group: string; inventories: Inventory[] })[]
@@ -156,17 +163,19 @@ export const productService = {
       return []
     }
   },
-  getAllByCustomerID: async function(
+  getAllByCustomerID: async function (
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<FormattedProduct[]> {
     return await product.getAllByCustomerID(customerID, trx)
   },
-  updateByID: async function(
+  updateByID: async function (
     productID: ProductID,
     updatedProductData: PartialProduct,
     userID: UserID,
+    lang: string = fallbackLng,
   ): Promise<Product | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     return await db.transaction(async trx => {
       try {
         const updatedProduct = await product.updateByID(
@@ -211,21 +220,27 @@ export const productService = {
         console.error(err)
         if (err instanceof LibsqlError) {
           if (err.message.includes('barcode')) {
-            throw new ActionError('Stregkoden findes allerede')
+            throw new ActionError(
+              t('product-service-action.barcode-already-exists'),
+            )
           }
           if (err.message.includes('sku')) {
-            throw new ActionError('Varenr. findes allerede')
+            throw new ActionError(
+              t('product-service-action.sku-already-exists'),
+            )
           }
         }
         throw new ActionError(ACTION_ERR_INTERNAL)
       }
     })
   },
-  updateBarredStatus: async function(
+  updateBarredStatus: async function (
     productID: ProductID,
     isBarred: boolean,
     userID: UserID,
+    lang: string = fallbackLng,
   ): Promise<Product | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     return await db.transaction(async trx => {
       try {
         const updatedProduct = await product.updateByID(productID, { isBarred })
@@ -263,14 +278,16 @@ export const productService = {
       } catch (err) {
         console.error('Der skete en fejl med spærringen:', err)
         throw new ActionError(
-          'Der skete en fejl med opdatering af produkt spærringen',
+          t('product-service-action.product-barring-failed'),
         )
       }
     })
   },
-  getByID: async function(
+  getByID: async function (
     id: ProductID,
+    lang: string = fallbackLng,
   ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     try {
       const p = await product.getByID(id)
       if (p == undefined) {
@@ -285,10 +302,12 @@ export const productService = {
       }
     } catch (e) {
       console.error(`ERROR: Trying to get product by id failed: ${e}`)
-      throw new ActionError(`Kunne ikke finde produkt med id ${id}`)
+      throw new ActionError(
+        `${t('product-service-action.product-id-not-found')} ${id}`,
+      )
     }
   },
-  importProducts: async function(
+  importProducts: async function (
     customerID: CustomerID,
     userID: UserID,
     importedProducts: ImportProducts,
@@ -532,12 +551,12 @@ export const productService = {
     console.log(`${performance.now() - start} ms execution time`)
     return transaction
   },
-  createHistoryLog: async function(
+  createHistoryLog: async function (
     newProductLog: NewProductHistory,
   ): Promise<ProductHistory | undefined> {
     return await product.createHistoryLog(newProductLog)
   },
-  getHistoryLogs: async function(
+  getHistoryLogs: async function (
     customerID: CustomerID,
     productID?: ProductID,
   ): Promise<ProductHistory[]> {

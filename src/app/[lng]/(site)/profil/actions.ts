@@ -8,6 +8,7 @@ import {
   updatePrimaryLocationValidation,
   updateProfileValidation,
 } from '@/app/[lng]/(site)/profil/validation'
+import { serverTranslation } from '@/app/i18n'
 import { adminAction, privateAction } from '@/lib/safe-action'
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
 import { locationService } from '@/service/location'
@@ -20,9 +21,10 @@ export const updateProfileInformationAction = privateAction
   .metadata({actionName: 'updateProfileInformation'})
   .schema(updateProfileValidation)
   .action(async ({ parsedInput, ctx: { user, lang } }) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
     const updatedUser = userService.updateByID(user.id, { ...parsedInput })
     if (!updatedUser) {
-      throw new ActionError('Profil blev ikke opdateret')
+      throw new ActionError(t('profile-action.profile-not-updated'))
     }
     revalidatePath(`${lang}/profil`)
   })
@@ -38,13 +40,14 @@ export const deleteProfileAction = privateAction
   .metadata({actionName: 'deleteProfile'})
   .schema(deleteProfileValidation)
   .action(async ({ parsedInput: { userId }, ctx: { session, user, lang } }) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
     const isSameUser = userId === user.id
     if (!isSameUser) {
       throw new ActionError(ACTION_ERR_UNAUTHORIZED)
     }
     const isDeleted = await userService.deleteByID(user.id)
     if (!isDeleted) {
-      throw new ActionError('Der gik noget galt med sletningen')
+      throw new ActionError(t('profile-action.profile-not-deleted'))
     }
     await sessionService.delete(session.id)
     redirect(`${lang}/log-ind`)
@@ -58,17 +61,18 @@ export const updatePasswordAction = privateAction
       parsedInput: { currentPassword, newPassword },
       ctx: { user, lang },
     }) => {
+      const { t } = await serverTranslation(lang, 'action-errors')
       const isValidPassword = await userService.verifyPassword(
         user.email,
         currentPassword,
       )
       if (!isValidPassword) {
-        throw new ActionError('Kodeord er ikke korrekt')
+        throw new ActionError(t('profile-action.password-not-correct'))
       }
 
       const updatedUser = await userService.updatePassword(user.id, newPassword)
       if (!updatedUser) {
-        throw new ActionError('Kodeord blev ikke opdateret')
+        throw new ActionError(t('profile-action.password-not-updated'))
       }
       const sessionID = await sessionService.create(updatedUser.id)
       revalidatePath(`${lang}/profil`)
@@ -80,15 +84,14 @@ export const updatePinAction = privateAction
   .schema(updatePinValidation)
   .action(
     async ({ parsedInput: { currentPin, newPin }, ctx: { user, lang } }) => {
+      const { t } = await serverTranslation(lang, 'action-errors')
       const isValidPin = await userService.verifyPin(user.email, currentPin)
       if (!isValidPin) {
-        throw new ActionError('Din PIN-kode er ikke korrekt. Prøv igen.')
+        throw new ActionError(t('profile-action.pin-not-correct'))
       }
       const updatedPin = await userService.updatePin(user.id, newPin)
       if (!updatedPin) {
-        throw new ActionError(
-          'Der skete en fejl, PIN-koden blev ikke opdateret.',
-        )
+        throw new ActionError(t('profile-action.pin-not-updated'))
       }
       revalidatePath(`${lang}/profil`)
     },
@@ -98,11 +101,12 @@ export const updatePrimaryLocationAction = privateAction
   .metadata({actionName: 'updatePrimaryLocation'})
   .schema(updatePrimaryLocationValidation)
   .action(async ({ parsedInput: { locationID }, ctx: { user, lang } }) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
     console.log('locID', locationID)
     const locations = await locationService.getAllByUserID(user.id)
 
     if (!locations.some(loc => loc.id == locationID)) {
-      throw new ActionError('Du har ikke adgang til denne lokation')
+      throw new ActionError(t('profile-action.no-access-to-location'))
     }
 
     const didUpdate = await locationService.toggleLocationPrimary(
@@ -110,7 +114,7 @@ export const updatePrimaryLocationAction = privateAction
       locationID,
     )
     if (!didUpdate) {
-      throw new ActionError('Din hovedlokation blev ikke opdateret')
+      throw new ActionError(t('profile-action.primary-location-not-updated'))
     }
 
     revalidatePath(`${lang}/profil`)

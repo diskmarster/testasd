@@ -1,10 +1,16 @@
+import { serverTranslation } from '@/app/i18n'
+import { fallbackLng } from '@/app/i18n/settings'
 import { EmailResetPassword } from '@/components/email/email-reset-password'
 import { passwordReset } from '@/data/password-reset'
-import { ResetPassword, ResetPasswordID, UserID } from '@/lib/database/schema/auth'
+import {
+  ResetPassword,
+  ResetPasswordID,
+  UserID,
+} from '@/lib/database/schema/auth'
 import { ACTION_ERR_INTERNAL, ActionError } from '@/lib/safe-action/error'
+import { isBefore } from 'date-fns'
 import { emailService } from './email'
 import { userService } from './user'
-import { isBefore } from 'date-fns'
 
 const RESET_PASSWORD_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -19,12 +25,14 @@ export type ResetPasswordLink =
 const LINK_DURATION_MINUTES = 30
 
 export const passwordResetService = {
-  createLink: async function(
+  createLink: async function (
     userEmail: string,
+    lang: string = fallbackLng,
   ): Promise<ResetPasswordLink | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     const user = await userService.getByEmail(userEmail)
     if (!user) {
-      throw new ActionError('Ingen bruger med denne email fundet')
+      throw new ActionError(t('password-reset-action.no-user-with-email'))
     }
 
     try {
@@ -38,12 +46,15 @@ export const passwordResetService = {
     } catch (e) {
       console.error(e)
       throw new ActionError(
-        `${ACTION_ERR_INTERNAL}. Kunne ikke oprette link til nulstilling af kodeord`,
+        `${ACTION_ERR_INTERNAL}. ${t('password-reset-action.couldnt-create-link')}`,
       )
     }
   },
-  createAndSendLink: async function(userEmail: string): Promise<boolean> {
-    const resetPasswordLink = await this.createLink(userEmail)
+  createAndSendLink: async function (
+    userEmail: string,
+    lang: string = fallbackLng,
+  ): Promise<boolean> {
+    const resetPasswordLink = await this.createLink(userEmail, lang)
     if (!resetPasswordLink) {
       return false
     }
@@ -56,7 +67,7 @@ export const passwordResetService = {
 
     return true
   },
-  getLinkById: async function(
+  getLinkById: async function (
     id: ResetPasswordID,
   ): Promise<(ResetPassword & { isExpired: () => boolean }) | undefined> {
     const link = await passwordReset.getPasswordResetById(id)
@@ -64,10 +75,10 @@ export const passwordResetService = {
 
     return {
       ...link,
-      isExpired: () => isBefore(link.expiresAt, Date.now())
+      isExpired: () => isBefore(link.expiresAt, Date.now()),
     }
   },
-  reset: async function(
+  reset: async function (
     linkID: ResetPasswordID,
     userID: UserID,
     password: string,
@@ -79,9 +90,7 @@ export const passwordResetService = {
 
     return await this.deleteLink(linkID)
   },
-  deleteLink: async function(
-    id: ResetPasswordID,
-  ): Promise<boolean> {
+  deleteLink: async function (id: ResetPasswordID): Promise<boolean> {
     return await passwordReset.deletePasswordReset(id)
-  }
+  },
 }

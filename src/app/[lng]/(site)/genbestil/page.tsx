@@ -17,6 +17,7 @@ interface PageProps {
   }
 }
 export default async function Page( { params: { lng } }: PageProps ) {
+  const { t } = await serverTranslation(lng, 'genbestil')
   const { session, user } = await sessionService.validate()
   if (!session) return signOutAction()
 
@@ -30,7 +31,6 @@ export default async function Page( { params: { lng } }: PageProps ) {
   const reorders = await inventoryService.getReordersByID(location)
   const units = await inventoryService.getActiveUnits()
   const groups = await inventoryService.getActiveGroupsByID(customer.id)
-  const { t } = await serverTranslation(lng, 'genbestil')
 
   const productsWithNoReorder = products.filter(
     prod => !reorders.some(reorder => prod.id === reorder.productID),

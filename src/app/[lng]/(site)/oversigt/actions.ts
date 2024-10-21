@@ -1,5 +1,6 @@
 'use server'
 
+import { serverTranslation } from '@/app/i18n'
 import { privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
@@ -18,33 +19,40 @@ export const updateInventoryAction = privateAction
       parsedInput: { productID, placementID, batchID, type, amount, reference },
       ctx,
     }) => {
+      const { t } = await serverTranslation(ctx.lang, 'action-errors')
       const location = await locationService.getLastVisited(ctx.user.id)
       if (!location) {
-        throw new ActionError('Kunne ikke finde din lokation')
+        throw new ActionError(t('overview-action.location-not-found'))
       }
       const customer = await customerService.getByID(ctx.user.customerID)
       if (!customer) {
-        throw new ActionError('Firmakonto findes ikke i systemet')
+        throw new ActionError(t('overview-action.customer-not-found'))
       }
 
       if (typeof placementID != 'number') {
-        const newPlacement = await inventoryService.createPlacement({
-          name: placementID,
-          locationID: location,
-        })
+        const newPlacement = await inventoryService.createPlacement(
+          {
+            name: placementID,
+            locationID: location,
+          },
+          ctx.lang,
+        )
         if (!newPlacement) {
-          throw new ActionError('Ny placering blev ikke oprettet')
+          throw new ActionError(t('overview-action.placement-not-created'))
         }
         placementID = newPlacement.id
       }
 
       if (typeof batchID != 'number') {
-        const newBatch = await inventoryService.createBatch({
-          batch: batchID,
-          locationID: location,
-        })
+        const newBatch = await inventoryService.createBatch(
+          {
+            batch: batchID,
+            locationID: location,
+          },
+          ctx.lang,
+        )
         if (!newBatch) {
-          throw new ActionError('Ny batchnr. blev ikke oprettet')
+          throw new ActionError(t('overview-action.batch-not-created'))
         }
         batchID = newBatch.id
       }
@@ -56,7 +64,7 @@ export const updateInventoryAction = privateAction
           batchID,
         )
         if (!exactInventory) {
-          throw new ActionError('Den præcise beholdning findes ikke')
+          throw new ActionError(t('overview-action.exact-inventory-not-found'))
         }
       }
 
@@ -71,6 +79,7 @@ export const updateInventoryAction = privateAction
         type,
         type == 'tilgang' ? amount : -amount,
         reference,
+        ctx.lang,
       )
 
       revalidatePath(`/${ctx.lang}/oversigt`)
@@ -80,13 +89,14 @@ export const updateInventoryAction = privateAction
 export const moveInventoryAction = privateAction
   .schema(moveInventoryValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const location = await locationService.getLastVisited(ctx.user.id)
     if (!location) {
-      throw new ActionError('Kunne ikke finde din lokation')
+      throw new ActionError(t('overview-action.location-not-found'))
     }
     const customer = await customerService.getByID(ctx.user.customerID)
     if (!customer) {
-      throw new ActionError('Firmakonto findes ikke i systemet')
+      throw new ActionError(t('overview-action.customer-not-found'))
     }
 
     await inventoryService.moveInventory(
@@ -101,6 +111,7 @@ export const moveInventoryAction = privateAction
       'flyt',
       parsedInput.amount,
       parsedInput.reference,
+      ctx.lang,
     )
 
     revalidatePath(`/${ctx.lang}/oversigt`)

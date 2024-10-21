@@ -1,6 +1,7 @@
 'use server'
 
 import { signUpValidation } from '@/app/[lng]/(auth)/registrer/[linkID]/validation'
+import { serverTranslation } from '@/app/i18n'
 import { EmailTest } from '@/components/email/email-test'
 import { publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
@@ -16,24 +17,25 @@ export const signUpAction = publicAction
   .metadata({ actionName: 'signUp' })
   .schema(signUpValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const activationLink = await customerService.getActivationLinkByID(
       parsedInput.linkID,
     )
     if (!activationLink) {
-      throw new ActionError('Dit aktiveringslink findes ikke længere')
+      throw new ActionError(t('register-action.link-no-longer-exists'))
     }
 
     const isLinkValid = customerService.validateActivationLink(
       activationLink.inserted,
     )
     if (!isLinkValid) {
-      throw new ActionError('Dit aktiveringslink er ikke længere gyldigt')
+      throw new ActionError(t('register-action.expired-link'))
     }
 
     const users = await userService.getAllByCustomerID(parsedInput.clientID)
     const existingCustomer = await customerService.getByID(parsedInput.clientID)
     if (!existingCustomer) {
-      throw new ActionError('Din firmakonto findes ikke')
+      throw new ActionError(t('register-action.company-account-doesnt-exist'))
     }
 
     if (
@@ -43,12 +45,12 @@ export const signUpAction = publicAction
         users.length,
       )
     ) {
-      throw new ActionError('Dit firma har nået brugergrænsen')
+      throw new ActionError(t('register-action.company-user-limit-reached'))
     }
 
     const existingUser = await userService.getByEmail(parsedInput.email)
     if (existingUser) {
-      throw new ActionError('En bruger med den email findes allerede')
+      throw new ActionError(t('register-action.existing-user-mail'))
     }
 
     const newUser = await userService.register({
@@ -61,7 +63,7 @@ export const signUpAction = publicAction
       isActive: true,
     })
     if (!newUser) {
-      throw new ActionError('Din bruger blev ikke oprettet')
+      throw new ActionError(t('register-action.user-not-created'))
     }
 
     if (!existingCustomer.isActive) {
@@ -69,7 +71,7 @@ export const signUpAction = publicAction
         existingCustomer.id,
       )
       if (!isCustomerToggled) {
-        throw new ActionError('Din firmakonto blev ikke aktiveret')
+        throw new ActionError(t('register-action.company-account-not-activated'))
       }
     }
 
@@ -81,7 +83,7 @@ export const signUpAction = publicAction
     })
     if (!isAccessAdded) {
       throw new ActionError(
-        'Der gik noget galt med at give brugeren tilladelse til lokation',
+        t('register-action.user-no-location-access'),
       )
     }
 

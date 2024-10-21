@@ -1,6 +1,7 @@
 'use server'
 
 import { createCustomerValidation } from '@/app/[lng]/(auth)/opret/validation'
+import { serverTranslation } from '@/app/i18n'
 import { EmailWelcomeCustomer } from '@/components/email/email-welcome-customer'
 import { publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
@@ -12,20 +13,21 @@ import { generateIdFromEntropySize } from 'lucia'
 
 export const createCustomerAction = publicAction
   .schema(createCustomerValidation)
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existingCustomer = await customerService.getByEmail(parsedInput.email)
     if (existingCustomer) {
-      throw new ActionError('En kunde med den email findes allerede')
+      throw new ActionError(t('create-action.customer-email-exists'))
     }
 
     const existingUser = await userService.getByEmail(parsedInput.email)
     if (existingUser) {
-      throw new ActionError('En bruger med den email findes allerede')
+      throw new ActionError(t('create-action.user-email-exists'))
     }
 
     const newCustomer = await customerService.create(parsedInput)
     if (!newCustomer) {
-      throw new ActionError('Der gik noget galt med at oprette dig som kunde')
+      throw new ActionError(t('create-action.customer-not-created'))
     }
 
     const newLocationID = generateIdFromEntropySize(8)
@@ -35,7 +37,7 @@ export const createCustomerAction = publicAction
       name: 'Hovedlokation',
     })
     if (!newLocation) {
-      throw new ActionError('Der gik noget galt med at oprette en lokation')
+      throw new ActionError(t('create-action.location-not-created'))
     }
 
     const activationLink = await customerService.createActivationLink({
@@ -45,9 +47,7 @@ export const createCustomerAction = publicAction
       role: 'firma_admin',
     })
     if (!activationLink) {
-      throw new ActionError(
-        'Der gik noget galt med at sende din aktiveringsmail',
-      )
+      throw new ActionError(t('create-action.activation-mail-not-sent'))
     }
 
     emailService.sendRecursively(

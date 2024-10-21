@@ -1,5 +1,6 @@
 'use server'
 
+import { serverTranslation } from '@/app/i18n'
 import { adminAction, privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
@@ -15,13 +16,15 @@ export const createProductAction = privateAction
   .metadata({ actionName: 'createProduct' })
   .schema(createProductValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const newProduct = await productService.create(
       parsedInput,
       ctx.user.customerID,
       ctx.user.id,
+      ctx.lang,
     )
     if (!newProduct) {
-      throw new ActionError('Der gik noget galt med at oprette produktet')
+      throw new ActionError(t('product-action.product-not-created'))
     }
     revalidatePath(`/${ctx.lang}/admin/produkter`)
   })
@@ -34,6 +37,7 @@ export const updateProductAction = privateAction
       ctx: { user, lang },
       parsedInput: { productID, data: updatedProductData },
     }) => {
+      const { t } = await serverTranslation(lang, 'action-errors')
       const updatedProduct = await productService.updateByID(
         productID,
         updatedProductData,
@@ -41,7 +45,7 @@ export const updateProductAction = privateAction
       )
 
       if (!updatedProduct) {
-        throw new ActionError('Der gik noget galt med at opdatere produktet')
+        throw new ActionError(t('product-action.product-not-updated'))
       }
 
       revalidatePath(`/${lang}/admin/produkter`)

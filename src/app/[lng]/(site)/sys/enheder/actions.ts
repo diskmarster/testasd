@@ -1,9 +1,11 @@
 'use server'
 
+import { serverTranslation } from '@/app/i18n'
 import { privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
+import { t } from 'i18next'
 import { revalidatePath } from 'next/cache'
 import {
   createUnitValidation,
@@ -15,15 +17,19 @@ export const createUnitAction = privateAction
   .metadata({ actionName: 'createUnit' })
   .schema(createUnitValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const { session, user } = await sessionService.validate()
     if (!session) {
-      throw new ActionError('Brugeren er ikke logget ind')
+      throw new ActionError(t('unit-action.user-not-logged-in'))
     }
-    const newUnit = await inventoryService.createUnit({
-      name,
-    })
+    const newUnit = await inventoryService.createUnit(
+      {
+        name,
+      },
+      ctx.lang,
+    )
     if (!newUnit) {
-      throw new ActionError('Enheden blev ikke oprettet')
+      throw new ActionError(t('unit-action.unit-not-created'))
     }
     revalidatePath(`/${ctx.lang}/sys/enheder`)
   })
@@ -38,7 +44,7 @@ export const updateUnitAction = privateAction
     )
 
     if (!updatedUnit) {
-      throw new ActionError('Der gik noget galt med at opdatere enheden')
+      throw new ActionError(t('unit-action.unit-not-updated'))
     }
     revalidatePath(`/${ctx.lang}/sys/enheder`)
   })
@@ -53,9 +59,7 @@ export const toggleBarredUnitAction = privateAction
     )
 
     if (!updatedUnit) {
-      throw new ActionError(
-        'Der gik noget galt med at opdatere spærring på enheden',
-      )
+      throw new ActionError(t('unit-action.unit-not-barred'))
     }
 
     revalidatePath('/sys/enheder')
