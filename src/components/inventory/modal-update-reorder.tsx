@@ -81,8 +81,8 @@ export function ModalUpdateReorder({ products }: Props) {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Genbestil opdateret for ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.update-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
     })
   }

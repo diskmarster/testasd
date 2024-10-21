@@ -78,5 +78,12 @@
     "product": "Product",
     "ordered-quantity": "Ordered quantity",
     "add-button": "Add"
+  },
+  "toasts": {
+    "add-ordered": "Order registered for ",
+    "create-reorder": "Minimum stock created for ",
+    "delete-reorder": "Restock deleted for ",
+    "update-reorder": "Restock updated for "
+
   }
 }

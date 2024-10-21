@@ -61,8 +61,8 @@ export function ModalDeleteReorder({ products }: Props) {
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Genbestil slettet for ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.delete-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
     })
   }

@@ -85,8 +85,8 @@ export function ModalAddOrderedReorder({ products }: Props) {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Bestilling registreret for ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.add-ordered')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
     })
   }

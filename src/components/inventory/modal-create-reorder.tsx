@@ -98,8 +98,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Minimums beholdning oprettet for ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.create-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
     })
   }
