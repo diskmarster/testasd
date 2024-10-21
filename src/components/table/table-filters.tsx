@@ -1,6 +1,6 @@
 import React, { SetStateAction, useState } from 'react'
 
-import { useDebouncedCallback } from 'use-debounce'
+import { useTranslation } from '@/app/i18n/client'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -25,8 +25,8 @@ import { cn } from '@/lib/utils'
 import { Table } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
+import { useDebouncedCallback } from 'use-debounce'
 import { ScrollArea } from '../ui/scroll-area'
-import { useTranslation } from '@/app/i18n/client'
 
 type TableToolbarFiltersProps<T> = {
   table: Table<T>
@@ -117,7 +117,9 @@ function FilterPopover<T>({
   t: (key: string) => string
 }) {
   const [value, setSearched] = useState<string>('')
-  const [selectValue, setSelectValue] = useState<string[]>((field.column?.getFilterValue() ?? []) as any[])
+  const [selectValue, setSelectValue] = useState<string[]>(
+    (field.column?.getFilterValue() ?? []) as any[],
+  )
   const [date, setDate] = useState<DateRange | undefined>({
     from: undefined,
     to: undefined,
@@ -132,8 +134,11 @@ function FilterPopover<T>({
     }
 
     return value
-      .map((val: any) => field.options?.find(opt => opt.value === val)?.label ||
-      `${t('table-filters.choose')} ${field.label.toLowerCase()}`)
+      .map(
+        (val: any) =>
+          field.options?.find(opt => opt.value === val)?.label ||
+          `${t('table-filters.choose')} ${field.label.toLowerCase()}`,
+      )
       .filter(Boolean)
       .join(', ')
   }
@@ -141,11 +146,10 @@ function FilterPopover<T>({
   const getDateRangeDisplayValue = (range: DateRange): string => {
     if (!range || (!range.from && !range.to))
       return t('table-filters.choose-dates')
-    if (range.from && !range.to)
-      return `${format(range.from, 'dd/MM/yyyy')}`
+    if (range.from && !range.to) return `${format(range.from, 'dd/MM/yyyy')}`
     if (range.from && range.to)
       return `${format(range.from, 'dd/MM/yyyy')} - ${format(range.to, 'dd/MM/yyyy')}`
-      return t('table-filters.choose-dates')
+    return t('table-filters.choose-dates')
   }
 
   const filterDisplayValue: string = isSelect
@@ -188,7 +192,12 @@ function FilterPopover<T>({
         {field.type === 'text' ? (
           <FilterText field={field} search={value} setSearched={setSearched} />
         ) : field.type === 'select' ? (
-          <FilterSelect field={field} setSelectedValues={setSelectValue} selectedValues={selectValue} t={t} />
+          <FilterSelect
+            field={field}
+            setSelectedValues={setSelectValue}
+            selectedValues={selectValue}
+            t={t}
+          />
         ) : field.type === 'date-range' ? (
           <FilterDateRange field={field} date={date} setDate={setDate} />
         ) : (
@@ -199,7 +208,15 @@ function FilterPopover<T>({
   )
 }
 
-function FilterText<T>({ field, search, setSearched }: { field: FilterField<T>, search: string, setSearched: React.Dispatch<React.SetStateAction<string>> }) {
+function FilterText<T>({
+  field,
+  search,
+  setSearched,
+}: {
+  field: FilterField<T>
+  search: string
+  setSearched: React.Dispatch<React.SetStateAction<string>>
+}) {
   const debouncedSeteFilter = useDebouncedCallback((val: string) => {
     field.column?.setFilterValue(val)
   }, 250)
@@ -236,70 +253,109 @@ function FilterText<T>({ field, search, setSearched }: { field: FilterField<T>, 
       return isAfter(rowDate, value.from) && isBefore(rowDate, value.to)
     },
   */
-function FilterDateRange<T>({ field, date, setDate }: { field: FilterField<T>, date: DateRange | undefined, setDate: React.Dispatch<SetStateAction<DateRange | undefined>> }) {
-  const debouncedCallback = useDebouncedCallback((val: DateRange | undefined) => field.column?.setFilterValue(val), 500)
+function FilterDateRange<T>({
+  field,
+  date,
+  setDate,
+}: {
+  field: FilterField<T>
+  date: DateRange | undefined
+  setDate: React.Dispatch<SetStateAction<DateRange | undefined>>
+}) {
+  const debouncedCallback = useDebouncedCallback(
+    (val: DateRange | undefined) => field.column?.setFilterValue(val),
+    500,
+  )
 
   return (
-    <Calendar mode='range' selected={date} onSelect={(dateRange) => {
-      setDate(dateRange)
-      debouncedCallback(dateRange)
-    }} initialFocus />
+    <Calendar
+      mode='range'
+      selected={date}
+      onSelect={dateRange => {
+        setDate(dateRange)
+        debouncedCallback(dateRange)
+      }}
+      initialFocus
+    />
   )
 }
 
-function FilterSelect<T>({ field, selectedValues, setSelectedValues, t }: { field: FilterField<T>, selectedValues: string[], setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>, t: (key: string) => string }) {
+function FilterSelect<T>({
+  field,
+  selectedValues,
+  setSelectedValues,
+  t,
+}: {
+  field: FilterField<T>
+  selectedValues: string[]
+  setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>
+  t: (key: string) => string
+}) {
   const [search, setSearch] = useState<string>('')
   const facets = field.column?.getFacetedUniqueValues()
-  const debouncedSetFilter = useDebouncedCallback((val: string) => field.column?.setFilterValue(val), 500)
+  const debouncedSetFilter = useDebouncedCallback(
+    (val: string[] | undefined) => field.column?.setFilterValue(val),
+    500,
+  )
 
-  const filtered = field.options?.filter(f => f.value.toString().toLowerCase().includes(search.toLowerCase())).slice(0, 20)
+  const filtered = field.options
+    ?.filter(f =>
+      f.value.toString().toLowerCase().includes(search.toLowerCase()),
+    )
+    .slice(0, 20)
 
   return (
     <Command>
       <CommandInput value={search} onValueChange={setSearch} />
       <CommandList>
-         <CommandEmpty>{t('table-filters.no-filter-choice')}</CommandEmpty>
+        <CommandEmpty>{t('table-filters.no-filter-choice')}</CommandEmpty>
         <ScrollArea maxHeight='max-h-52'>
           <CommandGroup>
-            {filtered && filtered.map(option => {
-
-              const isSelected = selectedValues.some(val => val == option.value)
-              return (
-                <CommandItem
-                  value={option.value}
-                  key={option.label}
-                  onSelect={() => {
-                    if (isSelected) {
-                      const newSelected = selectedValues.filter(val => val != option.value)
-                      debouncedSetFilter(newSelected.length == 0 ? undefined : newSelected)
-                      setSelectedValues(newSelected)
-                    } else {
-                      const newSelected = [...selectedValues, option.value]
-                      debouncedSetFilter(newSelected)
-                      setSelectedValues(newSelected)
-                    }
-                  }}>
-                  <div
-                    className={cn(
-                      'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                      isSelected
-                        ? 'bg-primary text-primary-foreground'
-                        : 'opacity-50 [&_svg]:invisible',
-                    )}>
-                    <Icons.check className={cn('h-4 w-4')} />
-                  </div>
-                  {option.icon && (
-                    <option.icon className='mr-2 h-4 w-4 text-muted-foreground' />
-                  )}
-                  <span>{option.label}</span>
-                  {facets?.get(option.value) && (
-                    <span className='ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs'>
-                      {facets.get(option.value)}
-                    </span>
-                  )}
-                </CommandItem>
-              )
-            })}
+            {filtered &&
+              filtered.map(option => {
+                const isSelected = selectedValues.some(
+                  val => val == option.value,
+                )
+                return (
+                  <CommandItem
+                    value={option.value}
+                    key={option.label}
+                    onSelect={() => {
+                      if (isSelected) {
+                        const newSelected = selectedValues.filter(
+                          val => val != option.value,
+                        )
+                        debouncedSetFilter(
+                          newSelected.length == 0 ? undefined : newSelected,
+                        )
+                        setSelectedValues(newSelected)
+                      } else {
+                        const newSelected = [...selectedValues, option.value]
+                        debouncedSetFilter(newSelected)
+                        setSelectedValues(newSelected)
+                      }
+                    }}>
+                    <div
+                      className={cn(
+                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                        isSelected
+                          ? 'bg-primary text-primary-foreground'
+                          : 'opacity-50 [&_svg]:invisible',
+                      )}>
+                      <Icons.check className={cn('h-4 w-4')} />
+                    </div>
+                    {option.icon && (
+                      <option.icon className='mr-2 h-4 w-4 text-muted-foreground' />
+                    )}
+                    <span>{option.label}</span>
+                    {facets?.get(option.value) && (
+                      <span className='ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs'>
+                        {facets.get(option.value)}
+                      </span>
+                    )}
+                  </CommandItem>
+                )
+              })}
           </CommandGroup>
         </ScrollArea>
         {selectedValues.length > 0 && (
