@@ -62,7 +62,16 @@ export async function POST(
 						status: 401,
 					},
 				)
-			}
+			} else if (!user.appAccess) {
+				return NextResponse.json(
+					{
+						msg: 'Bruger har ikke app adgang',
+					},
+					{
+						status: 401,
+					},
+				)
+      }
 		}
 		const customer = await customerService.getByID(user.customerID)
 

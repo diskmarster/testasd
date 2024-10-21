@@ -24,6 +24,11 @@ export const signInAction = publicAction
       throw new ActionError(t('log-in-action.user-inactive'))
     }
 
+    // TODO: add translation here
+    if (!existingUser.webAccess) {
+      throw new ActionError('Bruger har ikke web adgang')
+  }
+
     await sessionService.invalidateByID(existingUser.id)
     const newSessionID = await sessionService.create(existingUser.id)
 
