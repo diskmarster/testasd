@@ -83,7 +83,11 @@ export const privateAction = publicAction.use(async ({ next, ctx }) => {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
-  return next({ ctx: { ...ctx, session, user } })
+  if (!user.webAccess) {
+    throw new ActionError(ACTION_ERR_UNAUTHORIZED)
+  }
+
+  return next({ ctx: { session, user } })
 })
 
 // admin action client for admin only requests
