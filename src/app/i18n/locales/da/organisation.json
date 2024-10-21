@@ -112,6 +112,20 @@
       "users-chosen": "Valgte brugere",
       "create-button": "Opret",
       "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder, når du opretter lokationer."
+    },
+
+    "toasts": {
+      "location-created": "blev oprettet succesfuldt",
+      "location-updated": "blev opdateret succesfuldt",
+      "invitation-sent": "Invitation sendt til ",
+      "reset-pw-email": "Email sendt til ",
+      "location": "lokation",
+      "locations": "lokationer",
+      "locations-toggle": " opdateret",
+      "user": "bruger",
+      "users": "brugere",
+      "users-toggle": " opdateret"
+      
     }
   }
   
