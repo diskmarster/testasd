@@ -1,16 +1,17 @@
-'use server'
-
 import { privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
-import { createPlacementValidation, updatePlacementValidation } from './validation'
-import { PlacementID } from '@/lib/database/schema/inventory'
+import {
+  createPlacementValidation,
+  toggleBarredPlacementValidation,
+  updatePlacementValidation,
+} from './validation'
 
 export const createPlacementAction = privateAction
-  .metadata({actionName: 'createPlacement'})
+  .metadata({ actionName: 'createPlacement' })
   .schema(createPlacementValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
     const location = await locationService.getLastVisited(ctx.user.id)
@@ -35,32 +36,35 @@ export const createPlacementAction = privateAction
   })
 
 export const updatePlacementAction = privateAction
-  .metadata({actionName: 'updatePlacement'})
+  .metadata({ actionName: 'updatePlacement' })
   .schema(updatePlacementValidation)
-  .action(async ({ parsedInput: { placementID, data: updatedPlacementData } }) => {
-    const updatedPlacement = await inventoryService.updatePlacementByID(
+  .action(
+    async ({ parsedInput: { placementID, data: updatedPlacementData } }) => {
+      const updatedPlacement = await inventoryService.updatePlacementByID(
+        placementID,
+        updatedPlacementData,
+      )
+
+      if (!updatedPlacement) {
+        throw new ActionError('Der gik noget galt med at opdatere placeringen')
+      }
+      revalidatePath('/admin/placeringer')
+    },
+  )
+
+export const toggleBarredPlacementAction = privateAction
+  .metadata({ actionName: 'placementToggleBarred' })
+  .schema(toggleBarredPlacementValidation)
+  .action(async ({ parsedInput: { placementID, isBarred } }) => {
+    const updatedPlacement = await inventoryService.updatePlacementBarredStatus(
       placementID,
-      updatedPlacementData,
+      isBarred,
     )
 
     if (!updatedPlacement) {
-      throw new ActionError('Der gik noget galt med at opdatere placeringen')
+      throw new ActionError(
+        'Der gik noget galt med at opdatere spærring på placeringen',
+      )
     }
     revalidatePath('/admin/placeringer')
   })
-
-export async function toggleBarredPlacementAction(
-  placementID: PlacementID,
-  isBarred: boolean,
-) {
-  const updatedPlacement = await inventoryService.updatePlacementBarredStatus(
-    placementID,
-    isBarred,
-  )
-
-  if (!updatedPlacement) {
-    throw new ActionError('Der gik noget galt med at opdatere spærring på placeringen')
-  }
-  revalidatePath('/admin/placeringer')
-}
-

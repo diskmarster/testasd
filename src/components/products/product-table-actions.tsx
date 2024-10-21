@@ -15,7 +15,7 @@ interface Props {
 
 export function TableOverviewActions({ table, row }: Props) {
   const [open, setOpen] = useState<boolean>(false)
-  const [pending, startTransition] = useTransition()
+  const [_, startTransition] = useTransition()
 
   const handleToggleBar = () => {
     startTransition(async () => {

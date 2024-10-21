@@ -93,7 +93,7 @@ export function getTableGroupColumns(): ColumnDef<Group>[] {
   const actionsCol: ColumnDef<Group> = {
     accessorKey: 'actions',
     header: () => null,
-    cell: ({ table, row }) => <TableOverviewActions table={table} row={row} />,
+    cell: ({ row }) => <TableOverviewActions row={row} />,
     enableHiding: false,
     enableSorting: false,
     meta: {

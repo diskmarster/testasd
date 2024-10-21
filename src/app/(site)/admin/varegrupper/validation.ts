@@ -10,3 +10,8 @@ export const updateGroupValidation = z.object({
     name: z.string().min(1, 'Varegruppenavn er påkrævet'),
   }),
 })
+
+export const groupToggleBarredValidation = z.object({
+  groupID: z.coerce.number(),
+  isBarred: z.coerce.boolean(),
+})

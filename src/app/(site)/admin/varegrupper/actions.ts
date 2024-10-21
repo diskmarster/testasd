@@ -1,16 +1,19 @@
 'use server'
 
-import { GroupID } from '@/lib/database/schema/inventory'
 import { privateAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
 import { revalidatePath } from 'next/cache'
-import { createGroupValidation, updateGroupValidation } from './validation'
+import {
+  createGroupValidation,
+  groupToggleBarredValidation,
+  updateGroupValidation,
+} from './validation'
 
 export const createGroupAction = privateAction
-  .metadata({actionName: 'createGroup'})
+  .metadata({ actionName: 'createGroup' })
   .schema(createGroupValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
     const { session, user } = await sessionService.validate()
@@ -36,7 +39,7 @@ export const createGroupAction = privateAction
   })
 
 export const updateGroupAction = privateAction
-  .metadata({actionName: 'updateGroup'})
+  .metadata({ actionName: 'updateGroup' })
   .schema(updateGroupValidation)
   .action(async ({ parsedInput: { groupID, data: updatedGroupData } }) => {
     const updatedGroup = await inventoryService.updateGroupByID(
@@ -49,18 +52,18 @@ export const updateGroupAction = privateAction
     revalidatePath('/admin/varegrupper')
   })
 
-export async function toggleBarredGroupAction(
-  groupID: GroupID,
-  isBarred: boolean,
-) {
-  const updatedGroup = await inventoryService.updateGroupBarredStatus(
-    groupID,
-    isBarred,
-  )
-  if (!updatedGroup) {
-    throw new ActionError(
-      'Der gik noget galt med at opdaterer spærring på varegruppen',
+export const toggleBarredGroupAction = privateAction
+  .metadata({ actionName: 'groupToggleBarred' })
+  .schema(groupToggleBarredValidation)
+  .action(async ({ parsedInput: { groupID, isBarred } }) => {
+    const updatedGroup = await inventoryService.updateGroupBarredStatus(
+      groupID,
+      isBarred,
     )
-  }
-  revalidatePath('/admin/varegrupper')
-}
+    if (!updatedGroup) {
+      throw new ActionError(
+        'Der gik noget galt med at opdaterer spærring på varegruppen',
+      )
+    }
+    revalidatePath('/admin/varegrupper')
+  })
