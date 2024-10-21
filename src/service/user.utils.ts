@@ -127,7 +127,7 @@ export async function validateRequest(headers: ReadonlyHeaders): Promise<{ sessi
 
     return await sessionService.validateSessionId(res.data.sessionId)
   } catch (e) {
-    console.error(`Error validation request: '${(e as Error).message}'`)
+    console.error(`Error validating request: '${(e as Error).message}'`)
     return {
       session: null,
       user: null,

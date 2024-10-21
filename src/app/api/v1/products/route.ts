@@ -1,23 +1,25 @@
 import { productService } from '@/service/products'
 import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
+	request: NextRequest,
 ): Promise<NextResponse<unknown>> {
-	try {
-		const { session, user } = await validateRequest(headers())
+	const { session, user } = await validateRequest(headers())
 
-		if (session == null || user == null) {
-			return NextResponse.json(
-				{
-					msg: 'Du har ikke adgang til denne resource',
-				},
-				{
-					status: 401,
-				},
-			)
-		}
+	if (session == null || user == null) {
+		return NextResponse.json(
+			{
+				msg: 'Du har ikke adgang til denne resource',
+			},
+			{
+				status: 401,
+			},
+		)
+	}
+
+	try {
 
 		const products = await productService
 			.getAllProductsWithInventories(user.customerID)
