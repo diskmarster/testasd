@@ -86,8 +86,8 @@ export function UpdateProductsForm({
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: 'Produktet er opdateret succesfuldt.',
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: t('toasts.product-updated'),
       })
     })
   }

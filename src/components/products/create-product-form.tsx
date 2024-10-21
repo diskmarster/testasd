@@ -69,7 +69,7 @@ export function CreateProductsForm({
       setShow(false)
       setError(undefined)
       reset()
-      toast.success(siteConfig.successTitle, {
+      toast.success(t(`common:${siteConfig.successTitle}`), {
         description: t('toast-success'),
       })
     })
