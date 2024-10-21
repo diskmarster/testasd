@@ -1,5 +1,6 @@
 import { inventoryService } from '@/service/inventory'
 import { validateRequest } from '@/service/user.utils'
+import { headers } from 'next/headers'
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -17,7 +18,7 @@ export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<unknown>> {
   try {
-    const { session, user } = await validateRequest(request)
+    const { session, user } = await validateRequest()
 
     if (session == null || user == null) {
       return NextResponse.json(
@@ -30,7 +31,7 @@ export async function POST(
       )
     }
 
-    if (request.headers.get('content-type') != 'application/json') {
+    if (headers().get('content-type') != 'application/json') {
       return NextResponse.json(
         {
           msg: 'Request body skal være json format',

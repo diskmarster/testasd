@@ -2,6 +2,7 @@ import { customerService } from '@/service/customer'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
 import { signJwt } from '@/service/user.utils'
+import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -16,7 +17,7 @@ export async function POST(
 	request: NextRequest,
 ): Promise<NextResponse<unknown>> {
 	try {
-		if (request.headers.get('content-type') != 'application/json') {
+		if (headers().get('content-type') != 'application/json') {
 			return NextResponse.json(
 				{
 					msg: 'Request body skal være json format',
