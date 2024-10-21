@@ -92,7 +92,7 @@ export const privateAction = publicAction.use(async ({ next, ctx }) => {
 
 // admin action client for admin only requests
 export const adminAction = privateAction.use(async ({ next, ctx }) => {
-  if (!ctx.user.role.includes('admin')) {
+  if (!ctx.user.role.includes('admin') || !ctx.user.role.includes("moderator")) {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
   return next({ ctx })
