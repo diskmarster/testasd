@@ -87,7 +87,7 @@ function Form({ t }: FormProps) {
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>{t('error-title')}</AlertTitle>
+          <AlertTitle>{t('sign-in-card.error-title')}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}

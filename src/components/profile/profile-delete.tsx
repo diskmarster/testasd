@@ -71,7 +71,7 @@ function DeleteDialog({ user: profileUser }: { user?: UserNoHash }) {
                   userId: profileUser ? profileUser.id : user.id,
                 })
                 if (res && res.serverError)
-                  toast.error(siteConfig.errorTitle, {
+                  toast.error(t(`common:${siteConfig.errorTitle}`), {
                     description: res.serverError,
                   })
               })

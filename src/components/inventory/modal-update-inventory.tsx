@@ -25,16 +25,9 @@ import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { AutoComplete } from '../ui/autocomplete'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select'
-import { AutoComplete } from '../ui/autocomplete'
 
 interface Props {
   customer: Customer
@@ -63,9 +56,11 @@ export function ModalUpdateInventory({
   const { t } = useTranslation(lng, 'oversigt')
 
   const productOptions = products
-    .filter(prod =>
-      prod.text1.toLowerCase().includes(searchProduct.toLowerCase())
-      || prod.sku.toLowerCase().includes(searchProduct.toLowerCase()))
+    .filter(
+      prod =>
+        prod.text1.toLowerCase().includes(searchProduct.toLowerCase()) ||
+        prod.sku.toLowerCase().includes(searchProduct.toLowerCase()),
+    )
     .map(prod => ({
       label: prod.text1,
       value: prod.id.toString(),
@@ -73,7 +68,8 @@ export function ModalUpdateInventory({
 
   const placementOptions = placements
     .filter(placement =>
-      placement.name.toLowerCase().includes(searchPlacement.toLowerCase()))
+      placement.name.toLowerCase().includes(searchPlacement.toLowerCase()),
+    )
     .map(placement => ({
       label: placement.name,
       value: placement.id.toString(),
@@ -81,7 +77,8 @@ export function ModalUpdateInventory({
 
   const batchOptions = batches
     .filter(batch =>
-      batch.batch.toLowerCase().includes(searchBatch.toLowerCase()))
+      batch.batch.toLowerCase().includes(searchBatch.toLowerCase()),
+    )
     .map(batch => ({
       label: batch.batch,
       value: batch.id.toString(),
@@ -174,8 +171,8 @@ export function ModalUpdateInventory({
       setNewBatch(false)
       setNewPlacement(false)
       setUseReference(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${isIncoming ? t('incoming') : t('outgoing')} blev oprettet`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${isIncoming ? t('incoming') : t('outgoing')} ${t('toasts.was-created')}`,
       })
     })
   }
@@ -216,7 +213,7 @@ export function ModalUpdateInventory({
               </Alert>
             )}
             <div className='grid gap-2'>
-            <Label>{t('product')}</Label>
+              <Label>{t('product')}</Label>
               <AutoComplete
                 autoFocus={false}
                 placeholder='Søg i produkter...'
@@ -226,9 +223,7 @@ export function ModalUpdateInventory({
                   setValue('productID', parseInt(value))
                 }
                 onSearchValueChange={setSearchProduct}
-                selectedValue={
-                  productID ? productID.toString() : ''
-                }
+                selectedValue={productID ? productID.toString() : ''}
                 searchValue={searchProduct}
               />
               {formState.errors.productID && (
@@ -268,12 +263,12 @@ export function ModalUpdateInventory({
                       emptyMessage={t('autocomplete-empty-message')}
                       items={placementOptions}
                       onSelectedValueChange={value =>
-                        setValue('placementID', parseInt(value), { shouldValidate: true })
+                        setValue('placementID', parseInt(value), {
+                          shouldValidate: true,
+                        })
                       }
                       onSearchValueChange={setSearchPlacement}
-                      selectedValue={
-                        placementID ? placementID.toString() : ''
-                      }
+                      selectedValue={placementID ? placementID.toString() : ''}
                       searchValue={searchPlacement}
                     />
                   )}
@@ -308,12 +303,12 @@ export function ModalUpdateInventory({
                         emptyMessage={t('autocomplete-empty-message')}
                         items={batchOptions}
                         onSelectedValueChange={value =>
-                          setValue('batchID', parseInt(value), { shouldValidate: true })
+                          setValue('batchID', parseInt(value), {
+                            shouldValidate: true,
+                          })
                         }
                         onSearchValueChange={setSearchBatch}
-                        selectedValue={
-                          batchID ? batchID.toString() : ''
-                        }
+                        selectedValue={batchID ? batchID.toString() : ''}
                         searchValue={searchBatch}
                       />
                     )}

@@ -159,7 +159,7 @@ export function ModalMoveInventory({
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
+      toast.success(t(`common:${siteConfig.successTitle}`), {
         description: t('inventory-moved'),
       })
     })

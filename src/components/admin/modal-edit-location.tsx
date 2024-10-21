@@ -70,8 +70,8 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${values.name} blev opdateret`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.location-updated')}`,
       })
     })
   }

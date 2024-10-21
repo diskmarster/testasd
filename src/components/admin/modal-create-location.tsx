@@ -74,8 +74,8 @@ export function ModalCreateLocation({ user, users, children }: Props) {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${values.name} blev oprettet`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.location-created')}`,
       })
     })
   }

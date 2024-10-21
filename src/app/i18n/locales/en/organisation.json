@@ -30,19 +30,19 @@
     "reset-button": "Reset"
   },
   "modal-edit-location": {
-    "title": "Edit location",
+    "title": "Update location",
     "description": "Here you can edit a location's name and access-level for your users.",
     "location-name": "Location name",
     "location-name-placeholder": "Enter location name",
     "access-level": "Access level",
     "users-chosen": "Users chosen",
-    "create-button": "Create",
+    "create-button": "Update",
     "create-more-users": "Create more users to assign access rights when editing locations."
   },
-  "modal-toggle-location":{
+  "modal-toggle-location": {
     "title": "Change location status",
     "description": "This action is not permanent. If you activate a location, it can be accessed again. If you deactivate a location, it can no longer be accessed until it is reactivated.",
-    
+
     "status": "Status",
     "choose-status": "Choose Status",
     "cancel-button": "Cancel",
@@ -63,7 +63,6 @@
     "inactive": "Inactive",
     "updated": "Updated",
     "created": "Created"
-
   },
   "user-columns": {
     "user-name": "Name",
@@ -92,7 +91,6 @@
     "company-name": "Company name",
     "email": "Email",
     "update-button": "Update"
-
   },
 
   "modal-invite-user": {
@@ -121,6 +119,19 @@
     "users-chosen": "Users chosen",
     "create-button": "Create",
     "create-more-users": "Create more users to assign access rights when creating locations."
-  }
-  
+  },
+
+  "toasts": {
+      "location-created": "was created successfully",
+      "location-updated": "was updated successfully",
+      "invitation-sent": "Invitation sent to ",
+      "reset-pw-email": "Email sent to ",
+      "location": "location",
+      "locations": "locations",
+      "locations-toggle": " updated",
+      "user": "user",
+      "users": "users",
+      "users-toggle": " updated"
+      
+    }
 }

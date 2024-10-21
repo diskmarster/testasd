@@ -68,8 +68,8 @@ export function ModalToggleUser({ users }: Props) {
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${formValues.userIDs.length} ${formValues.userIDs.length == 1 ? 'bruger' : 'brugere'} blev opdateret`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${formValues.userIDs.length} ${formValues.userIDs.length == 1 ? t('toasts.user') : t('toasts.users')} ${t('toasts.users-toggle')}`,
       })
     })
   }

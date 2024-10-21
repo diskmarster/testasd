@@ -76,8 +76,8 @@ export function ModalInviteUser({
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Invitering sendt til ${values.email}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.invitation-sent')} ${values.email}`,
       })
     })
   }

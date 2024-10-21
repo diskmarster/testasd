@@ -63,8 +63,8 @@ export function ModalToggleLocation() {
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${formValues.locationIDs.length} ${formValues.locationIDs.length == 1 ? 'lokation' : 'lokationer'} blev opdateret`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${formValues.locationIDs.length} ${formValues.locationIDs.length == 1 ? t('toasts.location') : t('toasts.locations')} ${t('toasts.locations-toggle')}`,
       })
     })
   }

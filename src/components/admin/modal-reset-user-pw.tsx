@@ -63,8 +63,8 @@ export function ModalResetUserPW({ users }: Props) {
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Email sendt til ${user?.name}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.reset-pw-email')} ${user?.name}`,
       })
     })
   }

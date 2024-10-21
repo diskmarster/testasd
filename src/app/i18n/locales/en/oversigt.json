@@ -45,5 +45,9 @@
   "cost-price": "Cost price",
   "sales-price": "Sales price",
   "quantity": "Qty.",
-  "unit": "Unit"
+  "unit": "Unit",
+
+  "toasts": {
+    "was-created": " was created successfully"
+  }
 }

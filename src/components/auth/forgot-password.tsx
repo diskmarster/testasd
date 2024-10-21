@@ -2,8 +2,6 @@
 
 import { forgotPasswordAction } from '@/app/[lng]/(auth)/glemt-password/actions'
 import { forgotPasswordValidation } from '@/app/[lng]/(auth)/glemt-password/validation'
-import { useTranslation } from '@/app/i18n/client'
-import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
@@ -23,6 +21,8 @@ import {
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { useTranslation } from '@/app/i18n/client'
+import { useLanguage } from '@/context/language'
 
 export function ForgotPasswordCard() {
   const lng = useLanguage()

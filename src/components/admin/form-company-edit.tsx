@@ -23,10 +23,10 @@ interface Props {
 }
 
 export function FormCompanyEdit({ customer }: Props) {
-  const [pending, startTransition] = useTransition()
-  const [formError, setFormError] = useState<string | null>(null)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
+  const [pending, startTransition] = useTransition()
+  const [formError, setFormError] = useState<string | null>(null)
 
   const { handleSubmit, formState, register } = useForm<
     z.infer<typeof updateCustomerValidation>
