@@ -48,5 +48,9 @@
 
   "overview-table-actions": "",
   "update": "Opdater beholdning",
-  "move": "Flyt beholdning"
+  "move": "Flyt beholdning",
+
+  "toasts": {
+    "was-created": " blev oprettet succesfuldt"
+  }
 }
