@@ -1,12 +1,11 @@
 import { inventoryService } from '@/service/inventory'
 import { validateRequest } from '@/service/user.utils'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET({
-  params,
-}: {
-  params: { id: string }
-}): Promise<NextResponse<unknown>> {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+): Promise<NextResponse<unknown>> {
   try {
     const { session, user } = await validateRequest()
 

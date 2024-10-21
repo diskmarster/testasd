@@ -2,8 +2,7 @@ import { locationService } from '@/service/location'
 import { validateRequest } from '@/service/user.utils'
 import { NextResponse } from 'next/server'
 
-export async function GET(
-): Promise<NextResponse<unknown>> {
+export async function GET(): Promise<NextResponse<unknown>> {
 	try {
 		const { session, user } = await validateRequest()
 
