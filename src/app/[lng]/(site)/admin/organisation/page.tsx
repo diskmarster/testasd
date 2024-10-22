@@ -7,10 +7,12 @@ import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
 import { TabsAdmin } from '@/components/admin/tabs-company'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { useLanguage } from '@/context/language'
+import { hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
+import { redirect } from 'next/navigation'
 
 interface PageProps {
   params: {
@@ -18,12 +20,16 @@ interface PageProps {
   }
 }
 
-export default async function Page( { params: { lng } }: PageProps ) {
+export default async function Page({ params: { lng } }: PageProps) {
   const { t } = await serverTranslation(lng, 'organisation')
   const { session, user } = await sessionService.validate()
   if (!session) {
     signOutAction()
     return
+  }
+
+  if (!hasPermissionByRank(user.role, 'moderator')) {
+    redirect("/oversigt")
   }
 
   const location = await locationService.getLastVisited(user.id)

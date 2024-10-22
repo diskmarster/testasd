@@ -6,10 +6,12 @@ import { ModalCreateReorder } from '@/components/inventory/modal-create-reorder'
 import { ModalDeleteReorder } from '@/components/inventory/modal-delete-reorder'
 import { ModalUpdateReorder } from '@/components/inventory/modal-update-reorder'
 import { TableReorder } from '@/components/inventory/table-reorder'
+import { hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
+import { redirect } from 'next/navigation'
 
 interface PageProps {
   params: {
@@ -19,13 +21,26 @@ interface PageProps {
 export default async function Page( { params: { lng } }: PageProps ) {
   const { t } = await serverTranslation(lng, 'genbestil')
   const { session, user } = await sessionService.validate()
-  if (!session) return signOutAction()
+  if (!session) {
+    signOutAction()
+    return
+  }
+
+  if (!hasPermissionByRank(user.role, 'bruger')) {
+    redirect("/oversigt")
+  }
 
   const location = await locationService.getLastVisited(user.id!)
-  if (!location) return signOutAction()
+  if (!location) {
+    signOutAction()
+    return
+  }
 
   const customer = await customerService.getByID(user.customerID)
-  if (!customer) return signOutAction()
+  if (!customer) {
+    signOutAction()
+    return
+  }
 
   const products = await inventoryService.getActiveProductsByID(customer.id)
   const reorders = await inventoryService.getReordersByID(location)

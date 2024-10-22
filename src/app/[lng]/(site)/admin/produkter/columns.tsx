@@ -3,16 +3,16 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
-import { UserRole } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { User } from 'lucia'
 import { DateRange } from 'react-day-picker'
 
 export function getProductOverviewColumns(
   plan: Plan,
-  userRole: UserRole,
+  user: User,
   lng: string,
   t: (key: string) => string,
 ): ColumnDef<FormattedProduct>[] {
@@ -185,8 +185,8 @@ export function getProductOverviewColumns(
     salesPriceCol,
     updatedCol,
     isBarredCol,
-  ]
-  if (userRole != 'bruger') columns.push(actionsCol)
+  ].filter(col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol))
+  if (user.role != 'bruger') columns.push(actionsCol)
   return columns
 }
 
