@@ -16,7 +16,8 @@
 
   "log-in-action": {
     "wrong-credentials": "Forkert e-mail eller adgangskode",
-    "user-inactive": "Brugeren er inaktiv"
+    "user-inactive": "Brugeren er inaktiv",
+    "access-denied": "Brugeren har ikke web adgang"
   },
 
   "create-action": {

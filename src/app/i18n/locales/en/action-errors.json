@@ -15,7 +15,8 @@
   },
   "log-in-action": {
     "wrong-credentials": "Wrong email or password",
-    "user-inactive": "The user is inactive"
+    "user-inactive": "The user is inactive",
+    "access-denied": "The user does not have web access"
   },
   "create-action": {
     "customer-email-exists": "A customer with this email already exists",

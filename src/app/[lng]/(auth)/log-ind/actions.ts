@@ -24,9 +24,8 @@ export const signInAction = publicAction
       throw new ActionError(t('log-in-action.user-inactive'))
     }
 
-    // TODO: add translation here
     if (!existingUser.webAccess || existingUser.role != 'afgang') {
-      throw new ActionError('Bruger har ikke web adgang')
+      throw new ActionError(t('log-in-action.access-denied'))
   }
 
     await sessionService.invalidateByID(existingUser.id)
