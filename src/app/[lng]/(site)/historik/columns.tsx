@@ -3,22 +3,21 @@ import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Plan } from '@/data/customer.types'
 import {
-  FormattedHistory,
   HistoryPlatform,
   HistoryType,
 } from '@/data/inventory.types'
-import { UserRole } from '@/data/user.types'
 import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { TFunction } from 'i18next'
+import { User } from 'lucia'
 import { DateRange } from 'react-day-picker'
 
 export function getTableHistoryColumns(
   plan: Plan,
-  userRole: UserRole,
-lng: string,
+  user: User,
+  lng: string,
   t: TFunction<'historik', undefined>,
 ): ColumnDef<History>[] {
   const insertedCol: ColumnDef<History> = {
@@ -301,7 +300,7 @@ lng: string,
         platformCol,
         userCol,
         refCol,
-      ]
+      ].filter(col => user.priceAccess || col !== costPriceCol)
       return liteCols
     case 'plus':
       const plusCols = [
@@ -320,7 +319,7 @@ lng: string,
         platformCol,
         userCol,
         refCol,
-      ]
+      ].filter(col => user.priceAccess || col !== costPriceCol)
       return plusCols
     case 'pro':
       const proCols = [
@@ -340,7 +339,7 @@ lng: string,
         platformCol,
         userCol,
         refCol,
-      ]
+      ].filter(col => user.priceAccess || col !== costPriceCol)
       return proCols
   }
 }
@@ -352,8 +351,8 @@ export function getTableHistoryFilters(
   groups: Group[],
   placements: Placement[],
   batches: Batch[],
-lng: string,
-t: (key: string) => string,
+  lng: string,
+  t: (key: string) => string,
 ): FilterField<History>[] {
   const insertedFilter: FilterField<History> = {
     column: table.getColumn('inserted'),

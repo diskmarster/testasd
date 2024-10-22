@@ -5,17 +5,17 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
-import { UserRole } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { t } from 'i18next'
+import { User } from 'lucia'
 import { DateRange } from 'react-day-picker'
 
 export function getTableOverviewColumns(
   plan: Plan,
-  userRole: UserRole,
+  user: User,
   lng: string,
   t: (key: string) => string,
 ): ColumnDef<FormattedInventory>[] {
@@ -260,7 +260,7 @@ export function getTableOverviewColumns(
         costPriceCol,
         salesPriceCol,
         actionsCol,
-      ]
+      ].filter(col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol))
       return liteCols
     case 'plus':
       const plusCols = [
@@ -276,7 +276,7 @@ export function getTableOverviewColumns(
         salesPriceCol,
         placementCol,
         actionsCol,
-      ]
+      ].filter(col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol))
       return plusCols
     case 'pro':
       const proCols = [
@@ -293,7 +293,7 @@ export function getTableOverviewColumns(
         placementCol,
         batchCol,
         actionsCol,
-      ]
+      ].filter(col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol))
       return proCols
   }
 }
@@ -368,33 +368,33 @@ export function getTableOverviewFilters(
   const placementFilter: FilterField<FormattedInventory> | null =
     plan === 'plus' || plan === 'pro'
       ? {
-          column: table.getColumn('placement'),
-          type: 'select',
-          label: t('placement'),
-          value: '',
-          options: [
-            ...placements.map(placement => ({
-              value: placement.name,
-              label: placement.name,
-            })),
-          ],
-        }
+        column: table.getColumn('placement'),
+        type: 'select',
+        label: t('placement'),
+        value: '',
+        options: [
+          ...placements.map(placement => ({
+            value: placement.name,
+            label: placement.name,
+          })),
+        ],
+      }
       : null
 
   const batchFilter: FilterField<FormattedInventory> | null =
     plan === 'pro'
       ? {
-          column: table.getColumn('batch'),
-          type: 'select',
-          label: t('batch'),
-          value: '',
-          options: [
-            ...batches.map(batch => ({
-              value: batch.batch,
-              label: batch.batch,
-            })),
-          ],
-        }
+        column: table.getColumn('batch'),
+        type: 'select',
+        label: t('batch'),
+        value: '',
+        options: [
+          ...batches.map(batch => ({
+            value: batch.batch,
+            label: batch.batch,
+          })),
+        ],
+      }
       : null
 
   switch (plan) {
