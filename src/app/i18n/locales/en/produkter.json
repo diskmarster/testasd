@@ -31,8 +31,8 @@
     "update-product-modal-description": "Here you can update a product",
     "update-button": "Update"
   },
-  
+
   "toasts": {
-    "product-updated": "product updated successfully"
+    "product-updated": "Product updated successfully"
   }
 }

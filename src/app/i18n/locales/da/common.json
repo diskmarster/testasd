@@ -37,7 +37,8 @@
     "log-out": "Log ud"
   },
   "nav-location-select": {
-    "select-location": "Vælg Lokation"
+    "select-location": "Vælg Lokation",
+    "inactive": "Inaktiv"
   },
 
   "create-customer-action": {

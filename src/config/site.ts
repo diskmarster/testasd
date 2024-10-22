@@ -11,7 +11,7 @@ export const siteConfig: SiteConfig = {
   successTitle: 'site-config.success-title',
   navItems: (lng: string = 'dk') => [
     {
-      label: t('site-config.overview'),
+      label: 'site-config.overview',
       isDisabled: false,
       isDropdown: false,
       isExternal: false,

@@ -38,7 +38,8 @@
   },
 
   "nav-location-select": {
-    "select-location": "Select Location"
+    "select-location": "Select Location",
+    "inactive": "Inactive"
   },
 
   "create-customer-action": {
@@ -100,8 +101,8 @@
   "site-config": {
     "site-name": "Nem Lager",
     "site-description": "Keep track of your inventory.",
-    "success-title": "Action completed",
     "error-title": "Something went wrong",
+    "success-title": "Action completed",
 
     "overview": "Overview",
     "history": "History",

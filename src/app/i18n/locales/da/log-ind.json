@@ -31,7 +31,7 @@
     "new-password": "Indtast et nyt kodeord for at nulstille",
     "confirm-new-password": "Bekræft nyt kodeord"
   },
-  
+
   "reset-password-page": {
     "something-went-wrong": "Noget gik galt",
     "this-link-is-invalid": "Dette link er enten ugyldigt eller udløbet. Anmod om et nyt link for at nulstille dit kodeord",

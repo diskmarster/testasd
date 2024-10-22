@@ -31,14 +31,14 @@ export function TableOverviewActions({ table, row }: Props) {
       })
 
       if (res && res.serverError) {
-        toast.error(siteConfig.errorTitle, {
+        toast.error(t(`common:${siteConfig.errorTitle}`), {
           description: res.serverError,
         })
         return
       }
 
-      toast.success(siteConfig.successTitle, {
-        description: 'Produkt opdateret successfuldt',
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: t('toasts.product-updated'),
       })
     })
   }

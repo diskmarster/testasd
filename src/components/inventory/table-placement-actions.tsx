@@ -26,17 +26,17 @@ export function TableOverviewActions({ row }: Props) {
       const updatedBarredStatus = !isCurrentlyBarred
       const res = await toggleBarredPlacementAction({
         placementID: row.original.id,
-        isBarred: updatedBarredStatus
+        isBarred: updatedBarredStatus,
       })
       if (res && res.serverError) {
-        toast.error(siteConfig.errorTitle, {
+        toast.error(t(`common:${siteConfig.errorTitle}`), {
           description: res.serverError,
         })
         return
       }
 
-      toast.success(siteConfig.successTitle, {
-        description: 'Varegruppe opdateret successfuldt',
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: t('toasts.placement-updated'),
       })
     })
   }

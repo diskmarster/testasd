@@ -13,11 +13,11 @@ export function getTableUnitColumns(
   const unitCol: ColumnDef<Unit> = {
     accessorKey: 'name',
     header: ({ column }) => (
-      <TableHeader column={column} title={t('unit-columns-unit')} />
+      <TableHeader column={column} title={t('unit-columns.unit')} />
     ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
-      viewLabel: t('unit-columns-unit'),
+      viewLabel: t('unit-columns.unit'),
     },
   }
 

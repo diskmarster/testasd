@@ -4,13 +4,21 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { buttonVariants } from '../ui/button'
 
+interface PageProps {
+  params: {
+    lng: string;
+  };
+}
+
 export default async function LayoutAuth({
   children,
+  params: { lng }, 
 }: Readonly<{
   children: React.ReactNode
+  params: { lng: string }
 }>) {
   const { session } = await sessionService.validate()
-  if (session) redirect('/oversigt')
+  if (session) redirect(`/${lng}/oversigt`)
   return (
     <div className='w-full md:min-h-screen'>
       <div className='container pt-4 flex items-center h-14 justify-between'>
@@ -20,7 +28,7 @@ export default async function LayoutAuth({
         </Link>
         <Link
           className={buttonVariants({ variant: 'ghost' })}
-          href={'/faq'}>
+          href={`/${lng}/faq`}>
           F.A.Q
         </Link>
       </div>

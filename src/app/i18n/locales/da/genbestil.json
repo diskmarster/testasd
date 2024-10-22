@@ -8,6 +8,11 @@
     "no-minimum-stock": "Ingen min. beholdning"
   },
 
+  "table-reorder-actions": {
+    "update": "Opdater",
+    "delete": "Slet"
+  },
+
   "reorder-columns": {
     "productNo": "Varenr.",
     "barcode": "Stregkode",

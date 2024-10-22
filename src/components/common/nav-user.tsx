@@ -53,7 +53,7 @@ export function NavUser({ user }: { user: User }) {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href='/faq'>F.A.Q</Link>
+            <Link href={`/${lng}/faq`}>F.A.Q</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
