@@ -4,8 +4,10 @@ import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function GET({
+  req,
   params,
 }: {
+  req: Request,
   params: { id: string }
 }): Promise<NextResponse<unknown>> {
   try {

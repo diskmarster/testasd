@@ -3,7 +3,7 @@ import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-export async function GET(): Promise<NextResponse<unknown>> {
+export async function GET(req: Request): Promise<NextResponse<unknown>> {
   const { session, user } = await validateRequest(headers())
 
   if (session == null || user == null) {
