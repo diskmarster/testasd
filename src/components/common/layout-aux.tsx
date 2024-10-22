@@ -2,11 +2,6 @@ import { serverTranslation } from '@/app/i18n'
 import { buttonVariants } from '@/components/ui/button'
 import { siteConfig } from '@/config/site'
 import Link from 'next/link'
-<<<<<<< HEAD
-import { ThemeToggle } from './theme-toggle'
-import { serverTranslation } from '@/app/i18n'
-=======
->>>>>>> b5770dc (faq works again)
 import { NavSettings } from './nav-settings'
 
 interface PageProps {
@@ -31,10 +26,6 @@ export default async function AuxLayout({
           <span className='inline-block font-semibold'>{siteConfig.name}</span>
         </Link>
         <div className='flex items-center gap-2'>
-<<<<<<< HEAD
-
-=======
->>>>>>> b5770dc (faq works again)
           <NavSettings lng={lng} />
           <Link
             className={buttonVariants({ variant: 'default' })}

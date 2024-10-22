@@ -5,7 +5,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuTrigger,
@@ -16,13 +15,14 @@ import { ThemeToggle } from './theme-toggle'
 
 interface NavSettingsProps {
   lng: string
+  variant?: 'outline' | 'ghost'
 }
-export function NavSettings({ lng }: NavSettingsProps) {
+export function NavSettings({ lng, variant = 'outline' }: NavSettingsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline' size='icon' className='aspect-square'>
-          <Settings className='size-4' />
+        <Button variant={variant} size='icon' className='aspect-square'>
+          <Settings className='h-5 w-5' />
           <span className='sr-only'>Settings</span>
         </Button>
       </DropdownMenuTrigger>

@@ -2,8 +2,8 @@ import { sessionService } from '@/service/session'
 import { NavDesktop } from './nav-desktop'
 import { NavLocation } from './nav-location'
 import { NavMobile } from './nav-mobile'
-import { NavUser } from './nav-user'
 import { NavSettings } from './nav-settings'
+import { NavUser } from './nav-user'
 
 export async function Header({ lng }: { lng: string }) {
   const { session, user } = await sessionService.validate()
