@@ -336,8 +336,8 @@ export function ModalMoveInventory({
                     className='bg-background'
                     disabled={!hasProduct}
                     autoFocus={false}
-                    placeholder='Søg i placeringer...'
-                    emptyMessage='Ingen placeringer fundet'
+                    placeholder={t('placement-placeholder')}
+                    emptyMessage={t('placement-empty-message')}
                     items={placements
                       .filter(
                         p =>
