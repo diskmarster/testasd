@@ -29,7 +29,6 @@ import {
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  RowSelectionState,
   SortingState,
   Updater,
   useReactTable,
@@ -57,8 +56,8 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'produkter')
   const columns = useMemo(
-    () => getProductOverviewColumns(plan, user.role, lng, t),
-    [user.role, plan, lng, t],
+    () => getProductOverviewColumns(plan, user, lng, t),
+    [user, plan, lng, t],
   )
 
   const [sorting, setSorting] = useState<SortingState>([])
