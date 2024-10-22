@@ -145,8 +145,8 @@ export function LocationDialog({
                     setFormError(res.serverError)
                     return
                   }
-                  toast(siteConfig.successTitle, {
-                    description: `Hovedlokation opdateret til ${locations.find(loc => loc.id == values.locationID)?.name ?? 'Unavngivet'}`,
+                  toast(t(`common:${siteConfig.successTitle}`), {
+                    description: `${t('profile-location-dialog.primary-location-changed')} ${locations.find(loc => loc.id == values.locationID)?.name ?? t('profile-location-dialog.unnamed')}`,
                   })
                   setOpen(false)
                   setValue('locationID', values.locationID)

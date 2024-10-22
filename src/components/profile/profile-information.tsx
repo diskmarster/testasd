@@ -26,7 +26,6 @@ export function ProfileInformation() {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'profil')
 
-
   const { handleSubmit, formState, register } = useForm<
     z.infer<typeof updateProfileValidation>
   >({
@@ -49,8 +48,8 @@ export function ProfileInformation() {
             setFormError(res.serverError)
             return
           }
-          toast(siteConfig.successTitle, {
-            description: 'Din profil blev opdateret',
+          toast(t(`common:${siteConfig.successTitle}`), {
+            description: t('profile-information.updated'),
           })
         })
       })}>

@@ -145,8 +145,8 @@ function PasswordDialog() {
                     setFormError(res.serverError)
                     return
                   }
-                  toast(siteConfig.successTitle, {
-                    description: 'Kodeord blev opdateret',
+                  toast(t(`common:${siteConfig.successTitle}`), {
+                    description: t('profile-password.password-updated'),
                   })
                   setOpen(false)
                 })
