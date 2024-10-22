@@ -151,7 +151,7 @@ export function ModalInviteUser({
                         const role = value as UserRole
 
                         switch (role) {
-                          case 'admininstrator':
+                          case 'administrator':
                           case 'moderator':
                           case 'bruger':
                             setValue('webAccess', true, { shouldValidate: true })
