@@ -116,7 +116,6 @@ export function TabsAdmin({
                 </div>
               )}
               <ModalInviteUser
-                user={user}
                 locations={locations}
                 currentLocationID={currentLocationID}
                 isDisabled={isUserLimitReached(
