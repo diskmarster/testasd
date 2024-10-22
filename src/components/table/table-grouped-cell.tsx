@@ -5,6 +5,7 @@ import { TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { Row, flexRender } from '@tanstack/react-table'
 import { ChevronRight } from 'lucide-react'
+import { Icons } from '../ui/icons'
 
 interface Props<T> {
   row: Row<T>
@@ -30,7 +31,7 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
                 disabled={!canExpand}>
                 <>
                   <span className='sr-only'>Åben række</span>
-                  <ChevronRight
+                  <Icons.chevronRight
                     className={cn('h-4 w-4 transition-all', !canExpand && 'opacity-50', row.getIsExpanded() && 'rotate-90')}
                   />
                 </>

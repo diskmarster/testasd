@@ -1,5 +1,6 @@
 import {
   ArrowDown,
+  ChevronRight,
   ArrowDownUp,
   ArrowLeft,
   ArrowLeftRight,
@@ -44,6 +45,7 @@ import {
 
 export const Icons = {
   updown: ChevronsUpDown,
+  chevronRight: ChevronRight,
   triangleAlert: TriangleAlert,
   sheet: Sheet,
   cloudUpload: CloudUpload,
