@@ -10,6 +10,7 @@ import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { t } from 'i18next'
 import { DateRange } from 'react-day-picker'
 
 export function getTableOverviewColumns(
@@ -197,7 +198,9 @@ export function getTableOverviewColumns(
 
   const updatedCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title='Opdateret' />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('updated')} />
+    ),
     aggregatedCell: ({ getValue }) => formatDate(getValue<Date[]>()[0]),
     cell: () => null,
     filterFn: (row, id, value: DateRange) => {
@@ -223,7 +226,7 @@ export function getTableOverviewColumns(
       return true
     },
     meta: {
-      viewLabel: 'Opdateret',
+      viewLabel: t('updated'),
     },
   }
 
@@ -233,7 +236,9 @@ export function getTableOverviewColumns(
     aggregatedCell: ({ table, row }) => (
       <ModalShowProductLabel product={row.original.product} />
     ),
-    cell: ({ table, row }) => <TableOverviewActions row={row} table={table} />,
+    cell: ({ table, row }) => (
+      <TableOverviewActions row={row} table={table} plan={plan} />
+    ),
     enableHiding: false,
     enableSorting: false,
     meta: {
@@ -304,21 +309,21 @@ export function getTableOverviewFilters(
   const skuFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('sku'),
     type: 'text',
-    label: 'Varenr.',
+    label: t('product-No.'),
     value: '',
-    placeholder: 'Søg i varenr.',
+    placeholder: t('product-No.-placeholder'),
   }
   const barcodeFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('barcode'),
     type: 'text',
-    label: 'Stregkode',
+    label: t('barcode'),
     value: '',
-    placeholder: 'Søg i stregkode',
+    placeholder: t('barcode-placeholder'),
   }
   const unitFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('unit'),
     type: 'select',
-    label: 'Enhed',
+    label: t('unit'),
     value: '',
     options: [
       ...units.map(unit => ({
@@ -330,7 +335,7 @@ export function getTableOverviewFilters(
   const groupFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('group'),
     type: 'select',
-    label: 'Varegruppe',
+    label: t('product-group'),
     value: '',
     options: [
       ...groups.map(group => ({
@@ -342,30 +347,30 @@ export function getTableOverviewFilters(
   const text1Filter: FilterField<FormattedInventory> = {
     column: table.getColumn('text1'),
     type: 'text',
-    label: 'Varetekst 1',
+    label: t('product-text1'),
     value: '',
-    placeholder: 'Søg i varetekst 1',
+    placeholder: t('product-text1-placeholder'),
   }
   const text2Filter: FilterField<FormattedInventory> = {
     column: table.getColumn('text2'),
     type: 'text',
-    label: 'Varetekst 2',
+    label: t('product-text2'),
     value: '',
-    placeholder: 'Søg i varetekst 2',
+    placeholder: t('product-text2-placeholder'),
   }
   const text3Filter: FilterField<FormattedInventory> = {
     column: table.getColumn('text3'),
     type: 'text',
-    label: 'Varetekst 3',
+    label: t('product-text3'),
     value: '',
-    placeholder: 'Søg i varetekst 3',
+    placeholder: t('product-text3-placeholder'),
   }
   const placementFilter: FilterField<FormattedInventory> | null =
     plan === 'plus' || plan === 'pro'
       ? {
           column: table.getColumn('placement'),
           type: 'select',
-          label: 'Placering',
+          label: t('placement'),
           value: '',
           options: [
             ...placements.map(placement => ({
@@ -381,7 +386,7 @@ export function getTableOverviewFilters(
       ? {
           column: table.getColumn('batch'),
           type: 'select',
-          label: 'Batchnr.',
+          label: t('batch'),
           value: '',
           options: [
             ...batches.map(batch => ({

@@ -12,6 +12,7 @@ import { userService } from '@/service/user'
 import { generateIdFromEntropySize } from 'lucia'
 
 export const createCustomerAction = publicAction
+  .metadata({ actionName: 'createCustomer' })
   .schema(createCustomerValidation)
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')

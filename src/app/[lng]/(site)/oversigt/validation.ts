@@ -53,6 +53,8 @@ export const moveInventoryValidation = z.object({
   fromPlacementID: z.coerce.number(),
   fromBatchID: z.coerce.number(),
   toPlacementID: z.coerce.number(),
-  amount: z.coerce.number().min(1),
+  amount: z.coerce
+    .number()
+    .min(1, { message: 'Mængde skal være større end 0' }),
   reference: z.string().optional(),
 })
