@@ -51,7 +51,6 @@ export const updateGroupAction = privateAction
     const updatedGroup = await inventoryService.updateGroupByID(
       groupID,
       updatedGroupData,
-      ctx.lang,
     )
     if (!updatedGroup) {
       throw new ActionError(t('product-group-action.product-group-not-updated'))

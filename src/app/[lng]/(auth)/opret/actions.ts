@@ -45,7 +45,7 @@ export const createCustomerAction = publicAction
       customerID: newCustomer.id,
       email: newCustomer.email,
       locationID: newLocation.id,
-      role: 'firma_admin',
+      role: 'administrator',
     })
     if (!activationLink) {
       throw new ActionError(t('create-action.activation-mail-not-sent'))

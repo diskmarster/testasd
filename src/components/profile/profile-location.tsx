@@ -5,15 +5,12 @@ import { sessionService } from '@/service/session'
 import { Label } from '../ui/label'
 import { LocationDialog } from './profile-location-dialog'
 
-interface PageProps {
-  params: {
-    lng: string
-  }
-}
-
-export async function ProfileLocation({ params: { lng } }: PageProps) {
+export async function ProfileLocation({ lng }: { lng: string }) {
   const { session, user } = await sessionService.validate()
-  if (!session) return signOutAction()
+  if (!session) {
+    signOutAction()
+    return
+  }
   const locations = await locationService.getAllByUserID(user.id)
   const { t } = await serverTranslation(lng, 'profil')
 

@@ -23,11 +23,7 @@ export default async function Page({ params: { lng } }: PageProps) {
       <ProfileHeader />
       <Separator className='my-4' />
       <ProfileInformation />
-      <ProfileLocation
-        params={{
-          lng: lng,
-        }}
-      />
+      <ProfileLocation lng={lng} />
       <ProfilePassword />
       <ProfileDelete />
       <ProfilePin />
