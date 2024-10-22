@@ -96,17 +96,24 @@
   "modal-invite-user": {
     "title": "Invite new user",
     "description": "Send an activation email to one of your employees to quickly get them started using ",
-    "email": "User's email",
+    "email": "Email",
     "email-placeholder": "Write email for the new user",
     "role": "Role",
-    "role-placeholder": "Select role",
+    "role-placeholder": "Search role",
     "user": "User",
     "local-admin": "Local Admin",
     "company-admin": "Company Admin",
     "location-access": "Location Access",
     "of": " of ",
     "locations-chosen": "Locations chosen",
-    "send-invite": "Send invite"
+    "send-invite": "Send invite",
+    "role-question": "What can the roles do? Read more on our",
+    "role-link": "FAQ page",
+    "role-url": "what can the user roles do?",
+    "user-rights": "Rights",
+    "user-rights-web": "User must have access to web",
+    "user-rights-app": "User must have access to app",
+    "user-rights-prices": "User must have access to view prices"
   },
 
   "modal-create-location": {

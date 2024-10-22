@@ -24,34 +24,22 @@ export async function POST(
 
     if (session == null || user == null) {
       return NextResponse.json(
-        {
-          msg: 'Du har ikke adgang til denne resource',
-        },
-        {
-          status: 401,
-        },
+        { msg: 'Du har ikke adgang til denne resource', },
+        { status: 401, },
       )
     }
 
-		if (!user.appAccess) {
+    if (!user.appAccess) {
       return NextResponse.json(
-        {
-          msg: 'Bruger har ikke app adgang',
-        },
-        {
-          status: 401,
-        },
+        { msg: 'Bruger har ikke app adgang', },
+        { status: 401, },
       )
     }
 
     if (request.headers.get('content-type') != 'application/json') {
       return NextResponse.json(
-        {
-          msg: 'Request body skal være json format',
-        },
-        {
-          status: 400,
-        },
+        { msg: 'Request body skal være json format', },
+        { status: 400, },
       )
     }
 
@@ -64,9 +52,7 @@ export async function POST(
           errorMessages: zodRes.error.flatten().formErrors,
           error: zodRes.error,
         },
-        {
-          status: 400,
-        },
+        { status: 400, },
       )
     }
 
@@ -94,12 +80,8 @@ export async function POST(
               `Error creating move: Could not find or create default placement`,
             )
             return NextResponse.json(
-              {
-                msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
-              },
-              {
-                status: 500,
-              },
+              { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`, },
+              { status: 500, },
             )
           }
         }
@@ -111,12 +93,8 @@ export async function POST(
         })
         if (res == undefined) {
           return NextResponse.json(
-            {
-              msg: 'Kunne ikke oprette en ny placering i databasen',
-            },
-            {
-              status: 500,
-            },
+            { msg: 'Kunne ikke oprette en ny placering i databasen', },
+            { status: 500, },
           )
         }
         fromPlacementId = res.id
@@ -141,12 +119,8 @@ export async function POST(
             `Error creating move: Could not find or create default placement`,
           )
           return NextResponse.json(
-            {
-              msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
-            },
-            {
-              status: 500,
-            },
+            { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`, },
+            { status: 500, },
           )
         }
       }
@@ -173,12 +147,8 @@ export async function POST(
               `Error creating move: Could not find or create default placement`,
             )
             return NextResponse.json(
-              {
-                msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
-              },
-              {
-                status: 500,
-              },
+              { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`, },
+              { status: 500, },
             )
           }
         }
@@ -190,12 +160,8 @@ export async function POST(
         })
         if (res == undefined) {
           return NextResponse.json(
-            {
-              msg: 'Kunne ikke oprette en ny placering i databasen',
-            },
-            {
-              status: 500,
-            },
+            { msg: 'Kunne ikke oprette en ny placering i databasen', },
+            { status: 500, },
           )
         }
         toPlacementId = res.id
@@ -220,12 +186,8 @@ export async function POST(
             `Error creating move: Could not find or create default placement`,
           )
           return NextResponse.json(
-            {
-              msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
-            },
-            {
-              status: 500,
-            },
+            { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`, },
+            { status: 500, },
           )
         }
       }
@@ -252,12 +214,8 @@ export async function POST(
               `Error creating move: Could not find or create default batch`,
             )
             return NextResponse.json(
-              {
-                msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`,
-              },
-              {
-                status: 500,
-              },
+              { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`, },
+              { status: 500, },
             )
           }
         }
@@ -269,12 +227,8 @@ export async function POST(
         })
         if (res == undefined) {
           return NextResponse.json(
-            {
-              msg: 'Kunne ikke oprette nyt batch nummer i databasen',
-            },
-            {
-              status: 500,
-            },
+            { msg: 'Kunne ikke oprette nyt batch nummer i databasen', },
+            { status: 500, },
           )
         }
         batchId = res.id
@@ -299,20 +253,20 @@ export async function POST(
             `Error creating move: Could not find or create default batch`,
           )
           return NextResponse.json(
-            {
-              msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`,
-            },
-            {
-              status: 500,
-            },
+            { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`, },
+            { status: 500, },
           )
         }
       }
       batchId = defaultBatch.id
     }
 
-
-    const fromInventoryExists = await inventoryService.getInventoryByIDs(data.productId, fromPlacementId, batchId) != undefined
+    const fromInventoryExists =
+      (await inventoryService.getInventoryByIDs(
+        data.productId,
+        fromPlacementId,
+        batchId,
+      )) != undefined
 
     if (!fromInventoryExists) {
       await inventoryService.createInventory(
@@ -335,7 +289,7 @@ export async function POST(
       toPlacementId,
       'flyt',
       data.quantity,
-      data.reference ?? "",
+      data.reference ?? '',
     )
 
     const end = performance.now()
@@ -350,23 +304,15 @@ export async function POST(
     })
 
     return NextResponse.json(
-      {
-        msg: 'Success',
-      },
-      {
-        status: 201,
-      },
+      { msg: 'Success', },
+      { status: 201, },
     )
   } catch (e) {
     console.error(`Error creating move: '${(e as Error).message}'`)
 
     return NextResponse.json(
-      {
-        msg: `Der skete en fejl under flytning: '${(e as Error).message}'`,
-      },
-      {
-        status: 500,
-      },
+      { msg: `Der skete en fejl under flytning: '${(e as Error).message}'`, },
+      { status: 500, },
     )
   }
 }

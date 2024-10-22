@@ -90,18 +90,26 @@
     "modal-invite-user": {
       "title": "Inviter ny bruger",
       "description": "Send en aktiveringsmail til en af dine medarbejdere for hurtigt at få dem i gang med at bruge ",
-      "email": "Brugerens e-mail",
+      "email": "E-mail",
       "email-placeholder": "Skriv e-mail til den nye bruger",
       "role": "Rolle",
-      "role-placeholder": "Vælg rolle",
+      "role-placeholder": "Søg i roller",
       "user": "Bruger",
       "local-admin": "Lokal Admin",
       "company-admin": "Firma Admin",
-      "location-access": "Lokationsadgang",
-      "of": " af ",
+      "location-access": "Lokationer",
+      "of": "af",
       "locations-chosen": "Valgte lokationer",
-      "send-invite": "Send invitation"
+      "send-invite": "Send invitation",
+      "role-question": "Hvad kan rollerne? Læs mere på vores",
+      "role-link": "F.A.Q. side",
+      "role-url": "hvad kan brugerrollerne?",
+      "user-rights": "Rettigheder",
+      "user-rights-web": "Bruger skal have adgang til web",
+      "user-rights-app": "Bruger skal have adgang til app",
+      "user-rights-prices": "Bruger skal have adgang til at se priser"
     },
+
     "modal-create-location": {
       "title": "Opret ny lokation",
       "description": "Nye lokationer kan tilgås med det samme i den samme dropdown-menu i øverste højre hjørne",

@@ -128,9 +128,9 @@ export function ModalInviteUser({
             <div className='flex gap-4 h-[inherit] flex-col md:flex-row'>
               <div className='w-full space-y-4'>
                 <div className='grid gap-2'>
-                  <Label>Email</Label>
+                  <Label>{t('modal-invite-user.email')}</Label>
                   <Input
-                    placeholder='Indtast email for ny bruger'
+                    placeholder={t('modal-invite-user.email-placeholder')}
                     {...register('email')}
                   />
                   {formState.errors.email && (
@@ -141,10 +141,10 @@ export function ModalInviteUser({
                 </div>
                 <div className='flex flex-col gap-2'>
                   <div className='grid gap-2'>
-                    <Label>Rolle</Label>
+                    <Label>{t('modal-invite-user.role')}</Label>
                     <AutoComplete
                       autoFocus={false}
-                      placeholder='Søg i roller...'
+                      placeholder={t('modal-invite-user.role-placeholder')}
                       emptyMessage='Ingen roller fundet'
                       items={rolesOptions}
                       onSelectedValueChange={value => {
@@ -179,15 +179,15 @@ export function ModalInviteUser({
                       searchValue={searchRoles}
                     />
                     <div className='flex items-center gap-1 text-xs text-muted-foreground'>
-                      <p>Hvad kan rollerne? Læs mere mere på vores{" "}
-                        <Link className='underline' href={'/faq?spørgsmål="hvad kan brugerrollerne?"'} target="_blank">F.A.Q. side</Link>
+                      <p>{t('modal-invite-user.role-question')}{" "}
+                        <Link className='underline' href={`/faq?"${t("modal-invite-user.role-url")}"`} target="_blank">{t('modal-invite-user.role-link')}</Link>
                       </p>
                     </div>
                   </div>
                 </div>
                 {formValues.role == 'bruger' && (
                   <div className='flex flex-col gap-2'>
-                    <Label>Rettigheder</Label>
+                    <Label>{t('modal-invite-user.user-rights')}</Label>
                     <div className='space-y-1'>
                       <div className='flex items-center gap-2'>
                         <Checkbox
@@ -199,7 +199,7 @@ export function ModalInviteUser({
                           }}
                         />
                         <span className='text-muted-foreground text-sm'>
-                          Bruger skal have adgang til web
+                          {t('modal-invite-user.user-rights-web')}
                         </span>
                       </div>
                       <div className='flex items-center gap-2'>
@@ -212,7 +212,7 @@ export function ModalInviteUser({
                           }}
                         />
                         <span className='text-muted-foreground text-sm'>
-                          Bruger skal have adgang til app
+                          {t('modal-invite-user.user-rights-app')}
                         </span>
                       </div>
                       <div className='flex items-center gap-2'>
@@ -225,7 +225,7 @@ export function ModalInviteUser({
                           }}
                         />
                         <span className='text-muted-foreground text-sm'>
-                          Bruger skal have adgang til at se priser
+                          {t('modal-invite-user.user-rights-prices')}
                         </span>
                       </div>
                     </div>
@@ -235,11 +235,11 @@ export function ModalInviteUser({
               <div className={cn('flex w-px bg-border', formValues.role == 'administrator' && 'hidden')} />
               <div className={cn('grid gap-2 w-full', formValues.role == 'administrator' && 'hidden')}>
                 <div className='flex items-center justify-between'>
-                  <Label>Lokationer</Label>
+                  <Label>{t('modal-invite-user.location-access')}</Label>
                   <span className='text-muted-foreground text-xs tabular-nums leading-[14px]'>
                     {formValues.locationIDs.length}
-                    {' af '}
-                    {locations.length} lokationer valgt
+                    {" "}{t('modal-invite-user.of')}{" "}
+                    {locations.length} {t("modal-invite-user.locations-chosen")}
                   </span>
                 </div>
                 <ScrollArea
