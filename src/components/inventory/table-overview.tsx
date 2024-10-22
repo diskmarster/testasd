@@ -75,8 +75,8 @@ export function TableOverview({
   const { t } = useTranslation(lng, 'oversigt')
   const LOCALSTORAGE_KEY = 'inventory_cols'
   const columns = useMemo(
-    () => getTableOverviewColumns(plan, user.role, lng, t),
-    [user.role, plan, lng, t],
+    () => getTableOverviewColumns(plan, user, lng, t),
+    [user, plan, lng, t],
   )
 
   const [sorting, setSorting] = useState<SortingState>([])
