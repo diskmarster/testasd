@@ -25,7 +25,7 @@ export const signInAction = publicAction
     }
 
     // TODO: add translation here
-    if (!existingUser.webAccess) {
+    if (!existingUser.webAccess || existingUser.role != 'afgang') {
       throw new ActionError('Bruger har ikke web adgang')
   }
 
