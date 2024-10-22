@@ -99,15 +99,15 @@ function AnswerImportInventory() {
       <p>{t('faq-page.table-data')}</p>
       <ol className='space-y-2'>
         <li>
-          <span className='font-semibold'>{t('faq-page.product-no')}</span>
-          <span className=''>{t('faq-page.product-no-criteria')}</span>
+          <span className='font-semibold'>{t('faq-page.product-no')} </span>
+          <span className=''>{t(' faq-page.product-no-criteria')}</span>
         </li>
         <li>
           <span className='font-semibold'>{t('faq-page.barcode')} </span>
           <span className=''>{t('faq-page.barcode-criteria')}</span>
         </li>
         <li>
-          <span className='font-semibold'>{t('faq-page.product-group')}</span>
+          <span className='font-semibold'>{t('faq-page.product-group')} </span>
           <span className=''>{t('faq-page.product-group-criteria')}</span>
         </li>
         <li>
