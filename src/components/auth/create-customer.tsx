@@ -235,18 +235,16 @@ function FormCard({
   pending: boolean
 }) {
   function increment() {
-    // @ts-ignore
-    const nextValue = parseFloat(formValues.extraUsers) + 1
-    setValue('extraUsers', parseFloat(nextValue.toFixed(4)), {
-      shouldValidate: true,
-    })
+    const nextValue = parseFloat(formValues.extraUsers.toString()) + 1
+    setValue('extraUsers', nextValue, { shouldValidate: true })
   }
 
   function decrement() {
-    const nextValue = Math.max(0, formValues.extraUsers - 1)
-    setValue('extraUsers', parseFloat(nextValue.toFixed(4)), {
-      shouldValidate: true,
-    })
+    const nextValue = Math.max(
+      0,
+      parseFloat(formValues.extraUsers.toString()) - 1,
+    )
+    setValue('extraUsers', nextValue, { shouldValidate: true })
   }
 
   return (
@@ -371,7 +369,8 @@ function FormCard({
             {formValues.extraUsers != 0 && formValues.plan && (
               <p className='text-center'>
                 Total antal brugere:{' '}
-                {formValues.extraUsers + planUserLimits[formValues.plan]}{' '}
+                {Number(formValues.extraUsers) +
+                  Number(planUserLimits[formValues.plan])}
               </p>
             )}
           </div>
