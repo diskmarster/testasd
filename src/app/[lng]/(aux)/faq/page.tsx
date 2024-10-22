@@ -24,9 +24,14 @@ export default function Page() {
 
   const questions: { question: string, answer: string | React.ReactNode }[] = [
     {
+      // TODO: add translation here
+      question: 'Hvad kan brugerrollerne?',
+      answer: <AnswerUserRoles />
+    },
+    {
       question: t('faq-page.question-format-import'),
       answer: <AnswerImportInventory />
-    }
+    },
   ]
 
   const questionIndex = questions.findIndex(q => q.question == questionParam)
@@ -149,6 +154,42 @@ function AnswerImportInventory() {
           <span>
             {t('faq-page.barred-criteria')}
           </span>
+        </li>
+      </ol>
+    </div>
+  )
+}
+
+function AnswerUserRoles() {
+  return (
+    <div className='flex flex-col gap-4'>
+      <p>Brugerrollerne er fordelt på fem niveauer, med hver deres forskellige rettigheder. De fordeles således:</p>
+      <ol className='space-y-2'>
+        <li>
+          <span className='font-semibold'>Administrator </span>
+          <span className=''>
+            er den øverste brugerrolle på en kundekonto, og har adgang til alle funktioner, data relateret til beholdning og brugerstyring.
+          </span>
+        </li>
+        <li>
+          <span className='font-semibold'>Moderator </span>
+          <span className=''>
+            er den næstøverste brugerrolle, og har samme rettigheder som en administrator, men kun på tildelte lokationer.
+          </span>
+        </li>
+        <li>
+          <span className='font-semibold'>Bruger </span>
+          <span className=''>
+            er den alminidelige dag-til-dag bruger som har adgang funktioner relateret til beholdningstyring. Denne brugerrolle kan yderligere afgrænses med hvilken platform de har adgang til samt om priser må vises.
+          </span>
+        </li>
+        <li>
+          <span className='font-semibold'>Afgang </span>
+          <span>er til den begrænsede beholdningstyring på lageret hvor kun brugere skal have adgang til appen og lave afgange.</span>
+        </li>
+        <li>
+          <span className='font-semibold'>Læseadgang </span>
+          <span className=''>er til den helt begrænsede adgang til kun oversigt og historikken. Denne brugerrolle har kun adgang til web platformen.</span>
         </li>
       </ol>
     </div>
