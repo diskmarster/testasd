@@ -63,11 +63,11 @@ export function getTableUsersColumns(
     cell: ({ getValue }) => {
       const role = getValue<UserRole>()
       const badgeVariant =
-        role == 'sys_admin'
+        role == 'system_administrator'
           ? 'wow'
-          : role == 'firma_admin'
+          : role == 'administrator'
             ? 'default'
-            : role == 'lokal_admin'
+            : role == 'moderator'
               ? 'secondary'
               : 'outline'
 
