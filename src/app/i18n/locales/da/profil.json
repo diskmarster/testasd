@@ -1,7 +1,8 @@
 {
   "profile-information": {
     "name": "Navn",
-    "update-button": "Opdater"
+    "update-button": "Opdater",
+    "updated": "Din profil blev opdateret"
   },
 
   "profile-location": {
@@ -14,6 +15,8 @@
     "description": "Vælg en lokation for at sætte den som din primære",
     "location": "Lokation",
     "location-placeholder": "Vælg en lokation",
+    "primary-location-changed": "Hovedlokation opdateret til ",
+    "unnamed": "Unavngivet",
 
     "cancel-button": "Luk",
     "update-button": "Opdater"
@@ -21,7 +24,8 @@
 
   "profile-password": {
     "new-password": "Nyt kodeord",
-    "update-button": "Opdater dit kodeord"
+    "update-button": "Opdater dit kodeord",
+    "password-updated": "Dit kodeord blev opdateret"
   },
 
   "profile-password-dialog": {
@@ -48,7 +52,8 @@
 
   "profile-pin": {
     "pin": "PIN",
-    "update-pin": "Opdater din PIN"
+    "update-pin": "Opdater din PIN",
+    "pin-updated": "Din PIN blev opdateret"
   },
 
   "profile-pin-dialog": {
