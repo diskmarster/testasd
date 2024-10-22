@@ -66,8 +66,8 @@ export function TableHistory({
   const lng = useContext(LanguageContext)
   const { t } = useTranslation(lng, 'historik')
   const columns = useMemo(
-    () => getTableHistoryColumns(plan, user.role, lng, t),
-    [user.role, plan, lng, t],
+    () => getTableHistoryColumns(plan, user, lng, t),
+    [user, plan, lng, t],
   )
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -176,9 +176,9 @@ export function TableHistory({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
