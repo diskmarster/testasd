@@ -109,6 +109,7 @@ function AnswerImportInventory() {
         </li>
         <li>
           <span className='font-semibold'>{t('faq-page.product-group')}</span>
+          <span className='font-semibold'>Group </span>
           <span className=''>
             {t('faq-page.product-group-criteria')}
           </span>
