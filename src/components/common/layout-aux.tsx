@@ -3,6 +3,7 @@ import { siteConfig } from '@/config/site'
 import Link from 'next/link'
 import { ThemeToggle } from './theme-toggle'
 import { serverTranslation } from '@/app/i18n'
+import { NavSettings } from './nav-settings'
 
 interface PageProps {
   params: {
@@ -27,7 +28,7 @@ export default async function AuxLayout({
         </Link>
         <div className='flex items-center gap-2'>
 
-          <ThemeToggle />
+          <NavSettings lng={lng} />
           <Link
             className={buttonVariants({ variant: 'default' })}
             href={`/${lng}/log-ind`}>
