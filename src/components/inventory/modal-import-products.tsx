@@ -1,6 +1,11 @@
 'use client'
 
-import { finishProductsAction, importProductsAction } from '@/app/(site)/admin/produkter/actions'
+import {
+  finishProductsAction,
+  importProductsAction,
+} from '@/app/[lng]/(site)/admin/produkter/actions'
+import { productsDataValidation } from '@/app/[lng]/(site)/admin/produkter/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Dialog,
@@ -13,18 +18,17 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { useMediaQuery } from '@/hooks/use-media-query'
 import { readAndValidateFileData } from '@/lib/import/file-reader'
+import { chunkArray } from '@/lib/utils'
 import Link from 'next/link'
 import { useCallback, useState, useTransition } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { z, ZodError } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
-import { productsDataValidation } from '@/app/(site)/admin/produkter/validation'
-import { chunkArray } from '@/lib/utils'
 import { Progress } from '../ui/progress'
 import { ScrollArea } from '../ui/scroll-area'
-
 
 export function ModalImportProducts() {
   const [pending, startTransition] = useTransition()
@@ -33,7 +37,8 @@ export function ModalImportProducts() {
   const [uploadedAmount, setUploadedAmount] = useState(0)
   const [responseErrors, setResponseErrors] = useState<string[]>([])
   const [isDone, setIsDone] = useState(false)
-
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'other')
 
   const [rows, setRows] = useState<z.infer<typeof productsDataValidation>>([])
   const [errors, setErrors] = useState<
@@ -97,7 +102,7 @@ export function ModalImportProducts() {
       for (let i = 0; i < chunkedArray.length; i++) {
         const chunk = chunkedArray[i]
         const start = i * CHUNK_SIZE
-        const errorMsg = `Der gik noget galt med rækkerne fra ${start + 1} til ${start + CHUNK_SIZE}.`
+        const errorMsg = `${t('modal-import-products.something-went-wrong')} ${start + 1} ${t('modal-import-products.to')} ${start + CHUNK_SIZE}.`
         const res = await importProductsAction(chunk)
 
         if (res && res.serverError) {
@@ -110,7 +115,6 @@ export function ModalImportProducts() {
       setIsDone(true)
       await finishProductsAction()
     })
-
   }
 
   if (!isDesktop) return null
@@ -124,25 +128,26 @@ export function ModalImportProducts() {
       </DialogTrigger>
       <DialogContent className='max-w-xl'>
         <DialogHeader>
-          <DialogTitle>Import varekartotek</DialogTitle>
+          <DialogTitle>{t('modal-import-products.title')}</DialogTitle>
           <DialogDescription>
-            Når du importerer et varekartotek, oprettes der automatisk en nul-beholdning for alle jeres lokationer, hvis et produkt ikke allerede findes. Hvis produktet allerede eksisterer, vil det blive opdateret. Eventuelle nye varegrupper, der er angivet, vil også automatisk blive oprettet.
+            {t('modal-import-products.description')}
           </DialogDescription>
         </DialogHeader>
         <div className='flex flex-col gap-4'>
-
           <div className='grid gap-2'>
-            <Label>Før du uploader</Label>
+            <Label>{t('modal-import-products.before-upload')}</Label>
             <p className='text-muted-foreground text-sm'>
-              Din import fil skal opfylde visse kritirier før den kan uploades.
-              Se venligst eksempel filen for at se opbygningen.
+              {t('modal-import-products.import-criteria')}
             </p>
             <p className='text-muted-foreground text-sm'>
-              Er du i tvivl om hvordan du skal skrive dine værdier, så se
-              venligst på vores F.A.Q under{' '}
-              <Link href={'/faq?spørgsmål=Hvordan formaterer jeg min import fil til varekartoteket?'} target='_blank' className='underline'>
-                &quot;Hvordan formaterer jeg min import fil til
-                varekartoteket?&quot;
+              {t('modal-import-products.unsure-look-faq')}{' '}
+              <Link
+                href={
+                  '/faq?spørgsmål=Hvordan formaterer jeg min import fil til varekartoteket?'
+                }
+                target='_blank'
+                className='underline'>
+                &quot;{t('modal-import-products.faq-link')}&quot;
               </Link>
             </p>
           </div>
@@ -151,10 +156,12 @@ export function ModalImportProducts() {
               <div className='flex items-center gap-2'>
                 <Icons.sheet className='size-[18px] text-primary' />
 
-                <p className='text-sm'>Fil eksempel</p>
+                <p className='text-sm'>
+                  {t('modal-import-products.file-example')}
+                </p>
               </div>
               <p className='text-xs text-muted-foreground'>
-                Se hvordan import filen skal se ud
+                {t('modal-import-products.file-import-example')}
               </p>
             </div>
             <a
@@ -162,7 +169,7 @@ export function ModalImportProducts() {
               href={'/product-import-example.xlsx'}
               rel='noopener noreferrer'
               download>
-              Download
+              {t('modal-import-products.download')}
             </a>
           </div>
           <div
@@ -172,16 +179,19 @@ export function ModalImportProducts() {
             <div className='text-muted-foreground text-sm grid place-items-center'>
               {isReading ? (
                 <div className='flex gap-2 items-center'>
-                  <p>Indlæser filen</p>
+                  <p>{t('modal-import-products.loading-the-file')}</p>
                   <Icons.spinner className='animate-spin size-3' />
                 </div>
               ) : rows.length > 0 ? (
-                <p>Indlæst og klartgjort {rows.length} rækker til upload</p>
+                <p>
+                  {t('modal-import-products.loaded-and-ready')} {rows.length}{' '}
+                  {t('modal-import-products.loaded-and-ready2')}
+                </p>
               ) : (
                 <p>
                   {isDragActive
-                    ? 'Træk og slip din import fil her'
-                    : 'Træk og slip din import fil her, eller klik for at vælge'}
+                    ? t('modal-import-products.drag-and-drop')
+                    : t('modal-import-products.drag-and-drop2')}
                 </p>
               )}
             </div>
@@ -199,11 +209,16 @@ export function ModalImportProducts() {
 
                 return (
                   <div key={i}>
-                    <p>{`Fejl på række ${rowNumber} i ${rowKey}: ${rowMsg}`}</p>
+                    <p>{`${t('modal-import-products.error-on-row')} ${rowNumber} ${t('modal-import-products.in')} ${rowKey}: ${rowMsg}`}</p>
                   </div>
                 )
               })}
-              {errors.issues.length > 5 && <p className='text-foreground'>{errors.issues.length - 5} fejl mere...</p>}
+              {errors.issues.length > 5 && (
+                <p className='text-foreground'>
+                  {errors.issues.length - 5}{' '}
+                  {t('modal-import-products.more-errors')}
+                </p>
+              )}
             </div>
           )}
           {responseErrors.length > 0 && (
@@ -220,12 +235,16 @@ export function ModalImportProducts() {
           {isDone && responseErrors.length == 0 && (
             <Alert variant='default' className='border-success'>
               <Icons.check className='size-4 !top-3 text-success' />
-              <AlertTitle className='text-success'>Importering fuldført</AlertTitle>
-              <AlertDescription className='text-success'>Importering af dit varekartotek er nu færdigt</AlertDescription>
+              <AlertTitle className='text-success'>
+                {t('modal-import-products.import-completed-title')}
+              </AlertTitle>
+              <AlertDescription className='text-success'>
+                {t('modal-import-products.import-completed-description')}
+              </AlertDescription>
             </Alert>
           )}
           {pending && (
-            <Progress max={100} value={uploadedAmount / rows.length * 100} />
+            <Progress max={100} value={(uploadedAmount / rows.length) * 100} />
           )}
           <Button
             disabled={pending || rows.length == 0}
@@ -233,7 +252,9 @@ export function ModalImportProducts() {
             size='lg'
             className='w-full gap-2'
             onClick={() => onSubmit(rows)}>
-            {pending ? `${uploadedAmount} uploadet af ${rows.length}` : 'Upload til varekartotek'}
+            {pending
+              ? `${uploadedAmount} ${t('modal-import-products.uploaded-of')} ${rows.length}`
+              : t('modal-import-products.upload-to-catalog')}
           </Button>
         </div>
       </DialogContent>

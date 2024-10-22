@@ -2,12 +2,22 @@ import { buttonVariants } from '@/components/ui/button'
 import { siteConfig } from '@/config/site'
 import Link from 'next/link'
 import { ThemeToggle } from './theme-toggle'
+import { serverTranslation } from '@/app/i18n'
+
+interface PageProps {
+  params: {
+    lng: string;
+  };
+}
 
 export default async function AuxLayout({
   children,
+  params: { lng },
 }: {
-  children: React.ReactNode
+  children: React.ReactNode,
+  params: { lng: string }
 }) {
+  const { t } = await serverTranslation(lng, 'other')
   return (
     <div className='w-full md:min-h-screen'>
       <div className='container pt-4 flex items-center h-14 justify-between'>
@@ -20,8 +30,8 @@ export default async function AuxLayout({
           <ThemeToggle />
           <Link
             className={buttonVariants({ variant: 'default' })}
-            href={'/log-ind'}>
-            Log ind eller opret dig
+            href={`/${lng}/log-ind`}>
+            {t('layout-aux.title')}
           </Link>
         </div>
       </div>

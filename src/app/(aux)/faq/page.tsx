@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslation } from '@/app/i18n/client'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import {
   Accordion,
@@ -7,10 +8,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { useLanguage } from '@/context/language'
 import { useSearchParams } from 'next/navigation'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 
 export default function Page() {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'other')
   const searchParams = useSearchParams()
   const questionParam = searchParams.get("spørgsmål")
 
@@ -20,7 +24,7 @@ export default function Page() {
 
   const questions: { question: string, answer: string | React.ReactNode }[] = [
     {
-      question: 'Hvordan formaterer jeg min import fil til varekartoteket?',
+      question: t('faq-page.question-format-import'),
       answer: <AnswerImportInventory />
     }
   ]
@@ -40,12 +44,12 @@ export default function Page() {
         console.warn("no ref at index")
       }
     }
-  }, [questionParam])
+  }, [questionIndex, questionParam])
 
   return (
     <SiteWrapper
-      title='Oftest stillede spørgsmål'
-      description='Her kan du få svar på nogle af de oftest stillede spørgsmål til Nem Lager'>
+      title={t('faq-page.title')}
+      description={t('faq-page.description')}>
       <div className='lg:w-1/2'>
         <Accordion type='single' value={accordionValue} onValueChange={(value) => setAccordionValue(value)} collapsible className='space-y-4'>
           {questions.map((q, i) => (
@@ -74,81 +78,76 @@ const QandA = forwardRef<HTMLDivElement, { question: string, answer: string | Re
 })
 
 function AnswerImportInventory() {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'other')
+
   return (
     <div className='flex flex-col gap-4'>
       <p>
-        For at kunnne importerer en import fil til at opdaterer dit varekartotek, skal filen opfylde disse kritirier.
+        {t('faq-page.to-import')}
       </p>
       <p>
-        Tabel dataen skal være opbygget, i ingen vigtig rækkefølge, og indeholde
-        værdier som stemmer overens med listen nedenunder.
+        {t('faq-page.table-data')}
       </p>
       <ol className='space-y-2'>
         <li>
-          <span className='font-semibold'>Sku </span>
+          <span className='font-semibold'>{t('faq-page.product-no')}</span>
           <span className=''>
-            må indeholde både tal og bogstaver
+            {t('faq-page.product-no-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Barcode </span>
+          <span className='font-semibold'>{t('faq-page.barcode')} </span>
           <span className=''>
-            må indeholde både tal og bogstaver
+            {t('faq-page.barcode-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Group</span>
+          <span className='font-semibold'>{t('faq-page.product-group')}</span>
           <span className=''>
-            må indeholde både tal og bogstaver
+            {t('faq-page.product-group-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Unit </span>
+          <span className='font-semibold'>{t('faq-page.unit')} </span>
           <span>
-            skal skrives som de står på varekortene. Tager ikke højde for store
-            eller små bogstaver. F.eks. Stk eller stk.
+            {t('faq-page.unit-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Text1 </span>
+          <span className='font-semibold'>{t('faq-page.text1')} </span>
           <span className=''>
-            må ikke kun indeholde tal. F.eks. 34567 skal have minimum et
-            bogstav.
+            {t('faq-page.text1-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Text2 </span>
+          <span className='font-semibold'>{t('faq-page.text2')} </span>
           <span className=''>
-            må ikke kun indeholde tal. F.eks. 34567 skal have minimum et
-            bogstav. Er valgfri.
+            {t('faq-page.text2-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Text3 </span>
+          <span className='font-semibold'>{t('faq-page.text3')} </span>
           <span className=''>
-            må ikke kun indeholde tal. F.eks. 34567 skal have minimum et
-            bogstav. Er valgfri.
+            {t('faq-page.text3-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>CostPrice </span>
+          <span className='font-semibold'>{t('faq-page.cost-price')} </span>
           <span>
-            skal skilles med et komma (,) ved decimaler. Tusinde separator kan
-            benyttes med et punktum (.) men dette er ikke nødvendigt.
+            {t('faq-page.cost-price-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>SalesPrice </span>
+          <span className='font-semibold'>{t('faq-page.sales-price')} </span>
           <span>
-            skal skilles med et komma (,) ved decimaler. Tusinde separator kan
-            benyttes med et punktum (.) men dette er ikke nødvendigt.
+            {t('faq-page.sales-price-criteria')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Barred </span>
+          <span className='font-semibold'>{t('faq-page.barred')} </span>
           <span>
-            skal skrives som enten true, false, ja eller nej. Truthy værdier er
-            true og ja. Falsy værdier er false og nej.
+            {t('faq-page.barred-criteria')}
           </span>
         </li>
       </ol>

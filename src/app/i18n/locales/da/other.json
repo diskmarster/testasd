@@ -1,0 +1,77 @@
+{
+    "layout-aux": {
+      "title": "Log ind eller opret dig"
+    },
+    "modal-show-product-label": {
+      "title": "varelabels",
+      "description": "Print labels til dine vare",
+      "prod-no": "Varenr."
+    },
+    "modal-show-product-card": {
+      "barred": "Spærret",
+      "text2": "varetekst 2",
+      "no-text2": "Ingen varetekst 2",
+      "text3": "varetekst 3",
+      "no-text3": "Ingen varetekst 3",
+      "product-group": "Varegruppe",
+      "unit": "Enhed",
+      "product-no": "Varenr.",
+      "barcode": "Stregkode",
+      "cost-price": "Kostpris",
+      "sales-price": "Salgspris"
+    },
+    "modal-import-products": {
+      "something-went-wrong": "Noget gik galt med rækkerne fra",
+      "to": "til",
+      "title": "Importér varekartotek",
+      "description": "Når du importerer et varekartotek, oprettes der automatisk en nul-beholdning for alle dine lokationer, hvis en vare ikke allerede eksisterer. Hvis varen allerede eksisterer, vil det blive opdateret. Eventuelle nye varegrupper, der er angivet, vil også automatisk blive oprettet.",
+      "before-upload": "Før du uploader",
+      "import-criteria": "Din importfil skal opfylde visse kriterier, før den kan uploades. Se venligst eksempel filen for at se opbygningen.",
+      "unsure-look-faq": "Hvis du er usikker på formatet af filen, så se venligst vores FAQ.",
+      "faq-link": "Hvordan formaterer jeg min importfil til varekartotek?",
+      "file-example": "Eksempel på fil",
+      "file-import-example": "Se hvordan filen skal formateres",
+      "download": "Download",
+      "loading-the-file": "Indlæser filen",
+      "loaded-and-ready": "Indlæst og klar",
+      "loaded-and-ready2": "rækker til upload",
+      "drag-and-drop": "Træk og slip filen her",
+      "drag-and-drop2": "Træk og slip filen her, eller klik for at vælge",
+      "error-on-row": "Fejl på række",
+      "in": "i",
+      "more-errors": "flere fejl...",
+      "import-completed-title": "Import fuldført",
+      "import-completed-description": "Import af dit varekartotek er nu fuldført.",
+      "uploaded-of": "uploadet af",
+      "upload-to-catalog": "Upload til varekartotek"
+    },
+  
+    "faq-page": {
+      "question-format-import": "Hvordan formaterer jeg min importfil til varekartoteket?",
+      "title": "Ofte stillede spørgsmål",
+      "description": "Her kan du finde svar på de mest almindeligt stillede spørgsmål om Nem Lager",
+      "to-import": "For at kunne importere en fil for at opdatere dit varekartotek, skal filen opfylde disse kriterier.",
+      "table-data": "Tabel dataen skal være opbygget, i ingen vigtig rækkefølge, og indeholde værdier som stemmer overens med listen nedenunder.",
+      "product-no": "Varenr.",
+      "product-no-criteria": "må indeholde både tal og bogstaver",
+      "barcode": "Stregkode",
+      "barcode-criteria": "må indeholde både tal og bogstaver",
+      "product-group": "Varegruppe",
+      "product-group-criteria": "må indeholde både tal og bogstaver",
+      "unit": "Enhed",
+      "unit-criteria": "skal skrives som de står på varekortene. Tager ikke højde for store eller små bogstaver. F.eks. Stk eller stk.",
+      "text1": "varetekst 1",
+      "text1-criteria": "må ikke kun indeholde tal. F.eks. 34567 skal have minimum et bogstav.",
+      "text2": "varetekst 2",
+      "text2-criteria": "må ikke kun indeholde tal. F.eks. 34567 skal have minimum et bogstav. Er valgfri.",
+      "text3": "varetekst 3",
+      "text3-criteria": "må ikke kun indeholde tal. F.eks. 34567 skal have minimum et bogstav. Er valgfri.",
+      "cost-price": "Omkostningspris",
+      "cost-price-criteria": "skal skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
+      "sales-price": "Salgspris",
+      "sales-price-criteria": "skal skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
+      "barred": "Spærret",
+      "barred-criteria": "skal skrives som enten true, false, ja eller nej. Truthy værdier er true og ja. Falsy værdier er false og nej."
+    }
+  }
+  
