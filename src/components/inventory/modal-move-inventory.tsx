@@ -241,8 +241,8 @@ export function ModalMoveInventory({
               <Label>{t('product')}</Label>
               <AutoComplete
                 autoFocus={false}
-                placeholder='Søg i produkter...'
-                emptyMessage='Ingen produkter fundet'
+                placeholder={t('product-placeholder')}
+                emptyMessage={t('product-empty-message')}
                 items={productOptions}
                 onSelectedValueChange={value => {
                   resetField('fromPlacementID')
@@ -272,8 +272,8 @@ export function ModalMoveInventory({
                     className='bg-background'
                     disabled={!hasProduct}
                     autoFocus={false}
-                    placeholder='Søg i placeringer...'
-                    emptyMessage='Ingen placeringer fundet'
+                    placeholder={t('placement-placeholder')}
+                    emptyMessage={t('placement-empty-message')}
                     items={placementsForProduct(formValues.productID)}
                     onSelectedValueChange={value => {
                       resetField('fromBatchID')
@@ -297,8 +297,8 @@ export function ModalMoveInventory({
                       className='bg-background'
                       disabled={!hasProduct}
                       autoFocus={false}
-                      placeholder='Søg i placeringer...'
-                      emptyMessage='Ingen placeringer fundet'
+                      placeholder={t('batch-placeholder')}
+                      emptyMessage={t('batch-empty-message')}
                       items={batchesForProduct(
                         formValues.productID,
                         formValues.fromPlacementID,

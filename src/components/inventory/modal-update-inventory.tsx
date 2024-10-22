@@ -216,8 +216,8 @@ export function ModalUpdateInventory({
               <Label>{t('product')}</Label>
               <AutoComplete
                 autoFocus={false}
-                placeholder='Søg i produkter...'
-                emptyMessage='Ingen produkter fundet'
+                placeholder={t('product-placeholder')}
+                emptyMessage={t('product-empty-message')}
                 items={productOptions}
                 onSelectedValueChange={value =>
                   setValue('productID', parseInt(value))
@@ -260,7 +260,7 @@ export function ModalUpdateInventory({
                       disabled={!hasProduct}
                       autoFocus={false}
                       placeholder={t('placement-placeholder')}
-                      emptyMessage={t('autocomplete-empty-message')}
+                      emptyMessage={t('placement-empty-message')}
                       items={placementOptions}
                       onSelectedValueChange={value =>
                         setValue('placementID', parseInt(value), {
@@ -300,7 +300,7 @@ export function ModalUpdateInventory({
                         disabled={!hasPlacement}
                         autoFocus={false}
                         placeholder={t('batch-placeholder')}
-                        emptyMessage={t('autocomplete-empty-message')}
+                        emptyMessage={t('batch-empty-message')}
                         items={batchOptions}
                         onSelectedValueChange={value =>
                           setValue('batchID', parseInt(value), {

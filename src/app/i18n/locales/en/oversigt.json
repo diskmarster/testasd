@@ -49,5 +49,10 @@
 
   "toasts": {
     "was-created": " was created successfully"
-  }
+  },
+
+  "new-product-placeholder": "New product",
+  "product-empty-message": "No products found",
+  "placement-empty-message": "No placements found",
+  "batch-empty-message": "No batches found"
 }
