@@ -6,6 +6,7 @@ import { Session, User } from 'lucia'
 import { createSafeActionClient, MiddlewareResult } from 'next-safe-action'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
+import { hasPermissionByRank } from "@/data/user.types";
 
 type ActionContextType = { session?: Session; user?: User }
 const metadataSchema = z.object({
@@ -92,8 +93,9 @@ export const privateAction = publicAction.use(async ({ next, ctx }) => {
 
 // admin action client for admin only requests
 export const adminAction = privateAction.use(async ({ next, ctx }) => {
-  if (!ctx.user.role.includes('admin') || !ctx.user.role.includes("moderator")) {
-    throw new ActionError(ACTION_ERR_UNAUTHORIZED)
+  if (!hasPermissionByRank(ctx.user.role, 'moderator')) {
+    throw new ActionError(ACTION_ERR_UNAUTHORIZED);
   }
+
   return next({ ctx })
 })
