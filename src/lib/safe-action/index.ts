@@ -84,7 +84,7 @@ export const privateAction = publicAction.use(async ({ next, ctx }) => {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
-  if (!user.webAccess || !hasPermissionByRank(user.role, 'bruger')) {
+  if (!user.webAccess || user.role != 'læseadgang') {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
