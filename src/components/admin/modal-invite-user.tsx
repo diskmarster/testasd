@@ -232,10 +232,10 @@ export function ModalInviteUser({
                   </div>
                 )}
               </div>
-              <div className='flex w-px bg-border' />
-              <div className='grid gap-2 w-full'>
+              <div className={cn('flex w-px bg-border', formValues.role == 'administrator' && 'hidden')} />
+              <div className={cn('grid gap-2 w-full', formValues.role == 'administrator' && 'hidden')}>
                 <div className='flex items-center justify-between'>
-                  <Label>Lokations adgang</Label>
+                  <Label>Lokationer</Label>
                   <span className='text-muted-foreground text-xs tabular-nums leading-[14px]'>
                     {formValues.locationIDs.length}
                     {' af '}
@@ -243,14 +243,13 @@ export function ModalInviteUser({
                   </span>
                 </div>
                 <ScrollArea
-                  className='h-[314px]'
-                  maxHeight='max-h-[314px]'
+                  className='h-[300px]'
                 >
                   <div className='space-y-2'>
                     {locations.map(loc => (
                       <div
                         key={loc.id}
-                        className={cn('border rounded-sm py-2 px-3 flex items-center justify-between transition-colors', formValues.locationIDs.includes(loc.id) && 'bg-primary/5')}>
+                        className={cn('border rounded-sm py-2 px-3 flex items-center justify-between transition-colors h-9', formValues.locationIDs.includes(loc.id) && 'bg-primary/5')}>
                         <span className='text-muted-foreground text-sm'>
                           {loc.name}
                         </span>
