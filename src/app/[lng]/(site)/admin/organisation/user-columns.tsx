@@ -217,7 +217,7 @@ export function getTableUsersFilters(
     value: '',
     options: [
       ...userRoles
-        .filter(role => role != 'sys_admin')
+        .filter(role => role != 'system_administrator')
         .map(role => ({
           value: role,
           label: role
