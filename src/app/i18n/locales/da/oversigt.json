@@ -8,13 +8,13 @@
   "incoming": "Tilgang",
   "outgoing": "Afgang",
   "product": "Vare",
-  "product-placeholder": "Vælg en vare",
+  "product-placeholder": "Søg efter en vare",
   "use-existing": "Brug eksisterende",
   "create-new": "Opret ny",
   "placement": "Placering",
-  "placement-placeholder": "Vælg en placering",
+  "placement-placeholder": "Søg i placering..",
   "new-placement-placeholder": "Skriv ny placering",
-  "batch-placeholder": "Vælg et batchnr",
+  "batch-placeholder": "Søg i batchnr..",
   "new-batch-placeholder": "Skriv nyt batchnr",
   "use-account-case": "Brug konto/sag?",
   "use-account-case-placeholder": "Skriv konto/sag",
@@ -58,5 +58,10 @@
 
   "toasts": {
     "was-created": " blev oprettet succesfuldt"
-  }
+  },
+
+  "new-product-placeholder": "Nyt produkt",
+  "product-empty-message": "Ingen produkter fundet",
+  "placement-empty-message": "Ingen placeringer fundet",
+  "batch-empty-message": "Ingen batches fundet"
 }
