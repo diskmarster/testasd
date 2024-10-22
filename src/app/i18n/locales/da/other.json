@@ -47,6 +47,19 @@
     },
   
     "faq-page": {
+      "question-user-roles": "Hvad kan bruggerrollerne?",
+      "user-roles-description": "Brugerrollerne er fordelt på fem niveauer, med hver deres forskellige rettigheder. De fordeles således:",
+      "role-admin": "Administrator ",
+      "role-admin-description": "er den øverste brugerrolle på en kundekonto, og har adgang til alle funktioner, data relateret til beholdning og brugerstyring.",
+      "role-moderator": "Moderator ",
+      "role-moderator-description": "er den næstøverste brugerrolle, og har samme rettigheder som en administrator, men kun på tildelte lokationer.",
+      "role-user": "Bruger ",
+      "role-user-description": "er den almindelige dag-til-dag bruger, som har adgang til funktioner relateret til beholdningsstyring. Denne brugerrolle kan yderligere afgrænses med hvilken platform de har adgang til, samt om priser må vises.",
+      "role-departure": "Afgang ",
+      "role-departure-description": "er til den begrænsede beholdningsstyring på lageret, hvor kun brugere skal have adgang til appen og lave afgange.",
+      "role-readonly": "Læseadgang ",
+      "role-readonly-description": "er til den helt begrænsede adgang til kun oversigt og historik. Denne brugerrolle har kun adgang til webplatformen.",
+
       "question-format-import": "Hvordan formaterer jeg min importfil til varekartoteket?",
       "title": "Ofte stillede spørgsmål",
       "description": "Her kan du finde svar på de mest almindeligt stillede spørgsmål om Nem Lager",

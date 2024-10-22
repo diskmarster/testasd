@@ -24,8 +24,7 @@ export default function Page() {
 
   const questions: { question: string, answer: string | React.ReactNode }[] = [
     {
-      // TODO: add translation here
-      question: 'Hvad kan brugerrollerne?',
+      question: t('faq-page.question-user-roles'),
       answer: <AnswerUserRoles />
     },
     {
@@ -162,35 +161,42 @@ function AnswerImportInventory() {
 }
 
 function AnswerUserRoles() {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'other')
+
   return (
     <div className='flex flex-col gap-4'>
-      <p>Brugerrollerne er fordelt på fem niveauer, med hver deres forskellige rettigheder. De fordeles således:</p>
+      <p>{t('faq-page.user-roles-description')}</p>
       <ol className='space-y-2'>
         <li>
-          <span className='font-semibold'>Administrator </span>
+          <span className='font-semibold'>{t('faq-page.role-admin')}</span>
           <span className=''>
-            er den øverste brugerrolle på en kundekonto, og har adgang til alle funktioner, data relateret til beholdning og brugerstyring.
+            {t('faq-page.role-admin-description')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Moderator </span>
+          <span className='font-semibold'>{t('faq-page.role-moderator')}</span>
           <span className=''>
-            er den næstøverste brugerrolle, og har samme rettigheder som en administrator, men kun på tildelte lokationer.
+            {t('faq-page.role-moderator-description')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Bruger </span>
+          <span className='font-semibold'>{t('faq-page.role-user')}</span>
           <span className=''>
-            er den alminidelige dag-til-dag bruger som har adgang funktioner relateret til beholdningstyring. Denne brugerrolle kan yderligere afgrænses med hvilken platform de har adgang til samt om priser må vises.
+            {t('faq-page.role-user-description')}
           </span>
         </li>
         <li>
-          <span className='font-semibold'>Afgang </span>
-          <span>er til den begrænsede beholdningstyring på lageret hvor kun brugere skal have adgang til appen og lave afgange.</span>
+          <span className='font-semibold'>{t('faq-page.role-departure')}</span>
+          <span className=''>
+            {t('faq-page.role-departure-description')}
+          </span>
         </li>
         <li>
-          <span className='font-semibold'>Læseadgang </span>
-          <span className=''>er til den helt begrænsede adgang til kun oversigt og historikken. Denne brugerrolle har kun adgang til web platformen.</span>
+          <span className='font-semibold'>{t('faq-page.role-readonly')}</span>
+          <span className=''>
+            {t('faq-page.role-readonly-description')}
+          </span>
         </li>
       </ol>
     </div>
