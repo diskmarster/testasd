@@ -1,6 +1,6 @@
 'use server'
 
-import { editableAction } from '@/lib/safe-action'
+import { authedAction } from '@/lib/safe-action'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
@@ -10,7 +10,7 @@ const changeLocationValidation = z.object({
   revalidatePath: z.string(),
 })
 
-export const changeLocationAction = editableAction
+export const changeLocationAction = authedAction
   .metadata({ actionName: 'changeLocation' })
   .schema(changeLocationValidation)
   .action(async ({ parsedInput }) => {
@@ -18,7 +18,7 @@ export const changeLocationAction = editableAction
     revalidatePath(parsedInput.revalidatePath)
   })
 
-export const refreshTableAction = editableAction
+export const refreshTableAction = authedAction
   .schema(z.object({ pathName: z.string() }))
   .action(async ({ parsedInput }) => {
     revalidatePath(parsedInput.pathName)
