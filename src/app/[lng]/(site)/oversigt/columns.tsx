@@ -5,6 +5,7 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
+import { hasPermissionByRank } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -237,7 +238,8 @@ export function getTableOverviewColumns(
       <ModalShowProductLabel product={row.original.product} />
     ),
     cell: ({ table, row }) => (
-      <TableOverviewActions row={row} table={table} plan={plan} />
+      hasPermissionByRank(user.role, 'bruger') ?
+        <TableOverviewActions row={row} table={table} plan={plan} /> : null
     ),
     enableHiding: false,
     enableSorting: false,
