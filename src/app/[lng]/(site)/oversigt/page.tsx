@@ -4,6 +4,8 @@ import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
 import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
 import { TableOverview } from '@/components/inventory/table-overview'
+import { hasPermissionByRank } from '@/data/user.types'
+import { cn } from '@/lib/utils'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -49,14 +51,16 @@ export default async function Home({ params: { lng } }: PageProps) {
       description={t('overview-description')}
       actions={
         <>
-          <ModalUpdateInventory
-            customer={customer}
-            products={products}
-            placements={placements}
-            batches={batches}
-            lng={lng}
-          />
-          {customer.plan != 'lite' && (
+          {hasPermissionByRank(user.role, 'bruger') && (
+            <ModalUpdateInventory
+              customer={customer}
+              products={products}
+              placements={placements}
+              batches={batches}
+              lng={lng}
+            />
+          )}
+          {customer.plan != 'lite' && hasPermissionByRank(user.role, 'bruger') && (
             <ModalMoveInventory
               placements={placements}
               customer={customer}
