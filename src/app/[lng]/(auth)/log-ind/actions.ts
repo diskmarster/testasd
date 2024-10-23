@@ -24,7 +24,7 @@ export const signInAction = publicAction
       throw new ActionError(t('log-in-action.user-inactive'))
     }
 
-    if (!existingUser.webAccess || existingUser.role != 'afgang') {
+    if (!existingUser.webAccess || existingUser.role == 'afgang') {
       throw new ActionError(t('log-in-action.access-denied'))
   }
 
