@@ -35,11 +35,11 @@ export async function GET(
     )
   } catch (e) {
     console.error(
-      `Error getting products for authenticated user: '${(e as Error).message}'`,
+      `Error getting batches for authenticated user: '${(e as Error).message}'`,
     )
 
     return NextResponse.json(
-      { msg: `Der skete en fejl under reguleringen: '${(e as Error).message}'`, },
+      { msg: `Der skete en fejl da vi skulle hente batchnr.: '${(e as Error).message}'`, },
       { status: 500, },
     )
   }
