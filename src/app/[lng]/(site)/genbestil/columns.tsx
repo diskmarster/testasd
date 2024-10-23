@@ -9,10 +9,11 @@ import { Group, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, formatNumber } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { User } from 'lucia'
 import { DateRange } from 'react-day-picker'
 
 export function getTableReorderColumns(
-  userRole: UserRole,
+  user: User,
   lng: string,
   t: (key: string) => string,
 ): ColumnDef<FormattedReorder>[] {
@@ -45,7 +46,7 @@ export function getTableReorderColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('reorder-columns.productNo')} />
     ),
-    cell: ({ row }) => <ModalShowProductCard product={row.original.product} />,
+    cell: ({ row }) => <ModalShowProductCard product={row.original.product} user={user} />,
     enableHiding: false,
     meta: {
       viewLabel: t('reorder-columns.productNo'),

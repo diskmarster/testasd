@@ -58,7 +58,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'reorder_cols'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
-  const columns = useMemo(() => getTableReorderColumns(user.role, lng, t), [user.role, lng, t])
+  const columns = useMemo(() => getTableReorderColumns(user, lng, t), [user.role, lng, t])
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'recommended', desc: true },

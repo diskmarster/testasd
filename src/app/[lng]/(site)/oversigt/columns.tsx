@@ -26,7 +26,7 @@ export function getTableOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('product-No.')} />
     ),
-    cell: ({ row }) => <ModalShowProductCard product={row.original.product} />,
+    cell: ({ row }) => <ModalShowProductCard product={row.original.product} user={user} />,
     enableHiding: false,
     meta: {
       viewLabel: t('product-No.'),
