@@ -1,7 +1,8 @@
 {
   "profile-information": {
     "name": "Name",
-    "update-button": "Update"
+    "update-button": "Update",
+    "updated": "Your profile was updated"
   },
 
   "profile-location": {
