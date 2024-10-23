@@ -368,7 +368,12 @@ export const inventory = {
         },
       })
       .from(reorderTable)
-      .where(eq(reorderTable.locationID, locationID))
+      .where(
+        and(
+          eq(reorderTable.locationID, locationID),
+          eq(inventoryTable.locationID, locationID)
+        )
+      )
       .innerJoin(productTable, eq(productTable.id, reorderTable.productID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
