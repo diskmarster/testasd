@@ -72,8 +72,8 @@ export const location = {
       ))
     return resultSet.rowsAffected == 1
   },
-  getByName: async function(name: string, trx: TRX = db): Promise<Location | undefined> {
-    const location = await trx.select().from(locationTable).where(eq(locationTable.name, name))
+  getByName: async function(name: string, customerID: CustomerID, trx: TRX = db): Promise<Location | undefined> {
+    const location = await trx.select().from(locationTable).where(and(eq(locationTable.name, name), eq(locationTable.customerID, customerID)))
     return location[0]
   },
   getAccessesByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<LinkLocationToUser[]> {

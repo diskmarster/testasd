@@ -113,8 +113,8 @@ export const locationService = {
   ): Promise<LocationWithCounts[]> {
     return await location.getAllByCustomerID(customerID)
   },
-  getByName: async function (name: string): Promise<Location | undefined> {
-    return await location.getByName(name.trim())
+  getByName: async function (name: string, customerID: CustomerID): Promise<Location | undefined> {
+    return await location.getByName(name.trim(), customerID)
   },
   createWithAccess: async function (
     name: string,

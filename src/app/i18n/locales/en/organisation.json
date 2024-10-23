@@ -43,7 +43,6 @@
   "modal-toggle-location": {
     "title": "Change location status",
     "description": "This action is not permanent. If you activate a location, it can be accessed again. If you deactivate a location, it can no longer be accessed until it is reactivated.",
-
     "status": "Status",
     "choose-status": "Choose Status",
     "cancel-button": "Cancel",
@@ -51,11 +50,9 @@
     "active": "Active",
     "inactive": "Inactive"
   },
-
   "table-admin-locations": {
     "no-locations-found": "No locations found"
   },
-
   "location-columns": {
     "location-name": "Location name",
     "location-name-placeholder": "Search Location name",
@@ -85,6 +82,11 @@
     "email-placeholder": "Search email",
     "user-role": "Role",
     "status": "Status",
+    "web-access": "Web access",
+    "app-access": "App access",
+    "price-access": "Price access",
+    "access_true": "Yes",
+    "access_false": "No",
     "active": "Active",
     "inactive": "Inactive",
     "updated": "Updated",
@@ -94,19 +96,16 @@
     "update": "Update",
     "toggle-status": "Change Status"
   },
-
   "table-users-actions": {
     "toggle-status": "Change Status",
     "reset-password": "Reset Password",
     "reset-pin": "Reset PIN"
   },
-
   "form-company-edit": {
     "company-name": "Company name",
     "email": "Email",
     "update-button": "Update"
   },
-
   "modal-invite-user": {
     "title": "Invite new user",
     "description": "Send an activation email to one of your employees to quickly get them started using ",
@@ -129,7 +128,6 @@
     "user-rights-app": "User must have access to app",
     "user-rights-prices": "User must have access to view prices"
   },
-
   "modal-create-location": {
     "title": "Create new location",
     "description": "New locations can be accessed immediately in the dropdown menu in the top right corner.",
@@ -142,17 +140,16 @@
     "create-more-users": "Create more users to assign access rights when creating locations.",
     "own-user": "Your own user will automatically get access to this location, hence why its not shown here."
   },
-
   "toasts": {
-      "location-created": "was created successfully",
-      "location-updated": "was updated successfully",
-      "invitation-sent": "Invitation sent to ",
-      "reset-pw-email": "Email sent to ",
-      "location": "location",
-      "locations": "locations",
-      "locations-toggle": " updated",
-      "user": "user",
-      "users": "users",
-      "users-toggle": " updated"
-    }
+    "location-created": "was created successfully",
+    "location-updated": "was updated successfully",
+    "invitation-sent": "Invitation sent to ",
+    "reset-pw-email": "Email sent to ",
+    "location": "location",
+    "locations": "locations",
+    "locations-toggle": " updated",
+    "user": "user",
+    "users": "users",
+    "users-toggle": " updated"
+  }
 }
