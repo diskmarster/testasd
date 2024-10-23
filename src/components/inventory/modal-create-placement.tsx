@@ -71,8 +71,8 @@ export function ModalCreatePlacement() {
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
           <CredenzaTitle>{t('modal-create-placement.title')}</CredenzaTitle>
-        <CredenzaDescription>
-          {t('modal-create-placement.description')}
+          <CredenzaDescription>
+            {t('modal-create-placement.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -82,7 +82,7 @@ export function ModalCreatePlacement() {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}

@@ -88,7 +88,7 @@ export function ModalDeleteReorder({ products }: Props) {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}

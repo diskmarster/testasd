@@ -22,7 +22,7 @@ export function ProfileInformation() {
   const { session, user } = useSession()
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
-  
+
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'profil')
 
@@ -56,7 +56,7 @@ export function ProfileInformation() {
       {formError && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+          <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
           <AlertDescription>{formError}</AlertDescription>
         </Alert>
       )}

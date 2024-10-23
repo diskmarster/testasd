@@ -99,7 +99,7 @@ export function ModalUpdatePlacement({
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='!top-3 size-4' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}

@@ -56,7 +56,7 @@ export function FormCompanyEdit({ customer }: Props) {
       {formError && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+          <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
           <AlertDescription>{formError}</AlertDescription>
         </Alert>
       )}

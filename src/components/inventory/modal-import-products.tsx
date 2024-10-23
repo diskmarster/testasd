@@ -198,7 +198,7 @@ export function ModalImportProducts() {
           </div>
           {errors && (
             <div className='flex flex-col gap-1 text-destructive text-sm'>
-              <p className='font-semibold'>{siteConfig.errorTitle}</p>
+              <p className='font-semibold'>{t(siteConfig.errorTitle)}</p>
               {errors.issues.slice(0, 5).map((issue, i) => {
                 const rowNumber = Number(issue.path[0]) + 1
                 const rowKey =
@@ -224,7 +224,7 @@ export function ModalImportProducts() {
           {responseErrors.length > 0 && (
             <Alert variant='destructive' className='border-destructive'>
               <Icons.alert className='size-4 !top-3 ' />
-              <AlertTitle className=''>{siteConfig.errorTitle}</AlertTitle>
+              <AlertTitle className=''>{t(siteConfig.errorTitle)}</AlertTitle>
               <ScrollArea maxHeight='max-h-[140px]'>
                 {responseErrors.map((e, i) => (
                   <AlertDescription key={i}>{e}</AlertDescription>

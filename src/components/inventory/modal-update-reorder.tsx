@@ -103,7 +103,7 @@ export function ModalUpdateReorder({ products }: Props) {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -182,8 +182,8 @@ export function ModalUpdateReorder({ products }: Props) {
                     className={cn(
                       'h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0',
                       formValues.minimum != 0 &&
-                        formValues.buffer != 0 &&
-                        'rounded-1-none',
+                      formValues.buffer != 0 &&
+                      'rounded-1-none',
                     )}
                     onClick={() => setValue('buffer', 25)}>
                     25%
@@ -214,8 +214,8 @@ export function ModalUpdateReorder({ products }: Props) {
                     className={cn(
                       'h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
                       formValues.minimum != 0 &&
-                        formValues.buffer != 0 &&
-                        'rounded-1-none',
+                      formValues.buffer != 0 &&
+                      'rounded-1-none',
                     )}
                     onClick={() => setValue('buffer', 100)}>
                     100%
