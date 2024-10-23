@@ -66,8 +66,8 @@ export const LanguageSwitcher = ({ lng }: LanguageSwitcherProps) => {
                 countryCode={languageData[language].code}
                 svg
                 style={{
-                  width: '20px',
-                  height: '20px',
+                  width: '17px',
+                  height: '17px',
                   borderRadius: '6px',
                 }}
                 title={languageData[language].name}
