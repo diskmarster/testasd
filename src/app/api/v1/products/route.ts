@@ -4,34 +4,33 @@ import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
-    request: NextRequest
+	request: NextRequest,
 ): Promise<NextResponse<unknown>> {
 	const { session, user } = await validateRequest(headers())
 
 	if (session == null || user == null) {
 		return NextResponse.json(
-			{ msg: 'Du har ikke adgang til denne resource', },
-			{ status: 401, },
+			{ msg: 'Du har ikke adgang til denne resource' },
+			{ status: 401 },
+		)
+	}
+
+	if (!user.appAccess) {
+		return NextResponse.json(
+			{ msg: 'Bruger har ikke app adgang' },
+			{ status: 401 },
 		)
 	}
 
 	try {
-
-		if (!user.appAccess) {
-      return NextResponse.json(
-        { msg: 'Bruger har ikke app adgang', },
-        { status: 401, },
-      )
-    }
-
 		const products = await productService
 			.getAllProductsWithInventories(user.customerID)
 			.catch(e => {
 				console.error(`Error getting products for authenticated user: '${e}'`)
 
 				return NextResponse.json(
-					{ msg: `Error getting products for authenticated user: '${e}'`, },
-					{ status: 500, },
+					{ msg: `Error getting products for authenticated user: '${e}'` },
+					{ status: 500 },
 				)
 			})
 
@@ -44,7 +43,7 @@ export async function GET(
 				msg: 'Success',
 				data: products,
 			},
-			{ status: 200, },
+			{ status: 200 },
 		)
 	} catch (e) {
 		console.error(
@@ -52,8 +51,10 @@ export async function GET(
 		)
 
 		return NextResponse.json(
-			{ msg: `Der skete en fejl da vi skulle hente produkter: '${(e as Error).message}'`, },
-			{ status: 500, },
+			{
+				msg: `Der skete en fejl da vi skulle hente produkter: '${(e as Error).message}'`,
+			},
+			{ status: 500 },
 		)
 	}
 }

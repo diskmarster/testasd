@@ -25,22 +25,22 @@ export async function POST(
 
     if (session == null || user == null) {
       return NextResponse.json(
-        { msg: 'Du har ikke adgang til denne resource', },
-        { status: 401, },
+        { msg: 'Du har ikke adgang til denne resource' },
+        { status: 401 },
       )
     }
 
     if (!user.appAccess) {
       return NextResponse.json(
-        { msg: 'Bruger har ikke app adgang', },
-        { status: 401, },
+        { msg: 'Bruger har ikke app adgang' },
+        { status: 401 },
       )
     }
 
-    if (request.headers.get('content-type') != 'application/json') {
+    if (headers().get('content-type') != 'application/json') {
       return NextResponse.json(
-        { msg: 'Request body skal være json format', },
-        { status: 400, },
+        { msg: 'Request body skal være json format' },
+        { status: 400 },
       )
     }
 
@@ -53,7 +53,7 @@ export async function POST(
           errorMessages: zodRes.error.flatten().formErrors,
           error: zodRes.error,
         },
-        { status: 400, },
+        { status: 400 },
       )
     }
 
@@ -81,8 +81,10 @@ export async function POST(
               `Error creating move: Could not find or create default placement`,
             )
             return NextResponse.json(
-              { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`, },
-              { status: 500, },
+              {
+                msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
+              },
+              { status: 500 },
             )
           }
         }
@@ -94,8 +96,8 @@ export async function POST(
         })
         if (res == undefined) {
           return NextResponse.json(
-            { msg: 'Kunne ikke oprette en ny placering i databasen', },
-            { status: 500, },
+            { msg: 'Kunne ikke oprette en ny placering i databasen' },
+            { status: 500 },
           )
         }
         placementId = res.id
@@ -120,8 +122,10 @@ export async function POST(
             `Error creating move: Could not find or create default placement`,
           )
           return NextResponse.json(
-            { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`, },
-            { status: 500, },
+            {
+              msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`,
+            },
+            { status: 500 },
           )
         }
       }
@@ -148,8 +152,10 @@ export async function POST(
               `Error creating move: Could not find or create default batch`,
             )
             return NextResponse.json(
-              { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`, },
-              { status: 500, },
+              {
+                msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`,
+              },
+              { status: 500 },
             )
           }
         }
@@ -161,8 +167,8 @@ export async function POST(
         })
         if (res == undefined) {
           return NextResponse.json(
-            { msg: 'Kunne ikke oprette nyt batch nummer i databasen', },
-            { status: 500, },
+            { msg: 'Kunne ikke oprette nyt batch nummer i databasen' },
+            { status: 500 },
           )
         }
         batchId = res.id
@@ -187,8 +193,10 @@ export async function POST(
             `Error creating move: Could not find or create default batch`,
           )
           return NextResponse.json(
-            { msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`, },
-            { status: 500, },
+            {
+              msg: `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`,
+            },
+            { status: 500 },
           )
         }
       }
@@ -210,8 +218,8 @@ export async function POST(
       ))
     ) {
       return NextResponse.json(
-        { msg: `Kunne ikke oprette en ny ${data.type}, prøv igen`, },
-        { status: 500, },
+        { msg: `Kunne ikke oprette en ny ${data.type}, prøv igen` },
+        { status: 500 },
       )
     }
 
@@ -226,18 +234,17 @@ export async function POST(
       platform: 'app',
     })
 
-    return NextResponse.json(
-      { msg: 'Success', },
-      { status: 201, },
-    )
+    return NextResponse.json({ msg: 'Success' }, { status: 201 })
   } catch (e) {
     console.error(
       `Error getting products for authenticated user: '${(e as Error).message}'`,
     )
 
     return NextResponse.json(
-      { msg: `Der skete en fejl under reguleringen: '${(e as Error).message}'`, },
-      { status: 500, },
+      {
+        msg: `Der skete en fejl under reguleringen: '${(e as Error).message}'`,
+      },
+      { status: 500 },
     )
   }
 }

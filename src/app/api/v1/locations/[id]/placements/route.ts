@@ -7,23 +7,23 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ): Promise<NextResponse<unknown>> {
+  const { session, user } = await validateRequest(headers())
+
+  if (session == null || user == null) {
+    return NextResponse.json(
+      { msg: 'Du har ikke adgang til denne resource' },
+      { status: 401 },
+    )
+  }
+
+  if (!user.appAccess) {
+    return NextResponse.json(
+      { msg: 'Bruger har ikke app adgang' },
+      { status: 401 },
+    )
+  }
+
   try {
-    const { session, user } = await validateRequest(headers())
-
-    if (session == null || user == null) {
-      return NextResponse.json(
-        { msg: 'Du har ikke adgang til denne resource' },
-        { status: 401 },
-      )
-    }
-
-    if (!user.appAccess) {
-      return NextResponse.json(
-        { msg: 'Bruger har ikke app adgang' },
-        { status: 401 },
-      )
-    }
-
     const placements = await inventoryService.getActivePlacementsByID(params.id)
 
     return NextResponse.json(

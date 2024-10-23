@@ -10,28 +10,19 @@ export async function GET(
 
   if (session == null || user == null) {
     return NextResponse.json(
-      { msg: 'Du har ikke adgang til denne ressource', },
-      { status: 401, },
+      { msg: 'Du har ikke adgang til denne ressource' },
+      { status: 401 },
+    )
+  }
+
+  if (!user.appAccess) {
+    return NextResponse.json(
+      { msg: 'Bruger har ikke app adgang' },
+      { status: 401 },
     )
   }
 
   try {
-    const { session, user } = await validateRequest(headers())
-
-    if (session == null || user == null) {
-      return NextResponse.json(
-        { msg: 'Du har ikke adgang til denne ressource', },
-        { status: 401, },
-      )
-    }
-
-    if (!user.appAccess) {
-      return NextResponse.json(
-        { msg: 'Bruger har ikke app adgang', },
-        { status: 401, },
-      )
-    }
-
     const locations = await locationService.getAllByUserID(user.id)
 
     return NextResponse.json(
@@ -39,13 +30,13 @@ export async function GET(
         msg: 'Success',
         data: locations,
       },
-      { status: 200, },
+      { status: 200 },
     )
   } catch (e) {
     console.error(e)
     return NextResponse.json(
-      { msg: `Der skete en fejl på serveren. '${(e as Error).message}'`, },
-      { status: 500, },
+      { msg: `Der skete en fejl på serveren. '${(e as Error).message}'` },
+      { status: 500 },
     )
   }
 }

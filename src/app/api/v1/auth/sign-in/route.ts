@@ -47,17 +47,18 @@ export async function POST(
 
     if (user == undefined) {
       user = await userService.verifyPassword(email, password)
-      if (user == undefined) {
-        return NextResponse.json(
-          { msg: 'Ugyldig email og password', },
-          { status: 401, },
-        )
-      } else if (!user.appAccess) {
-        return NextResponse.json(
-          { msg: 'Bruger har ikke app adgang', },
-          { status: 401, },
-        )
-      }
+    }
+
+    if (user == undefined) {
+      return NextResponse.json(
+        { msg: 'Ugyldig email og password', },
+        { status: 401, },
+      )
+    } else if (!user.appAccess) {
+      return NextResponse.json(
+        { msg: 'Bruger har ikke app adgang', },
+        { status: 401, },
+      )
     }
     const customer = await customerService.getByID(user.customerID)
 

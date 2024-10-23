@@ -7,23 +7,23 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } },
 ): Promise<NextResponse<unknown>> {
+  const { session, user } = await validateRequest(headers())
+
+  if (session == null || user == null) {
+    return NextResponse.json(
+      { msg: 'Du har ikke adgang til denne resource' },
+      { status: 401 },
+    )
+  }
+
+  if (!user.appAccess) {
+    return NextResponse.json(
+      { msg: 'Bruger har ikke app adgang' },
+      { status: 401 },
+    )
+  }
+
   try {
-    const { session, user } = await validateRequest(headers())
-
-    if (session == null || user == null) {
-      return NextResponse.json(
-        { msg: 'Du har ikke adgang til denne resource', },
-        { status: 401, },
-      )
-    }
-
-    if (!user.appAccess) {
-      return NextResponse.json(
-        { msg: 'Bruger har ikke app adgang', },
-        { status: 401, },
-      )
-    }
-
     const batches = await inventoryService.getActiveBatchesByID(params.id)
 
     return NextResponse.json(
@@ -31,7 +31,7 @@ export async function GET(
         msg: 'Success',
         data: batches,
       },
-      { status: 200, },
+      { status: 200 },
     )
   } catch (e) {
     console.error(
@@ -39,8 +39,10 @@ export async function GET(
     )
 
     return NextResponse.json(
-      { msg: `Der skete en fejl da vi skulle hente batchnr.: '${(e as Error).message}'`, },
-      { status: 500, },
+      {
+        msg: `Der skete en fejl da vi skulle hente batchnr.: '${(e as Error).message}'`,
+      },
+      { status: 500 },
     )
   }
 }
