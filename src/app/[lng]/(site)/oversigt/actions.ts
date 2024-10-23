@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { privateAction } from '@/lib/safe-action'
+import { editableAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -12,7 +12,7 @@ import {
   updateInventoryValidation,
 } from './validation'
 
-export const updateInventoryAction = privateAction
+export const updateInventoryAction = editableAction
   .schema(updateInventoryValidation)
   .action(
     async ({
@@ -86,7 +86,7 @@ export const updateInventoryAction = privateAction
     },
   )
 
-export const moveInventoryAction = privateAction
+export const moveInventoryAction = editableAction
   .schema(moveInventoryValidation)
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')

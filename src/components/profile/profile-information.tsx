@@ -40,8 +40,9 @@ export function ProfileInformation() {
   if (!session) return null
   return (
     <form
-      className={cn('grid w-full items-start gap-4 md:max-w-lg')}
+      className={cn('grid w-full items-start gap-4 md:max-w-lg mb-8')}
       onSubmit={handleSubmit(values => {
+        setFormError("")
         startTransition(async () => {
           const res = await updateProfileInformationAction({ ...values })
           if (res && res.serverError) {
@@ -69,6 +70,7 @@ export function ProfileInformation() {
           </p>
         )}
       </div>
+      {/*
       <div className='grid gap-2'>
         <Label htmlFor='email'>Email</Label>
         <Input id='email' type='email' {...register('email')} />
@@ -78,6 +80,7 @@ export function ProfileInformation() {
           </p>
         )}
       </div>
+      */}
 
       <Button
         disabled={!formState.isDirty}

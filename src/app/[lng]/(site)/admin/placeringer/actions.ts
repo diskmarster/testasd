@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { privateAction } from '@/lib/safe-action'
+import { editableAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -14,7 +14,7 @@ import {
   updatePlacementValidation,
 } from './validation'
 
-export const createPlacementAction = privateAction
+export const createPlacementAction = editableAction
   .metadata({ actionName: 'createPlacement' })
   .schema(createPlacementValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
@@ -43,7 +43,7 @@ export const createPlacementAction = privateAction
     revalidatePath(`/${ctx.lang}/admin/placeringer`)
   })
 
-export const updatePlacementAction = privateAction
+export const updatePlacementAction = editableAction
   .metadata({ actionName: 'updatePlacement' })
   .schema(updatePlacementValidation)
   .action(
@@ -63,7 +63,7 @@ export const updatePlacementAction = privateAction
     },
   )
 
-export const toggleBarredPlacementAction = privateAction
+export const toggleBarredPlacementAction = editableAction
   .metadata({ actionName: 'placementToggleBarred' })
   .schema(toggleBarredPlacementValidation)
   .action(async ({ parsedInput: { placementID, isBarred }, ctx }) => {

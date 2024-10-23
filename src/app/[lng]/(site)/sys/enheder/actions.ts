@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { privateAction } from '@/lib/safe-action'
+import { editableAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
@@ -13,7 +13,7 @@ import {
   updateUnitValidation,
 } from './validation'
 
-export const createUnitAction = privateAction
+export const createUnitAction = editableAction
   .metadata({ actionName: 'createUnit' })
   .schema(createUnitValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
@@ -34,7 +34,7 @@ export const createUnitAction = privateAction
     revalidatePath(`/${ctx.lang}/sys/enheder`)
   })
 
-export const updateUnitAction = privateAction
+export const updateUnitAction = editableAction
   .metadata({ actionName: 'updateUnit' })
   .schema(updateUnitValidation)
   .action(async ({ parsedInput: { unitID, data: updatedUnitData }, ctx }) => {
@@ -49,7 +49,7 @@ export const updateUnitAction = privateAction
     revalidatePath(`/${ctx.lang}/sys/enheder`)
   })
 
-export const toggleBarredUnitAction = privateAction
+export const toggleBarredUnitAction = editableAction
   .metadata({ actionName: 'unitToggleBarred' })
   .schema(toggleBarredUnitValidation)
   .action(async ({ parsedInput: { unitID, isBarred } }) => {

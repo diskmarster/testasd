@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { privateAction } from '@/lib/safe-action'
+import { editableAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -13,7 +13,7 @@ import {
   updateGroupValidation,
 } from './validation'
 
-export const createGroupAction = privateAction
+export const createGroupAction = editableAction
   .metadata({ actionName: 'createGroup' })
   .schema(createGroupValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
@@ -43,7 +43,7 @@ export const createGroupAction = privateAction
     revalidatePath(`/${ctx.lang}/admin/varegrupper`)
   })
 
-export const updateGroupAction = privateAction
+export const updateGroupAction = editableAction
   .metadata({ actionName: 'updateGroup' })
   .schema(updateGroupValidation)
   .action(async ({ parsedInput: { groupID, data: updatedGroupData }, ctx }) => {
@@ -58,7 +58,7 @@ export const updateGroupAction = privateAction
     revalidatePath(`/${ctx.lang}/admin/varegrupper`)
   })
 
-export const toggleBarredGroupAction = privateAction
+export const toggleBarredGroupAction = editableAction
   .metadata({ actionName: 'groupToggleBarred' })
   .schema(groupToggleBarredValidation)
   .action(async ({ parsedInput: { groupID, isBarred }, ctx }) => {

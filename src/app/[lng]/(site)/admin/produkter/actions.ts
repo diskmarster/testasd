@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { adminAction, privateAction } from '@/lib/safe-action'
+import { adminAction, editableAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
@@ -12,7 +12,7 @@ import {
   updateProductValidation,
 } from './validation'
 
-export const createProductAction = privateAction
+export const createProductAction = editableAction
   .metadata({ actionName: 'createProduct' })
   .schema(createProductValidation)
   .action(async ({ parsedInput, ctx }) => {
@@ -29,7 +29,7 @@ export const createProductAction = privateAction
     revalidatePath(`/${ctx.lang}/admin/produkter`)
   })
 
-export const updateProductAction = privateAction
+export const updateProductAction = editableAction
   .metadata({ actionName: 'updateProduct' })
   .schema(updateProductValidation)
   .action(
@@ -52,7 +52,7 @@ export const updateProductAction = privateAction
     },
   )
 
-export const toggleBarredProductAction = privateAction
+export const toggleBarredProductAction = editableAction
   .metadata({ actionName: 'productToggleBarred' })
   .schema(productToggleBarredValidation)
   .action(

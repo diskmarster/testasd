@@ -1,6 +1,6 @@
 'use server'
 
-import { privateAction } from '@/lib/safe-action'
+import { editableAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -13,7 +13,7 @@ import {
 } from './validation'
 import { serverTranslation } from '@/app/i18n'
 
-export const createReorderAction = privateAction
+export const createReorderAction = editableAction
   .metadata({actionName: 'createReorder'})
   .schema(createReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
@@ -37,7 +37,7 @@ export const createReorderAction = privateAction
     revalidatePath(`/${ctx.lang}/genbestil`)
   })
 
-export const updateReorderAction = privateAction
+export const updateReorderAction = editableAction
   .metadata({actionName: 'updateReorder'})
   .schema(updateReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
@@ -66,7 +66,7 @@ export const updateReorderAction = privateAction
     revalidatePath(`/${ctx.lang}/genbestil`)
   })
 
-export const deleteReorderAction = privateAction
+export const deleteReorderAction = editableAction
   .metadata({actionName: 'deleteReorder'})
   .schema(deleteReorderValidation)
   .action(async ({ parsedInput, ctx }) => {
@@ -91,7 +91,7 @@ export const deleteReorderAction = privateAction
     revalidatePath(`/${ctx.lang}/genbestil`)
   })
 
-export const addOrderedToReorderAction = privateAction
+export const addOrderedToReorderAction = editableAction
   .metadata({actionName: 'addOrderedToReorderAction'})
   .schema(addOrderedToReorderValidation)
   .action(async ({ parsedInput, ctx }) => {

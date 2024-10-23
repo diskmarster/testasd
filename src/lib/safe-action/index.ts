@@ -77,14 +77,24 @@ export const publicAction = baseClient.use(async ({ next }) => {
   return next({ ctx: { session, user, lang } })
 })
 
-// private action client for all authorized requests
-export const privateAction = publicAction.use(async ({ next, ctx }) => {
+// authed action client for all authorized requests
+export const authedAction = publicAction.use(async ({ next, ctx }) => {
 
   if (!ctx.session || !ctx.user) {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
-  if (!ctx.user.webAccess || ctx.user.role == 'læseadgang') {
+  if (!ctx.user.webAccess) {
+    throw new ActionError(ACTION_ERR_UNAUTHORIZED)
+  }
+
+  return next({ ctx })
+})
+
+// editable action client for all users with rights to mutate data
+export const editableAction = authedAction.use(async ({ next, ctx }) => {
+
+  if (ctx.user.role == 'læseadgang') {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
@@ -92,7 +102,7 @@ export const privateAction = publicAction.use(async ({ next, ctx }) => {
 })
 
 // admin action client for admin only requests
-export const adminAction = privateAction.use(async ({ next, ctx }) => {
+export const adminAction = editableAction.use(async ({ next, ctx }) => {
   if (!hasPermissionByRank(ctx.user.role, 'moderator')) {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED);
   }

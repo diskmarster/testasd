@@ -9,7 +9,7 @@ import {
   updateProfileValidation,
 } from '@/app/[lng]/(site)/profil/validation'
 import { serverTranslation } from '@/app/i18n'
-import { adminAction, privateAction } from '@/lib/safe-action'
+import { adminAction, authedAction } from '@/lib/safe-action'
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
@@ -17,7 +17,7 @@ import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-export const updateProfileInformationAction = privateAction
+export const updateProfileInformationAction = authedAction
   .metadata({actionName: 'updateProfileInformation'})
   .schema(updateProfileValidation)
   .action(async ({ parsedInput, ctx: { user, lang } }) => {
@@ -36,7 +36,7 @@ export const adminUpdateProfileInformationAction = adminAction
     async ({ parsedInput: { userId, ...userInfo }, ctx: { user, lang } }) => {},
   )
 
-export const deleteProfileAction = privateAction
+export const deleteProfileAction = authedAction
   .metadata({actionName: 'deleteProfile'})
   .schema(deleteProfileValidation)
   .action(async ({ parsedInput: { userId }, ctx: { session, user, lang } }) => {
@@ -53,7 +53,7 @@ export const deleteProfileAction = privateAction
     redirect(`${lang}/log-ind`)
   })
 
-export const updatePasswordAction = privateAction
+export const updatePasswordAction = authedAction
   .metadata({actionName: 'updatePassword'})
   .schema(updatePasswordValidation)
   .action(
@@ -79,7 +79,7 @@ export const updatePasswordAction = privateAction
     },
   )
 
-export const updatePinAction = privateAction
+export const updatePinAction = authedAction
   .metadata({actionName: 'updatePin'})
   .schema(updatePinValidation)
   .action(
@@ -97,7 +97,7 @@ export const updatePinAction = privateAction
     },
   )
 
-export const updatePrimaryLocationAction = privateAction
+export const updatePrimaryLocationAction = authedAction
   .metadata({actionName: 'updatePrimaryLocation'})
   .schema(updatePrimaryLocationValidation)
   .action(async ({ parsedInput: { locationID }, ctx: { user, lang } }) => {
