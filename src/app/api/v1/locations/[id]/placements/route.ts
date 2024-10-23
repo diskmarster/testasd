@@ -1,13 +1,13 @@
 import { inventoryService } from '@/service/inventory'
 import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET({
-  req,
+  request,
   params,
 }: {
-  req: Request,
+  request: NextRequest,
   params: { id: string }
 }): Promise<NextResponse<unknown>> {
   try {
