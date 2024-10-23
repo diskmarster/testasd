@@ -32,7 +32,7 @@ export const siteConfig: SiteConfig = {
       isDropdown: false,
       isExternal: false,
       href: `/${lng}/genbestil`,
-      roles: [],
+      roles: ['system_administrator', 'administrator', 'moderator', 'bruger'],
     },
     {
       label: 'Administration',
