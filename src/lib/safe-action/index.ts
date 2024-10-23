@@ -72,23 +72,23 @@ const baseClient = createSafeActionClient<
 // public action client for unauthorized requests
 export const publicAction = baseClient.use(async ({ next }) => {
   const lang = cookies().get('i18next')?.value ?? fallbackLng
+  const { session, user } = await sessionService.validate()
 
-  return next({ ctx: { lang } })
+  return next({ ctx: { session, user, lang } })
 })
 
 // private action client for all authorized requests
 export const privateAction = publicAction.use(async ({ next, ctx }) => {
-  const { session, user } = await sessionService.validate()
 
-  if (!session || !user) {
+  if (!ctx.session || !ctx.user) {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
-  if (!user.webAccess || user.role != 'læseadgang') {
+  if (!ctx.user.webAccess || ctx.user.role == 'læseadgang') {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
-  return next({ ctx: { session, user } })
+  return next({ ctx })
 })
 
 // admin action client for admin only requests
