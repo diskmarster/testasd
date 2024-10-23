@@ -3,13 +3,10 @@ import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET({
-  request,
-  params,
-}: {
+export async function GET(
   request: NextRequest,
-  params: { id: string }
-}): Promise<NextResponse<unknown>> {
+  { params }: { params: { id: string } },
+): Promise<NextResponse<unknown>> {
   try {
     const { session, user } = await validateRequest(headers())
 
