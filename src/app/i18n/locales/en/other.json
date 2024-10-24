@@ -18,7 +18,8 @@
     "product-no": "Product no.",
     "barcode": "Barcode",
     "cost-price": "Cost price",
-    "sales-price": "Sales price"
+    "sales-price": "Sales price",
+    "barred-tooltip": "This item is barred"
   },
   "modal-import-products": {
     "something-went-wrong": "Something went wrong with the rows from",

@@ -18,7 +18,8 @@
       "product-no": "Varenr.",
       "barcode": "Stregkode",
       "cost-price": "Kostpris",
-      "sales-price": "Salgspris"
+      "sales-price": "Salgspris",
+      "barred-tooltip": "Denne vare er spærret"
     },
     "modal-import-products": {
       "something-went-wrong": "Noget gik galt med rækkerne fra",
