@@ -21,6 +21,8 @@ import {
   changeUserStatusValidation,
   createNewLocationValidation,
   editLocationValidation,
+  editUserValidation,
+  getLocationsByUserIDValidation,
   inviteNewUserValidation,
   resetUserPasswordValidation,
   updateCustomerValidation,
@@ -246,4 +248,33 @@ export const resetUserPasswordAction = adminAction
         `${ACTION_ERR_INTERNAL}. ${t('organisation-action.couldnt-create-reset-link')}`,
       )
     }
+  })
+
+export const editUserAction = adminAction
+  .metadata({ actionName: 'editUser' })
+  .schema(async () => await getSchema(editUserValidation, 'organisation'))
+  .action(async ({ parsedInput: { userID, data }, ctx: { user, lang } }) => {
+    const { t } = await serverTranslation(lang, 'actions-errors')
+
+    const {locationIDs, ...userData} = data
+
+    const updatedUser = await userService.updateByID(userID, {
+      ...userData,
+    })
+
+    if (!updatedUser) {
+      throw new ActionError(t('organisation-action.user-wasnt-updated'))
+    }
+
+    const updated = await locationService.updateAccessByUserID(userID, user.customerID, locationIDs)
+    if (!updated) {
+      throw new ActionError(t('organisation-action.user-locations-wasnt-updated'))
+    }
+  })
+
+export const getLocationsByUserIDAction = adminAction
+  // No metadata, since we dont need to log when querying data
+  .schema(getLocationsByUserIDValidation)
+  .action(async ({ parsedInput: { userID } }) => {
+    return await locationService.getAllByUserID(userID)
   })
