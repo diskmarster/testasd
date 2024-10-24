@@ -276,7 +276,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                       {t(
                         'modal-create-reorder.recommended-reorder-calculation1',
                       )}{' '}
-                      {(formatNumber(formValues.minimum * (formValues.buffer / 100)))}{' '}
+                      {formatNumber(
+                        formValues.minimum * (formValues.buffer / 100),
+                      )}{' '}
                       {t(
                         'modal-create-reorder.recommended-reorder-calculation2',
                       )}
