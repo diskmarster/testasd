@@ -52,7 +52,8 @@
     "has-invited-you": "has invited you to join ",
     "you-have-been-invited": "You have been invited to join ",
     "user-wasnt-updated": "Something went wrong while updating the user",
-    "user-locations-wasnt-updated": "Something went wrong while updating the user's location access"
+    "user-locations-wasnt-updated": "Something went wrong while updating the user's location access",
+    "deactivate-own-user-error": "You cannot deactivate your own user"
   },
 
   "placement-action": {

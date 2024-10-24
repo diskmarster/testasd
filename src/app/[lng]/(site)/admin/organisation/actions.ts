@@ -33,6 +33,11 @@ export const toggleUserStatusAction = adminAction
   .schema(async () => await getSchema(changeUserStatusValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
+
+    if (parsedInput.status == "inactive" && parsedInput.userIDs.some(id => ctx.user.id == id)) {
+      throw new ActionError(t('organisation-action.deactivate-own-user-error'))
+    }
+
     const status = parsedInput.status == 'active' ? true : false
     const userTogglePromises = parsedInput.userIDs.map(uID => {
       return userService.updateStatus(uID, status)

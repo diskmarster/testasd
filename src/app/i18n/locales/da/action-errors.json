@@ -55,7 +55,8 @@
     "has-invited-you": "har inviteret dig til ",
     "you-have-been-invited": "Du er blevet inviteret til ",
     "user-wasnt-updated": "Noget gik galt under opdateringen af brugeren",
-    "user-locations-wasnt-updated": "Noget gik galt under opdateringen af brugerens lokationsadgange"
+    "user-locations-wasnt-updated": "Noget gik galt under opdateringen af brugerens lokationsadgange",
+    "deactivate-own-user-error": "Du kan ikke deaktivere din egen bruger"
   },
 
   "placement-action": {
