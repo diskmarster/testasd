@@ -26,7 +26,6 @@ interface Props {
 export function ModalShowProductCard({ product, user }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'other')
-  console.log("user", user)
   return (
     <Credenza>
       <CredenzaTrigger className='hover:underline flex items-center gap-2' asChild>
@@ -35,10 +34,10 @@ export function ModalShowProductCard({ product, user }: Props) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span className={cn('hidden size-1.5 rounded-full bg-destructive', product.isBarred && 'block')} />
+                <span className={cn('hidden size-1.5 rounded-full bg-destructive cursor-pointer', product.isBarred && 'block')} />
               </TooltipTrigger>
               <TooltipContent className='bg-foreground text-background'>
-                Denne vare er spærret
+                {t('modal-show-product-card.barred-tooltip')}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
