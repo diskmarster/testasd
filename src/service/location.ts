@@ -266,4 +266,53 @@ export const locationService = {
   ): Promise<LocationWithPrimary[]> {
     return await location.getAllActiveByUserID(userID)
   },
+  updateAccessByUserID: async function(
+    userID: UserID,
+    customerID: CustomerID,
+    locationIDs: LocationID[],
+  ): Promise<boolean> {
+    return await db.transaction(async trx => {
+      const current = await location.getAllByUserID(userID, trx)
+
+      const toRemove = current.filter(
+        l => !locationIDs.some(lID => l.id == lID),
+      )
+      const toAdd = locationIDs.filter(lID => !current.some(l => l.id == lID))
+
+      const primaryRemoved = toRemove.some(l => !l.isBarred && l.isPrimary)
+
+      const removePromises = toRemove.map(
+        async loc =>
+          await location.removeAccess(
+            { locationID: loc.id, userID: userID },
+            trx,
+          ),
+      )
+
+      const addPromises = toAdd.map(
+        async loc =>
+          await location.createAccess(
+            {
+              customerID: customerID,
+              locationID: loc,
+              userID: userID,
+            },
+            trx,
+          ),
+      )
+
+      const res = await Promise.all([...removePromises, ...addPromises])
+
+      if (res.some(bool => !bool)) {
+        trx.rollback()
+        return false
+      }
+
+      if (primaryRemoved) {
+        await location.toggleLocationPrimary(userID, locationIDs[0], trx)
+      }
+
+      return true
+    })
+  },
 }
