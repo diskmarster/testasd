@@ -16,8 +16,7 @@ import { cn } from '@/lib/utils'
 import { User } from 'lucia'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Suspense } from 'react'
-import { NavRestockChip } from './nav-restock-chip'
+import { NavChip } from './nav-chip'
 
 export function NavDesktop({ user, lng }: { user: User; lng: string }) {
   const pathname = usePathname()
@@ -128,9 +127,7 @@ export function Item({
             {t(item.label)}
             {item.isExternal && <Icons.external className='size-3' />}
             {item.hasChip && (
-              <Suspense fallback={null}>
-                <item.hasChip />
-              </Suspense>
+              <NavChip id={item.label} />
             )}
           </NavigationMenuLink>
         </Link>

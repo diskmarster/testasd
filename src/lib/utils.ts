@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -24,7 +24,7 @@ export function formatNumber(num: number): string {
   }
 }
 
-const dkCurrencyFormat = new Intl.NumberFormat("da-DK", {
+const dkCurrencyFormat = new Intl.NumberFormat('da-DK', {
   style: 'currency',
   currency: 'DKK',
 })
@@ -61,4 +61,19 @@ export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   }
 
   return tmpArray
+}
+
+export async function getChipCount(chip: string): Promise<number> {
+  try {
+    const request = await fetch(`/api/v1/chip/${chip}`)
+
+    if (!request.ok) {
+      return 0
+    }
+
+    const response = (await request.json()) as { count: number }
+    return response.count
+  } catch (error) {
+    return 0
+  }
 }
