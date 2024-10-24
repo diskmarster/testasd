@@ -154,5 +154,25 @@
       "users": "brugere",
       "users-toggle": " opdateret"
       
+  },
+  "modal-edit-user": {
+    "title": "Rediger bruger",
+    "description": "Her kan du redigere en brugers navn og adgangsniveauer.",
+    "user-not-found-title": "Der gik noget galt",
+    "user-not-found-description": "Brugeren kunne ikke findes, prøv venligst igen",
+    "user-name": "Navn",
+    "user-name-placeholder": "Indtast navn",
+    "access-level": "Lokationsadgang",
+    "locations-chosen": "valgte lokationer",
+    "update-button": "Opdater",
+    "create-more-locations": "Opret flere lokationer for at tildele adgangsrettigheder, når du redigerer brugere.",
+    "success": "Brugeren blev opdateret successfuldt",
+    "validation": {
+      "email": "Email skal være gyldig",
+      "name_one": "Navn skal være minimum {{count}} karakter",
+      "name_other": "Navn skal være minimum {{count}} karakterer",
+      "locationIDs_one": "Minimum {{count}} lokation skal vælges",
+      "locationIDs_other": "Minimum {{count}} lokationer skal vælges"
     }
   }
+}

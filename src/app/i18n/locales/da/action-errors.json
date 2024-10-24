@@ -53,7 +53,9 @@
     "company-wasnt-updated": "Noget gik galt under opdateringen af virksomheden",
     "couldnt-create-reset-link": "Kunne ikke oprette et nulstillingslink",
     "has-invited-you": "har inviteret dig til ",
-    "you-have-been-invited": "Du er blevet inviteret til "
+    "you-have-been-invited": "Du er blevet inviteret til ",
+    "user-wasnt-updated": "Noget gik galt under opdateringen af brugeren",
+    "user-locations-wasnt-updated": "Noget gik galt under opdateringen af brugerens lokationsadgange"
   },
 
   "placement-action": {

@@ -99,6 +99,7 @@
     "toggle-status": "Change Status"
   },
   "table-users-actions": {
+    "edit-user": "Edit",
     "toggle-status": "Change Status",
     "reset-password": "Reset Password",
     "reset-pin": "Reset PIN"
@@ -153,5 +154,25 @@
     "user": "user",
     "users": "users",
     "users-toggle": " updated"
+  },
+  "modal-edit-user": {
+    "title": "Edit user",
+    "description": "Here you can edit a user's name and access levels.",
+    "user-not-found-title": "Something went wrong",
+    "user-not-found-description": "The user could not be found, please try again",
+    "user-name": "Name",
+    "user-name-placeholder": "Enter name",
+    "access-level": "Location access",
+    "locations-chosen": "locations chosen",
+    "update-button": "Update",
+    "create-more-locations": "Create more locations to assign access rights when editing users.",
+    "success": "The user was successfully updated",
+    "validation": {
+      "email": "Email must be valid",
+      "name_one": "Name must be at least {{count}} character",
+      "name_other": "Name must be at least {{count}} characters",
+      "locationIDs_one": "At least {{count}} location must be selected",
+      "locationIDs_other": "At least {{count}} locations must be selected"
+    }
   }
 }
