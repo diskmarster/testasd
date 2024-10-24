@@ -126,8 +126,8 @@ export function Item({
             )}>
             {t(item.label)}
             {item.isExternal && <Icons.external className='size-3' />}
-            {item.hasChip && (
-              <NavChip id={item.label} />
+            {item.chipLabel && (
+              <NavChip id={item.chipLabel} />
             )}
           </NavigationMenuLink>
         </Link>

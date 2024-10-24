@@ -33,7 +33,7 @@ export const siteConfig: SiteConfig = {
       isExternal: false,
       href: `/${lng}/genbestil`,
       roles: ['system_administrator', 'administrator', 'moderator', 'bruger'],
-      hasChip: true,
+      chipLabel: 'genbestil',
     },
     {
       label: 'Administration',
@@ -160,7 +160,7 @@ type NavItemNoDropdown = {
   isDisabled: boolean
   isDropdown: false
   href: string
-  hasChip?: boolean
+  chipLabel?: string
 }
 
 type NavItemDropdown = {

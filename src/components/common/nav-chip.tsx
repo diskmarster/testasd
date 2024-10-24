@@ -6,12 +6,13 @@ import { getChipCount } from "@/lib/utils"
 
 export function NavChip({ id }: { id: string }) {
   const [count, setCount] = useState<number>()
+  console.log(id)
 
   useEffect(() => {
     if (!count) {
       getChipCount(id).then(c => setCount(c))
     }
-  }, [count])
+  }, [count, id])
 
   if (!count || count == 0) return null
 

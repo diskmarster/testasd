@@ -71,6 +71,11 @@ export async function getChipCount(chip: string): Promise<number> {
       return 0
     }
 
+    if (request.status != 200) {
+      console.error('chip request error', await request.json())
+      return 0
+    }
+
     const response = (await request.json()) as { count: number }
     return response.count
   } catch (error) {
