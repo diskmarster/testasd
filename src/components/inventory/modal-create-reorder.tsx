@@ -41,6 +41,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   const [pending, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createReorderValidation(validationT)
 
   const productOptions = products
     .map(prod => ({
@@ -59,9 +61,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   }
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
-    z.infer<typeof createReorderValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createReorderValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       locationID: locationID,
       minimum: 0,
@@ -86,12 +88,18 @@ export function ModalCreateReorder({ locationID, products }: Props) {
     })
   }
 
-  function onSubmit(values: z.infer<typeof createReorderValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await createReorderAction(values)
 
       if (res && res.serverError) {
         setError(res.serverError)
+        return
+      }
+
+      if (res && res.validationErrors) {
+        console.log(res.validationErrors)
+        setError('Der skete en fejl')
         return
       }
 
@@ -212,8 +220,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     className={cn(
                       'h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0',
                       formValues.minimum != 0 &&
-                      formValues.buffer != 0 &&
-                      'rounded-l-none',
+                        formValues.buffer != 0 &&
+                        'rounded-l-none',
                     )}
                     onClick={() =>
                       setValue('buffer', 25, { shouldValidate: true })
@@ -250,8 +258,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     className={cn(
                       'h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
                       formValues.minimum != 0 &&
-                      formValues.buffer != 0 &&
-                      'rounded-r-none',
+                        formValues.buffer != 0 &&
+                        'rounded-r-none',
                     )}
                     onClick={() =>
                       setValue('buffer', 100, { shouldValidate: true })

@@ -1,36 +1,51 @@
 import { z } from 'zod'
 
-export const createReorderValidation = z.object({
-  productID: z.coerce.number({ required_error: 'Et produkt skal vælges' }),
-  locationID: z.string().min(1),
-  buffer: z.coerce
-    .number()
-    .positive({ message: 'Buffer rate skal være positiv' }),
-  minimum: z.coerce.number({
-    message: 'Minimums beholdning skal være større end 0',
-  }),
-})
+export const createReorderValidation = (
+  t: (key: string, options?: any) => string,
+) =>
+  z.object({
+    productID: z.coerce.number({
+      message: t('restock.product-required'),
+    }),
+    locationID: z.string().min(1),
+    buffer: z.coerce
+      .number()
+      .positive({ message: t('restock.buffer-positive') }),
+    minimum: z.coerce.number().refine(val => !isNaN(val) && val > 0, {
+      message: t('restock.minimum-quantity-positive'),
+    }),
+  })
+export const updateReorderValidation = (
+  t: (key: string, options?: any) => string,
+) =>
+  z.object({
+    productID: z.coerce.number({
+      message: t('restock.product-required'),
+    }),
+    locationID: z.string().min(1),
+    buffer: z.coerce
+      .number()
+      .positive({ message: t('restock.buffer-positive') }),
+    minimum: z.coerce.number().refine(val => !isNaN(val) && val > 0, {
+      message: t('restock.minimum-quantity-positive'),
+    }),
+  })
 
-export const updateReorderValidation = z.object({
-  productID: z.coerce.number({ required_error: 'Et produkt skal vælges' }),
-  locationID: z.string().min(1),
-  buffer: z.coerce
-    .number()
-    .positive({ message: 'Buffer rate skal være positiv' }),
-  minimum: z.coerce.number({
-    message: 'Minimums beholdning skal være større end 0',
-  }),
-})
+export const deleteReorderValidation = (
+  t: (key: string, options?: any) => string,
+) =>
+  z.object({
+    productID: z.coerce.number({ message: t('restock.product-required') }),
+    locationID: z.string().min(1),
+  })
 
-export const deleteReorderValidation = z.object({
-  productID: z.coerce.number({ required_error: 'Et produkt skal vælges' }),
-  locationID: z.string().min(1),
-})
-
-export const addOrderedToReorderValidation = z.object({
-  productID: z.coerce.number({ required_error: 'Et produkt skal vælges' }),
-  locationID: z.string().min(1),
-  ordered: z.coerce
-    .number()
-    .positive({ message: 'Antal skal være større end 0' }),
-})
+export const addOrderedToReorderValidation = (
+  t: (key: string, options?: any) => string,
+) =>
+  z.object({
+    productID: z.coerce.number({ message: t('restock.product.required') }),
+    locationID: z.string().min(1),
+    ordered: z.coerce
+      .number()
+      .positive({ message: t('restock.ordered-quantity-positive') }),
+  })

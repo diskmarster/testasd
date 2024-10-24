@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { editableAction } from '@/lib/safe-action'
+import { editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -15,7 +15,7 @@ import {
 
 export const createReorderAction = editableAction
   .metadata({ actionName: 'createReorder' })
-  .schema(createReorderValidation)
+  .schema(async () => await getSchema(createReorderValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
@@ -41,7 +41,7 @@ export const createReorderAction = editableAction
 
 export const updateReorderAction = editableAction
   .metadata({ actionName: 'updateReorder' })
-  .schema(updateReorderValidation)
+  .schema(async () => await getSchema(updateReorderValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
@@ -72,7 +72,7 @@ export const updateReorderAction = editableAction
 
 export const deleteReorderAction = editableAction
   .metadata({ actionName: 'deleteReorder' })
-  .schema(deleteReorderValidation)
+  .schema(async () => await getSchema(deleteReorderValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
@@ -99,7 +99,10 @@ export const deleteReorderAction = editableAction
 
 export const addOrderedToReorderAction = editableAction
   .metadata({ actionName: 'addOrderedToReorderAction' })
-  .schema(addOrderedToReorderValidation)
+  .schema(
+    async () => await getSchema(addOrderedToReorderValidation, 'validation'),
+  )
+
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)

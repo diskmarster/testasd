@@ -1,0 +1,38 @@
+{
+  "updateProfile": {
+    "name": {
+      "required": "Name is required",
+      "minLength": "Name must be at least {{minLength}} characters long",
+      "maxLength": "Name must be at most {{maxLength}} characters long"
+    },
+    "email": {
+      "required": "Email is required",
+      "email": "Email must be a valid email"
+    },
+    "new-password": {
+      "required": "Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.",
+      "equal": "New password and confirm password must match.",
+      "same": "Your current password cannot be the same as your new password."
+    },
+    "new-pin": {
+      "required": "PIN must be at least 4 characters long",
+      "equal": "New PIN and confirm PIN must match.",
+      "same": "Your current PIN cannot be the same as your new PIN."
+    }
+  },
+  "updateInventory": {
+    "invalid-placement": "Invalid placement",
+    "invalid-batch": "Invalid batch",
+    "empty-placement": "Placement cannot be empty",
+    "empty-batch": "Batch cannot be empty",
+    "move-quantity-type": "Quantity must be a number",
+    "move-quantity-number": "Quantity must be greater than 0"
+  },
+  "restock": {
+    "product-required": "Product is required",
+    "buffer-number": "Buffer must be a number",
+    "buffer-positive": "Buffer must be greater than 0",
+    "minimum-quantity-positive": "Minimum quantity must be greater than 0",
+    "ordered-quantity-positive": "Ordered quantity must be greater than 0"
+  }
+}

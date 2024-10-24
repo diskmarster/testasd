@@ -38,11 +38,13 @@ export function ModalAddOrderedReorder({ products }: Props) {
   const [alreadyOrdered, setAlreadyOrdered] = useState<number>(0)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = addOrderedToReorderValidation(validationT)
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
-    z.infer<typeof addOrderedToReorderValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(addOrderedToReorderValidation),
+    resolver: zodResolver(schema),
   })
 
   useCustomEventListener('AddOrderedReorderByIDs', (data: any) => {
@@ -70,7 +72,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
     })
   }
 
-  function onSubmit(values: z.infer<typeof addOrderedToReorderValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await addOrderedToReorderAction({
         ...values,

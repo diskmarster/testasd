@@ -37,11 +37,13 @@ export function ModalUpdateReorder({ products }: Props) {
   const [pending, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = updateReorderValidation(validationT)
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
-    z.infer<typeof updateReorderValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(updateReorderValidation),
+    resolver: zodResolver(schema),
   })
 
   useCustomEventListener('UpdateReorderByIDs', (data: any) => {
@@ -69,7 +71,7 @@ export function ModalUpdateReorder({ products }: Props) {
     })
   }
 
-  function onSubmit(values: z.infer<typeof updateReorderValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await updateReorderAction(values)
 
@@ -239,9 +241,9 @@ export function ModalUpdateReorder({ products }: Props) {
                   )}
                 </div>
               </div>
-              {formState.errors.minimum && (
+              {formState.errors.buffer && (
                 <p className='text-sm text-destructive'>
-                  {formState.errors.minimum.message}
+                  {formState.errors.buffer.message}
                 </p>
               )}
             </div>

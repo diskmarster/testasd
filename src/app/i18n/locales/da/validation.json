@@ -1,0 +1,31 @@
+{
+  "updateProfile": {
+    "name": {
+      "required": "Navn er påkrævet",
+      "minLength": "Navnet skal være mindst {{minLength}} tegn langt",
+      "maxLength": "Navnet må ikke være mere end {{maxLength}} tegn langt"
+    },
+    "email": {
+      "required": "Email er påkrævet",
+      "email": "Email skal være en gyldig email-adresse"
+    },
+    "new-password": {
+      "required": "Kodeord skal minimum være 8 karakterer, have et stort bogstav, nummer og special karakter",
+      "same": "Dit nuvæende kodeord kan ikke være det samme som dit nye kodeord",
+      "equal": "Kodeordene er ikke ens"
+    },
+    "new-pin": {
+      "required": "PIN skal være mindst 4 karakterer lang",
+      "same": "Din nuværende PIN kan ikke være den samme som din nye PIN",
+      "equal": "PIN-koderne er ikke ens"
+    }
+  },
+  "updateInventory": {
+    "invalid-placement": "Ugyldig placering",
+    "invalid-batch": "Ugyldig batch",
+    "empty-placement": "Placering kan ikke være tom",
+    "empty-batch": "Batch kan ikke være tom",
+    "move-quantity-type": "Mængden skal være et tal",
+    "move-quantity-number": "Mængden skal være større end 0"
+  }
+}
