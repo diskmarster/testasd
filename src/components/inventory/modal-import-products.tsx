@@ -39,8 +39,10 @@ export function ModalImportProducts() {
   const [isDone, setIsDone] = useState(false)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'other')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = productsDataValidation(validationT)
 
-  const [rows, setRows] = useState<z.infer<typeof productsDataValidation>>([])
+  const [rows, setRows] = useState<z.infer<typeof schema>>([])
   const [errors, setErrors] = useState<
     ZodError<typeof productsDataValidation> | undefined
   >(undefined)
@@ -53,10 +55,7 @@ export function ModalImportProducts() {
     setRows([])
     setIsDone(false)
 
-    const dataRes = await readAndValidateFileData(
-      files[0],
-      productsDataValidation,
-    )
+    const dataRes = await readAndValidateFileData(files[0], schema)
     setIsReading(false)
 
     if (!dataRes.success) {
@@ -88,7 +87,7 @@ export function ModalImportProducts() {
     setIsDone(false)
   }
 
-  function onSubmit(values: z.infer<typeof productsDataValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     setErrors(undefined)
     setResponseErrors([])
     setUploadedAmount(0)

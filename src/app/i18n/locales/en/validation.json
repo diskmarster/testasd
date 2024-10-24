@@ -34,5 +34,24 @@
     "buffer-positive": "Buffer must be greater than 0",
     "minimum-quantity-positive": "Minimum quantity must be greater than 0",
     "ordered-quantity-positive": "Ordered quantity must be greater than 0"
+  },
+  "product-groups": {
+    "name-required": "Name is required"
+  },
+  "products": {
+    "sku-required": "Product No. is required",
+    "sku-preprocess": "Product No. must minimum be 1 character",
+    "barcode-required": "Barcode is required",
+    "barcode-preprocess": "Barcode must minimum be 1 character",
+    "product-group-required": "Product group is required",
+    "product-group-preprocess": "Product group must minimum be 1 character",
+    "unit-required": "Unit is required",
+    "unit-preprocess-unknown-type": "Unknown unit. Maybe try: ",
+    "product-text-required": "Product text is required",
+    "product-text-preprocess": "Product text must minimum be 1 character",
+    "cost-price-required": "Cost price is required",
+    "cost-price-type": "Cost price must be a number",
+    "cost-price-not-negative": "Cost price cannot be negative and must be a number.",
+    "sales-price-type": "Sales price must be a number"
   }
 }

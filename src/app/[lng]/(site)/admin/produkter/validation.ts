@@ -129,8 +129,7 @@ export const productsDataValidation = (
           .preprocess(
             val => (val == '' ? 'false' : val),
             z.string({
-              invalid_type_error:
-                'Ukendt værdi i spærret. Brug true, false, ja eller nej',
+              invalid_type_error: t('products.barred-values'),
             }),
           )
           .transform(val => val.trim().toLowerCase())
@@ -141,12 +140,12 @@ export const productsDataValidation = (
               value === 'ja' ||
               value === 'nej',
             {
-              message: 'Ukendt værdi i spærret. Brug true, false, ja eller nej',
+              message: t('products.barred-values'),
             },
           )
           .transform(value => value === 'true' || value === 'ja'),
       })
-      .strict({ message: 'Ukendt kolonne' })
+      .strict({ message: t('products.unknown-column') })
       .superRefine((val, ctx) => {}),
   )
 
