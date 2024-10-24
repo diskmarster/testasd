@@ -1,6 +1,7 @@
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { ModalEditLocation } from '@/components/admin/modal-edit-location'
+import { ModalEditUser } from '@/components/admin/modal-edit-user'
 import { ModalResetUserPW } from '@/components/admin/modal-reset-user-pw'
 import { ModalToggleLocation } from '@/components/admin/modal-toggle-location'
 import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
@@ -60,6 +61,7 @@ export default async function Page({ params: { lng } }: PageProps) {
       />
 
       {/* Modals without triggers that we open with custom events from row actions */}
+      <ModalEditUser users={users} locations={locations} />
       <ModalToggleUser users={users} />
       <ModalResetUserPW users={users} />
       <ModalEditLocation user={user} users={users} userAccesses={userAccesses} />
