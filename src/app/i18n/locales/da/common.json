@@ -136,5 +136,9 @@
   "toasts": {
     "location-select": "Skiftet lokation til ",
     "unnamed": "Unnavngivet"
+  },
+
+  "chip": {
+    "genbestil-chip-tooltip": "{{count}} vare skal genbestilles"
   }
 }

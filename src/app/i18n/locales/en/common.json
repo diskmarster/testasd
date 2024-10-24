@@ -137,5 +137,9 @@
   "toasts": {
     "location-select": "Changed location to ",
     "unnamed": "Unnamed"
+  },
+
+  "chip": {
+    "genbestil-chip-tooltip": "{{count}} items needs to be reordered"
   }
 }

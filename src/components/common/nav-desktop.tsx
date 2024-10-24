@@ -127,7 +127,7 @@ export function Item({
             {t(item.label)}
             {item.isExternal && <Icons.external className='size-3' />}
             {item.chipLabel && (
-              <NavChip id={item.chipLabel} />
+              <NavChip chipLabel={item.chipLabel} localeKey={`chip.${item.chipLabel}-chip-tooltip`} />
             )}
           </NavigationMenuLink>
         </Link>
