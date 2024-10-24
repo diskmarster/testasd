@@ -36,17 +36,19 @@ export function ModalUpdateGroup({
   const [error, setError] = useState<string>()
   const lng = useContext(LanguageContext)
   const { t } = useTranslation(lng, 'varegrupper')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createGroupValidation(validationT)
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
-    z.infer<typeof createGroupValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createGroupValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       name: groupToEdit?.name || '',
     },
   })
 
-  async function onSubmit(values: z.infer<typeof createGroupValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       if (!groupToEdit) {
         setError(t('update-product-group-modal.no-product-group'))

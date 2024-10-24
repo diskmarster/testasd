@@ -30,11 +30,13 @@ export function ModalCreateProductGroup() {
   const [error, setError] = useState<string | undefined>()
   const lng = useContext(LanguageContext)
   const { t } = useTranslation(lng, 'varegrupper')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createGroupValidation(validationT)
 
   const { handleSubmit, register, formState, reset } = useForm<
-    z.infer<typeof createGroupValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createGroupValidation),
+    resolver: zodResolver(schema),
     defaultValues: {},
   })
 
@@ -43,7 +45,7 @@ export function ModalCreateProductGroup() {
     setOpen(open)
   }
 
-  const onSubmit = async (values: z.infer<typeof createGroupValidation>) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await createGroupAction(values)
       if (res && res.serverError) {
@@ -76,7 +78,9 @@ export function ModalCreateProductGroup() {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{toast.error(t(`common:${siteConfig.errorTitle}`))}</AlertTitle>
+                <AlertTitle>
+                  {toast.error(t(`common:${siteConfig.errorTitle}`))}
+                </AlertTitle>
                 <AlertDescription></AlertDescription>
               </Alert>
             )}

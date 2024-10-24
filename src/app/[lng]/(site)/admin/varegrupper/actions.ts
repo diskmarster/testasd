@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { editableAction } from '@/lib/safe-action'
+import { editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -15,7 +15,8 @@ import {
 
 export const createGroupAction = editableAction
   .metadata({ actionName: 'createGroup' })
-  .schema(createGroupValidation)
+  .schema(async () => await getSchema(createGroupValidation, 'validation'))
+
   .action(async ({ parsedInput: { name }, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const { session, user } = await sessionService.validate()
@@ -45,7 +46,7 @@ export const createGroupAction = editableAction
 
 export const updateGroupAction = editableAction
   .metadata({ actionName: 'updateGroup' })
-  .schema(updateGroupValidation)
+  .schema(async () => await getSchema(updateGroupValidation, 'validation'))
   .action(async ({ parsedInput: { groupID, data: updatedGroupData }, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const updatedGroup = await inventoryService.updateGroupByID(

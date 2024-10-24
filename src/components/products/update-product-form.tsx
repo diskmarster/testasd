@@ -52,11 +52,13 @@ export function UpdateProductsForm({
   const [error, setError] = useState<string>()
   const lng = useContext(LanguageContext)
   const { t } = useTranslation(lng, 'produkter')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createProductValidation(validationT)
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
-    z.infer<typeof createProductValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createProductValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       customerID: user!.customerID,
       costPrice: 0,
@@ -67,7 +69,7 @@ export function UpdateProductsForm({
 
   const formValues = watch()
 
-  async function onSubmit(values: z.infer<typeof createProductValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       if (!productToEdit) {
         setError('No product to edit')
@@ -95,7 +97,7 @@ export function UpdateProductsForm({
   useEffect(() => {
     if (productToEdit) {
       Object.entries(productToEdit).forEach(([key, value]) => {
-        setValue(key as keyof z.infer<typeof createProductValidation>, value)
+        setValue(key as keyof z.infer<typeof schema>, value)
       })
     }
   }, [productToEdit, setValue])

@@ -12,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
 import { useTranslation } from '@/app/i18n/client'
+import { LanguageContext } from '@/context/language'
 import { useSession } from '@/context/session'
 import {
   Credenza,
@@ -32,7 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
-import { LanguageContext } from '@/context/language'
 
 export function CreateProductsForm({
   units,
@@ -47,11 +47,13 @@ export function CreateProductsForm({
   const [pending, startTransition] = useTransition()
   const [show, setShow] = useState(false)
   const [error, setError] = useState<string>()
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createProductValidation(validationT)
 
   const { handleSubmit, register, formState, setValue, reset } = useForm<
-    z.infer<typeof createProductValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createProductValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       customerID: user!.customerID,
       costPrice: 0,
@@ -59,7 +61,7 @@ export function CreateProductsForm({
     },
   })
 
-  async function onSubmit(values: z.infer<typeof createProductValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const response = await createProductAction(values)
       if (response && response.serverError) {

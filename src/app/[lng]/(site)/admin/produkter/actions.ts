@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { adminAction, editableAction } from '@/lib/safe-action'
+import { adminAction, editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
@@ -14,7 +14,7 @@ import {
 
 export const createProductAction = editableAction
   .metadata({ actionName: 'createProduct' })
-  .schema(createProductValidation)
+  .schema(async () => await getSchema(createProductValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const newProduct = await productService.create(
@@ -31,7 +31,7 @@ export const createProductAction = editableAction
 
 export const updateProductAction = editableAction
   .metadata({ actionName: 'updateProduct' })
-  .schema(updateProductValidation)
+  .schema(async () => await getSchema(updateProductValidation, 'validation'))
   .action(
     async ({
       ctx: { user, lang },
