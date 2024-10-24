@@ -94,3 +94,24 @@ export const resetUserPasswordValidation = z.object({
   userID: z.coerce.number(),
   email: z.string().email(),
 })
+
+export const editUserValidation = (t: (key: string, options?: any) => string) => (
+  z.object({
+    userID: z.coerce.number(),
+    data: z.object({
+      name: z.string().min(2, { message: t('modal-edit-user.validation.name', { count: 2 }) }),
+      email: z.string().email({ message: t('modal-edit-user.validation.email') }),
+      role: userRoleZodSchema,
+      locationIDs: z
+      .array(z.string())
+      .min(1, { message: t('modal-edit-user.validation.locationIDs', { count: 1 }) }),
+      webAccess: z.coerce.boolean(),
+      appAccess: z.coerce.boolean(),
+      priceAccess: z.coerce.boolean(),
+    })
+  })
+)
+
+export const getLocationsByUserIDValidation = z.object({
+  userID: z.coerce.number(),
+})
