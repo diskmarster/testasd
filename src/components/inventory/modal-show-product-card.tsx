@@ -29,7 +29,7 @@ export function ModalShowProductCard({ product, user }: Props) {
   return (
     <Credenza>
       <CredenzaTrigger className='hover:underline flex items-center gap-2' asChild>
-        <div>
+        <div className='cursor-pointer'>
           {product.sku}
           <TooltipProvider>
             <Tooltip>
