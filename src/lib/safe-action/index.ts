@@ -1,3 +1,4 @@
+import { serverTranslation } from '@/app/i18n'
 import { fallbackLng } from '@/app/i18n/settings'
 import { hasPermissionByRank } from '@/data/user.types'
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
@@ -7,9 +8,19 @@ import { sessionService } from '@/service/session'
 import { Session, User } from 'lucia'
 import { createSafeActionClient, MiddlewareResult } from 'next-safe-action'
 import { cookies } from 'next/headers'
-import { z } from 'zod'
+import { z, ZodEffects, ZodObject } from 'zod'
 import { NewApplicationError } from '../database/schema/errors'
 
+export async function getSchema(
+  schema: (
+    t: (key: string, options?: any) => string,
+  ) => ZodObject<any> | ZodEffects<any>,
+  namespace: string = 'common',
+) {
+  const lng = cookies().get('i18next')?.value ?? fallbackLng
+  const { t } = await serverTranslation(lng, namespace)
+  return schema(t)
+}
 type ActionContextType = { session?: Session; user?: User }
 const metadataSchema = z.object({
   actionName: z.string().optional(),

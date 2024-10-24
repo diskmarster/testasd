@@ -59,6 +59,8 @@ export function ModalMoveInventory({
   const [searchToPlacement, setSearchToPlacement] = useState<string>('')
   const lng = useContext(LanguageContext)
   const { t } = useTranslation(lng, 'oversigt')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = moveInventoryValidation(validationT)
 
   const uniqueProducts = inventory.filter((item, index, self) => {
     return index === self.findIndex(i => i.product.id === item.product.id)
@@ -127,8 +129,8 @@ export function ModalMoveInventory({
     register,
     resetField,
     setFocus,
-  } = useForm<z.infer<typeof moveInventoryValidation>>({
-    resolver: zodResolver(moveInventoryValidation),
+  } = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       amount: 0,
       fromPlacementID: undefined,
@@ -147,7 +149,7 @@ export function ModalMoveInventory({
       item.batch.id === formValues.fromBatchID,
   )
 
-  function onSubmit(values: z.infer<typeof moveInventoryValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await moveInventoryAction(values)
 

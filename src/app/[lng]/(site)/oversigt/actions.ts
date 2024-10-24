@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { editableAction } from '@/lib/safe-action'
+import { editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -13,7 +13,7 @@ import {
 } from './validation'
 
 export const updateInventoryAction = editableAction
-  .schema(updateInventoryValidation)
+  .schema(async () => await getSchema(updateInventoryValidation, 'validation'))
   .action(
     async ({
       parsedInput: { productID, placementID, batchID, type, amount, reference },
@@ -87,7 +87,7 @@ export const updateInventoryAction = editableAction
   )
 
 export const moveInventoryAction = editableAction
-  .schema(moveInventoryValidation)
+  .schema(async () => await getSchema(moveInventoryValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const location = await locationService.getLastVisited(ctx.user.id)

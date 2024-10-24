@@ -54,6 +54,8 @@ export function ModalUpdateInventory({
   const [searchBatch, setSearchBatch] = useState<string>('')
   const [searchPlacement, setSearchPlacement] = useState<string>('')
   const { t } = useTranslation(lng, 'oversigt')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = updateInventoryValidation(validationT)
 
   const productOptions = products
     .filter(
@@ -103,8 +105,8 @@ export function ModalUpdateInventory({
     handleSubmit,
     resetField,
     setFocus,
-  } = useForm<z.infer<typeof updateInventoryValidation>>({
-    resolver: zodResolver(updateInventoryValidation),
+  } = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       type: 'tilgang',
       amount: 0,
@@ -156,7 +158,7 @@ export function ModalUpdateInventory({
     }
   }
 
-  function onSubmit(values: z.infer<typeof updateInventoryValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await updateInventoryAction(values)
 
