@@ -1,10 +1,8 @@
 import { sessionService } from '@/service/session'
-import { LanguageSwitcher } from './language-switcher'
 import { NavDesktop } from './nav-desktop'
 import { NavLocation } from './nav-location'
 import { NavMobile } from './nav-mobile'
 import { NavUser } from './nav-user'
-import { ThemeToggle } from './theme-toggle'
 import { NavSettings } from './nav-settings'
 
 export async function Header({ lng }: { lng: string }) {

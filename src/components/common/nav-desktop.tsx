@@ -16,6 +16,8 @@ import { cn } from '@/lib/utils'
 import { User } from 'lucia'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Suspense } from 'react'
+import { NavRestockChip } from './nav-restock-chip'
 
 export function NavDesktop({ user, lng }: { user: User; lng: string }) {
   const pathname = usePathname()
@@ -64,7 +66,7 @@ export function Item({
         className={cn(
           'relative',
           item.isDisabled &&
-            'pointer-events-none cursor-not-allowed select-none opacity-60',
+          'pointer-events-none cursor-not-allowed select-none opacity-60',
         )}>
         <NavigationMenuTrigger className='gap-1.5 p-2 text-muted-foreground'>
           {t(item.label)}
@@ -85,7 +87,7 @@ export function Item({
                         'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
                         isActive(link.href) && 'bg-muted',
                         link.isDisabled &&
-                          'pointer-events-none cursor-not-allowed select-none opacity-50',
+                        'pointer-events-none cursor-not-allowed select-none opacity-50',
                       )}>
                       <div className='space-y-1.5'>
                         <div className='flex items-center gap-1.5 text-sm font-semibold leading-none'>
@@ -114,7 +116,7 @@ export function Item({
         className={cn(
           'relative',
           item.isDisabled &&
-            'pointer-events-none cursor-not-allowed select-none opacity-50',
+          'pointer-events-none cursor-not-allowed select-none opacity-50',
         )}>
         <Link href={item.href} legacyBehavior passHref>
           <NavigationMenuLink
@@ -125,6 +127,11 @@ export function Item({
             )}>
             {t(item.label)}
             {item.isExternal && <Icons.external className='size-3' />}
+            {item.hasChip && (
+              <Suspense fallback={null}>
+                <item.hasChip />
+              </Suspense>
+            )}
           </NavigationMenuLink>
         </Link>
       </NavigationMenuItem>

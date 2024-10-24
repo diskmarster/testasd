@@ -1,3 +1,4 @@
+import { NavRestockChip } from '@/components/common/nav-restock-chip'
 import { Icons } from '@/components/ui/icons'
 import { UserRole } from '@/data/user.types'
 import { t } from 'i18next'
@@ -33,6 +34,7 @@ export const siteConfig: SiteConfig = {
       isExternal: false,
       href: `/${lng}/genbestil`,
       roles: ['system_administrator', 'administrator', 'moderator', 'bruger'],
+      hasChip: NavRestockChip,
     },
     {
       label: 'Administration',
@@ -159,6 +161,7 @@ type NavItemNoDropdown = {
   isDisabled: boolean
   isDropdown: false
   href: string
+  hasChip?: React.ReactNode
 }
 
 type NavItemDropdown = {
