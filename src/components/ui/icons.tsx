@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils'
 import {
   ArrowDown,
   ChevronRight,
@@ -41,7 +42,11 @@ import {
   Sheet,
   CloudUpload,
   TriangleAlert,
-  Copy
+  Copy,
+  Monitor,
+  Smartphone,
+  CircleDollarSign,
+  Ban
 } from 'lucide-react'
 
 export const Icons = {
@@ -88,6 +93,22 @@ export const Icons = {
   infinity: Infinity,
   refresh: RefreshCcw,
   settings: Settings,
+  monitor: Monitor,
+  bannedMonitor:({sizeClass: className}: {sizeClass?: string}) => (
+    <div className={cn('relative overflow-none size-4')}>
+      <Monitor className={cn('absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2', className)} />
+      <Ban className={cn('size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2')} />
+    </div>
+  ),
+  smartphone: Smartphone,
+  bannedSmartphone:({sizeClass: className}: {sizeClass?: string}) => (
+    <div className={cn('relative overflow-none size-4')}>
+      <Smartphone className={cn('absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2', className)} />
+      <Ban className={cn('size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2')} />
+    </div>
+  ),
+  dollarSign: CircleDollarSign,
+  ban: Ban,
 
   plusMinus: ({ ...props }) => (
     <svg

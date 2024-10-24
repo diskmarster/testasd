@@ -3,18 +3,24 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Icons } from '@/components/ui/icons'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { UserRole, userRoles } from '@/data/user.types'
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
-import { t } from 'i18next'
 import { DateRange } from 'react-day-picker'
 
 export function getTableUsersColumns(
   userRole: UserRole,
   lng: string,
-  t: (key: string) => string,
+  t: (key: string, options?: any) => string,
 ): ColumnDef<UserNoHash>[] {
   const selectCol: ColumnDef<UserNoHash> = {
     id: 'select',
@@ -41,7 +47,9 @@ export function getTableUsersColumns(
 
   const nameCol: ColumnDef<UserNoHash> = {
     accessorKey: 'name',
-    header: ({ column }) => <TableHeader column={column} title={t('user-columns.user-name')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('user-columns.user-name')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: t('user-columns.user-name'),
@@ -50,7 +58,9 @@ export function getTableUsersColumns(
 
   const emailCol: ColumnDef<UserNoHash> = {
     accessorKey: 'email',
-    header: ({ column }) => <TableHeader column={column} title={t('user-columns.email')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('user-columns.email')} />
+    ),
     cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: t('user-columns.email'),
@@ -59,7 +69,9 @@ export function getTableUsersColumns(
 
   const roleCol: ColumnDef<UserNoHash> = {
     accessorKey: 'role',
-    header: ({ column }) => <TableHeader column={column} title={t('user-columns.user-role')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('user-columns.user-role')} />
+    ),
     cell: ({ getValue }) => {
       const role = getValue<UserRole>()
       const badgeVariant =
@@ -87,13 +99,17 @@ export function getTableUsersColumns(
 
   const statusCol: ColumnDef<UserNoHash> = {
     accessorKey: 'isActive',
-    header: ({ column }) => <TableHeader column={column} title={t('user-columns.status')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('user-columns.status')} />
+    ),
     cell: ({ getValue }) => {
       const status = getValue<boolean>()
       const badgeVariant = status ? 'secondary' : 'destructive'
 
       return (
-        <Badge variant={badgeVariant}>{status ? t('user-columns.active') : t('user-columns.inactive')}</Badge>
+        <Badge variant={badgeVariant}>
+          {status ? t('user-columns.active') : t('user-columns.inactive')}
+        </Badge>
       )
     },
     meta: {
@@ -101,12 +117,121 @@ export function getTableUsersColumns(
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
-    }
+    },
+  }
+
+  const accessCol: ColumnDef<UserNoHash> = {
+    accessorKey: 'access',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('user-columns.access')} />
+    ),
+    cell: ({ row }) => {
+      const web = row.getValue<boolean>('webAccess')
+      const app = row.getValue<boolean>('appAccess')
+      const price = row.getValue<boolean>('priceAccess')
+
+      return (
+        <div className='grid grid-cols-3 items-center gap-2'>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className={'relative overflow-none size-6'}>
+                  {web ? (
+                    <Icons.monitor className='size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2' />
+                  ) : (
+                    <>
+                      <Icons.monitor className={'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                      <Icons.ban className={'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                    </>
+                  )}
+                  </div>
+              </TooltipTrigger>
+              <TooltipContent className='bg-foreground text-background'>
+                {t('user-columns.access-web')}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className={'relative overflow-none size-6'}>
+                  {app ? (
+                    <Icons.smartphone className='size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2' />
+                  ) : (
+                    <>
+                      <Icons.smartphone className={'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                      <Icons.ban className={'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                    </>
+                  )}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className='bg-foreground text-background'>
+                {t('user-columns.access-app')}
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <div className={'relative overflow-none size-6'}>
+                  {price ? (
+                    <Icons.dollarSign className='size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2' />
+                  ) : (
+                    <>
+                      <Icons.dollarSign className={'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                      <Icons.ban className={'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                    </>
+                  )}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className='bg-foreground text-background'>
+                {t('user-columns.access-price')}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )
+    },
+    meta: {
+      viewLabel: t('user-columns.access'),
+    },
+    filterFn: (row, _id, value) => {
+      return [
+        row.getValue('webAccess') ? 'web' : undefined,
+        row.getValue('appAccess') ? 'app' : undefined,
+        row.getValue('priceAccess') ? 'price' : undefined,
+      ].some(val => value.includes(val))
+    },
+  }
+
+  const webAccessCol: ColumnDef<UserNoHash> = {
+    accessorKey: 'webAccess',
+    header: () => null,
+    cell: () => null,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+  }
+
+  const appAccessCol: ColumnDef<UserNoHash> = {
+    accessorKey: 'appAccess',
+    header: () => null,
+    cell: () => null,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+  }
+
+  const priceAccessCol: ColumnDef<UserNoHash> = {
+    accessorKey: 'priceAccess',
+    header: () => null,
+    cell: () => null,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
   }
 
   const updatedCol: ColumnDef<UserNoHash> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title={t('user-columns.updated')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('user-columns.updated')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -137,7 +262,9 @@ export function getTableUsersColumns(
 
   const insertedCol: ColumnDef<UserNoHash> = {
     accessorKey: 'inserted',
-    header: ({ column }) => <TableHeader column={column} title={t('user-columns.created')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('user-columns.created')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -183,8 +310,12 @@ export function getTableUsersColumns(
     emailCol,
     roleCol,
     statusCol,
+    accessCol,
     insertedCol,
     updatedCol,
+    webAccessCol,
+    appAccessCol,
+    priceAccessCol,
     actionsCol,
   ]
 }
@@ -192,7 +323,7 @@ export function getTableUsersColumns(
 export function getTableUsersFilters(
   table: Table<UserNoHash>,
   lng: string,
-  t: (key: string) => string,
+  t: (key: string, options?: any) => string,
 ): FilterField<UserNoHash>[] {
   const nameFilter: FilterField<UserNoHash> = {
     column: table.getColumn('name'),
@@ -239,10 +370,22 @@ export function getTableUsersFilters(
     ],
   }
 
+  const accessFilter: FilterField<UserNoHash> = {
+    column: table.getColumn('access'),
+    type: 'select',
+    label: t('user-columns.access'),
+    value: '',
+    options: [
+      { value: 'web', label: t('user-columns.access-web') },
+      { value: 'app', label: t('user-columns.access-app') },
+      { value: 'price', label: t('user-columns.access-price') },
+    ],
+  }
+
   const insertedFilter: FilterField<UserNoHash> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
-    label: t('user-columns.created'), 
+    label: t('user-columns.created'),
     value: '',
   }
 
@@ -253,5 +396,13 @@ export function getTableUsersFilters(
     value: '',
   }
 
-  return [nameFilter, emailFilter, roleFilter, statusFilter, insertedFilter, updatedFilter]
+  return [
+    nameFilter,
+    emailFilter,
+    roleFilter,
+    statusFilter,
+    accessFilter,
+    insertedFilter,
+    updatedFilter,
+  ]
 }

@@ -124,7 +124,7 @@ export const createNewLocationAction = adminAction
     const locations = await locationService.getByCustomerID(ctx.user.customerID)
     const customer = await customerService.getByID(ctx.user.customerID)
     if (!customer) {
-      throw new ActionError(t('organisation-action.location-already-exists'))
+      throw new ActionError(t('organisation-action.company-account-doesnt-exist'))
     }
 
     if (isLocationLimitReached(customer.plan, locations.length)) {
@@ -135,6 +135,7 @@ export const createNewLocationAction = adminAction
 
     const existingLocation = await locationService.getByName(
       parsedInput.name.trim(),
+      customer.id,
     )
     if (existingLocation) {
       throw new ActionError(t('organisation-action.location-already-exists'))
