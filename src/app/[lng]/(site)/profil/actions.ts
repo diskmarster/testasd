@@ -3,13 +3,11 @@
 import {
   adminUpdateProfileValidation,
   deleteProfileValidation,
-  updatePasswordValidation,
-  updatePinValidation,
   updatePrimaryLocationValidation,
   updateProfileValidation,
 } from '@/app/[lng]/(site)/profil/validation'
 import { serverTranslation } from '@/app/i18n'
-import { adminAction, authedAction } from '@/lib/safe-action'
+import { adminAction, authedAction, getSchema } from '@/lib/safe-action'
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
@@ -18,8 +16,8 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 export const updateProfileInformationAction = authedAction
-  .metadata({actionName: 'updateProfileInformation'})
-  .schema(updateProfileValidation)
+  .metadata({ actionName: 'updateProfileInformation' })
+  .schema(async () => await getSchema(updateProfileValidation, 'validation'))
   .action(async ({ parsedInput, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')
     const updatedUser = userService.updateByID(user.id, { ...parsedInput })
@@ -30,14 +28,16 @@ export const updateProfileInformationAction = authedAction
   })
 
 export const adminUpdateProfileInformationAction = adminAction
-  .metadata({actionName: 'adminUpdateProfileInformation'})
-  .schema(adminUpdateProfileValidation)
+  .metadata({ actionName: 'adminUpdateProfileInformation' })
+  .schema(
+    async () => await getSchema(adminUpdateProfileValidation, 'validation'),
+  )
   .action(
     async ({ parsedInput: { userId, ...userInfo }, ctx: { user, lang } }) => {},
   )
 
 export const deleteProfileAction = authedAction
-  .metadata({actionName: 'deleteProfile'})
+  .metadata({ actionName: 'deleteProfile' })
   .schema(deleteProfileValidation)
   .action(async ({ parsedInput: { userId }, ctx: { session, user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')
@@ -54,8 +54,8 @@ export const deleteProfileAction = authedAction
   })
 
 export const updatePasswordAction = authedAction
-  .metadata({actionName: 'updatePassword'})
-  .schema(updatePasswordValidation)
+  .metadata({ actionName: 'updatePassword' })
+  .schema(async () => await getSchema(updateProfileValidation, 'validation'))
   .action(
     async ({
       parsedInput: { currentPassword, newPassword },
@@ -80,8 +80,8 @@ export const updatePasswordAction = authedAction
   )
 
 export const updatePinAction = authedAction
-  .metadata({actionName: 'updatePin'})
-  .schema(updatePinValidation)
+  .metadata({ actionName: 'updatePin' })
+  .schema(async () => await getSchema(updateProfileValidation, 'validation'))
   .action(
     async ({ parsedInput: { currentPin, newPin }, ctx: { user, lang } }) => {
       const { t } = await serverTranslation(lang, 'action-errors')
@@ -98,7 +98,7 @@ export const updatePinAction = authedAction
   )
 
 export const updatePrimaryLocationAction = authedAction
-  .metadata({actionName: 'updatePrimaryLocation'})
+  .metadata({ actionName: 'updatePrimaryLocation' })
   .schema(updatePrimaryLocationValidation)
   .action(async ({ parsedInput: { locationID }, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')

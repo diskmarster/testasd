@@ -52,11 +52,13 @@ export function PinDialog() {
   const [open, setOpen] = useState<boolean>(false)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'profil')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = updatePinValidation(validationT)
 
   const { handleSubmit, formState, register, reset, watch } = useForm<
-    z.infer<typeof updatePinValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(updatePinValidation),
+    resolver: zodResolver(schema),
   })
 
   if (!session) return null

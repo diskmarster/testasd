@@ -52,11 +52,13 @@ function PasswordDialog() {
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
   const [open, setOpen] = useState<boolean>(false)
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = updatePasswordValidation(validationT)
 
   const { handleSubmit, formState, register, reset } = useForm<
-    z.infer<typeof updatePasswordValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(updatePasswordValidation),
+    resolver: zodResolver(schema),
   })
 
   if (!session) return null

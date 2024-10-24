@@ -25,23 +25,25 @@ export function ProfileInformation() {
 
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'profil')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = updateProfileValidation(validationT)
 
-  const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof updateProfileValidation>
-  >({
-    resolver: zodResolver(updateProfileValidation),
-    defaultValues: {
-      name: user?.name,
-      email: user?.email,
+  const { handleSubmit, formState, register } = useForm<z.infer<typeof schema>>(
+    {
+      resolver: zodResolver(schema),
+      defaultValues: {
+        name: user?.name,
+        email: user?.email,
+      },
     },
-  })
+  )
 
   if (!session) return null
   return (
     <form
       className={cn('grid w-full items-start gap-4 md:max-w-lg mb-8')}
       onSubmit={handleSubmit(values => {
-        setFormError("")
+        setFormError('')
         startTransition(async () => {
           const res = await updateProfileInformationAction({ ...values })
           if (res && res.serverError) {
