@@ -53,7 +53,7 @@ export function ModalInviteUser({
   const { t } = useTranslation(lng, 'organisation')
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = inviteNewUserValidation(validationT)
-  const [searchRoles, setSearchRoles] = useState('Bruger')
+  const [searchRoles, setSearchRoles] = useState('bruger')
 
   const rolesOptions = userRoles
     .filter(
@@ -149,6 +149,7 @@ export function ModalInviteUser({
                   <div className='grid gap-2'>
                     <Label>{t('modal-invite-user.role')}</Label>
                     <AutoComplete
+                      className='capitalize'
                       autoFocus={false}
                       placeholder={t('modal-invite-user.role-placeholder')}
                       emptyMessage='Ingen roller fundet'
