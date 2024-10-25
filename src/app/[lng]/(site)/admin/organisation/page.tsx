@@ -44,9 +44,18 @@ export default async function Page({ params: { lng } }: PageProps) {
     return
   }
 
-  const locations = await locationService.getByCustomerID(customer.id)
-  const users = await userService.getAllByCustomerID(customer.id)
+  let locations = await locationService.getByCustomerID(customer.id)
+  let users = await userService.getAllByCustomerID(customer.id)
   const userAccesses = await locationService.getAccessesByCustomerID(customer.id)
+
+  if (user.role == 'moderator') {
+    const signedInUserLocations = await locationService.getAllByUserID(user.id)
+
+    const userIDsToView = userAccesses.filter(acc => signedInUserLocations.some(loc => loc.id == acc.locationID)).map(acc => acc.userID)
+
+    users = users.filter(u => userIDsToView.some(uID => u.id == uID))
+    locations = signedInUserLocations
+  }
 
   return (
     <SiteWrapper
