@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from 'clsx'
+import { emitCustomEvent } from 'react-custom-events'
 import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
@@ -61,6 +62,10 @@ export function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   }
 
   return tmpArray
+}
+
+export function updateChipCount() {
+  emitCustomEvent('UpdateNavBadges')
 }
 
 export async function getChipCount(chip: string): Promise<number> {
