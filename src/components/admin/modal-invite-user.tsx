@@ -281,7 +281,9 @@ export function ModalInviteUser({
                     {locations.length} {t('modal-invite-user.locations-chosen')}
                   </span>
                 </div>
-                <ScrollArea className='h-[300px]'>
+                <ScrollArea
+                  className='max-md:max-h-[125px] md:h-[300px]'
+                >
                   <div className='space-y-2'>
                     {locations.map(loc => (
                       <div
