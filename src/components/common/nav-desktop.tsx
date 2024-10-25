@@ -17,6 +17,7 @@ import { User } from 'lucia'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { NavChip } from './nav-chip'
+import { Suspense } from 'react'
 
 export function NavDesktop({ user, lng }: { user: User; lng: string }) {
   const pathname = usePathname()
@@ -48,12 +49,12 @@ export function Item({
   item,
   pathname,
   user,
-  t
+  t,
 }: {
   item: NavItem
   pathname: string
   user: User
-  t: (key: string) => string
+  t: (key: string) => string,
 }) {
   function isActive(path: string): boolean {
     return pathname === path
@@ -127,7 +128,9 @@ export function Item({
             {t(item.label)}
             {item.isExternal && <Icons.external className='size-3' />}
             {item.chipLabel && (
-              <NavChip chipLabel={item.chipLabel} localeKey={`chip.${item.chipLabel}-chip-tooltip`} />
+              <Suspense fallback={null}>
+                <NavChip chipLabel={item.chipLabel} localeKey={`chip.${item.chipLabel}-chip-tooltip`} />
+              </Suspense>
             )}
           </NavigationMenuLink>
         </Link>

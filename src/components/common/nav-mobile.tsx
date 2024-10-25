@@ -18,6 +18,8 @@ import { cn } from '@/lib/utils'
 import { User } from 'lucia'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Suspense } from 'react'
+import { NavChip } from './nav-chip'
 
 export function NavMobile({ user, lng }: { user: User; lng: string }) {
   const pathname = usePathname()
@@ -54,7 +56,7 @@ export function NavMobile({ user, lng }: { user: User; lng: string }) {
                         className={cn(
                           'flex items-center justify-between',
                           item.isDisabled &&
-                            'cursor-not-allowed pointer-events-none opacity-50',
+                          'cursor-not-allowed pointer-events-none opacity-50',
                         )}>
                         <span>{item.label}</span>
                         <Icons.chevronDown className='h-5 w-5 transition-transform' />
@@ -73,7 +75,7 @@ export function NavMobile({ user, lng }: { user: User; lng: string }) {
                                 className={cn(
                                   'text-muted-foreground hover:text-foreground',
                                   item.isDisabled &&
-                                    'cursor-not-allowed pointer-events-none opacity-50',
+                                  'cursor-not-allowed pointer-events-none opacity-50',
                                 )}
                                 prefetch={false}>
                                 {item.label}
@@ -91,12 +93,17 @@ export function NavMobile({ user, lng }: { user: User; lng: string }) {
                         className={cn(
                           'flex select-none items-center gap-2 font-medium text-muted-foreground transition-colors hover:text-foreground',
                           item.isDisabled &&
-                            'pointer-events-none cursor-not-allowed opacity-60',
+                          'pointer-events-none cursor-not-allowed opacity-60',
                         )}>
-                        <span className='relative'>
+                        <span className='relative flex items-center justify-between w-full pr-0.5'>
                           {item.label}
                           {item.isExternal && (
                             <Icons.external className='size-4' />
+                          )}
+                          {item.chipLabel && (
+                            <Suspense fallback={null}>
+                              <NavChip chipLabel={item.chipLabel} localeKey={`chip.${item.chipLabel}-chip-tooltip`} />
+                            </Suspense>
                           )}
                         </span>
                       </Link>
