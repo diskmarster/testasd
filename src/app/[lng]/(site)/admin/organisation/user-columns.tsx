@@ -131,7 +131,7 @@ export function getTableUsersColumns(
       const price = row.getValue<boolean>('priceAccess')
 
       return (
-        <div className='grid grid-cols-3 items-center gap-2'>
+        <div className='grid grid-cols-3 items-center gap-0.5'>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
