@@ -1,25 +1,71 @@
-"use client"
+'use client'
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { Icons } from "@/components/ui/icons"
-import { ReactNode } from "react"
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Icons } from '@/components/ui/icons'
+import { forwardRef, ReactNode } from 'react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip'
 
 interface Props {
   children: ReactNode
+  disabled?: boolean
+  tooltipContent?: string
 }
 
-export function TableActionsWrapper({ children }: Props) {
+export function TableActionsWrapper({
+  children,
+  disabled = false,
+  tooltipContent,
+}: Props) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='iconSm'>
-          <Icons.horizontalDots className="size-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {children}
-      </DropdownMenuContent>
+      <TableActionsTrigger
+        disabled={disabled}
+        tooltipContent={tooltipContent}
+      />
+      <DropdownMenuContent align='end'>{children}</DropdownMenuContent>
     </DropdownMenu>
   )
 }
+
+const TableActionsTrigger = forwardRef<
+  HTMLButtonElement,
+  { tooltipContent?: string; disabled: boolean }
+>(({ tooltipContent, disabled }, ref) => {
+  if (tooltipContent) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger ref={ref}>
+            <DropdownMenuTrigger asChild>
+              <Button variant='ghost' size='iconSm' disabled={disabled}>
+                <Icons.horizontalDots className='size-4' />
+              </Button>
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent className='bg-muted-foreground text-muted'>
+            {tooltipContent}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  } else {
+    return (
+      <DropdownMenuTrigger asChild>
+        <Button ref={ref} variant='ghost' size='iconSm' disabled={disabled}>
+          <Icons.horizontalDots className='size-4' />
+        </Button>
+      </DropdownMenuTrigger>
+    )
+  }
+})
+TableActionsTrigger.displayName = 'TableActionsTrigger'
