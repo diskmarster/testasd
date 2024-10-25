@@ -102,7 +102,9 @@
     "edit-user": "Edit",
     "toggle-status": "Change Status",
     "reset-password": "Reset Password",
-    "reset-pin": "Reset PIN"
+    "reset-pin": "Reset PIN",
+    "same-user-tooltip": "You cannot edit your own user, go to profile instead",
+    "no-permission-tooltip": "You do not have permission to edit this user"
   },
   "form-company-edit": {
     "company-name": "Company name",

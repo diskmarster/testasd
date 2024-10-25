@@ -99,7 +99,9 @@
   "table-users-actions": {
     "toggle-status": "Skift status",
     "reset-password": "Nulstil adgangskode",
-    "reset-pin": "Nulstil PIN"
+    "reset-pin": "Nulstil PIN",
+    "same-user-tooltip": "Du må ikke ændre din egen bruger her, gå til din profil istedet",
+    "no-permission-tooltip": "Du har ikke tilladelse til at ændre denne bruger"
   },
   "form-company-edit": {
     "company-name": "Firma navn",
