@@ -7,7 +7,7 @@ import { ModalToggleLocation } from '@/components/admin/modal-toggle-location'
 import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
 import { TabsAdmin } from '@/components/admin/tabs-company'
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { hasPermissionByRank } from '@/data/user.types'
+import { getUserRoles, hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
@@ -70,7 +70,7 @@ export default async function Page({ params: { lng } }: PageProps) {
       />
 
       {/* Modals without triggers that we open with custom events from row actions */}
-      <ModalEditUser users={users} locations={locations} />
+      <ModalEditUser users={users} locations={locations} userRoles={getUserRoles({op: 'le', role: user.role})} />
       <ModalToggleUser users={users} />
       <ModalResetUserPW users={users} />
       <ModalEditLocation user={user} users={users} userAccesses={userAccesses} />

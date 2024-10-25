@@ -4,7 +4,7 @@ import { editUserAction, getLocationsByUserIDAction } from '@/app/[lng]/(site)/a
 import { editUserValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
-import { UserRole, userRoles } from '@/data/user.types'
+import { UserRole } from '@/data/user.types'
 import { UserID, UserNoHash } from '@/lib/database/schema/auth'
 import { Location, LocationID } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
@@ -38,9 +38,10 @@ import { siteConfig } from '@/config/site'
 interface Props {
   users: UserNoHash[]
   locations: Location[]
+  userRoles: UserRole[]
 }
 
-export function ModalEditUser({ users, locations: allLocations }: Props) {
+export function ModalEditUser({ users, locations: allLocations, userRoles }: Props) {
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<UserNoHash>()
   const [locations, setLocations] = useState<

@@ -3,7 +3,7 @@
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
 import { UserNoHash } from '@/lib/database/schema/auth'
-import { Customer, Location, LocationID } from '@/lib/database/schema/customer'
+import { Customer, LocationID } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import {
   isLocationLimitReached,
@@ -26,6 +26,7 @@ import { ModalInviteUser } from './modal-invite-user'
 import { TableAdminLocations } from './table-company-locations'
 import { TableAdminUsers } from './table-company-users'
 import { LocationWithCounts } from '@/data/location.types'
+import { getUserRoles, hasPermissionByRank } from '@/data/user.types'
 
 interface Props {
   user: User
@@ -123,9 +124,13 @@ export function TabsAdmin({
                   customer.extraUsers,
                   users.length,
                 )}
+                userRoles={getUserRoles({
+                  op: 'le',
+                  role: user.role,
+                })}
               />
             </div>
-          ) : currentTab() == 'lokationer' ? (
+          ) : (currentTab() == 'lokationer' && hasPermissionByRank(user.role, 'administrator')) ? (
             <div className='flex items-center gap-4'>
               {isLocationLimitReached(customer.plan, locations.length) && (
                 <div className='flex items-center gap-2'>

@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { UserRole, userRoles } from '@/data/user.types'
+import { UserRole } from '@/data/user.types'
 import { Location } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -37,12 +37,14 @@ interface Props {
   locations: Location[]
   currentLocationID: string
   isDisabled: boolean
+  userRoles: UserRole[]
 }
 
 export function ModalInviteUser({
   locations,
   currentLocationID,
   isDisabled,
+  userRoles,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
