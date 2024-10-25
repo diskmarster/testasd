@@ -143,7 +143,7 @@ export function getTableHistoryColumns(
   }
 
   const unitCol: ColumnDef<History> = {
-    accessorKey: 'productUnit',
+    accessorKey: 'productUnitName',
     id: 'unit',
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.unit')} />
