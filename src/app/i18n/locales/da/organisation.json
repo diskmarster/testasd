@@ -1,159 +1,159 @@
 {
-    "organisation-page": {
-      "title": "Organisation",
-      "description": "Her kan du administrere dine brugere, lokationer og firma."
-    },
-    "tabs-admin": {
-      "users": "Brugere",
-      "locations": "Lokationer",
-      "company": "Firma",
-      "user-limit-reached": "Du har nået det maksimale antal brugere for din plan.",
-      "user-upgrade-plan": "Opgrader din plan for at tilføje flere brugere.",
-      "location-limit-reached": "Du har nået det maksimale antal lokationer for din plan.",
-      "location-upgrade-plan": "Opgrader din plan for at tilføje flere lokationer."
-    },
-    "modal-toggle-user": {
-      "title": "Skift brugerstatus",
-      "description1": "Denne handling er ikke permanent. Hvis du aktiverer en bruger, vil de kunne logge ind på ",
-      "description2": " igen. Hvis du deaktiverer en bruger, vil de blive logget af og vil ikke kunne logge ind igen, før de er genaktiveret.",
-      "status": "Status",
-      "choose-status": "Vælg status",
-      "cancel-button": "Luk",
-      "update-button": "Opdater",
-      "active": "Aktiv",
-      "inactive": "Inaktiv"
-    },
-    "modal-reset-userpw": {
-      "title": "Nulstil brugerens adgangskode",
-      "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres adgangskode.",
-      "cancel-button": "Luk",
-      "reset-button": "Send e-mail"
-    },
-    "modal-edit-location": {
-      "title": "Rediger lokation",
-      "description": "Her kan du redigere en lokations navn og adgangsniveau for dine brugere.",
-      "location-name": "Lokationsnavn",
-      "location-name-placeholder": "Indtast lokationsnavn",
-      "access-level": "Adgangsniveau",
-      "users-chosen": "brugere valgt",
-      "create-button": "Opdater",
-      "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du redigerer lokationer.",
-      "own-user": "Du kan ikke redigere din egen brugers rettigheder, så derfor er den ikke vist her."
-    },
-    "modal-toggle-location": {
-      "title": "Skift lokationsstatus",
-      "description": "Denne handling er ikke permanent. Hvis du aktiverer en lokation, kan den tilgås igen. Hvis du deaktiverer en lokation, kan den kun tilgås af administratorer, indtil den er genaktiveret.",
-      "status": "Status",
-      "choose-status": "Vælg status",
-      "cancel-button": "Luk",
-      "update-button": "Opdater",
-      "active": "Aktiv",
-      "inactive": "Inaktiv"
-    },
-    "table-admin-locations": {
-      "no-locations-found": "Ingen lokationer fundet"
-    },
-    "location-columns": {
-      "location-name": "Lokationsnavn",
-      "location-name-placeholder": "Søg efter lokationsnavn",
-      "status": "Status",
-      "active": "Aktiv",
-      "inactive": "Inaktiv",
-      "updated": "Opdateret",
-      "created": "Oprettet",
-      "mod-count": "Moderatorer",
-      "users-count": "Brugere",
-      "outgoing-count": "Afgang",
-      "read-count": "Læseadgang",
-      "users": "Brugere",
-      "users-mod-short": "M",
-      "users-mod-long": "Moderator",
-      "users-user-short": "B",
-      "users-user-long": "Bruger",
-      "users-out-short": "A",
-      "users-out-long": "Afgang",
-      "users-read-short": "L",
-      "users-read-long": "Læseadgang"
-    },
-    "user-columns": {
-      "user-name": "Navn",
-      "user-name-placeholder": "Søg efter brugernavn",
-      "email": "E-mail",
-      "email-placeholder": "Søg efter e-mail",
-      "user-role": "Rolle",
-      "status": "Status",
-      "web-access": "Web adgang",
-      "app-access": "App adgang",
-      "price-access": "Pris adgang",
-      "access_true": "Ja",
-      "access_false": "Nej",
-      "active": "Aktiv",
-      "inactive": "Inaktiv",
-      "updated": "Opdateret",
-      "created": "Oprettet"
-    },
-    "table-locations-actions": {
-      "update": "Opdater",
-      "toggle-status": "Skift status"
-    },
-    "table-users-actions": {
-      "toggle-status": "Skift status",
-      "reset-password": "Nulstil adgangskode",
-      "reset-pin": "Nulstil PIN"
-    },
-    "form-company-edit": {
-      "company-name": "Firma navn",
-      "email": "E-mail",
-      "update-button": "Opdater"
-    },
-    "modal-invite-user": {
-      "title": "Inviter ny bruger",
-      "description": "Send en aktiveringsmail til en af dine medarbejdere for hurtigt at få dem i gang med at bruge ",
-      "email": "E-mail",
-      "email-placeholder": "Skriv e-mail til den nye bruger",
-      "role": "Rolle",
-      "role-placeholder": "Søg i roller",
-      "user": "Bruger",
-      "local-admin": "Lokal Admin",
-      "company-admin": "Firma Admin",
-      "location-access": "Lokationer",
-      "of": "af",
-      "locations-chosen": "lokationer valgt",
-      "send-invite": "Send invitation",
-      "role-question": "Hvad kan rollerne? Læs mere på vores",
-      "role-link": "F.A.Q. side",
-      "role-url": "hvad kan brugerrollerne?",
-      "user-rights": "Rettigheder",
-      "user-rights-web": "Bruger skal have adgang til web",
-      "user-rights-app": "Bruger skal have adgang til app",
-      "user-rights-prices": "Bruger skal have adgang til at se priser"
-    },
+  "organisation-page": {
+    "title": "Organisation",
+    "description": "Her kan du administrere dine brugere, lokationer og firma."
+  },
+  "tabs-admin": {
+    "users": "Brugere",
+    "locations": "Lokationer",
+    "company": "Firma",
+    "user-limit-reached": "Du har nået det maksimale antal brugere for din plan.",
+    "user-upgrade-plan": "Opgrader din plan for at tilføje flere brugere.",
+    "location-limit-reached": "Du har nået det maksimale antal lokationer for din plan.",
+    "location-upgrade-plan": "Opgrader din plan for at tilføje flere lokationer."
+  },
+  "modal-toggle-user": {
+    "title": "Skift brugerstatus",
+    "description1": "Denne handling er ikke permanent. Hvis du aktiverer en bruger, vil de kunne logge ind på ",
+    "description2": " igen. Hvis du deaktiverer en bruger, vil de blive logget af og vil ikke kunne logge ind igen, før de er genaktiveret.",
+    "status": "Status",
+    "choose-status": "Vælg status",
+    "cancel-button": "Luk",
+    "update-button": "Opdater",
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "modal-reset-userpw": {
+    "title": "Nulstil brugerens adgangskode",
+    "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres adgangskode.",
+    "cancel-button": "Luk",
+    "reset-button": "Send e-mail"
+  },
+  "modal-edit-location": {
+    "title": "Rediger lokation",
+    "description": "Her kan du redigere en lokations navn og adgangsniveau for dine brugere.",
+    "location-name": "Lokationsnavn",
+    "location-name-placeholder": "Indtast lokationsnavn",
+    "access-level": "Adgangsniveau",
+    "users-chosen": "brugere valgt",
+    "create-button": "Opdater",
+    "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du redigerer lokationer.",
+    "own-user": "Du kan ikke redigere din egen brugers rettigheder, så derfor er den ikke vist her."
+  },
+  "modal-toggle-location": {
+    "title": "Skift lokationsstatus",
+    "description": "Denne handling er ikke permanent. Hvis du aktiverer en lokation, kan den tilgås igen. Hvis du deaktiverer en lokation, kan den kun tilgås af administratorer, indtil den er genaktiveret.",
+    "status": "Status",
+    "choose-status": "Vælg status",
+    "cancel-button": "Luk",
+    "update-button": "Opdater",
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "table-admin-locations": {
+    "no-locations-found": "Ingen lokationer fundet"
+  },
+  "location-columns": {
+    "location-name": "Lokationsnavn",
+    "location-name-placeholder": "Søg efter lokationsnavn",
+    "status": "Status",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "updated": "Opdateret",
+    "created": "Oprettet",
+    "mod-count": "Moderatorer",
+    "users-count": "Brugere",
+    "outgoing-count": "Afgang",
+    "read-count": "Læseadgang",
+    "users": "Brugere",
+    "users-mod-short": "M",
+    "users-mod-long": "Moderator",
+    "users-user-short": "B",
+    "users-user-long": "Bruger",
+    "users-out-short": "A",
+    "users-out-long": "Afgang",
+    "users-read-short": "L",
+    "users-read-long": "Læseadgang"
+  },
+  "user-columns": {
+    "user-name": "Navn",
+    "user-name-placeholder": "Søg efter brugernavn",
+    "email": "E-mail",
+    "email-placeholder": "Søg efter e-mail",
+    "user-role": "Rolle",
+    "status": "Status",
+    "web-access": "Web adgang",
+    "app-access": "App adgang",
+    "price-access": "Pris adgang",
+    "access_true": "Ja",
+    "access_false": "Nej",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "updated": "Opdateret",
+    "created": "Oprettet"
+  },
+  "table-locations-actions": {
+    "update": "Opdater",
+    "toggle-status": "Skift status"
+  },
+  "table-users-actions": {
+    "toggle-status": "Skift status",
+    "reset-password": "Nulstil adgangskode",
+    "reset-pin": "Nulstil PIN"
+  },
+  "form-company-edit": {
+    "company-name": "Firma navn",
+    "email": "E-mail",
+    "update-button": "Opdater"
+  },
+  "modal-invite-user": {
+    "title": "Inviter ny bruger",
+    "description": "Send en aktiveringsmail til en af dine medarbejdere for hurtigt at få dem i gang med at bruge ",
+    "email": "E-mail",
+    "email-placeholder": "Skriv e-mail til den nye bruger",
+    "role": "Rolle",
+    "role-placeholder": "Søg i roller",
+    "user": "Bruger",
+    "local-admin": "Lokal Admin",
+    "company-admin": "Firma Admin",
+    "location-access": "Lokationer",
+    "of": "af",
+    "locations-chosen": "lokationer valgt",
+    "send-invite": "Send invitation",
+    "role-question": "Hvad kan rollerne? Læs mere på vores",
+    "role-link": "F.A.Q. side",
+    "role-url": "hvad kan brugerrollerne?",
+    "user-rights": "Rettigheder",
+    "user-rights-web": "Bruger skal have adgang til web",
+    "user-rights-app": "Bruger skal have adgang til app",
+    "user-rights-prices": "Bruger skal have adgang til at se priser"
+  },
 
-    "modal-create-location": {
-      "title": "Opret ny lokation",
-      "description": "Nye lokationer kan tilgås med det samme i dropdown-menuen i øverste højre hjørne.",
-      "location-name": "Lokationsnavn",
-      "location-name-placeholder": "Indtast lokationsnavn",
-      "access-level": "Adgangsniveau",
-      "of": " af ",
-      "users-chosen": "brugere valgt",
-      "create-button": "Opret",
-      "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du opretter lokationer.",
-      "own-user": "Din egen bruger vil automatisk blive tildelt rettighed til den nye lokation, og er derfor ikke vist her."
-    },
+  "modal-create-location": {
+    "title": "Opret ny lokation",
+    "description": "Nye lokationer kan tilgås med det samme i dropdown-menuen i øverste højre hjørne.",
+    "location-name": "Lokationsnavn",
+    "location-name-placeholder": "Indtast lokationsnavn",
+    "access-level": "Adgangsniveau",
+    "of": " af ",
+    "users-chosen": "brugere valgt",
+    "create-button": "Opret",
+    "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du opretter lokationer.",
+    "own-user": "Din egen bruger vil automatisk blive tildelt rettighed til den nye lokation, og er derfor ikke vist her."
+  },
 
-    "toasts": {
-      "location-created": "blev oprettet succesfuldt",
-      "location-updated": "blev opdateret succesfuldt",
-      "invitation-sent": "Invitation sendt til ",
-      "reset-pw-email": "Email sendt til ",
-      "location": "lokation",
-      "locations": "lokationer",
-      "locations-toggle": " opdateret",
-      "user": "bruger",
-      "users": "brugere",
-      "users-toggle": " opdateret"
-      
+  "toasts": {
+    "location-created": "blev oprettet succesfuldt",
+    "location-updated": "blev opdateret succesfuldt",
+    "invitation-sent": "Invitation sendt til ",
+    "reset-pw-email": "Email sendt til ",
+    "location": "lokation",
+    "locations": "lokationer",
+    "locations-toggle": " opdateret",
+    "user": "bruger",
+    "users": "brugere",
+    "users-toggle": " opdateret"
+    
   },
   "modal-edit-user": {
     "title": "Rediger bruger",

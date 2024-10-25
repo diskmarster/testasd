@@ -217,7 +217,7 @@ export function ModalEditUser({ users, locations: allLocations, userRoles }: Pro
                         className='capitalize'
                         autoFocus={false}
                         placeholder={t('modal-invite-user.role-placeholder')}
-                        emptyMessage='Ingen roller fundet'
+                        emptyMessage={t('modal-invite-user.role-not-found')}
                         items={rolesOptions}
                         onSelectedValueChange={value => {
                           const role = value as UserRole

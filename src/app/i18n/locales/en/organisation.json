@@ -116,6 +116,7 @@
     "email-placeholder": "Write email for the new user",
     "role": "Role",
     "role-placeholder": "Search role",
+    "role-not-found": "No roles found",
     "user": "User",
     "local-admin": "Local Admin",
     "company-admin": "Company Admin",
