@@ -19,7 +19,7 @@ import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { LocationID } from '@/lib/database/schema/customer'
 import { Product } from '@/lib/database/schema/inventory'
-import { cn } from '@/lib/utils'
+import { cn, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -101,6 +101,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
       toast.success(t(`common:${siteConfig.successTitle}`), {
         description: `${t('toasts.create-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
+      updateChipCount()
     })
   }
 

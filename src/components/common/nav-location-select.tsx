@@ -22,6 +22,8 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { ModalCreateLocation } from '../admin/modal-create-location'
 import { Button } from '../ui/button'
+import { emitCustomEvent } from 'react-custom-events'
+import { updateChipCount } from '@/lib/utils'
 
 export function NavLocationSelect({
   locations,
@@ -53,6 +55,7 @@ export function NavLocationSelect({
         })
         router.refresh()
       }
+      updateChipCount()
     })
   }
 

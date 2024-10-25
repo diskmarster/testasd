@@ -18,7 +18,7 @@ import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { Customer } from '@/lib/database/schema/customer'
 import { Batch, Placement, Product } from '@/lib/database/schema/inventory'
-import { cn } from '@/lib/utils'
+import { cn, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -174,6 +174,7 @@ export function ModalUpdateInventory({
       toast.success(t(`common:${siteConfig.successTitle}`), {
         description: `${isIncoming ? t('incoming') : t('outgoing')} ${t('toasts.was-created')}`,
       })
+      updateChipCount()
     })
   }
 

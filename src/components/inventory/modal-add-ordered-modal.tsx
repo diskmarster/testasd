@@ -17,7 +17,7 @@ import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { Product } from '@/lib/database/schema/inventory'
-import { cn } from '@/lib/utils'
+import { cn, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -88,6 +88,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
       toast.success(t(`common:${siteConfig.successTitle}`), {
         description: `${t('toasts.add-ordered')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
+      updateChipCount()
     })
   }
 
