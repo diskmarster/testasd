@@ -12,3 +12,55 @@ export function hasPermissionByRank(userRole: UserRole, requiredRole: UserRole):
   return userRank >= requiredRank;
 }
 
+export type UserRoleFilter = {
+  op: 'lt' | 'le' | 'eq' | 'gt' | 'ge',
+  role: UserRole
+}
+
+type FilterFn<T> = (val: T) => boolean
+type UserRoleFilterFn = FilterFn<UserRole>
+
+export function getUserRoles(filter?: UserRoleFilter): UserRole[] {
+  if (!filter) {
+    return userRoles as UserRole[]
+  }
+
+  return userRoles.filter(getUserRoleFilterFn(filter))
+}
+
+function getUserRoleFilterFn(filter: UserRoleFilter): UserRoleFilterFn {
+  const requiredRank = userRoles.indexOf(filter.role);
+
+  switch (filter.op) {
+    case 'lt':
+      return (val: UserRole) => {
+        const userRank = userRoles.indexOf(val);
+
+        return userRank < requiredRank
+      }
+    case 'le':
+      return (val: UserRole) => {
+        const userRank = userRoles.indexOf(val);
+
+        return userRank <= requiredRank
+      }
+    case 'gt':
+      return (val: UserRole) => {
+        const userRank = userRoles.indexOf(val);
+
+        return userRank > requiredRank
+      }
+    case 'ge':
+      return (val: UserRole) => {
+        const userRank = userRoles.indexOf(val);
+
+        return userRank >= requiredRank
+      }
+    case 'eq':
+      return (val: UserRole) => {
+        const userRank = userRoles.indexOf(val);
+
+        return userRank == requiredRank
+      }
+  }
+}
