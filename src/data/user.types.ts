@@ -1,19 +1,28 @@
-import { z } from "zod";
+import { z } from 'zod'
 
-export const userRoleZodSchema = z.enum(['læseadgang', 'afgang', 'bruger', 'moderator', 'administrator', 'system_administrator']);
-export type UserRole = z.infer<typeof userRoleZodSchema>;
-export const userRoles = userRoleZodSchema.options as readonly UserRole[];
+export const userRoleZodSchema = z.enum([
+  'læseadgang',
+  'afgang',
+  'bruger',
+  'moderator',
+  'administrator',
+  'system_administrator',
+])
+export type UserRole = z.infer<typeof userRoleZodSchema>
+export const userRoles = userRoleZodSchema.options as readonly UserRole[]
 
+export function hasPermissionByRank(
+  userRole: UserRole,
+  requiredRole: UserRole,
+): boolean {
+  const userRank = userRoles.indexOf(userRole)
+  const requiredRank = userRoles.indexOf(requiredRole)
 
-export function hasPermissionByRank(userRole: UserRole, requiredRole: UserRole): boolean {
-  const userRank = userRoles.indexOf(userRole);
-  const requiredRank = userRoles.indexOf(requiredRole);
-
-  return userRank >= requiredRank;
+  return userRank >= requiredRank
 }
 
 export type UserRoleFilter = {
-  op: 'lt' | 'le' | 'eq' | 'gt' | 'ge',
+  op: 'lt' | 'lte' | 'eq' | 'gt' | 'gte'
   role: UserRole
 }
 
@@ -28,39 +37,77 @@ export function getUserRoles(filter?: UserRoleFilter): UserRole[] {
   return userRoles.filter(getUserRoleFilterFn(filter))
 }
 
+export function lt(role: UserRole): UserRoleFilter {
+  return {
+    op: 'lt',
+    role,
+  }
+}
+
+export function lte(role: UserRole): UserRoleFilter {
+  return {
+    op: 'lte',
+    role,
+  }
+}
+
+export function eq(role: UserRole): UserRoleFilter {
+  return {
+    op: 'eq',
+    role,
+  }
+}
+
+export function gt(role: UserRole): UserRoleFilter {
+  return {
+    op: 'gt',
+    role,
+  }
+}
+
+export function gte(role: UserRole): UserRoleFilter {
+  return {
+    op: 'gte',
+    role,
+  }
+}
+
 function getUserRoleFilterFn(filter: UserRoleFilter): UserRoleFilterFn {
-  const requiredRank = userRoles.indexOf(filter.role);
+  const requiredRank = userRoles.indexOf(filter.role)
 
   switch (filter.op) {
     case 'lt':
       return (val: UserRole) => {
-        const userRank = userRoles.indexOf(val);
+        const userRank = userRoles.indexOf(val)
 
         return userRank < requiredRank
       }
-    case 'le':
+    case 'lte':
       return (val: UserRole) => {
-        const userRank = userRoles.indexOf(val);
+        const userRank = userRoles.indexOf(val)
 
         return userRank <= requiredRank
       }
     case 'gt':
       return (val: UserRole) => {
-        const userRank = userRoles.indexOf(val);
+        const userRank = userRoles.indexOf(val)
 
         return userRank > requiredRank
       }
-    case 'ge':
+    case 'gte':
       return (val: UserRole) => {
-        const userRank = userRoles.indexOf(val);
+        const userRank = userRoles.indexOf(val)
 
         return userRank >= requiredRank
       }
     case 'eq':
       return (val: UserRole) => {
-        const userRank = userRoles.indexOf(val);
+        const userRank = userRoles.indexOf(val)
 
         return userRank == requiredRank
       }
+
+    default:
+      return () => true
   }
 }

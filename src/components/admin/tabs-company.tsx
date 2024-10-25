@@ -26,7 +26,7 @@ import { ModalInviteUser } from './modal-invite-user'
 import { TableAdminLocations } from './table-company-locations'
 import { TableAdminUsers } from './table-company-users'
 import { LocationWithCounts } from '@/data/location.types'
-import { getUserRoles, hasPermissionByRank } from '@/data/user.types'
+import { getUserRoles, hasPermissionByRank, lte } from '@/data/user.types'
 
 interface Props {
   user: User
@@ -124,10 +124,7 @@ export function TabsAdmin({
                   customer.extraUsers,
                   users.length,
                 )}
-                userRoles={getUserRoles({
-                  op: 'le',
-                  role: user.role,
-                })}
+                userRoles={getUserRoles(lte(user.role))}
               />
             </div>
           ) : (currentTab() == 'lokationer' && hasPermissionByRank(user.role, 'administrator')) ? (
