@@ -52,7 +52,7 @@ export function TableToolbar<T>({
 }: Props<T>) {
   return (
     <div className='flex items-center gap-2 py-4'>
-      <div className='mr-auto overflow-y-auto'>
+      <div className='mr-auto max-sm:overflow-y-auto'>
         <TableToolbarFilters table={table} filterFields={filterFields} />
       </div>
       {options && (
