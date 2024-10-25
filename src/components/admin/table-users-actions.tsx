@@ -28,19 +28,20 @@ export function TableUsersActions({ table, row }: Props) {
   }
 
   const { role: sessionUserRole, id: sessionUserID } = user
+
   const hasPermission = hasPermissionByRank(sessionUserRole, row.original.role)
   const isSignedInUser = row.original.id == sessionUserID
-  const tooltipContent = !hasPermission
-          ? t('table-users-actions.no-permission-tooltip')
-          : isSignedInUser
-            ? t('table-users-actions.same-user-tooltip')
-            : undefined
 
-      console.log(row.original.name, tooltipContent)
+  const tooltipContent = !hasPermission
+    ? t('table-users-actions.no-permission-tooltip')
+    : isSignedInUser
+      ? t('table-users-actions.same-user-tooltip')
+      : undefined
+
   return (
     <TableActionsWrapper
       disabled={!hasPermission || isSignedInUser}
-      tooltipContent={ tooltipContent }>
+      tooltipContent={tooltipContent}>
       <DropdownMenuItem
         onClick={() => {
           emitCustomEvent('EditUserByID', {

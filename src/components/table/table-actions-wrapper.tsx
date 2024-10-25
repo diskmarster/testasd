@@ -52,7 +52,7 @@ const TableActionsTrigger = forwardRef<
               </Button>
             </DropdownMenuTrigger>
           </TooltipTrigger>
-          <TooltipContent className='bg-muted-foreground text-muted'>
+          <TooltipContent className='bg-foreground text-background'>
             {tooltipContent}
           </TooltipContent>
         </Tooltip>
