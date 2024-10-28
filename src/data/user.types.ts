@@ -1,3 +1,4 @@
+import { Column, sql } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const userRoleZodSchema = z.enum([
@@ -10,6 +11,10 @@ export const userRoleZodSchema = z.enum([
 ])
 export type UserRole = z.infer<typeof userRoleZodSchema>
 export const userRoles = userRoleZodSchema.options as readonly UserRole[]
+
+export function inList<TCol extends Column>(col: TCol, list: unknown[]) {
+  return sql`${col} in (${sql.raw(list.join(', '))})`
+}
 
 export function hasPermissionByRank(
   userRole: UserRole,
