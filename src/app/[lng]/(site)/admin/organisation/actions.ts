@@ -43,8 +43,6 @@ export const toggleUserStatusAction = adminAction
 
       const hasPermission = users.some(u => hasPermissionByRank(ctx.user.role, u.role))
 
-      console.log("hasPermission:", hasPermission)
-
       if (!hasPermission) {
         throw new ActionError(t('organisation-action.deactivate-higher-rank-user-error'))
       }
@@ -272,6 +270,15 @@ export const editUserAction = adminAction
   .schema(async () => await getSchema(editUserValidation, 'organisation'))
   .action(async ({ parsedInput: { userID, data }, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'actions-errors')
+
+    if (userID == user.id) {
+      throw new ActionError(t('organisation-action.deactivate-own-user-error'))
+    }
+
+    const userToUpdate = await userService.getByID(userID)
+    if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
+      throw new ActionError(t('organisation-action.deactivate-higher-rank-user-error'))
+    }
 
     const {locationIDs, ...userData} = data
 
