@@ -22,7 +22,7 @@ export function ButtonToggleLocations({ table }: { table: Table<LocationWithCoun
         })
         table.resetRowSelection()
       }}>
-      <Icons.lisTodo className='size-5' />
+      <Icons.listTodo className='size-5' />
     </Button>
   )
 }

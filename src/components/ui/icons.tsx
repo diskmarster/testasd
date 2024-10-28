@@ -56,7 +56,7 @@ export const Icons = {
   triangleAlert: TriangleAlert,
   sheet: Sheet,
   cloudUpload: CloudUpload,
-  lisTodo: ListTodo,
+  listTodo: ListTodo,
   housePlus: HousePlus,
   arrowDownUp: ArrowDownUp,
   userPlus: UserRoundPlus,

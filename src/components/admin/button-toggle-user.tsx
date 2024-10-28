@@ -21,7 +21,7 @@ export function ButtonToggleUsers({ table }: { table: Table<UserNoHash> }) {
         })
         table.resetRowSelection()
       }}>
-      <Icons.lisTodo className='size-5' />
+      <Icons.listTodo className='size-5' />
     </Button>
   )
 }
