@@ -56,8 +56,12 @@
     "you-have-been-invited": "Du er blevet inviteret til ",
     "user-wasnt-updated": "Noget gik galt under opdateringen af brugeren",
     "user-locations-wasnt-updated": "Noget gik galt under opdateringen af brugerens lokationsadgange",
-    "deactivate-own-user-error": "Du kan ikke deaktivere din egen bruger",
-    "deactivate-higher-rank-user-error": "Du kan ikke deaktivere brugere med flere rettigheder end dig"
+    "deactivate-own-user-error": "Du kan ikke deaktivere din egen bruger her",
+    "deactivate-higher-rank-user-error": "Du kan ikke deaktivere brugere med flere rettigheder end dig",
+    "edit-own-user-error": "Du kan ikke redigere din egen bruger her",
+    "edit-higher-rank-user-error": "Du kan ikke redigere brugere med flere rettigheder end dig",
+    "reset-own-pw-error": "Du kan ikke nulstille kodeord for din egen bruger her",
+    "reset-higher-rank-pw-error": "Du kan ikke nulstille kodeord for brugere med flere rettigheder end dig"
   },
 
   "placement-action": {
