@@ -158,7 +158,7 @@ export function ModalEditUser({
           locationIDs: [],
         },
         {
-          shouldValidate: true,
+          shouldValidate: false,
           shouldDirty: false,
         },
       )
