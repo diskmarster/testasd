@@ -49,6 +49,7 @@ export function ModalEditUser({
   locations: allLocations,
   userRoles,
 }: Props) {
+  const [error, setError] = useState<string>()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<UserNoHash>()
   const [locations, setLocations] = useState<
@@ -95,6 +96,7 @@ export function ModalEditUser({
 
   const onOpenChange = (val: boolean) => {
     setOpen(val)
+    setError(undefined)
     reset()
   }
 
@@ -103,7 +105,7 @@ export function ModalEditUser({
       const res = await editUserAction(values)
 
       if (res && res.serverError) {
-        // TODO: Do something with the error
+        setError(res.serverError)
         return
       }
 
@@ -119,7 +121,7 @@ export function ModalEditUser({
       const res = await getLocationsByUserIDAction({ userID })
 
       if (res && res.serverError) {
-        // TODO: Do something with the error
+        setError(res.serverError)
         return
       }
 
@@ -189,6 +191,13 @@ export function ModalEditUser({
               <form
                 className='flex flex-col gap-4 pb-4 md:pb-0 justify-between'
                 onSubmit={handleSubmit(onSubmit, e => console.log(e))}>
+                {error && (
+                  <Alert variant='destructive'>
+                    <Icons.alert className='size-4 !top-3' />
+                    <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
                 <div className='flex gap-4 h-[inherit] flex-col md:flex-row'>
                   <div className='w-full space-y-4'>
                     <div className='grid gap-2'>
