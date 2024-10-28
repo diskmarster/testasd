@@ -27,6 +27,7 @@ import {
   resetUserPasswordValidation,
   updateCustomerValidation,
 } from './validation'
+import { hasPermissionByRank } from '@/data/user.types'
 
 export const toggleUserStatusAction = adminAction
   .metadata({ actionName: 'toggleUserStatus' })
@@ -34,8 +35,19 @@ export const toggleUserStatusAction = adminAction
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
-    if (parsedInput.status == "inactive" && parsedInput.userIDs.some(id => ctx.user.id == id)) {
-      throw new ActionError(t('organisation-action.deactivate-own-user-error'))
+    if (parsedInput.status == 'inactive') {
+      if (parsedInput.userIDs.some(id => ctx.user.id == id)) {
+        throw new ActionError(t('organisation-action.deactivate-own-user-error'))
+      }
+      const users = await userService.getByIDs(parsedInput.userIDs)
+
+      const hasPermission = users.some(u => hasPermissionByRank(ctx.user.role, u.role))
+
+      console.log("hasPermission:", hasPermission)
+
+      if (!hasPermission) {
+        throw new ActionError(t('organisation-action.deactivate-higher-rank-user-error'))
+      }
     }
 
     const status = parsedInput.status == 'active' ? true : false
@@ -44,7 +56,7 @@ export const toggleUserStatusAction = adminAction
     })
 
     let userInvalidatePromises: Promise<void>[] = []
-    if (parsedInput.status) {
+    if (!status) {
       userInvalidatePromises = parsedInput.userIDs.map(uID => {
         return sessionService.invalidateByID(uID)
       })
