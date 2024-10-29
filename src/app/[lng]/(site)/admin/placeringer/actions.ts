@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { editableAction } from '@/lib/safe-action'
+import { editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -16,7 +16,7 @@ import {
 
 export const createPlacementAction = editableAction
   .metadata({ actionName: 'createPlacement' })
-  .schema(createPlacementValidation)
+  .schema(async () => await getSchema(createPlacementValidation, 'validation'))
   .action(async ({ parsedInput: { name }, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const location = await locationService.getLastVisited(ctx.user.id)
@@ -45,7 +45,7 @@ export const createPlacementAction = editableAction
 
 export const updatePlacementAction = editableAction
   .metadata({ actionName: 'updatePlacement' })
-  .schema(updatePlacementValidation)
+  .schema(async () => await getSchema(updatePlacementValidation, 'validation'))
   .action(
     async ({
       parsedInput: { placementID, data: updatedPlacementData },
@@ -65,7 +65,9 @@ export const updatePlacementAction = editableAction
 
 export const toggleBarredPlacementAction = editableAction
   .metadata({ actionName: 'placementToggleBarred' })
-  .schema(toggleBarredPlacementValidation)
+  .schema(
+    async () => await getSchema(toggleBarredPlacementValidation, 'validation'),
+  )
   .action(async ({ parsedInput: { placementID, isBarred }, ctx }) => {
     const updatedPlacement = await inventoryService.updatePlacementBarredStatus(
       placementID,
