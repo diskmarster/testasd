@@ -36,17 +36,19 @@ export function ModalUpdatePlacement({
   const [error, setError] = useState<string>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'placeringer')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createPlacementValidation(validationT)
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
-    z.infer<typeof createPlacementValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createPlacementValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       name: placementToEdit?.name || '',
     },
   })
 
-  async function onSubmit(values: z.infer<typeof createPlacementValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       if (!placementToEdit) {
         setError('Ingen placering at redigere')

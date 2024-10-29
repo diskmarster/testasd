@@ -5,11 +5,11 @@ export const inviteNewUserValidation = (
   t: (key: string, options?: any) => string,
 ) =>
   z.object({
-    email: z.string().email({ message: 'Email skal være gyldig' }),
+    email: z.string().email({ message: t('organisation.email-valid') }),
     role: userRoleZodSchema,
     locationIDs: z
       .array(z.string())
-      .min(1, { message: 'Minimum en lokation skal vælges' }),
+      .min(1, { message: t('organisation.minimum-location') }),
     webAccess: z.coerce.boolean(),
     appAccess: z.coerce.boolean(),
     priceAccess: z.coerce.boolean(),
@@ -20,8 +20,7 @@ export const changeUserStatusValidation = (
 ) =>
   z.object({
     userIDs: z.array(z.coerce.number()).min(1, {
-      message:
-        'Kunne ikke hente brugernes information. Prøv at luk og åben pop-up vinduet',
+      message: t('organisation.couldnt-find-customer-information'),
     }),
     status: z.enum(['active', 'inactive']),
   })
@@ -32,11 +31,16 @@ export const createNewLocationValidation = (
   z.object({
     name: z
       .string()
-      .min(3, { message: 'Lokationsnavn skal være minimum 3 karaktere lang' }),
+      .min(3, {
+        message: t('organisation.location-name-minLength', { minLength: 3 }),
+      })
+      .max(50, {
+        message: t('organisation.location-name-maxLength', { maxLength: 50 }),
+      }),
     customerID: z.coerce.number(),
     userIDs: z
       .array(z.coerce.number())
-      .min(1, { message: 'Minimum en lokation skal vælges' }),
+      .min(1, { message: t('organisation.minimum-location') }),
     pathname: z.string().min(1),
   })
 
@@ -45,16 +49,20 @@ export const editLocationValidation = (
 ) =>
   z.object({
     locationID: z.string().min(1, {
-      message:
-        'Kunne ikke hente lokationens information. Prøv at luk og åben pop-up vinduet',
+      message: t('organisation.couldnt-find-location-information'),
     }),
     name: z
       .string()
-      .min(3, { message: 'Lokationsnavn skal være minimum 3 karaktere lang' }),
+      .min(3, {
+        message: t('organisation.location-name-minLength', { minLength: 3 }),
+      })
+      .max(50, {
+        message: t('organisation.location-name-maxLength', { maxLength: 50 }),
+      }),
     customerID: z.coerce.number(),
     userIDs: z
       .array(z.coerce.number())
-      .min(1, { message: 'Minimum en bruger skal vælges' }),
+      .min(1, { message: t('organisation.minimum-user') }),
   })
 
 export const changeLocationStatusValidation = (
@@ -63,7 +71,7 @@ export const changeLocationStatusValidation = (
   z.object({
     locationIDs: z
       .array(z.string())
-      .min(1, { message: 'Minimum en lokation skal vælges' }),
+      .min(1, { message: t('organisation.minimum-location') }),
     status: z.enum(['active', 'inactive']),
   })
 
@@ -73,14 +81,16 @@ export const updateCustomerValidation = (
   z.object({
     company: z
       .string()
-      .min(2, { message: 'Firmanavn skal være minimum 2 karakterer' }),
-    email: z.string().email({ message: 'Email skal være gyldig' }),
+      .min(2, {
+        message: t('organisation.company-name-minLength', { minLength: 2 }),
+      })
+      .max(50, {
+        message: t('organisation.company-name-maxLength', { maxLength: 50 }),
+      }),
+    email: z.string().email({ message: t('organisation.email-valid') }),
   })
 
-export const resetUserPasswordValidation = (
-  t: (key: string, options?: any) => string,
-) =>
-  z.object({
-    userID: z.coerce.number(),
-    email: z.string().email(),
-  })
+export const resetUserPasswordValidation = z.object({
+  userID: z.coerce.number(),
+  email: z.string().email(),
+})
