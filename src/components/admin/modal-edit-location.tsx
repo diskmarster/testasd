@@ -42,11 +42,13 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
   const [error, setError] = useState<string>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = editLocationValidation(validationT)
 
   const { handleSubmit, register, formState, reset, watch, setValue } = useForm<
-    z.infer<typeof editLocationValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(editLocationValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       userIDs: [user.id],
       customerID: user.customerID,
@@ -60,7 +62,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
     setOpen(open)
   }
 
-  const onSubmit = async (values: z.infer<typeof editLocationValidation>) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await editLocationAction(values)
       if (res && res.serverError) {

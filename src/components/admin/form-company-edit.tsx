@@ -27,16 +27,18 @@ export function FormCompanyEdit({ customer }: Props) {
   const { t } = useTranslation(lng, 'organisation')
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = updateCustomerValidation(validationT)
 
-  const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof updateCustomerValidation>
-  >({
-    resolver: zodResolver(updateCustomerValidation),
-    defaultValues: {
-      company: customer.company,
-      email: customer.email,
+  const { handleSubmit, formState, register } = useForm<z.infer<typeof schema>>(
+    {
+      resolver: zodResolver(schema),
+      defaultValues: {
+        company: customer.company,
+        email: customer.email,
+      },
     },
-  })
+  )
 
   return (
     <form

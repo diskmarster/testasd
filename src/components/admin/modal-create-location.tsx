@@ -43,11 +43,13 @@ export function ModalCreateLocation({ user, users, children }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
   const pathname = usePathname()
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createNewLocationValidation(validationT)
 
   const { handleSubmit, register, formState, reset, watch, setValue } = useForm<
-    z.infer<typeof createNewLocationValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createNewLocationValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       userIDs: [user.id],
       customerID: user.customerID,
@@ -62,9 +64,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
     setOpen(open)
   }
 
-  const onSubmit = async (
-    values: z.infer<typeof createNewLocationValidation>,
-  ) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await createNewLocationAction(values)
       if (res && res.serverError) {

@@ -38,11 +38,13 @@ export function ModalToggleLocation() {
   const [pending, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = changeLocationStatusValidation(validationT)
 
   const { setValue, handleSubmit, formState, watch, reset } = useForm<
-    z.infer<typeof changeLocationStatusValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(changeLocationStatusValidation),
+    resolver: zodResolver(schema),
   })
 
   const formValues = watch()
@@ -52,7 +54,7 @@ export function ModalToggleLocation() {
     setValue('locationIDs', data.locationIDs, { shouldValidate: true })
   })
 
-  function onSubmit(values: z.infer<typeof changeLocationStatusValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await changeLocationStatusAction(values)
 

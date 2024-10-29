@@ -5,9 +5,14 @@ export const updateProfileValidation = (
   t: (key: string, options?: any) => string,
 ) =>
   z.object({
-    name: z.string({ message: t('updateProfile.name.required') }).min(2, {
-      message: t('updateProfile.name.minLength', { minLength: 2 }),
-    }),
+    name: z
+      .string({ message: t('updateProfile.name.required') })
+      .min(2, {
+        message: t('updateProfile.name.minLength', { minLength: 2 }),
+      })
+      .max(50, {
+        message: t('updateProfile.name.maxLength', { maxLength: 50 }),
+      }),
     email: z
       .string({ message: t('updateProfile.email.required') })
       .email({ message: t('updateProfile.email.email') }),
@@ -18,9 +23,14 @@ export const adminUpdateProfileValidation = (
 ) =>
   z.object({
     userId: z.string(),
-    name: z.string({ message: t('updateProfile.name.required') }).min(2, {
-      message: t('updateProfile.name.minLength', { minLength: 2 }),
-    }),
+    name: z
+      .string({ message: t('updateProfile.name.required') })
+      .min(2, {
+        message: t('updateProfile.name.minLength', { minLength: 2 }),
+      })
+      .max(50, {
+        message: t('updateProfile.name.maxLength', { maxLength: 50 }),
+      }),
     email: z.string().email({ message: 'Email skal være gyldig' }),
     role: userRoleZodSchema,
   })
@@ -71,7 +81,7 @@ export const updatePinValidation = (
     .object({
       currentPin: z.string(),
       newPin: z.string().regex(/^\d{4}$/, {
-        message: t('updateProfile.new-pin.required'),
+        message: t('updateProfile.new-pin.pinLength', { pinLength: 4 }),
       }),
       confirmPin: z.string(),
     })

@@ -2,6 +2,7 @@
 
 import { inviteNewUserAction } from '@/app/[lng]/(site)/admin/organisation/actions'
 import { inviteNewUserValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -16,22 +17,21 @@ import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
+import { UserRole, userRoles } from '@/data/user.types'
 import { Location } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { AutoComplete } from '../ui/autocomplete'
+import { Checkbox } from '../ui/checkbox'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
-import { useLanguage } from '@/context/language'
-import { useTranslation } from '@/app/i18n/client'
-import { AutoComplete } from '../ui/autocomplete'
-import { UserRole, userRoles } from '@/data/user.types'
-import Link from 'next/link'
-import { Checkbox } from '../ui/checkbox'
 
 interface Props {
   locations: Location[]
@@ -49,28 +49,31 @@ export function ModalInviteUser({
   const [error, setError] = useState<string>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = inviteNewUserValidation(validationT)
   const [searchRoles, setSearchRoles] = useState('Bruger')
 
   const rolesOptions = userRoles
     .filter(
-      role => role != 'system_administrator'
-        && role.toLowerCase().includes(searchRoles.toLowerCase())
+      role =>
+        role != 'system_administrator' &&
+        role.toLowerCase().includes(searchRoles.toLowerCase()),
     )
     .map(role => ({
-      label: role.replace("_", " "),
-      value: role
+      label: role.replace('_', ' '),
+      value: role,
     }))
 
   const { handleSubmit, register, formState, reset, watch, setValue } = useForm<
-    z.infer<typeof inviteNewUserValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(inviteNewUserValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       locationIDs: [currentLocationID],
       role: 'bruger',
       webAccess: true,
       appAccess: true,
-      priceAccess: true
+      priceAccess: true,
     },
   })
 
@@ -81,7 +84,7 @@ export function ModalInviteUser({
     setOpen(open)
   }
 
-  const onSubmit = async (values: z.infer<typeof inviteNewUserValidation>) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await inviteNewUserAction(values)
       if (res && res.serverError) {
@@ -111,7 +114,8 @@ export function ModalInviteUser({
         <CredenzaHeader>
           <CredenzaTitle>{t('modal-invite-user.title')}</CredenzaTitle>
           <CredenzaDescription>
-            {t('modal-invite-user.description')}{siteConfig.name}
+            {t('modal-invite-user.description')}
+            {siteConfig.name}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -154,20 +158,38 @@ export function ModalInviteUser({
                           case 'administrator':
                           case 'moderator':
                           case 'bruger':
-                            setValue('webAccess', true, { shouldValidate: true })
-                            setValue('appAccess', true, { shouldValidate: true })
-                            setValue('priceAccess', true, { shouldValidate: true })
-                            break;
+                            setValue('webAccess', true, {
+                              shouldValidate: true,
+                            })
+                            setValue('appAccess', true, {
+                              shouldValidate: true,
+                            })
+                            setValue('priceAccess', true, {
+                              shouldValidate: true,
+                            })
+                            break
                           case 'afgang':
-                            setValue('webAccess', false, { shouldValidate: true })
-                            setValue('appAccess', true, { shouldValidate: true })
-                            setValue('priceAccess', false, { shouldValidate: true })
-                            break;
+                            setValue('webAccess', false, {
+                              shouldValidate: true,
+                            })
+                            setValue('appAccess', true, {
+                              shouldValidate: true,
+                            })
+                            setValue('priceAccess', false, {
+                              shouldValidate: true,
+                            })
+                            break
                           case 'læseadgang':
-                            setValue('webAccess', true, { shouldValidate: true })
-                            setValue('appAccess', false, { shouldValidate: true })
-                            setValue('priceAccess', false, { shouldValidate: true })
-                            break;
+                            setValue('webAccess', true, {
+                              shouldValidate: true,
+                            })
+                            setValue('appAccess', false, {
+                              shouldValidate: true,
+                            })
+                            setValue('priceAccess', false, {
+                              shouldValidate: true,
+                            })
+                            break
                         }
 
                         setValue('role', role, { shouldValidate: true })
@@ -179,8 +201,14 @@ export function ModalInviteUser({
                       searchValue={searchRoles}
                     />
                     <div className='flex items-center gap-1 text-xs text-muted-foreground'>
-                      <p>{t('modal-invite-user.role-question')}{" "}
-                        <Link className='underline' href={`/faq?"${t("modal-invite-user.role-url")}"`} target="_blank">{t('modal-invite-user.role-link')}</Link>
+                      <p>
+                        {t('modal-invite-user.role-question')}{' '}
+                        <Link
+                          className='underline'
+                          href={`/faq?"${t('modal-invite-user.role-url')}"`}
+                          target='_blank'>
+                          {t('modal-invite-user.role-link')}
+                        </Link>
                       </p>
                     </div>
                   </div>
@@ -232,24 +260,34 @@ export function ModalInviteUser({
                   </div>
                 )}
               </div>
-              <div className={cn('flex w-px bg-border', formValues.role == 'administrator' && 'hidden')} />
-              <div className={cn('grid gap-2 w-full', formValues.role == 'administrator' && 'hidden')}>
+              <div
+                className={cn(
+                  'flex w-px bg-border',
+                  formValues.role == 'administrator' && 'hidden',
+                )}
+              />
+              <div
+                className={cn(
+                  'grid gap-2 w-full',
+                  formValues.role == 'administrator' && 'hidden',
+                )}>
                 <div className='flex items-center justify-between'>
                   <Label>{t('modal-invite-user.location-access')}</Label>
                   <span className='text-muted-foreground text-xs tabular-nums leading-[14px]'>
-                    {formValues.locationIDs.length}
-                    {" "}{t('modal-invite-user.of')}{" "}
-                    {locations.length} {t("modal-invite-user.locations-chosen")}
+                    {formValues.locationIDs.length} {t('modal-invite-user.of')}{' '}
+                    {locations.length} {t('modal-invite-user.locations-chosen')}
                   </span>
                 </div>
-                <ScrollArea
-                  className='h-[300px]'
-                >
+                <ScrollArea className='h-[300px]'>
                   <div className='space-y-2'>
                     {locations.map(loc => (
                       <div
                         key={loc.id}
-                        className={cn('border rounded-sm py-2 px-3 flex items-center justify-between transition-colors h-9', formValues.locationIDs.includes(loc.id) && 'bg-primary/5')}>
+                        className={cn(
+                          'border rounded-sm py-2 px-3 flex items-center justify-between transition-colors h-9',
+                          formValues.locationIDs.includes(loc.id) &&
+                            'bg-primary/5',
+                        )}>
                         <span className='text-muted-foreground text-sm'>
                           {loc.name}
                         </span>

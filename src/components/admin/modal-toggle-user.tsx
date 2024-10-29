@@ -43,11 +43,13 @@ export function ModalToggleUser({ users }: Props) {
   const [pending, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = changeUserStatusValidation(validationT)
 
   const { setValue, handleSubmit, formState, watch, reset } = useForm<
-    z.infer<typeof changeUserStatusValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(changeUserStatusValidation),
+    resolver: zodResolver(schema),
   })
 
   const formValues = watch()
@@ -57,7 +59,7 @@ export function ModalToggleUser({ users }: Props) {
     setValue('userIDs', data.userIDs, { shouldValidate: true })
   })
 
-  function onSubmit(values: z.infer<typeof changeUserStatusValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await toggleUserStatusAction(values)
 

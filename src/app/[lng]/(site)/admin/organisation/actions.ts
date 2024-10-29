@@ -3,7 +3,7 @@
 import { serverTranslation } from '@/app/i18n'
 import { EmailInviteUser } from '@/components/email/email-invite-user'
 import { siteConfig } from '@/config/site'
-import { adminAction } from '@/lib/safe-action'
+import { adminAction, getSchema } from '@/lib/safe-action'
 import { ACTION_ERR_INTERNAL, ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import {
@@ -28,7 +28,7 @@ import {
 
 export const toggleUserStatusAction = adminAction
   .metadata({ actionName: 'toggleUserStatus' })
-  .schema(changeUserStatusValidation)
+  .schema(async () => await getSchema(changeUserStatusValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const status = parsedInput.status == 'active' ? true : false
@@ -59,7 +59,7 @@ export const toggleUserStatusAction = adminAction
 
 export const inviteNewUserAction = adminAction
   .metadata({ actionName: 'inviteNewUser' })
-  .schema(inviteNewUserValidation)
+  .schema(async () => await getSchema(inviteNewUserValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existingUser = await userService.getByEmail(parsedInput.email)
@@ -107,7 +107,10 @@ export const inviteNewUserAction = adminAction
 
 export const createNewLocationAction = adminAction
   .metadata({ actionName: 'createNewLocation' })
-  .schema(createNewLocationValidation)
+  .schema(
+    async () => await getSchema(createNewLocationValidation, 'validation'),
+  )
+
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     // 1. is location limit reached?
@@ -151,7 +154,8 @@ export const createNewLocationAction = adminAction
 
 export const editLocationAction = adminAction
   .metadata({ actionName: 'editLocation' })
-  .schema(editLocationValidation)
+  .schema(async () => await getSchema(editLocationValidation, 'validation'))
+
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     // 1. fetch old accesses for location
@@ -181,16 +185,21 @@ export const editLocationAction = adminAction
 
 export const changeLocationStatusAction = adminAction
   .metadata({ actionName: 'changeLocation' })
-  .schema(changeLocationStatusValidation)
+  .schema(
+    async () => await getSchema(changeLocationStatusValidation, 'validation'),
+  )
+
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     // 1. toggle location by ID
     // 2. revalidate path
 
     const status = parsedInput.status == 'active' ? false : true
-    const locationTogglePromises = parsedInput.locationIDs.map(locID => {
-      return locationService.updateStatus(locID, status)
-    })
+    const locationTogglePromises = parsedInput.locationIDs.map(
+      (locID: string) => {
+        return locationService.updateStatus(locID, status)
+      },
+    )
 
     const toggleResponses = await Promise.allSettled(locationTogglePromises)
 
@@ -208,7 +217,8 @@ export const changeLocationStatusAction = adminAction
 
 export const updateCustomerAction = adminAction
   .metadata({ actionName: 'updateCustomer' })
-  .schema(updateCustomerValidation)
+  .schema(async () => await getSchema(updateCustomerValidation, 'validation'))
+
   .action(async ({ parsedInput, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')
     const updatedCustomer = customerService.updateByID(user.customerID, {
@@ -222,7 +232,10 @@ export const updateCustomerAction = adminAction
 
 export const resetUserPasswordAction = adminAction
   .metadata({ actionName: 'resetUserPassword' })
-  .schema(resetUserPasswordValidation)
+  .schema(
+    async () => await getSchema(resetUserPasswordValidation, 'validation'),
+  )
+
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const linkCreated = await passwordResetService.createAndSendLink(
