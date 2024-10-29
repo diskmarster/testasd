@@ -95,8 +95,8 @@ export const inviteNewUserAction = adminAction
     }
 
     const subject = customer
-      ? `${customer.company} har inviteret dig til ${siteConfig.name}`
-      : `Du er blevet inviteret til ${siteConfig.name}`
+      ? `${customer.company} ${t('organisation-action.has-invited-you')} ${siteConfig.name}`
+      : `${t('organisation-action.you-have-been-invited')} ${siteConfig.name}`
 
     await emailService.sendRecursively(
       [parsedInput.email],

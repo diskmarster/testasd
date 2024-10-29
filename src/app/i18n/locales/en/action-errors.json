@@ -48,8 +48,9 @@
     "location-not-updated": "Something went wrong while updating the location",
     "couldnt-update-locations": "Couldn't update the locations",
     "company-wasnt-updated": "Something went wrong while updating the company",
-    "couldnt-create-reset-link": "Couldn't create a reset link"
-
+    "couldnt-create-reset-link": "Couldn't create a reset link",
+    "has-invited-you": "has invited you to join",
+    "you-have-been-invited": "You have been invited to join"
   },
 
   "placement-action": {
@@ -58,7 +59,6 @@
     "placement-not-created": "Something went wrong while creating the placement",
     "placement-not-updated": "Something went wrong while updating the placement",
     "placement-not-updated-barred": "Something went wrong while barring the placement"
-
   },
 
   "product-action": {
@@ -88,7 +88,6 @@
     "placement-not-created": "Something went wrong while creating the placement",
     "batch-not-created": "Something went wrong while creating the batch.",
     "exact-inventory-not-found": "Couldn't find the exact inventory"
-
   },
 
   "profile-action": {
@@ -100,7 +99,6 @@
     "pin-not-updated": "Something went wrong while updating the PIN",
     "no-access-to-location": "You don't have access to this location",
     "primary-location-not-updated": "Something went wrong while updating your primary location"
-
   },
 
   "unit-action": {
@@ -134,13 +132,10 @@
 
   "location-service-action": {
     "location-didnt-update": "Something went wrong while updating the location name"
-
   },
 
   "password-reset-action": {
     "no-user-with-email": "No user with this email found",
     "couldnt-create-link": "Couldn't create a password reset link"
-
   }
-  
 }

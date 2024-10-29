@@ -51,7 +51,9 @@
     "location-not-updated": "Noget gik galt under opdateringen af lokationen",
     "couldnt-update-locations": "Kunne ikke opdatere lokationerne",
     "company-wasnt-updated": "Noget gik galt under opdateringen af virksomheden",
-    "couldnt-create-reset-link": "Kunne ikke oprette et nulstillingslink"
+    "couldnt-create-reset-link": "Kunne ikke oprette et nulstillingslink",
+    "has-invited-you": "har inviteret dig til ",
+    "you-have-been-invited": "Du er blevet inviteret til "
   },
 
   "placement-action": {
