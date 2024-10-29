@@ -59,5 +59,25 @@
   "placement": {
     "name-required": "Name is required",
     "name-minLength": "Name must be at least {{minLength}} characters long"
+  },
+  "organisation": {
+    "email-valid": "Email must be a valid email",
+    "minimum-location": "At least one location must be picked",
+    "couldnt-find-customer-information": "Couldn't find the customer's information. Try to close and re-open the pop-up window.",
+    "location-name-minLength": "Location name must be at least {{minLength}} characters long",
+    "location-name-maxLength": "Location name must be at most {{maxLength}} characters long",
+    "couldnt-find-location-information": "Couldn't find the location's information. Try to close and re-open the pop-up window.",
+    "minimum-user": "At least one user must be picked",
+    "company-name-minLength": "Company name must be at least {{minLength}} characters long",
+    "company-name-maxLength": "Company name must be at most {{maxLength}} characters long"
+  },
+  "register": {
+    "name-minLength": "Name must be at least {{minLength}} characters long",
+    "name-maxLength": "Name can be at most {{maxLength}} characters long",
+    "email": "Email must be a valid email address",
+    "password": "Password must be at least 8 characters.",
+    "confirm-password": "Password and confirm password must match",
+    "pin": "PIN must be 4 characters long",
+    "pin-must-be-number": "PIN must consist of numbers"
   }
 }

@@ -3,7 +3,7 @@
 import { signUpValidation } from '@/app/[lng]/(auth)/registrer/[linkID]/validation'
 import { serverTranslation } from '@/app/i18n'
 import { EmailTest } from '@/components/email/email-test'
-import { publicAction } from '@/lib/safe-action'
+import { getSchema, publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { isUserLimitReached } from '@/service/customer.utils'
@@ -15,7 +15,7 @@ import { redirect } from 'next/navigation'
 
 export const signUpAction = publicAction
   .metadata({ actionName: 'signUp' })
-  .schema(signUpValidation)
+  .schema(async () => await getSchema(signUpValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const activationLink = await customerService.getActivationLinkByID(
@@ -71,7 +71,9 @@ export const signUpAction = publicAction
         existingCustomer.id,
       )
       if (!isCustomerToggled) {
-        throw new ActionError(t('register-action.company-account-not-activated'))
+        throw new ActionError(
+          t('register-action.company-account-not-activated'),
+        )
       }
     }
 
@@ -82,9 +84,7 @@ export const signUpAction = publicAction
       isPrimary: true,
     })
     if (!isAccessAdded) {
-      throw new ActionError(
-        t('register-action.user-no-location-access'),
-      )
+      throw new ActionError(t('register-action.user-no-location-access'))
     }
 
     const isLinkDeleted = await customerService.deleteActivationLink(

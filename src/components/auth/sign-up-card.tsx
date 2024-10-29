@@ -16,6 +16,7 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useLanguage } from '@/context/language'
 import { Customer } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -75,20 +76,23 @@ function Form({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = signUpValidation(validationT)
 
-  const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof signUpValidation>
-  >({
-    resolver: zodResolver(signUpValidation),
-    defaultValues: {
-      linkID: linkID,
-      name: 'Firma Admin',
-      email: customer.email,
-      clientID: customer.id,
+  const { handleSubmit, formState, register } = useForm<z.infer<typeof schema>>(
+    {
+      resolver: zodResolver(schema),
+      defaultValues: {
+        linkID: linkID,
+        name: 'Firma Admin',
+        email: customer.email,
+        clientID: customer.id,
+      },
     },
-  })
+  )
 
-  async function onSubmit(values: z.infer<typeof signUpValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const response = await signUpAction(values)
       if (response && response.serverError) {
