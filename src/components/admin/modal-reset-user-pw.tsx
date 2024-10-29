@@ -35,11 +35,13 @@ export function ModalResetUserPW({ users }: Props) {
   const [pending, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = resetUserPasswordValidation(validationT)
 
   const { setValue, handleSubmit, formState, watch, reset } = useForm<
-    z.infer<typeof resetUserPasswordValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(resetUserPasswordValidation),
+    resolver: zodResolver(schema),
   })
 
   const formValues = watch()
@@ -50,7 +52,7 @@ export function ModalResetUserPW({ users }: Props) {
     setValue('email', data.email, { shouldValidate: true })
   })
 
-  function onSubmit(values: z.infer<typeof resetUserPasswordValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await resetUserPasswordAction(values)
 
