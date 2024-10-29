@@ -8,13 +8,11 @@ import { sessionService } from '@/service/session'
 import { Session, User } from 'lucia'
 import { createSafeActionClient, MiddlewareResult } from 'next-safe-action'
 import { cookies } from 'next/headers'
-import { z, ZodEffects, ZodObject } from 'zod'
+import { z } from 'zod'
 import { NewApplicationError } from '../database/schema/errors'
 
-export async function getSchema(
-  schema: (
-    t: (key: string, options?: any) => string,
-  ) => ZodObject<any> | ZodEffects<any>,
+export async function getSchema<T>(
+  schema: (t: (key: string, options?: any) => string) => T,
   namespace: string = 'common',
 ) {
   const lng = cookies().get('i18next')?.value ?? fallbackLng

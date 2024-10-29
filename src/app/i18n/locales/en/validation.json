@@ -15,7 +15,7 @@
       "same": "Your current password cannot be the same as your new password."
     },
     "new-pin": {
-      "required": "PIN must be at least 4 characters long",
+      "pinLength": "PIN must be {{pinLength}} characters long",
       "equal": "New PIN and confirm PIN must match.",
       "same": "Your current PIN cannot be the same as your new PIN."
     }
@@ -52,6 +52,12 @@
     "cost-price-required": "Cost price is required",
     "cost-price-type": "Cost price must be a number",
     "cost-price-not-negative": "Cost price cannot be negative and must be a number.",
-    "sales-price-type": "Sales price must be a number"
+    "sales-price-type": "Sales price must be a number",
+    "barred-values": "Unknown value in barred. Use true, false, ja or nej",
+    "unknown-column": "Unknown column"
+  },
+  "placement": {
+    "name-required": "Name is required",
+    "name-minLength": "Name must be at least {{minLength}} characters long"
   }
 }

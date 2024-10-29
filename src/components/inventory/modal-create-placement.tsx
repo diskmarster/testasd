@@ -2,6 +2,7 @@
 
 import { createPlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
 import { createPlacementValidation } from '@/app/[lng]/(site)/admin/placeringer/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -16,14 +17,13 @@ import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
-import { useLanguage } from '@/context/language'
-import { useTranslation } from '@/app/i18n/client'
 
 export function ModalCreatePlacement() {
   const [open, setOpen] = useState(false)
@@ -31,11 +31,13 @@ export function ModalCreatePlacement() {
   const [error, setError] = useState<string | undefined>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'placeringer')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createPlacementValidation(validationT)
 
   const { register, handleSubmit, formState, reset } = useForm<
-    z.infer<typeof createPlacementValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createPlacementValidation),
+    resolver: zodResolver(schema),
   })
 
   function onOpenChange(open: boolean) {
@@ -43,9 +45,7 @@ export function ModalCreatePlacement() {
     setOpen(open)
   }
 
-  const onSubmit = async (
-    values: z.infer<typeof createPlacementValidation>,
-  ) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await createPlacementAction(values)
       if (res && res.serverError) {
