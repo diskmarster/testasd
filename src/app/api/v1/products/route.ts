@@ -1,3 +1,5 @@
+import { NewApplicationError } from '@/lib/database/schema/errors'
+import { errorsService } from '@/service/errors'
 import { productService } from '@/service/products'
 import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
@@ -50,9 +52,20 @@ export async function GET(
 			`Error getting products for authenticated user: '${(e as Error).message}'`,
 		)
 
+    const errorLog: NewApplicationError = {
+      userID: user.id,
+      customerID: user.customerID,
+      type: 'endpoint',
+      input: null,
+      error: (e as Error).message ?? 'Kunne ikke hente varer',
+      origin: `GET api/v1/products`,
+    }
+
+    errorsService.create(errorLog)
+
 		return NextResponse.json(
 			{
-				msg: `Der skete en fejl da vi skulle hente produkter: '${(e as Error).message}'`,
+				msg: `Der skete en fejl da vi skulle hente varer: '${(e as Error).message}'`,
 			},
 			{ status: 500 },
 		)

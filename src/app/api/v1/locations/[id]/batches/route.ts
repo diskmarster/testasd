@@ -1,3 +1,5 @@
+import { NewApplicationError } from '@/lib/database/schema/errors'
+import { errorsService } from '@/service/errors'
 import { inventoryService } from '@/service/inventory'
 import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
@@ -37,6 +39,17 @@ export async function GET(
     console.error(
       `Error getting batches for authenticated user: '${(e as Error).message}'`,
     )
+
+    const errorLog: NewApplicationError = {
+      userID: user.id,
+      customerID: user.customerID,
+      type: 'endpoint',
+      input: { id: params.id },
+      error: (e as Error).message ?? 'Kunne ikke hente batchnumre',
+      origin: `GET api/v1/locations/{id}/batches`,
+    }
+
+    errorsService.create(errorLog)
 
     return NextResponse.json(
       {

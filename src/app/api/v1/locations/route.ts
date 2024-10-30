@@ -1,3 +1,5 @@
+import { NewApplicationError } from '@/lib/database/schema/errors'
+import { errorsService } from '@/service/errors'
 import { locationService } from '@/service/location'
 import { validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
@@ -34,6 +36,18 @@ export async function GET(
     )
   } catch (e) {
     console.error(e)
+
+    const errorLog: NewApplicationError = {
+      userID: user.id,
+      customerID: user.customerID,
+      type: 'endpoint',
+      input: null,
+      error: (e as Error).message ?? 'Der skete en fejl på serveren',
+      origin: `GET api/v1/locations`,
+    }
+
+    errorsService.create(errorLog)
+
     return NextResponse.json(
       { msg: `Der skete en fejl på serveren. '${(e as Error).message}'` },
       { status: 500 },
