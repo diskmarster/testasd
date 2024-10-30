@@ -1,2 +1,1 @@
-export type ErrorsPlatform = 'web' | 'app'
-export type ErrorsCategory = 'action'
+export type ErrorsCategory = 'action' | 'endpoint'
