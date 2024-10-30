@@ -1,4 +1,5 @@
 import { fallbackLng } from '@/app/i18n/settings'
+import { hasPermissionByRank } from '@/data/user.types'
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
 import { analyticsService } from '@/service/analytics'
 import { sessionService } from '@/service/session'
@@ -6,7 +7,7 @@ import { Session, User } from 'lucia'
 import { createSafeActionClient, MiddlewareResult } from 'next-safe-action'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
-import { hasPermissionByRank } from "@/data/user.types";
+import { NewApplicationError } from '../database/schema/errors'
 
 type ActionContextType = { session?: Session; user?: User }
 const metadataSchema = z.object({
@@ -23,9 +24,10 @@ const baseClient = createSafeActionClient<
 
     if (err instanceof ActionError) {
       console.error('ActionError thrown:', err, utils.bindArgsClientInputs)
+      console.trace(err)
+    } else {
+      console.error('UnknownError thrown:', err, utils.bindArgsClientInputs)
     }
-
-    console.error('Error thrown:', err, utils.bindArgsClientInputs)
   },
   handleReturnedServerError(err) {
     if (err instanceof ActionError) {
@@ -38,7 +40,7 @@ const baseClient = createSafeActionClient<
   },
 })
   .metadata({})
-  .use(async ({ next, metadata }) => {
+  .use(async ({ next, metadata, clientInput }) => {
     const start = performance.now()
 
     const res: MiddlewareResult<string, ActionContextType> =
@@ -66,6 +68,18 @@ const baseClient = createSafeActionClient<
       })
     }
 
+    if (!res.success && metadata.actionName != 'signIn') {
+      const errorLog: NewApplicationError = {
+        userID: ctx?.user?.id ?? -1,
+        customerID: ctx?.user?.customerID ?? -1,
+        platform: 'web',
+        input: clientInput,
+        error: res.serverError,
+        origin: metadata.actionName ?? 'unavngivet',
+      }
+      console.log(errorLog)
+    }
+
     return res
   })
 
@@ -79,7 +93,6 @@ export const publicAction = baseClient.use(async ({ next }) => {
 
 // authed action client for all authorized requests
 export const authedAction = publicAction.use(async ({ next, ctx }) => {
-
   if (!ctx.session || !ctx.user) {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
@@ -93,7 +106,6 @@ export const authedAction = publicAction.use(async ({ next, ctx }) => {
 
 // editable action client for all users with rights to mutate data
 export const editableAction = authedAction.use(async ({ next, ctx }) => {
-
   if (ctx.user.role == 'læseadgang') {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
@@ -104,7 +116,7 @@ export const editableAction = authedAction.use(async ({ next, ctx }) => {
 // admin action client for admin only requests
 export const adminAction = editableAction.use(async ({ next, ctx }) => {
   if (!hasPermissionByRank(ctx.user.role, 'moderator')) {
-    throw new ActionError(ACTION_ERR_UNAUTHORIZED);
+    throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
 
   return next({ ctx })

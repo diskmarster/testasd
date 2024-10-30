@@ -26,7 +26,7 @@ export const signInAction = publicAction
 
     if (!existingUser.webAccess || existingUser.role == 'afgang') {
       throw new ActionError(t('log-in-action.access-denied'))
-  }
+    }
 
     await sessionService.invalidateByID(existingUser.id)
     const newSessionID = await sessionService.create(existingUser.id)
