@@ -68,16 +68,16 @@ const baseClient = createSafeActionClient<
       })
     }
 
-    if (!res.success && metadata.actionName != 'signIn') {
+    if (!res.success && ctx && ctx.user && metadata.actionName != 'signIn') {
       const errorLog: NewApplicationError = {
-        userID: ctx?.user?.id ?? -1,
-        customerID: ctx?.user?.customerID ?? -1,
-        platform: 'web',
+        userID: ctx.user.id,
+        customerID: ctx.user.customerID,
+        type: 'action',
         input: clientInput,
         error: res.serverError,
         origin: metadata.actionName ?? 'unavngivet',
       }
-      console.log(errorLog)
+      errorsService.create(errorLog)
     }
 
     return res
