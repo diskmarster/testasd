@@ -61,7 +61,9 @@
     "edit-own-user-error": "Du kan ikke redigere din egen bruger her",
     "edit-higher-rank-user-error": "Du kan ikke redigere brugere med flere rettigheder end dig",
     "reset-own-pw-error": "Du kan ikke nulstille kodeord for din egen bruger her",
-    "reset-higher-rank-pw-error": "Du kan ikke nulstille kodeord for brugere med flere rettigheder end dig"
+    "reset-higher-rank-pw-error": "Du kan ikke nulstille kodeord for brugere med flere rettigheder end dig",
+    "reset-own-pin-error": "Du kan ikke nulstille pinkoden for din egen bruger her",
+    "reset-higher-rank-pin-error": "Du kan ikke nulstille pinkoden for brugere med flere rettigheder end dig"
   },
 
   "placement-action": {

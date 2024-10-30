@@ -36,5 +36,16 @@
     "something-went-wrong": "Noget gik galt",
     "this-link-is-invalid": "Dette link er enten ugyldigt eller udløbet. Anmod om et nyt link for at nulstille dit kodeord",
     "back-to-login": "Tilbage til login"
+  },
+
+  "reset-pin-card": {
+    "pin-reset": "Pinkode nulstillet",
+    "pin-reset-description": "Din pinkode er nu nulstillet.",
+    "back-to-login": "Tilbage til login",
+    "error-occured": "Der skete en fejl",
+
+    "reset-pin": "Nulstil pinkode",
+    "new-pin": "Indtast en ny pinkode for at nulstille",
+    "confirm-new-pin": "Bekræft ny pinkode"
   }
 }

@@ -39,6 +39,7 @@ export const resetPasswordAction = publicAction
       link.id,
       link.userId,
       password,
+			ctx.lang,
     )
     if (!pwResat) {
       throw new ActionError(

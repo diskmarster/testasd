@@ -36,5 +36,16 @@
     "something-went-wrong": "Something went wrong",
     "this-link-is-invalid": "This link is invalid or has expired. Please request a new password reset link",
     "back-to-login": "Back to login"
+  },
+
+  "reset-pin-card": {
+    "pin-reset": "PIN reset",
+    "pin-reset-description": "Your PIN has now been reset.",
+    "back-to-login": "Back to login",
+    "error-occured": "An error occurred",
+
+    "reset-pin": "Reset PIN",
+    "new-pin": "Enter a new PIN to reset",
+    "confirm-new-pin": "Confirm new PIN"
   }
 }

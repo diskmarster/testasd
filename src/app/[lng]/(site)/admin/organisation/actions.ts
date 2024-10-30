@@ -264,6 +264,7 @@ export const resetUserPasswordAction = adminAction
 
     const linkCreated = await passwordResetService.createAndSendLink(
       parsedInput.email,
+      'pw',
       lang,
     )
     if (!linkCreated) {
@@ -309,4 +310,32 @@ export const getLocationsByUserIDAction = adminAction
   .schema(getLocationsByUserIDValidation)
   .action(async ({ parsedInput: { userID } }) => {
     return await locationService.getAllByUserID(userID)
+  })
+
+export const resetUserPinAction = adminAction
+  .metadata({ actionName: 'resetUserPin' })
+  .schema(resetUserPasswordValidation)
+  .action(async ({ parsedInput, ctx: {user, lang} }) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
+    if (parsedInput.userID == user.id) {
+      throw new ActionError(t('organisation-action.reset-own-pin-error'))
+    }
+
+    const userToUpdate = await userService.getByID(parsedInput.userID)
+    if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
+      throw new ActionError(t('organisation-action.reset-higher-rank-pin-error'))
+    }
+
+  console.log(parsedInput)
+
+    const linkCreated = await passwordResetService.createAndSendLink(
+      parsedInput.email,
+      'pin',
+      lang,
+    )
+    if (!linkCreated) {
+      throw new ActionError(
+        `${ACTION_ERR_INTERNAL}. ${t('organisation-action.couldnt-create-reset-link')}`,
+      )
+    }
   })

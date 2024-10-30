@@ -176,5 +176,11 @@
       "locationIDs_one": "Minimum {{count}} lokation skal vælges",
       "locationIDs_other": "Minimum {{count}} lokationer skal vælges"
     }
+  },
+  "modal-reset-userpin": {
+    "title": "Nulstil brugerens pinkode",
+    "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres pinkode.",
+    "cancel-button": "Luk",
+    "reset-button": "Nulstil"
   }
 }

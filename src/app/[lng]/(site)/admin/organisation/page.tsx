@@ -2,6 +2,7 @@ import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { ModalEditLocation } from '@/components/admin/modal-edit-location'
 import { ModalEditUser } from '@/components/admin/modal-edit-user'
+import { ModalResetUserPin } from '@/components/admin/modal-reset-user-pin'
 import { ModalResetUserPW } from '@/components/admin/modal-reset-user-pw'
 import { ModalToggleLocation } from '@/components/admin/modal-toggle-location'
 import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
@@ -73,6 +74,7 @@ export default async function Page({ params: { lng } }: PageProps) {
       <ModalEditUser users={users} locations={locations} userRoles={getUserRoles(lte(user.role))} />
       <ModalToggleUser users={users} />
       <ModalResetUserPW users={users} />
+      <ModalResetUserPin users={users} />
       <ModalEditLocation user={user} users={users} userAccesses={userAccesses} />
       <ModalToggleLocation />
     </SiteWrapper>

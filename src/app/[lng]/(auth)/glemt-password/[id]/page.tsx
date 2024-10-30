@@ -1,25 +1,26 @@
 import { serverTranslation } from '@/app/i18n'
 import { ResetPasswordCard } from '@/components/auth/reset-password'
+import { ResetPinCard } from '@/components/auth/reset-pin'
 import { buttonVariants } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
+import { resetPasswordTypes } from '@/data/user.types'
 import { cn } from '@/lib/utils'
 import { passwordResetService } from '@/service/password-reset'
 import Link from 'next/link'
 
 interface PageProps {
-	params: {
-	  lng: string
-	}
+  params: {
+    id: string,
+    lng: string,
+  }
 }
 
 export default async function Page({
   params,
-}: {
-  params: { id: string; lng: string }
-}) {
+}: PageProps) {
   const link = await passwordResetService.getLinkById(params.id)
   const { t } = await serverTranslation(params.lng, 'log-ind')
-  if (!link || link.isExpired()) {
+  if (!link || !resetPasswordTypes.includes(link.passwordType) || link.isExpired()) {
     return (
       <div className='mx-auto max-w-lg space-y-4 text-center'>
         <Icons.alert className='mx-auto h-12 w-12 animate-pulse text-destructive' />
@@ -45,9 +46,25 @@ export default async function Page({
 
   return (
     <section className='w-full'>
-      <ResetPasswordCard
-        link={{ id: link.id, userId: link.userId, expiresAt: link.expiresAt }}
-      />
+      {link.passwordType == 'pw' ? (
+        <ResetPasswordCard
+          link={{
+            id: link.id,
+            userId: link.userId,
+            expiresAt: link.expiresAt,
+            passwordType: link.passwordType,
+          }}
+        />
+      ) : (
+        <ResetPinCard
+          link={{
+            id: link.id,
+            userId: link.userId,
+            expiresAt: link.expiresAt,
+            passwordType: link.passwordType,
+          }}
+        />
+      )}
     </section>
   )
 }

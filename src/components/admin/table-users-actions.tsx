@@ -69,10 +69,10 @@ export function TableUsersActions({ table, row }: Props) {
         {t('table-users-actions.reset-password')}
       </DropdownMenuItem>
       <DropdownMenuItem
-        disabled
         onClick={() => {
-          emitCustomEvent('DeleteReorderByIDs', {
-            foo: 'foo',
+          emitCustomEvent('ResetUserPinByID', {
+            userID: row.original.id,
+            email: row.original.email,
           })
         }}>
         {t('table-users-actions.reset-pin')}
