@@ -12,6 +12,14 @@ export const userRoleZodSchema = z.enum([
 export type UserRole = z.infer<typeof userRoleZodSchema>
 export const userRoles = userRoleZodSchema.options as readonly UserRole[]
 
+export const resetPasswordTypeSchema = z.enum([
+  'pw',
+  'pin',
+])
+
+export type ResetPasswordType = z.infer<typeof resetPasswordTypeSchema>
+export const resetPasswordTypes = resetPasswordTypeSchema.options as readonly ResetPasswordType[]
+
 export function inList<TCol extends Column>(col: TCol, list: unknown[]) {
   return sql`${col} in (${sql.raw(list.join(', '))})`
 }

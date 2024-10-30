@@ -2,6 +2,7 @@ import { serverTranslation } from '@/app/i18n'
 import { fallbackLng } from '@/app/i18n/settings'
 import { EmailResetPassword } from '@/components/email/email-reset-password'
 import { passwordReset } from '@/data/password-reset'
+import { ResetPasswordType } from '@/data/user.types'
 import {
   ResetPassword,
   ResetPasswordID,
@@ -25,8 +26,9 @@ export type ResetPasswordLink =
 const LINK_DURATION_MINUTES = 30
 
 export const passwordResetService = {
-  createLink: async function (
+  createLink: async function(
     userEmail: string,
+    pwType: ResetPasswordType = 'pw',
     lang: string = fallbackLng,
   ): Promise<ResetPasswordLink | undefined> {
     const { t } = await serverTranslation(lang, 'action-errors')
@@ -37,7 +39,11 @@ export const passwordResetService = {
 
     try {
       const id: ResetPasswordID | undefined =
-        await passwordReset.createPasswordReset(user.id, LINK_DURATION_MINUTES)
+        await passwordReset.createPasswordReset(
+          user.id,
+          pwType,
+          LINK_DURATION_MINUTES,
+        )
       if (!id) {
         return undefined
       }
@@ -50,24 +56,25 @@ export const passwordResetService = {
       )
     }
   },
-  createAndSendLink: async function (
+  createAndSendLink: async function(
     userEmail: string,
+    pwType: ResetPasswordType = 'pw',
     lang: string = fallbackLng,
   ): Promise<boolean> {
-    const resetPasswordLink = await this.createLink(userEmail, lang)
+    const resetPasswordLink = await this.createLink(userEmail, pwType, lang)
     if (!resetPasswordLink) {
       return false
     }
 
     await emailService.sendRecursively(
       [userEmail],
-      'Nulstil kodeord',
-      EmailResetPassword({ link: resetPasswordLink }),
+      `Nulstil ${pwType == 'pw' ? 'kodeord' : 'pin'}`,
+      EmailResetPassword({ link: resetPasswordLink, pwType: pwType }),
     )
 
     return true
   },
-  getLinkById: async function (
+  getLinkById: async function(
     id: ResetPasswordID,
   ): Promise<(ResetPassword & { isExpired: () => boolean }) | undefined> {
     const link = await passwordReset.getPasswordResetById(id)
@@ -78,19 +85,33 @@ export const passwordResetService = {
       isExpired: () => isBefore(link.expiresAt, Date.now()),
     }
   },
-  reset: async function (
+  reset: async function(
     linkID: ResetPasswordID,
     userID: UserID,
     password: string,
+    lang: string = fallbackLng,
   ): Promise<boolean> {
-    const user = await userService.updatePassword(userID, password)
-    if (!user) {
-      return false
+    const { t } = await serverTranslation(lang, 'action-errors')
+    const link = await this.getLinkById(linkID)
+    if (!link || link.isExpired()) {
+      throw new ActionError(t('forgot-password-action.expired'))
+    }
+
+    if (link.passwordType == 'pw') {
+      const user = await userService.updatePassword(userID, password)
+      if (!user) {
+        return false
+      }
+    } else if (link.passwordType == 'pin') {
+      const user = await userService.updatePin(userID, password)
+      if (!user) {
+        return false
+      }
     }
 
     return await this.deleteLink(linkID)
   },
-  deleteLink: async function (id: ResetPasswordID): Promise<boolean> {
+  deleteLink: async function(id: ResetPasswordID): Promise<boolean> {
     return await passwordReset.deletePasswordReset(id)
   },
 }
