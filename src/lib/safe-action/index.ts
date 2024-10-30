@@ -2,6 +2,7 @@ import { fallbackLng } from '@/app/i18n/settings'
 import { hasPermissionByRank } from '@/data/user.types'
 import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
 import { analyticsService } from '@/service/analytics'
+import { errorsService } from '@/service/errors'
 import { sessionService } from '@/service/session'
 import { Session, User } from 'lucia'
 import { createSafeActionClient, MiddlewareResult } from 'next-safe-action'
@@ -19,16 +20,6 @@ const baseClient = createSafeActionClient<
   string,
   typeof metadataSchema
 >({
-  handleServerErrorLog(err, utils) {
-    // TODO: implement third party logger or just insert into error table
-
-    if (err instanceof ActionError) {
-      console.error('ActionError thrown:', err, utils.bindArgsClientInputs)
-      console.trace(err)
-    } else {
-      console.error('UnknownError thrown:', err, utils.bindArgsClientInputs)
-    }
-  },
   handleReturnedServerError(err) {
     if (err instanceof ActionError) {
       return err.message
