@@ -1,4 +1,4 @@
-import { UserRole } from '@/data/user.types'
+import { ResetPasswordType, UserRole } from '@/data/user.types'
 import { customerTable, LocationID } from '@/lib/database/schema/customer'
 import { sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
@@ -47,6 +47,7 @@ export const resetPasswordTable = sqliteTable('nl_reset_password', {
     .notNull()
     .references(() => userTable.id, { onDelete: 'cascade' }),
   expiresAt: integer('expires_at').notNull(),
+  passwordType: text('password_type').$type<ResetPasswordType>().notNull().default('pw')
 })
 
 export type ResetPassword = typeof resetPasswordTable.$inferSelect
