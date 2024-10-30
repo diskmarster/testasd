@@ -132,10 +132,10 @@ export const siteConfig: SiteConfig = {
           description: t(
             'site-config.sys-admin-dropdown.error-messages-description',
           ),
-          href: `/${lng}/sys/fejl`,
+          href: `/${lng}/sys/fejlbeskeder`,
           roles: ['system_administrator'],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
       ],
     },

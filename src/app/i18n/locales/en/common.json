@@ -130,7 +130,7 @@
       "units": "Units",
       "units-description": "Here you can create and update units",
       "errorMessages": "Error messages",
-      "errorMessages-description": "Here you can see a list of all error messages in Nem Lager"
+      "errorMessages-description": "Get an overview of all error messages"
     }
   },
 

@@ -40,11 +40,13 @@ import {
   ListTodo,
   Sheet,
   CloudUpload,
-  TriangleAlert
+  TriangleAlert,
+  Copy
 } from 'lucide-react'
 
 export const Icons = {
   updown: ChevronsUpDown,
+  copy: Copy,
   chevronRight: ChevronRight,
   triangleAlert: TriangleAlert,
   sheet: Sheet,

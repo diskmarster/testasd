@@ -128,8 +128,8 @@
       "admin-users-description": "Se en oversigt over alle brugere i Nem Lager.",
       "units": "Enheder",
       "units-description": "Her kan du oprette og opdatere enheder.",
-      "error-messages": "Fejlmeddelelser",
-      "error-messages-description": "Her kan du se en liste over alle fejlmeddelelser i Nem Lager."
+      "error-messages": "Fejlbeskeder",
+      "error-messages-description": "Få et overblik over alle fejlbeskeder"
     }
   },
 

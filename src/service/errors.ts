@@ -1,4 +1,5 @@
 import { errors } from '@/data/errors'
+import { FormattedError } from '@/data/errors.types'
 import {
   ApplicationError,
   NewApplicationError,
@@ -10,7 +11,7 @@ export const errorsService = {
   ): Promise<ApplicationError | undefined> {
     return await errors.create(newError)
   },
-  getAll: async function (): Promise<ApplicationError[]> {
+  getAll: async function (): Promise<FormattedError[]> {
     return await errors.getAll()
   },
 }

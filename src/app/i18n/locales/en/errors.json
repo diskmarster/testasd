@@ -1,0 +1,21 @@
+{
+  "columns": {
+    "inserted": "Created",
+    "user": "User",
+    "company_placeholder": "Search users...",
+    "company": "Company",
+    "company_placeholder": "Search company...",
+    "path": "Path",
+    "more": "Details",
+    "type": "Type",
+    "origin": "Origin",
+    "origin_placeholder": "Search origin..."
+  },
+  "view-modal": {
+    "trigger": "View more",
+    "title": "Details for error message",
+    "sub": "Happened {{time}} by {{user}} from {{company}}",
+    "input": "Input",
+    "output": "Output"
+  }
+}
