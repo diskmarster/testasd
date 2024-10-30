@@ -256,7 +256,7 @@ export const productService = {
             product.upsertProduct({
               customerID: customerID,
               groupID: groupsMap.get(p.group)?.id!,
-              unitID: units.find(u => u.name == p.unit)?.id ?? units[0].id,
+              unitID: units.find(u => u.name.toLowerCase() == p.unit.toLowerCase())?.id ?? units[0].id,
               text1: p.text1,
               sku: p.sku,
               barcode: p.barcode,
@@ -274,7 +274,7 @@ export const productService = {
             product.upsertProduct({
               customerID: customerID,
               groupID: groupsMap.get(p.group)?.id!,
-              unitID: units.find(u => u.name == p.unit)?.id ?? units[0].id,
+              unitID: units.find(u => u.name.toLowerCase() == p.unit.toLowerCase())?.id ?? units[0].id,
               text1: p.text1,
               sku: p.sku,
               barcode: p.barcode,
