@@ -77,6 +77,9 @@ export function getTableUsersColumns(
     meta: {
       viewLabel: 'Brugerrolle',
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    }
   }
 
   const statusCol: ColumnDef<UserNoHash> = {

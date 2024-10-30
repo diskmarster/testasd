@@ -49,6 +49,9 @@ export function getTableOverviewColumns(
     meta: {
       viewLabel: 'Varegruppe',
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    }
   }
 
   const text1Col: ColumnDef<FormattedInventory> = {
