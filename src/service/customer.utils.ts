@@ -16,7 +16,7 @@ export function isLinkExpired(inserted: Date, durationHH: number): boolean {
 export function isLocationLimitReached(plan: Plan, num: number): boolean {
   const limits: { [key: string]: number } = {
     lite: 1,
-    plus: 1,
+    basis: 1,
     pro: Infinity,
   }
 
