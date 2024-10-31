@@ -3,6 +3,8 @@
 import {
   adminUpdateProfileValidation,
   deleteProfileValidation,
+  updatePasswordValidation,
+  updatePinValidation,
   updatePrimaryLocationValidation,
   updateProfileValidation,
 } from '@/app/[lng]/(site)/profil/validation'
@@ -55,7 +57,7 @@ export const deleteProfileAction = authedAction
 
 export const updatePasswordAction = authedAction
   .metadata({ actionName: 'updatePassword' })
-  .schema(async () => await getSchema(updateProfileValidation, 'validation'))
+  .schema(async () => await getSchema(updatePasswordValidation, 'validation'))
   .action(
     async ({
       parsedInput: { currentPassword, newPassword },
@@ -81,7 +83,7 @@ export const updatePasswordAction = authedAction
 
 export const updatePinAction = authedAction
   .metadata({ actionName: 'updatePin' })
-  .schema(async () => await getSchema(updateProfileValidation, 'validation'))
+  .schema(async () => await getSchema(updatePinValidation, 'validation'))
   .action(
     async ({ parsedInput: { currentPin, newPin }, ctx: { user, lang } }) => {
       const { t } = await serverTranslation(lang, 'action-errors')

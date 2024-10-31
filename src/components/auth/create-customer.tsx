@@ -1,7 +1,10 @@
 'use client'
 
 import { createCustomerAction } from '@/app/[lng]/(auth)/opret/actions'
-import { createCustomerValidation } from '@/app/[lng]/(auth)/opret/validation'
+import {
+  createCustomerValidation,
+  CreateCustomerValidationType,
+} from '@/app/[lng]/(auth)/opret/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -19,7 +22,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PlanConfig, plansConfig } from '@/config/plan'
 import { siteConfig } from '@/config/site'
-import { Plan } from '@/data/customer.types'
 import { cn } from '@/lib/utils'
 import { planUserLimits } from '@/service/customer.utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -40,15 +42,19 @@ interface CreateCustomerCardProps {
   lng: string
 }
 
+let schema = createCustomerValidation(() => '')
+
 export function CreateCustomer({ lng }: CreateCustomerCardProps) {
   const { t } = useTranslation(lng, 'opret')
   const [emailSent, setEmailSent] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const { t: validationT } = useTranslation(lng, 'validation')
+  schema = createCustomerValidation(validationT)
   const { handleSubmit, formState, register, setValue, getValues, watch } =
-    useForm<z.infer<typeof createCustomerValidation>>({
-      resolver: zodResolver(createCustomerValidation),
+    useForm<z.infer<typeof schema>>({
+      resolver: zodResolver(schema),
       defaultValues: {
         extraUsers: 0,
       },
@@ -56,7 +62,7 @@ export function CreateCustomer({ lng }: CreateCustomerCardProps) {
 
   watch('plan')
 
-  async function onSubmit(values: z.infer<typeof createCustomerValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const response = await createCustomerAction(values)
       if (response && response.serverError) {
@@ -232,18 +238,13 @@ function FormCard({
   pending,
   t,
 }: {
-  handleSubmit: UseFormHandleSubmit<z.infer<typeof createCustomerValidation>>
-  onSubmit: SubmitHandler<z.infer<typeof createCustomerValidation>>
+  handleSubmit: UseFormHandleSubmit<CreateCustomerValidationType>
+  onSubmit: SubmitHandler<CreateCustomerValidationType>
   error: string | undefined
-  formState: FormState<z.infer<typeof createCustomerValidation>>
-  register: UseFormRegister<z.infer<typeof createCustomerValidation>>
-  setValue: UseFormSetValue<{
-    company: string
-    email: string
-    plan: 'lite' | 'basis' | 'pro'
-    extraUsers: number
-  }>
-  formValues: { extraUsers: number; plan: Plan }
+  formState: FormState<CreateCustomerValidationType>
+  register: UseFormRegister<CreateCustomerValidationType>
+  setValue: UseFormSetValue<CreateCustomerValidationType>
+  formValues: CreateCustomerValidationType
   pending: boolean
   t: (key: string) => string
 }) {
@@ -384,7 +385,8 @@ function FormCard({
             {formValues.extraUsers != 0 && formValues.plan && (
               <p className='text-center'>
                 {t('total-user-amount')}{' '}
-                {Number(formValues.extraUsers) + Number(planUserLimits[formValues.plan])}{' '}
+                {Number(formValues.extraUsers) +
+                  Number(planUserLimits[formValues.plan])}
               </p>
             )}
           </div>
@@ -418,7 +420,7 @@ function FormCard({
       </div>
       <Button
         type='submit'
-        disabled={pending || !formState.isValid}
+        disabled={pending}
         className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
         {t('create-button')}

@@ -3,7 +3,7 @@
 import { createCustomerValidation } from '@/app/[lng]/(auth)/opret/validation'
 import { serverTranslation } from '@/app/i18n'
 import { EmailWelcomeCustomer } from '@/components/email/email-welcome-customer'
-import { publicAction } from '@/lib/safe-action'
+import { getSchema, publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
@@ -13,7 +13,7 @@ import { generateIdFromEntropySize } from 'lucia'
 
 export const createCustomerAction = publicAction
   .metadata({ actionName: 'createCustomer' })
-  .schema(createCustomerValidation)
+  .schema(async () => await getSchema(createCustomerValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existingCustomer = await customerService.getByEmail(parsedInput.email)

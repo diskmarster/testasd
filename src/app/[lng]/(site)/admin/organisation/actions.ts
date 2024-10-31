@@ -86,7 +86,7 @@ export const inviteNewUserAction = adminAction
       locationIDs: parsedInput.locationIDs,
       webAccess: parsedInput.webAccess,
       appAccess: parsedInput.appAccess,
-      priceAccess: parsedInput.priceAccess
+      priceAccess: parsedInput.priceAccess,
     })
     if (!userInviteLink) {
       throw new ActionError(
@@ -232,9 +232,7 @@ export const updateCustomerAction = adminAction
 
 export const resetUserPasswordAction = adminAction
   .metadata({ actionName: 'resetUserPassword' })
-  .schema(
-    async () => await getSchema(resetUserPasswordValidation, 'validation'),
-  )
+  .schema(resetUserPasswordValidation)
 
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
