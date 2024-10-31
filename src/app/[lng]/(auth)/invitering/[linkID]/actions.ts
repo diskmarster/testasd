@@ -3,7 +3,7 @@
 import { signUpInvitedValidation } from '@/app/[lng]/(auth)/invitering/[linkID]/validation'
 import { serverTranslation } from '@/app/i18n'
 import { EmailTest } from '@/components/email/email-test'
-import { publicAction } from '@/lib/safe-action'
+import { getSchema, publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
@@ -13,8 +13,8 @@ import { userService } from '@/service/user'
 import { redirect } from 'next/navigation'
 
 export const signUpInvitedAction = publicAction
-  .metadata({actionName: 'signUpInvite'})
-  .schema(signUpInvitedValidation)
+  .metadata({ actionName: 'signUpInvite' })
+  .schema(async () => await getSchema(signUpInvitedValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const activationLink = await userService.getInviteLinkByID(

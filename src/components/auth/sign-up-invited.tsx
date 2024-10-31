@@ -75,19 +75,21 @@ function Form({
   const [error, setError] = useState<string>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'opret')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = signUpInvitedValidation(validationT)
 
-  const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof signUpInvitedValidation>
-  >({
-    resolver: zodResolver(signUpInvitedValidation),
-    defaultValues: {
-      linkID: inviteLink.id,
-      email: inviteLink.email,
-      clientID: inviteLink.customerID,
+  const { handleSubmit, formState, register } = useForm<z.infer<typeof schema>>(
+    {
+      resolver: zodResolver(schema),
+      defaultValues: {
+        linkID: inviteLink.id,
+        email: inviteLink.email,
+        clientID: inviteLink.customerID,
+      },
     },
-  })
+  )
 
-  async function onSubmit(values: z.infer<typeof signUpInvitedValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const response = await signUpInvitedAction(values)
       if (response && response.serverError) {
