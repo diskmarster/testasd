@@ -100,7 +100,7 @@ function AnswerImportInventory() {
       <ol className='space-y-2'>
         <li>
           <span className='font-semibold'>{t('faq-page.product-no')} </span>
-          <span className=''>{t(' faq-page.product-no-criteria')}</span>
+          <span className=''>{t('faq-page.product-no-criteria')}</span>
         </li>
         <li>
           <span className='font-semibold'>{t('faq-page.barcode')} </span>
