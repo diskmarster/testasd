@@ -11,9 +11,9 @@
     "no-fitler-choice": "Ingen filter muligheder",
     "add-filter": "Tilføj filter",
     "no-filter-found": "Ingen filter fundet",
-
     "choose": "Vælg",
-    "choose-dates": "Vælg datoer"
+    "choose-dates": "Vælg datoer",
+    "search": "Søg"
   },
 
   "language-switcher": {

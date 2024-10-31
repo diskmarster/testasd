@@ -130,7 +130,7 @@ function FilterPopover<T>({
 
   const getSelectDisplayValue = (value: any[]): string => {
     if (value.length == 0) {
-      return `Vælg ${field.label.toLowerCase()}`
+      return `${t('table-filters.choose')} ${field.label.toLowerCase()}`
     }
 
     return value
@@ -152,11 +152,19 @@ function FilterPopover<T>({
     return t('table-filters.choose-dates')
   }
 
+  const getTextFilterDisplayValue = (value: string): string => {
+    if (value == '') {
+      return `${t('table-filters.search')} ${field.label.toLowerCase()}`
+    } else {
+      return value
+    }
+  }
+
   const filterDisplayValue: string = isSelect
     ? getSelectDisplayValue(selectValue)
     : isDateRange
       ? getDateRangeDisplayValue(date as DateRange)
-      : (value as string) || ''
+      : getTextFilterDisplayValue(value as string) || ''
 
   return (
     <Popover

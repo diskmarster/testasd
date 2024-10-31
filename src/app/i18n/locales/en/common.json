@@ -12,7 +12,8 @@
     "add-filter": "Add filter",
     "no-filter-found": "No filter found",
     "choose": "Choose",
-    "choose-dates": "Choose dates"
+    "choose-dates": "Choose dates",
+    "search": "Search"
   },
 
   "language-switcher": {
