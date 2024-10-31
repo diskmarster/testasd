@@ -79,5 +79,27 @@
     "confirm-password": "Password and confirm password must match",
     "pin": "PIN must be 4 characters long",
     "pin-must-be-number": "PIN must consist of numbers"
+  },
+  "create-customer": {
+    "name-minLength": "Name must be at least {{minLength}} characters long",
+    "name-maxLength": "Name can be at most {{maxLength}} characters long",
+    "email": "Email must be a valid email address"
+  },
+  "log-in": {
+    "email": "Email must be a valid email address",
+    "password": "Password must be at least 8 characters."
+  },
+  "sign-up-invited": {
+    "name-minLength": "Name must be at least {{minLength}} characters long",
+    "name-maxLength": "Name can be at most {{maxLength}} characters long",
+    "email": "Email must be a valid email address",
+    "password": "Password must be at least 8 characters.",
+    "confirm-password": "Password and confirm password must match",
+    "pin": "PIN must be 4 characters long",
+    "pin-must-be-number": "PIN must consist of numbers"
+  },
+  "reset-password": {
+    "password": "Password must be at least 8 characters.",
+    "confirm-password": "Password and confirm password must match"
   }
 }

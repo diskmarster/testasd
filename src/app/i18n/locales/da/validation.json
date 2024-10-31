@@ -62,7 +62,7 @@
     "name-minLength": "Navn skal være mindst {{minLength}} tegn langt"
   },
   "organisation": {
-    "email-valid": "E-mailen skal være en gyldig e-mailadresse",
+    "email-valid": "Email skal være en gyldig emailadresse",
     "minimum-location": "Mindst én placering skal vælges",
     "couldnt-find-customer-information": "Kunne ikke finde kundeoplysningerne. Prøv at lukke og genåbne pop-op-vinduet.",
     "location-name-minLength": "Lokationsnavnet skal være mindst {{minLength}} tegn langt",
@@ -80,5 +80,27 @@
     "confirm-password": "Kodeord og bekræft kodeord skal være ens",
     "pin": "PIN skal være på 4 karakterer",
     "pin-must-be-number": "PIN skal bestå af tal"
+  },
+  "create-customer": {
+    "name-minLength": "Navn skal være mindst {{minLength}} tegn langt",
+    "name-maxLength": "Navn kan være højst {{maxLength}} tegn langt",
+    "email": "Email skal være en gyldig emailadresse"
+  },
+  "log-in": {
+    "email": "Email skal være en gyldig emailadresse",
+    "password": "Kodeord skal være mindst 8 tegn."
+  },
+  "sign-up-invited": {
+    "name-minLength": "Navn skal være mindst {{minLength}} tegn langt",
+    "name-maxLength": "Navn kan være højst {{maxLength}} tegn langt",
+    "email": "Email skal være en gyldig emailadresse",
+    "password": "Kodeord skal være mindst 8 tegn.",
+    "confirm-password": "Kodeord og bekræft kodeord skal stemme overens",
+    "pin": "PIN skal være 4 tegn langt",
+    "pin-must-be-number": "PIN skal bestå af tal"
+  },
+  "reset-password": {
+    "password": "Kodeord skal være mindst 8 tegn.",
+    "confirm-password": "Kodeord og bekræft kodeord skal stemme overens"
   }
 }
