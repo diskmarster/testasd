@@ -9,18 +9,18 @@ export const plansConfig: PlanConfig[] = [
     locations: 1,
   },
   {
-    plan: 'plus',
+    plan: 'basis',
     description: 'Til de små virksomheder',
     price: 990,
-    userCount: 3,
-    locations: 3,
+    userCount: 5,
+    locations: 1,
   },
   {
     plan: 'pro',
     description: 'Til de store virksomheder',
     price: 1990,
-    userCount: 20,
-    locations: 10,
+    userCount: 10,
+    locations: Infinity,
   },
 ]
 

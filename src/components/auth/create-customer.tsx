@@ -150,7 +150,7 @@ function ExpandableCard({
 }: {
   plan: PlanConfig
   isExpanded: boolean
-  setPlan: (value: 'lite' | 'plus' | 'pro') => void
+  setPlan: (value: 'lite' | 'basis' | 'pro') => void
   isSelected: boolean
   t: TFunction<'opret', undefined>
 }) {
@@ -198,7 +198,7 @@ function ExpandableCard({
               }) as string[]
             ).map((feature, index) => {
               const isFirstFeature =
-                (plan.plan === 'plus' && index === 0) ||
+                (plan.plan === 'basis' && index === 0) ||
                 (plan.plan === 'pro' && index === 0)
               return (
                 <li key={index} className='flex text-xl'>
@@ -240,7 +240,7 @@ function FormCard({
   setValue: UseFormSetValue<{
     company: string
     email: string
-    plan: 'lite' | 'plus' | 'pro'
+    plan: 'lite' | 'basis' | 'pro'
     extraUsers: number
   }>
   formValues: { extraUsers: number; plan: Plan }

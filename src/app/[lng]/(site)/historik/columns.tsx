@@ -302,7 +302,7 @@ export function getTableHistoryColumns(
         refCol,
       ].filter(col => user.priceAccess || col !== costPriceCol)
       return liteCols
-    case 'plus':
+    case 'basis':
       const plusCols = [
         insertedCol,
         skuCol,
@@ -515,7 +515,7 @@ export function getTableHistoryFilters(
         platformFilter,
         refFilter,
       ]
-    case 'plus':
+    case 'basis':
       return [
         insertedFilter,
         skuFilter,

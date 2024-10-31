@@ -264,7 +264,7 @@ export function getTableOverviewColumns(
         actionsCol,
       ].filter(col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol))
       return liteCols
-    case 'plus':
+    case 'basis':
       const plusCols = [
         skuCol,
         barcodeCol,
@@ -368,7 +368,7 @@ export function getTableOverviewFilters(
     placeholder: t('product-text3-placeholder'),
   }
   const placementFilter: FilterField<FormattedInventory> | null =
-    plan === 'plus' || plan === 'pro'
+    plan === 'basis' || plan === 'pro'
       ? {
         column: table.getColumn('placement'),
         type: 'select',
@@ -410,7 +410,7 @@ export function getTableOverviewFilters(
         text2Filter,
         text3Filter,
       ]
-    case 'plus':
+    case 'basis':
       return [
         skuFilter,
         barcodeFilter,

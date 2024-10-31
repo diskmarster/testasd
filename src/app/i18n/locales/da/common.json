@@ -62,11 +62,11 @@
 
   "plans": {
     "plan_lite": "Lite",
-    "plan_plus": "Plus",
+    "plan_basis": "Basis",
     "plan_pro": "Pro",
     "description": "",
     "description_lite": "Til enkeltmandsvirksomheder",
-    "description_plus": "Til små virksomheder",
+    "description_basis": "Til små virksomheder",
     "description_pro": "Til store virksomheder",
     "feature_lite": [
       "1 bruger",
@@ -81,18 +81,16 @@
       "Rapporter via historik",
       "1 lokation"
     ],
-    "feature_plus": [
+    "feature_basis": [
       "Alt fra Lite",
-      "10 brugere",
+      "5 brugere",
       "Placeringsstyring",
-      "Genbestilling",
-      "3 lokationer"
+      "Genbestilling"
     ],
     "feature_pro": [
-      "Alt fra Plus",
-      "20 brugere",
+      "Alt fra Basis",
+      "10 brugere",
       "Batchnummer",
-      "Serienummer",
       "Ubegrænsede lokationer"
     ]
   },

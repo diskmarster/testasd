@@ -3,8 +3,8 @@ import { addHours, isBefore } from 'date-fns'
 
 export const planUserLimits: { readonly [Property in Plan]: number } = Object.freeze({
   lite: 1,
-  plus: 10,
-  pro: 20,
+  basis: 5,
+  pro: 10,
 })
 
 export function isLinkExpired(inserted: Date, durationHH: number): boolean {
@@ -16,7 +16,7 @@ export function isLinkExpired(inserted: Date, durationHH: number): boolean {
 export function isLocationLimitReached(plan: Plan, num: number): boolean {
   const limits: { [key: string]: number } = {
     lite: 1,
-    plus: 3,
+    plus: 1,
     pro: Infinity,
   }
 
