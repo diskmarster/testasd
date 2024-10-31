@@ -174,7 +174,7 @@ export function TableErrors({
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  {t('inventory')}
+                  {t('table.no-rows')}
                 </TableCell>
               </TableRow>
             )}

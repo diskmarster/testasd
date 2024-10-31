@@ -17,5 +17,8 @@
     "sub": "Skete {{time}} af {{user}} fra {{company}}",
     "input": "Input",
     "output": "Output"
+  },
+  "table": {
+    "no-rows": "Ingen fejlbeskeder"
   }
 }

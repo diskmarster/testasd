@@ -17,5 +17,8 @@
     "sub": "Happened {{time}} by {{user}} from {{company}}",
     "input": "Input",
     "output": "Output"
+  },
+  "table": {
+    "no-rows": "No error messages"
   }
 }
