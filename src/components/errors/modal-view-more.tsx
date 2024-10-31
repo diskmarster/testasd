@@ -3,11 +3,10 @@
 import { useTranslation } from "@/app/i18n/client"
 import { useLanguage } from "@/context/language"
 import { FormattedError } from "@/data/errors.types"
-import { Credenza, CredenzaBody, CredenzaClose, CredenzaContent, CredenzaDescription, CredenzaFooter, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "@/components/ui/credenza"
+import { Credenza, CredenzaBody, CredenzaContent, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "@/components/ui/credenza"
 import { Badge } from "../ui/badge"
 import { ButtonCopy } from "../common/button-copy"
 import { ScrollArea } from "../ui/scroll-area"
-import { formatDate } from "@/lib/utils"
 import { formatRelative } from "date-fns"
 import * as DateFnsLocale from 'date-fns/locale'
 
@@ -21,7 +20,6 @@ export function ModalViewMore({ error }: Props) {
   const time = formatRelative(error.inserted, Date.now(), { locale: DateFnsLocale[lng] })
   return (
     <Credenza>
-
       <CredenzaTrigger asChild>
         <span className="hover:underline cursor-pointer">{t('view-modal.trigger')}</span>
       </CredenzaTrigger>
