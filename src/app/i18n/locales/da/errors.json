@@ -2,7 +2,7 @@
   "columns": {
     "inserted": "Oprettet",
     "user": "Bruger",
-    "company_placeholder": "Søg i brugere...",
+    "user_placeholder": "Søg i brugere...",
     "company": "Firma",
     "company_placeholder": "Søg i firma...",
     "path": "Path",

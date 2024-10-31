@@ -2,7 +2,7 @@
   "columns": {
     "inserted": "Created",
     "user": "User",
-    "company_placeholder": "Search users...",
+    "user_placeholder": "Search users...",
     "company": "Company",
     "company_placeholder": "Search company...",
     "path": "Path",
