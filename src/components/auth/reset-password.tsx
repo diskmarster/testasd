@@ -84,17 +84,19 @@ function ResetPasswordForm({
   const [error, setError] = useState<string>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'log-ind')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = resetPasswordValidation(validationT)
 
-  const { register, formState, handleSubmit } = useForm<
-    z.infer<typeof resetPasswordValidation>
-  >({
-    resolver: zodResolver(resetPasswordValidation),
-    defaultValues: {
-      link: link,
+  const { register, formState, handleSubmit } = useForm<z.infer<typeof schema>>(
+    {
+      resolver: zodResolver(schema),
+      defaultValues: {
+        link: link,
+      },
     },
-  })
+  )
 
-  const submitHandler = (values: z.infer<typeof resetPasswordValidation>) => {
+  const submitHandler = (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await resetPasswordAction(values)
       if (res && res.serverError) {
@@ -117,7 +119,9 @@ function ResetPasswordForm({
         </Alert>
       )}
       <div className='grid gap-2'>
-        <Label htmlFor='password'>{t('reset-password-card.new-password')}</Label>
+        <Label htmlFor='password'>
+          {t('reset-password-card.new-password')}
+        </Label>
         <PasswordInput {...register('password')} />
         {formState.errors.password && (
           <p className='text-sm text-destructive '>
@@ -126,7 +130,9 @@ function ResetPasswordForm({
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='confirmPassword'>{t('reset-password-card.confirm-new-password')}</Label>
+        <Label htmlFor='confirmPassword'>
+          {t('reset-password-card.confirm-new-password')}
+        </Label>
         <PasswordInput {...register('confirmPassword')} />
         {formState.errors.confirmPassword && (
           <p className='text-sm text-destructive '>
