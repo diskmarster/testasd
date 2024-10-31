@@ -36,6 +36,8 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
+import { TableFloatingBar } from '../table/table-floating-bar'
+import { ExportSelectedButton } from '../inventory/button-export-selected'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -182,6 +184,11 @@ export function TableErrors({
         </Table>
       </div>
       <TablePagination table={table} pageSizes={ROW_PER_PAGE} />
+      {ROW_SELECTION_ENABLED && (
+        <TableFloatingBar table={table}>
+          {table => <ExportSelectedButton table={table} />}
+        </TableFloatingBar>
+      )}
     </div>
   )
 }

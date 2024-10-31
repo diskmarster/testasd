@@ -56,7 +56,7 @@ export function TableFloatingBar<TData>({
                   <Icons.cross className='size-4' />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className='flex items-center gap-2'>
+              <TooltipContent className='flex items-center gap-2 bg-foreground text-background'>
                 <p>Ryd markering</p>
                 <Kbd abbrTitle='Escape' variant='outline'>
                   Esc
