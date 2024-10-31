@@ -114,7 +114,7 @@ export function ModalMoveInventory({
       }))
 
   const fallbackBatchID =
-    customer.plan == 'plus'
+    customer.plan == 'basis'
       ? batches.find(batch => batch.batch == '-')?.id
       : undefined
 
