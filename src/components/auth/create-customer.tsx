@@ -420,7 +420,7 @@ function FormCard({
       </div>
       <Button
         type='submit'
-        disabled={pending}
+        disabled={pending || !formState.isValid}
         className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
         {t('create-button')}
