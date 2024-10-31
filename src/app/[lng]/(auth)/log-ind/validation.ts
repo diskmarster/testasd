@@ -1,6 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod'
 
-export const signInValidation = z.object({
-  email: z.string().email({ message: 'Email skal være gyldig' }),
-  password: z.string().min(8, { message: 'Kodeord skal minimum være 8 karakterer' }),
-})
+export const signInValidation = (t: (key: string, options?: any) => string) =>
+  z.object({
+    email: z.string().email({ message: t('log-in.email') }),
+    password: z.string().min(8, { message: t('log-in.password') }),
+  })

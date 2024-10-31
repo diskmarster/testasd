@@ -32,6 +32,8 @@ interface SignInCardProps {
 
 export function SignInCard({ lng }: SignInCardProps) {
   const { t } = useTranslation(lng, 'log-ind')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = signInValidation(validationT)
 
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
@@ -64,14 +66,16 @@ function Form({ t }: FormProps) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
   const lng = useLanguage()
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = signInValidation(validationT)
 
-  const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof signInValidation>
-  >({
-    resolver: zodResolver(signInValidation),
-  })
+  const { handleSubmit, formState, register } = useForm<z.infer<typeof schema>>(
+    {
+      resolver: zodResolver(schema),
+    },
+  )
 
-  async function onSubmit(values: z.infer<typeof signInValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const response = await signInAction(values)
       if (response && response.serverError) {
