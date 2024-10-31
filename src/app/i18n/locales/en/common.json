@@ -65,10 +65,10 @@
 
   "plans": {
     "plan_lite": "Lite",
-    "plan_plus": "Basis",
+    "plan_basis": "Basis",
     "plan_pro": "Pro",
     "description_lite": "To the single user companies",
-    "description_plus": "To the small businesses",
+    "description_basis": "To the small businesses",
     "description_pro": "To the large businesses",
     "feature_lite": [
       "1 user",
@@ -83,18 +83,16 @@
       "Reports via history",
       "1 location"
     ],
-    "feature_plus": [
+    "feature_basis": [
       "Everything from Lite",
-      "10 users",
+      "5 users",
       "Location management",
-      "Reordering",
-      "3 locations"
+      "Automated Restock"
     ],
     "feature_pro": [
-      "Everything from Plus",
-      "20 users",
+      "Everything from Basis",
+      "10 users",
       "Batch number",
-      "Serial number",
       "Unlimited locations"
     ]
   },
