@@ -38,7 +38,7 @@ export async function POST(
     )
   }
 
-  const json = await request.json()
+  let json: any
 
   try {
     if (headers().get('content-type') != 'application/json') {
@@ -56,6 +56,8 @@ export async function POST(
 
       return NextResponse.json({ msg: msg }, { status: 400 })
     }
+
+    json = await request.json()
 
     const zodRes = createRegulationSchema.safeParse(json)
 
@@ -111,7 +113,7 @@ export async function POST(
               userID: user.id,
               customerID: user.customerID,
               type: 'endpoint',
-              input: json,
+              input: data,
               error: msg,
               origin: 'POST /api/v1/regulations',
             }
@@ -138,7 +140,7 @@ export async function POST(
             userID: user.id,
             customerID: user.customerID,
             type: 'endpoint',
-            input: json,
+            input: data,
             error: msg,
             origin: 'POST /api/v1/regulations',
           }
@@ -174,7 +176,7 @@ export async function POST(
             userID: user.id,
             customerID: user.customerID,
             type: 'endpoint',
-            input: json,
+            input: data,
             error: msg,
             origin: 'POST /api/v1/regulations',
           }
@@ -217,7 +219,7 @@ export async function POST(
               userID: user.id,
               customerID: user.customerID,
               type: 'endpoint',
-              input: json,
+              input: data,
               error: msg,
               origin: 'POST /api/v1/regulations',
             }
@@ -239,7 +241,7 @@ export async function POST(
             userID: user.id,
             customerID: user.customerID,
             type: 'endpoint',
-            input: json,
+            input: data,
             error: msg,
             origin: 'POST /api/v1/regulations',
           }
@@ -275,7 +277,7 @@ export async function POST(
             userID: user.id,
             customerID: user.customerID,
             type: 'endpoint',
-            input: json,
+            input: data,
             error: msg,
             origin: 'POST /api/v1/regulations',
           }
@@ -312,7 +314,7 @@ export async function POST(
         userID: user.id,
         customerID: user.customerID,
         type: 'endpoint',
-        input: json,
+        input: data,
         error: msg,
         origin: 'POST /api/v1/regulations',
       }
