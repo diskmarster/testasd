@@ -1,7 +1,7 @@
 {
   "organisation-page": {
     "title": "Organisation",
-    "description": "Here you can manage your organisation's users, locations, and company information."
+    "description": "View and edit users, locations and company information."
   },
   "tabs-admin": {
     "users": "Users",
@@ -27,7 +27,7 @@
     "title": "Reset user password",
     "description": "This action sends a mail to the user, with a link to reset their password.",
     "cancel-button": "Cancel",
-    "reset-button": "Reset"
+    "reset-button": "Send mail"
   },
   "modal-edit-location": {
     "title": "Update location",
@@ -35,7 +35,7 @@
     "location-name": "Location name",
     "location-name-placeholder": "Enter location name",
     "access-level": "Access level",
-    "users-chosen": "Users chosen",
+    "users-chosen": "users chosen",
     "create-button": "Update",
     "create-more-users": "Create more users to assign access rights when editing locations."
   },
@@ -118,12 +118,12 @@
 
   "modal-create-location": {
     "title": "Create new location",
-    "description": "New locations can be accessed immediately in the same dropdown menu in the top right corner",
+    "description": "New locations can be accessed immediately in the dropdown menu in the top right corner.",
     "location-name": "Location name",
     "location-name-placeholder": "Enter location name",
     "access-level": "Access level",
     "of": " of ",
-    "users-chosen": "Users chosen",
+    "users-chosen": "users chosen",
     "create-button": "Create",
     "create-more-users": "Create more users to assign access rights when creating locations."
   },
@@ -139,6 +139,5 @@
       "user": "user",
       "users": "users",
       "users-toggle": " updated"
-      
     }
 }

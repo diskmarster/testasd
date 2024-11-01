@@ -1,7 +1,7 @@
 {
     "organisation-page": {
       "title": "Organisation",
-      "description": "Her kan du administrere din organisations brugere, lokationer og firma oplysninger."
+      "description": "Her kan du administrere dine brugere, lokationer og firma."
     },
     "tabs-admin": {
       "users": "Brugere",
@@ -27,7 +27,7 @@
       "title": "Nulstil brugerens adgangskode",
       "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres adgangskode.",
       "cancel-button": "Luk",
-      "reset-button": "Nulstil"
+      "reset-button": "Send e-mail"
     },
     "modal-edit-location": {
       "title": "Rediger lokation",
@@ -35,13 +35,13 @@
       "location-name": "Lokationsnavn",
       "location-name-placeholder": "Indtast lokationsnavn",
       "access-level": "Adgangsniveau",
-      "users-chosen": "Valgte brugere",
+      "users-chosen": "brugere valgt",
       "create-button": "Opret",
       "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder, når du redigerer lokationer."
     },
     "modal-toggle-location": {
       "title": "Skift lokationsstatus",
-      "description": "Denne handling er ikke permanent. Hvis du aktiverer en lokation, kan den tilgås igen. Hvis du deaktiverer en lokation, kan den ikke længere tilgås, før den er genaktiveret.",
+      "description": "Denne handling er ikke permanent. Hvis du aktiverer en lokation, kan den tilgås igen. Hvis du deaktiverer en lokation, kan den kun tilgås af administratorer, indtil den er genaktiveret.",
       "status": "Status",
       "choose-status": "Vælg status",
       "cancel-button": "Luk",
@@ -99,7 +99,7 @@
       "company-admin": "Firma Admin",
       "location-access": "Lokationer",
       "of": "af",
-      "locations-chosen": "Valgte lokationer",
+      "locations-chosen": "lokationer valgt",
       "send-invite": "Send invitation",
       "role-question": "Hvad kan rollerne? Læs mere på vores",
       "role-link": "F.A.Q. side",
@@ -112,12 +112,12 @@
 
     "modal-create-location": {
       "title": "Opret ny lokation",
-      "description": "Nye lokationer kan tilgås med det samme i den samme dropdown-menu i øverste højre hjørne",
+      "description": "Nye lokationer kan tilgås med det samme i dropdown-menuen i øverste højre hjørne.",
       "location-name": "Lokationsnavn",
       "location-name-placeholder": "Indtast lokationsnavn",
       "access-level": "Adgangsniveau",
       "of": " af ",
-      "users-chosen": "Valgte brugere",
+      "users-chosen": "brugere valgt",
       "create-button": "Opret",
       "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder, når du opretter lokationer."
     },
