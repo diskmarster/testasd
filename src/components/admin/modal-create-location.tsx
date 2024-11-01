@@ -140,9 +140,15 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                               <span className='text-muted-foreground text-sm font-semibold'>
                                 {u.name}
                               </span>
-                              <span className='text-xs text-muted-foreground'>
-                                {u.email}
-                              </span>
+                              <div className='flex items-center gap-1'>
+                                <span className='text-xs text-muted-foreground/70 capitalize'>
+                                  {u.role}
+                                </span>
+                                <span className='text-muted-foreground text-xs' >•</span>
+                                <span className='text-xs text-muted-foreground/70'>
+                                  {u.email}
+                                </span>
+                              </div>
                             </div>
                             <Switch
                               checked={formValues.userIDs.includes(u.id)}

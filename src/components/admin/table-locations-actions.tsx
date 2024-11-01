@@ -10,8 +10,9 @@ import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
+import { LocationWithCounts } from '@/data/location.types'
 interface Props {
-  table: Table<Location>
+  table: Table<LocationWithCounts>
   row: Row<Location>
 }
 

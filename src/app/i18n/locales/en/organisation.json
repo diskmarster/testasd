@@ -62,7 +62,20 @@
     "active": "Active",
     "inactive": "Inactive",
     "updated": "Updated",
-    "created": "Created"
+    "created": "Created",
+    "mod-count": "Moderators",
+    "users-count": "Users",
+    "outgoing-count": "Outgoing",
+    "read-count": "Read-only",
+    "users": "Users",
+    "users-mod-short": "M",
+    "users-mod-long": "Moderator",
+    "users-user-short": "U",
+    "users-user-long": "User",
+    "users-out-short": "O",
+    "users-out-long": "Outgoing",
+    "users-read-short": "R",
+    "users-read-long": "Read only"
   },
   "user-columns": {
     "user-name": "Name",

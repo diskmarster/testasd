@@ -3,8 +3,9 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { LocationWithCounts } from '@/data/location.types'
 import { UserRole } from '@/data/user.types'
-import { Location } from '@/lib/database/schema/customer'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
@@ -14,8 +15,8 @@ export function getTableLocationsColumns(
   userRole: UserRole,
   lng: string,
   t: (key: string) => string,
-): ColumnDef<Location>[] {
-  const selectCol: ColumnDef<Location> = {
+): ColumnDef<LocationWithCounts>[] {
+  const selectCol: ColumnDef<LocationWithCounts> = {
     id: 'select',
     header: ({ table }) => (
       <Checkbox
@@ -38,7 +39,7 @@ export function getTableLocationsColumns(
     enableHiding: false,
   }
 
-  const nameCol: ColumnDef<Location> = {
+  const nameCol: ColumnDef<LocationWithCounts> = {
     accessorKey: 'name',
     header: ({ column }) => (
       <TableHeader
@@ -52,7 +53,7 @@ export function getTableLocationsColumns(
     },
   }
 
-  const statusCol: ColumnDef<Location> = {
+  const statusCol: ColumnDef<LocationWithCounts> = {
     accessorKey: 'isBarred',
     header: ({ column }) => (
       <TableHeader column={column} title={t('location-columns.status')} />
@@ -77,7 +78,7 @@ export function getTableLocationsColumns(
     },
   }
 
-  const updatedCol: ColumnDef<Location> = {
+  const updatedCol: ColumnDef<LocationWithCounts> = {
     accessorKey: 'updated',
     header: ({ column }) => (
       <TableHeader column={column} title={t('location-columns.updated')} />
@@ -110,7 +111,7 @@ export function getTableLocationsColumns(
     },
   }
 
-  const insertedCol: ColumnDef<Location> = {
+  const insertedCol: ColumnDef<LocationWithCounts> = {
     accessorKey: 'inserted',
     header: ({ column }) => (
       <TableHeader column={column} title={t('location-columns.created')} />
@@ -143,7 +144,7 @@ export function getTableLocationsColumns(
     },
   }
 
-  const actionsCol: ColumnDef<Location> = {
+  const actionsCol: ColumnDef<LocationWithCounts> = {
     accessorKey: 'actions',
     header: () => null,
     cell: ({ table, row }) => <TableLocationsActions row={row} table={table} />,
@@ -154,15 +155,84 @@ export function getTableLocationsColumns(
     },
   }
 
-  return [selectCol, nameCol, statusCol, insertedCol, updatedCol, actionsCol]
+  const countCol: ColumnDef<LocationWithCounts> = {
+    accessorKey: 'count',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('location-columns.users')} />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex items-center border rounded-md text-xs [&>*]:px-2 [&>*]:py-0.5 [&>*]:border-r-border [&>*]:border-r [&>*]:h-[22px]'>
+          <TooltipProvider>
+            <Tooltip delayDuration={250}>
+              <TooltipTrigger>
+                <div className='flex items-center gap-1'>
+                  <span className='font-semibold text-muted-foreground'>{t('location-columns.users-mod-short')}</span>
+                  <span className='tabular-nums'>{row.original.modCount}</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className='bg-foreground text-background'>
+                <span>{t('location-columns.users-mod-long')}</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip delayDuration={250}>
+              <TooltipTrigger>
+                <div className='flex items-center gap-1'>
+                  <span className='font-semibold text-muted-foreground'>{t('location-columns.users-user-short')}</span>
+                  <span className='tabular-nums'>{row.original.userCount}</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className='bg-foreground text-background'>
+                <span>{t('location-columns.users-user-long')}</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip delayDuration={250}>
+              <TooltipTrigger>
+                <div className='flex items-center gap-1'>
+                  <span className='font-semibold text-muted-foreground'>{t('location-columns.users-out-short')}</span>
+                  <span className='tabular-nums'>{row.original.outgoingCount}</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className='bg-foreground text-background'>
+                <span>{t('location-columns.users-out-long')}</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip delayDuration={250}>
+              <TooltipTrigger>
+                <div className='flex items-center gap-1'>
+                  <span className='font-semibold text-muted-foreground border-r-0'>{t('location-columns.users-read-short')}</span>
+                  <span className='tabular-nums'>{row.original.readCount}</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className='bg-foreground text-background'>
+                <span>{t('location-columns.users-read-long')}</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )
+    },
+    meta: {
+      viewLabel: t('location-columns.users'),
+    }
+  }
+
+
+  return [selectCol, nameCol, statusCol, countCol, insertedCol, updatedCol, actionsCol]
 }
 
-export function getTableLocationFilters(
-  table: Table<Location>,
+export function getTableLocationsFilters(
+  table: Table<LocationWithCounts>,
   lng: string,
   t: (key: string) => string,
-): FilterField<Location>[] {
-  const nameFilter: FilterField<Location> = {
+): FilterField<LocationWithCounts>[] {
+  const nameFilter: FilterField<LocationWithCounts> = {
     column: table.getColumn('name'),
     type: 'text',
     label: t('location-columns.location-name'),
@@ -170,7 +240,7 @@ export function getTableLocationFilters(
     placeholder: t('location-columns.location-name-placeholder'),
   }
 
-  const statusFilter: FilterField<Location> = {
+  const statusFilter: FilterField<LocationWithCounts> = {
     column: table.getColumn('isBarred'),
     type: 'select',
     label: t('location-columns.status'),
@@ -181,14 +251,14 @@ export function getTableLocationFilters(
     ],
   }
 
-  const insertedFilter: FilterField<Location> = {
+  const insertedFilter: FilterField<LocationWithCounts> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
     label: t('location-columns.created'),
     value: '',
   }
 
-  const updatedFilter: FilterField<Location> = {
+  const updatedFilter: FilterField<LocationWithCounts> = {
     column: table.getColumn('updated'),
     type: 'date-range',
     label: t('location-columns.updated'),

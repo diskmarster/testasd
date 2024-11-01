@@ -2,7 +2,7 @@
 
 import {
   getTableLocationsColumns,
-  getTableLocationFilters as getTableLocationsFilters,
+   getTableLocationsFilters,
 } from '@/app/[lng]/(site)/admin/organisation/location-columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Customer, Location } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import {
   ColumnFiltersState,
@@ -38,23 +37,21 @@ import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
 import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { TableFloatingBar } from '../table/table-floating-bar'
-import { Button } from '../ui/button'
-import { Icons } from '../ui/icons'
 import { ButtonToggleLocations } from './button-toggle-locations'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
+import { LocationWithCounts } from '@/data/location.types'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
 const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
-  data: Location[]
+  data: LocationWithCounts[]
   user: User
-  customer: Customer
 }
 
-export function TableAdminLocations({ data, user, customer }: Props) {
+export function TableAdminLocations({ data, user }: Props) {
   const LOCALSTORAGE_KEY = 'users_cols'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')

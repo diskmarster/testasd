@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx'
 import { emitCustomEvent } from 'react-custom-events'
 import { twMerge } from 'tailwind-merge'
+import { z } from 'zod'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -86,4 +87,11 @@ export async function getChipCount(chip: string): Promise<number> {
   } catch (error) {
     return 0
   }
+}
+
+export function obscureEmail(s: string): string {
+  const parsed = z.string().email().safeParse(s)
+  if (!parsed.success) return s
+  const parts = parsed.data.split("@")
+  return `${parts[0].substring(0,1)}...${parts[0].substring(parts[0].length - 1)}@${parts[1]}`
 }

@@ -5,9 +5,10 @@ import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
+import { LocationWithCounts } from '@/data/location.types'
 
-export function ButtonToggleLocations({ table }: { table: Table<Location> }) {
-  const selectedRows: Row<Location>[] = table.getSelectedRowModel().rows
+export function ButtonToggleLocations({ table }: { table: Table<LocationWithCounts> }) {
+  const selectedRows: Row<LocationWithCounts>[] = table.getSelectedRowModel().rows
   const selectedIDs: LocationID[] = selectedRows.map(row => row.original.id)
 
   return (

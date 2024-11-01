@@ -59,7 +59,20 @@
       "active": "Aktiv",
       "inactive": "Inaktiv",
       "updated": "Opdateret",
-      "created": "Oprettet"
+      "created": "Oprettet",
+      "mod-count": "Moderatorer",
+      "users-count": "Brugere",
+      "outgoing-count": "Afgang",
+      "read-count": "Læseadgang",
+      "users": "Brugere",
+      "users-mod-short": "M",
+      "users-mod-long": "Moderator",
+      "users-user-short": "B",
+      "users-user-long": "Bruger",
+      "users-out-short": "A",
+      "users-out-long": "Afgang",
+      "users-read-short": "L",
+      "users-read-long": "Læseadgang"
     },
     "user-columns": {
       "user-name": "Navn",

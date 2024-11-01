@@ -29,6 +29,8 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
+import { Badge } from '../ui/badge'
+import { obscureEmail } from '@/lib/utils'
 
 interface Props {
   users?: UserNoHash[]
@@ -142,12 +144,18 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                             key={u.id}
                             className='border rounded-sm p-2 flex items-center justify-between'>
                             <div className='flex flex-col'>
-                              <span className='text-muted-foreground text-sm font-semibold'>
+                              <span className='text-muted-foreground text-sm'>
                                 {u.name}
                               </span>
-                              <span className='text-xs text-muted-foreground'>
-                                {u.email}
-                              </span>
+                              <div className='flex items-center gap-1'>
+                                <span className='text-xs text-muted-foreground/70 capitalize'>
+                                  {u.role}
+                                </span>
+                                <span className='text-muted-foreground text-xs' >•</span>
+                                <span className='text-xs text-muted-foreground/70'>
+                                  {u.email}
+                                </span>
+                              </div>
                             </div>
                             <Switch
                               checked={formValues.userIDs.includes(u.id)}

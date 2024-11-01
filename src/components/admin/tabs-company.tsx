@@ -25,12 +25,13 @@ import { ModalCreateLocation } from './modal-create-location'
 import { ModalInviteUser } from './modal-invite-user'
 import { TableAdminLocations } from './table-company-locations'
 import { TableAdminUsers } from './table-company-users'
+import { LocationWithCounts } from '@/data/location.types'
 
 interface Props {
   user: User
   customer: Customer
   users: UserNoHash[]
-  locations: Location[]
+  locations: LocationWithCounts[]
   currentLocationID: LocationID
 }
 
@@ -93,28 +94,27 @@ export function TabsAdmin({
         <div>
           {currentTab() == 'brugere' ? (
             <div className='flex items-center gap-4'>
-              {/* TODO: add customers extra users to function below when its added */}
               {isUserLimitReached(
                 customer.plan,
                 customer.extraUsers,
                 users.length,
               ) && (
-                <div className='flex items-center gap-2'>
-                  <span className='text-xs font-semibold text-destructive'>
-                    {t('tabs-admin.user-limit-reached')}
-                  </span>
-                  <TooltipProvider delayDuration={250}>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Icons.alert className='size-[18px] text-destructive' />
-                      </TooltipTrigger>
-                      <TooltipContent className='bg-foreground text-background'>
-                        <p>{t('tabs-admin.user-upgrade-plan')}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              )}
+                  <div className='flex items-center gap-2'>
+                    <span className='text-xs font-semibold text-destructive'>
+                      {t('tabs-admin.user-limit-reached')}
+                    </span>
+                    <TooltipProvider delayDuration={250}>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Icons.alert className='size-[18px] text-destructive' />
+                        </TooltipTrigger>
+                        <TooltipContent className='bg-foreground text-background'>
+                          <p>{t('tabs-admin.user-upgrade-plan')}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                )}
               <ModalInviteUser
                 locations={locations}
                 currentLocationID={currentLocationID}
@@ -154,7 +154,7 @@ export function TabsAdmin({
                   )}
                   className={cn(
                     isLocationLimitReached(customer.plan, locations.length) &&
-                      'pointer-events-none',
+                    'pointer-events-none',
                   )}>
                   <Icons.gridPlus className='size-5' />
                 </Button>
@@ -168,7 +168,7 @@ export function TabsAdmin({
       </TabsContent>
 
       <TabsContent value='lokationer'>
-        <TableAdminLocations data={locations} user={user} customer={customer} />
+        <TableAdminLocations data={locations} user={user} />
       </TabsContent>
       <TabsContent value='firma'>
         <FormCompanyEdit customer={customer} />
