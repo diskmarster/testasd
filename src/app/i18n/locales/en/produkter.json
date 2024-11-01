@@ -1,6 +1,6 @@
 {
-  "product-title": "Create Products",
-  "product-description": "Here you can create products",
+  "product-title": "Products",
+  "product-description": "View and edit products for the entire company",
   "product-modal-title": "Create Product",
   "product-modal-description": "Fill in the details below to create a product",
   "product-No.": "Product No.",
@@ -15,7 +15,7 @@
   "cost-price": "Cost price",
   "sales-price": "Sales price",
   "create-button": "Create",
-  "updated-time": "Last Updated",
+  "updated-time": "Updated",
 
   "toast-success": "Product created successfully",
 

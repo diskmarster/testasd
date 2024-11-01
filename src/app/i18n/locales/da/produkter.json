@@ -1,6 +1,6 @@
 {
-  "product-title": "Opret Varer",
-  "product-description": "Her kan du oprette varer",
+  "product-title": "Varer",
+  "product-description": "Her kan du administrerer varer for hele firmaet",
   "product-modal-title": "Opret Vare",
   "product-modal-description": "Udfyld nedenstående detaljer for at oprette en vare",
   "product-No.": "Vare Nr.",
@@ -15,11 +15,11 @@
   "cost-price": "Kostpris",
   "sales-price": "Salgspris",
   "create-button": "Opret",
-  "updated-time": "sidst opdateret",
+  "updated-time": "Opdateret",
 
   "toast-success": "Vare oprettet succesfuldt",
 
-  "update-product": "Redigér Vare",
+  "update-product": "Rediger vare",
   "bar-this": "Spær varen",
   "unbar-this": "Fjern spærring",
   "barred-status-yes": "Spærret",
@@ -33,6 +33,6 @@
   },
 
   "toasts": {
-    "product-updated": "Varen opdateret succesfuldt"
+    "product-updated": "Vare opdateret succesfuldt"
   }
 }
