@@ -1,4 +1,8 @@
 {
+  "page": {
+    "title": "Error messages",
+    "description": "View latest error messages"
+  },
   "columns": {
     "inserted": "Created",
     "user": "User",

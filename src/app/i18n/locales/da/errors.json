@@ -1,4 +1,8 @@
 {
+  "page": {
+    "title": "Fejlbeskeder",
+    "description": "Få et overblik over alle fejlbeskeder på NemLager"
+  },
   "columns": {
     "inserted": "Oprettet",
     "user": "Bruger",

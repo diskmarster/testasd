@@ -130,8 +130,8 @@
       "adminusers-description": "See an overview of all users in Nem Lager",
       "units": "Units",
       "units-description": "Here you can create and update units",
-      "errorMessages": "Error messages",
-      "errorMessages-description": "Get an overview of all error messages"
+      "error-messages": "Error messages",
+      "error-messages-description": "View latest error messages"
     }
   },
 
