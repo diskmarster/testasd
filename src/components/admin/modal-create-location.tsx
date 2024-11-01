@@ -29,6 +29,7 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
+import { hasPermissionByRank } from '@/data/user.types'
 
 interface Props {
   users?: UserNoHash[]
@@ -122,7 +123,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                   <span className='text-muted-foreground text-xs tabular-nums'>
                     {formValues.userIDs.length - 1}
                     {t('modal-create-location.of')}
-                    {users.length - 1} {t('modal-create-location.users-chosen')}
+                    {users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator').length} {t('modal-create-location.users-chosen')}
                   </span>
                 </div>
                 <ScrollArea
@@ -131,7 +132,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                   <div className='space-y-2'>
                     {users.length > 1 ? (
                       users
-                        .filter(u => u.id != user.id)
+                        .filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator')
                         .map(u => (
                           <div
                             key={u.id}

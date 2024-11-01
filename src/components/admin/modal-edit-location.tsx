@@ -129,7 +129,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                   <span className='text-muted-foreground text-xs tabular-nums'>
                     {formValues.userIDs.length - 1}
                     {' af '}
-                    {users.length - 1} {t('modal-edit-location.users-chosen')}
+                    {users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator').length} {t('modal-edit-location.users-chosen')}
                   </span>
                 </div>
                 <ScrollArea
@@ -138,7 +138,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                   <div className='space-y-2'>
                     {users.length > 1 ? (
                       users
-                        .filter(u => u.id != user.id)
+                        .filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator')
                         .map(u => (
                           <div
                             key={u.id}
