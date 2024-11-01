@@ -42,9 +42,9 @@
 
   "modal-create-reorder": {
     "title": "Opret minimums beholdning",
-    "description": "Bliv gjort opmærksom på når en vare kommer under en valgt minimumsgrænse",
+    "description": "Bliv gjort opmærksom på når en vare kommer under en angivet minimumsgrænse.",
     "product": "Vare",
-    "product-placeholder": "Vælg en vare",
+    "product-placeholder": "Søg efter vare",
     "product-emptymessage": "Ingen vare fundet",
     "minimum-stock": "Minimum beholdning",
     "restock-factor": "Genbestillingsfaktor (%)",
@@ -56,7 +56,7 @@
 
   "modal-update-reorder": {
     "title": "Opdater minimums beholdning",
-    "description": "Bliv gjort opmærksom på når en vare kommer under en valgt minimumsgrænse",
+    "description": "Bliv gjort opmærksom på når en vare kommer under en angivet minimumsgrænse",
     "product": "Vare",
     "minimum-stock": "Minimum beholdning",
     "restock-factor": "Genbestillingsfaktor (%)",

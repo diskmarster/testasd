@@ -21,9 +21,9 @@
     "quantity": "Qty.",
     "unit": "Unit",
     "product-group": "Product group",
-    "minimum-stock": "Min. qty/stock",
-    "disposible-stock": "Disp. qty/stock",
-    "recommended": "Rec. reord.",
+    "minimum-stock": "Min. Qty.",
+    "disposible-stock": "Disp. Qty.",
+    "recommended": "Rec. reorder",
     "buffer": "Factor (%)",
     "ordered": "Ordered",
     "updated": "Updated"
@@ -42,14 +42,14 @@
   },
   "modal-create-reorder": {
     "title": "Create minimum stock",
-    "description": "Get notified when an item falls below a selected minimum threshold",
+    "description": "Get notified when an item falls below a selected minimum threshold.",
     "product": "Product",
-    "product-placeholder": "Select a product",
+    "product-placeholder": "Search for product",
     "product-emptymessage": "No products found",
     "minimum-stock": "Minimum stock",
     "restock-factor": "Restock factor (%)",
     "restock-factor-description": "This is used to calculate the recommended restock quantity.",
-    "recommended-reorder-calculation1": "Recommended Restock:",
+    "recommended-reorder-calculation1": "Recommended restock:",
     "recommended-reorder-calculation2": "over the minimum stock",
     "create-button": "Create"
   },
@@ -74,7 +74,7 @@
   },
   "modal-add-ordered-reorder": {
     "title": "Add ordered quantity",
-    "description": "The ordered quantity will be automatically updated when there is an incoming stock for this product.",
+    "description": "The ordered quantity will automatically by updated when an incoming transaction for this product is created.",
     "product": "Product",
     "ordered-quantity": "Ordered quantity",
     "add-button": "Add"

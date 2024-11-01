@@ -19,7 +19,7 @@ import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { LocationID } from '@/lib/database/schema/customer'
 import { Product } from '@/lib/database/schema/inventory'
-import { cn, updateChipCount } from '@/lib/utils'
+import { cn, formatNumber, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -269,9 +269,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                       {t(
                         'modal-create-reorder.recommended-reorder-calculation1',
                       )}{' '}
-                      {(formValues.minimum * (formValues.buffer / 100)).toFixed(
-                        2,
-                      )}{' '}
+                      {(formatNumber(formValues.minimum * (formValues.buffer / 100)))}{' '}
                       {t(
                         'modal-create-reorder.recommended-reorder-calculation2',
                       )}

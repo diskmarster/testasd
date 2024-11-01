@@ -36,7 +36,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
-import { use, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
 import { useLanguage } from '@/context/language'

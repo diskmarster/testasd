@@ -17,7 +17,7 @@ import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { Product } from '@/lib/database/schema/inventory'
-import { cn } from '@/lib/utils'
+import { cn, formatNumber } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -231,9 +231,7 @@ export function ModalUpdateReorder({ products }: Props) {
                       {t(
                         'modal-update-reorder.recommended-reorder-calculation1',
                       )}{' '}
-                      {(formValues.minimum * (formValues.buffer / 100)).toFixed(
-                        2,
-                      )}{' '}
+                      {formatNumber((formValues.minimum * (formValues.buffer / 100)))}{' '}
                       {t(
                         'modal-update-reorder.recommended-reorder-calculation2',
                       )}
