@@ -81,6 +81,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
   }
 
   const filteredUser = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator') : []
+  const numChosen = formValues.userIDs.filter(id => filteredUsers.some((u) => u.id == id)).length
 
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
@@ -122,7 +123,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                 <div className='flex items-center justify-between'>
                   <Label>{t('modal-create-location.access-level')}</Label>
                   <span className='text-muted-foreground text-xs tabular-nums'>
-                    {formValues.userIDs.length - 1}
+                    {numChosen}
                     {t('modal-create-location.of')}
                     {filteredUser.length} {t('modal-create-location.users-chosen')}
                   </span>

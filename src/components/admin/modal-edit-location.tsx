@@ -89,6 +89,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
   })
 
   const filteredUsers = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator') : []
+  const numChosen = formValues.userIDs.filter(id => filteredUsers.some((u) => u.id == id)).length
 
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
@@ -127,7 +128,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                 <div className='flex items-center justify-between'>
                   <Label>{t('modal-edit-location.access-level')}</Label>
                   <span className='text-muted-foreground text-xs tabular-nums'>
-                    {formValues.userIDs.length - 1}
+                    {numChosen}
                     {' af '}
                     {filteredUsers.length} {t('modal-edit-location.users-chosen')}
                   </span>
@@ -137,42 +138,42 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                   maxHeight='max-h-60'>
                   <div className='space-y-2'>
                     {filteredUsers.length > 1 ? (
-                        filteredUsers.map(u => (
-                          <div
-                            key={u.id}
-                            className='border rounded-sm p-2 flex items-center justify-between'>
-                            <div className='flex flex-col'>
-                              <span className='text-muted-foreground text-sm'>
-                                {u.name}
+                      filteredUsers.map(u => (
+                        <div
+                          key={u.id}
+                          className='border rounded-sm p-2 flex items-center justify-between'>
+                          <div className='flex flex-col'>
+                            <span className='text-muted-foreground text-sm'>
+                              {u.name}
+                            </span>
+                            <div className='flex items-center gap-1'>
+                              <span className='text-xs text-muted-foreground/70 capitalize'>
+                                {u.role}
                               </span>
-                              <div className='flex items-center gap-1'>
-                                <span className='text-xs text-muted-foreground/70 capitalize'>
-                                  {u.role}
-                                </span>
-                                <span className='text-muted-foreground text-xs'>•</span>
-                                <span className='text-xs text-muted-foreground/70'>
-                                  {u.email}
-                                </span>
-                              </div>
+                              <span className='text-muted-foreground text-xs'>•</span>
+                              <span className='text-xs text-muted-foreground/70'>
+                                {u.email}
+                              </span>
                             </div>
-                            <Switch
-                              checked={formValues.userIDs.includes(u.id)}
-                              onCheckedChange={(checked: boolean) => {
-                                let users = formValues.userIDs
-
-                                if (checked) {
-                                  users.push(u.id)
-                                } else {
-                                  users = users.filter(us => us != u.id)
-                                }
-
-                                setValue('userIDs', users, {
-                                  shouldValidate: true,
-                                })
-                              }}
-                            />
                           </div>
-                        ))
+                          <Switch
+                            checked={formValues.userIDs.includes(u.id)}
+                            onCheckedChange={(checked: boolean) => {
+                              let users = formValues.userIDs
+
+                              if (checked) {
+                                users.push(u.id)
+                              } else {
+                                users = users.filter(us => us != u.id)
+                              }
+
+                              setValue('userIDs', users, {
+                                shouldValidate: true,
+                              })
+                            }}
+                          />
+                        </div>
+                      ))
                     ) : (
                       <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5 space-y-2'>
                         <p>{t('modal-edit-location.create-more-users')}</p>
