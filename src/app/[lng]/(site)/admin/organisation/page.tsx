@@ -55,7 +55,7 @@ export default async function Page({ params: { lng } }: PageProps) {
     const userIDsToView = userAccesses.filter(acc => signedInUserLocations.some(loc => loc.id == acc.locationID)).map(acc => acc.userID)
 
     users = users.filter(u => userIDsToView.some(uID => u.id == uID))
-    locations = signedInUserLocations
+    locations = locations.filter(l => signedInUserLocations.some(uL => l.id == uL.id))
   }
 
   return (
