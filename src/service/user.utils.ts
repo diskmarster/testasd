@@ -100,7 +100,6 @@ export function getLanguageFromRequest(headers: ReadonlyHeaders): string {
     return fallbackLng
   }
   const acceptLang = langHeader.split(',')[0].split('-')[0]
-
   // @ts-ignore
   if (languages.includes(acceptLang)) {
     return acceptLang
