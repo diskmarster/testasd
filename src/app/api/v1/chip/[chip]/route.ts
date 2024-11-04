@@ -1,5 +1,4 @@
 import { serverTranslation } from '@/app/i18n'
-import { useLanguage } from '@/context/language'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
@@ -10,7 +9,7 @@ export async function GET(
   { params: { chip } }: { params: { chip: string } },
 ) {
   const { session, user } = await sessionService.validate()
-  const lng = useLanguage()
+  const lng = request.cookies.get('lng')?.value ?? 'da'
   const { t } = await serverTranslation(lng, 'common')
 
   if (session == null || user == null) {
