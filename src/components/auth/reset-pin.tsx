@@ -1,7 +1,7 @@
 'use client'
 
-import { resetPasswordAction } from '@/app/[lng]/(auth)/glemt-password/actions'
-import { resetPasswordValidation } from '@/app/[lng]/(auth)/glemt-password/validation'
+import { resetPasswordAction, resetPinAction } from '@/app/[lng]/(auth)/glemt-password/actions'
+import { resetPasswordValidation, resetPinValidation } from '@/app/[lng]/(auth)/glemt-password/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
 import { ResetPassword } from '@/lib/database/schema/auth'
@@ -86,17 +86,17 @@ function ResetPasswordForm({
   const { t } = useTranslation(lng, 'log-ind')
 
   const { register, formState, handleSubmit } = useForm<
-    z.infer<typeof resetPasswordValidation>
+    z.infer<typeof resetPinValidation>
   >({
-    resolver: zodResolver(resetPasswordValidation),
+    resolver: zodResolver(resetPinValidation),
     defaultValues: {
       link: link,
     },
   })
 
-  const submitHandler = (values: z.infer<typeof resetPasswordValidation>) => {
+  const submitHandler = (values: z.infer<typeof resetPinValidation>) => {
     startTransition(async () => {
-      const res = await resetPasswordAction(values)
+      const res = await resetPinAction(values)
       if (res && res.serverError) {
         setError(res.serverError)
       } else {
