@@ -10,14 +10,14 @@ export function EmailResetPassword({
   link: ResetPasswordLink
   pwType: ResetPasswordType
 }) {
-  const pwName = pwType == 'pw' ? 'kodeord' : 'pinkode'
+  const pwName = pwType == 'pw' ? 'adgangskode' : 'pinkode'
 
   return (
     <Tailwind>
       <Section>
         <Heading as='h1'>Glemt {pwName}!</Heading>
         <Text>
-          Vi har modtaget en forespørgsel på at nulstille dit {pwName} på{' '}
+          Vi har modtaget en forespørgsel på at nulstille din {pwName} på{' '}
           {siteConfig.name}
         </Text>
       </Section>
@@ -26,12 +26,12 @@ export function EmailResetPassword({
           <Link href={link} target='_blank'>
             Følg dette link
           </Link>{' '}
-          for at nulstille dit {pwName}.
+          for at nulstille din {pwName}.
         </Text>
       </Section>
       <Section>
         <Text>
-          Er det ikke dig som har forspurgt om en nulstilling, så kan du ignorere
+          Er det ikke dig, eller din administrator, som har forespurgt denne nulstilling, så kan du ignorere
           denne mail.
         </Text>
       </Section>

@@ -68,7 +68,7 @@ export const passwordResetService = {
 
     await emailService.sendRecursively(
       [userEmail],
-      `Nulstil ${pwType == 'pw' ? 'kodeord' : 'pin'}`,
+      `Nulstil ${pwType == 'pw' ? 'adgangskode' : 'pin'}`,
       EmailResetPassword({ link: resetPasswordLink, pwType: pwType }),
     )
 
