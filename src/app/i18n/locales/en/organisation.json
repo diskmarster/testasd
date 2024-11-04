@@ -37,7 +37,8 @@
     "access-level": "Access level",
     "users-chosen": "users chosen",
     "create-button": "Update",
-    "create-more-users": "Create more users to assign access rights when editing locations."
+    "create-more-users": "Create more users to assign access rights when editing locations.",
+    "own-user": "You cannot edit your own users location accesses, hence why its not shown here."
   },
   "modal-toggle-location": {
     "title": "Change location status",
@@ -138,7 +139,8 @@
     "of": " of ",
     "users-chosen": "users chosen",
     "create-button": "Create",
-    "create-more-users": "Create more users to assign access rights when creating locations."
+    "create-more-users": "Create more users to assign access rights when creating locations.",
+    "own-user": "Your own user will automatically get access to this location, hence why its not shown here."
   },
 
   "toasts": {

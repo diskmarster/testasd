@@ -80,7 +80,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
     })
   }
 
-  const filteredUser = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator') : []
+  const filteredUsers = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator') : []
   const numChosen = formValues.userIDs.filter(id => filteredUsers.some((u) => u.id == id)).length
 
   return (
@@ -118,22 +118,22 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                 </p>
               )}
             </div>
-            {filteredUser && (
+            {filteredUsers && (
               <div className='grid gap-2'>
                 <div className='flex items-center justify-between'>
                   <Label>{t('modal-create-location.access-level')}</Label>
                   <span className='text-muted-foreground text-xs tabular-nums'>
                     {numChosen}
                     {t('modal-create-location.of')}
-                    {filteredUser.length} {t('modal-create-location.users-chosen')}
+                    {filteredUsers.length} {t('modal-create-location.users-chosen')}
                   </span>
                 </div>
                 <ScrollArea
                   className='border p-2 rounded-md'
                   maxHeight='max-h-60'>
                   <div className='space-y-2'>
-                    {filteredUser.length > 1 ? (
-                        filteredUser.map(u => (
+                    {filteredUsers.length > 1 ? (
+                        filteredUsers.map(u => (
                           <div
                             key={u.id}
                             className='border rounded-sm p-2 flex items-center justify-between'>
