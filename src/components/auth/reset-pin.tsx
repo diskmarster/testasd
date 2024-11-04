@@ -24,9 +24,14 @@ import {
 import { Icons } from '../ui/icons'
 import { Label } from '../ui/label'
 import { PasswordInput } from '../ui/password-input'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { resetPasswordTypes } from '@/data/user.types'
+import { isBefore } from 'date-fns'
 
-export function ResetPinCard({ link }: { link: ResetPassword }) {
-  const [passwordResat, setPasswordResat] = useState<boolean>(false)
+export function ResetPinCard({ link }: { link?: ResetPassword }) {
+  const searchParams = useSearchParams()
+  const successParam = searchParams.get('success')
+  const [passwordResat, setPasswordResat] = useState<boolean>(successParam == null ? false : Boolean(successParam))
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'log-ind')
   if (passwordResat) {
@@ -44,6 +49,30 @@ export function ResetPinCard({ link }: { link: ResetPassword }) {
             {t('reset-pin-card.back-to-login')}
           </Link>
         </Button>
+      </div>
+    )
+  }
+
+  if (!link || !resetPasswordTypes.includes(link.passwordType) || isBefore(link.expiresAt, Date.now())) {
+    return (
+      <div className='mx-auto max-w-lg space-y-4 text-center'>
+        <Icons.alert className='mx-auto h-12 w-12 animate-pulse text-destructive' />
+        <h1 className='text-2xl font-bold tracking-tight text-foreground'>
+          {t('reset-password-page.something-went-wrong')}
+        </h1>
+        <div className='flex flex-col'>
+          <p className='text-md text-foreground'>
+            {t('reset-password-page.this-link-is-invalid')}
+          </p>
+          <p className='text-md text-foreground'>
+            {t('reset-password-page.back-to-login')}
+          </p>
+        </div>
+        <Link
+          className={cn(buttonVariants({ variant: 'default' }))}
+          href={`/${lng}/log-ind`}>
+          {t('reset-password-page.back-to-login')}
+        </Link>
       </div>
     )
   }
@@ -80,6 +109,8 @@ function ResetPasswordForm({
   setPasswordResat: (val: boolean) => void
   link: ResetPassword
 }) {
+  const router = useRouter()
+  const pathName = usePathname()
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
   const lng = useLanguage()
@@ -101,6 +132,7 @@ function ResetPasswordForm({
         setError(res.serverError)
       } else {
         setPasswordResat(true)
+        router.replace(pathName + '?success=true&type=pin')
       }
     })
   }
