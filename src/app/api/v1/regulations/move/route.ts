@@ -1,8 +1,9 @@
+import { serverTranslation } from '@/app/i18n'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { inventoryService } from '@/service/inventory'
-import { validateRequest } from '@/service/user.utils'
+import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -22,17 +23,19 @@ export async function POST(
 ): Promise<NextResponse<unknown>> {
   const start = performance.now()
   const { session, user } = await validateRequest(headers())
+  const lng = getLanguageFromRequest(headers())
+  const { t } = await serverTranslation(lng, 'common')
 
   if (session == null || user == null) {
     return NextResponse.json(
-      { msg: 'Du har ikke adgang til denne resource' },
+      { msg: t('route-translations-move.no-access-to-resource') },
       { status: 401 },
     )
   }
 
   if (!user.appAccess) {
     return NextResponse.json(
-      { msg: 'Bruger har ikke app adgang' },
+      { msg: t('route-translations-move.no-app-access') },
       { status: 401 },
     )
   }
@@ -41,7 +44,7 @@ export async function POST(
 
   try {
     if (headers().get('content-type') != 'application/json') {
-      const msg = 'Request body skal være json format'
+      const msg = t('route-translations-move.request-body-json')
 
       const errorLog: NewApplicationError = {
         userID: user.id,
@@ -59,7 +62,7 @@ export async function POST(
     const zodRes = createMoveSchema.safeParse(json)
 
     if (!zodRes.success) {
-      const msg = 'Indlæsning af data fejlede'
+      const msg = t('route-translations-move.loading-failed')
 
       const errorLog: NewApplicationError = {
         userID: user.id,
@@ -102,10 +105,10 @@ export async function POST(
 
           if (defaultPlacement == undefined) {
             console.error(
-              `Error creating move: Could not find or create default placement`,
+              `${t('route-translations-move.error-creating-move-placement')}`,
             )
 
-            const msg = `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`
+            const msg = `${t('route-translations-move.error-while-moving-placement')}`
 
             const errorLog: NewApplicationError = {
               userID: user.id,
@@ -132,7 +135,7 @@ export async function POST(
           name: data.fromPlacementId,
         })
         if (res == undefined) {
-          const msg = 'Kunne ikke oprette en ny placering i databasen'
+          const msg = t('route-translations-move.error-creating-placement-db')
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -165,9 +168,9 @@ export async function POST(
 
         if (defaultPlacement == undefined) {
           console.error(
-            `Error creating move: Could not find or create default placement`,
+            `${t('route-translations-move.error-creating-move-placement')}`,
           )
-          const msg = `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`
+          const msg = `${t('route-translations-move.error-while-moving-placement')}`
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -207,9 +210,9 @@ export async function POST(
 
           if (defaultPlacement == undefined) {
             console.error(
-              `Error creating move: Could not find or create default placement`,
+              `${t('route-translations-move.error-creating-move-placement')}`,
             )
-            const msg = `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`
+            const msg = `${t('route-translations-move.error-while-moving-placement')}`
 
             const errorLog: NewApplicationError = {
               userID: user.id,
@@ -236,7 +239,7 @@ export async function POST(
           name: data.toPlacementId,
         })
         if (res == undefined) {
-          const msg = 'Kunne ikke oprette en ny placering i databasen'
+          const msg = t('route-translations-move.error-creating-placement-db')
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -269,9 +272,9 @@ export async function POST(
 
         if (defaultPlacement == undefined) {
           console.error(
-            `Error creating move: Could not find or create default placement`,
+            `${t('route-translations-move.error-creating-move-placement')}`,
           )
-          const msg = `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering`
+          const msg = `${t('route-translations-move.error-while-moving-placement')}`
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -311,9 +314,9 @@ export async function POST(
 
           if (defaultBatch == undefined) {
             console.error(
-              `Error creating move: Could not find or create default batch`,
+              `${t('route-translations-move.error-creating-move-batch')}`,
             )
-            const msg = `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`
+            const msg = `${t('route-translations-move.error-while-moving-batch')}`
 
             const errorLog: NewApplicationError = {
               userID: user.id,
@@ -340,7 +343,7 @@ export async function POST(
           batch: data.batchId,
         })
         if (res == undefined) {
-          const msg = 'Kunne ikke oprette nyt batch nummer i databasen'
+          const msg = t('route-translations-move.error-creating-batch-db')
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -373,9 +376,9 @@ export async function POST(
 
         if (defaultBatch == undefined) {
           console.error(
-            `Error creating move: Could not find or create default batch`,
+            `${t('route-translations-move.error-creating-move-batch')}`,
           )
-          const msg = `Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch`
+          const msg = `${t('route-translations-move.error-while-moving-batch')}`
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -442,8 +445,10 @@ export async function POST(
 
     return NextResponse.json({ msg: 'Success' }, { status: 201 })
   } catch (e) {
-    console.error(`Error creating move: '${(e as Error).message}'`)
-    const msg = `Der skete en fejl under flytning: '${(e as Error).message}'`
+    console.error(
+      `${t('route-translations-move.error-creating-move')} '${(e as Error).message}'`,
+    )
+    const msg = `${t('route-translations-move.error-while-moving')} '${(e as Error).message}'`
 
     const errorLog: NewApplicationError = {
       userID: user.id,

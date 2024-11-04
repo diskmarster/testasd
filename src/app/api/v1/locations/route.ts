@@ -1,7 +1,8 @@
+import { serverTranslation } from '@/app/i18n'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { errorsService } from '@/service/errors'
 import { locationService } from '@/service/location'
-import { validateRequest } from '@/service/user.utils'
+import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -9,17 +10,19 @@ export async function GET(
   request: NextRequest,
 ): Promise<NextResponse<unknown>> {
   const { session, user } = await validateRequest(headers())
+  const lng = getLanguageFromRequest(headers())
+  const { t } = await serverTranslation(lng, 'common')
 
   if (session == null || user == null) {
     return NextResponse.json(
-      { msg: 'Du har ikke adgang til denne ressource' },
+      { msg: t('route-translations-locations.no-access-to-resource') },
       { status: 401 },
     )
   }
 
   if (!user.appAccess) {
     return NextResponse.json(
-      { msg: 'Bruger har ikke app adgang' },
+      { msg: t('route-translations-locations.no-app-access') },
       { status: 401 },
     )
   }
@@ -42,14 +45,17 @@ export async function GET(
       customerID: user.customerID,
       type: 'endpoint',
       input: null,
-      error: (e as Error).message ?? 'Der skete en fejl på serveren',
+      error:
+        (e as Error).message ?? t('route-translations-locations.server-error'),
       origin: `GET api/v1/locations`,
     }
 
     errorsService.create(errorLog)
 
     return NextResponse.json(
-      { msg: `Der skete en fejl på serveren. '${(e as Error).message}'` },
+      {
+        msg: `${t('route-translations-locations.server-error')} '${(e as Error).message}'`,
+      },
       { status: 500 },
     )
   }

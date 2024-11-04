@@ -1,9 +1,10 @@
+import { serverTranslation } from '@/app/i18n'
 import { historyTypeZodSchema } from '@/data/inventory.types'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { inventoryService } from '@/service/inventory'
-import { validateRequest } from '@/service/user.utils'
+import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
@@ -23,17 +24,19 @@ export async function POST(
 ): Promise<NextResponse<unknown>> {
   const start = performance.now()
   const { session, user } = await validateRequest(headers())
+  const lng = getLanguageFromRequest(headers())
+  const { t } = await serverTranslation(lng, 'common')
 
   if (session == null || user == null) {
     return NextResponse.json(
-      { msg: 'Du har ikke adgang til denne resource' },
+      { msg: t('route-translations-regulations.no-access-to-resource') },
       { status: 401 },
     )
   }
 
   if (!user.appAccess) {
     return NextResponse.json(
-      { msg: 'Bruger har ikke app adgang' },
+      { msg: t('route-translations-regulations.no-app-access') },
       { status: 401 },
     )
   }
@@ -42,7 +45,7 @@ export async function POST(
 
   try {
     if (headers().get('content-type') != 'application/json') {
-      const msg = 'Request body skal være json format'
+      const msg = t('route-translations-regulations.request-body-json')
 
       const errorLog: NewApplicationError = {
         userID: user.id,
@@ -62,7 +65,7 @@ export async function POST(
     const zodRes = createRegulationSchema.safeParse(json)
 
     if (!zodRes.success) {
-      const msg = 'Indlæsning af data fejlede'
+      const msg = t('route-translations-regulations.loading-failed')
 
       const errorLog: NewApplicationError = {
         userID: user.id,
@@ -103,11 +106,12 @@ export async function POST(
 
           if (defaultPlacement == undefined) {
             console.error(
-              `Error creating move: Could not find or create default placement`,
+              `${t('route-translations-regulations.error-creating-move-placement')}`,
             )
 
-            const msg =
-              'Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering'
+            const msg = t(
+              'route-translations-regulations.error-while-moving-placement',
+            )
 
             const errorLog: NewApplicationError = {
               userID: user.id,
@@ -134,7 +138,9 @@ export async function POST(
           name: data.placementId,
         })
         if (res == undefined) {
-          const msg = 'Kunne ikke oprette en ny placering i databasen'
+          const msg = t(
+            'route-translations-regulations.error-creating-placement-db',
+          )
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -167,10 +173,11 @@ export async function POST(
 
         if (defaultPlacement == undefined) {
           console.error(
-            `Error creating move: Could not find or create default placement`,
+            `${t('route-translations-regulations.error-creating-move-placement')}`,
           )
-          const msg =
-            'Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard placering'
+          const msg = t(
+            'route-translations-regulations.error-while-moving-placement',
+          )
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -210,10 +217,11 @@ export async function POST(
 
           if (defaultBatch == undefined) {
             console.error(
-              `Error creating move: Could not find or create default batch`,
+              `${t('route-translations-regulations.error-creating-move-batch')}`,
             )
-            const msg =
-              'Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch'
+            const msg = t(
+              'route-translations-regulations.error-while-moving-batch',
+            )
 
             const errorLog: NewApplicationError = {
               userID: user.id,
@@ -235,7 +243,9 @@ export async function POST(
           batch: data.batchId,
         })
         if (res == undefined) {
-          const msg = 'Kunne ikke oprette nyt batch nummer i databasen'
+          const msg = t(
+            'route-translations-regulations.error-creating-batch-db',
+          )
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -268,10 +278,11 @@ export async function POST(
 
         if (defaultBatch == undefined) {
           console.error(
-            `Error creating move: Could not find or create default batch`,
+            `${t('route-translations-regulations.error-creating-move-batch')}`,
           )
-          const msg =
-            'Der skete en fejl under flytning: Kunne ikke finde eller oprette en standard batch'
+          const msg = t(
+            'route-translations-regulations.error-while-moving-batch',
+          )
 
           const errorLog: NewApplicationError = {
             userID: user.id,
@@ -308,7 +319,7 @@ export async function POST(
         data.reference ?? '',
       ))
     ) {
-      const msg = `Kunne ikke oprette en ny ${data.type}, prøv igen`
+      const msg = `${t('route-translations-regulations.error-creating-new')} ${data.type}, ${t('route-translations-regulations.try-again')}`
 
       const errorLog: NewApplicationError = {
         userID: user.id,
@@ -337,9 +348,9 @@ export async function POST(
     return NextResponse.json({ msg: 'Success' }, { status: 201 })
   } catch (e) {
     console.error(
-      `Error getting products for authenticated user: '${(e as Error).message}'`,
+      `${t('route-translations-regulations.error-getting-product')} '${(e as Error).message}'`,
     )
-    const msg = `Der skete en fejl under reguleringen: '${(e as Error).message}'`
+    const msg = `${t('route-translations-regulations.error-during-regulation')} '${(e as Error).message}'`
 
     const errorLog: NewApplicationError = {
       userID: user.id,

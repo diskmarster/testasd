@@ -141,11 +141,73 @@
   "chip": {
     "genbestil-chip-tooltip": "{{count}} items needs to be reordered"
   },
-  "route-translations": {
+  "route-translations-chip": {
     "no-resource-access": "You do not have access to this resource.",
     "no-web-access": "User does not have web access",
     "no-location-found": "No location found",
     "chip-count-error": "Error getting chip count for: ",
     "chip-get-error": "An error occurred while retrieving chip value for: "
+  },
+  "route-translations-batches": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "User does not have app access.",
+    "error-getting-batch": "Error retrieving batches for authenticated user: ",
+    "error-getting-batch-number": "An error occurred while retrieving batch number: ",
+    "error-getting-batch-numbers": "Could not retrieve batch numbers."
+  },
+  "route-translations-placements": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "User does not have app access.",
+    "error-getting-placement": "Error retrieving placements for authenticated user: ",
+    "error-getting-placement-number": "An error occurred while retrieving placements: ",
+    "error-getting-placement-numbers": "Could not retrieve placements."
+  },
+  "route-translations-locations": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "User does not have app access.",
+    "server-error": "A server error occurred. "
+  },
+  "route-translations-productid": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "User does not have app access.",
+    "error-fetching-product": "Error fetching product by ID: ",
+    "server-error-product": "A server error occurred when trying to fetch product."
+  },
+  "route-translations-product": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "User does not have app access.",
+    "error-getting-product": "Error retrieving product for authenticated user: ",
+    "couldnt-get-product": "Could not retrieve product",
+    "error-occured-getting-product": "An error occurred while retrieving product: "
+  },
+  "route-translations-move": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "User does not have app access.",
+    "request-body-json": "Request body must be in JSON format",
+    "loading-failed": "Loading of data failed",
+    "error-creating-move-placement": "Error creating move: Could not find or create default placement",
+    "error-while-moving-placement": "An error occurred while moving: Couldn't find or create a standard placement",
+    "error-creating-placement-db": "Error creating a new placement in database",
+    "error-creating-move-batch": "Error creating move: Could not find or create default batch",
+    "error-while-moving-batch": "An error occurred while moving: Couldn't find or create a standard batch",
+    "error-creating-batch-db": "Error creating a new batch number in database",
+    "error-creating-move": "Error creating move: ",
+    "error-while-moving": "An error occurred while moving: "
+  },
+  "route-translations-regulations": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "User does not have app access.",
+    "request-body-json": "Request body must be in JSON format",
+    "loading-failed": "Loading of data failed",
+    "error-creating-move-placement": "Error creating move: Could not find or create default placement",
+    "error-while-moving-placement": "An error occurred while moving: Couldn't find or create a standard placement",
+    "error-creating-placement-db": "Error creating a new placement in database",
+    "error-creating-move-batch": "Error creating move: Could not find or create default batch",
+    "error-while-moving-batch": "An error occurred while moving: Couldn't find or create a standard batch",
+    "error-creating-batch-db": "Error creating a new batch number in database",
+    "error-creating-new": "Error creating new: ",
+    "try-again": "Please try again",
+    "error-getting-product": "Error retrieving product for authenticated user: ",
+    "error-during-regulation": "An error occurred during regulation: "
   }
 }
