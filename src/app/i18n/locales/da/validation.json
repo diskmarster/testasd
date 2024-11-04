@@ -102,5 +102,9 @@
   "reset-password": {
     "password": "Kodeord skal være mindst 8 tegn.",
     "confirm-password": "Kodeord og bekræft kodeord skal stemme overens"
+  },
+  "reset-pin": {
+    "pin": "Kodeord skal være {{length}} tal.",
+    "confirm-pin": "Pin og bekræft pin skal stemme overens"
   }
 }

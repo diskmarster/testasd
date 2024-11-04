@@ -101,5 +101,9 @@
   "reset-password": {
     "password": "Password must be at least 8 characters.",
     "confirm-password": "Password and confirm password must match"
+  },
+  "reset-pin": {
+    "pin": "The PIN must be {{length}} digits.",
+    "confirm-pin": "PIN and confirm PIN must match"
   }
 }
