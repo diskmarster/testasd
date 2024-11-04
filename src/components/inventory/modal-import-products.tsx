@@ -141,9 +141,7 @@ export function ModalImportProducts() {
             <p className='text-muted-foreground text-sm'>
               {t('modal-import-products.unsure-look-faq')}{' '}
               <Link
-                href={
-                  '/faq?spørgsmål=Hvordan formaterer jeg min import fil til varekartoteket?'
-                }
+                href={`/faq?spørgsmål=${t('modal-import-products.faq-link')}`}
                 target='_blank'
                 className='underline'>
                 &quot;{t('modal-import-products.faq-link')}&quot;

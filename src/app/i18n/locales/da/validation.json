@@ -15,7 +15,7 @@
       "equal": "Kodeordene er ikke ens"
     },
     "new-pin": {
-      "required": "PIN skal være mindst 4 karakterer lang",
+      "required": "PIN skal være {{pinLength}} karakterer lang",
       "same": "Din nuværende PIN kan ikke være den samme som din nye PIN",
       "equal": "PIN-koderne er ikke ens"
     }

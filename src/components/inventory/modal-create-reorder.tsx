@@ -98,8 +98,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
       }
 
       if (res && res.validationErrors) {
-        console.log(res.validationErrors)
-        setError('Der skete en fejl')
+        setError(t('modal-create-reorder.error-occured'))
         return
       }
 

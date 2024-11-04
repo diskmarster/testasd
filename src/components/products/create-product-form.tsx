@@ -4,7 +4,7 @@ import { createProductValidation } from '@/app/[lng]/(site)/admin/produkter/vali
 import { siteConfig } from '@/config/site'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useContext, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -12,7 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
 import { useTranslation } from '@/app/i18n/client'
-import { LanguageContext } from '@/context/language'
+import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import {
   Credenza,
@@ -41,7 +41,7 @@ export function CreateProductsForm({
   units: Unit[]
   groups: Group[]
 }) {
-  const lng = useContext(LanguageContext)
+  const lng = useLanguage()
   const { user } = useSession()
   const { t } = useTranslation(lng, 'produkter')
   const [pending, startTransition] = useTransition()

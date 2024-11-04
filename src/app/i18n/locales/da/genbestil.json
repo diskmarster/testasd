@@ -51,7 +51,8 @@
     "restock-factor-description": "Dette bruges til at beregne det anbefalede genbestillingsantal.",
     "recommended-reorder-calculation1": "Anbefalet genbestilling:",
     "recommended-reorder-calculation2": "over minimums beholdningen",
-    "create-button": "Opret"
+    "create-button": "Opret",
+    "error-occured": "Der skete en fejl."
   },
 
   "modal-update-reorder": {

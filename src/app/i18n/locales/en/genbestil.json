@@ -11,7 +11,6 @@
   "table-reorder-actions": {
     "update": "Update",
     "delete": "Delete"
-    
   },
 
   "reorder-columns": {
@@ -51,7 +50,8 @@
     "restock-factor-description": "This is used to calculate the recommended restock quantity.",
     "recommended-reorder-calculation1": "Recommended restock:",
     "recommended-reorder-calculation2": "over the minimum stock",
-    "create-button": "Create"
+    "create-button": "Create",
+    "error-occured": "An error occurred."
   },
 
   "modal-update-reorder": {
@@ -84,6 +84,5 @@
     "create-reorder": "Minimum stock created for ",
     "delete-reorder": "Restock deleted for ",
     "update-reorder": "Restock updated for "
-
   }
 }
