@@ -48,7 +48,7 @@ export default function Page() {
         console.warn('no ref at index')
       }
     }
-  }, [questionParam])
+  }, [questionParam, questionIndex])
 
   return (
     <SiteWrapper
