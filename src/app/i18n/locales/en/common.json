@@ -140,5 +140,12 @@
 
   "chip": {
     "genbestil-chip-tooltip": "{{count}} items needs to be reordered"
+  },
+  "route-translations": {
+    "no-resource-access": "You do not have access to this resource.",
+    "no-web-access": "User does not have web access",
+    "no-location-found": "No location found",
+    "chip-count-error": "Error getting chip count for: ",
+    "chip-get-error": "An error occurred while retrieving chip value for: "
   }
 }

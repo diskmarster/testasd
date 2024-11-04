@@ -138,5 +138,13 @@
 
   "chip": {
     "genbestil-chip-tooltip": "{{count}} vare skal genbestilles"
+  },
+
+  "route-translations": {
+    "no-resource-access": "Du har ikke adgang til denne ressource.",
+    "no-web-access": "Bruger har ikke web adgang",
+    "no-location-found": "Fandt ikke nogen lokation",
+    "chip-count-error": "Fejl ved hentning af chip antal for: ",
+    "chip-get-error": "Der skete en fejl med at hente chip værdi for: "
   }
 }

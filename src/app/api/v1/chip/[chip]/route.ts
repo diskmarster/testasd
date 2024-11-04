@@ -1,3 +1,5 @@
+import { serverTranslation } from '@/app/i18n'
+import { useLanguage } from '@/context/language'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
@@ -8,17 +10,19 @@ export async function GET(
   { params: { chip } }: { params: { chip: string } },
 ) {
   const { session, user } = await sessionService.validate()
+  const lng = useLanguage()
+  const { t } = await serverTranslation(lng, 'common')
 
   if (session == null || user == null) {
     return NextResponse.json(
-      { msg: 'Du har ikke adgang til denne resource' },
+      { msg: t('route-translations.no-resource-access') },
       { status: 401 },
     )
   }
 
   if (!user.appAccess) {
     return NextResponse.json(
-      { msg: 'Bruger har ikke web adgang' },
+      { msg: t('route-translations.no-web-access') },
       { status: 401 },
     )
   }
@@ -26,7 +30,7 @@ export async function GET(
   const location = await locationService.getLastVisited(user.id!)
   if (!location) {
     return NextResponse.json(
-      { msg: 'Fandt ikke nogen lokation' },
+      { msg: t('route-translations.no-location-found') },
       { status: 404 },
     )
   }
@@ -53,7 +57,7 @@ export async function GET(
 
     return NextResponse.json(
       {
-        msg: `Der skete en fejl med at hente chip værdi for ${chip}: '${(e as Error).message}'`,
+        msg: `${t('route-translations.chip-get-error ')} ${chip}: '${(e as Error).message}'`,
       },
       { status: 500 },
     )
