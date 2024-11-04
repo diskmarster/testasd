@@ -1,9 +1,10 @@
+import { fallbackLng, languages } from '@/app/i18n/settings'
 import { User, UserNoHash } from '@/lib/database/schema/auth'
 import { hash, verify } from '@node-rs/argon2'
 import * as jwt from 'jsonwebtoken'
-import { sessionService } from './session'
-import { Session, User as AuthUser } from 'lucia'
+import { User as AuthUser, Session } from 'lucia'
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers'
+import { sessionService } from './session'
 
 const MEMORY_COST = 19456
 const TIME_COST = 2
@@ -32,7 +33,6 @@ export async function verifyPassword(
   })
   return valid
 }
-
 
 export function userDTO(u: User): UserNoHash {
   const { hash, pin, ...rest } = u
@@ -94,11 +94,30 @@ export function verifyJWT(jwtString: string): VerifyJWTResponse {
   }
 }
 
-export async function validateRequest(headers: ReadonlyHeaders): Promise<{ session: Session, user: AuthUser } | { session: null, user: null }> {
+export function getLanguageFromRequest(headers: ReadonlyHeaders): string {
+  const langHeader = headers.get('Accept-Language')
+  if (!langHeader) {
+    return fallbackLng
+  }
+  const acceptLang = langHeader.split(',')[0].split('-')[0]
+
+  // @ts-ignore
+  if (languages.includes(acceptLang)) {
+    return acceptLang
+  } else {
+    return fallbackLng
+  }
+}
+
+export async function validateRequest(
+  headers: ReadonlyHeaders,
+): Promise<
+  { session: Session; user: AuthUser } | { session: null; user: null }
+> {
   try {
-    const authHeader = headers.get("Authorization")
+    const authHeader = headers.get('Authorization')
     if (!authHeader) {
-      console.error("No authentication header found")
+      console.error('No authentication header found')
       return {
         session: null,
         user: null,
@@ -106,8 +125,11 @@ export async function validateRequest(headers: ReadonlyHeaders): Promise<{ sessi
     }
 
     const authWords = authHeader.split(' ')
-    if (authWords.length != 2 || !authWords[0].toLowerCase().includes('bearer')) {
-      console.error("Invalid authentication header")
+    if (
+      authWords.length != 2 ||
+      !authWords[0].toLowerCase().includes('bearer')
+    ) {
+      console.error('Invalid authentication header')
       return {
         session: null,
         user: null,
@@ -118,7 +140,7 @@ export async function validateRequest(headers: ReadonlyHeaders): Promise<{ sessi
 
     const res = verifyJWT(jwtString)
     if (!res.ok) {
-      console.error("Could not verify jwt")
+      console.error('Could not verify jwt')
       return {
         session: null,
         user: null,
