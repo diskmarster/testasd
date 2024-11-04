@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX `nl_location_name_customer_id_unique` ON `nl_location` (`name`,`customer_id`);
