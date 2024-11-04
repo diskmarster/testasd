@@ -52,7 +52,7 @@ export async function GET(
     }
   } catch (e) {
     console.error(
-      `Error getting chip count for ${chip}: '${(e as Error).message}'`,
+      `${t('route-translations.chip-count-error')} ${chip}: '${(e as Error).message}'`,
     )
 
     return NextResponse.json(
