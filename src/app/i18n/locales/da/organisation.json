@@ -82,9 +82,11 @@
     "email-placeholder": "Søg efter e-mail",
     "user-role": "Rolle",
     "status": "Status",
-    "web-access": "Web adgang",
-    "app-access": "App adgang",
-    "price-access": "Pris adgang",
+    "access": "Adgange",
+    "access-web": "Web adgang",
+    "access-app": "App adgang",
+    "access-price": "Pris adgang",
+    "access-none": "Ingen",
     "access_true": "Ja",
     "access_false": "Nej",
     "active": "Aktiv",
@@ -97,6 +99,7 @@
     "toggle-status": "Skift status"
   },
   "table-users-actions": {
+    "edit-user": "Rediger",
     "toggle-status": "Skift status",
     "reset-password": "Nulstil adgangskode",
     "reset-pin": "Nulstil PIN",
