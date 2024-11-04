@@ -1,0 +1,1 @@
+ALTER TABLE `nl_reset_password` ADD `password_type` text DEFAULT 'pw' NOT NULL;
