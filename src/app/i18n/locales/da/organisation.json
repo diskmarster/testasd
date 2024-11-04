@@ -36,8 +36,9 @@
       "location-name-placeholder": "Indtast lokationsnavn",
       "access-level": "Adgangsniveau",
       "users-chosen": "brugere valgt",
-      "create-button": "Opret",
-      "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder, når du redigerer lokationer."
+      "create-button": "Opdater",
+      "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du redigerer lokationer.",
+      "own-user": "Du kan ikke redigere din egen brugers rettigheder, så derfor er den ikke vist her."
     },
     "modal-toggle-location": {
       "title": "Skift lokationsstatus",
@@ -132,7 +133,8 @@
       "of": " af ",
       "users-chosen": "brugere valgt",
       "create-button": "Opret",
-      "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder, når du opretter lokationer."
+      "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du opretter lokationer.",
+      "own-user": "Din egen bruger vil automatisk blive tildelt rettighed til den nye lokation, og er derfor ikke vist her."
     },
 
     "toasts": {

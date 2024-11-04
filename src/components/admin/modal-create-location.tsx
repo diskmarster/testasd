@@ -29,7 +29,6 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
-import { hasPermissionByRank } from '@/data/user.types'
 
 interface Props {
   users?: UserNoHash[]
@@ -81,6 +80,8 @@ export function ModalCreateLocation({ user, users, children }: Props) {
     })
   }
 
+  const filteredUser = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator') : []
+
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>{children}</CredenzaTrigger>
@@ -116,24 +117,22 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                 </p>
               )}
             </div>
-            {users && (
+            {filteredUser && (
               <div className='grid gap-2'>
                 <div className='flex items-center justify-between'>
                   <Label>{t('modal-create-location.access-level')}</Label>
                   <span className='text-muted-foreground text-xs tabular-nums'>
                     {formValues.userIDs.length - 1}
                     {t('modal-create-location.of')}
-                    {users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator').length} {t('modal-create-location.users-chosen')}
+                    {filteredUser.length} {t('modal-create-location.users-chosen')}
                   </span>
                 </div>
                 <ScrollArea
                   className='border p-2 rounded-md'
                   maxHeight='max-h-60'>
                   <div className='space-y-2'>
-                    {users.length > 1 ? (
-                      users
-                        .filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator')
-                        .map(u => (
+                    {filteredUser.length > 1 ? (
+                        filteredUser.map(u => (
                           <div
                             key={u.id}
                             className='border rounded-sm p-2 flex items-center justify-between'>
@@ -170,8 +169,9 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                           </div>
                         ))
                     ) : (
-                      <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>
-                        {t('modal-create-location.create-more-users')}
+                      <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5 space-y-2'>
+                        <p>{t('modal-create-location.create-more-users')}</p>
+                        <p>{t('modal-create-location.own-user')}</p>
                       </div>
                     )}
                   </div>

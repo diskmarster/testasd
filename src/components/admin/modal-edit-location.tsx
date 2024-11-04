@@ -29,8 +29,6 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
-import { Badge } from '../ui/badge'
-import { obscureEmail } from '@/lib/utils'
 
 interface Props {
   users?: UserNoHash[]
@@ -90,6 +88,8 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
     setOpen(true)
   })
 
+  const filteredUsers = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator') : []
+
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-md'>
@@ -122,24 +122,22 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                 </p>
               )}
             </div>
-            {users && (
+            {filteredUsers && (
               <div className='grid gap-2'>
                 <div className='flex items-center justify-between'>
                   <Label>{t('modal-edit-location.access-level')}</Label>
                   <span className='text-muted-foreground text-xs tabular-nums'>
                     {formValues.userIDs.length - 1}
                     {' af '}
-                    {users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator').length} {t('modal-edit-location.users-chosen')}
+                    {filteredUsers.length} {t('modal-edit-location.users-chosen')}
                   </span>
                 </div>
                 <ScrollArea
                   className='border p-2 rounded-md'
                   maxHeight='max-h-60'>
                   <div className='space-y-2'>
-                    {users.length > 1 ? (
-                      users
-                        .filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator')
-                        .map(u => (
+                    {filteredUsers.length > 1 ? (
+                        filteredUsers.map(u => (
                           <div
                             key={u.id}
                             className='border rounded-sm p-2 flex items-center justify-between'>
@@ -151,7 +149,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                                 <span className='text-xs text-muted-foreground/70 capitalize'>
                                   {u.role}
                                 </span>
-                                <span className='text-muted-foreground text-xs' >•</span>
+                                <span className='text-muted-foreground text-xs'>•</span>
                                 <span className='text-xs text-muted-foreground/70'>
                                   {u.email}
                                 </span>
@@ -176,8 +174,9 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                           </div>
                         ))
                     ) : (
-                      <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>
-                        {t('modal-edit-location.create-more-users')}
+                      <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5 space-y-2'>
+                        <p>{t('modal-edit-location.create-more-users')}</p>
+                        <p>{t('modal-edit-location.own-user')}</p>
                       </div>
                     )}
                   </div>
