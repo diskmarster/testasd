@@ -88,7 +88,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
     setOpen(true)
   })
 
-  const filteredUsers = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator') : []
+  const filteredUsers = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator' && u.isActive) : []
   const numChosen = formValues.userIDs.filter(id => filteredUsers.some((u) => u.id == id)).length
 
   return (
