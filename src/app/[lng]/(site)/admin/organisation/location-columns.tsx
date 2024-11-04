@@ -162,11 +162,11 @@ export function getTableLocationsColumns(
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center border rounded-md text-xs [&>*]:px-2 [&>*]:py-0.5 [&>*]:border-r-border [&>*]:border-r [&>*]:h-[22px]'>
+        <div className='flex items-center border rounded-md text-xs'>
           <TooltipProvider>
             <Tooltip delayDuration={250}>
               <TooltipTrigger>
-                <div className='flex items-center gap-1'>
+                <div className='flex items-center gap-1 px-2 py-0.5 border-r-border border-r h-[22px]'>
                   <span className='font-semibold text-muted-foreground'>{t('location-columns.users-mod-short')}</span>
                   <span className='tabular-nums'>{row.original.modCount}</span>
                 </div>
@@ -179,7 +179,7 @@ export function getTableLocationsColumns(
           <TooltipProvider>
             <Tooltip delayDuration={250}>
               <TooltipTrigger>
-                <div className='flex items-center gap-1'>
+                <div className='flex items-center gap-1 px-2 py-0.5 border-r-border border-r h-[22px]'>
                   <span className='font-semibold text-muted-foreground'>{t('location-columns.users-user-short')}</span>
                   <span className='tabular-nums'>{row.original.userCount}</span>
                 </div>
@@ -192,7 +192,7 @@ export function getTableLocationsColumns(
           <TooltipProvider>
             <Tooltip delayDuration={250}>
               <TooltipTrigger>
-                <div className='flex items-center gap-1'>
+                <div className='flex items-center gap-1 px-2 py-0.5 border-r-border border-r h-[22px]'>
                   <span className='font-semibold text-muted-foreground'>{t('location-columns.users-out-short')}</span>
                   <span className='tabular-nums'>{row.original.outgoingCount}</span>
                 </div>
@@ -205,7 +205,7 @@ export function getTableLocationsColumns(
           <TooltipProvider>
             <Tooltip delayDuration={250}>
               <TooltipTrigger>
-                <div className='flex items-center gap-1'>
+                <div className='flex items-center gap-1 px-2 py-0.5 h-[22px]'>
                   <span className='font-semibold text-muted-foreground border-r-0'>{t('location-columns.users-read-short')}</span>
                   <span className='tabular-nums'>{row.original.readCount}</span>
                 </div>
