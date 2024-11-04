@@ -137,7 +137,7 @@ export function ModalEditLocation({ user, users, userAccesses }: Props) {
                   className='border p-2 rounded-md'
                   maxHeight='max-h-60'>
                   <div className='space-y-2'>
-                    {filteredUsers.length > 1 ? (
+                    {filteredUsers.length > 0 ? (
                       filteredUsers.map(u => (
                         <div
                           key={u.id}
