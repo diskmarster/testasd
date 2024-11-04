@@ -29,26 +29,33 @@ export const resetPasswordValidation = (
       }
     })
 
-export const resetPinValidation = z
-	.object({
-		link: z.object({
-			id: z.string(),
-			userId: z.number(),
-			expiresAt: z.number(),
-		}),
-		password: z
-			.string()
-			.length(4, { message: 'Pin skal være 4 karakterer' }),
-		confirmPassword: z
-			.string()
-			.length(4, { message: 'Pin skal være 4 karakterer' }),
-	})
-	.superRefine((val, ctx) => {
-		if (val.password != val.confirmPassword) {
-			ctx.addIssue({
-				path: ['password'],
-				code: z.ZodIssueCode.custom,
-				message: 'Kodeord er ikke ens.',
-			})
-		}
-	})
+export const resetPinValidation = (t: (key: string, options?: any) => string) =>
+	z
+		.object({
+			link: z.object({
+				id: z.string(),
+				userId: z.number(),
+				expiresAt: z.number(),
+			}),
+			password: z
+				.string()
+				.length(4, { message: t('reset-pin.pin', { length: 4 }) })
+				.regex(/^\d{4}$/, {
+					message: t('reset-pin.pin', { length: 4 }),
+				}),
+			confirmPassword: z
+				.string()
+				.length(4, { message: t('reset-pin.pin', { length: 4 }) })
+				.regex(/^\d{4}$/, {
+					message: t('reset-pin.pin', { length: 4 }),
+				}),
+		})
+		.superRefine((val, ctx) => {
+			if (val.password != val.confirmPassword) {
+				ctx.addIssue({
+					path: ['password'],
+					code: z.ZodIssueCode.custom,
+					message: t('reset-pin.confirm-pin'),
+				})
+			}
+		})

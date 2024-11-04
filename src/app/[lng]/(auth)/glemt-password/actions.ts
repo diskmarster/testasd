@@ -50,7 +50,7 @@ export const resetPasswordAction = publicAction
 
 export const resetPinAction = publicAction
 	.metadata({actionName: "resetPin"})
-	.schema(resetPinValidation)
+	.schema(async () => getSchema(resetPinValidation, 'validation'))
 	.action(async ({ parsedInput: { link, password }, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
 		if (isBefore(link.expiresAt, Date.now())) {

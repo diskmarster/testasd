@@ -86,7 +86,7 @@ export function ResetPinCard({ link }: { link?: ResetPassword }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ResetPasswordForm setPasswordResat={setPasswordResat} link={link} />
+        <ResetPinForm setPasswordResat={setPasswordResat} link={link} />
       </CardContent>
       <CardFooter>
         <Link
@@ -102,7 +102,7 @@ export function ResetPinCard({ link }: { link?: ResetPassword }) {
   )
 }
 
-function ResetPasswordForm({
+function ResetPinForm({
   setPasswordResat,
   link,
 }: {
@@ -115,17 +115,19 @@ function ResetPasswordForm({
   const [error, setError] = useState<string>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'log-ind')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = resetPinValidation(validationT)
 
   const { register, formState, handleSubmit } = useForm<
-    z.infer<typeof resetPinValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(resetPinValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       link: link,
     },
   })
 
-  const submitHandler = (values: z.infer<typeof resetPinValidation>) => {
+  const submitHandler = (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await resetPinAction(values)
       if (res && res.serverError) {
