@@ -61,6 +61,9 @@ export function getTableOverviewColumns(
     meta: {
       viewLabel: t('product-group'),
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    }
   }
 
   const text1Col: ColumnDef<FormattedInventory> = {
@@ -381,33 +384,33 @@ export function getTableOverviewFilters(
   const placementFilter: FilterField<FormattedInventory> | null =
     plan === 'basis' || plan === 'pro'
       ? {
-          column: table.getColumn('placement'),
-          type: 'select',
-          label: t('placement'),
-          value: '',
-          options: [
-            ...placements.map(placement => ({
-              value: placement.name,
-              label: placement.name,
-            })),
-          ],
-        }
+        column: table.getColumn('placement'),
+        type: 'select',
+        label: t('placement'),
+        value: '',
+        options: [
+          ...placements.map(placement => ({
+            value: placement.name,
+            label: placement.name,
+          })),
+        ],
+      }
       : null
 
   const batchFilter: FilterField<FormattedInventory> | null =
     plan === 'pro'
       ? {
-          column: table.getColumn('batch'),
-          type: 'select',
-          label: t('batch'),
-          value: '',
-          options: [
-            ...batches.map(batch => ({
-              value: batch.batch,
-              label: batch.batch,
-            })),
-          ],
-        }
+        column: table.getColumn('batch'),
+        type: 'select',
+        label: t('batch'),
+        value: '',
+        options: [
+          ...batches.map(batch => ({
+            value: batch.batch,
+            label: batch.batch,
+          })),
+        ],
+      }
       : null
 
   switch (plan) {
