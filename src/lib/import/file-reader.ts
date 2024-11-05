@@ -1,5 +1,7 @@
+import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
 import { z } from 'zod'
+import { NewNumberParser } from '../utils'
 
 type ReadAndValidateFileSuccess<T extends z.ZodTypeAny> = {
   success: true
@@ -36,8 +38,10 @@ export function readAndValidateFileData<T extends z.ZodTypeAny>(
         switch (file.type) {
           case SUPPORTED_TYPES['xlsx']:
           case SUPPORTED_TYPES['xls']:
-          case SUPPORTED_TYPES['csv']:
             data = readWithXLSX(reader)
+            break
+          case SUPPORTED_TYPES['csv']:
+            data = readWithPapaparse(reader)
             break
           default:
             console.error('wrong import file type')
@@ -103,4 +107,37 @@ function readWithXLSX(reader: FileReader): Record<string, any>[] {
   })
 
   return lowercasedKeysArray
+}
+
+function readWithPapaparse(reader: FileReader): Record<string, any>[] {
+  const data = reader.result
+
+  let stringData = ''
+  if (typeof data == 'string') {
+    stringData = data
+  } else if (data) {
+    stringData = new TextDecoder('windows-1252').decode(data)
+  }
+
+  const numberParser = NewNumberParser('da')
+  const res = Papa.parse(stringData, {
+    header: true,
+    skipEmptyLines: true,
+    transform: (val, field) => {
+      let res
+      switch (field) {
+        case 'costPrice':
+        case 'salesPrice':
+          res = numberParser.parse(val)
+          break
+
+        default:
+          res = val
+          break
+      }
+      return res
+    },
+  })
+
+  return res.data as Record<string, any>[]
 }
