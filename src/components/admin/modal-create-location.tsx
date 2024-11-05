@@ -83,8 +83,6 @@ export function ModalCreateLocation({ user, users, children }: Props) {
   const filteredUsers = users ? users.filter(u => u.id != user.id && u.role != 'system_administrator' && u.role != 'administrator' && u.isActive) : []
   const numChosen = formValues.userIDs.filter(id => filteredUsers.some((u) => u.id == id)).length
 
-  console.log(filteredUsers)
-
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>{children}</CredenzaTrigger>
