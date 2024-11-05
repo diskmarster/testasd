@@ -1,6 +1,6 @@
 import { Plan } from "@/data/customer.types";
 import { sql } from "drizzle-orm";
-import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text, primaryKey, unique } from "drizzle-orm/sqlite-core";
 import { userTable } from "./auth";
 import { UserRole } from "@/data/user.types";
 
@@ -38,8 +38,12 @@ export const locationTable = sqliteTable('nl_location', {
   id: text("id").notNull().primaryKey(),
   customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
-  isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false)
-})
+  isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false),
+  inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updated: integer("updated", { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>()
+}, (t) => ({
+    unq: unique().on(t.name, t.customerID)
+  }))
 
 export type NewLocation = typeof locationTable.$inferInsert
 export type Location = typeof locationTable.$inferSelect

@@ -1,7 +1,7 @@
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 import { Lucia, TimeSpan } from "lucia";
 import { db } from "@/lib/database";
-import { sessionTable, UserID, userTable } from "@/lib/database/schema/auth";
+import { sessionTable, userTable } from "@/lib/database/schema/auth";
 import { UserRole } from "@/data/user.types";
 
 const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
@@ -25,6 +25,9 @@ export const lucia = new Lucia(adapter, {
       isActive: u.isActive,
       inserted: u.inserted,
       updated: u.updated,
+      webAccess: u.webAccess,
+      appAccess: u.appAccess,
+      priceAccess: u.priceAccess,
     }
   }
 })
@@ -45,5 +48,8 @@ interface SessionUser {
   isActive: boolean
   inserted: Date
   updated: Date
+  webAccess: boolean
+  appAccess: boolean
+  priceAccess: boolean
 }
 

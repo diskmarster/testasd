@@ -1,0 +1,38 @@
+{
+  "product-title": "Varer",
+  "product-description": "Her kan du administrerer varer for hele firmaet",
+  "product-modal-title": "Opret Vare",
+  "product-modal-description": "Udfyld nedenstående detaljer for at oprette en vare",
+  "product-No.": "Vare Nr.",
+  "barcode": "Stregkode",
+  "product-group": "Varegruppe",
+  "product-group-placeholder": "Vælg en varegruppe",
+  "unit": "Enhed",
+  "unit-placeholder": "Vælg en enhed",
+  "product-text1": "Varetekst 1",
+  "product-text2": "Varetekst 2",
+  "product-text3": "Varetekst 3",
+  "cost-price": "Kostpris",
+  "sales-price": "Salgspris",
+  "create-button": "Opret",
+  "updated-time": "Opdateret",
+
+  "toast-success": "Vare oprettet succesfuldt",
+
+  "update-product": "Rediger vare",
+  "bar-this": "Spær varen",
+  "unbar-this": "Fjern spærring",
+  "barred-status-yes": "Spærret",
+  "barred-status-no": "Aktiv",
+
+  "update-product-modal": {
+    "update-product": "Redigér Vare",
+    "update-product-modal-title": "Rediger Vare",
+    "update-product-modal-description": "Her kan du redigere en vare",
+    "update-button": "Opdater"
+  },
+
+  "toasts": {
+    "product-updated": "Vare opdateret succesfuldt"
+  }
+}

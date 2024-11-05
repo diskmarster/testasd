@@ -15,8 +15,8 @@ const badgeVariants = cva(
         destructive:
           'border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80',
         outline: 'text-foreground',
-        success: 'bg-success text-success-foreground',
-        warning: 'bg-warning text-warning-foreground',
+        success: 'bg-success text-success-foreground border-transparent',
+        warning: 'bg-warning text-warning-foreground border-transparent',
         wow: 'bg-gradient-to-r from-violet-500 to-purple-500 text-white',
       },
     },

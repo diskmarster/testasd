@@ -1,4 +1,4 @@
-import { UserRole } from '@/data/user.types'
+import { ResetPasswordType, UserRole } from '@/data/user.types'
 import { customerTable, LocationID } from '@/lib/database/schema/customer'
 import { sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
@@ -22,6 +22,9 @@ export const userTable = sqliteTable('nl_user', {
     .default(sql`(unixepoch())`)
     .$onUpdateFn(() => new Date())
     .$type<Date>(),
+  webAccess: integer('web_access', {mode: 'boolean'}).notNull().default(true),
+  appAccess: integer('app_access', {mode: 'boolean'}).notNull().default(true),
+  priceAccess: integer('price_access', {mode: 'boolean'}).notNull().default(true),
 })
 
 export type User = typeof userTable.$inferSelect
@@ -44,6 +47,7 @@ export const resetPasswordTable = sqliteTable('nl_reset_password', {
     .notNull()
     .references(() => userTable.id, { onDelete: 'cascade' }),
   expiresAt: integer('expires_at').notNull(),
+  passwordType: text('password_type').$type<ResetPasswordType>().notNull().default('pw')
 })
 
 export type ResetPassword = typeof resetPasswordTable.$inferSelect
@@ -60,6 +64,9 @@ export const userLinkTable = sqliteTable('nl_user_link', {
   inserted: integer('inserted', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),
+  webAccess: integer('web_access', {mode: 'boolean'}).notNull().default(true),
+  appAccess: integer('app_access', {mode: 'boolean'}).notNull().default(true),
+  priceAccess: integer('price_access', {mode: 'boolean'}).notNull().default(true),
 })
 
 export type UserLink = typeof userLinkTable.$inferSelect

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import React, { SetStateAction, useState } from 'react'
 
+import { useTranslation } from '@/app/i18n/client'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -7,6 +8,7 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
@@ -18,10 +20,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { Table } from '@tanstack/react-table'
 import { format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
+import { useDebouncedCallback } from 'use-debounce'
+import { ScrollArea } from '../ui/scroll-area'
 
 type TableToolbarFiltersProps<T> = {
   table: Table<T>
@@ -40,6 +45,8 @@ function TableToolbarFilters<T>({
   )
   const [activeIndex, setActiveIndex] = useState<number>()
 
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'common')
   const handleClearAllFilters = () => {
     setSelectedFields([])
     table.setColumnFilters([])
@@ -66,6 +73,7 @@ function TableToolbarFilters<T>({
           setActiveIndex={setActiveIndex}
           onRemoveField={handleRemoveField}
           index={i}
+          t={t}
         />
       ))}
 
@@ -76,6 +84,7 @@ function TableToolbarFilters<T>({
           filterFields={filterFields}
           selectedFields={selectedFields}
           onSelectField={handleSelectField}
+          t={t}
         />
       )}
 
@@ -85,7 +94,7 @@ function TableToolbarFilters<T>({
           className='gap-1'
           onClick={handleClearAllFilters}>
           <Icons.cross className='size-4' />
-          <span className='hidden md:block'>Nulstil</span>
+          <span className='hidden md:block'>{t('table-filters.clear')}</span>
         </Button>
       )}
     </div>
@@ -98,52 +107,64 @@ function FilterPopover<T>({
   setActiveIndex,
   onRemoveField,
   index,
+  t,
 }: {
   field: FilterField<T>
   isActive: boolean
   setActiveIndex: (index?: number) => void
   onRemoveField: (field: FilterField<T>) => void
   index: number
+  t: (key: string) => string
 }) {
+  const [value, setSearched] = useState<string>('')
+  const [selectValue, setSelectValue] = useState<string[]>(
+    (field.column?.getFilterValue() ?? []) as any[],
+  )
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: undefined,
+    to: undefined,
+  })
+
   const isSelect = field.type === 'select'
-  const isDate = field.type === 'date'
   const isDateRange = field.type === 'date-range'
 
-  const value = field.column?.getFilterValue()
-
-  const getSelectDisplayValue = (value: any): string => {
-    if (Array.isArray(value)) {
-      return value
-        .map((val: any) => field.options?.find(opt => opt.value === val)?.label)
-        .filter(Boolean)
-        .join(', ')
+  const getSelectDisplayValue = (value: any[]): string => {
+    if (value.length == 0) {
+      return `${t('table-filters.choose')} ${field.label.toLowerCase()}`
     }
-    return (
-      field.options?.find(opt => opt.value === value)?.label ||
-      `Vælg ${field.label.toLowerCase()}`
-    )
-  }
 
-  const getDateDisplayValue = (date: any): string => {
-    return date ? format(new Date(date), 'dd/MM/yyyy') : 'Vælg dato'
+    return value
+      .map(
+        (val: any) =>
+          field.options?.find(opt => opt.value === val)?.label ||
+          `${t('table-filters.choose')} ${field.label.toLowerCase()}`,
+      )
+      .filter(Boolean)
+      .join(', ')
   }
 
   const getDateRangeDisplayValue = (range: DateRange): string => {
-    if (!range || (!range.from && !range.to)) return 'Vælg datoer'
-    if (range.from && !range.to)
-      return `${format(new Date(range.from), 'dd/MM/yyyy')}`
+    if (!range || (!range.from && !range.to))
+      return t('table-filters.choose-dates')
+    if (range.from && !range.to) return `${format(range.from, 'dd/MM/yyyy')}`
     if (range.from && range.to)
-      return `${format(new Date(range.from), 'dd/MM/yyyy')} - ${format(new Date(range.to), 'dd/MM/yyyy')}`
-    return 'Vælg datoer'
+      return `${format(range.from, 'dd/MM/yyyy')} - ${format(range.to, 'dd/MM/yyyy')}`
+    return t('table-filters.choose-dates')
   }
 
-  const filterDisplayValue: string = isDate
-    ? getDateDisplayValue(value)
-    : isSelect
-      ? getSelectDisplayValue(value)
-      : isDateRange
-        ? getDateRangeDisplayValue(value as DateRange)
-        : (value as string) || ''
+  const getTextFilterDisplayValue = (value: string): string => {
+    if (value == '') {
+      return `${t('table-filters.search')} ${field.label.toLowerCase()}`
+    } else {
+      return value
+    }
+  }
+
+  const filterDisplayValue: string = isSelect
+    ? getSelectDisplayValue(selectValue)
+    : isDateRange
+      ? getDateRangeDisplayValue(date as DateRange)
+      : getTextFilterDisplayValue(value as string) || ''
 
   return (
     <Popover
@@ -177,19 +198,16 @@ function FilterPopover<T>({
         )}
         align='center'>
         {field.type === 'text' ? (
-          <Input
-            autoFocus
-            size={12}
-            placeholder={field.placeholder}
-            value={field.column?.getFilterValue() as string}
-            onChange={e => field.column?.setFilterValue(e.target.value)}
-          />
+          <FilterText field={field} search={value} setSearched={setSearched} />
         ) : field.type === 'select' ? (
-          <FilterSelect field={field} />
-        ) : field.type === 'date' ? (
-          <FilterDate field={field} />
+          <FilterSelect
+            field={field}
+            setSelectedValues={setSelectValue}
+            selectedValues={selectValue}
+            t={t}
+          />
         ) : field.type === 'date-range' ? (
-          <FilterDateRange field={field} />
+          <FilterDateRange field={field} date={date} setDate={setDate} />
         ) : (
           'Unsupported type'
         )}
@@ -198,22 +216,30 @@ function FilterPopover<T>({
   )
 }
 
-/**
-  * Remember to include filterFn in columnDef
-  *
-    filterFn: (row, id, value) => {
-      return isSameDay(value, row.getValue(id))
-    },
-  */
-function FilterDate<T>({ field }: { field: FilterField<T> }) {
-  const [date, setDate] = useState<Date>()
-
-  useEffect(() => {
-    field.column?.setFilterValue(date?.toString())
-  }, [date, field])
+function FilterText<T>({
+  field,
+  search,
+  setSearched,
+}: {
+  field: FilterField<T>
+  search: string
+  setSearched: React.Dispatch<React.SetStateAction<string>>
+}) {
+  const debouncedSeteFilter = useDebouncedCallback((val: string) => {
+    field.column?.setFilterValue(val)
+  }, 250)
 
   return (
-    <Calendar mode='single' selected={date} onSelect={setDate} initialFocus />
+    <Input
+      autoFocus
+      size={12}
+      placeholder={field.placeholder}
+      value={search}
+      onChange={e => {
+        setSearched(e.target.value)
+        debouncedSeteFilter(e.target.value)
+      }}
+    />
   )
 }
 
@@ -235,76 +261,122 @@ function FilterDate<T>({ field }: { field: FilterField<T> }) {
       return isAfter(rowDate, value.from) && isBefore(rowDate, value.to)
     },
   */
-function FilterDateRange<T>({ field }: { field: FilterField<T> }) {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: undefined,
-    to: undefined,
-  })
-  useEffect(() => {
-    field.column?.setFilterValue(date)
-  }, [date, field])
+function FilterDateRange<T>({
+  field,
+  date,
+  setDate,
+}: {
+  field: FilterField<T>
+  date: DateRange | undefined
+  setDate: React.Dispatch<SetStateAction<DateRange | undefined>>
+}) {
+  const debouncedCallback = useDebouncedCallback(
+    (val: DateRange | undefined) => field.column?.setFilterValue(val),
+    500,
+  )
 
   return (
-    <Calendar mode='range' selected={date} onSelect={setDate} initialFocus />
+    <Calendar
+      mode='range'
+      selected={date}
+      onSelect={dateRange => {
+        setDate(dateRange)
+        debouncedCallback(dateRange)
+      }}
+      initialFocus
+    />
   )
 }
 
-function FilterSelect<T>({ field }: { field: FilterField<T> }) {
+function FilterSelect<T>({
+  field,
+  selectedValues,
+  setSelectedValues,
+  t,
+}: {
+  field: FilterField<T>
+  selectedValues: string[]
+  setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>
+  t: (key: string) => string
+}) {
+  const [search, setSearch] = useState<string>('')
   const facets = field.column?.getFacetedUniqueValues()
-  const selectedValues = new Set(field.column?.getFilterValue() as string[])
+  const debouncedSetFilter = useDebouncedCallback(
+    (val: string[] | undefined) => field.column?.setFilterValue(val),
+    500,
+  )
+
+  const filtered = field.options
+    ?.filter(f =>
+      f.value.toString().toLowerCase().includes(search.toLowerCase()),
+    )
+    .slice(0, 20)
 
   return (
     <Command>
+      <CommandInput value={search} onValueChange={setSearch} />
       <CommandList>
-        <CommandEmpty>Ingen valgmuligheder</CommandEmpty>
-        <CommandGroup>
-          {field.options?.map(option => {
-            const isSelected = selectedValues.has(option.value)
-            return (
-              <CommandItem
-                key={option.label}
-                onSelect={() => {
-                  if (isSelected) {
-                    selectedValues.delete(option.value)
-                  } else {
-                    selectedValues.add(option.value)
-                  }
-                  field.column?.setFilterValue(
-                    Array.from(selectedValues).length
-                      ? Array.from(selectedValues)
-                      : undefined,
-                  )
-                }}>
-                <div
-                  className={cn(
-                    'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                    isSelected
-                      ? 'bg-primary text-primary-foreground'
-                      : 'opacity-50 [&_svg]:invisible',
-                  )}>
-                  <Icons.check className={cn('h-4 w-4')} />
-                </div>
-                {option.icon && (
-                  <option.icon className='mr-2 h-4 w-4 text-muted-foreground' />
-                )}
-                <span>{option.label}</span>
-                {facets?.get(option.value) && (
-                  <span className='ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs'>
-                    {facets.get(option.value)}
-                  </span>
-                )}
-              </CommandItem>
-            )
-          })}
-        </CommandGroup>
-        {selectedValues.size > 0 && (
+        <CommandEmpty>{t('table-filters.no-filter-choice')}</CommandEmpty>
+        <ScrollArea maxHeight='max-h-52'>
+          <CommandGroup>
+            {filtered &&
+              filtered.map(option => {
+                const isSelected = selectedValues.some(
+                  val => val == option.value,
+                )
+                return (
+                  <CommandItem
+                    value={option.value}
+                    key={option.label}
+                    onSelect={() => {
+                      if (isSelected) {
+                        const newSelected = selectedValues.filter(
+                          val => val != option.value,
+                        )
+                        debouncedSetFilter(
+                          newSelected.length == 0 ? undefined : newSelected,
+                        )
+                        setSelectedValues(newSelected)
+                      } else {
+                        const newSelected = [...selectedValues, option.value]
+                        debouncedSetFilter(newSelected)
+                        setSelectedValues(newSelected)
+                      }
+                    }}>
+                    <div
+                      className={cn(
+                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                        isSelected
+                          ? 'bg-primary text-primary-foreground'
+                          : 'opacity-50 [&_svg]:invisible',
+                      )}>
+                      <Icons.check className={cn('h-4 w-4')} />
+                    </div>
+                    {option.icon && (
+                      <option.icon className='mr-2 h-4 w-4 text-muted-foreground' />
+                    )}
+                    <span>{option.label}</span>
+                    {facets?.get(option.value) && (
+                      <span className='ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs'>
+                        {facets.get(option.value)}
+                      </span>
+                    )}
+                  </CommandItem>
+                )
+              })}
+          </CommandGroup>
+        </ScrollArea>
+        {selectedValues.length > 0 && (
           <>
             <CommandSeparator />
             <CommandGroup>
               <CommandItem
-                onSelect={() => field.column?.setFilterValue(undefined)}
+                onSelect={() => {
+                  debouncedSetFilter(undefined)
+                  setSelectedValues([])
+                }}
                 className='justify-center text-center'>
-                Nulstil filter
+                {t('table-filters.clear-filter')}
               </CommandItem>
             </CommandGroup>
           </>
@@ -320,12 +392,14 @@ function AddFilterPopover<T>({
   filterFields,
   selectedFields,
   onSelectField,
+  t,
 }: {
   open: boolean
   setOpen: (open: boolean) => void
   filterFields: FilterField<T>[]
   selectedFields: FilterField<T>[]
   onSelectField: (field: FilterField<T>) => void
+  t: (key: string) => string
 }) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -335,13 +409,13 @@ function AddFilterPopover<T>({
             className='mr-1 size-3.5 shrink-0'
             aria-hidden='true'
           />
-          Tilføj filter
+          {t('table-filters.add-filter')}
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-[12.5rem] p-0' align='center'>
         <Command>
           <CommandList>
-            <CommandEmpty>Ingen filtrer fundet.</CommandEmpty>
+            <CommandEmpty>{t('table-filters.no-filter-found')}</CommandEmpty>
             <CommandGroup>
               {filterFields
                 .filter(

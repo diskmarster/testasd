@@ -1,7 +1,8 @@
-import { updatePlacementAction } from '@/app/(site)/admin/placeringer/actions'
-import { createPlacementValidation } from '@/app/(site)/admin/placeringer/validation'
+import { updatePlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
+import { createPlacementValidation } from '@/app/[lng]/(site)/admin/placeringer/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
-import { useSession } from '@/context/session'
+import { useLanguage } from '@/context/language'
 import { Placement } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState, useTransition } from 'react'
@@ -33,17 +34,21 @@ export function ModalUpdatePlacement({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'placeringer')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createPlacementValidation(validationT)
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
-    z.infer<typeof createPlacementValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createPlacementValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       name: placementToEdit?.name || '',
     },
   })
 
-  async function onSubmit(values: z.infer<typeof createPlacementValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       if (!placementToEdit) {
         setError('Ingen placering at redigere')
@@ -62,8 +67,8 @@ export function ModalUpdatePlacement({
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: 'Placeringen er opdateret succesfuldt.',
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.placement-updated')}`,
       })
     })
   }
@@ -84,9 +89,9 @@ export function ModalUpdatePlacement({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Rediger placering</CredenzaTitle>
+          <CredenzaTitle>{t('modal-update-placement.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Her kan du redigere en placering
+            {t('modal-update-placement.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -96,7 +101,7 @@ export function ModalUpdatePlacement({
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='!top-3 size-4' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -104,7 +109,7 @@ export function ModalUpdatePlacement({
             <div className='mt-2 mb-2'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
-                  Navn på placering
+                  {t('modal-update-placement.placement')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='name' type='text' {...register('name')} />
@@ -115,8 +120,11 @@ export function ModalUpdatePlacement({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
-              Opdater
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
+              {t('modal-update-placement.update-button')}
             </Button>
           </form>
         </CredenzaBody>

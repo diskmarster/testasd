@@ -3,13 +3,16 @@ import { CustomerID } from '@/lib/database/schema/customer'
 import {
   groupTable,
   NewProduct,
+  NewProductHistory,
   PartialProduct,
   Product,
+  ProductHistory,
+  productHistoryTable,
   ProductID,
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { eq, getTableColumns } from 'drizzle-orm'
+import { and, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
 
 const UNIT_COLS = getTableColumns(unitTable)
@@ -39,7 +42,11 @@ export const product = {
   ): Promise<Product | undefined> {
     const product = await trx
       .insert(productTable)
-      .values(newProduct)
+      .values({
+        ...newProduct,
+        sku: sql`upper(${newProduct.sku})`,
+        barcode: sql`upper(${newProduct.barcode})`,
+      })
       .returning()
     return product[0]
   },
@@ -48,9 +55,33 @@ export const product = {
     updatedProductData: PartialProduct,
     trx: TRX = db,
   ): Promise<Product | undefined> {
+    const data: Partial<{
+      isBarred: boolean | SQL<unknown>
+      customerID: number | SQL<unknown>
+      groupID: number | SQL<unknown>
+      unitID: number | SQL<unknown>
+      text1: string | SQL<unknown>
+      text2: string | SQL<unknown>
+      text3: string | SQL<unknown>
+      sku: string | SQL<unknown>
+      barcode: string | SQL<unknown>
+      costPrice: number | SQL<unknown>
+      salesPrice: number | SQL<unknown>
+      note: string | SQL<unknown>
+    }> = {
+      ...updatedProductData
+    }
+
+    if (updatedProductData.sku != undefined) {
+      data.sku = sql`upper(${updatedProductData.sku})`
+    }
+    if (updatedProductData.barcode != undefined) {
+      data.barcode = sql`upper(${updatedProductData.barcode})`
+    }
+
     const product = await trx
       .update(productTable)
-      .set({ ...updatedProductData })
+      .set(data)
       .where(eq(productTable.id, productID))
       .returning()
     return product[0]
@@ -78,16 +109,59 @@ export const product = {
   ): Promise<Product> {
     const product = await trx
       .insert(productTable)
-      .values({ ...newProductData })
+      .values({
+        ...newProductData,
+        sku: sql`upper(${newProductData.sku})`,
+        barcode: sql`upper(${newProductData.barcode})`,
+      })
       .onConflictDoUpdate({
         target: [
           productTable.customerID,
           productTable.sku,
-          productTable.barcode
+          productTable.barcode,
         ],
-        set: { ...newProductData },
+        set: {
+          ...newProductData,
+          sku: sql`upper(${newProductData.sku})`,
+          barcode: sql`upper(${newProductData.barcode})`,
+        },
       })
       .returning()
     return product[0]
+  },
+  createHistoryLog: async function(
+    newProductLog: NewProductHistory,
+    trx: TRX = db,
+  ): Promise<ProductHistory | undefined> {
+    const history = await trx
+      .insert(productHistoryTable)
+      .values(newProductLog)
+      .returning()
+
+    return history[0]
+  },
+  getHistoryLogsForCustomer: async function(
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<ProductHistory[]> {
+    return await trx
+      .select()
+      .from(productHistoryTable)
+      .where(eq(productHistoryTable.customerID, customerID))
+  },
+  getHistoryLogs: async function(
+    customerID: CustomerID,
+    productID: ProductID,
+    trx: TRX = db,
+  ): Promise<ProductHistory[]> {
+    return await trx
+      .select()
+      .from(productHistoryTable)
+      .where(
+        and(
+          eq(productHistoryTable.customerID, customerID),
+          eq(productHistoryTable.productID, productID),
+        ),
+      )
   },
 }

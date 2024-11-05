@@ -1,9 +1,18 @@
-import { customer } from "@/data/customer";
-import { Customer, CustomerID, CustomerLink, CustomerLinkID, NewCustomer, NewCustomerLink, PartialCustomer } from "@/lib/database/schema/customer";
-import { generateIdFromEntropySize } from "lucia";
-import { isLinkExpired } from "./customer.utils";
-import { user } from "@/data/user";
-import { UserLinkID } from "@/lib/database/schema/auth";
+import { fallbackLng } from '@/app/i18n/settings'
+import { customer } from '@/data/customer'
+import { user } from '@/data/user'
+import { UserLinkID } from '@/lib/database/schema/auth'
+import {
+  Customer,
+  CustomerID,
+  CustomerLink,
+  CustomerLinkID,
+  NewCustomer,
+  NewCustomerLink,
+  PartialCustomer,
+} from '@/lib/database/schema/customer'
+import { generateIdFromEntropySize } from 'lucia'
+import { isLinkExpired } from './customer.utils'
 
 const ACTIVATION_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -12,27 +21,27 @@ const ACTIVATION_LINK_BASEURL =
       ? 'stage.lager.nemunivers.app'
       : 'http://localhost:3000'
 export type CustomerActivationLink =
-  `${typeof ACTIVATION_LINK_BASEURL}/registrer/${CustomerLinkID}`
+  `${typeof ACTIVATION_LINK_BASEURL}/${string}/registrer/${CustomerLinkID}`
 const LINK_DURATION_HOURS = 1
 
 export const customerService = {
-  create: async function(
+  create: async function (
     customerData: NewCustomer,
   ): Promise<Customer | undefined> {
     const newCustomer = await customer.create(customerData)
     return newCustomer
   },
-  getByEmail: async function(email: string): Promise<Customer | undefined> {
+  getByEmail: async function (email: string): Promise<Customer | undefined> {
     const existingCustomer = await customer.getByEmail(email)
     return existingCustomer
   },
-  getByID: async function(
+  getByID: async function (
     customerID: CustomerID,
   ): Promise<Customer | undefined> {
     const existingCustomer = await customer.getByID(customerID)
     return existingCustomer
   },
-  createActivationLink: async function(
+  createActivationLink: async function (
     customerLinkData: Omit<NewCustomerLink, 'id'>,
   ): Promise<CustomerActivationLink | undefined> {
     const id = generateIdFromEntropySize(16)
@@ -41,23 +50,23 @@ export const customerService = {
       id: id,
     })
     if (!newCustomerLink) return undefined
-    return `${ACTIVATION_LINK_BASEURL}/registrer/${newCustomerLink.id}`
+    return `${ACTIVATION_LINK_BASEURL}/${fallbackLng}/registrer/${newCustomerLink.id}`
   },
-  getActivationLinkByID: async function(
+  getActivationLinkByID: async function (
     linkID: CustomerLinkID,
   ): Promise<CustomerLink | undefined> {
     const existingCustomerLink = await customer.getCustomerLinkByID(linkID)
     return existingCustomerLink
   },
-  validateActivationLink: function(insertedDate: Date): boolean {
+  validateActivationLink: function (insertedDate: Date): boolean {
     return isLinkExpired(insertedDate, LINK_DURATION_HOURS)
   },
-  deleteActivationLink: async function(
+  deleteActivationLink: async function (
     linkID: CustomerLinkID,
   ): Promise<boolean> {
     return await customer.deleteCustomerLink(linkID)
   },
-  getByLinkID: async function(
+  getByLinkID: async function (
     linkID: CustomerLinkID,
   ): Promise<Customer | undefined> {
     const existingLink = await customer.getCustomerLinkByID(linkID)
@@ -65,16 +74,23 @@ export const customerService = {
     const existingCustomer = customer.getByID(existingLink.customerID)
     return existingCustomer
   },
-  getByUserLinkID: async function(linkID: UserLinkID): Promise<Customer | undefined> {
+  getByUserLinkID: async function (
+    linkID: UserLinkID,
+  ): Promise<Customer | undefined> {
     const existingLink = await user.getUserLinkByID(linkID)
     if (!existingLink) return undefined
     const existingCustomer = customer.getByID(existingLink.customerID)
     return existingCustomer
   },
-  toggleActivationByID: async function(customerID: CustomerID): Promise<boolean> {
+  toggleActivationByID: async function (
+    customerID: CustomerID,
+  ): Promise<boolean> {
     return await customer.toggleActivationStatusByID(customerID)
   },
-  updateByID: async function(customerID: CustomerID, customerData: PartialCustomer): Promise<boolean> {
+  updateByID: async function (
+    customerID: CustomerID,
+    customerData: PartialCustomer,
+  ): Promise<boolean> {
     return await customer.updateByID(customerID, customerData)
-  }
+  },
 }

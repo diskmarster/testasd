@@ -1,12 +1,14 @@
 'use client'
 
-import { createPlacementAction } from '@/app/(site)/admin/placeringer/actions'
-import { createPlacementValidation } from '@/app/(site)/admin/placeringer/validation'
+import { createPlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
+import { createPlacementValidation } from '@/app/[lng]/(site)/admin/placeringer/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
   CredenzaBody,
   CredenzaContent,
+  CredenzaDescription,
   CredenzaHeader,
   CredenzaTitle,
   CredenzaTrigger,
@@ -15,6 +17,7 @@ import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -26,11 +29,15 @@ export function ModalCreatePlacement() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | undefined>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'placeringer')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createPlacementValidation(validationT)
 
   const { register, handleSubmit, formState, reset } = useForm<
-    z.infer<typeof createPlacementValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createPlacementValidation),
+    resolver: zodResolver(schema),
   })
 
   function onOpenChange(open: boolean) {
@@ -38,9 +45,7 @@ export function ModalCreatePlacement() {
     setOpen(open)
   }
 
-  const onSubmit = async (
-    values: z.infer<typeof createPlacementValidation>,
-  ) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await createPlacementAction(values)
       if (res && res.serverError) {
@@ -50,8 +55,8 @@ export function ModalCreatePlacement() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${values.name} placering oprettet`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.placement-created')}`,
       })
     })
   }
@@ -65,7 +70,10 @@ export function ModalCreatePlacement() {
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret ny placering</CredenzaTitle>
+          <CredenzaTitle>{t('modal-create-placement.title')}</CredenzaTitle>
+          <CredenzaDescription>
+            {t('modal-create-placement.description')}
+          </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
           <form
@@ -74,14 +82,14 @@ export function ModalCreatePlacement() {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Placering</Label>
+              <Label>{t('modal-create-placement.placement')}</Label>
               <Input
-                placeholder='Indtast navn for ny placering'
+                placeholder={t('modal-create-placement.placement-placeholder')}
                 {...register('name')}
               />
               {formState.errors.name && (
@@ -94,7 +102,7 @@ export function ModalCreatePlacement() {
               type='submit'
               disabled={pending || !formState.isValid}
               className='w-full md:w-auto py-3 text-lg'>
-              Opret
+              {t('modal-create-placement.create-button')}
             </Button>
           </form>
         </CredenzaBody>

@@ -1,47 +1,64 @@
+import { serverTranslation } from '@/app/i18n'
+import { NewApplicationError } from '@/lib/database/schema/errors'
+import { errorsService } from '@/service/errors'
 import { productService } from '@/service/products'
-import { validateRequest } from '@/service/user.utils'
+import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
+import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
-	request: NextRequest,
-	{ params: { id } }: { params: { id: string } },
+  request: NextRequest,
+  { params: { id } }: { params: { id: string } },
 ): Promise<NextResponse<unknown>> {
-	try {
-		const { session, user } = await validateRequest(request)
-		if (session == null || user == null) {
-			return NextResponse.json(
-				{
-					msg: 'Du har ikke adgang til denne ressource',
-				},
-				{
-					status: 401,
-				},
-			)
-		}
+  const { session, user } = await validateRequest(headers())
+  const lng = getLanguageFromRequest(headers())
+  const { t } = await serverTranslation(lng, 'common')
 
-		const productID = parseInt(id)
+  if (session == null || user == null) {
+    return NextResponse.json(
+      { msg: t('route-translations-productid.no-access-to-resource') },
+      { status: 401 },
+    )
+  }
 
-		const product = await productService.getByID(productID)
+  if (!user.appAccess) {
+    return NextResponse.json(
+      { msg: t('route-translations-productid.no-app-access') },
+      { status: 401 },
+    )
+  }
 
-		return NextResponse.json(
-			{
-				msg: 'success',
-				data: product,
-			},
-			{
-				status: 200,
-			},
-		)
-	} catch (e) {
-		console.error('Error fetching product by ID:', e)
+  try {
+    const productID = parseInt(id)
 
-		return NextResponse.json(
-			{
-				msg: 'Der skete en fejl på serveren, ved hentning af produkt',
-			},
-			{
-				status: 500,
-			},
-		)
-	}
+    const product = await productService.getByID(productID)
+
+    return NextResponse.json(
+      {
+        msg: 'success',
+        data: product,
+      },
+      { status: 200 },
+    )
+  } catch (e) {
+    console.error(t('route-translations-productid.error-fetching-product'), e)
+
+    const errorLog: NewApplicationError = {
+      userID: user.id,
+      customerID: user.customerID,
+      type: 'endpoint',
+      input: { id: id },
+      error:
+        (e as Error).message ??
+        `${t('route-translations-productid.error-fetching-product')} ${id}`,
+      origin: `GET api/v1/products/{id}`,
+    }
+
+    errorsService.create(errorLog)
+
+    return NextResponse.json(
+      { msg: t('route-translations-productid.server-error-product') },
+      { status: 500 },
+    )
+  }
 }

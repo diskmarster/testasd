@@ -1,4 +1,4 @@
-import { updateUnitAction } from '@/app/(site)/sys/enheder/actions'
+import { updateUnitAction } from '@/app/[lng]/(site)/sys/enheder/actions'
 import { siteConfig } from '@/config/site'
 import { Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,7 +9,9 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 
-import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
+import { createUnitValidation } from '@/app/[lng]/(site)/sys/enheder/validation'
+import { useTranslation } from '@/app/i18n/client'
+import { useLanguage } from '@/context/language'
 import {
   Credenza,
   CredenzaBody,
@@ -33,6 +35,8 @@ export function ModalUpdateUnit({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'enheder')
 
   const { handleSubmit, register, formState, setValue, reset } = useForm<
     z.infer<typeof createUnitValidation>
@@ -62,8 +66,8 @@ export function ModalUpdateUnit({
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: 'Enheden er opdateret succesfuldt.',
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.unit-updated')}`,
       })
     })
   }
@@ -84,9 +88,11 @@ export function ModalUpdateUnit({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Rediger enhed</CredenzaTitle>
+          <CredenzaTitle>
+            {t('modal-update-unit.update-unit-title')}
+          </CredenzaTitle>
           <CredenzaDescription>
-            Her kan du redigere en enhed
+            {t('modal-update-unit.update-unit-description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -96,7 +102,7 @@ export function ModalUpdateUnit({
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='!top-3 size-4' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -104,7 +110,7 @@ export function ModalUpdateUnit({
             <div className='mt-2 mb-2'>
               <div className='grid gap-2'>
                 <Label htmlFor='sku'>
-                  Navn på enhed
+                  {t('modal-update-unit.unit-name')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='name' type='text' {...register('name')} />
@@ -115,8 +121,11 @@ export function ModalUpdateUnit({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
-              Opdater
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
+              {t('modal-update-unit.update-button')}
             </Button>
           </form>
         </CredenzaBody>

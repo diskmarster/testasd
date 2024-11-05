@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import {
@@ -9,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useLanguage } from '@/context/language'
 import { Table } from '@tanstack/react-table'
 import { useEffect } from 'react'
 
@@ -19,6 +21,8 @@ export function TablePagination<TData>({
   table: Table<TData>
   pageSizes?: number[]
 }) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'common')
   useEffect(() => {
     if (
       !table.getState().pagination.pageSize ||
@@ -48,7 +52,8 @@ export function TablePagination<TData>({
           </SelectContent>
         </Select>
         <p className='text-sm font-medium text-muted-foreground hidden md:block'>
-          Rækker pr. side ({table.getFilteredRowModel().rows.length} total)
+          {t('table-pagination.rows-per-page')} (
+          {table.getFilteredRowModel().rows.length} total)
         </p>
       </div>
       <div className='space-x-2'>
@@ -59,7 +64,9 @@ export function TablePagination<TData>({
           disabled={!table.getCanPreviousPage()}
           aria-label='Go to previous page'>
           <Icons.arrowLeft className='size-4' />
-          <span className='sr-only'>Gå en side tilbage</span>
+          <span className='sr-only'>
+            {t('table-pagination.go-to-previous-page')}
+          </span>
         </Button>
         <Button
           variant='outline'
@@ -68,7 +75,9 @@ export function TablePagination<TData>({
           disabled={!table.getCanNextPage()}
           aria-label='Go to next page'>
           <Icons.arrowRight className='size-4' />
-          <span className='sr-only'>Gå til næste side</span>
+          <span className='sr-only'>
+            {t('table-pagination.go-to-next-page')}
+          </span>
         </Button>
       </div>
     </div>

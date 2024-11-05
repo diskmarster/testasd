@@ -3,7 +3,7 @@
 import {
   getProductOverviewColumns,
   getProductTableOverviewFilters,
-} from '@/app/(site)/admin/produkter/columns'
+} from '@/app/[lng]/(site)/admin/produkter/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import {
@@ -29,7 +29,6 @@ import {
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  RowSelectionState,
   SortingState,
   Updater,
   useReactTable,
@@ -38,10 +37,12 @@ import {
 import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
 import { TableToolbar } from '../table/table-toolbar'
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [100, 250, 500, 1000]
+const ROW_PER_PAGE = [25, 50, 75, 100]
 interface Props {
   data: FormattedProduct[]
   plan: Plan
@@ -52,18 +53,25 @@ interface Props {
 
 export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'product_cols'
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'produkter')
   const columns = useMemo(
-    () => getProductOverviewColumns(plan, user.role),
-    [user.role, plan],
+    () => getProductOverviewColumns(plan, user, lng, t),
+    [user, plan, lng, t],
   )
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     { id: 'isBarred', value: [false] },
   ])
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const visibility = JSON.parse(
@@ -108,7 +116,6 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     groupedColumnMode: 'reorder',
 
     onColumnFiltersChange: setColumnFilters,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,
@@ -121,7 +128,6 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
 
     state: {
       columnFilters,
-      rowSelection,
       sorting,
       expanded,
       columnVisibility,
@@ -135,9 +141,11 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
   })
 
   const filterFields = useMemo(
-    () => getProductTableOverviewFilters(plan, units, groups, table),
-    [plan, units, groups, table],
+    () => getProductTableOverviewFilters(plan, units, groups, table, lng, t),
+    [plan, units, groups, table, lng, t],
   )
+
+  if (!mounted) return null
 
   return (
     <div>
@@ -156,9 +164,9 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

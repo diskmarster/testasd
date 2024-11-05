@@ -1,7 +1,8 @@
 'use client'
 
-import { signUpInvitedAction } from '@/app/(auth)/invitering/[linkID]/actions'
-import { signUpInvitedValidation } from '@/app/(auth)/invitering/[linkID]/validation'
+import { signUpInvitedAction } from '@/app/[lng]/(auth)/invitering/[linkID]/actions'
+import { signUpInvitedValidation } from '@/app/[lng]/(auth)/invitering/[linkID]/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -16,6 +17,7 @@ import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { UserLink } from '@/lib/database/schema/auth'
 import { Customer } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
@@ -33,12 +35,16 @@ export function SignUpInvitedCard({
   customer: Customer
   inviteLink: UserLink
 }) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'opret')
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
       <CardHeader>
-        <CardTitle>Velkommen til {siteConfig.name}</CardTitle>
+        <CardTitle>
+          {t('sign-up-invited.welcome-to')} {siteConfig.name}
+        </CardTitle>
         <CardDescription>
-          {customer.company} har inviteret dig til deres firmakonto
+          {customer.company} {t('sign-up-invited.has-invited-you')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -50,8 +56,8 @@ export function SignUpInvitedCard({
             buttonVariants({ variant: 'link' }),
             'mx-auto h-auto p-0',
           )}
-          href={'/log-ind'}>
-          Har du allerede en bruger?
+          href={`/${lng}/log-ind`}>
+          {t('sign-up-invited.already-have-account')}
         </Link>
       </CardFooter>
     </Card>
@@ -67,19 +73,23 @@ function Form({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'opret')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = signUpInvitedValidation(validationT)
 
-  const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof signUpInvitedValidation>
-  >({
-    resolver: zodResolver(signUpInvitedValidation),
-    defaultValues: {
-      linkID: inviteLink.id,
-      email: inviteLink.email,
-      clientID: inviteLink.customerID,
+  const { handleSubmit, formState, register } = useForm<z.infer<typeof schema>>(
+    {
+      resolver: zodResolver(schema),
+      defaultValues: {
+        linkID: inviteLink.id,
+        email: inviteLink.email,
+        clientID: inviteLink.customerID,
+      },
     },
-  })
+  )
 
-  async function onSubmit(values: z.infer<typeof signUpInvitedValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const response = await signUpInvitedAction(values)
       if (response && response.serverError) {
@@ -95,12 +105,12 @@ function Form({
       {error && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+          <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       <div className='grid gap-2'>
-        <Label htmlFor='name'>Navn</Label>
+        <Label htmlFor='name'>{t('sign-up-invited.name')}</Label>
         <Input id='name' type='text' {...register('name')} />
         {formState.errors.name && (
           <p className='text-sm text-destructive '>
@@ -109,7 +119,7 @@ function Form({
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='email'>Email</Label>
+        <Label htmlFor='email'>{t('sign-up-invited.email')}</Label>
         <Input
           id='email'
           type='email'
@@ -123,7 +133,7 @@ function Form({
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='password'>Kodeord</Label>
+        <Label htmlFor='password'>{t('sign-up-invited.password')}</Label>
         <PasswordInput id='password' {...register('password')} />
         {formState.errors.password && (
           <p className='text-sm text-destructive '>
@@ -132,7 +142,9 @@ function Form({
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='confirmPassword'>Bekræft kodeord</Label>
+        <Label htmlFor='confirmPassword'>
+          {t('sign-up-invited.confirm-password')}
+        </Label>
         <PasswordInput id='confirmPassword' {...register('confirmPassword')} />
         {formState.errors.confirmPassword && (
           <p className='text-sm text-destructive '>
@@ -141,7 +153,7 @@ function Form({
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='pin'>PIN-Kode</Label>
+        <Label htmlFor='pin'>{t('sign-up-invited.pin')}</Label>
         <PasswordInput id='pin' {...register('pin')} />
         {formState.errors.pin && (
           <p className='text-sm text-destructive '>
@@ -152,7 +164,7 @@ function Form({
 
       <Button type='submit' className='flex items-center gap-2'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        Opret
+        {t('sign-up-invited.create-button')}
       </Button>
     </form>
   )

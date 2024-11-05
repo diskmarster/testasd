@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX `nl_product_customer_id_barcode_unique` ON `nl_product` (`customer_id`,`barcode`);--> statement-breakpoint
+CREATE UNIQUE INDEX `nl_product_customer_id_sku_unique` ON `nl_product` (`customer_id`,`sku`);

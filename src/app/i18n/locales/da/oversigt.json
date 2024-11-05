@@ -1,0 +1,68 @@
+{
+  "overview": "Oversigt",
+  "overview-description": "Se en oversigt over din varebeholdning",
+
+  "modal-update-inventory.translations": "",
+  "update-inventory": "Opdater beholdning",
+  "update-inventory-description": "Opdater din beholdning ved at lave en tilgang eller afgang",
+  "incoming": "Tilgang",
+  "outgoing": "Afgang",
+  "product": "Vare",
+  "product-placeholder": "Søg efter en vare",
+  "use-existing": "Brug eksisterende",
+  "create-new": "Opret ny",
+  "placement": "Placering",
+  "placement-placeholder": "Søg i placering..",
+  "new-placement-placeholder": "Skriv ny placering",
+  "batch-placeholder": "Søg i batchnr..",
+  "new-batch-placeholder": "Skriv nyt batchnr",
+  "use-account-case": "Brug konto/sag?",
+  "use-account-case-placeholder": "Skriv konto/sag",
+  "create-button": "Opret",
+
+  "modal-move-inventory-translations": "",
+  "inventory-moved": "Beholdning flyttet",
+  "move-inventory": "Flyt beholdning",
+  "move-inventory-description": "Opdater beholdning ved at flytte en beholdning til en anden placering",
+  "from-placement": "Fra placering",
+  "to-placement": "Til placering",
+  "from-batch": "Fra batch",
+  "moveable-quantity": "Flytbar beholdning:",
+  "moveable-quantity-must-be-picked": "En beholdning skal vælges, før du kan flytte den.",
+  "move-button": "Flyt",
+
+  "overview-table-translations": "",
+  "inventory": "Ingen lagerbeholdning",
+
+  "columns": "",
+  "barcode": "Stregkode",
+  "barcode-placeholder": "Søg i stregkode",
+  "product-No.": "Varenr.",
+  "product-No.-placeholder": "Søg i varenr.",
+  "product-group": "Varegruppe",
+  "product-text1": "Varetekst 1",
+  "product-text1-placeholder": "Søg i varetekst 1",
+  "product-text2": "Varetekst 2",
+  "product-text2-placeholder": "Søg i varetekst 2",
+  "product-text3": "Varetekst 3",
+  "product-text3-placeholder": "Søg i varetekst 3",
+  "cost-price": "Kostpris",
+  "sales-price": "Salgspris",
+  "quantity": "Beh.",
+  "unit": "Enhed",
+  "updated": "Opdateret",
+  "batch": "Batch",
+
+  "overview-table-actions": "",
+  "update": "Opdater beholdning",
+  "move": "Flyt beholdning",
+
+  "toasts": {
+    "was-created": " blev oprettet succesfuldt"
+  },
+
+  "new-product-placeholder": "Nyt produkt",
+  "product-empty-message": "Ingen produkter fundet",
+  "placement-empty-message": "Ingen placeringer fundet",
+  "batch-empty-message": "Ingen batches fundet"
+}

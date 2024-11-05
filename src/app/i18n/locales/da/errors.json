@@ -1,0 +1,28 @@
+{
+  "page": {
+    "title": "Fejlbeskeder",
+    "description": "Få et overblik over alle fejlbeskeder på NemLager"
+  },
+  "columns": {
+    "inserted": "Oprettet",
+    "user": "Bruger",
+    "user_placeholder": "Søg i brugere...",
+    "company": "Firma",
+    "company_placeholder": "Søg i firma...",
+    "path": "Path",
+    "more": "Detaljer",
+    "type": "Type",
+    "origin": "Oprindelse",
+    "origin_placeholder": "Søg i oprindelse..."
+  },
+  "view-modal": {
+    "trigger": "Se mere",
+    "title": "Detaljer for fejlbesked",
+    "sub": "Skete {{time}} af {{user}} fra {{company}}",
+    "input": "Input",
+    "output": "Output"
+  },
+  "table": {
+    "no-rows": "Ingen fejlbeskeder"
+  }
+}

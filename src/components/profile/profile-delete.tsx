@@ -1,6 +1,7 @@
 'use client'
 
-import { deleteProfileAction } from '@/app/(site)/profil/actions'
+import { deleteProfileAction } from '@/app/[lng]/(site)/profil/actions'
+import { useTranslation } from '@/app/i18n/client'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,18 +17,21 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 
 export function ProfileDelete({ user }: { user?: UserNoHash }) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'profil')
   return (
     <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
       <div className='grid gap-0.5'>
-        <Label>Slet bruger</Label>
+        <Label>{t('profile-delete.delete-user')}</Label>
         <p className='text-sm text-muted-foreground'>
-          Slet bruger fra platformen
+          {t('profile-delete.delete-description')}
         </p>
       </div>
       <DeleteDialog user={user} />
@@ -38,37 +42,42 @@ export function ProfileDelete({ user }: { user?: UserNoHash }) {
 function DeleteDialog({ user: profileUser }: { user?: UserNoHash }) {
   const { session, user } = useSession()
   const [pending, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'profil')
   if (!session) return null
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant='outline' className='hover:text-destructive'>
-          Slet bruger
+          {t('profile-delete.delete-user')}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Slet bruger</AlertDialogTitle>
+          <AlertDialogTitle>{t('profile-delete.delete-user')}</AlertDialogTitle>
           <AlertDialogDescription>
-            Denne handling er permanent og kan ikke fortrydes når først det er
-            fuldført.
+            {t('profile-delete-dialog.delete-user-alert')}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Luk</AlertDialogCancel>
+          <AlertDialogCancel>
+            {t('profile-delete-dialog.cancel-button')}
+          </AlertDialogCancel>
           <AlertDialogAction
             className='flex items-center gap-2'
             onClick={() => {
               startTransition(async () => {
-                const res = await deleteProfileAction({ userId: profileUser ? profileUser.id : user.id })
+                const res = await deleteProfileAction({
+                  userId: profileUser ? profileUser.id : user.id,
+                })
                 if (res && res.serverError)
-                  toast.error(siteConfig.errorTitle, {
+                  toast.error(t(`common:${siteConfig.errorTitle}`), {
                     description: res.serverError,
                   })
               })
             }}>
             {pending && <Icons.spinner className='size-4 animate-spin' />}
-            Slet
+            {t('profile-delete-dialog.delete-button')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -1,0 +1,42 @@
+{
+  "page": {
+    "title": "History",
+    "description": "See a history of all your item movements"
+  },
+
+  "table-history": {
+    "no-history": "No history"
+  },
+
+  "history-columns": {
+    "created": "Created",
+    "productNo": "Product No.",
+    "barcode": "Barcode",
+    "product-group": "Product group",
+    "text1": "Text1",
+    "text2": "Text2",
+    "text3": "Text3",
+    "cost-price": "Cost price",
+    "unit": "Unit",
+    "quantity": "Quantity",
+    "placement": "Placement",
+    "batchNo": "Batch No.",
+    "type": "Unknown",
+    "type_tilgang": "Incoming",
+    "type_afgang": "Outgoing",
+    "type_regulering": "Regulation",
+    "type_flyt": "Move",
+    "type_import": "Import",
+    "reference": "Account/case",
+    "user": "User",
+
+    "placeholders": {
+      "productNo": "Search by product no.",
+      "barcode": "Search by barcode",
+      "text1": "Search by text1",
+      "text2": "Search by text2",
+      "text3": "Search by text3",
+      "reference": "Search by account/case"
+    }
+  }
+}

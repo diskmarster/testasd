@@ -3,7 +3,8 @@
 import {
   getTablePlacementColumns,
   getTablePlacementFilters,
-} from '@/app/(site)/admin/placeringer/columns'
+} from '@/app/[lng]/(site)/admin/placeringer/columns'
+import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -15,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { LanguageContext, useLanguage } from '@/context/language'
 import { Placement } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
@@ -38,7 +40,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [100, 250, 500, 1000]
+const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
   data: Placement[]
@@ -47,7 +49,9 @@ interface Props {
 
 export function TablePlacement({ data, user }: Props) {
   const LOCALSTORAGE_KEY = 'placements_cols'
-  const columns = useMemo(() => getTablePlacementColumns(), [])
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'placeringer')
+  const columns = useMemo(() => getTablePlacementColumns(lng, t), [lng, t])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -125,8 +129,8 @@ export function TablePlacement({ data, user }: Props) {
   })
 
   const filterFields = useMemo(
-    () => getTablePlacementFilters(table, data),
-    [table, data],
+    () => getTablePlacementFilters(table, data, lng, t),
+    [table, data, lng, t],
   )
 
   if (!mounted) return null
@@ -148,9 +152,9 @@ export function TablePlacement({ data, user }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -170,7 +174,7 @@ export function TablePlacement({ data, user }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  Ingen historik
+                  {t('table-placements.no-placements')}
                 </TableCell>
               </TableRow>
             )}

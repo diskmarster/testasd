@@ -3,7 +3,8 @@
 import {
   getTableHistoryColumns,
   getTableHistoryFilters,
-} from '@/app/(site)/historik/columns'
+} from '@/app/[lng]/(site)/historik/columns'
+import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -15,9 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { LanguageContext } from '@/context/language'
 import { Plan } from '@/data/customer.types'
-import { FormattedHistory } from '@/data/inventory.types'
-import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
+import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
   flexRender,
@@ -36,14 +37,14 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [100, 250, 500, 1000]
+const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
-  data: FormattedHistory[]
+  data: History[]
   user: User
   plan: Plan
   units: Unit[]
@@ -62,11 +63,12 @@ export function TableHistory({
   batches,
 }: Props) {
   const LOCALSTORAGE_KEY = 'history_cols'
+  const lng = useContext(LanguageContext)
+  const { t } = useTranslation(lng, 'historik')
   const columns = useMemo(
-    () => getTableHistoryColumns(plan, user.role),
-    [user.role, plan],
+    () => getTableHistoryColumns(plan, user, lng, t),
+    [user, plan, lng, t],
   )
-
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -142,8 +144,17 @@ export function TableHistory({
 
   const filterFields = useMemo(
     () =>
-      getTableHistoryFilters(plan, table, units, groups, placements, batches),
-    [plan, table, units, groups, placements, batches],
+      getTableHistoryFilters(
+        plan,
+        table,
+        units,
+        groups,
+        placements,
+        batches,
+        lng,
+        t,
+      ),
+    [plan, table, units, groups, placements, batches, lng, t],
   )
 
   if (!mounted) return null
@@ -187,7 +198,7 @@ export function TableHistory({
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  Ingen historik
+                  {t('table-history.no-history')}
                 </TableCell>
               </TableRow>
             )}

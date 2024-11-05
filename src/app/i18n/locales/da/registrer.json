@@ -1,0 +1,12 @@
+{
+  "title": "Velkommen",
+  "description": "Før du kan begynde, skal du først oprette en admin-konto.",
+  "customer?": "Allerede kunde? Log ind",
+  "name": "Navn",
+  "password": "Kodeord",
+  "confirm-password": "Bekræft kodeord",
+  "pin": "PIN-Kode",
+  "create-button": "Opret",
+  "default-admin-name": "Firma Admin",
+  "error-msg": "Der skete en fejl. Prøv venligst igen."
+}

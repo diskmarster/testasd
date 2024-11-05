@@ -1,10 +1,11 @@
-import { updateGroupAction } from '@/app/(site)/admin/varegrupper/actions'
-import { createGroupValidation } from '@/app/(site)/admin/varegrupper/validation'
+import { updateGroupAction } from '@/app/[lng]/(site)/admin/varegrupper/actions'
+import { createGroupValidation } from '@/app/[lng]/(site)/admin/varegrupper/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
-import { useSession } from '@/context/session'
+import { LanguageContext } from '@/context/language'
 import { Group } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState, useTransition } from 'react'
+import { useContext, useEffect, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -33,20 +34,24 @@ export function ModalUpdateGroup({
 }) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useContext(LanguageContext)
+  const { t } = useTranslation(lng, 'varegrupper')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createGroupValidation(validationT)
 
   const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
-    z.infer<typeof createGroupValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createGroupValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       name: groupToEdit?.name || '',
     },
   })
 
-  async function onSubmit(values: z.infer<typeof createGroupValidation>) {
+  async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       if (!groupToEdit) {
-        setError('Ingen varegruppe at redigere')
+        setError(t('update-product-group-modal.no-product-group'))
         return
       }
 
@@ -62,8 +67,8 @@ export function ModalUpdateGroup({
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: 'Varegruppen er opdateret succesfuldt.',
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.update-group')}`,
       })
     })
   }
@@ -84,9 +89,9 @@ export function ModalUpdateGroup({
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Rediger varegruppe</CredenzaTitle>
+          <CredenzaTitle>{t('update-product-group-modal.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Her kan du redigere en varegruppe
+            {t('update-product-group-modal.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -96,7 +101,7 @@ export function ModalUpdateGroup({
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='!top-3 size-4' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -104,7 +109,7 @@ export function ModalUpdateGroup({
             <div className='mt-2 mb-2'>
               <div className=''>
                 <Label htmlFor='sku'>
-                  Navn på varegruppe
+                  {t('update-product-group-modal.name')}
                   <span className='text-destructive'> * </span>
                 </Label>
                 <Input id='name' type='text' {...register('name')} />
@@ -115,8 +120,11 @@ export function ModalUpdateGroup({
                 )}
               </div>
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto' >
-              Opdater
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
+              {t('update-product-group-modal.update-button')}
             </Button>
           </form>
         </CredenzaBody>

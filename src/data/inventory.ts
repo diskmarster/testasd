@@ -1,10 +1,5 @@
-import {
-  FormattedHistory,
-  FormattedInventory,
-  FormattedReorder,
-} from '@/data/inventory.types'
+import { FormattedInventory, FormattedReorder } from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
-import { userTable } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
@@ -47,7 +42,6 @@ const PLACEMENT_COLS = getTableColumns(placementTable)
 const BATCH_COLS = getTableColumns(batchTable)
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
-const { hash, ...USER_COLS } = getTableColumns(userTable)
 const HISTORY_COLS = getTableColumns(historyTable)
 const REORDER_COLS = getTableColumns(reorderTable)
 
@@ -84,7 +78,7 @@ export const inventory = {
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .limit(pageSize)
-      .offset((page-1) * pageSize)
+      .offset((page - 1) * pageSize)
 
     return inventory
   },
@@ -240,7 +234,7 @@ export const inventory = {
       )
     return resultSet.rowsAffected == 1
   },
-  createHitoryLog: async function(
+  createHistoryLog: async function(
     historyData: NewHistory,
     trx: TRX = db,
   ): Promise<History | undefined> {
@@ -284,30 +278,13 @@ export const inventory = {
   getHistoryByLocationID: async function(
     locationID: LocationID,
     trx: TRX = db,
-  ): Promise<FormattedHistory[]> {
+  ): Promise<History[]> {
     const history = await trx
       .select({
         ...HISTORY_COLS,
-        product: {
-          ...PRODUCT_COLS,
-          unit: UNIT_COLS.name,
-          group: GROUP_COLS.name,
-        },
-        placement: { ...PLACEMENT_COLS },
-        batch: { ...BATCH_COLS },
-        user: { ...USER_COLS },
       })
       .from(historyTable)
       .where(eq(historyTable.locationID, locationID))
-      .innerJoin(productTable, eq(productTable.id, historyTable.productID))
-      .innerJoin(userTable, eq(userTable.id, historyTable.userID))
-      .innerJoin(
-        placementTable,
-        eq(placementTable.id, historyTable.placementID),
-      )
-      .innerJoin(batchTable, eq(batchTable.id, historyTable.batchID))
-      .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
-      .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .orderBy(desc(historyTable.inserted))
 
     return history
@@ -391,7 +368,12 @@ export const inventory = {
         },
       })
       .from(reorderTable)
-      .where(eq(reorderTable.locationID, locationID))
+      .where(
+        and(
+          eq(reorderTable.locationID, locationID),
+          eq(inventoryTable.locationID, locationID)
+        )
+      )
       .innerJoin(productTable, eq(productTable.id, reorderTable.productID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
@@ -486,10 +468,48 @@ export const inventory = {
     return await trx
       .select()
       .from(productTable)
-      .where(
-        and(
-          eq(productTable.customerID, customerID),
-        ),
-      )
+      .where(and(eq(productTable.customerID, customerID)))
+  },
+  getPlacementByID: async function(
+    placementID: PlacementID,
+    trx: TRX = db,
+  ): Promise<Placement | undefined> {
+    const [res] = await trx
+      .select()
+      .from(placementTable)
+      .where(eq(placementTable.id, placementID))
+
+    return res
+  },
+  getBatchByID: async function(
+    batchID: BatchID,
+    trx: TRX = db,
+  ): Promise<Batch | undefined> {
+    const [res] = await trx
+      .select()
+      .from(batchTable)
+      .where(eq(batchTable.id, batchID))
+
+    return res
+  },
+  createMany: async function(
+    inventories: NewInventory[],
+    trx: TRX = db,
+  ): Promise<Inventory[]> {
+    return await trx.insert(inventoryTable).values(inventories).returning()
+  },
+  getUnitByID: async function(
+    unitID: UnitID,
+    trx: TRX = db,
+  ): Promise<Unit | undefined> {
+    const [res] = await trx.select().from(unitTable).where(eq(unitTable.id, unitID))
+    return res
+  },
+  getGroupByID: async function(
+    groupID: GroupID,
+    trx: TRX = db,
+  ): Promise<Group | undefined> {
+    const [res] = await trx.select().from(groupTable).where(eq(groupTable.id, groupID))
+    return res
   },
 }

@@ -1,12 +1,13 @@
 'use client'
 
-import { createUnitAction } from '@/app/(site)/sys/enheder/actions'
-import { createUnitValidation } from '@/app/(site)/sys/enheder/validation'
+import { createUnitAction } from '@/app/[lng]/(site)/sys/enheder/actions'
+import { createUnitValidation } from '@/app/[lng]/(site)/sys/enheder/validation'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
   CredenzaBody,
   CredenzaContent,
+  CredenzaDescription,
   CredenzaHeader,
   CredenzaTitle,
   CredenzaTrigger,
@@ -21,11 +22,15 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 
 export function ModalCreateUnit() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'enheder')
   const { handleSubmit, register, formState, reset } = useForm<
     z.infer<typeof createUnitValidation>
   >({
@@ -46,8 +51,8 @@ export function ModalCreateUnit() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${values.name} enhed oprettet`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.create-unit')}`,
       })
     })
   }
@@ -60,7 +65,10 @@ export function ModalCreateUnit() {
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret ny Enhed</CredenzaTitle>
+          <CredenzaTitle>{t('modal-create-unit.create-unit-title')}</CredenzaTitle>
+          <CredenzaDescription>
+            {t('modal-create-unit.create-unit-description')}
+          </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
           <form
@@ -69,14 +77,14 @@ export function ModalCreateUnit() {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Enhed navn</Label>
+              <Label>{t('modal-create-unit.unit-name')}</Label>
               <Input
-                placeholder='Indtast navn for ny enhed'
+                placeholder={t('modal-create-unit.unit-name-placeholder')}
                 {...register('name')}
               />
               {formState.errors.name && (
@@ -85,8 +93,11 @@ export function ModalCreateUnit() {
                 </p>
               )}
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto'>
-              Opret
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
+              {t('modal-create-unit.create-button')}
             </Button>
           </form>
         </CredenzaBody>

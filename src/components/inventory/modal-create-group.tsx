@@ -1,7 +1,8 @@
 'use client'
 
-import { createGroupAction } from '@/app/(site)/admin/varegrupper/actions'
-import { createGroupValidation } from '@/app/(site)/admin/varegrupper/validation'
+import { createGroupAction } from '@/app/[lng]/(site)/admin/varegrupper/actions'
+import { createGroupValidation } from '@/app/[lng]/(site)/admin/varegrupper/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
   Credenza,
@@ -15,25 +16,28 @@ import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
+import { LanguageContext } from '@/context/language'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useTransition } from 'react'
+import { useContext, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 
-
-
 export function ModalCreateProductGroup() {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | undefined>()
+  const lng = useContext(LanguageContext)
+  const { t } = useTranslation(lng, 'varegrupper')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createGroupValidation(validationT)
 
   const { handleSubmit, register, formState, reset } = useForm<
-    z.infer<typeof createGroupValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createGroupValidation),
-    defaultValues: { },
+    resolver: zodResolver(schema),
+    defaultValues: {},
   })
 
   function onOpenChange(open: boolean) {
@@ -41,7 +45,7 @@ export function ModalCreateProductGroup() {
     setOpen(open)
   }
 
-  const onSubmit = async (values: z.infer<typeof createGroupValidation>) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransition(async () => {
       const res = await createGroupAction(values)
       if (res && res.serverError) {
@@ -51,8 +55,8 @@ export function ModalCreateProductGroup() {
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${values.name} varegruppe oprettet`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${values.name} ${t('toasts.create-group')}}`,
       })
     })
   }
@@ -65,7 +69,7 @@ export function ModalCreateProductGroup() {
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret ny varegruppe</CredenzaTitle>
+          <CredenzaTitle>{t('create-product-group-modal.title')}</CredenzaTitle>
         </CredenzaHeader>
         <CredenzaBody>
           <form
@@ -74,14 +78,16 @@ export function ModalCreateProductGroup() {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
+                <AlertTitle>
+                  {toast.error(t(`common:${siteConfig.errorTitle}`))}
+                </AlertTitle>
+                <AlertDescription></AlertDescription>
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Varegruppenavn</Label>
+              <Label>{t('create-product-group-modal.name')}</Label>
               <Input
-                placeholder='Indtast navn for ny varegruppe'
+                placeholder={t('create-product-group-modal.name-placeholder')}
                 {...register('name')}
               />
               {formState.errors.name && (
@@ -90,8 +96,11 @@ export function ModalCreateProductGroup() {
                 </p>
               )}
             </div>
-            <Button type='submit' disabled={pending || !formState.isValid} className='w-full md:w-auto' >
-              Opret
+            <Button
+              type='submit'
+              disabled={pending || !formState.isValid}
+              className='w-full md:w-auto'>
+              {t('create-product-group-modal.create-button')}
             </Button>
           </form>
         </CredenzaBody>

@@ -1,12 +1,14 @@
 'use client'
 
-import { updateCustomerAction } from '@/app/(site)/admin/organisation/actions'
-import { updateCustomerValidation } from '@/app/(site)/admin/organisation/validation'
+import { updateCustomerAction } from '@/app/[lng]/(site)/admin/organisation/actions'
+import { updateCustomerValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { Customer } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,18 +23,22 @@ interface Props {
 }
 
 export function FormCompanyEdit({ customer }: Props) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
   const [pending, startTransition] = useTransition()
   const [formError, setFormError] = useState<string | null>(null)
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = updateCustomerValidation(validationT)
 
-  const { handleSubmit, formState, register } = useForm<
-    z.infer<typeof updateCustomerValidation>
-  >({
-    resolver: zodResolver(updateCustomerValidation),
-    defaultValues: {
-      company: customer.company,
-      email: customer.email,
+  const { handleSubmit, formState, register } = useForm<z.infer<typeof schema>>(
+    {
+      resolver: zodResolver(schema),
+      defaultValues: {
+        company: customer.company,
+        email: customer.email,
+      },
     },
-  })
+  )
 
   return (
     <form
@@ -52,12 +58,12 @@ export function FormCompanyEdit({ customer }: Props) {
       {formError && (
         <Alert variant='destructive'>
           <Icons.alert className='size-4 !top-3' />
-          <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+          <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
           <AlertDescription>{formError}</AlertDescription>
         </Alert>
       )}
       <div className='grid gap-2'>
-        <Label htmlFor='name'>Firmanavn</Label>
+        <Label htmlFor='name'>{t('form-company-edit.company-name')}</Label>
         <Input id='name' type='text' {...register('company')} />
         {formState.errors.company && (
           <p className='text-sm text-destructive '>
@@ -66,7 +72,7 @@ export function FormCompanyEdit({ customer }: Props) {
         )}
       </div>
       <div className='grid gap-2'>
-        <Label htmlFor='email'>Email</Label>
+        <Label htmlFor='email'>{t('form-company-edit.email')}</Label>
         <Input id='email' type='email' {...register('email')} />
         {formState.errors.email && (
           <p className='text-sm text-destructive '>
@@ -80,7 +86,7 @@ export function FormCompanyEdit({ customer }: Props) {
         type='submit'
         className='flex items-center gap-2 md:w-fit'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        Opdater
+        {t('form-company-edit.update-button')}
       </Button>
     </form>
   )

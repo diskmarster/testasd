@@ -1,0 +1,28 @@
+{
+  "page": {
+    "title": "Error messages",
+    "description": "View latest error messages"
+  },
+  "columns": {
+    "inserted": "Created",
+    "user": "User",
+    "user_placeholder": "Search users...",
+    "company": "Company",
+    "company_placeholder": "Search company...",
+    "path": "Path",
+    "more": "Details",
+    "type": "Type",
+    "origin": "Origin",
+    "origin_placeholder": "Search origin..."
+  },
+  "view-modal": {
+    "trigger": "View more",
+    "title": "Details for error message",
+    "sub": "Happened {{time}} by {{user}} from {{company}}",
+    "input": "Input",
+    "output": "Output"
+  },
+  "table": {
+    "no-rows": "No error messages"
+  }
+}

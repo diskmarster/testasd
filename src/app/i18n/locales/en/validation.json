@@ -1,0 +1,109 @@
+{
+  "updateProfile": {
+    "name": {
+      "required": "Name is required",
+      "minLength": "Name must be at least {{minLength}} characters long",
+      "maxLength": "Name must be at most {{maxLength}} characters long"
+    },
+    "email": {
+      "required": "Email is required",
+      "email": "Email must be a valid email"
+    },
+    "new-password": {
+      "required": "Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character.",
+      "equal": "New password and confirm password must match.",
+      "same": "Your current password cannot be the same as your new password."
+    },
+    "new-pin": {
+      "pinLength": "PIN must be {{pinLength}} characters long",
+      "equal": "New PIN and confirm PIN must match.",
+      "same": "Your current PIN cannot be the same as your new PIN."
+    }
+  },
+  "updateInventory": {
+    "invalid-placement": "Invalid placement",
+    "invalid-batch": "Invalid batch",
+    "empty-placement": "Placement cannot be empty",
+    "empty-batch": "Batch cannot be empty",
+    "move-quantity-type": "Quantity must be a number",
+    "move-quantity-number": "Quantity must be greater than 0"
+  },
+  "restock": {
+    "product-required": "Product is required",
+    "buffer-number": "Buffer must be a number",
+    "buffer-positive": "Buffer must be greater than 0",
+    "minimum-quantity-positive": "Minimum quantity must be greater than 0",
+    "ordered-quantity-positive": "Ordered quantity must be greater than 0"
+  },
+  "product-groups": {
+    "name-required": "Name is required"
+  },
+  "products": {
+    "sku-required": "Product No. is required",
+    "sku-preprocess": "Product No. must minimum be 1 character",
+    "barcode-required": "Barcode is required",
+    "barcode-preprocess": "Barcode must minimum be 1 character",
+    "product-group-required": "Product group is required",
+    "product-group-preprocess": "Product group must minimum be 1 character",
+    "unit-required": "Unit is required",
+    "unit-preprocess-unknown-type": "Unknown unit. Maybe try: ",
+    "product-text-required": "Product text is required",
+    "product-text-preprocess": "Product text must minimum be 1 character",
+    "cost-price-required": "Cost price is required",
+    "cost-price-type": "Cost price must be a number",
+    "cost-price-not-negative": "Cost price cannot be negative and must be a number.",
+    "sales-price-type": "Sales price must be a number",
+    "barred-values": "Unknown value in barred. Use true, false, ja or nej",
+    "unknown-column": "Unknown column"
+  },
+  "placement": {
+    "name-required": "Name is required",
+    "name-minLength": "Name must be at least {{minLength}} characters long"
+  },
+  "organisation": {
+    "email-valid": "Email must be a valid email",
+    "minimum-location": "At least one location must be picked",
+    "couldnt-find-customer-information": "Couldn't find the customer's information. Try to close and re-open the pop-up window.",
+    "location-name-minLength": "Location name must be at least {{minLength}} characters long",
+    "location-name-maxLength": "Location name must be at most {{maxLength}} characters long",
+    "couldnt-find-location-information": "Couldn't find the location's information. Try to close and re-open the pop-up window.",
+    "minimum-user": "At least one user must be picked",
+    "company-name-minLength": "Company name must be at least {{minLength}} characters long",
+    "company-name-maxLength": "Company name must be at most {{maxLength}} characters long"
+  },
+  "register": {
+    "name-minLength": "Name must be at least {{minLength}} characters long",
+    "name-maxLength": "Name can be at most {{maxLength}} characters long",
+    "email": "Email must be a valid email address",
+    "password": "Password must be at least 8 characters.",
+    "confirm-password": "Password and confirm password must match",
+    "pin": "PIN must be 4 characters long",
+    "pin-must-be-number": "PIN must consist of numbers"
+  },
+  "create-customer": {
+    "name-minLength": "Name must be at least {{minLength}} characters long",
+    "name-maxLength": "Name can be at most {{maxLength}} characters long",
+    "email": "Email must be a valid email address"
+  },
+  "log-in": {
+    "email": "Email must be a valid email address",
+    "password": "Password must be at least 8 characters."
+  },
+  "sign-up-invited": {
+    "name-minLength": "Name must be at least {{minLength}} characters long",
+    "name-maxLength": "Name can be at most {{maxLength}} characters long",
+    "email": "Email must be a valid email address",
+    "password": "Password must be at least 8 characters.",
+    "confirm-password": "Password and confirm password must match",
+    "pin": "PIN must be 4 characters long",
+    "pin-must-be-number": "PIN must consist of numbers"
+  },
+  "reset-password": {
+    "password": "Password must be at least 8 characters.",
+    "confirm-password": "Password and confirm password must match"
+  },
+  "reset-pin": {
+    "pin": "The PIN must be {{length}} digits.",
+    "confirm-pin": "PIN and confirm PIN must match"
+  }
+}

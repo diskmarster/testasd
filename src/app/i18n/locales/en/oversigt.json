@@ -1,0 +1,63 @@
+{
+  "overview": "Overview",
+  "overview-description": "See an overview of your inventory",
+
+  "modal-update-inventory.translations": "",
+  "update-inventory": "Update inventory",
+  "update-inventory-description": "Update your inventory by making an incoming or outgoing transaction",
+  "incoming": "Incoming",
+  "outgoing": "Outgoing",
+  "product": "Product",
+  "product-placeholder": "Search for a product",
+  "use-existing": "Use existing",
+  "create-new": "Create new",
+  "placement": "Placement",
+  "placement-placeholder": "Search for placement",
+  "new-placement-placeholder": "Write new placement",
+  "batch": "Batch No.",
+  "batch-placeholder": "Search for Batch No.",
+  "new-batch-placeholder": "Write new Batch No.",
+  "use-account-case": "Use account/case?",
+  "use-account-case-placeholder": "Write account/case",
+  "create-button": "Create",
+
+  "modal-move-inventory-translations": "",
+  "inventory-moved": "Quantity moved",
+  "move-inventory": "Move quantity",
+  "move-inventory-description": "Update quantity by moving a quantity to another placement",
+  "from-placement": "From Placement",
+  "to-placement": "To Placement",
+  "from-batch": "From Batch",
+  "moveable-quantity": "Moveable quantity:",
+  "moveable-quantity-must-be-picked": "A quantity must be picked before you can move it.",
+  "move-button": "Move",
+
+  "overview-table-translations": "",
+  "inventory": "No inventory",
+
+  "columns": "",
+  "barcode": "Barcode",
+  "barcode-placeholder": "Search by barcode",
+  "product-No.": "Product No.",
+  "product-No.-placeholder": "Search by product No.",
+  "product-group": "Product Group",
+  "product-text1": "Product Text 1",
+  "product-text1-placeholder": "Search by Product Text 1",
+  "product-text2": "Product Text 2",
+  "product-text2-placeholder": "Search by Product Text 2",
+  "product-text3": "Product Text 3",
+  "product-text3-placeholder": "Search by Product Text 3",
+  "cost-price": "Cost price",
+  "sales-price": "Sales price",
+  "quantity": "Qty.",
+  "unit": "Unit",
+
+  "toasts": {
+    "was-created": " was created successfully"
+  },
+
+  "new-product-placeholder": "New product",
+  "product-empty-message": "No products found",
+  "placement-empty-message": "No placements found",
+  "batch-empty-message": "No batches found"
+}

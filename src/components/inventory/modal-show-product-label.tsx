@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/app/i18n/client'
 import {
   Credenza,
   CredenzaBody,
@@ -9,6 +10,7 @@ import {
   CredenzaTitle,
   CredenzaTrigger,
 } from '@/components/ui/credenza'
+import { useLanguage } from '@/context/language'
 import { FormattedProduct } from '@/data/products.types'
 import { cn } from '@/lib/utils'
 import { QRCodeSVG } from 'qrcode.react'
@@ -23,6 +25,9 @@ interface Props {
 
 export function ModalShowProductLabel({ product }: Props) {
   const ref = useRef<HTMLDivElement>(null)
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'other')
+
   return (
     <Credenza>
       <CredenzaTrigger asChild>
@@ -32,9 +37,9 @@ export function ModalShowProductLabel({ product }: Props) {
       </CredenzaTrigger>
       <CredenzaContent className='max-w-sm'>
         <CredenzaHeader>
-          <CredenzaTitle>Produkt label</CredenzaTitle>
+          <CredenzaTitle>{t('modal-show-product-label.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Print label til dine produkter
+            {t('modal-show-product-label.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody className='space-y-4 pb-4 md:pb-0'>
@@ -54,7 +59,9 @@ export function ModalShowProductLabel({ product }: Props) {
                 </p>
               </div>
               <div className='flex items-end justify-between'>
-                <p className='print:text-xs'>Vnr: {product.sku}</p>
+                <p className='print:text-xs'>
+                  {t('modal-show-product-label.prod-no')} {product.sku}
+                </p>
                 <QRCodeSVG
                   value={product.barcode}
                   className='print:size-10 size-16'

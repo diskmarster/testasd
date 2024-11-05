@@ -3,7 +3,8 @@
 import {
   getTableUnitColumns,
   getTableUnitFilters,
-} from '@/app/(site)/sys/enheder/columns'
+} from '@/app/[lng]/(site)/sys/enheder/columns'
+import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -15,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useLanguage } from '@/context/language'
 import { Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
@@ -38,7 +40,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [100, 250, 500, 1000]
+const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
   user: User
@@ -47,7 +49,9 @@ interface Props {
 
 export function UnitOverview({ units, user }: Props) {
   const LOCALSTORAGE_KEY = 'unit_cols'
-  const columns = useMemo(() => getTableUnitColumns(), [])
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'enheder')
+  const columns = useMemo(() => getTableUnitColumns(lng, t), [lng, t])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -122,8 +126,8 @@ export function UnitOverview({ units, user }: Props) {
   })
 
   const filterFields = useMemo(
-    () => getTableUnitFilters(table, units),
-    [table, units],
+    () => getTableUnitFilters(table, units, lng, t),
+    [table, units, lng, t],
   )
 
   return (
@@ -143,9 +147,9 @@ export function UnitOverview({ units, user }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

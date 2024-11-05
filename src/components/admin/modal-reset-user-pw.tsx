@@ -1,7 +1,8 @@
 'use client'
 
-import { resetUserPasswordAction } from '@/app/(site)/admin/organisation/actions'
-import { resetUserPasswordValidation } from '@/app/(site)/admin/organisation/validation'
+import { resetUserPasswordAction } from '@/app/[lng]/(site)/admin/organisation/actions'
+import { resetUserPasswordValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
@@ -31,6 +33,8 @@ export function ModalResetUserPW({ users }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
 
   const { setValue, handleSubmit, formState, watch, reset } = useForm<
     z.infer<typeof resetUserPasswordValidation>
@@ -59,8 +63,8 @@ export function ModalResetUserPW({ users }: Props) {
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Email sendt til ${user?.name}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.reset-pw-email')} ${user?.name}`,
       })
     })
   }
@@ -74,9 +78,9 @@ export function ModalResetUserPW({ users }: Props) {
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-sm'>
         <CredenzaHeader>
-          <CredenzaTitle>Nulstil brugerens kodeord</CredenzaTitle>
+          <CredenzaTitle>{t('modal-reset-userpw.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Denne handling sender en email til brugeren med et link hvor de kan nulstille deres kodeord
+            {t('modal-reset-userpw.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -86,7 +90,7 @@ export function ModalResetUserPW({ users }: Props) {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -97,7 +101,7 @@ export function ModalResetUserPW({ users }: Props) {
                   size='lg'
                   variant='secondary'
                   className='w-full'>
-                  Luk
+                  {t('modal-reset-userpw.cancel-button')}
                 </Button>
               </CredenzaClose>
               <Button
@@ -108,7 +112,7 @@ export function ModalResetUserPW({ users }: Props) {
                 size='lg'
                 className='w-full gap-2'>
                 {pending && <Icons.spinner className='size-4 animate-spin' />}
-                Send
+                {t('modal-reset-userpw.reset-button')}
               </Button>
             </div>
           </form>

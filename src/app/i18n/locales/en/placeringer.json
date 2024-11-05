@@ -1,0 +1,46 @@
+{
+  "placement-page": {
+    "title": "Placements",
+    "description": "See an overview of all your placements here."
+  },
+
+  "table-placements": {
+    "no-placements": "No placements"
+  },
+
+  "placement-columns": {
+    "placement": "Placement",
+    "is-barred": "Barred",
+    "is-barred-yes": "Yes",
+    "is-barred-no": "No",
+    "inserted": "Inserted",
+    "updated": "Updated"
+  },
+
+  "table-placement-actions": {
+    "update": "Update",
+    "bar": "Bar the placement",
+    "unbar": "Unbar the placement"
+  },
+
+  "modal-create-placement": {
+    "title": "Create new placement",
+    "description": "Here you can create a new placement.",
+    "placement": "Placement",
+    "placement-placeholder": "Enter name for new placement",
+    "autocomplete-empty-message": "Nothing found.",
+    "create-button": "Create"
+  },
+
+  "modal-update-placement": {
+    "title": "Update placement",
+    "description": "Here you can update a placement.",
+    "placement": "Placement",
+    "placement-placeholder": "Enter name for placement",
+    "update-button": "Update"
+  },
+  "toasts": {
+    "placement-created": " placement created successfully",
+    "placement-updated": " placement updated successfully"
+  }
+}

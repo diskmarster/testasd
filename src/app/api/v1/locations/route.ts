@@ -1,44 +1,62 @@
+import { serverTranslation } from '@/app/i18n'
+import { NewApplicationError } from '@/lib/database/schema/errors'
+import { errorsService } from '@/service/errors'
 import { locationService } from '@/service/location'
-import { validateRequest } from '@/service/user.utils'
+import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
+import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
-	request: NextRequest,
+  request: NextRequest,
 ): Promise<NextResponse<unknown>> {
-	try {
-		const { session, user } = await validateRequest(request)
+  const { session, user } = await validateRequest(headers())
+  const lng = getLanguageFromRequest(headers())
+  const { t } = await serverTranslation(lng, 'common')
 
-		if (session == null || user == null) {
-			return NextResponse.json(
-				{
-					msg: 'Du har ikke adgang til denne ressource',
-				},
-				{
-					status: 401,
-				},
-			)
-		}
+  if (session == null || user == null) {
+    return NextResponse.json(
+      { msg: t('route-translations-locations.no-access-to-resource') },
+      { status: 401 },
+    )
+  }
 
-		const locations = await locationService.getAllByUserID(user.id)
+  if (!user.appAccess) {
+    return NextResponse.json(
+      { msg: t('route-translations-locations.no-app-access') },
+      { status: 401 },
+    )
+  }
 
-		return NextResponse.json(
-			{
-				msg: 'Success',
-				data: locations,
-			},
-			{
-				status: 200,
-			},
-		)
-	} catch (e) {
-		console.error(e)
-		return NextResponse.json(
-			{
-				msg: `Der skete en fejl på serveren. '${(e as Error).message}'`,
-			},
-			{
-				status: 500,
-			},
-		)
-	}
+  try {
+    const locations = await locationService.getAllByUserID(user.id)
+
+    return NextResponse.json(
+      {
+        msg: 'Success',
+        data: locations,
+      },
+      { status: 200 },
+    )
+  } catch (e) {
+    console.error(e)
+
+    const errorLog: NewApplicationError = {
+      userID: user.id,
+      customerID: user.customerID,
+      type: 'endpoint',
+      input: null,
+      error:
+        (e as Error).message ?? t('route-translations-locations.server-error'),
+      origin: `GET api/v1/locations`,
+    }
+
+    errorsService.create(errorLog)
+
+    return NextResponse.json(
+      {
+        msg: `${t('route-translations-locations.server-error')} '${(e as Error).message}'`,
+      },
+      { status: 500 },
+    )
+  }
 }

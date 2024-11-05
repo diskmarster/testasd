@@ -169,4 +169,14 @@ export const userService = {
     }
     return userDTO(updatedUser)
   },
+  getByIDs: async function(
+    userIDs: UserID[]
+  ): Promise<UserNoHash[]> {
+    const users = await user.getByIDs(userIDs)
+
+    return users.map(u => {
+      const {hash, pin, ...uNoHash} = u
+      return uNoHash
+    })
+  }
 }

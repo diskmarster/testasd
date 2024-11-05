@@ -1,9 +1,13 @@
-import { toggleBarredProductAction } from '@/app/(site)/admin/produkter/actions'
+import { toggleBarredProductAction } from '@/app/[lng]/(site)/admin/produkter/actions'
+import { useTranslation } from '@/app/i18n/client'
 import { UpdateProductsForm } from '@/components/products/update-product-form'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { FormattedProduct } from '@/data/products.types'
 import { Row, Table } from '@tanstack/react-table'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
 
 interface Props {
@@ -13,14 +17,30 @@ interface Props {
 
 export function TableOverviewActions({ table, row }: Props) {
   const [open, setOpen] = useState<boolean>(false)
+  const [_, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'produkter')
 
-  const handleToggleBar = async () => {
-    const isCurrentlyBarred = row.original.isBarred
-    const updatedBarredStatus = !isCurrentlyBarred
-    const result = await toggleBarredProductAction(
-      row.original.id,
-      updatedBarredStatus,
-    )
+  const handleToggleBar = () => {
+    startTransition(async () => {
+      const isCurrentlyBarred = row.original.isBarred
+      const updatedBarredStatus = !isCurrentlyBarred
+      const res = await toggleBarredProductAction({
+        productID: row.original.id,
+        isBarred: updatedBarredStatus,
+      })
+
+      if (res && res.serverError) {
+        toast.error(t(`common:${siteConfig.errorTitle}`), {
+          description: res.serverError,
+        })
+        return
+      }
+
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: t('toasts.product-updated'),
+      })
+    })
   }
 
   // @ts-ignore
@@ -32,10 +52,10 @@ export function TableOverviewActions({ table, row }: Props) {
     <>
       <TableActionsWrapper>
         <DropdownMenuItem onClick={() => setOpen(true)}>
-          Redigér produkt
+          {t('update-product')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleToggleBar}>
-          {row.original.isBarred ? 'Ophæv spærring' : 'Spær'}
+          {row.original.isBarred ? t('unbar-this') : t('bar-this')}
         </DropdownMenuItem>
       </TableActionsWrapper>
 

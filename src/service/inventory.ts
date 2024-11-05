@@ -1,11 +1,12 @@
+import { serverTranslation } from '@/app/i18n'
+import { fallbackLng } from '@/app/i18n/settings'
 import { inventory } from '@/data/inventory'
 import {
-  FormattedHistory,
   FormattedInventory,
   FormattedReorder,
   HistoryType,
 } from '@/data/inventory.types'
-import { db } from '@/lib/database'
+import { db, TRX } from '@/lib/database'
 import { UserID } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
@@ -34,9 +35,11 @@ import {
 } from '@/lib/database/schema/inventory'
 import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
+import { productService } from './products'
+import { userService } from './user'
 
 export const inventoryService = {
-  getInventory: async function(
+  getInventory: async function (
     locationID: LocationID,
   ): Promise<FormattedInventory[]> {
     const rows: FormattedInventory[] = []
@@ -45,7 +48,11 @@ export const inventoryService = {
     let receivedPageSize = 0
 
     do {
-      const temp = await inventory.getInventoryByLocationID(locationID, pageSize, page)
+      const temp = await inventory.getInventoryByLocationID(
+        locationID,
+        pageSize,
+        page,
+      )
 
       rows.push(...temp)
 
@@ -53,47 +60,100 @@ export const inventoryService = {
       page += 1
     } while (receivedPageSize == pageSize)
 
-    return  rows
+    return rows
   },
-  getActiveUnits: async function(): Promise<Unit[]> {
+  getActiveUnits: async function (): Promise<Unit[]> {
     return inventory.getActiveUnits()
   },
-  getActiveGroupsByID: async function(
+  getActiveGroupsByID: async function (
     customerID: CustomerID,
   ): Promise<Group[]> {
     return await inventory.getActiveGroupsByID(customerID)
   },
-  getAllGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
+  getAllGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
     return await inventory.getAllGroupsByID(customerID)
   },
-  getActivePlacementsByID: async function(
+  getActivePlacementsByID: async function (
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getActivePlacementsByID(locationID)
   },
-  getAllPlacementsByID: async function(
+  getAllPlacementsByID: async function (
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getAllPlacementsByID(locationID)
   },
-  getActiveBatchesByID: async function(
+  getActiveBatchesByID: async function (
     locationID: LocationID,
   ): Promise<Batch[]> {
     return await inventory.getActiveBatchesByID(locationID)
   },
-  getInventoryByIDs: async function(
+  getInventoryByIDs: async function (
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
   ): Promise<Inventory | undefined> {
     return await inventory.getInventoryByIDs(productID, placementID, batchID)
   },
-  createHistoryLog: async function(
-    historyData: NewHistory,
+  createHistoryLog: async function (
+    historyData: {
+      customerID: CustomerID
+      locationID: LocationID
+      productID: ProductID
+      placementID: PlacementID
+      batchID: BatchID
+      userID: UserID
+      type: 'tilgang' | 'afgang' | 'regulering' | 'flyt'
+      platform: 'web' | 'app'
+      amount: number
+      reference: string | undefined
+    },
+    trx?: TRX,
   ): Promise<History | undefined> {
-    return await inventory.createHitoryLog(historyData)
+    const historyLogData: NewHistory = {
+      ...historyData,
+    }
+
+    // fetch product info
+    const productPromise = productService
+      .getByID(historyData.productID)
+      .then(product => {
+        historyLogData.productSku = product?.sku
+        historyLogData.productText1 = product?.text1
+        historyLogData.productText2 = product?.text2
+        historyLogData.productText3 = product?.text3
+        historyLogData.productBarcode = product?.barcode
+        historyLogData.productUnitName = product?.unit
+        historyLogData.productGroupName = product?.group
+        historyLogData.productCostPrice = product?.costPrice
+        historyLogData.productSalesPrice = product?.salesPrice
+      })
+    // fetch user info
+    const userPromise = userService.getByID(historyData.userID).then(user => {
+      historyLogData.userName = user?.name
+      historyLogData.userRole = user?.role
+    })
+    // fetch placement info
+    const placementPromise = this.getPlacementByID(
+      historyData.placementID,
+    ).then(placement => {
+      historyLogData.placementName = placement?.name
+    })
+    // fetch batch info
+    const batchPromise = this.getBatchByID(historyData.batchID).then(batch => {
+      historyLogData.batchName = batch?.batch
+    })
+
+    await Promise.all([
+      productPromise,
+      userPromise,
+      placementPromise,
+      batchPromise,
+    ])
+
+    return await inventory.createHistoryLog(historyLogData, trx)
   },
-  upsertInventory: async function(
+  upsertInventory: async function (
     platform: 'web' | 'app',
     customerID: CustomerID,
     userID: UserID,
@@ -104,7 +164,9 @@ export const inventoryService = {
     type: HistoryType,
     amount: number,
     reference: string = '',
+    lang: string = fallbackLng,
   ): Promise<boolean> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     const result = await db.transaction(async trx => {
       const isReorderOnProduct = await inventory.getReorderByProductID(
         productID,
@@ -129,7 +191,9 @@ export const inventoryService = {
           trx,
         )
         if (!isReorderUpdated) {
-          throw new ActionError('Genbestil på produktet kunne ikke opdateret')
+          throw new ActionError(
+            t('inventory-service-action.restock-not-updated'),
+          )
         }
       }
 
@@ -145,10 +209,12 @@ export const inventoryService = {
         trx,
       )
       if (!didUpsert) {
-        throw new ActionError('Beholdning blev ikke opdateret')
+        throw new ActionError(
+          t('inventory-service-action.inventory-not-updated'),
+        )
       }
 
-      const historyLog = await inventory.createHitoryLog(
+      const historyLog = await this.createHistoryLog(
         {
           customerID,
           locationID,
@@ -164,7 +230,9 @@ export const inventoryService = {
         trx,
       )
       if (!historyLog) {
-        throw new ActionError('Beholdning blev ikke opdateret')
+        throw new ActionError(
+          t('inventory-service-action.inventory-not-updated'),
+        )
       }
 
       return didUpsert && !!historyLog
@@ -172,7 +240,7 @@ export const inventoryService = {
 
     return result
   },
-  moveInventory: async function(
+  moveInventory: async function (
     platform: 'web' | 'app',
     customerID: CustomerID,
     userID: UserID,
@@ -184,7 +252,9 @@ export const inventoryService = {
     type: HistoryType,
     amount: number,
     reference: string = '',
+    lang: string = fallbackLng,
   ): Promise<boolean> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     const result = await db.transaction(async trx => {
       const didUpdateFrom = await inventory.updateInventory(
         productID,
@@ -194,7 +264,9 @@ export const inventoryService = {
         trx,
       )
       if (!didUpdateFrom) {
-        throw new ActionError('Kunne ikke flytte beholdning')
+        throw new ActionError(
+          t('inventory-service-action.couldnt-move-inventory'),
+        )
       }
 
       const didUpsertTo = await inventory.upsertInventory(
@@ -210,10 +282,12 @@ export const inventoryService = {
       )
 
       if (!didUpsertTo) {
-        throw new ActionError('Kunne ikke flytte beholdning til placering')
+        throw new ActionError(
+          t('inventory-service-action.couldnt-move-inventory-to-placement'),
+        )
       }
 
-      const fromHistoryLog = await inventory.createHitoryLog(
+      const fromHistoryLog = await this.createHistoryLog(
         {
           customerID,
           locationID,
@@ -229,7 +303,7 @@ export const inventoryService = {
         trx,
       )
 
-      const toHistoryLog = await inventory.createHitoryLog(
+      const toHistoryLog = await this.createHistoryLog(
         {
           customerID,
           locationID,
@@ -246,7 +320,9 @@ export const inventoryService = {
       )
 
       if (!fromHistoryLog || !toHistoryLog) {
-        throw new ActionError('Kunne ikke opdatere historikken')
+        throw new ActionError(
+          t('inventory-service-action.couldnt-update-history'),
+        )
       }
 
       return didUpdateFrom && didUpsertTo && !!fromHistoryLog && !!toHistoryLog
@@ -254,58 +330,72 @@ export const inventoryService = {
 
     return result
   },
-  getActiveProductsByID: async function(
+  getActiveProductsByID: async function (
     customerID: CustomerID,
   ): Promise<Product[]> {
     return await inventory.getActiveProductsByID(customerID)
   },
-  createPlacement: async function(
+  createPlacement: async function (
     placementData: NewPlacement,
+    lang: string = fallbackLng,
   ): Promise<Placement | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     try {
       return await inventory.createPlacement(placementData)
     } catch (err) {
       if (err instanceof LibsqlError) {
         if (err.message.includes('location_id')) {
-          throw new ActionError('Placering findes allerede')
+          throw new ActionError(
+            t('inventory-service-action.placement-already-exists'),
+          )
         }
       }
     }
   },
-  createProductGroup: async function(groupData: {
-    name: string
-    customerID: number
-  }): Promise<Group | undefined> {
+  createProductGroup: async function (
+    groupData: {
+      name: string
+      customerID: number
+    },
+    lang: string = fallbackLng,
+  ): Promise<Group | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     try {
       return await inventory.createProductGroup(groupData)
     } catch (err) {
       if (err instanceof LibsqlError) {
         if (err.message.includes('name')) {
-          throw new ActionError('Produktgruppenavn findes allerede')
+          throw new ActionError(
+            t('inventory-service-action.product-group-name-already-exists'),
+          )
         }
       }
     }
   },
 
-  createBatch: async function(
+  createBatch: async function (
     batchData: NewBatch,
+    lang: string = fallbackLng,
   ): Promise<Batch | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     try {
       return await inventory.createBatch(batchData)
     } catch (err) {
       if (err instanceof LibsqlError) {
         if (err.message.includes('location_id')) {
-          throw new ActionError('Batchnr. findes allerede')
+          throw new ActionError(
+            t('inventory-service-action.batch-already-exists'),
+          )
         }
       }
     }
   },
-  getHistoryByLocationID: async function(
+  getHistoryByLocationID: async function (
     locationID: LocationID,
-  ): Promise<FormattedHistory[]> {
+  ): Promise<History[]> {
     return await inventory.getHistoryByLocationID(locationID)
   },
-  createReorder: async function(
+  createReorder: async function (
     reorderData: NewReorder,
   ): Promise<Reorder | undefined> {
     return await inventory.createReorder({
@@ -313,14 +403,14 @@ export const inventoryService = {
       buffer: reorderData.buffer / 100,
     })
   },
-  deleteReorderByIDs: async function(
+  deleteReorderByIDs: async function (
     productID: ProductID,
     locationID: LocationID,
     customerID: CustomerID,
   ): Promise<boolean> {
     return await inventory.deleteReorderByID(productID, locationID, customerID)
   },
-  updateReorderByIDs: async function(
+  updateReorderByIDs: async function (
     productID: ProductID,
     locationID: LocationID,
     customerID: CustomerID,
@@ -333,7 +423,7 @@ export const inventoryService = {
       reorderData,
     )
   },
-  getReordersByID: async function(
+  getReordersByID: async function (
     locationID: LocationID,
   ): Promise<FormattedReorder[]> {
     const reorders = await inventory.getAllReordersByID(locationID)
@@ -343,17 +433,17 @@ export const inventoryService = {
       const recommended = isQuantityGreater
         ? 0
         : Math.max(
-          reorder.minimum -
-          reorder.quantity +
-          reorder.minimum * reorder.buffer,
-          0,
-        )
+            reorder.minimum -
+              reorder.quantity +
+              reorder.minimum * reorder.buffer,
+            0,
+          )
       const disposible = reorder.quantity + reorder.ordered
 
       return {
         ...reorder,
         recommended,
-        disposible 
+        disposible,
       }
     })
 
@@ -365,18 +455,24 @@ export const inventoryService = {
     return await inventory.getInventoryByProductID(productID)
   },
 
-  createUnit: async function(unitData: NewUnit): Promise<Unit | undefined> {
+  createUnit: async function (
+    unitData: NewUnit,
+    lang: string = fallbackLng,
+  ): Promise<Unit | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     try {
       return await inventory.createUnit(unitData)
     } catch (err) {
       if (err instanceof LibsqlError) {
         if (err.message.includes('name')) {
-          throw new ActionError('Enhedsnavn findes allerede')
+          throw new ActionError(
+            t('inventory-service-action.unit-name-already-exists'),
+          )
         }
       }
     }
   },
-  updateUnitByID: async function(
+  updateUnitByID: async function (
     unitID: UnitID,
     updatedUnitData: PartialUnit,
   ): Promise<Unit | undefined> {
@@ -385,7 +481,7 @@ export const inventoryService = {
     return updatedUnit
   },
 
-  updateUnitBarredStatus: async function(
+  updateUnitBarredStatus: async function (
     unitID: UnitID,
     isBarred: boolean,
   ): Promise<Unit | undefined> {
@@ -395,16 +491,13 @@ export const inventoryService = {
       return updatedUnit
     } catch (err) {
       console.error('Der skete en fejl med spærringen:', err)
-      throw new ActionError(
-        'Der skete en fejl med opdatering af Enheds spærringen',
-      )
     }
   },
-  getAllUnits: async function(): Promise<Unit[]> {
+  getAllUnits: async function (): Promise<Unit[]> {
     return await inventory.getAllUnits()
   },
 
-  updateGroupByID: async function(
+  updateGroupByID: async function (
     groupID: GroupID,
     updatedGroupData: PartialGroup,
   ): Promise<Group | undefined> {
@@ -412,11 +505,12 @@ export const inventoryService = {
       groupID,
       updatedGroupData,
     )
+
     if (!updatedGroup) return undefined
     return updatedGroup
   },
 
-  updatePlacementByID: async function(
+  updatePlacementByID: async function (
     placementID: PlacementID,
     updatedPlacementData: PartialPlacement,
   ): Promise<Placement | undefined> {
@@ -428,7 +522,7 @@ export const inventoryService = {
     return updatedPlacement
   },
 
-  updateGroupBarredStatus: async function(
+  updateGroupBarredStatus: async function (
     groupID: GroupID,
     isBarred: boolean,
   ): Promise<Group | undefined> {
@@ -440,12 +534,9 @@ export const inventoryService = {
       return updatedGroup
     } catch (err) {
       console.error('Der skete en fejl med spærringen:', err)
-      throw new ActionError(
-        'Der skete en fejl med opdatering af varegruppe spærringen',
-      )
     }
   },
-  updatePlacementBarredStatus: async function(
+  updatePlacementBarredStatus: async function (
     placementID: PlacementID,
     isBarred: boolean,
   ): Promise<Placement | undefined> {
@@ -458,12 +549,9 @@ export const inventoryService = {
       return updatedPlacement
     } catch (err) {
       console.error('Der skete en fejl med spærringen:', err)
-      throw new ActionError(
-        'Der skete en fejl med opdatering af placerings spærringen',
-      )
     }
   },
-  createInventory: async function(
+  createInventory: async function (
     customerID: number,
     productID: number,
     locationID: string,
@@ -478,5 +566,13 @@ export const inventoryService = {
       batchID,
       quantity: 0,
     })
+  },
+  getPlacementByID: async function (
+    placementID: PlacementID,
+  ): Promise<Placement | undefined> {
+    return await inventory.getPlacementByID(placementID)
+  },
+  getBatchByID: async function (batchID: BatchID): Promise<Batch | undefined> {
+    return await inventory.getBatchByID(batchID)
   },
 }

@@ -1,7 +1,8 @@
 'use client'
 
-import { updateInventoryAction } from '@/app/(site)/oversigt/actions'
-import { updateInventoryValidation } from '@/app/(site)/oversigt/validation'
+import { updateInventoryAction } from '@/app/[lng]/(site)/oversigt/actions'
+import { updateInventoryValidation } from '@/app/[lng]/(site)/oversigt/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,28 +18,23 @@ import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { Customer } from '@/lib/database/schema/customer'
 import { Batch, Placement, Product } from '@/lib/database/schema/inventory'
-import { cn } from '@/lib/utils'
+import { cn, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { AutoComplete } from '../ui/autocomplete'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select'
 
 interface Props {
   customer: Customer
   products: Product[]
   placements: Placement[]
   batches: Batch[]
+  lng: string
 }
 
 export function ModalUpdateInventory({
@@ -46,6 +42,7 @@ export function ModalUpdateInventory({
   products,
   placements,
   batches,
+  lng,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
@@ -53,6 +50,41 @@ export function ModalUpdateInventory({
   const [newPlacement, setNewPlacement] = useState(false)
   const [newBatch, setNewBatch] = useState(false)
   const [useReference, setUseReference] = useState(false)
+  const [searchProduct, setSearchProduct] = useState<string>('')
+  const [searchBatch, setSearchBatch] = useState<string>('')
+  const [searchPlacement, setSearchPlacement] = useState<string>('')
+  const { t } = useTranslation(lng, 'oversigt')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = updateInventoryValidation(validationT)
+
+  const productOptions = products
+    .filter(
+      prod =>
+        prod.text1.toLowerCase().includes(searchProduct.toLowerCase()) ||
+        prod.sku.toLowerCase().includes(searchProduct.toLowerCase()),
+    )
+    .map(prod => ({
+      label: prod.text1,
+      value: prod.id.toString(),
+    }))
+
+  const placementOptions = placements
+    .filter(placement =>
+      placement.name.toLowerCase().includes(searchPlacement.toLowerCase()),
+    )
+    .map(placement => ({
+      label: placement.name,
+      value: placement.id.toString(),
+    }))
+
+  const batchOptions = batches
+    .filter(batch =>
+      batch.batch.toLowerCase().includes(searchBatch.toLowerCase()),
+    )
+    .map(batch => ({
+      label: batch.batch,
+      value: batch.id.toString(),
+    }))
 
   const fallbackPlacementID =
     customer.plan == 'lite'
@@ -73,8 +105,8 @@ export function ModalUpdateInventory({
     handleSubmit,
     resetField,
     setFocus,
-  } = useForm<z.infer<typeof updateInventoryValidation>>({
-    resolver: zodResolver(updateInventoryValidation),
+  } = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
       type: 'tilgang',
       amount: 0,
@@ -113,6 +145,9 @@ export function ModalUpdateInventory({
     setError(undefined)
     setNewBatch(false)
     setNewPlacement(false)
+    setSearchProduct('')
+    setSearchPlacement('')
+    setSearchBatch('')
     setOpen(open)
   }
 
@@ -123,7 +158,7 @@ export function ModalUpdateInventory({
     }
   }
 
-  function onSubmit(values: z.infer<typeof updateInventoryValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await updateInventoryAction(values)
 
@@ -137,17 +172,22 @@ export function ModalUpdateInventory({
       setOpen(false)
       setNewBatch(false)
       setNewPlacement(false)
-      toast.success(siteConfig.successTitle, {
-        description: `${isIncoming ? 'Tilgang' : 'Afgang'} blev oprettet`,
+      setUseReference(false)
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${isIncoming ? t('incoming') : t('outgoing')} ${t('toasts.was-created')}`,
       })
+      updateChipCount()
     })
   }
 
   useCustomEventListener('UpdateInventoryByIDs', (data: any) => {
     setOpen(true)
-    setValue('productID', data.productID)
-    setValue('placementID', data.placementID)
-    setValue('batchID', data.batchID)
+    setSearchProduct(data.productName)
+    setSearchPlacement(data.placementName)
+    setSearchBatch(data.batchName)
+    setValue('productID', data.productID, { shouldValidate: true })
+    setValue('placementID', data.placementID, { shouldValidate: true })
+    setValue('batchID', data.batchID, { shouldValidate: true })
   })
 
   return (
@@ -159,9 +199,9 @@ export function ModalUpdateInventory({
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opdater beholdning</CredenzaTitle>
+          <CredenzaTitle>{t('update-inventory')}</CredenzaTitle>
           <CredenzaDescription>
-            Opdater beholdning ved at lave en tilgang eller afgang
+            {t('update-inventory-description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -171,44 +211,35 @@ export function ModalUpdateInventory({
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <div className='grid gap-2 flex-grow'>
-              <Label>Produkt</Label>
-              <Select
-                value={productID ? productID.toString() : undefined}
-                onValueChange={(value: string) => {
-                  setValue('productID', parseInt(value), {
-                    shouldValidate: true,
-                  })
-                }}>
-                <SelectTrigger className='h-[58px]'>
-                  <SelectValue placeholder='Vælg vare' />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map((p, i) => (
-                    <SelectItem
-                      key={i}
-                      value={p.id.toString()}
-                      className='capitalize'>
-                      <div className='flex flex-col gap items-start'>
-                        <span className='font-semibold'>{p.text1}</span>
-                        <span className='text-muted-foreground text-sm'>
-                          {p.sku}
-                        </span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className='grid gap-2'>
+              <Label>{t('product')}</Label>
+              <AutoComplete
+                autoFocus={false}
+                placeholder={t('product-placeholder')}
+                emptyMessage={t('product-empty-message')}
+                items={productOptions}
+                onSelectedValueChange={value =>
+                  setValue('productID', parseInt(value))
+                }
+                onSearchValueChange={setSearchProduct}
+                selectedValue={productID ? productID.toString() : ''}
+                searchValue={searchProduct}
+              />
+              {formState.errors.productID && (
+                <p className='text-sm text-destructive'>
+                  {formState.errors.productID.message}
+                </p>
+              )}
             </div>
             {customer.plan != 'lite' && (
               <div className='flex flex-col gap-4 md:flex-row'>
                 <div className='grid gap-2 w-full'>
                   <div className='flex items-center justify-between h-4'>
-                    <Label>Placering</Label>
+                    <Label>{t('placement')}</Label>
                     <span
                       className={cn(
                         'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
@@ -218,45 +249,37 @@ export function ModalUpdateInventory({
                         resetField('placementID')
                         setNewPlacement(prev => !prev)
                       }}>
-                      {newPlacement ? 'Brug eksisterende' : 'Opret ny'}
+                      {newPlacement ? t('use-existing') : t('create-new')}
                     </span>
                   </div>
                   {newPlacement ? (
                     <Input
                       autoFocus
-                      placeholder='Skriv ny placering'
+                      placeholder={t('new-placement-placeholder')}
                       {...register('placementID')}
                     />
                   ) : (
-                    <Select
-                      value={placementID ? placementID.toString() : undefined}
+                    <AutoComplete
                       disabled={!hasProduct}
-                      onValueChange={(value: string) => {
-                        //resetField('batchID')
+                      autoFocus={false}
+                      placeholder={t('placement-placeholder')}
+                      emptyMessage={t('placement-empty-message')}
+                      items={placementOptions}
+                      onSelectedValueChange={value =>
                         setValue('placementID', parseInt(value), {
                           shouldValidate: true,
                         })
-                      }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Vælg placering' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {placements.map((p, i) => (
-                          <SelectItem
-                            key={i}
-                            value={p.id.toString()}
-                            className='capitalize'>
-                            {p.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      }
+                      onSearchValueChange={setSearchPlacement}
+                      selectedValue={placementID ? placementID.toString() : ''}
+                      searchValue={searchPlacement}
+                    />
                   )}
                 </div>
                 {customer.plan == 'pro' && (
                   <div className='grid gap-2 w-full'>
                     <div className='flex items-center justify-between h-4'>
-                      <Label>Batchnr.</Label>
+                      <Label>{t('batch')}</Label>
                       <span
                         className={cn(
                           'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
@@ -266,38 +289,31 @@ export function ModalUpdateInventory({
                           resetField('batchID')
                           setNewBatch(prev => !prev)
                         }}>
-                        {newBatch ? 'Brug eksisterende' : 'Opret ny'}
+                        {newBatch ? t('use-existing') : t('create-new')}
                       </span>
                     </div>
                     {newBatch ? (
                       <Input
                         autoFocus
-                        placeholder='Skriv ny batchnr.'
+                        placeholder={t('new-batch-placeholder')}
                         {...register('batchID')}
                       />
                     ) : (
-                      <Select
-                        value={batchID ? batchID.toString() : undefined}
+                      <AutoComplete
                         disabled={!hasPlacement}
-                        onValueChange={(value: string) =>
+                        autoFocus={false}
+                        placeholder={t('batch-placeholder')}
+                        emptyMessage={t('batch-empty-message')}
+                        items={batchOptions}
+                        onSelectedValueChange={value =>
                           setValue('batchID', parseInt(value), {
                             shouldValidate: true,
                           })
-                        }>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Vælg batchnr.' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {batches.map((p, i) => (
-                            <SelectItem
-                              key={i}
-                              value={p.id.toString()}
-                              className='capitalize'>
-                              {p.batch}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        }
+                        onSearchValueChange={setSearchBatch}
+                        selectedValue={batchID ? batchID.toString() : ''}
+                        searchValue={searchBatch}
+                      />
                     )}
                   </div>
                 )}
@@ -311,7 +327,7 @@ export function ModalUpdateInventory({
                 onClick={() =>
                   setValue('type', 'tilgang', { shouldValidate: true })
                 }>
-                Tilgang
+                {t('incoming')}
               </Button>
               <Button
                 type='button'
@@ -326,7 +342,7 @@ export function ModalUpdateInventory({
                   }
                   setValue('type', 'afgang', { shouldValidate: true })
                 }}>
-                Afgang
+                {t('outgoing')}
               </Button>
             </div>
             <div className='pt-2 flex flex-col gap-2'>
@@ -362,19 +378,25 @@ export function ModalUpdateInventory({
                 </p>
               )}
             </div>
-            <div className={cn('relative flex flex-col transition-all', useReference && 'gap-2')}>
+            <div
+              className={cn(
+                'relative flex flex-col transition-all',
+                useReference && 'gap-2',
+              )}>
               <div className={cn('w-full flex z-10 transition-all')}>
                 <Label
                   className='md:text-xs cursor-pointer hover:underline select-none transition-all'
-                  onClick={() => onUseReferenceChange(!useReference)}
-                >
-                  Brug konto/sag
+                  onClick={() => onUseReferenceChange(!useReference)}>
+                  {t('use-account-case')}
                 </Label>
               </div>
               <Input
                 {...register('reference')}
-                placeholder='Indtast Konto/sag'
-                className={cn('transition-all', !useReference ? 'h-0 p-0 border-none' : 'h-[40px]')}
+                placeholder={t('use-account-case-placeholder')}
+                className={cn(
+                  'transition-all',
+                  !useReference ? 'h-0 p-0 border-none' : 'h-[40px]',
+                )}
               />
             </div>
             <Button
@@ -382,7 +404,7 @@ export function ModalUpdateInventory({
               size='lg'
               className='w-full gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opret {isIncoming ? 'tilgang' : 'afgang'}
+              {t('create-button')} {isIncoming ? t('incoming') : t('outgoing')}
             </Button>
           </form>
         </CredenzaBody>

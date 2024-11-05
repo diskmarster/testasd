@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button'
 import { TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { Row, flexRender } from '@tanstack/react-table'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
+import { Icons } from '../ui/icons'
 
 interface Props<T> {
   row: Row<T>
@@ -28,19 +29,12 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
                 variant='ghost'
                 className='h-6 w-6 p-0 data-[state=open]:bg-muted'
                 disabled={!canExpand}>
-                {row.getIsExpanded() ? (
-                  <>
-                    <span className='sr-only'>Kollaps række</span>
-                    <ChevronDown className='h-4 w-4' />
-                  </>
-                ) : (
-                  <>
-                    <span className='sr-only'>Åben række</span>
-                    <ChevronRight
-                      className={cn('h-4 w-4', !canExpand && 'opacity-50')}
-                    />
-                  </>
-                )}
+                <>
+                  <span className='sr-only'>Åben række</span>
+                  <Icons.chevronRight
+                    className={cn('h-4 w-4 transition-all', !canExpand && 'opacity-50', row.getIsExpanded() && 'rotate-90')}
+                  />
+                </>
               </Button>
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
             </div>
@@ -50,20 +44,20 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
                 'flex max-w-52',
                 typeof cell.getValue() == 'number' && 'justify-end',
                 Array.isArray(cell.getValue<number | number[]>()) &&
-                  cell
-                    .getValue<number[]>()
-                    .every(item => typeof item === 'number') &&
-                  'justify-end',
+                cell
+                  .getValue<number[]>()
+                  .every(item => typeof item === 'number') &&
+                'justify-end',
                 // @ts-ignore
                 cell.column.columnDef.meta?.className &&
-                  // @ts-ignore
-                  cell.column.columnDef.meta.className,
+                // @ts-ignore
+                cell.column.columnDef.meta.className,
               )}>
               {cell.column.columnDef.aggregationFn && (
                 <div className='truncate flex items-center'>
                   {flexRender(
                     cell.column.columnDef.aggregatedCell ??
-                      cell.column.columnDef.cell,
+                    cell.column.columnDef.cell,
                     cell.getContext(),
                   )}
                 </div>
@@ -75,14 +69,14 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
                 'flex max-w-52',
                 typeof cell.getValue() == 'number' && 'justify-end',
                 Array.isArray(cell.getValue<number | number[]>()) &&
-                  cell
-                    .getValue<number[]>()
-                    .every(item => typeof item === 'number') &&
-                  'justify-end',
+                cell
+                  .getValue<number[]>()
+                  .every(item => typeof item === 'number') &&
+                'justify-end',
                 // @ts-ignore
                 cell.column.columnDef.meta?.className &&
-                  // @ts-ignore
-                  cell.column.columnDef.meta.className,
+                // @ts-ignore
+                cell.column.columnDef.meta.className,
               )}>
               <div className='truncate flex items-center'>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

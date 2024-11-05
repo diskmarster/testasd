@@ -1,6 +1,5 @@
-"use client"
+'use client'
 
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
   Collapsible,
@@ -17,9 +16,12 @@ import {
 import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { User } from 'lucia'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Suspense } from 'react'
+import { NavChip } from './nav-chip'
 
-export function NavMobile({ user }: { user: User }) {
+export function NavMobile({ user, lng }: { user: User; lng: string }) {
   const pathname = usePathname()
   return (
     <div className='flex gap-6 md:hidden md:gap-10'>
@@ -34,15 +36,14 @@ export function NavMobile({ user }: { user: User }) {
           <nav className='grid gap-4 text-lg font-medium'>
             <SheetClose asChild>
               <Link
-                href='/'
+                href={`/${lng}/oversigt`}
                 className='flex items-center gap-2 text-lg font-semibold'>
                 <siteConfig.logo className='size-6' strokeWidth={1.5} />
-                <span className='sr-only'>
-                  {siteConfig.name}
-                </span>
+                <span className='sr-only'>{siteConfig.name}</span>
               </Link>
             </SheetClose>
-            {siteConfig.navItems
+            {siteConfig
+              .navItems(lng)
               .filter(
                 item =>
                   item.roles.includes(user.role) || item.roles.length == 0,
@@ -51,21 +52,36 @@ export function NavMobile({ user }: { user: User }) {
                 if (item.isDropdown) {
                   return (
                     <Collapsible key={index} className='grid gap-2'>
-                      <CollapsibleTrigger className={cn('flex items-center justify-between', item.isDisabled && 'cursor-not-allowed pointer-events-none opacity-50')}>
+                      <CollapsibleTrigger
+                        className={cn(
+                          'flex items-center justify-between',
+                          item.isDisabled &&
+                          'cursor-not-allowed pointer-events-none opacity-50',
+                        )}>
                         <span>{item.label}</span>
                         <Icons.chevronDown className='h-5 w-5 transition-transform' />
                       </CollapsibleTrigger>
                       <CollapsibleContent className='grid gap-2 pl-4'>
-                        {item.items.filter(item => item.roles.includes(user.role) || item.roles.length == 0).map((item, index) => (
-                          <SheetClose key={index} asChild>
-                            <Link
-                              href={item.href}
-                              className={cn('text-muted-foreground hover:text-foreground', item.isDisabled && 'cursor-not-allowed pointer-events-none opacity-50')}
-                              prefetch={false}>
-                              {item.label}
-                            </Link>
-                          </SheetClose>
-                        ))}
+                        {item.items
+                          .filter(
+                            item =>
+                              item.roles.includes(user.role) ||
+                              item.roles.length == 0,
+                          )
+                          .map((item, index) => (
+                            <SheetClose key={index} asChild>
+                              <Link
+                                href={item.href}
+                                className={cn(
+                                  'text-muted-foreground hover:text-foreground',
+                                  item.isDisabled &&
+                                  'cursor-not-allowed pointer-events-none opacity-50',
+                                )}
+                                prefetch={false}>
+                                {item.label}
+                              </Link>
+                            </SheetClose>
+                          ))}
                       </CollapsibleContent>
                     </Collapsible>
                   )
@@ -79,10 +95,15 @@ export function NavMobile({ user }: { user: User }) {
                           item.isDisabled &&
                           'pointer-events-none cursor-not-allowed opacity-60',
                         )}>
-                        <span className='relative'>
+                        <span className='relative flex items-center justify-between w-full pr-0.5'>
                           {item.label}
                           {item.isExternal && (
                             <Icons.external className='size-4' />
+                          )}
+                          {item.chipLabel && (
+                            <Suspense fallback={null}>
+                              <NavChip chipLabel={item.chipLabel} localeKey={`chip.${item.chipLabel}-chip-tooltip`} />
+                            </Suspense>
                           )}
                         </span>
                       </Link>

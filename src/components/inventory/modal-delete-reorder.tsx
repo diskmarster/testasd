@@ -1,7 +1,8 @@
 'use client'
 
-import { deleteReorderAction } from '@/app/(site)/genbestil/actions'
-import { deleteReorderValidation } from '@/app/(site)/genbestil/validation'
+import { deleteReorderAction } from '@/app/[lng]/(site)/genbestil/actions'
+import { deleteReorderValidation } from '@/app/[lng]/(site)/genbestil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { Product } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
@@ -31,11 +33,15 @@ export function ModalDeleteReorder({ products }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'genbestil')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = deleteReorderValidation(validationT)
 
   const { setValue, handleSubmit, formState, watch, reset } = useForm<
-    z.infer<typeof deleteReorderValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(deleteReorderValidation),
+    resolver: zodResolver(schema),
   })
 
   const formValues = watch()
@@ -46,7 +52,7 @@ export function ModalDeleteReorder({ products }: Props) {
     setValue('locationID', data.locationID, { shouldValidate: true })
   })
 
-  function onSubmit(values: z.infer<typeof deleteReorderValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await deleteReorderAction(values)
 
@@ -57,8 +63,8 @@ export function ModalDeleteReorder({ products }: Props) {
 
       setError(undefined)
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Genbestil slettet for ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.delete-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
     })
   }
@@ -72,10 +78,9 @@ export function ModalDeleteReorder({ products }: Props) {
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-sm'>
         <CredenzaHeader>
-          <CredenzaTitle>Slet minimums beholdning</CredenzaTitle>
+          <CredenzaTitle>{t('modal-delete-reorder.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Denne handling er permanent og kan ikke fortrydes. Hvis der er
-            registreret et bestilt antal, vil denne ikke længere opdateres
+            {t('modal-delete-reorder.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -85,7 +90,7 @@ export function ModalDeleteReorder({ products }: Props) {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -96,7 +101,7 @@ export function ModalDeleteReorder({ products }: Props) {
                   size='lg'
                   variant='secondary'
                   className='w-full'>
-                  Luk
+                  {t('modal-delete-reorder.cancel-button')}
                 </Button>
               </CredenzaClose>
               <Button
@@ -107,7 +112,7 @@ export function ModalDeleteReorder({ products }: Props) {
                 size='lg'
                 className='w-full gap-2'>
                 {pending && <Icons.spinner className='size-4 animate-spin' />}
-                Slet
+                {t('modal-delete-reorder.delete-button')}
               </Button>
             </div>
           </form>

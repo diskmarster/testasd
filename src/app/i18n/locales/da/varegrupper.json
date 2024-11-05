@@ -1,0 +1,41 @@
+{
+  "product-group-page": {
+    "title": "Varegrupper",
+    "description": "Her kan du se dine varegrupper"
+  },
+
+  "create-product-group-modal": {
+    "title": "Opret en ny varegruppe",
+    "name": "Varegruppe navn",
+    "name-placeholder": "Indtast et navn til varegruppen",
+    "create-button": "Opret"
+  },
+
+  "update-product-group-modal": {
+    "title": "Opdater varegruppe",
+    "name": "Varegruppe navn",
+    "description": "Her kan du opdatere en varegruppe",
+    "update-button": "Opdater",
+    "no-product-group": "Ingen varegruppe at redigere",
+    "product-group-success": "Varegruppe opdateret succesfuldt"
+  },
+
+  "product-group-actions": {
+    "update": "Redigér varegruppe",
+    "bar-product-group": "Spær",
+    "unbar-product-group": "Ophæv spærring"
+  },
+
+  "product-group-columns": {
+    "product-group": "Varegruppe",
+    "product-group-barred": "Spærret",
+    "product-group-barred-yes": "Ja",
+    "product-group-barred-no": "Nej",
+    "product-group-created": "Oprettet",
+    "product-group-updated": "Opdateret"
+  },
+  "toasts": {
+    "create-group": "varegruppe oprettet",
+    "update-group": "varegruppe opdateret"
+  }
+}

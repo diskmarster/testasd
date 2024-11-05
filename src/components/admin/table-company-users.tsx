@@ -3,7 +3,7 @@
 import {
   getTableUsersColumns,
   getTableUsersFilters,
-} from '@/app/(site)/admin/organisation/user-columns'
+} from '@/app/[lng]/(site)/admin/organisation/user-columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -40,6 +40,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { TableFloatingBar } from '../table/table-floating-bar'
 import { ButtonToggleUsers } from './button-toggle-user'
+import { useLanguage } from '@/context/language'
+import { useTranslation } from '@/app/i18n/client'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -53,7 +55,9 @@ interface Props {
 
 export function TableAdminUsers({ data, user, customer }: Props) {
   const LOCALSTORAGE_KEY = 'users_cols'
-  const columns = useMemo(() => getTableUsersColumns(user.role), [user.role])
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
+  const columns = useMemo(() => getTableUsersColumns(user.role, lng, t), [user.role, lng, t])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -130,7 +134,7 @@ export function TableAdminUsers({ data, user, customer }: Props) {
     },
   })
 
-  const filterFields = useMemo(() => getTableUsersFilters(table), [table])
+  const filterFields = useMemo(() => getTableUsersFilters(table, lng, t), [table, lng, t])
 
   if (!mounted) return null
 

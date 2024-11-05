@@ -1,0 +1,51 @@
+{
+  "sign-in-card": {
+    "title": "Welcome back",
+    "description": "Fill out your information to proceed",
+    "opret-en-bruger": "Don't have a NemLager account?",
+    "email": "Email",
+    "password": "Password",
+    "forgot-password": "Forgot password?",
+    "login": "Log in",
+    "error-title": "An error occurred"
+  },
+
+  "forgot-password-card": {
+    "title": "Forgot password",
+    "description": "Enter your email to reset your password",
+    "we-received-your-request": "We have received your request",
+    "we-sent-you-an-email": "We have sent you an email that shows how you can reset your password, please check your inbox to proceed",
+    "check-spam-folder": "If you can't find the email, please check your spam folder",
+    "back-to-login": "Back to login",
+    "reset-password": "Reset password",
+    "error-occured": "An error occurred"
+  },
+
+  "reset-password-card": {
+    "password-reset": "Password reset",
+    "password-reset-description": "Your password was successfully reset. Go back to the login page to log in with your new password",
+    "back-to-login": "Back to login",
+    "error-occured": "An error occurred",
+
+    "reset-password": "Reset password",
+    "new-password": "Type a new password to reset",
+    "confirm-new-password": "Confirm password"
+  },
+
+  "reset-password-page": {
+    "something-went-wrong": "Something went wrong",
+    "this-link-is-invalid": "This link is invalid or has expired. Please request a new password reset link",
+    "back-to-login": "Back to login"
+  },
+
+  "reset-pin-card": {
+    "pin-reset": "PIN reset",
+    "pin-reset-description": "Your PIN has now been reset.",
+    "back-to-login": "Back to login",
+    "error-occured": "An error occurred",
+
+    "reset-pin": "Reset PIN",
+    "new-pin": "Enter a new PIN to reset",
+    "confirm-new-pin": "Confirm new PIN"
+  }
+}

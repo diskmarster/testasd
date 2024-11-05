@@ -1,0 +1,32 @@
+{
+  "choose-plan": "Vælg plan",
+  "thank-you": "Tak for din tilmelding",
+  "activation-email": "Vi har sendt et aktiveringslink til din e-mailadresse. Tjek venligst din indbakke og klik på linket for at aktivere din konto.",
+  "check-spam": "Hvis du ikke kan se e-mailen, så tjek venligst din spam-mappe.",
+  "go-to-login": "Gå til log ind siden",
+  "see-less": "Se mindre",
+  "see-more": "Se mere",
+  "price-per-month": "Kr pr. md",
+  "title": "Opret din konto",
+  "description": "Udfyld venligst oplysningerne nedenfor for at oprette din konto.",
+  "company-name": "Virksomhedsnavn",
+  "email": "E-mail",
+  "email-confirm-msg": "Du vil modtage en bekræftelses-e-mail.",
+  "create-button": "Opret konto",
+  "customer?": "Allerede kunde? Log ind",
+  "extra-users": "Ekstra brugere",
+  "extra-users-price": "49,- kr pr. bruger/md",
+  "total-user-amount": "Total antal brugere:",
+
+  "sign-up-invited": {
+    "welcome-to": "Velkommen til",
+    "has-invited-you": "har inviteret dig til deres firmakonto",
+    "already-have-account": "Har du allerede en konto?",
+    "name": "Fulde navn",
+    "email": "E-mailadresse",
+    "password": "Opret adgangskode",
+    "confirm-password": "Bekræft adgangskode",
+    "pin": "Opret en 4-cifret PIN",
+    "create-button": "Opret konto"
+  }
+}

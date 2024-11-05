@@ -1,0 +1,212 @@
+{
+  "table-pagination": {
+    "rows-per-page": "Rækker pr. side:",
+    "go-to-previous-page": "Gå til forrige side",
+    "go-to-next-page": "Gå til næste side"
+  },
+
+  "table-filters": {
+    "clear": "Fjern",
+    "clear-filter": "Fjern Filter",
+    "no-fitler-choice": "Ingen filter muligheder",
+    "add-filter": "Tilføj filter",
+    "no-filter-found": "Ingen filter fundet",
+    "choose": "Vælg",
+    "choose-dates": "Vælg datoer",
+    "search": "Søg"
+  },
+
+  "language-switcher": {
+    "language": "Sprog",
+    "full-lang-name-da": "Dansk",
+    "full-lang-name-en": "Engelsk"
+  },
+
+  "theme-toggle": {
+    "theme": "Tema",
+    "light": "Lyst",
+    "dark": "Mørkt"
+  },
+
+  "table-toolbar": {
+    "show-hide-columns": "Gem/vis Kolonner"
+  },
+  "nav-user": {
+    "my-profile": "Min profil",
+    "get-help": "Få hjælp",
+    "log-out": "Log ud"
+  },
+  "nav-location-select": {
+    "select-location": "Vælg Lokation",
+    "inactive": "Inaktiv"
+  },
+
+  "create-customer-action": {
+    "primary-location": "Hovedlokation",
+    "welcome-email": "Velkommen til Nem Lager",
+    "email-exist-customer": "Denne Email eksisterer allerede for en kunde",
+    "email-exist-user": "Denne Email eksisterer allerede for en bruger",
+    "create-customer-error": "Der gik noget galt med at oprette dig som kunde.",
+    "create-location-error": "Der gik noget galt med at oprette lokationen.",
+    "actvation-email-error": "Der gik noget galt med at sende aktiveringsmailen."
+  },
+  "signup-action": {
+    "activation-link-no-longer-exists": "Aktiveringslinket eksisterer ikke længere.",
+    "activation-link-expired": "Aktiveringslinket er udløbet og er ikke længere gyldigt.",
+    "company-account-no-exist": "Din firmakonto eksisterer ikke.",
+    "existing-email": "En bruger med denne email eksisterer allerede.",
+    "user-wasnt-created": "Din bruger blev ikke oprettet.",
+    "company-account-wasnt-activated": "Din firmakonto blev ikke aktiveret.",
+    "location-access-error": "Der skete en fejl med at give brugeren tilladelse til lokationen."
+  },
+
+  "plans": {
+    "plan_lite": "Lite",
+    "plan_basis": "Basis",
+    "plan_pro": "Pro",
+    "description": "",
+    "description_lite": "Til enkeltmandsvirksomheder",
+    "description_basis": "Til små virksomheder",
+    "description_pro": "Til store virksomheder",
+    "feature_lite": [
+      "1 bruger",
+      "Beholdningsstyring",
+      "Import/eksport",
+      "Varebeskrivelser 1, 2, 3",
+      "Lagerliste",
+      "Varegrupper",
+      "Konto/sagsstyring",
+      "Print stregkoder/etiketter",
+      "Scanner-app",
+      "Rapporter via historik",
+      "1 lokation"
+    ],
+    "feature_basis": [
+      "Alt fra Lite",
+      "5 brugere",
+      "Placeringsstyring",
+      "Genbestilling"
+    ],
+    "feature_pro": [
+      "Alt fra Basis",
+      "10 brugere",
+      "Batchnummer",
+      "Ubegrænsede lokationer"
+    ]
+  },
+
+  "site-config": {
+    "site-name": "Nem Lager",
+    "site-description": "Hold styr på dit lager.",
+    "error-title": "Noget gik galt",
+    "success-title": "Handling fuldført",
+
+    "overview": "Oversigt",
+    "history": "Historik",
+    "restock": "Genbestil",
+    "administration": "Administration",
+
+    "administration-dropdown": {
+      "users": "Brugere",
+      "users-description": "Her kan du oprette og opdatere brugere.",
+      "products": "Varer",
+      "products-description": "Her kan du oprette og opdatere varer.",
+      "product-groups": "Varegrupper",
+      "product-groups-description": "Her kan du oprette og opdatere varegrupper.",
+      "placements": "Placeringer",
+      "placements-description": "Her kan du oprette og opdatere placeringer.",
+      "organisation": "Lokationer",
+      "organisation-description": "Her kan du administrere dine brugere, lokationer og firma."
+    },
+
+    "sys-admin-dropdown": {
+      "customers": "Kunder",
+      "customers-description": "Se en oversigt over alle kunder i Nem Lager.",
+      "admin-users": "Admin Brugere",
+      "admin-users-description": "Se en oversigt over alle brugere i Nem Lager.",
+      "units": "Enheder",
+      "units-description": "Her kan du oprette og opdatere enheder.",
+      "error-messages": "Fejlbeskeder",
+      "error-messages-description": "Få et overblik over alle fejlbeskeder"
+    }
+  },
+
+  "toasts": {
+    "location-select": "Skiftet lokation til ",
+    "unnamed": "Unnavngivet"
+  },
+
+  "chip": {
+    "genbestil-chip-tooltip": "{{count}} vare skal genbestilles"
+  },
+
+  "route-translations-chip": {
+    "no-resource-access": "Du har ikke adgang til denne ressource.",
+    "no-web-access": "Bruger har ikke web adgang",
+    "no-location-found": "Fandt ikke nogen lokation",
+    "chip-count-error": "Fejl ved hentning af chip antal for: ",
+    "chip-get-error": "Der skete en fejl med at hente chip værdi for: "
+  },
+  "route-translations-batches": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Bruger har ikke app adgang",
+    "error-getting-batch": "Fejl ved hentning af batches for godkendt bruger: ",
+    "error-getting-batch-numbers": "Kunne ikke hente batchnumre",
+    "error-getting-batch-number": "Der skete en fejl da vi skulle hente batchnr.: "
+  },
+  "route-translations-placements": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Brugeren har ikke adgang til appen.",
+    "error-getting-placement": "Fejl ved hentning af placeringer for den autentificerede bruger: ",
+    "error-getting-placement-number": "Der opstod en fejl under hentning af placeringer: ",
+    "error-getting-placement-numbers": "Kunne ikke hente placeringer."
+  },
+  "route-translations-locations": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Brugeren har ikke adgang til appen.",
+    "server-error": "Der opstod en serverfejl."
+  },
+  "route-translations-productid": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Brugeren har ikke adgang til appen.",
+    "error-fetching-product": "Fejl ved hentning af vare efter ID: ",
+    "server-error-product": "Der opstod en serverfejl, da der blev forsøgt at hente vare."
+  },
+  "route-translations-product": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Brugeren har ikke adgang til appen.",
+    "error-getting-product": "Fejl ved hentning af vare for den autentificerede bruger: ",
+    "couldnt-get-product": "Kunne ikke hente vare",
+    "error-occured-getting-product": "Der opstod en fejl under hentning af vare: "
+  },
+  "route-translations-move": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Brugeren har ikke adgang til appen.",
+    "request-body-json": "Anmodningskroppen skal være i JSON-format",
+    "loading-failed": "Indlæsning af data fejlede",
+    "error-creating-move-placement": "Fejl ved oprettelse af flytning: Kunne ikke finde eller oprette standardplacering",
+    "error-while-moving-placement": "Der opstod en fejl under flytning: Kunne ikke finde eller oprette en standardplacering",
+    "error-creating-placement-db": "Fejl ved oprettelse af en ny placering i databasen",
+    "error-creating-move-batch": "Fejl ved oprettelse af flytning: Kunne ikke finde eller oprette standardbatch",
+    "error-while-moving-batch": "Der opstod en fejl under flytning: Kunne ikke finde eller oprette en standardbatch",
+    "error-creating-batch-db": "Fejl ved oprettelse af et nyt batchnummer i databasen",
+    "error-creating-move": "Fejl ved oprettelse af flytning: ",
+    "error-while-moving": "Der opstod en fejl under flytning: "
+  },
+  "route-translations-regulations": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Brugeren har ikke adgang til appen.",
+    "request-body-json": "Anmodningskroppen skal være i JSON-format",
+    "loading-failed": "Indlæsning af data fejlede",
+    "error-creating-move-placement": "Fejl ved oprettelse af flytning: Kunne ikke finde eller oprette standardplacering",
+    "error-while-moving-placement": "Der opstod en fejl under flytning: Kunne ikke finde eller oprette en standardplacering",
+    "error-creating-placement-db": "Fejl ved oprettelse af en ny placering i databasen",
+    "error-creating-move-batch": "Fejl ved oprettelse af flytning: Kunne ikke finde eller oprette standardbatch",
+    "error-while-moving-batch": "Der opstod en fejl under flytning: Kunne ikke finde eller oprette en standardbatch",
+    "error-creating-batch-db": "Fejl ved oprettelse af et nyt batchnummer i databasen",
+    "error-creating-new": "Fejl ved oprettelse af ny: ",
+    "try-again": "Prøv venligst igen",
+    "error-getting-product": "Fejl ved hentning af vare for den autentificerede bruger: ",
+    "error-during-regulation": "Der opstod en fejl under regulering: "
+  }
+}

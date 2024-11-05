@@ -1,0 +1,68 @@
+{
+  "profile-information": {
+    "name": "Navn",
+    "update-button": "Opdater",
+    "updated": "Din profil blev opdateret"
+  },
+
+  "profile-location": {
+    "primary-location": "Skift primær lokation",
+    "primary-location-description": "Ændr hvilken lokation der er din primære"
+  },
+
+  "profile-location-dialog": {
+    "title": "Skift primær lokation",
+    "description": "Vælg en lokation for at sætte den som din primære",
+    "location": "Lokation",
+    "location-placeholder": "Vælg en lokation",
+    "primary-location-changed": "Hovedlokation opdateret til ",
+    "unnamed": "Unavngivet",
+
+    "cancel-button": "Luk",
+    "update-button": "Opdater"
+  },
+
+  "profile-password": {
+    "new-password": "Nyt kodeord",
+    "update-button": "Opdater dit kodeord",
+    "password-updated": "Dit kodeord blev opdateret"
+  },
+
+  "profile-password-dialog": {
+    "title": "Skift kodeord",
+    "description": "Indtast dit nye kodeord",
+    "current-password": "Nuværende kodeord",
+    "new-password": "Nyt kodeord",
+    "confirm-password": "Bekræft kodeord",
+
+    "cancel-button": "Luk",
+    "update-button": "Opdater"
+  },
+
+  "profile-delete": {
+    "delete-user": "Slet bruger",
+    "delete-description": "Slet din brugerkonto"
+  },
+
+  "profile-delete-dialog": {
+    "delete-user-alert": "Denne handling er permanent og kan ikke fortrydes. Er du sikker på, at du vil slette din brugerkonto?",
+    "cancel-button": "Luk",
+    "delete-button": "Slet"
+  },
+
+  "profile-pin": {
+    "pin": "PIN",
+    "update-pin": "Opdater din PIN",
+    "pin-updated": "Din PIN blev opdateret"
+  },
+
+  "profile-pin-dialog": {
+    "title": "Skift PIN",
+    "description": "Indtast din nye PIN",
+    "current-pin": "Nuværende PIN",
+    "new-pin": "Ny PIN",
+    "confirm-pin": "Bekræft PIN",
+    "cancel-button": "Luk",
+    "update-button": "Opdater"
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "organisation-page": {
+    "title": "Organisation",
+    "description": "View and edit users, locations and company information."
+  },
+  "tabs-admin": {
+    "users": "Users",
+    "locations": "Locations",
+    "company": "Company",
+    "user-limit-reached": "You've reached the maximum number of users for your plan.",
+    "user-upgrade-plan": "Upgrade your plan to add more users.",
+    "location-limit-reached": "You've reached the maximum number of locations for your plan.",
+    "location-upgrade-plan": "Upgrade your plan to add more locations."
+  },
+  "modal-toggle-user": {
+    "title": "Change user status",
+    "description1": "This action is not permanent. If you activate a user, they will be able to log in to ",
+    "description2": " again. If you deactivate a user, they will be logged out and will not be able to log in again until reactivated.",
+    "status": "Status",
+    "choose-status": "Choose status",
+    "cancel-button": "Cancel",
+    "update-button": "Update",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "modal-reset-userpw": {
+    "title": "Reset user password",
+    "description": "This action sends a mail to the user, with a link to reset their password.",
+    "cancel-button": "Cancel",
+    "reset-button": "Send mail"
+  },
+  "modal-edit-location": {
+    "title": "Update location",
+    "description": "Here you can edit a location's name and access-level for your users.",
+    "location-name": "Location name",
+    "location-name-placeholder": "Enter location name",
+    "access-level": "Access level",
+    "users-chosen": "users chosen",
+    "create-button": "Update",
+    "create-more-users": "Create more users to assign access rights when editing locations.",
+    "own-user": "You cannot edit your own users location accesses, hence why its not shown here."
+  },
+  "modal-toggle-location": {
+    "title": "Change location status",
+    "description": "This action is not permanent. If you activate a location, it can be accessed again. If you deactivate a location, it can no longer be accessed until it is reactivated.",
+    "status": "Status",
+    "choose-status": "Choose Status",
+    "cancel-button": "Cancel",
+    "update-button": "Update",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "table-admin-locations": {
+    "no-locations-found": "No locations found"
+  },
+  "location-columns": {
+    "location-name": "Location name",
+    "location-name-placeholder": "Search Location name",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "updated": "Updated",
+    "created": "Created",
+    "mod-count": "Moderators",
+    "users-count": "Users",
+    "outgoing-count": "Outgoing",
+    "read-count": "Read-only",
+    "users": "Users",
+    "users-mod-short": "M",
+    "users-mod-long": "Moderator",
+    "users-user-short": "U",
+    "users-user-long": "User",
+    "users-out-short": "O",
+    "users-out-long": "Outgoing",
+    "users-read-short": "R",
+    "users-read-long": "Read only"
+  },
+  "user-columns": {
+    "user-name": "Name",
+    "user-name-placeholder": "Search user name",
+    "email": "Email",
+    "email-placeholder": "Search email",
+    "user-role": "Role",
+    "status": "Status",
+    "access": "Access",
+    "access-web": "Web",
+    "access-app": "App",
+    "access-price": "Prices",
+    "access-none": "None",
+    "access_true": "Yes",
+    "access_false": "No",
+    "active": "Active",
+    "inactive": "Inactive",
+    "updated": "Updated",
+    "created": "Created"
+  },
+  "table-locations-actions": {
+    "update": "Update",
+    "toggle-status": "Change Status"
+  },
+  "table-users-actions": {
+    "edit-user": "Edit",
+    "toggle-status": "Change Status",
+    "reset-password": "Reset Password",
+    "reset-pin": "Reset PIN",
+    "same-user-tooltip": "You cannot edit your own user, go to profile instead",
+    "no-permission-tooltip": "You do not have permission to edit this user"
+  },
+  "form-company-edit": {
+    "company-name": "Company name",
+    "email": "Email",
+    "update-button": "Update"
+  },
+  "modal-invite-user": {
+    "title": "Invite new user",
+    "description": "Send an activation email to one of your employees to quickly get them started using ",
+    "email": "Email",
+    "email-placeholder": "Write email for the new user",
+    "role": "Role",
+    "role-placeholder": "Search role",
+    "role-not-found": "No roles found",
+    "user": "User",
+    "local-admin": "Local Admin",
+    "company-admin": "Company Admin",
+    "location-access": "Location Access",
+    "of": " of ",
+    "locations-chosen": "Locations chosen",
+    "send-invite": "Send invite",
+    "role-question": "What can the roles do? Read more on our",
+    "role-link": "FAQ page",
+    "role-url": "what can the user roles do?",
+    "user-rights": "Rights",
+    "user-rights-web": "User must have access to web",
+    "user-rights-app": "User must have access to app",
+    "user-rights-prices": "User must have access to view prices"
+  },
+  "modal-create-location": {
+    "title": "Create new location",
+    "description": "New locations can be accessed immediately in the dropdown menu in the top right corner.",
+    "location-name": "Location name",
+    "location-name-placeholder": "Enter location name",
+    "access-level": "Access level",
+    "of": " of ",
+    "users-chosen": "users chosen",
+    "create-button": "Create",
+    "create-more-users": "Create more users to assign access rights when creating locations.",
+    "own-user": "Your own user will automatically get access to this location, hence why its not shown here."
+  },
+  "toasts": {
+    "location-created": "was created successfully",
+    "location-updated": "was updated successfully",
+    "invitation-sent": "Invitation sent to ",
+    "reset-pw-email": "Email sent to ",
+    "location": "location",
+    "locations": "locations",
+    "locations-toggle": " updated",
+    "user": "user",
+    "users": "users",
+    "users-toggle": " updated"
+  },
+  "modal-edit-user": {
+    "title": "Edit user",
+    "description": "Here you can edit a user's name and access levels.",
+    "user-not-found-title": "Something went wrong",
+    "user-not-found-description": "The user could not be found, please try again",
+    "user-name": "Name",
+    "user-name-placeholder": "Enter name",
+    "access-level": "Location access",
+    "locations-chosen": "locations chosen",
+    "update-button": "Update",
+    "create-more-locations": "Create more locations to assign access rights when editing users.",
+    "success": "The user was successfully updated",
+    "validation": {
+      "email": "Email must be valid",
+      "name_one": "Name must be at least {{count}} character",
+      "name_other": "Name must be at least {{count}} characters",
+      "locationIDs_one": "At least {{count}} location must be selected",
+      "locationIDs_other": "At least {{count}} locations must be selected"
+    }
+  }
+}

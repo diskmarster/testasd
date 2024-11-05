@@ -1,6 +1,7 @@
 'use client'
 
 import { refreshTableAction } from '@/app/actions'
+import { useTranslation } from '@/app/i18n/client'
 import TableToolbarFilters from '@/components/table/table-filters'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,11 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Icons } from '@/components/ui/icons'
+import { LanguageContext } from '@/context/language'
 import { exportTableToCSV } from '@/lib/export/csv'
 import { cn } from '@/lib/utils'
 import { Column, Table } from '@tanstack/react-table'
 import { usePathname } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useContext, useState, useTransition } from 'react'
 
 type ToolbarOptions = {
   showExport?: boolean
@@ -50,7 +52,7 @@ export function TableToolbar<T>({
 }: Props<T>) {
   return (
     <div className='flex items-center gap-2 py-4'>
-      <div className='mr-auto overflow-y-auto'>
+      <div className='mr-auto max-sm:overflow-y-auto'>
         <TableToolbarFilters table={table} filterFields={filterFields} />
       </div>
       {options && (
@@ -88,6 +90,8 @@ function DownloadButton<T>({ table }: { table: Table<T> }) {
 }
 
 export function ViewOptions<T>({ table }: { table: Table<T> }) {
+  const lng = useContext(LanguageContext)
+  const { t } = useTranslation(lng, 'common')
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -96,7 +100,9 @@ export function ViewOptions<T>({ table }: { table: Table<T> }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-auto'>
-        <DropdownMenuLabel>Gem/vis kollonner</DropdownMenuLabel>
+        <DropdownMenuLabel>
+          {t('table-toolbar.show-hide-columns')}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()

@@ -1,7 +1,8 @@
 'use client'
 
-import { createReorderAction } from '@/app/(site)/genbestil/actions'
-import { createReorderValidation } from '@/app/(site)/genbestil/validation'
+import { createReorderAction } from '@/app/[lng]/(site)/genbestil/actions'
+import { createReorderValidation } from '@/app/[lng]/(site)/genbestil/validation'
+import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,9 +16,10 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { useLanguage } from '@/context/language'
 import { LocationID } from '@/lib/database/schema/customer'
 import { Product } from '@/lib/database/schema/inventory'
-import { cn } from '@/lib/utils'
+import { cn, formatNumber, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
@@ -37,6 +39,10 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   const [error, setError] = useState<string>()
   const [searchValue, setSearchValue] = useState<string>('')
   const [pending, startTransition] = useTransition()
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'genbestil')
+  const { t: validationT } = useTranslation(lng, 'validation')
+  const schema = createReorderValidation(validationT)
 
   const productOptions = products
     .map(prod => ({
@@ -55,9 +61,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   }
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
-    z.infer<typeof createReorderValidation>
+    z.infer<typeof schema>
   >({
-    resolver: zodResolver(createReorderValidation),
+    resolver: zodResolver(schema),
     defaultValues: {
       locationID: locationID,
       minimum: 0,
@@ -82,7 +88,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
     })
   }
 
-  function onSubmit(values: z.infer<typeof createReorderValidation>) {
+  function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await createReorderAction(values)
 
@@ -91,12 +97,18 @@ export function ModalCreateReorder({ locationID, products }: Props) {
         return
       }
 
+      if (res && res.validationErrors) {
+        setError(t('modal-create-reorder.error-occured'))
+        return
+      }
+
       setError(undefined)
       reset()
       setOpen(false)
-      toast.success(siteConfig.successTitle, {
-        description: `Minimums beholdning oprettet for ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+      toast.success(t(`common:${siteConfig.successTitle}`), {
+        description: `${t('toasts.create-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
+      updateChipCount()
     })
   }
 
@@ -109,10 +121,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
       </CredenzaTrigger>
       <CredenzaContent className='md:max-w-lg'>
         <CredenzaHeader>
-          <CredenzaTitle>Opret minimums beholdning</CredenzaTitle>
+          <CredenzaTitle>{t('modal-create-reorder.title')}</CredenzaTitle>
           <CredenzaDescription>
-            Bliv gjort opmærksom på når en vare kommer under en minimums grænse
-            som du selv bestemmer
+            {t('modal-create-reorder.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -122,16 +133,16 @@ export function ModalCreateReorder({ locationID, products }: Props) {
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{siteConfig.errorTitle}</AlertTitle>
+                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             <div className='grid gap-2'>
-              <Label>Produkt</Label>
+              <Label>{t('modal-create-reorder.product')}</Label>
               <AutoComplete
                 autoFocus={false}
-                placeholder='Søg i produkter...'
-                emptyMessage='Ingen produkter fundet'
+                placeholder={t('modal-create-reorder.product-placeholder')}
+                emptyMessage={t('modal-create-reorder.product-emptymessage')}
                 items={productOptions}
                 onSelectedValueChange={value =>
                   setValue('productID', parseInt(value))
@@ -149,7 +160,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Minimums beholdning</Label>
+              <Label>{t('modal-create-reorder.minimum-stock')}</Label>
               <div className='flex'>
                 <Button
                   tabIndex={-1}
@@ -186,9 +197,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>Genbestillingsfaktor (%)</Label>
+              <Label>{t('modal-create-reorder.restock-factor')}</Label>
               <p className='text-sm text-muted-foreground -mt-1.5'>
-                Dette bruges til at udregne en anbefalet genbestillings antal.
+                {t('modal-create-reorder.restock-factor-description')}
               </p>
               <div className='flex flex-col'>
                 <Input
@@ -208,8 +219,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     className={cn(
                       'h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0',
                       formValues.minimum != 0 &&
-                      formValues.buffer != 0 &&
-                      'rounded-l-none',
+                        formValues.buffer != 0 &&
+                        'rounded-l-none',
                     )}
                     onClick={() =>
                       setValue('buffer', 25, { shouldValidate: true })
@@ -246,8 +257,8 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     className={cn(
                       'h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
                       formValues.minimum != 0 &&
-                      formValues.buffer != 0 &&
-                      'rounded-r-none',
+                        formValues.buffer != 0 &&
+                        'rounded-r-none',
                     )}
                     onClick={() =>
                       setValue('buffer', 100, { shouldValidate: true })
@@ -262,11 +273,15 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                   )}>
                   {formValues.minimum != 0 && formValues.buffer != 0 && (
                     <p className='text-center'>
-                      Anbefalet genbestilling:{' '}
-                      {(formValues.minimum * (formValues.buffer / 100)).toFixed(
-                        2,
+                      {t(
+                        'modal-create-reorder.recommended-reorder-calculation1',
                       )}{' '}
-                      over minimumsbeholdningen
+                      {formatNumber(
+                        formValues.minimum * (formValues.buffer / 100),
+                      )}{' '}
+                      {t(
+                        'modal-create-reorder.recommended-reorder-calculation2',
+                      )}
                     </p>
                   )}
                 </div>
@@ -282,7 +297,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
               size='lg'
               className='w-full gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              Opret
+              {t('modal-create-reorder.create-button')}
             </Button>
           </form>
         </CredenzaBody>

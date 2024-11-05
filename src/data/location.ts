@@ -1,7 +1,8 @@
 import { db, TRX } from "@/lib/database";
-import { UserID } from "@/lib/database/schema/auth";
+import { UserID, userTable } from "@/lib/database/schema/auth";
 import { CustomerID, LinkLocationToUser, LinkLocationToUserPK, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation, PartialLocation } from "@/lib/database/schema/customer";
-import { eq, and, getTableColumns, not } from "drizzle-orm";
+import { eq, and, getTableColumns, not, sql } from "drizzle-orm";
+import { LocationWithCounts } from "./location.types";
 
 
 export const location = {
@@ -9,8 +10,21 @@ export const location = {
     const newLocation = await trx.insert(locationTable).values(locationData).returning()
     return newLocation[0]
   },
-  getAllByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<Location[]> {
-    const locations = await trx.select().from(locationTable).where(eq(locationTable.customerID, customerID))
+  getAllByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<LocationWithCounts[]> {
+    const locations = await trx
+      .select({
+        ...getTableColumns(locationTable),
+        modCount: sql<number>`sum(iif(${userTable.role} = 'moderator', 1, 0))`,
+        userCount: sql<number>`sum(iif(${userTable.role} = 'bruger', 1, 0))`,
+        outgoingCount: sql<number>`sum(iif(${userTable.role} = 'afgang', 1, 0))`,
+        readCount: sql<number>`sum(iif(${userTable.role} = 'læseadgang', 1, 0))`,
+      })
+      .from(locationTable)
+      .where(eq(locationTable.customerID, customerID))
+      .leftJoin(linkLocationToUserTable, eq(linkLocationToUserTable.locationID, locationTable.id))  
+      .leftJoin(userTable, eq(userTable.id, linkLocationToUserTable.userID))
+      .groupBy(locationTable.id)
+
     return locations
   },
   getAllByUserID: async function(userID: UserID, trx: TRX = db): Promise<LocationWithPrimary[]> {
@@ -58,8 +72,8 @@ export const location = {
       ))
     return resultSet.rowsAffected == 1
   },
-  getByName: async function(name: string, trx: TRX = db): Promise<Location | undefined> {
-    const location = await trx.select().from(locationTable).where(eq(locationTable.name, name))
+  getByName: async function(name: string, customerID: CustomerID, trx: TRX = db): Promise<Location | undefined> {
+    const location = await trx.select().from(locationTable).where(and(eq(locationTable.name, name), eq(locationTable.customerID, customerID)))
     return location[0]
   },
   getAccessesByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<LinkLocationToUser[]> {

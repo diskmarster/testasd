@@ -1,0 +1,23 @@
+CREATE TABLE `nl_product_history` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`customer_id` integer NOT NULL,
+	`user_id` integer NOT NULL,
+	`user_name` text NOT NULL,
+	`user_role` text NOT NULL,
+	`product_id` integer NOT NULL,
+	`product_group_name` text NOT NULL,
+	`product_unit_name` text NOT NULL,
+	`product_text_1` text NOT NULL,
+	`product_text_2` text NOT NULL,
+	`product_text_3` text NOT NULL,
+	`product_sku` text NOT NULL,
+	`product_barcode` text NOT NULL,
+	`product_cost_price` real NOT NULL,
+	`product_sales_price` real NOT NULL,
+	`product_is_barred` integer NOT NULL,
+	`product_note` text NOT NULL,
+	`type` text NOT NULL,
+	`is_import` integer NOT NULL,
+	`inserted` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`customer_id`) REFERENCES `nl_customer`(`id`) ON UPDATE no action ON DELETE cascade
+);

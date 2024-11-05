@@ -1,0 +1,139 @@
+{
+  "forgot-password-action": {
+    "link-create-failed": "Couldn't create a reset link",
+    "expired": "The reset link has expired",
+    "pw-reset": "Couldn't reset the password"
+  },
+  "invited-user-action": {
+    "link-no-longer-exist": "The invitation link no longer exists",
+    "expired-link": "The invitation link has expired",
+    "company-account-doesnt-exist": "The company account doesn't exist",
+    "existing-user-mail": "The email is already in use",
+    "user-not-created": "Couldn't create the user",
+    "invitation-link-not-deleted": "Couldn't delete the invitation link for brugerID"
+  },
+  "log-in-action": {
+    "wrong-credentials": "Wrong email or password",
+    "user-inactive": "The user is inactive",
+    "access-denied": "The user does not have web access"
+  },
+  "create-action": {
+    "customer-email-exists": "A customer with this email already exists",
+    "user-email-exists": "A user with this email already exists",
+    "customer-not-created": "Something went wrong while creating the customer",
+    "location-not-created": "Something went wrong while creating the location",
+    "activation-mail-not-sent": "Something went wrong while sending the activation mail"
+  },
+  "register-action": {
+    "link-no-longer-exist": "The registration link no longer exists",
+    "expired-link": "The registration link has expired",
+    "company-account-doesnt-exist": "The company account doesn't exist",
+    "company-user-limit-reached": "The company has reached the user-limit",
+    "existing-user-mail": "The email is already in use",
+    "user-not-created": "Couldn't create the user",
+    "company-account-not-activated": "The company account wasn't activated",
+    "user-no-location-access": "Something went wrong with giving the user access to the location"
+  },
+  "organisation-action": {
+    "couldnt-update-users": "Couldn't update the users",
+    "existing-user-mail": "The email is already in use",
+    "company-account-doesnt-exist": "The company account doesn't exist",
+    "company-user-limit-reached": "The company has reached the user-limit",
+    "couldnt-send-activation-link": "Couldn't send the activation link",
+    "location-already-exists": "The location already exists",
+    "company-location-limit-reached": "The company has reached the location-limit",
+    "location-not-created": "Something went wrong while creating the location",
+    "location-not-updated": "Something went wrong while updating the location",
+    "couldnt-update-locations": "Couldn't update the locations",
+    "company-wasnt-updated": "Something went wrong while updating the company",
+    "couldnt-create-reset-link": "Couldn't create a reset link",
+    "has-invited-you": "has invited you to join ",
+    "you-have-been-invited": "You have been invited to join ",
+    "user-wasnt-updated": "Something went wrong while updating the user",
+    "user-locations-wasnt-updated": "Something went wrong while updating the user's location access",
+    "deactivate-own-user-error": "You cannot deactivate your own user here",
+    "deactivate-higher-rank-user-error": "You cannot deactivate users with higher privileges than yours",
+    "edit-own-user-error": "You cannot edit your own account here",
+    "edit-higher-rank-user-error": "You cannot edit users with higher privileges than yours",
+    "reset-own-pw-error": "You cannot reset the password of your own account here",
+    "reset-higher-rank-pw-error": "You cannot reset the password of users with higher privileges than yours",
+    "reset-own-pin-error": "You cannot reset the pin code of your own account here",
+    "reset-higher-rank-pin-error": "You cannot reset the pin code of users with higher privileges than yours"
+  },
+  "placement-action": {
+    "location-not-found": "Couldn't find your location",
+    "customer-not-found": "Company account doesn't exist",
+    "placement-not-created": "Something went wrong while creating the placement",
+    "placement-not-updated": "Something went wrong while updating the placement",
+    "placement-not-updated-barred": "Something went wrong while barring the placement"
+  },
+  "product-action": {
+    "product-not-created": "Something went wrong while creating the product",
+    "product-not-updated": "Something went wrong while updating the product",
+    "product-not-updated-barred": "Something went wrong while barring the product"
+  },
+  "product-group-action": {
+    "user-not-logged-in": "User not logged in",
+    "company-not-found": "Company account doesn't exist",
+    "product-group-not-created": "Something went wrong while creating the product group",
+    "product-group-not-updated": "Something went wrong while updating the product group",
+    "product-group-not-updated-barred": "Something went wrong while barring the product group"
+  },
+  "restock-action": {
+    "company-location-not-found": "Company location not found",
+    "company-location-belongs-to-your-company": "Company location belongs to your company",
+    "minimum-stock-quantity-not-created": "Something went wrong while updating the minimum stock quantity",
+    "minimum-stock-quantity-not-deleted": "Something went wrong while deleting the minimum stock quantity",
+    "minimum-stock-quantity-not-updated": "Something went wrong while updating the minimum stock quantity"
+  },
+  "overview-action": {
+    "location-not-found": "Couldn't find your location",
+    "customer-not-found": "Company account doesn't exist",
+    "placement-not-created": "Something went wrong while creating the placement",
+    "batch-not-created": "Something went wrong while creating the batch.",
+    "exact-inventory-not-found": "Couldn't find the exact inventory"
+  },
+  "profile-action": {
+    "profile-not-updated": "Something went wrong while updating the profile",
+    "profile-not-deleted": "Something went wrong while deleting the profile",
+    "password-not-correct": "The password is incorrect",
+    "password-not-updated": "Something went wrong while updating the password",
+    "pin-not-correct": "The PIN is incorrect, try again",
+    "pin-not-updated": "Something went wrong while updating the PIN",
+    "no-access-to-location": "You don't have access to this location",
+    "primary-location-not-updated": "Something went wrong while updating your primary location"
+  },
+  "unit-action": {
+    "user-not-logged-in": "User not logged in",
+    "unit-not-created": "Something went wrong while creating the unit",
+    "unit-not-updated": "Something went wrong while updating the unit",
+    "unit-not-updated-barred": "Something went wrong while barring the unit"
+  },
+  "inventory-service-action": {
+    "restock-not-updated": "Something went wrong while updating the restock",
+    "inventory-not-updated": "Something went wrong while updating the inventory",
+    "couldnt-move-inventory": "Couldn't move the inventory",
+    "couldnt-move-inventory-to-placement": "Couldn't move the inventory to the placement",
+    "couldnt-update-history": "Couldn't update the history",
+    "placement-already-exists": "The placement already exists",
+    "product-group-name-already-exists": "The product group name already exists",
+    "batch-already-exists": "The batch already exists",
+    "unit-name-already-exists": "The unit name already exists",
+    "unit-barring-failed": "Something went wrong trying to bar the unit",
+    "product-group-barring-failed": "Something went wrong trying to bar the product group",
+    "placement-barring-failed": "Something went wrong trying to bar the placement"
+  },
+  "product-service-action": {
+    "barcode-already-exists": "The barcode already exists",
+    "sku-already-exists": "The product number already exists",
+    "product-barring-failed": "Something went wrong trying to bar the product",
+    "product-id-not-found": "Couldn't find the product by id"
+  },
+  "location-service-action": {
+    "location-didnt-update": "Something went wrong while updating the location name"
+  },
+  "password-reset-action": {
+    "no-user-with-email": "No user with this email found",
+    "couldnt-create-link": "Couldn't create a password reset link"
+  }
+}

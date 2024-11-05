@@ -1,76 +1,85 @@
 import { Icons } from '@/components/ui/icons'
 import { UserRole } from '@/data/user.types'
+import { t } from 'i18next'
 import { LucideIcon } from 'lucide-react'
 
 export const siteConfig: SiteConfig = {
   name: 'NemLager',
-  description: 'Hold styr på din beholdning',
+  description: t('site-config.description'),
   logo: Icons.boxes,
-  errorTitle: 'Der gik noget galt',
-  successTitle: 'Handling fuldført',
-  navItems: [
+  errorTitle: 'site-config.error-title',
+  successTitle: 'site-config.success-title',
+  navItems: (lng: string = 'dk') => [
     {
-      label: 'Oversigt',
+      label: t('site-config.overview'),
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: '/oversigt',
+      href: `/${lng}/oversigt`,
       roles: [],
     },
     {
-      label: 'Historik',
+      label: t('site-config.history'),
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: '/historik',
+      href: `/${lng}/historik`,
       roles: [],
     },
     {
-      label: 'Genbestil',
+      label: t('site-config.restock'),
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
-      href: '/genbestil',
-      roles: [],
+      href: `/${lng}/genbestil`,
+      roles: ['system_administrator', 'administrator', 'moderator', 'bruger'],
+      chipLabel: 'genbestil',
     },
     {
       label: 'Administration',
-      roles: ['sys_admin', 'firma_admin', 'lokal_admin'],
+      roles: ['system_administrator', 'administrator', 'moderator'],
       isDisabled: false,
       isDropdown: true,
       items: [
         {
           label: 'Organisation',
-          description:
-            'Se og rediger i brugere, lokationer og firmainformation',
-          href: '/admin/organisation',
+          description: t(
+            'site-config.administration-dropdown.organisation-description',
+          ),
+          href: `/${lng}/admin/organisation`,
           roles: [],
           isExternal: false,
           isDisabled: false,
         },
 
         {
-          label: 'Produkter',
-          description: 'Se, opret og rediger i dine produkter',
-          href: '/admin/produkter',
-          roles: ['sys_admin', 'firma_admin', 'lokal_admin'],
+          label: t('site-config.administration-dropdown.products'),
+          description: t(
+            'site-config.administration-dropdown.products-description',
+          ),
+          href: `/${lng}/admin/produkter`,
+          roles: ['system_administrator', 'administrator', 'moderator'],
           isExternal: false,
           isDisabled: false,
         },
 
         {
-          label: 'Varegrupper',
-          description: 'Se, opret og rediger i dine varegrupper',
-          href: '/admin/varegrupper',
-          roles: ['sys_admin', 'firma_admin'],
+          label: t('site-config.administration-dropdown.product-groups'),
+          description: t(
+            'site-config.administration-dropdown.product-groups-description',
+          ),
+          href: `/${lng}/admin/varegrupper`,
+          roles: ['system_administrator', 'administrator'],
           isExternal: false,
           isDisabled: false,
         },
         {
-          label: 'Placeringer',
-          description: 'Se, opret og rediger i dine placeringer',
-          href: '/admin/placeringer',
-          roles: ['sys_admin', 'firma_admin'],
+          label: t('site-config.administration-dropdown.placements'),
+          description: t(
+            'site-config.administration-dropdown.placements-description',
+          ),
+          href: `/${lng}/admin/placeringer`,
+          roles: ['system_administrator', 'administrator'],
           isExternal: false,
           isDisabled: false,
         },
@@ -78,49 +87,55 @@ export const siteConfig: SiteConfig = {
     },
     {
       label: 'Skancode',
-      roles: ['sys_admin'],
+      roles: ['system_administrator'],
       isDisabled: false,
       isDropdown: true,
       items: [
         {
           label: 'Analytics',
           description: 'Se en oversigt over hvordan systemet bruges',
-          href: '/sys/analytics',
-          roles: ['sys_admin'],
+          href: `/${lng}/sys/analytics`,
+          roles: ['system_administrator'],
           isExternal: false,
           isDisabled: false,
         },
         {
-          label: 'Kunder',
-          description: 'Se en oversigt over alle kunder i Nem Lager',
-          href: '/sys/kunder',
-          roles: ['sys_admin'],
+          label: t('site-config.sys-admin-dropdown.customers'),
+          description: t(
+            'site-config.sys-admin-dropdown.customers-description',
+          ),
+          href: `/${lng}/sys/kunder`,
+          roles: ['system_administrator'],
           isExternal: false,
           isDisabled: true,
         },
         {
-          label: 'Brugere',
-          description: 'Se en oversigt over alle brugere i Nem Lager',
-          href: '/sys/brugere',
-          roles: ['sys_admin'],
+          label: t('site-config.sys-admin-dropdown.admin-users'),
+          description: t(
+            'site-config.sys-admin-dropdown.admin-users-description',
+          ),
+          href: `/${lng}/sys/brugere`,
+          roles: ['system_administrator'],
           isExternal: false,
           isDisabled: true,
         },
         {
-          label: 'Enheder',
-          description: 'Se, opret og rediger i de enheder kunderne kan vælge',
-          href: '/sys/enheder',
-          roles: ['sys_admin'],
+          label: t('site-config.sys-admin-dropdown.units'),
+          description: t('site-config.sys-admin-dropdown.units-description'),
+          href: `/${lng}/sys/enheder`,
+          roles: ['system_administrator'],
           isExternal: false,
           isDisabled: false,
         },
         {
-          label: 'Fejlbeskeder',
-          description: 'Se en oversigt over alle fejlbeskeder i Nem Lager',
-          href: '/sys/fejl',
-          roles: ['sys_admin'],
+          label: t('site-config.sys-admin-dropdown.error-messages'),
+          description: t(
+            'site-config.sys-admin-dropdown.error-messages-description',
+          ),
+          href: `/${lng}/sys/fejlbeskeder`,
+          roles: ['system_administrator'],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
       ],
     },
@@ -133,7 +148,7 @@ type SiteConfig = {
   logo: LucideIcon
   errorTitle: string
   successTitle: string
-  navItems: NavItem[]
+  navItems: (lng?: string) => NavItem[]
 }
 
 export type NavItem = NavItemNoDropdown | NavItemDropdown
@@ -145,6 +160,7 @@ type NavItemNoDropdown = {
   isDisabled: boolean
   isDropdown: false
   href: string
+  chipLabel?: string
 }
 
 type NavItemDropdown = {

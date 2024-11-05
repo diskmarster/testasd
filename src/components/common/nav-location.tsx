@@ -1,6 +1,7 @@
 import { sessionService } from "@/service/session";
 import { locationService } from "@/service/location";
 import { NavLocationSelect } from "./nav-location-select";
+import { hasPermissionByRank } from "@/data/user.types";
 
 export async function NavLocation() {
   const { session, user } = await sessionService.validate()
@@ -8,7 +9,7 @@ export async function NavLocation() {
 
   let locations = await locationService.getAllActiveByUserID(user.id)
 
-  if (user.role == 'firma_admin' || user.role == 'sys_admin') {
+  if (hasPermissionByRank(user.role, 'administrator')) {
     let tmpLocations = await locationService.getByCustomerID(user.customerID)
     tmpLocations = tmpLocations.filter(loc => !locations.some(l => l.id == loc.id))
 

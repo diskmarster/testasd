@@ -1,7 +1,8 @@
 import { db, TRX } from "@/lib/database";
 import { NewUser, NewUserLink, PartialUser, User, UserID, UserLink, UserLinkID, userLinkTable, userTable } from "@/lib/database/schema/auth";
 import { CustomerID } from "@/lib/database/schema/customer";
-import { eq, not } from "drizzle-orm";
+import { eq, not, } from "drizzle-orm";
+import { inList } from '@/data/user.types'
 
 export const user = {
   create: async function(
@@ -71,5 +72,11 @@ export const user = {
       isActive: not(userTable.isActive)
     }).where(eq(userTable.id, userID))
     return resultSet.rowsAffected == 1
+  },
+  getByIDs: async function(userIDs: UserID[], trx: TRX = db): Promise<User[]> {
+    return trx
+      .select()
+      .from(userTable)
+      .where(inList(userTable.id, userIDs))
   }
 }

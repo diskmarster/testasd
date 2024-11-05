@@ -1,3 +1,5 @@
+import { serverTranslation } from '@/app/i18n'
+import { fallbackLng } from '@/app/i18n/settings'
 import { inventory } from '@/data/inventory'
 import { location } from '@/data/location'
 import { db } from '@/lib/database'
@@ -17,12 +19,13 @@ import { addDays } from 'date-fns'
 import { generateIdFromEntropySize } from 'lucia'
 import { cookies } from 'next/headers'
 import { productService } from './products'
+import { LocationWithCounts } from '@/data/location.types'
 
 const LAST_LOCATION_COOKIE_NAME = 'nl_last_location'
 const LAST_LOCATION_COOKIE_DURATION_D = 14
 
 export const locationService = {
-  create: async function(
+  create: async function (
     locationData: NewLocation,
   ): Promise<Location | undefined> {
     const didCreate = await db.transaction(async trx => {
@@ -46,25 +49,25 @@ export const locationService = {
     })
     return didCreate
   },
-  addAccess: async function(newLink: NewLinkLocationToUser): Promise<boolean> {
+  addAccess: async function (newLink: NewLinkLocationToUser): Promise<boolean> {
     return await location.createAccess(newLink)
   },
-  getAllByUserID: async function(
+  getAllByUserID: async function (
     userID: UserID,
   ): Promise<LocationWithPrimary[]> {
     return await location.getAllByUserID(userID)
   },
-  setCookie: function(locationID: LocationID): void {
+  setCookie: function (locationID: LocationID): void {
     cookies().set(LAST_LOCATION_COOKIE_NAME, locationID.toString(), {
       httpOnly: true,
       secure: process.env.VERCEL_ENV === 'production',
       expires: addDays(new Date(), LAST_LOCATION_COOKIE_DURATION_D),
     })
   },
-  deleteCookie: function(): void {
+  deleteCookie: function (): void {
     cookies().delete(LAST_LOCATION_COOKIE_NAME)
   },
-  getLastVisited: async function(
+  getLastVisited: async function (
     userID: UserID,
   ): Promise<LocationID | undefined> {
     let defaultLocationID
@@ -90,7 +93,7 @@ export const locationService = {
 
     return defaultLocationID
   },
-  toggleLocationPrimary: async function(
+  toggleLocationPrimary: async function (
     userID: UserID,
     newLocationID: LocationID,
   ): Promise<boolean> {
@@ -100,20 +103,20 @@ export const locationService = {
     )
     return didUpdate
   },
-  getByID: async function(
+  getByID: async function (
     locationID: LocationID,
   ): Promise<Location | undefined> {
     return await location.getByID(locationID)
   },
   getByCustomerID: async function getByCustomerID(
     customerID: CustomerID,
-  ): Promise<Location[]> {
+  ): Promise<LocationWithCounts[]> {
     return await location.getAllByCustomerID(customerID)
   },
-  getByName: async function(name: string): Promise<Location | undefined> {
-    return await location.getByName(name.trim())
+  getByName: async function (name: string, customerID: CustomerID): Promise<Location | undefined> {
+    return await location.getByName(name.trim(), customerID)
   },
-  createWithAccess: async function(
+  createWithAccess: async function (
     name: string,
     customerID: CustomerID,
     userIDs: number[],
@@ -176,23 +179,25 @@ export const locationService = {
 
     return transaction
   },
-  getAccessesByCustomerID: async function(
+  getAccessesByCustomerID: async function (
     customerID: CustomerID,
   ): Promise<LinkLocationToUser[]> {
     return await location.getAccessesByCustomerID(customerID)
   },
-  getAccessesByLocationID: async function(
+  getAccessesByLocationID: async function (
     locationID: LocationID,
   ): Promise<LinkLocationToUser[]> {
     return await location.getAccessesByLocationID(locationID)
   },
-  updateLocation: async function(
+  updateLocation: async function (
     locationID: LocationID,
     customerID: CustomerID,
     newName: string,
     oldAccesses: UserID[],
     newAccesses: UserID[],
+    lang: string = fallbackLng,
   ): Promise<boolean> {
+    const { t } = await serverTranslation(lang, 'action-errors')
     const transaction = await db.transaction(async trx => {
       const didUpdateLocation = await location.updateLocation(
         locationID,
@@ -200,7 +205,9 @@ export const locationService = {
         trx,
       )
       if (!didUpdateLocation) {
-        throw new ActionError('Lokationens navn kunne ikke opdateres')
+        throw new ActionError(
+          t('location-service-action.location-didnt-update'),
+        )
       }
 
       const usersToRemove = oldAccesses.filter(
@@ -248,12 +255,64 @@ export const locationService = {
 
     return transaction
   },
-  updateStatus: async function(locationID: LocationID, isBarred: boolean): Promise<boolean> {
-    return await location.updateLocation(locationID, {isBarred: isBarred})
+  updateStatus: async function (
+    locationID: LocationID,
+    isBarred: boolean,
+  ): Promise<boolean> {
+    return await location.updateLocation(locationID, { isBarred: isBarred })
   },
-  getAllActiveByUserID: async function(
+  getAllActiveByUserID: async function (
     userID: UserID,
   ): Promise<LocationWithPrimary[]> {
     return await location.getAllActiveByUserID(userID)
+  },
+  updateAccessByUserID: async function(
+    userID: UserID,
+    customerID: CustomerID,
+    locationIDs: LocationID[],
+  ): Promise<boolean> {
+    return await db.transaction(async trx => {
+      const current = await location.getAllByUserID(userID, trx)
+
+      const toRemove = current.filter(
+        l => !locationIDs.some(lID => l.id == lID),
+      )
+      const toAdd = locationIDs.filter(lID => !current.some(l => l.id == lID))
+
+      const primaryRemoved = toRemove.some(l => !l.isBarred && l.isPrimary)
+
+      const removePromises = toRemove.map(
+        async loc =>
+          await location.removeAccess(
+            { locationID: loc.id, userID: userID },
+            trx,
+          ),
+      )
+
+      const addPromises = toAdd.map(
+        async loc =>
+          await location.createAccess(
+            {
+              customerID: customerID,
+              locationID: loc,
+              userID: userID,
+            },
+            trx,
+          ),
+      )
+
+      const res = await Promise.all([...removePromises, ...addPromises])
+
+      if (res.some(bool => !bool)) {
+        trx.rollback()
+        return false
+      }
+
+      if (primaryRemoved) {
+        await location.toggleLocationPrimary(userID, locationIDs[0], trx)
+      }
+
+      return true
+    })
   },
 }

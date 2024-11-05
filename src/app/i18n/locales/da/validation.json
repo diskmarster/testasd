@@ -1,0 +1,110 @@
+{
+  "updateProfile": {
+    "name": {
+      "required": "Navn er påkrævet",
+      "minLength": "Navnet skal være mindst {{minLength}} tegn langt",
+      "maxLength": "Navnet må ikke være mere end {{maxLength}} tegn langt"
+    },
+    "email": {
+      "required": "Email er påkrævet",
+      "email": "Email skal være en gyldig email-adresse"
+    },
+    "new-password": {
+      "required": "Kodeord skal minimum være 8 karakterer, have et stort bogstav, nummer og special karakter",
+      "same": "Dit nuvæende kodeord kan ikke være det samme som dit nye kodeord",
+      "equal": "Kodeordene er ikke ens"
+    },
+    "new-pin": {
+      "required": "PIN skal være {{pinLength}} karakterer lang",
+      "same": "Din nuværende PIN kan ikke være den samme som din nye PIN",
+      "equal": "PIN-koderne er ikke ens"
+    }
+  },
+  "updateInventory": {
+    "invalid-placement": "Ugyldig placering",
+    "invalid-batch": "Ugyldig batch",
+    "empty-placement": "Placering kan ikke være tom",
+    "empty-batch": "Batch kan ikke være tom",
+    "move-quantity-type": "Mængden skal være et tal",
+    "move-quantity-number": "Mængden skal være større end 0"
+  },
+
+  "restock": {
+    "product-required": "Produkt er påkrævet",
+    "buffer-number": "Buffer skal være et tal",
+    "buffer-positive": "Buffer skal være større end 0",
+    "minimum-quantity-positive": "Minimumsbeholdning skal være større end 0",
+    "ordered-quantity-positive": "Bestilt beholdning skal være større end 0"
+  },
+  "product-groups": {
+    "name-required": "Navn er påkrævet"
+  },
+  "products": {
+    "sku-required": "Produktnr. er påkrævet",
+    "sku-preprocess": "Produktnr. skal minimum være 1 tegn",
+    "barcode-required": "Stregkode er påkrævet",
+    "barcode-preprocess": "Stregkode skal minimum være 1 tegn",
+    "product-group-required": "Produktgruppe er påkrævet",
+    "product-group-preprocess": "Produktgruppe skal minimum være 1 tegn",
+    "unit-required": "Enhed er påkrævet",
+    "unit-preprocess-unknown-type": "Ukendt enhed. Prøv måske: ",
+    "product-text-required": "Produkttekst er påkrævet",
+    "product-text-preprocess": "Produkttekst skal minimum være 1 tegn",
+    "cost-price-required": "Kostpris er påkrævet",
+    "cost-price-type": "Kostpris skal være et tal",
+    "cost-price-not-negative": "Kostpris kan ikke være negativ og skal være et tal.",
+    "sales-price-type": "Salgspris skal være et tal",
+    "barred-values": "Ukendt værdi i barred. Brug true, false, ja eller nej",
+    "unknown-column": "Ukendt kolonne"
+  },
+  "placement": {
+    "name-required": "Navn er påkrævet",
+    "name-minLength": "Navn skal være mindst {{minLength}} tegn langt"
+  },
+  "organisation": {
+    "email-valid": "Email skal være en gyldig emailadresse",
+    "minimum-location": "Mindst én placering skal vælges",
+    "couldnt-find-customer-information": "Kunne ikke finde kundeoplysningerne. Prøv at lukke og genåbne pop-op-vinduet.",
+    "location-name-minLength": "Lokationsnavnet skal være mindst {{minLength}} tegn langt",
+    "location-name-maxLength": "Lokationsnavnet må højst være {{maxLength}} tegn langt",
+    "couldnt-find-location-information": "Kunne ikke finde placeringsoplysningerne. Prøv at lukke og genåbne pop-op-vinduet.",
+    "minimum-user": "Mindst én bruger skal vælges",
+    "company-name-minLength": "Firmanavn skal være mindst {{minLength}} tegn langt",
+    "company-name-maxLength": "Firmanavn må højst være {{maxLength}} tegn langt"
+  },
+  "register": {
+    "name-minLength": "Navn skal være mindst {{minLength}} tegn langt",
+    "name-maxLength": "Navn må højst være {{maxLength}} tegn langt",
+    "email": "Email skal være en gyldig email-adresse",
+    "password": "Kodeord skal minimum være 8 karakterer.",
+    "confirm-password": "Kodeord og bekræft kodeord skal være ens",
+    "pin": "PIN skal være på 4 karakterer",
+    "pin-must-be-number": "PIN skal bestå af tal"
+  },
+  "create-customer": {
+    "name-minLength": "Navn skal være mindst {{minLength}} tegn langt",
+    "name-maxLength": "Navn kan være højst {{maxLength}} tegn langt",
+    "email": "Email skal være en gyldig emailadresse"
+  },
+  "log-in": {
+    "email": "Email skal være en gyldig emailadresse",
+    "password": "Kodeord skal være mindst 8 tegn."
+  },
+  "sign-up-invited": {
+    "name-minLength": "Navn skal være mindst {{minLength}} tegn langt",
+    "name-maxLength": "Navn kan være højst {{maxLength}} tegn langt",
+    "email": "Email skal være en gyldig emailadresse",
+    "password": "Kodeord skal være mindst 8 tegn.",
+    "confirm-password": "Kodeord og bekræft kodeord skal stemme overens",
+    "pin": "PIN skal være 4 tegn langt",
+    "pin-must-be-number": "PIN skal bestå af tal"
+  },
+  "reset-password": {
+    "password": "Kodeord skal være mindst 8 tegn.",
+    "confirm-password": "Kodeord og bekræft kodeord skal stemme overens"
+  },
+  "reset-pin": {
+    "pin": "Kodeord skal være {{length}} tal.",
+    "confirm-pin": "Pin og bekræft pin skal stemme overens"
+  }
+}

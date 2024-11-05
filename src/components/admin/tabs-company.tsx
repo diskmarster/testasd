@@ -1,7 +1,9 @@
 'use client'
 
+import { useTranslation } from '@/app/i18n/client'
+import { useLanguage } from '@/context/language'
 import { UserNoHash } from '@/lib/database/schema/auth'
-import { Customer, Location, LocationID } from '@/lib/database/schema/customer'
+import { Customer, LocationID } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import {
   isLocationLimitReached,
@@ -23,12 +25,14 @@ import { ModalCreateLocation } from './modal-create-location'
 import { ModalInviteUser } from './modal-invite-user'
 import { TableAdminLocations } from './table-company-locations'
 import { TableAdminUsers } from './table-company-users'
+import { LocationWithCounts } from '@/data/location.types'
+import { getUserRoles, hasPermissionByRank, lte } from '@/data/user.types'
 
 interface Props {
   user: User
   customer: Customer
   users: UserNoHash[]
-  locations: Location[]
+  locations: LocationWithCounts[]
   currentLocationID: LocationID
 }
 
@@ -43,6 +47,8 @@ export function TabsAdmin({
   const pathName = usePathname()
   const searchParams = useSearchParams()
   const tabs = ['brugere', 'lokationer', 'firma']
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
 
   function createTabParam(val: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -69,59 +75,64 @@ export function TabsAdmin({
               router.push(pathName + '?' + createTabParam('brugere'))
             }
             value='brugere'>
-            Brugere
+            {t('tabs-admin.users')}
           </TabsTrigger>
           <TabsTrigger
             onClick={() =>
               router.push(pathName + '?' + createTabParam('lokationer'))
             }
             value='lokationer'>
-            Lokationer
+            {t('tabs-admin.locations')}
           </TabsTrigger>
           <TabsTrigger
             onClick={() =>
               router.push(pathName + '?' + createTabParam('firma'))
             }
             value='firma'>
-            Firma
+            {t('tabs-admin.company')}
           </TabsTrigger>
         </TabsList>
         <div>
           {currentTab() == 'brugere' ? (
             <div className='flex items-center gap-4'>
-              {/* TODO: add customers extra users to function below when its added */}
-              {isUserLimitReached(customer.plan, customer.extraUsers, users.length) && (
-                <div className='flex items-center gap-2'>
-                  <span className='text-xs font-semibold text-destructive'>
-                    Du har nået brugergrænsen
-                  </span>
-                  <TooltipProvider delayDuration={250}>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Icons.alert className='size-[18px] text-destructive' />
-                      </TooltipTrigger>
-                      <TooltipContent className='bg-foreground text-background'>
-                        <p>
-                          Opgrader din plan for at få adgang til flere brugere
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              )}
+              {isUserLimitReached(
+                customer.plan,
+                customer.extraUsers,
+                users.length,
+              ) && (
+                  <div className='flex items-center gap-2'>
+                    <span className='text-xs font-semibold text-destructive'>
+                      {t('tabs-admin.user-limit-reached')}
+                    </span>
+                    <TooltipProvider delayDuration={250}>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Icons.alert className='size-[18px] text-destructive' />
+                        </TooltipTrigger>
+                        <TooltipContent className='bg-foreground text-background'>
+                          <p>{t('tabs-admin.user-upgrade-plan')}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                )}
               <ModalInviteUser
-                user={user}
                 locations={locations}
                 currentLocationID={currentLocationID}
-                isDisabled={isUserLimitReached(customer.plan, customer.extraUsers, users.length)}
+                isDisabled={isUserLimitReached(
+                  customer.plan,
+                  customer.extraUsers,
+                  users.length,
+                )}
+                userRoles={getUserRoles(lte(user.role))}
               />
             </div>
-          ) : currentTab() == 'lokationer' ? (
+          ) : (currentTab() == 'lokationer' && hasPermissionByRank(user.role, 'administrator')) ? (
             <div className='flex items-center gap-4'>
               {isLocationLimitReached(customer.plan, locations.length) && (
                 <div className='flex items-center gap-2'>
                   <span className='text-xs font-semibold text-destructive'>
-                    Du har nået lokationsgrænsen
+                    {t('tabs-admin.location-limit-reached')}
                   </span>
                   <TooltipProvider delayDuration={250}>
                     <Tooltip>
@@ -129,10 +140,7 @@ export function TabsAdmin({
                         <Icons.alert className='size-[18px] text-destructive' />
                       </TooltipTrigger>
                       <TooltipContent className='bg-foreground text-background'>
-                        <p>
-                          Opgrader din plan for at få adgang til flere
-                          lokationer
-                        </p>
+                        <p>{t('tabs-admin.location-upgrade-plan')}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -162,7 +170,7 @@ export function TabsAdmin({
       </TabsContent>
 
       <TabsContent value='lokationer'>
-        <TableAdminLocations data={locations} user={user} customer={customer} />
+        <TableAdminLocations data={locations} user={user} />
       </TabsContent>
       <TabsContent value='firma'>
         <FormCompanyEdit customer={customer} />
