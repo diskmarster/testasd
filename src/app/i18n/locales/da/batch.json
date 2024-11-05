@@ -1,0 +1,42 @@
+{
+  "batch-page": {
+    "page-title": "Batchnumre",
+    "page-description": "Se en oversigt over alle dine batchnumre"
+  },
+  "batch-columns": {
+    "batch-number": "Batch nr.",
+    "barred": "Spærret",
+    "yes": "Ja",
+    "no": "Nej",
+    "expiration-date": "Udløbsdato",
+    "created-at": "Oprettet",
+    "updated-at": "Opdateret"
+  },
+
+  "create-batch-modal": {
+    "toast-error": "Serverfejl",
+    "batch-created": "Batch oprettet succesfuldt",
+    "new-batch": "Ny batch: ",
+    "create-new-batch": "Opret ny batch",
+    "batch-name": "Batchnavn",
+    "batch-placeholder": "Indtast navn til ny batch",
+    "expiration-date": "Udløbsdato",
+    "choose-date": "Vælg dato",
+    "create-batch-button": "Opret batch"
+  },
+
+  "modal-update-batch": {
+    "no-batch-to-edit": "Ingen batch at redigere",
+    "batch-updated-successfully": "Batch opdateret succesfuldt",
+    "credenza-title": "Her kan du opdatere dit batchnummer",
+    "credenza-description": "Udfyld venligst oplysningerne for at opdatere dit batchnummer",
+    "batch": "Batchnummer",
+    "update-button": "Opdater"
+  },
+  "batch-table-actions": {
+    "update": "Opdater Batchnummer",
+    "bar": "Spær",
+    "unbar": "Fjern Spærring",
+    "toast-success": "Batchnummeret blev opdateret succesfuldt"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "batch-page": {
+    "page-title": "Batch numbers",
+    "page-description": "See an overview of all your batch numbers here"
+  },
+  "batch-columns": {
+    "batch-number": "Batch No.",
+    "barred": "Barred",
+    "yes": "Yes",
+    "no": "No",
+    "expiration-date": "Expiration date",
+    "created-at": "Created at",
+    "updated-at": "Updated at",
+    "no-batches": "No batches found"
+  },
+
+  "create-batch-modal": {
+    "toast-error": "Server error",
+    "batch-created": "Batch created successfully",
+    "new-batch": "New batch: ",
+    "create-new-batch": "Create new batch",
+    "batch-name": "Batch name",
+    "batch-placeholder": "Enter name for new Batch",
+    "expiration-date": "Expiration date",
+    "choose-date": "Choose date",
+    "create-batch-button": "Create batch"
+  },
+
+  "modal-update-batch": {
+    "no-batch-to-edit": "No batch to edit",
+    "batch-updated-successfully": "Batch updated successfully",
+    "credenza-title": "Here you can update your batch number",
+    "credenza-description": "Please fill in the information to update your batch number",
+    "batch": "Batch number",
+    "update-button": "Update"
+  },
+  "batch-table-actions": {
+    "update": "Update Batchnumber",
+    "bar": "Bar the batchnumber",
+    "unbar": "Unbar the batchnumber",
+    "toast-success": "Successfully updated the batchnumber"
+  }
+}
