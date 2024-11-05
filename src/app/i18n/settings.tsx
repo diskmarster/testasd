@@ -1,5 +1,6 @@
-export const fallbackLng = 'da'
-export const languages: ('da' | 'en')[] = [fallbackLng, 'en']
+export type I18NLanguage = 'da' | 'en'
+export const fallbackLng: I18NLanguage = 'da'
+export const languages: I18NLanguage[] = [fallbackLng, 'en']
 export const defaultNS = ['common']
 export const cookieName = 'i18next'
 
