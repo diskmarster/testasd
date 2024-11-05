@@ -1,3 +1,4 @@
+import { I18NLanguage } from '@/app/i18n/settings'
 import { clsx, type ClassValue } from 'clsx'
 import { emitCustomEvent } from 'react-custom-events'
 import { twMerge } from 'tailwind-merge'
@@ -92,6 +93,58 @@ export async function getChipCount(chip: string): Promise<number> {
 export function obscureEmail(s: string): string {
   const parsed = z.string().email().safeParse(s)
   if (!parsed.success) return s
-  const parts = parsed.data.split("@")
-  return `${parts[0].substring(0,1)}...${parts[0].substring(parts[0].length - 1)}@${parts[1]}`
+  const parts = parsed.data.split('@')
+  return `${parts[0].substring(0, 1)}...${parts[0].substring(parts[0].length - 1)}@${parts[1]}`
+}
+
+// I did not write the following class, follow this link to read more about it.
+// https://observablehq.com/@mbostock/localized-number-parsing
+export class NumberParser {
+  _group: RegExp
+  _decimal: RegExp
+  _numeral: RegExp
+  _index: any
+  constructor(locale: string) {
+    const parts = new Intl.NumberFormat(locale).formatToParts(12345.6)
+    const numerals = [
+      //@ts-ignore
+      ...new Intl.NumberFormat(locale, { useGrouping: false }).format(
+        9876543210,
+      ),
+    ].reverse()
+    const index = new Map(numerals.map((d, i) => [d, i]))
+    this._group = new RegExp(
+      `[${parts.find(d => d.type === 'group')!.value}]`,
+      'g',
+    )
+    this._decimal = new RegExp(
+      `[${parts.find(d => d.type === 'decimal')!.value}]`,
+    )
+    this._numeral = new RegExp(`[${numerals.join('')}]`, 'g')
+    this._index = (d: string) => index.get(d)
+  }
+  parse(string: string) {
+    return (string = string
+      .trim()
+      .replace(this._group, '')
+      .replace(this._decimal, '.')
+      .replace(this._numeral, this._index))
+      ? +string
+      : NaN
+  }
+}
+
+export function NewNumberParser(lng: I18NLanguage): NumberParser {
+  let locale
+  switch (lng) {
+    case 'en':
+      locale = 'en-GB'
+      break
+
+    default:
+      locale = 'da-DK'
+      break
+  }
+
+  return new NumberParser(locale)
 }
