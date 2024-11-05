@@ -21,6 +21,7 @@ import {
   NewPlacement,
   NewReorder,
   NewUnit,
+  PartialBatch,
   PartialGroup,
   PartialPlacement,
   PartialReorder,
@@ -87,6 +88,9 @@ export const inventoryService = {
     locationID: LocationID,
   ): Promise<Batch[]> {
     return await inventory.getActiveBatchesByID(locationID)
+  },
+  getAllBatchesByID: async function (locationID: LocationID): Promise<Batch[]> {
+    return await inventory.getAllBatchesByID(locationID)
   },
   getInventoryByIDs: async function (
     productID: ProductID,
@@ -335,6 +339,11 @@ export const inventoryService = {
   ): Promise<Product[]> {
     return await inventory.getActiveProductsByID(customerID)
   },
+  getAllProductsByID: async function (
+    customerID: CustomerID,
+  ): Promise<Product[]> {
+    return await inventory.getAllProductsByID(customerID)
+  },
   createPlacement: async function (
     placementData: NewPlacement,
     lang: string = fallbackLng,
@@ -521,6 +530,17 @@ export const inventoryService = {
     if (!updatedPlacement) return undefined
     return updatedPlacement
   },
+  updateBatchByID: async function (
+    batchID: BatchID,
+    updatedBatchData: PartialBatch,
+  ): Promise<Batch | undefined> {
+    const updatedBatch = await inventory.updateBatchByID(
+      batchID,
+      updatedBatchData,
+    )
+    if (!updatedBatch) return undefined
+    return updatedBatch
+  },
 
   updateGroupBarredStatus: async function (
     groupID: GroupID,
@@ -551,6 +571,21 @@ export const inventoryService = {
       console.error('Der skete en fejl med spærringen:', err)
     }
   },
+  updateBatchBarredStatus: async function (
+    batchID: BatchID,
+    isBarred: boolean,
+  ): Promise<Batch | undefined> {
+    try {
+      const updatedBatch = await inventory.updateBatchByID(batchID, {
+        isBarred,
+      })
+      if (!updatedBatch) return undefined
+      return updatedBatch
+    } catch (err) {
+      console.error('Der skete en fejl med spærringen:', err)
+    }
+  },
+
   createInventory: async function (
     customerID: number,
     productID: number,

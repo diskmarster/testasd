@@ -118,7 +118,9 @@
       "placements": "Placements",
       "placements-description": "Here you can create and update placements",
       "organisation": "Organisation",
-      "organisation-description": "View and edit users, locations, and company information."
+      "organisation-description": "View and edit users, locations, and company information.",
+      "batch": "Batch",
+      "batch-description": "Here you can create and update batch numbers"
     },
 
     "sys-admin-dropdown": {

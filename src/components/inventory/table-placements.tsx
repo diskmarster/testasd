@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { LanguageContext, useLanguage } from '@/context/language'
+import { useLanguage } from '@/context/language'
 import { Placement } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
@@ -52,6 +52,10 @@ export function TablePlacement({ data, user }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'placeringer')
   const columns = useMemo(() => getTablePlacementColumns(lng, t), [lng, t])
+
+  const filteredData = useMemo(() => {
+    return data.filter(placement => placement.name !== '-')
+  }, [data])
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -93,7 +97,7 @@ export function TablePlacement({ data, user }: Props) {
   }
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
 
     getCoreRowModel: getCoreRowModel(),
@@ -152,9 +156,9 @@ export function TablePlacement({ data, user }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
