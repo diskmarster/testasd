@@ -58,6 +58,7 @@ export function getProductOverviewColumns(
     cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: t('product-text1'),
+      className: "[&>*]:block"
     },
   }
 

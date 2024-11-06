@@ -77,6 +77,7 @@ export function getTableOverviewColumns(
     cell: () => null,
     meta: {
       viewLabel: t('product-text1'),
+      className: "[&>*]:block"
     },
   }
 

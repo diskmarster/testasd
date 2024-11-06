@@ -74,6 +74,7 @@ export function getTableReorderColumns(
     cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: t('reorder-columns.text1'),
+      className: "[&>*]:block"
     },
   }
 
