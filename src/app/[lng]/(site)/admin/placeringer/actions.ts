@@ -50,7 +50,7 @@ export const updatePlacementAction = editableAction
       parsedInput: { placementID, data: updatedPlacementData },
       ctx,
     }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
+      const { t } = await serverTranslation(ctx.lang, 'action-errors')
       const updatedPlacement = await inventoryService.updatePlacementByID(
         placementID,
         updatedPlacementData,
@@ -75,7 +75,7 @@ export const toggleBarredPlacementAction = editableAction
       isBarred,
     )
 
-    if (updatedPlacement) {
+    if (!updatedPlacement) {
       throw new ActionError(t('placement-action.placement-not-updated-barred'))
     }
     revalidatePath(`/${ctx.lang}/admin/placeringer`)
