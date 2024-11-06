@@ -5,9 +5,9 @@
   },
   "unit-columns": {
     "unit": "Enhed",
-    "is-barred": "Spærret",
-    "is-barred-yes": "Ja",
-    "is-barred-no": "Nej",
+    "is-barred": "Status",
+    "is-barred-yes": "Spærret",
+    "is-barred-no": "Aktiv",
     "created-at": "Oprettet",
     "updated-at": "Opdateret"
   },

@@ -29,7 +29,7 @@ export function NavChip({ chipLabel, localeKey }: { chipLabel: string, localeKey
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className='bg-destructive tabular-nums rounded text-xs py-0.5 px-1 text-destructive-foreground font-semibold'>{count}</span>
+          <span className='bg-red-500/25 border-red-500/50 tabular-nums rounded text-xs py-0.5 px-1 text-red-500 border font-semibold'>{count}</span>
         </TooltipTrigger>
         <TooltipContent className="bg-foreground text-background">
           {t(localeKey, { context: 'count', count })}

@@ -164,10 +164,10 @@ export function getTableHistoryColumns(
       const type = getValue<HistoryType>()
       const variant =
         type == 'tilgang'
-          ? 'success'
+          ? 'green'
           : type == 'afgang'
-            ? 'destructive'
-            : 'warning'
+            ? 'red'
+            : 'yellow'
 
       return (
         <Badge className='capitalize' variant={variant}>
@@ -192,7 +192,7 @@ export function getTableHistoryColumns(
       const amount = getValue<number>()
 
       return (
-        <span className={cn('', amount < 0 && 'text-destructive')}>
+        <span className={cn('tabular-nums', amount < 0 && 'text-destructive')}>
           {amount}
         </span>
       )
@@ -239,7 +239,7 @@ export function getTableHistoryColumns(
     header: ({ column }) => <TableHeader column={column} title='Platform' />,
     cell: ({ getValue }) => {
       const platform = getValue<HistoryPlatform>()
-      const variant = platform == 'web' ? 'secondary' : 'outline'
+      const variant = platform == 'web' ? 'gray' : 'lessGray'
 
       return (
         <Badge className='capitalize' variant={variant}>

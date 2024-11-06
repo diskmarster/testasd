@@ -1,6 +1,7 @@
 import { TableOverviewActions } from '@/components/inventory/table-group-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
+import { Badge } from '@/components/ui/badge'
 import { Group } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -33,10 +34,19 @@ export function getTableGroupColumns(
         title={t('product-group-columns.product-group-barred')}
       />
     ),
-    cell: ({ getValue }) =>
-      getValue<boolean>()
-        ? t('product-group-columns.product-group-barred-yes')
-        : t('product-group-columns.product-group-barred-no'),
+    cell: ({ getValue }) => {
+
+      const status = getValue<boolean>()
+      const badgeVariant = status ? 'red' : 'gray'
+
+      return (
+        <Badge variant={badgeVariant}>
+          {status
+            ? t('product-group-columns.product-group-barred-yes')
+            : t('product-group-columns.product-group-barred-no')}
+        </Badge>
+      )
+    },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<boolean>(id))
     },

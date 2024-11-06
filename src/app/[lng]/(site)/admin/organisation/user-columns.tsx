@@ -76,12 +76,12 @@ export function getTableUsersColumns(
       const role = getValue<UserRole>()
       const badgeVariant =
         role == 'system_administrator'
-          ? 'wow'
+          ? 'violet'
           : role == 'administrator'
-            ? 'default'
+            ? 'blue'
             : role == 'moderator'
-              ? 'secondary'
-              : 'outline'
+              ? 'gray'
+              : 'lessGray'
 
       return (
         <Badge variant={badgeVariant} className='capitalize'>
@@ -104,7 +104,7 @@ export function getTableUsersColumns(
     ),
     cell: ({ getValue }) => {
       const status = getValue<boolean>()
-      const badgeVariant = status ? 'secondary' : 'destructive'
+      const badgeVariant = status ? 'gray' : 'red'
 
       return (
         <Badge variant={badgeVariant}>
