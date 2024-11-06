@@ -1,17 +1,16 @@
 import { Icons } from '@/components/ui/icons'
 import { UserRole } from '@/data/user.types'
-import { t } from 'i18next'
 import { LucideIcon } from 'lucide-react'
 
 export const siteConfig: SiteConfig = {
   name: 'NemLager',
-  description: t('site-config.description'),
+  description: 'site-config.description',
   logo: Icons.boxes,
   errorTitle: 'site-config.error-title',
   successTitle: 'site-config.success-title',
   navItems: (lng: string = 'dk') => [
     {
-      label: t('site-config.overview'),
+      label: 'site-config.overview',
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
@@ -19,7 +18,7 @@ export const siteConfig: SiteConfig = {
       roles: [],
     },
     {
-      label: t('site-config.history'),
+      label: 'site-config.history',
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
@@ -27,7 +26,7 @@ export const siteConfig: SiteConfig = {
       roles: [],
     },
     {
-      label: t('site-config.restock'),
+      label: 'site-config.restock',
       isDisabled: false,
       isDropdown: false,
       isExternal: false,
@@ -43,9 +42,7 @@ export const siteConfig: SiteConfig = {
       items: [
         {
           label: 'Organisation',
-          description: t(
-            'site-config.administration-dropdown.organisation-description',
-          ),
+          description: 'site-config.administration-dropdown.organisation-description',
           href: `/${lng}/admin/organisation`,
           roles: [],
           isExternal: false,
@@ -53,10 +50,8 @@ export const siteConfig: SiteConfig = {
         },
 
         {
-          label: t('site-config.administration-dropdown.products'),
-          description: t(
-            'site-config.administration-dropdown.products-description',
-          ),
+          label: 'site-config.administration-dropdown.products',
+          description: 'site-config.administration-dropdown.products-description',
           href: `/${lng}/admin/produkter`,
           roles: ['system_administrator', 'administrator', 'moderator'],
           isExternal: false,
@@ -64,20 +59,16 @@ export const siteConfig: SiteConfig = {
         },
 
         {
-          label: t('site-config.administration-dropdown.product-groups'),
-          description: t(
-            'site-config.administration-dropdown.product-groups-description',
-          ),
+          label: 'site-config.administration-dropdown.product-groups',
+          description:  'site-config.administration-dropdown.product-groups-description',
           href: `/${lng}/admin/varegrupper`,
           roles: ['system_administrator', 'administrator'],
           isExternal: false,
           isDisabled: false,
         },
         {
-          label: t('site-config.administration-dropdown.placements'),
-          description: t(
-            'site-config.administration-dropdown.placements-description',
-          ),
+          label: 'site-config.administration-dropdown.placements',
+          description: 'site-config.administration-dropdown.placements-description',
           href: `/${lng}/admin/placeringer`,
           roles: ['system_administrator', 'administrator'],
           isExternal: false,
@@ -100,38 +91,32 @@ export const siteConfig: SiteConfig = {
           isDisabled: false,
         },
         {
-          label: t('site-config.sys-admin-dropdown.customers'),
-          description: t(
-            'site-config.sys-admin-dropdown.customers-description',
-          ),
+          label: 'site-config.sys-admin-dropdown.customers',
+          description: 'site-config.sys-admin-dropdown.customers-description',
           href: `/${lng}/sys/kunder`,
           roles: ['system_administrator'],
           isExternal: false,
           isDisabled: true,
         },
         {
-          label: t('site-config.sys-admin-dropdown.admin-users'),
-          description: t(
-            'site-config.sys-admin-dropdown.admin-users-description',
-          ),
+          label: 'site-config.sys-admin-dropdown.admin-users',
+          description: 'site-config.sys-admin-dropdown.admin-users-description',
           href: `/${lng}/sys/brugere`,
           roles: ['system_administrator'],
           isExternal: false,
           isDisabled: true,
         },
         {
-          label: t('site-config.sys-admin-dropdown.units'),
-          description: t('site-config.sys-admin-dropdown.units-description'),
+          label: 'site-config.sys-admin-dropdown.units',
+          description: 'site-config.sys-admin-dropdown.units-description',
           href: `/${lng}/sys/enheder`,
           roles: ['system_administrator'],
           isExternal: false,
           isDisabled: false,
         },
         {
-          label: t('site-config.sys-admin-dropdown.error-messages'),
-          description: t(
-            'site-config.sys-admin-dropdown.error-messages-description',
-          ),
+          label: 'site-config.sys-admin-dropdown.error-messages',
+          description: 'site-config.sys-admin-dropdown.error-messages-description',
           href: `/${lng}/sys/fejlbeskeder`,
           roles: ['system_administrator'],
           isExternal: false,

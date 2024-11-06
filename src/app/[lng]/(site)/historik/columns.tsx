@@ -440,10 +440,10 @@ export function getTableHistoryFilters(
     label: 'Type',
     value: '',
     options: [
-      { value: 'tilgang', label: t('history-columns.type.incoming') },
-      { value: 'afgang', label: t('history-columns.type.outgoing') },
-      { value: 'regulering', label: t('history-columns.type.regulation') },
-      { value: 'flyt', label: t('history-columns.type.move') },
+      { value: 'tilgang', label: t('history-columns.filters.type-incoming') },
+      { value: 'afgang', label: t('history-columns.filters.type-outgoing') },
+      { value: 'regulering', label: t('history-columns.filters.type-adjustment') },
+      { value: 'flyt', label: t('history-columns.filters.type-move') },
     ],
   }
 

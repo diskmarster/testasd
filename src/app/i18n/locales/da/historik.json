@@ -3,11 +3,9 @@
     "title": "Historik",
     "description": "Se en historik over alle dine varebevægelser"
   },
-
   "table-history": {
     "no-history": "Ingen historik"
   },
-
   "history-columns": {
     "created": "Oprettet",
     "productNo": "Varenr.",
@@ -29,7 +27,6 @@
     "type_import": "Import",
     "reference": "Konto/sag",
     "user": "Bruger",
-
     "placeholders": {
       "productNo": "Søg i varenr.",
       "barcode": "Søg i stregkode",
@@ -37,6 +34,12 @@
       "text2": "Søg i tekst2",
       "text3": "Søg i tekst3",
       "reference": "Søg i konto/sag"
+    },
+    "filters": {
+      "type-incoming": "Tilgang",
+      "type-outgoing": "Afgang",
+      "type-adjustment": "Regulering",
+      "type-move": "Flyt"
     }
   }
 }
