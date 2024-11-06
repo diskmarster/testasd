@@ -6,7 +6,6 @@ import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
-import { t } from 'i18next'
 import { revalidatePath } from 'next/cache'
 import {
   createPlacementValidation,
@@ -51,6 +50,7 @@ export const updatePlacementAction = editableAction
       parsedInput: { placementID, data: updatedPlacementData },
       ctx,
     }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
       const updatedPlacement = await inventoryService.updatePlacementByID(
         placementID,
         updatedPlacementData,
@@ -69,12 +69,13 @@ export const toggleBarredPlacementAction = editableAction
     async () => await getSchema(toggleBarredPlacementValidation, 'validation'),
   )
   .action(async ({ parsedInput: { placementID, isBarred }, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const updatedPlacement = await inventoryService.updatePlacementBarredStatus(
       placementID,
       isBarred,
     )
 
-    if (!updatedPlacement) {
+    if (updatedPlacement) {
       throw new ActionError(t('placement-action.placement-not-updated-barred'))
     }
     revalidatePath(`/${ctx.lang}/admin/placeringer`)
