@@ -10,7 +10,6 @@ import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
-import { t } from 'i18next'
 import { User } from 'lucia'
 import { DateRange } from 'react-day-picker'
 
@@ -322,6 +321,7 @@ export function getTableOverviewFilters(
   groups: Group[],
   placements: Placement[],
   batches: Batch[],
+  t: (key: string) => string,
 ): FilterField<FormattedInventory>[] {
   const skuFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('sku'),

@@ -164,8 +164,8 @@ export function TableOverview({
 
   const filterFields = useMemo(
     () =>
-      getTableOverviewFilters(plan, table, units, groups, placements, batches),
-    [plan, table, units, groups, placements, batches],
+      getTableOverviewFilters(plan, table, units, groups, placements, batches, t),
+    [plan, table, units, groups, placements, batches, t],
   )
 
   if (!mounted) return null
