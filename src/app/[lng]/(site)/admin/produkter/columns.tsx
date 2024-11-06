@@ -1,6 +1,7 @@
 import { TableOverviewActions } from '@/components/products/product-table-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
+import { Badge } from '@/components/ui/badge'
 import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
@@ -156,8 +157,19 @@ export function getProductOverviewColumns(
   const isBarredCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'isBarred',
     header: ({ column }) => <TableHeader column={column} title='Status' />,
-    cell: ({ getValue }) =>
-      getValue<boolean>() ? t('barred-status-yes') : t('barred-status-no'),
+    cell: ({ getValue }) => {
+
+      const status = getValue<boolean>()
+      const badgeVariant = status ? 'red' : 'gray'
+
+      return (
+        <Badge variant={badgeVariant}>
+          {status
+            ? t('barred-status-yes')
+            : t('barred-status-no')}
+        </Badge>
+      )
+    },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<boolean>(id))
     },

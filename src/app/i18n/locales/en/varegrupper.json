@@ -28,9 +28,9 @@
 
   "product-group-columns": {
     "product-group": "Product Group",
-    "product-group-barred": "Barred",
-    "product-group-barred-yes": "Yes",
-    "product-group-barred-no": "No",
+    "product-group-barred": "Status",
+    "product-group-barred-yes": "Barred",
+    "product-group-barred-no": "Active",
     "product-group-created": "Created",
     "product-group-updated": "Updated"
   },
