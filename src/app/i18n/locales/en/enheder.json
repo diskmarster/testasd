@@ -5,9 +5,9 @@
   },
   "unit-columns": {
     "unit": "Unit",
-    "is-barred": "Barred",
-    "is-barred-yes": "Yes",
-    "is-barred-no": "No",
+    "is-barred": "Status",
+    "is-barred-yes": "Inactive",
+    "is-barred-no": "Active",
     "created-at": "Created",
     "updated-at": "Updated"
   },

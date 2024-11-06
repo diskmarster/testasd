@@ -10,9 +10,9 @@
   
     "placement-columns": {
       "placement": "Placering",
-      "is-barred": "Spærret",
-      "is-barred-yes": "Ja",
-      "is-barred-no": "Nej",
+      "is-barred": "Status",
+      "is-barred-yes": "Spærret",
+      "is-barred-no": "Aktiv",
       "inserted": "Indsat",
       "updated": "Opdateret"
     },

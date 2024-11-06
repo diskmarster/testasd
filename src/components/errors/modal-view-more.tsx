@@ -33,8 +33,8 @@ export function ModalViewMore({ error }: Props) {
               {t('view-modal.sub', { time, user: error.user, company: error.company })}
             </p>
             <div className="flex items-center gap-2">
-              <Badge className="capitalize" variant='secondary'>{error.type}</Badge>
-              <Badge>{error.origin}</Badge>
+              <Badge className="capitalize" variant='gray'>{error.type}</Badge>
+              <Badge variant='blue'>{error.origin}</Badge>
             </div>
             <div className="rounded-md bg-muted overflow-hidden">
               <div className="flex items-center justify-between gap-1 bg-foreground/10 py-2 px-3">

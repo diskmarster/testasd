@@ -80,8 +80,8 @@ export function getTableUsersColumns(
           : role == 'administrator'
             ? 'blue'
             : role == 'moderator'
-              ? 'secondary'
-              : 'outline'
+              ? 'gray'
+              : 'lessGray'
 
       return (
         <Badge variant={badgeVariant} className='capitalize'>
