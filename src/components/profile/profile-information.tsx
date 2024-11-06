@@ -50,7 +50,7 @@ export function ProfileInformation() {
             setFormError(res.serverError)
             return
           }
-          toast(t(`common:${siteConfig.successTitle}`), {
+          toast(t(siteConfig.successTitle), {
             description: t('profile-information.updated'),
           })
         })

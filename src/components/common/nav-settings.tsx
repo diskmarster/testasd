@@ -22,7 +22,7 @@ export function NavSettings({ lng, variant = 'outline' }: NavSettingsProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant={variant} size='icon' className='aspect-square'>
-          <Icons.settings className='h-5 w-5' />
+          <Icons.settings className='size-4' />
           <span className='sr-only'>Settings</span>
         </Button>
       </DropdownMenuTrigger>

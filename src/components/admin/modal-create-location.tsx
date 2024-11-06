@@ -118,7 +118,7 @@ export function ModalCreateLocation({ user, users, children }: Props) {
                 </p>
               )}
             </div>
-            {filteredUsers && (
+            {filteredUsers.length > 0 && (
               <div className='grid gap-2'>
                 <div className='flex items-center justify-between'>
                   <Label>{t('modal-create-location.access-level')}</Label>

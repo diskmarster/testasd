@@ -5,7 +5,6 @@ import { editableAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
-import { t } from 'i18next'
 import { revalidatePath } from 'next/cache'
 import {
   createUnitValidation,
@@ -18,7 +17,7 @@ export const createUnitAction = editableAction
   .schema(createUnitValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const { session, user } = await sessionService.validate()
+    const { session } = await sessionService.validate()
     if (!session) {
       throw new ActionError(t('unit-action.user-not-logged-in'))
     }
@@ -38,6 +37,7 @@ export const updateUnitAction = editableAction
   .metadata({ actionName: 'updateUnit' })
   .schema(updateUnitValidation)
   .action(async ({ parsedInput: { unitID, data: updatedUnitData }, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const updatedUnit = await inventoryService.updateUnitByID(
       unitID,
       updatedUnitData,
@@ -52,7 +52,8 @@ export const updateUnitAction = editableAction
 export const toggleBarredUnitAction = editableAction
   .metadata({ actionName: 'unitToggleBarred' })
   .schema(toggleBarredUnitValidation)
-  .action(async ({ parsedInput: { unitID, isBarred } }) => {
+  .action(async ({ parsedInput: { unitID, isBarred }, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const updatedUnit = await inventoryService.updateUnitBarredStatus(
       unitID,
       isBarred,
