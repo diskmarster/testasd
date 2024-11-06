@@ -28,9 +28,9 @@
 
   "product-group-columns": {
     "product-group": "Varegruppe",
-    "product-group-barred": "Spærret",
-    "product-group-barred-yes": "Ja",
-    "product-group-barred-no": "Nej",
+    "product-group-barred": "Status",
+    "product-group-barred-yes": "Spærret",
+    "product-group-barred-no": "Aktiv",
     "product-group-created": "Oprettet",
     "product-group-updated": "Opdateret"
   },

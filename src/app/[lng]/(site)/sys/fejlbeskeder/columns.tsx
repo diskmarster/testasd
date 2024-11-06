@@ -124,14 +124,15 @@ export function getTableErrorsColumns(
 
       return (
         <div className='flex items-center gap-1'>
-          <Badge className='capitalize' variant='secondary'>{type}</Badge>
-          <Badge>{origin}</Badge>
+          <Badge className='capitalize' variant='gray'>{type}</Badge>
+          <Badge variant='blue'>{origin}</Badge>
         </div>
       )
     },
     enableHiding: true,
     meta: {
       viewLabel: t('columns.path'),
+      className: 'max-w-fit'
     },
   }
 

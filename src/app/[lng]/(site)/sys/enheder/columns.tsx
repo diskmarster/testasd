@@ -1,6 +1,7 @@
 import { TableOverviewActions } from '@/components/inventory/table-units-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
+import { Badge } from '@/components/ui/badge'
 import { Unit } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -26,10 +27,19 @@ export function getTableUnitColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('unit-columns.is-barred')} />
     ),
-    cell: ({ getValue }) =>
-      getValue<boolean>()
-        ? t('unit-columns.is-barred-yes')
-        : t('unit-columns.is-barred-no'),
+    cell: ({ getValue }) => {
+
+      const status = getValue<boolean>()
+      const badgeVariant = status ? 'red' : 'gray'
+
+      return (
+        <Badge variant={badgeVariant}>
+          {status
+            ? t('unit-columns.is-barred-yes')
+            : t('unit-columns.is-barred-no')}
+        </Badge>
+      )
+    },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<boolean>(id))
     },

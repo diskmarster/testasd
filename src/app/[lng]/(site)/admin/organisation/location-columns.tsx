@@ -60,7 +60,7 @@ export function getTableLocationsColumns(
     ),
     cell: ({ getValue }) => {
       const status = getValue<boolean>()
-      const badgeVariant = status ? 'destructive' : 'secondary'
+      const badgeVariant = status ? 'red' : 'gray'
 
       return (
         <Badge variant={badgeVariant}>

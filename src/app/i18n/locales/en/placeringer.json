@@ -10,9 +10,9 @@
 
   "placement-columns": {
     "placement": "Placement",
-    "is-barred": "Barred",
-    "is-barred-yes": "Yes",
-    "is-barred-no": "No",
+    "is-barred": "Status",
+    "is-barred-yes": "Barred",
+    "is-barred-no": "Active",
     "inserted": "Inserted",
     "updated": "Updated"
   },

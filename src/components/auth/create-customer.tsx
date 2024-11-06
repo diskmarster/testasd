@@ -91,7 +91,7 @@ export function CreateCustomer({ lng }: CreateCustomerCardProps) {
 
   return (
     <div className='flex flex-col items-center'>
-      <Badge variant={'default'} className='mb-5 text-primary-foreground'>
+      <Badge variant='blue' className='mb-5 text-primary-foreground'>
         {t('choose-plan')}
       </Badge>
       <div className='grid w-full grid-cols-1 gap-6 md:w-fit md:grid-cols-3'>

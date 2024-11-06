@@ -18,6 +18,13 @@ const badgeVariants = cva(
         success: 'bg-success text-success-foreground border-transparent',
         warning: 'bg-warning text-warning-foreground border-transparent',
         wow: 'bg-gradient-to-r from-violet-500 to-purple-500 text-white',
+        yellow: 'bg-yellow-400/25 border-yellow-400/50 dark:text-yellow-500 text-yellow-600',
+        red: 'bg-red-500/25 border-red-500/50 text-red-500',
+        green: 'bg-green-500/25 border-green-500/50 dark:text-green-500 text-green-600',
+        gray: 'bg-slate-500/25 border-slate-500/50 dark:text-slate-500 text-slate-600',
+        lessGray: 'bg-slate-500/10 border-slate-500/50 dark:text-slate-500 text-slate-600',
+        blue: 'bg-blue-500/25 border-blue-500/50 dark:text-blue-500 text-blue-600',
+        violet: 'bg-gradient-to-r from-violet-500/25 to-purple-500/25 border-violet-500/50 dark:text-violet-500 text-violet-600',
       },
     },
     defaultVariants: {

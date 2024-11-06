@@ -48,7 +48,7 @@ export function ModalShowProductCard({ product, user }: Props) {
           <CredenzaTitle asChild>
             <div className='flex items-center gap-3'>
               <p className='md:w-11/12'>{product.text1}</p>
-              {product.isBarred && <Badge variant='destructive'>{t('modal-show-product-card.barred')}</Badge>}
+              {product.isBarred && <Badge variant='red'>{t('modal-show-product-card.barred')}</Badge>}
             </div>
           </CredenzaTitle>
         </CredenzaHeader>
