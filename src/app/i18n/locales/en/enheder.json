@@ -6,7 +6,7 @@
   "unit-columns": {
     "unit": "Unit",
     "is-barred": "Status",
-    "is-barred-yes": "Inactive",
+    "is-barred-yes": "Barred",
     "is-barred-no": "Active",
     "created-at": "Created",
     "updated-at": "Updated"
