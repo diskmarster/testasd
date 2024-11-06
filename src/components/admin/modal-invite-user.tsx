@@ -83,6 +83,7 @@ export function ModalInviteUser({
 
   function onOpenChange(open: boolean) {
     reset()
+    setSearchRoles('bruger')
     setOpen(open)
   }
 
@@ -95,6 +96,7 @@ export function ModalInviteUser({
       }
       setError(undefined)
       reset()
+      setSearchRoles('bruger')
       setOpen(false)
       toast.success(t(`common:${siteConfig.successTitle}`), {
         description: `${t('toasts.invitation-sent')} ${values.email}`,
@@ -291,7 +293,7 @@ export function ModalInviteUser({
                         className={cn(
                           'border rounded-sm py-2 px-3 flex items-center justify-between transition-colors h-9',
                           formValues.locationIDs.includes(loc.id) &&
-                            'bg-primary/5',
+                          'bg-primary/5',
                         )}>
                         <span className='text-muted-foreground text-sm'>
                           {loc.name}
