@@ -152,7 +152,8 @@
     "no-app-access": "Bruger har ikke app adgang",
     "error-getting-batch": "Fejl ved hentning af batches for godkendt bruger: ",
     "error-getting-batch-numbers": "Kunne ikke hente batchnumre",
-    "error-getting-batch-number": "Der skete en fejl da vi skulle hente batchnr.: "
+    "error-getting-batch-number": "Der skete en fejl da vi skulle hente batchnr.: ",
+    "maintenance": "Vedligeholdelse i gang"
   },
   "route-translations-placements": {
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",
@@ -164,20 +165,23 @@
   "route-translations-locations": {
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",
     "no-app-access": "Brugeren har ikke adgang til appen.",
-    "server-error": "Der opstod en serverfejl."
+    "server-error": "Der opstod en serverfejl.",
+    "maintenance": "Vedligeholdelse i gang"
   },
   "route-translations-productid": {
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",
     "no-app-access": "Brugeren har ikke adgang til appen.",
     "error-fetching-product": "Fejl ved hentning af vare efter ID: ",
-    "server-error-product": "Der opstod en serverfejl, da der blev forsøgt at hente vare."
+    "server-error-product": "Der opstod en serverfejl, da der blev forsøgt at hente vare.",
+    "maintenance": "Vedligeholdelse i gang"
   },
   "route-translations-product": {
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",
     "no-app-access": "Brugeren har ikke adgang til appen.",
     "error-getting-product": "Fejl ved hentning af vare for den autentificerede bruger: ",
     "couldnt-get-product": "Kunne ikke hente vare",
-    "error-occured-getting-product": "Der opstod en fejl under hentning af vare: "
+    "error-occured-getting-product": "Der opstod en fejl under hentning af vare: ",
+    "maintenance": "Vedligeholdelse i gang"
   },
   "route-translations-move": {
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",
@@ -191,7 +195,8 @@
     "error-while-moving-batch": "Der opstod en fejl under flytning: Kunne ikke finde eller oprette en standardbatch",
     "error-creating-batch-db": "Fejl ved oprettelse af et nyt batchnummer i databasen",
     "error-creating-move": "Fejl ved oprettelse af flytning: ",
-    "error-while-moving": "Der opstod en fejl under flytning: "
+    "error-while-moving": "Der opstod en fejl under flytning: ",
+    "maintenance": "Vedligeholdelse i gang"
   },
   "route-translations-regulations": {
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",
@@ -207,6 +212,7 @@
     "error-creating-new": "Fejl ved oprettelse af ny: ",
     "try-again": "Prøv venligst igen",
     "error-getting-product": "Fejl ved hentning af vare for den autentificerede bruger: ",
-    "error-during-regulation": "Der opstod en fejl under regulering: "
+    "error-during-regulation": "Der opstod en fejl under regulering: ",
+    "maintenance": "Vedligeholdelse i gang"
   }
 }
