@@ -11,9 +11,9 @@
     "productNo": "Varenr.",
     "barcode": "Stregkode",
     "product-group": "Varegruppe",
-    "text1": "Tekst1",
-    "text2": "Tekst2",
-    "text3": "Tekst3",
+    "text1": "Varetekst 1",
+    "text2": "Varetekst 2",
+    "text3": "Varetekst 3",
     "cost-price": "Kostpris",
     "unit": "Enhed",
     "quantity": "Antal",
@@ -30,9 +30,9 @@
     "placeholders": {
       "productNo": "Søg i varenr.",
       "barcode": "Søg i stregkode",
-      "text1": "Søg i tekst1",
-      "text2": "Søg i tekst2",
-      "text3": "Søg i tekst3",
+      "text1": "Søg i varetekst 1",
+      "text2": "Søg i varetekst 2",
+      "text3": "Søg i varetekst 3",
       "reference": "Søg i konto/sag"
     },
     "filters": {
