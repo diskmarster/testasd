@@ -1,5 +1,6 @@
 import { serverTranslation } from '@/app/i18n'
 import { NewApplicationError } from '@/lib/database/schema/errors'
+import { isMaintenanceMode } from '@/lib/utils.server'
 import { errorsService } from '@/service/errors'
 import { productService } from '@/service/products'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
@@ -13,6 +14,13 @@ export async function GET(
   const { session, user } = await validateRequest(headers())
   const lng = getLanguageFromRequest(headers())
   const { t } = await serverTranslation(lng, 'common')
+
+  if (isMaintenanceMode()) {
+    return NextResponse.json(
+      { msg: t('route-translations-productid.maintenance') },
+      { status: 423 },
+    )
+  }
 
   if (session == null || user == null) {
     return NextResponse.json(

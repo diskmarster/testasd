@@ -1,7 +1,7 @@
 import { serverTranslation } from '@/app/i18n'
 import { fallbackLng } from '@/app/i18n/settings'
 import { hasPermissionByRank } from '@/data/user.types'
-import { ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
+import { ACTION_ERR_MAINTENANCE, ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
 import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { sessionService } from '@/service/session'
@@ -10,6 +10,7 @@ import { createSafeActionClient, MiddlewareResult } from 'next-safe-action'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { NewApplicationError } from '../database/schema/errors'
+import { isMaintenanceMode } from '../utils.server'
 
 export async function getSchema<T>(
   schema: (t: (key: string, options?: any) => string) => T,
@@ -93,6 +94,10 @@ export const publicAction = baseClient.use(async ({ next }) => {
 
 // authed action client for all authorized requests
 export const authedAction = publicAction.use(async ({ next, ctx }) => {
+  if (isMaintenanceMode()) {
+    throw new ActionError(ACTION_ERR_MAINTENANCE)
+  }
+
   if (!ctx.session || !ctx.user) {
     throw new ActionError(ACTION_ERR_UNAUTHORIZED)
   }
