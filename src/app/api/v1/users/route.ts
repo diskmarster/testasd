@@ -57,7 +57,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 		return NextResponse.json(
 			{
 				msg: 'Success',
-				users: users.map(u => ({
+				data: users.map(u => ({
 					id: u.id,
 					name: u.name,
 				})),
