@@ -11,9 +11,9 @@
     "productNo": "Product No.",
     "barcode": "Barcode",
     "product-group": "Product group",
-    "text1": "Text1",
-    "text2": "Text2",
-    "text3": "Text3",
+    "text1": "Product text 1",
+    "text2": "Product text 2",
+    "text3": "Product text 3",
     "cost-price": "Cost price",
     "unit": "Unit",
     "quantity": "Quantity",
@@ -30,9 +30,9 @@
     "placeholders": {
       "productNo": "Search by product no.",
       "barcode": "Search by barcode",
-      "text1": "Search by text1",
-      "text2": "Search by text2",
-      "text3": "Search by text3",
+      "text1": "Search by product text 1",
+      "text2": "Search by product text 2",
+      "text3": "Search by product text 3",
       "reference": "Search by account/case"
     },
     "filters": {
