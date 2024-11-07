@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import {
   ArrowDown,
+  TrafficCone,
   ChevronRight,
   ArrowDownUp,
   ArrowLeft,
@@ -58,6 +59,7 @@ export const Icons = {
   cloudUpload: CloudUpload,
   listTodo: ListTodo,
   housePlus: HousePlus,
+  trafficCone: TrafficCone,
   arrowDownUp: ArrowDownUp,
   userPlus: UserRoundPlus,
   arrowLeftRight: ArrowLeftRight,
@@ -94,14 +96,14 @@ export const Icons = {
   refresh: RefreshCcw,
   settings: Settings,
   monitor: Monitor,
-  bannedMonitor:({sizeClass: className}: {sizeClass?: string}) => (
+  bannedMonitor: ({ sizeClass: className }: { sizeClass?: string }) => (
     <div className={cn('relative overflow-none size-4')}>
       <Monitor className={cn('absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2', className)} />
       <Ban className={cn('size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2')} />
     </div>
   ),
   smartphone: Smartphone,
-  bannedSmartphone:({sizeClass: className}: {sizeClass?: string}) => (
+  bannedSmartphone: ({ sizeClass: className }: { sizeClass?: string }) => (
     <div className={cn('relative overflow-none size-4')}>
       <Smartphone className={cn('absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2', className)} />
       <Ban className={cn('size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2')} />

@@ -153,32 +153,37 @@
     "no-app-access": "User does not have app access.",
     "error-getting-batch": "Error retrieving batches for authenticated user: ",
     "error-getting-batch-number": "An error occurred while retrieving batch number: ",
-    "error-getting-batch-numbers": "Could not retrieve batch numbers."
+    "error-getting-batch-numbers": "Could not retrieve batch numbers.",
+    "maintenance": "Maintenance in progress"
   },
   "route-translations-placements": {
     "no-access-to-resource": "You do not have access to this resource.",
     "no-app-access": "User does not have app access.",
     "error-getting-placement": "Error retrieving placements for authenticated user: ",
     "error-getting-placement-number": "An error occurred while retrieving placements: ",
-    "error-getting-placement-numbers": "Could not retrieve placements."
+    "error-getting-placement-numbers": "Could not retrieve placements.",
+    "maintenance": "Maintenance in progress"
   },
   "route-translations-locations": {
     "no-access-to-resource": "You do not have access to this resource.",
     "no-app-access": "User does not have app access.",
-    "server-error": "A server error occurred. "
+    "server-error": "A server error occurred. ",
+    "maintenance": "Maintenance in progress"
   },
   "route-translations-productid": {
     "no-access-to-resource": "You do not have access to this resource.",
     "no-app-access": "User does not have app access.",
     "error-fetching-product": "Error fetching product by ID: ",
-    "server-error-product": "A server error occurred when trying to fetch product."
+    "server-error-product": "A server error occurred when trying to fetch product.",
+    "maintenance": "Maintenance in progress"
   },
   "route-translations-product": {
     "no-access-to-resource": "You do not have access to this resource.",
     "no-app-access": "User does not have app access.",
     "error-getting-product": "Error retrieving product for authenticated user: ",
     "couldnt-get-product": "Could not retrieve product",
-    "error-occured-getting-product": "An error occurred while retrieving product: "
+    "error-occured-getting-product": "An error occurred while retrieving product: ",
+    "maintenance": "Maintenance in progress"
   },
   "route-translations-move": {
     "no-access-to-resource": "You do not have access to this resource.",
@@ -192,7 +197,8 @@
     "error-while-moving-batch": "An error occurred while moving: Couldn't find or create a standard batch",
     "error-creating-batch-db": "Error creating a new batch number in database",
     "error-creating-move": "Error creating move: ",
-    "error-while-moving": "An error occurred while moving: "
+    "error-while-moving": "An error occurred while moving: ",
+    "maintenance": "Maintenance in progress"
   },
   "route-translations-regulations": {
     "no-access-to-resource": "You do not have access to this resource.",
@@ -208,6 +214,7 @@
     "error-creating-new": "Error creating new: ",
     "try-again": "Please try again",
     "error-getting-product": "Error retrieving product for authenticated user: ",
-    "error-during-regulation": "An error occurred during regulation: "
+    "error-during-regulation": "An error occurred during regulation: ",
+    "maintenance": "Maintenance in progress"
   }
 }

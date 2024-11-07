@@ -80,8 +80,12 @@ export function getTableUsersColumns(
           : role == 'administrator'
             ? 'blue'
             : role == 'moderator'
-              ? 'gray'
-              : 'lessGray'
+              ? 'teal'
+              : role == 'bruger'
+                ? 'orange'
+                : role == 'afgang'
+                  ? 'rose'
+                  : 'lessGray'
 
       return (
         <Badge variant={badgeVariant} className='capitalize'>
@@ -144,7 +148,7 @@ export function getTableUsersColumns(
                       <Icons.ban className={'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
                     </>
                   )}
-                  </div>
+                </div>
               </TooltipTrigger>
               <TooltipContent className='bg-foreground text-background'>
                 {t('user-columns.access-web')}

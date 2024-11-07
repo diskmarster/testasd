@@ -1,5 +1,6 @@
 import { serverTranslation } from '@/app/i18n'
 import { NewApplicationError } from '@/lib/database/schema/errors'
+import { isMaintenanceMode } from '@/lib/utils.server'
 import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { inventoryService } from '@/service/inventory'
@@ -25,6 +26,13 @@ export async function POST(
   const { session, user } = await validateRequest(headers())
   const lng = getLanguageFromRequest(headers())
   const { t } = await serverTranslation(lng, 'common')
+
+  if (isMaintenanceMode()) {
+    return NextResponse.json(
+      { msg: t('route-translations-move.maintenance') },
+      { status: 423 },
+    )
+  }
 
   if (session == null || user == null) {
     return NextResponse.json(
