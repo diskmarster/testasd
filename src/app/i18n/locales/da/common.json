@@ -4,7 +4,6 @@
     "go-to-previous-page": "Gå til forrige side",
     "go-to-next-page": "Gå til næste side"
   },
-
   "table-filters": {
     "clear": "Fjern",
     "clear-filter": "Fjern Filter",
@@ -16,24 +15,20 @@
     "search": "Søg",
     "number-range": "til",
     "number-range-empty": "Vælg {{label}}",
-    "number-range-to": "Fra 0 til og med {{to}}",
+    "number-range-to": "Til og med {{to}}",
     "number-range-from": "Fra {{from}} og op",
-    "number-range-both": "Fra {{from}} til og med {{to}}",
-    "number-range-all": "Viser alle"
+    "number-range-both": "Fra {{from}} til og med {{to}}"
   },
-
   "language-switcher": {
     "language": "Sprog",
     "full-lang-name-da": "Dansk",
     "full-lang-name-en": "Engelsk"
   },
-
   "theme-toggle": {
     "theme": "Tema",
     "light": "Lyst",
     "dark": "Mørkt"
   },
-
   "table-toolbar": {
     "show-hide-columns": "Gem/vis Kolonner"
   },
@@ -46,7 +41,6 @@
     "select-location": "Vælg Lokation",
     "inactive": "Inaktiv"
   },
-
   "create-customer-action": {
     "primary-location": "Hovedlokation",
     "welcome-email": "Velkommen til Nem Lager",
@@ -65,7 +59,6 @@
     "company-account-wasnt-activated": "Din firmakonto blev ikke aktiveret.",
     "location-access-error": "Der skete en fejl med at give brugeren tilladelse til lokationen."
   },
-
   "plans": {
     "plan_lite": "Lite",
     "plan_basis": "Basis",
@@ -100,18 +93,15 @@
       "Ubegrænsede lokationer"
     ]
   },
-
   "site-config": {
     "site-name": "Nem Lager",
     "site-description": "Hold styr på dit lager.",
     "error-title": "Noget gik galt",
     "success-title": "Handling fuldført",
-
     "overview": "Oversigt",
     "history": "Historik",
     "restock": "Genbestil",
     "administration": "Administration",
-
     "administration-dropdown": {
       "users": "Brugere",
       "users-description": "Her kan du oprette og opdatere brugere.",
@@ -124,7 +114,6 @@
       "organisation": "Lokationer",
       "organisation-description": "Her kan du administrere dine brugere, lokationer og firma."
     },
-
     "sys-admin-dropdown": {
       "customers": "Kunder",
       "customers-description": "Se en oversigt over alle kunder i Nem Lager.",
@@ -136,16 +125,13 @@
       "error-messages-description": "Få et overblik over alle fejlbeskeder"
     }
   },
-
   "toasts": {
     "location-select": "Skiftet lokation til ",
     "unnamed": "Unnavngivet"
   },
-
   "chip": {
     "genbestil-chip-tooltip": "{{count}} vare skal genbestilles"
   },
-
   "route-translations-chip": {
     "no-resource-access": "Du har ikke adgang til denne ressource.",
     "no-web-access": "Bruger har ikke web adgang",

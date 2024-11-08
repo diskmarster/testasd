@@ -158,11 +158,9 @@ function FilterPopover<T>({
       return t('table-filters.number-range-to', {to})
     } else if (from && !to) {
       return t('table-filters.number-range-from', {from})
-    } else if (from && to) {
-      return t('table-filters.number-range-both', {from, to})
     } else {
-      return t('table-filters.number-range-all')
-    }
+      return t('table-filters.number-range-both', {from, to})
+    } 
   } 
 
   const getDateRangeDisplayValue = (range: DateRange): string => {
