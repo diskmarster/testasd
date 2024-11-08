@@ -13,7 +13,13 @@
     "no-filter-found": "Ingen filter fundet",
     "choose": "Vælg",
     "choose-dates": "Vælg datoer",
-    "search": "Søg"
+    "search": "Søg",
+    "number-range": "til",
+    "number-range-empty": "Vælg {{label}}",
+    "number-range-to": "Fra 0 til og med {{to}}",
+    "number-range-from": "Fra {{from}} og op",
+    "number-range-both": "Fra {{from}} til og med {{to}}",
+    "number-range-all": "Viser alle"
   },
 
   "language-switcher": {

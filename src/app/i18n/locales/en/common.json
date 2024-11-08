@@ -13,7 +13,13 @@
     "no-filter-found": "No filter found",
     "choose": "Choose",
     "choose-dates": "Choose dates",
-    "search": "Search"
+    "search": "Search",
+    "number-range": "to",
+    "number-range-empty": "Choose {{label}}",
+    "number-range-to": "From 0 to and with {{to}}",
+    "number-range-from": "From {{from}} and up",
+    "number-range-both": "From {{from}} to and with {{to}}",
+    "number-range-all": "Shows all"
   },
 
   "language-switcher": {

@@ -1,7 +1,7 @@
 import React, { SetStateAction, useState } from 'react'
 
 import { useTranslation } from '@/app/i18n/client'
-import { FilterField } from '@/components/table/table-toolbar'
+import { FilterField, NumberRange } from '@/components/table/table-toolbar'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -114,7 +114,7 @@ function FilterPopover<T>({
   setActiveIndex: (index?: number) => void
   onRemoveField: (field: FilterField<T>) => void
   index: number
-  t: (key: string) => string
+  t: (key: string, opts?: any) => string
 }) {
   const [value, setSearched] = useState<string>('')
   const [selectValue, setSelectValue] = useState<string[]>(
@@ -125,8 +125,14 @@ function FilterPopover<T>({
     to: undefined,
   })
 
+  const [numRange, setNumRange] = useState<NumberRange>({
+    from: undefined,
+    to: undefined
+  })
+
   const isSelect = field.type === 'select'
   const isDateRange = field.type === 'date-range'
+  const isNumberRange = field.type === 'number-range'
 
   const getSelectDisplayValue = (value: any[]): string => {
     if (value.length == 0) {
@@ -142,6 +148,22 @@ function FilterPopover<T>({
       .filter(Boolean)
       .join(', ')
   }
+
+  const getNumberRangeDisplayValue = (value: NumberRange): string => {
+    const {from, to} = value
+
+    if (!from && !to) {
+      return t('table-filters.number-range-empty', {label: field.label}) 
+    } else if (!from && to) {
+      return t('table-filters.number-range-to', {to})
+    } else if (from && !to) {
+      return t('table-filters.number-range-from', {from})
+    } else if (from && to) {
+      return t('table-filters.number-range-both', {from, to})
+    } else {
+      return t('table-filters.number-range-all')
+    }
+  } 
 
   const getDateRangeDisplayValue = (range: DateRange): string => {
     if (!range || (!range.from && !range.to))
@@ -164,7 +186,9 @@ function FilterPopover<T>({
     ? getSelectDisplayValue(selectValue)
     : isDateRange
       ? getDateRangeDisplayValue(date as DateRange)
-      : getTextFilterDisplayValue(value as string) || ''
+      : isNumberRange
+        ? getNumberRangeDisplayValue(numRange)
+        : getTextFilterDisplayValue(value as string) || ''
 
   return (
     <Popover
@@ -183,6 +207,7 @@ function FilterPopover<T>({
               'flex items-center gap-1 max-w-56',
               field.type == 'date-range' && 'max-w-72',
               field.type == 'select' && 'max-w-72',
+              field.type == 'number-range' && 'max-w-96'
             )}
             onClick={() => setActiveIndex(isActive ? undefined : index)}>
             <span>{field.label}:</span>
@@ -208,11 +233,73 @@ function FilterPopover<T>({
           />
         ) : field.type === 'date-range' ? (
           <FilterDateRange field={field} date={date} setDate={setDate} />
+        ) : field.type === 'number-range' ? (
+          <FilterNumberRange
+            field={field}
+            numberRange={numRange}
+            setNumberRange={setNumRange}
+            t={t}
+          />
         ) : (
           'Unsupported type'
         )}
       </PopoverContent>
     </Popover>
+  )
+}
+
+function FilterNumberRange<T>({
+  field,
+  numberRange,
+  setNumberRange,
+  t
+}: {
+  field: FilterField<T>
+  numberRange: NumberRange
+  setNumberRange: React.Dispatch<React.SetStateAction<NumberRange>>
+  t: (key: string) => string
+}) {
+  const debouncedSeteFilter = useDebouncedCallback((val: NumberRange) => {
+    field.column?.setFilterValue(val)
+  }, 250)
+
+  return (
+    <div className='flex items-center justify-between gap-3'>
+      <Input
+        autoFocus
+        size={12}
+        placeholder={field.placeholder}
+        type='number'
+        value={numberRange.from?.toString() ?? ''}
+        onChange={e => {
+          setNumberRange(prev => ({
+            from: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
+            to: prev.to
+          }))
+          debouncedSeteFilter({
+            from: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
+            to: numberRange.to
+          })
+        }}
+      />
+      <span className='text-sm text-muted-foreground'>{t('table-filters.number-range')}</span>
+      <Input
+        size={12}
+        placeholder={field.placeholder}
+        type='number'
+        value={numberRange.to?.toString() ?? ''}
+        onChange={e => {
+          setNumberRange(prev => ({
+            from: prev.from,
+            to: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
+          }))
+          debouncedSeteFilter({
+            from: numberRange.from,
+            to: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
+          })
+        }}
+      />
+    </div>
   )
 }
 
@@ -434,6 +521,8 @@ function AddFilterPopover<T>({
                       <Icons.list className='mr-2 size-4' aria-hidden='true' />
                     ) : field.type === 'text' ? (
                       <Icons.text className='mr-2 size-4' aria-hidden='true' />
+                    ) : field.type === 'number-range' ? (
+                      <Icons.hash className='mr-2 size-4' />
                     ) : (
                       <Icons.calendar
                         className='mr-2 size-4'
