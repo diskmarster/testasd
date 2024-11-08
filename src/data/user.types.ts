@@ -20,6 +20,14 @@ export const resetPasswordTypeSchema = z.enum([
 export type ResetPasswordType = z.infer<typeof resetPasswordTypeSchema>
 export const resetPasswordTypes = resetPasswordTypeSchema.options as readonly ResetPasswordType[]
 
+export const authProviderDomainSchema = z.enum([
+  'pw',
+  'pin',
+  'nfc'
+])
+export type AuthProviderDomain = z.infer<typeof authProviderDomainSchema>
+export const AuthProviderDomains = authProviderDomainSchema.options as readonly AuthProviderDomain[]
+
 export function inList<TCol extends Column>(col: TCol, list: unknown[]) {
   return sql`${col} in (${sql.raw(list.join(', '))})`
 }
