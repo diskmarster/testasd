@@ -1,0 +1,24 @@
+{
+  "page": {
+    "title": "Clients",
+    "description": "View and edit clients"
+  },
+  "columns": {
+    "inserted": "Inserted",
+    "updated": "Updated",
+    "company": "Company",
+    "plan": "Plan",
+    "active": "Status",
+    "active_true": "Active",
+    "active_false": "Inactive",
+    "email": "Company email",
+    "extra": "Extra users"
+  },
+  "row-actions": {
+    "update": "Update client",
+    "toggle": "Toggle status",
+    "toggle_true": "Deactivate client",
+    "toggle_false": "Activate client",
+    "delete": "Delete client"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "page": {
+    "title": "Kunder",
+    "description": "Administrer kunder i Nem Lager"
+  },
+  "columns": {
+    "inserted": "Oprettet",
+    "updated": "Opdateret",
+    "company": "Firma",
+    "plan": "Plan",
+    "active": "Status",
+    "active_true": "Aktiv",
+    "active_false": "Inaktiv",
+    "email": "Firma e-mail",
+    "extra": "Ekstra brugere"
+  },
+  "row-actions": {
+    "update": "Opdater kunde",
+    "toggle": "Skift status",
+    "toggle_true": "Deaktiver kunde",
+    "toggle_false": "Aktiver kunde",
+    "delete": "Slet kunde"
+  }
+}
