@@ -47,11 +47,13 @@ import {
   Monitor,
   Smartphone,
   CircleDollarSign,
-  Ban
+  Ban,
+  Hash
 } from 'lucide-react'
 
 export const Icons = {
   updown: ChevronsUpDown,
+  hash: Hash,
   copy: Copy,
   chevronRight: ChevronRight,
   triangleAlert: TriangleAlert,
