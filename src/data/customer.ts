@@ -88,5 +88,8 @@ export const customer = {
   updateByID: async function(customerID: CustomerID, customerData: PartialCustomer, trx: TRX =db): Promise<boolean> {
     const resultSet = await trx.update(customerTable).set(customerData).where(eq(customerTable.id, customerID))
     return resultSet.rowsAffected == 1
+  },
+  getAll: async function(trx: TRX = db): Promise<Customer[]> {
+    return trx.select().from(customerTable)
   }
 }

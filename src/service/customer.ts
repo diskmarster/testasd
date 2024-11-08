@@ -93,4 +93,7 @@ export const customerService = {
   ): Promise<boolean> {
     return await customer.updateByID(customerID, customerData)
   },
+  getAll: async function(): Promise<Customer[]> {
+    return customer.getAll()
+  }
 }
