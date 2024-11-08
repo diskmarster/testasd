@@ -4,8 +4,7 @@ import { TableHeader } from "@/components/table/table-header";
 import { FilterField, NumberRange } from "@/components/table/table-toolbar";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { plans } from "@/data/customer.types";
-import { Customer } from "@/lib/database/schema/customer";
+import { CustomerWithUserCount, plans } from "@/data/customer.types";
 import { dateRangeFilterFn, numberRangeFilterFn } from "@/lib/tanstack/filter-fns";
 import { formatDate } from "@/lib/utils";
 import { ColumnDef, Table } from "@tanstack/react-table";
@@ -14,8 +13,8 @@ import { DateRange } from "react-day-picker";
 
 export function getTableClientsColumns(
   t: (key: string, opts?: any) => string,
-): ColumnDef<Customer>[] {
-  const selectCol: ColumnDef<Customer> = {
+): ColumnDef<CustomerWithUserCount>[] {
+  const selectCol: ColumnDef<CustomerWithUserCount> = {
     id: 'select',
     header: ({ table }) => (
       <Checkbox
@@ -38,7 +37,7 @@ export function getTableClientsColumns(
     enableHiding: false,
   }
 
-  const insertedCol: ColumnDef<Customer> = {
+  const insertedCol: ColumnDef<CustomerWithUserCount> = {
     accessorKey: 'inserted',
     header: ({ column }) => (
       <TableHeader column={column} title={t('columns.inserted')} />
@@ -50,7 +49,7 @@ export function getTableClientsColumns(
     },
   }
 
-  const updatedCol: ColumnDef<Customer> = {
+  const updatedCol: ColumnDef<CustomerWithUserCount> = {
     accessorKey: 'updated',
     header: ({ column }) => (
       <TableHeader column={column} title={t('columns.updated')} />
@@ -62,7 +61,7 @@ export function getTableClientsColumns(
     },
   }
 
-  const companyCol: ColumnDef<Customer> = {
+  const companyCol: ColumnDef<CustomerWithUserCount> = {
     accessorKey: 'company',
     header: ({ column }) => (
       <TableHeader column={column} title={t('columns.company')} />
@@ -74,7 +73,7 @@ export function getTableClientsColumns(
     },
   }
 
-  const emailCol: ColumnDef<Customer> = {
+  const emailCol: ColumnDef<CustomerWithUserCount> = {
     accessorKey: 'email',
     header: ({ column }) => (
       <TableHeader column={column} title={t('columns.email')} />
@@ -86,7 +85,7 @@ export function getTableClientsColumns(
     },
   }
 
-  const planCol: ColumnDef<Customer> = {
+  const planCol: ColumnDef<CustomerWithUserCount> = {
     accessorKey: 'plan',
     header: ({ column }) => (
       <TableHeader column={column} title={t('columns.plan')} />
@@ -110,7 +109,7 @@ export function getTableClientsColumns(
     filterFn: (row, id, value) => value.includes(row.getValue(id))
   }
 
-  const activeCol: ColumnDef<Customer> = {
+  const activeCol: ColumnDef<CustomerWithUserCount> = {
     accessorKey: 'isActive',
     header: ({ column }) => (
       <TableHeader column={column} title={t('columns.active')} />
@@ -132,7 +131,7 @@ export function getTableClientsColumns(
     filterFn: (row, id, value) => value.includes(row.getValue(id))
   }
 
-  const extraUsersCol: ColumnDef<Customer> = {
+  const extraUsersCol: ColumnDef<CustomerWithUserCount> = {
     accessorKey: 'extraUsers',
     header: ({ column }) => (
       <TableHeader column={column} title={t('columns.extra')} />
@@ -150,7 +149,25 @@ export function getTableClientsColumns(
     filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
   }
 
-  const actionsCol: ColumnDef<Customer> = {
+  const usersCol: ColumnDef<CustomerWithUserCount> = {
+    accessorKey: 'userCount',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('columns.users')} />
+    ),
+    cell: ({ row }) => {
+      return (
+        <span className="tabular-nums">{row.original.userCount}</span>
+      )
+    },
+    enableHiding: true,
+    meta: {
+      viewLabel: t('columns.users'),
+      rightAlign: true
+    },
+    filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
+  }
+
+  const actionsCol: ColumnDef<CustomerWithUserCount> = {
     accessorKey: 'actions',
     header: () => null,
     cell: ({ table, row }) => <TableClientsActions row={row} table={table} />,
@@ -167,6 +184,7 @@ export function getTableClientsColumns(
     emailCol,
     planCol,
     extraUsersCol,
+    usersCol,
     activeCol,
     insertedCol,
     updatedCol,
@@ -175,25 +193,25 @@ export function getTableClientsColumns(
 }
 
 export function getTableClientFilters(
-  table: Table<Customer>,
+  table: Table<CustomerWithUserCount>,
   t: (key: string, opts?: any) => string,
-): FilterField<Customer>[] {
+): FilterField<CustomerWithUserCount>[] {
 
-  const companyFilter: FilterField<Customer> = {
+  const companyFilter: FilterField<CustomerWithUserCount> = {
     column: table.getColumn('company'),
     label: t('columns.company'),
     value: '',
     type: 'text'
   }
 
-  const emailFilter: FilterField<Customer> = {
+  const emailFilter: FilterField<CustomerWithUserCount> = {
     column: table.getColumn('email'),
     label: t('columns.email'),
     value: '',
     type: 'text'
   }
 
-  const planFilter: FilterField<Customer> = {
+  const planFilter: FilterField<CustomerWithUserCount> = {
     column: table.getColumn('plan'),
     label: t('columns.plan'),
     type: 'select',
@@ -206,14 +224,14 @@ export function getTableClientFilters(
     ]
   }
 
-  const extraUsersFilter: FilterField<Customer> = {
+  const extraUsersFilter: FilterField<CustomerWithUserCount> = {
     column: table.getColumn('extraUsers'),
     label: t('columns.extra'),
     type: 'number-range',
     value: ''
   }
 
-  const activeFilter: FilterField<Customer> = {
+  const activeFilter: FilterField<CustomerWithUserCount> = {
     column: table.getColumn('isActive'),
     label: t('columns.active'),
     type: 'select',
@@ -224,14 +242,14 @@ export function getTableClientFilters(
     ]
   }
 
-  const insertedFilter: FilterField<Customer> = {
+  const insertedFilter: FilterField<CustomerWithUserCount> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
     label: t('columns.inserted'),
     value: '',
   }
 
-  const updatedFilter: FilterField<Customer> = {
+  const updatedFilter: FilterField<CustomerWithUserCount> = {
     column: table.getColumn('updated'),
     type: 'date-range',
     label: t('columns.updated'),

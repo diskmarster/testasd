@@ -12,7 +12,8 @@
     "active_true": "Active",
     "active_false": "Inactive",
     "email": "Company email",
-    "extra": "Extra users"
+    "extra": "Extra users",
+    "users": "Registered users"
   },
   "row-actions": {
     "update": "Update client",

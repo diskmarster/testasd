@@ -1,5 +1,6 @@
 import { fallbackLng } from '@/app/i18n/settings'
 import { customer } from '@/data/customer'
+import { CustomerWithUserCount } from '@/data/customer.types'
 import { user } from '@/data/user'
 import { UserLinkID } from '@/lib/database/schema/auth'
 import {
@@ -93,7 +94,7 @@ export const customerService = {
   ): Promise<boolean> {
     return await customer.updateByID(customerID, customerData)
   },
-  getAll: async function(): Promise<Customer[]> {
+  getAll: async function (): Promise<CustomerWithUserCount[]> {
     return customer.getAll()
-  }
+  },
 }

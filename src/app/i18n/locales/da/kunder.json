@@ -12,7 +12,8 @@
     "active_true": "Aktiv",
     "active_false": "Inaktiv",
     "email": "Firma e-mail",
-    "extra": "Ekstra brugere"
+    "extra": "Ekstra brugere",
+    "users": "Registreret brugere"
   },
   "row-actions": {
     "update": "Opdater kunde",

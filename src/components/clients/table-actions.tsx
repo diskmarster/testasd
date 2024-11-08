@@ -6,11 +6,11 @@ import { useLanguage } from '@/context/language'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
-import { Customer } from '@/lib/database/schema/customer'
+import { CustomerWithUserCount } from '@/data/customer.types'
 
 interface Props {
-  table: Table<Customer>
-  row: Row<Customer>
+  table: Table<CustomerWithUserCount>
+  row: Row<CustomerWithUserCount>
 }
 
 export function TableClientsActions({ row }: Props) {

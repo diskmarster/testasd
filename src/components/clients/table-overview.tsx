@@ -12,6 +12,7 @@ import { TablePagination } from "../table/table-pagination"
 import { TableFloatingBar } from "../table/table-floating-bar"
 import { ExportSelectedButton } from "../inventory/button-export-selected"
 import { getTableClientFilters, getTableClientsColumns } from "@/app/[lng]/(site)/sys/kunder/columns"
+import { CustomerWithUserCount } from "@/data/customer.types"
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -19,7 +20,7 @@ const ROW_PER_PAGE = [25, 50, 75, 100]
 const LOCALSTORAGE_KEY = 'clients_cols'
 
 interface Props {
-  data: Customer[]
+  data: CustomerWithUserCount[]
 }
 
 export function TableClients({ data }: Props) {
