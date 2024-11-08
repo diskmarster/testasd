@@ -1,11 +1,12 @@
 import { TableClientsActions } from "@/components/clients/table-actions";
 import { TableReorderActions } from "@/components/inventory/table-reorder-actions";
 import { TableHeader } from "@/components/table/table-header";
-import { FilterField } from "@/components/table/table-toolbar";
+import { FilterField, NumberRange } from "@/components/table/table-toolbar";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { plans } from "@/data/customer.types";
 import { Customer } from "@/lib/database/schema/customer";
+import { dateRangeFilterFn, numberRangeFilterFn } from "@/lib/tanstack/filter-fns";
 import { formatDate } from "@/lib/utils";
 import { ColumnDef, Table } from "@tanstack/react-table";
 import { isAfter, isBefore, isSameDay } from "date-fns";
@@ -43,28 +44,7 @@ export function getTableClientsColumns(
       <TableHeader column={column} title={t('columns.inserted')} />
     ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
-    filterFn: (row, id, value: DateRange) => {
-      const rowDate: string | number | Date = row.getValue(id)
-
-      if (!value.from && value.to) {
-        return true
-      }
-
-      if (value.from && !value.to) {
-        return isSameDay(rowDate, new Date(value.from))
-      }
-
-      if (value.from && value.to) {
-        return (
-          (isAfter(rowDate, new Date(value.from)) &&
-            isBefore(rowDate, new Date(value.to))) ||
-          isSameDay(rowDate, new Date(value.from)) ||
-          isSameDay(rowDate, new Date(value.to))
-        )
-      }
-
-      return true
-    },
+    filterFn: (row, id, value: DateRange) => dateRangeFilterFn(row, id, value),
     meta: {
       viewLabel: t('columns.inserted'),
     },
@@ -76,28 +56,7 @@ export function getTableClientsColumns(
       <TableHeader column={column} title={t('columns.updated')} />
     ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
-    filterFn: (row, id, value: DateRange) => {
-      const rowDate: string | number | Date = row.getValue(id)
-
-      if (!value.from && value.to) {
-        return true
-      }
-
-      if (value.from && !value.to) {
-        return isSameDay(rowDate, new Date(value.from))
-      }
-
-      if (value.from && value.to) {
-        return (
-          (isAfter(rowDate, new Date(value.from)) &&
-            isBefore(rowDate, new Date(value.to))) ||
-          isSameDay(rowDate, new Date(value.from)) ||
-          isSameDay(rowDate, new Date(value.to))
-        )
-      }
-
-      return true
-    },
+    filterFn: (row, id, value: DateRange) => dateRangeFilterFn(row, id, value),
     meta: {
       viewLabel: t('columns.updated'),
     },
@@ -187,7 +146,8 @@ export function getTableClientsColumns(
     meta: {
       viewLabel: t('columns.extra'),
       rightAlign: true
-    }
+    },
+    filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
   }
 
   const actionsCol: ColumnDef<Customer> = {
@@ -246,6 +206,13 @@ export function getTableClientFilters(
     ]
   }
 
+  const extraUsersFilter: FilterField<Customer> = {
+    column: table.getColumn('extraUsers'),
+    label: t('columns.extra'),
+    type: 'number-range',
+    value: ''
+  }
+
   const activeFilter: FilterField<Customer> = {
     column: table.getColumn('isActive'),
     label: t('columns.active'),
@@ -275,6 +242,7 @@ export function getTableClientFilters(
     companyFilter,
     emailFilter,
     planFilter,
+    extraUsersFilter,
     activeFilter,
     insertedFilter,
     updatedFilter
