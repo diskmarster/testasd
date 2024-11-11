@@ -77,6 +77,12 @@
   "delete-action-errors": {
     "client-not-deleted": "Der gik noget galt med at slette kunden"
   },
+  "update-modal": {
+    "title": "Opdater kunde",
+    "description": "Opdater kunden informationer",
+    "toast-success": "{{client}} blev opdateret",
+    "submit-button": "Opdater kunde"
+  },
   "update-action-errors": {
     "client-not-updated": "Der gik noget galt med at opdaterer kunden"
   }

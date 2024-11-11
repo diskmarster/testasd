@@ -77,7 +77,7 @@ export function ModalUpdateClient({ }: Props) {
       reset()
       setOpen(false)
       toast.success(t(siteConfig.successTitle), {
-        description: t('create-modal.toast-success', { client: values.company }),
+        description: t('update-modal.toast-success', { client: values.company }),
       })
     })
   }
@@ -99,9 +99,9 @@ export function ModalUpdateClient({ }: Props) {
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaContent className='md:max-w-md'>
         <CredenzaHeader>
-          <CredenzaTitle>{t('create-modal.title')}</CredenzaTitle>
+          <CredenzaTitle>{t('update-modal.title')}</CredenzaTitle>
           <CredenzaDescription>
-            {t('create-modal.description')}
+            {t('update-modal.description')}
           </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
@@ -142,9 +142,6 @@ export function ModalUpdateClient({ }: Props) {
                   {formState.errors.email.message}
                 </p>
               )}
-              <p className='text-sm text-muted-foreground'>
-                {t('create-modal.email-description')}
-              </p>
             </div>
             <div className='grid gap-2'>
               <Label htmlFor='plan'>{t('create-modal.plan-label')}</Label>
@@ -294,7 +291,7 @@ export function ModalUpdateClient({ }: Props) {
               disabled={pending || !formState.isValid}
               className='flex items-center gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              {t('create-modal.submit-button')}
+              {t('update-modal.submit-button')}
             </Button>
           </form>
         </CredenzaBody>
