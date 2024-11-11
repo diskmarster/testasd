@@ -269,9 +269,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                 <div
                   className={cn(
                     'bg-border rounded-b-md text-sm h-0 transition-all text-muted-foreground flex items-center gap-2 justify-center',
-                    formValues.minimum && formValues.buffer && 'h-12 md:h-9',
+                    formValues.minimum > 0 && formValues.buffer > 0 && 'h-12 md:h-9',
                   )}>
-                  {formValues.minimum != 0 && formValues.buffer != 0 && (
+                  {formValues.minimum > 0 && formValues.buffer > 0 && (
                     <p className='text-center'>
                       {t(
                         'modal-create-reorder.recommended-reorder-calculation1',
