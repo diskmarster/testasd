@@ -1,5 +1,4 @@
 import { TableClientsActions } from "@/components/clients/table-actions";
-import { TableReorderActions } from "@/components/inventory/table-reorder-actions";
 import { TableHeader } from "@/components/table/table-header";
 import { FilterField, NumberRange } from "@/components/table/table-toolbar";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +7,6 @@ import { CustomerWithUserCount, plans } from "@/data/customer.types";
 import { dateRangeFilterFn, numberRangeFilterFn } from "@/lib/tanstack/filter-fns";
 import { formatDate } from "@/lib/utils";
 import { ColumnDef, Table } from "@tanstack/react-table";
-import { isAfter, isBefore, isSameDay } from "date-fns";
 import { DateRange } from "react-day-picker";
 
 export function getTableClientsColumns(
@@ -231,6 +229,13 @@ export function getTableClientFilters(
     value: ''
   }
 
+  const regUsersFilter: FilterField<CustomerWithUserCount> = {
+    column: table.getColumn('userCount'),
+    label: t('columns.users'),
+    type: 'number-range',
+    value: ''
+  }
+
   const activeFilter: FilterField<CustomerWithUserCount> = {
     column: table.getColumn('isActive'),
     label: t('columns.active'),
@@ -261,6 +266,7 @@ export function getTableClientFilters(
     emailFilter,
     planFilter,
     extraUsersFilter,
+    regUsersFilter,
     activeFilter,
     insertedFilter,
     updatedFilter
