@@ -218,6 +218,7 @@ function FilterPopover<T>({
           'space-y-1 p-2 max-w-56',
           field.type === 'date' && 'w-auto p-0 max-w-max',
           field.type === 'date-range' && 'w-auto p-0 max-w-max',
+          field.type === 'number-range' && 'max-w-48'
         )}
         align='center'>
         {field.type === 'text' ? (
