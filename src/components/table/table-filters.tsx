@@ -265,10 +265,10 @@ function FilterNumberRange<T>({
     <div className='flex items-center justify-between gap-3'>
       <Input
         autoFocus
-        size={12}
         placeholder={field.placeholder}
         type='number'
         value={numberRange.from?.toString() ?? ''}
+        className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
         onChange={e => {
           setNumberRange(prev => ({
             from: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
@@ -282,10 +282,10 @@ function FilterNumberRange<T>({
       />
       <span className='text-sm text-muted-foreground'>{t('table-filters.number-range')}</span>
       <Input
-        size={12}
         placeholder={field.placeholder}
         type='number'
         value={numberRange.to?.toString() ?? ''}
+        className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
         onChange={e => {
           setNumberRange(prev => ({
             from: prev.from,
