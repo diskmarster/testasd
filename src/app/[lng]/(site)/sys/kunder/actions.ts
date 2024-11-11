@@ -14,6 +14,7 @@ import {
   createClientValidation,
   deleteClientStatusValidation,
   toggleClientStatusValidation,
+  updateClientValidation,
 } from './validation'
 
 export const createClientAction = sysAdminAction
@@ -88,5 +89,19 @@ export const deleteClientAction = sysAdminAction
       throw new ActionError('delete-action-errors.client-not-deleted')
     }
 
+    revalidatePath(`/${ctx.lang}/sys/kunder`)
+  })
+
+export const updateClientAction = sysAdminAction
+  .schema(async () => await getSchema(updateClientValidation, 'kunder'))
+  .action(async ({ parsedInput, ctx }) => {
+    const { customerID, ...rest } = parsedInput
+    const updatedCustomer = await customerService.updateByID(
+      parsedInput.customerID,
+      { ...rest },
+    )
+    if (!updatedCustomer) {
+      throw new ActionError('update-action-errors.client-not-updated')
+    }
     revalidatePath(`/${ctx.lang}/sys/kunder`)
   })

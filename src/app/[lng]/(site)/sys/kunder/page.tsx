@@ -9,6 +9,7 @@ import { ClientTable } from "./table"
 import { ModalCreateClient } from "@/components/clients/modal-create-client"
 import { ModalToggleClient } from "@/components/clients/modal-toggle-client"
 import { ModalDeleteClient } from "@/components/clients/modal-delete-client"
+import { ModalUpdateClient } from "@/components/clients/modal-update-client"
 
 interface Props {
   params: { lng: string }
@@ -40,6 +41,7 @@ export default async function Page({ params: { lng } }: Props) {
 
       <ModalToggleClient />
       <ModalDeleteClient />
+      <ModalUpdateClient />
     </SiteWrapper>
   )
 }

@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useTranslation } from '@/app/i18n/client'
@@ -9,7 +10,6 @@ import {
   CredenzaDescription,
   CredenzaHeader,
   CredenzaTitle,
-  CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { Input } from '@/components/ui/input'
@@ -24,13 +24,14 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { cn, numberToDKCurrency } from '@/lib/utils'
 import { planUserLimits } from '@/service/customer.utils'
-import { createClientValidation } from '@/app/[lng]/(site)/sys/kunder/validation'
+import { updateClientValidation } from '@/app/[lng]/(site)/sys/kunder/validation'
 import { plansConfig } from '@/config/plan'
-import { createClientAction } from '@/app/[lng]/(site)/sys/kunder/actions'
+import { updateClientAction } from '@/app/[lng]/(site)/sys/kunder/actions'
+import { useCustomEventListener } from 'react-custom-events'
 
 interface Props { }
 
-export function ModalCreateClient({ }: Props) {
+export function ModalUpdateClient({ }: Props) {
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
@@ -38,16 +39,24 @@ export function ModalCreateClient({ }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'kunder')
 
-  const schema = createClientValidation(t)
+  const schema = updateClientValidation(t)
 
   const { handleSubmit, register, formState, reset, watch, setValue } = useForm<
     z.infer<typeof schema>
   >({
     resolver: zodResolver(schema),
     defaultValues: {
-      plan: 'pro',
       extraUsers: 0
     },
+  })
+
+  useCustomEventListener('UpdateClientByID', (data: any) => {
+    setValue('customerID', data.customerID, { shouldValidate: true })
+    setValue('company', data.company, { shouldValidate: true })
+    setValue('email', data.email, { shouldValidate: true })
+    setValue('plan', data.plan, { shouldValidate: true })
+    setValue('extraUsers', data.extraUsers, { shouldValidate: true })
+    setOpen(true)
   })
 
   const formValues = watch()
@@ -59,7 +68,7 @@ export function ModalCreateClient({ }: Props) {
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransition(async () => {
-      const res = await createClientAction(values)
+      const res = await updateClientAction(values)
       if (res && res.serverError) {
         setError(res.serverError)
         return
@@ -88,11 +97,6 @@ export function ModalCreateClient({ }: Props) {
 
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
-      <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
-          <Icons.plus className='size-4' />
-        </Button>
-      </CredenzaTrigger>
       <CredenzaContent className='md:max-w-md'>
         <CredenzaHeader>
           <CredenzaTitle>{t('create-modal.title')}</CredenzaTitle>

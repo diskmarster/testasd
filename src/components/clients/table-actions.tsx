@@ -21,7 +21,13 @@ export function TableClientsActions({ row }: Props) {
     <TableActionsWrapper>
       <DropdownMenuItem
         onClick={() => {
-          emitCustomEvent('UpdateClientByID', {})
+          emitCustomEvent('UpdateClientByID', {
+            customerID: row.original.id,
+            company: row.original.company,
+            email: row.original.email,
+            plan: row.original.plan,
+            extraUsers: row.original.extraUsers
+          })
         }}>
         {t('row-actions.update')}
       </DropdownMenuItem>

@@ -76,5 +76,8 @@
   },
   "delete-action-errors": {
     "client-not-deleted": "Der gik noget galt med at slette kunden"
+  },
+  "update-action-errors": {
+    "client-not-updated": "Der gik noget galt med at opdaterer kunden"
   }
 }
