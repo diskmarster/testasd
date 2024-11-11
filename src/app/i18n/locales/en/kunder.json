@@ -76,5 +76,14 @@
   },
   "delete-action-errors": {
     "client-not-deleted": "An error occurred when deleting the client"
+  },
+  "update-modal": {
+    "title": "Update client",
+    "description": "Update client information",
+    "toast-success": "{{client}} has been updated",
+    "submit-button": "Update client"
+  },
+  "update-action-errors": {
+    "client-not-updated": "An error occurred when updating the client information"
   }
 }
