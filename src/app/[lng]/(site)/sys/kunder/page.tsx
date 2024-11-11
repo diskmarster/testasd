@@ -17,10 +17,10 @@ interface Props {
 export default async function Page({ params: { lng } }: Props) {
   const { session, user } = await sessionService.validate()
 
-  if (!session) redirect('/login')
+  if (!session) redirect(`${lng}/log-ind`)
 
   if (!hasPermissionByRank(user.role, 'system_administrator')) {
-    redirect("/oversigt")
+    redirect(`${lng}/oversigt`)
   }
 
   const { t } = await serverTranslation(lng, 'kunder')
