@@ -12,7 +12,7 @@ export function numberRangeFilterFn<T>(
   const val = row.getValue<number>(id)
 
   if (!from && !to) {
-    return false
+    return true
   } else if (!from && to) {
     return val <= to
   } else if (from && !to) {
