@@ -21,5 +21,60 @@
     "toggle_true": "Deactivate client",
     "toggle_false": "Activate client",
     "delete": "Delete client"
+  },
+  "create-modal": {
+    "title": "Create client",
+    "description": "The client will receive an activationlink in the company email inbox.",
+    "toast-success": "{{client}} has been created as a client",
+    "company-label": "Company name",
+    "company-placeholder": "Type company name",
+    "email-label": "Company email",
+    "email-placeholder": "Type company email",
+    "email-description": "An activation link will be sent to the company emails inbox",
+    "plan-label": "Plan",
+    "extra-users-label": "Extra users",
+    "extra-users-price": "49,- DKK per. user/mth",
+    "extra-users-count": "Total user count: {{count}}",
+    "submit-button": "Create client"
+  },
+  "validation": {
+    "company-min": "Company name must be at least {{minLength}} characters",
+    "company-max": "Company name connat exceed {{maxLength}} characters",
+    "company-required": "Company name is required",
+    "email-required": "Company email is required",
+    "email-invalid": "Company email must be valid"
+  },
+  "create-action-errors": {
+    "client-exists": "A company with that email already exists",
+    "user-exists": "A user with that email already exists",
+    "client-not-created": "An error occurred when creating client",
+    "location-not-created": "An error occurred when creating a location for client",
+    "mail-not-sent": "An error occurred when sending activation link"
+  },
+  "toggle-modal": {
+    "title": "Update client status",
+    "title_activate": "Activate client",
+    "title_deactivate": "Deactivate client",
+    "description": "Updates a clients status. Deactivated clients cannot log in to the system",
+    "cancel-button": "Cancel",
+    "submit-button": "Update status",
+    "submit-button_activate": "Activate",
+    "submit-button_deactivate": "Deactivate",
+    "toast-success": "The clients status has been updated",
+    "toast-success_activate": "The client has been activated",
+    "toast-success_deactivate": "The client has been deactivated"
+  },
+  "toggle-action-errors": {
+    "client-not-updated": "An error occurred when updating the clients status"
+  },
+  "delete-modal": {
+    "title": "Delete client",
+    "description": "This action is permanent. All data associated with the client will be deleted and cannot be reversed",
+    "cancel-button": "Cancel",
+    "submit-button": "Delete client",
+    "toast-success": "The client has been deleted"
+  },
+  "delete-action-errors": {
+    "client-not-deleted": "An error occurred when deleting the client"
   }
 }

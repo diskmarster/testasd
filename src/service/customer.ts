@@ -97,4 +97,7 @@ export const customerService = {
   getAll: async function (): Promise<CustomerWithUserCount[]> {
     return customer.getAll()
   },
+  deleteByID: async function(customerID: CustomerID): Promise<boolean> {
+    return customer.deleteByID(customerID)
+  }
 }

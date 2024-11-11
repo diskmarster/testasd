@@ -21,5 +21,60 @@
     "toggle_true": "Deaktiver kunde",
     "toggle_false": "Aktiver kunde",
     "delete": "Slet kunde"
+  },
+  "create-modal": {
+    "title": "Opret kunde",
+    "description": "Kunden vil modtage et oprettelseslink på firma e-mailen.",
+    "toast-success": "{{client}} blev oprettet som kunde",
+    "company-label": "Firmanavn",
+    "company-placeholder": "Indtast firmanavn",
+    "email-label": "Firma e-mail",
+    "email-placeholder": "Indtast firma e-mail",
+    "email-description": "Kunden vil modtage et aktiveringslink i deres indbakke",
+    "plan-label": "Plan",
+    "extra-users-label": "Ekstra brugere",
+    "extra-users-price": "49,- kr pr. bruger/md",
+    "extra-users-count": "Total antal brugere: {{count}}",
+    "submit-button": "Opret kunde"
+  },
+  "create-validation": {
+    "company-min": "Firmanavn skal være minimum {{minLength}} tegn",
+    "company-max": "Firmanavn kan være maks {{maxLength}} tegn",
+    "company-required": "Firmanavn skal udfyldes",
+    "email-required": "Firma e-mail skal udfyldes",
+    "email-invalid": "Firma e-mail skal være gyldig"
+  },
+  "create-action-errors": {
+    "client-exists": "Et firma med den e-mail findes allerede",
+    "user-exists": "En bruger med den e-mail findes allerede",
+    "client-not-created": "Der skete en fejl med at oprette firma",
+    "location-not-created": "Der skete en fejl med at oprette lokation til firma",
+    "mail-not-sent": "Der skete en fejl med at sende aktiverings link"
+  },
+  "toggle-modal": {
+    "title": "Skift kunde status",
+    "title_activate": "Aktiver kunde",
+    "title_deactivate": "Deaktiver kunde",
+    "description": "Skifter en kundes status. Har en betydning for om kunden kan logge på systemet",
+    "cancel-button": "Luk",
+    "submit-button": "Skift status",
+    "submit-button_activate": "Aktiver",
+    "submit-button_deactivate": "Deaktiver",
+    "toast-success": "Kundens status blev opdateret",
+    "toast-success_activate": "Kunden blev aktiveret",
+    "toast-success_deactivate": "Kunden blev deaktiveret"
+  },
+  "toggle-action-errors": {
+    "client-not-updated": "Kundens status blev ikke opdateret"
+  },
+  "delete-modal": {
+    "title": "Slet kunde",
+    "description": "Denne handling er permanent. Kundens data vil blive slettet og kan ikke gendannes",
+    "cancel-button": "Luk",
+    "submit-button": "Slet kunde",
+    "toast-success": "Kunden er blevet slettet"
+  },
+  "delete-action-errors": {
+    "client-not-deleted": "Der gik noget galt med at slette kunden"
   }
 }

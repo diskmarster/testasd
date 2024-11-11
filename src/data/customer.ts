@@ -100,5 +100,9 @@ export const customer = {
       .from(customerTable)
       .leftJoin(userTable, eq(userTable.customerID, customerTable.id))
       .groupBy(customerTable.id)
+  },
+  deleteByID: async function(customerID: CustomerID, trx: TRX = db): Promise<boolean> {
+    const res = await trx.delete(customerTable).where(eq(customerTable.id, customerID))
+    return res.rowsAffected == 1
   }
 }

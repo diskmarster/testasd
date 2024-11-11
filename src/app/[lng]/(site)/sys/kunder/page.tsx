@@ -6,6 +6,9 @@ import { sessionService } from "@/service/session"
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import { ClientTable } from "./table"
+import { ModalCreateClient } from "@/components/clients/modal-create-client"
+import { ModalToggleClient } from "@/components/clients/modal-toggle-client"
+import { ModalDeleteClient } from "@/components/clients/modal-delete-client"
 
 interface Props {
   params: { lng: string }
@@ -28,12 +31,15 @@ export default async function Page({ params: { lng } }: Props) {
       description={t('page.description')}
       actions={
         <>
-          <span>opret</span>
+          <ModalCreateClient />
         </>
       }>
       <Suspense fallback={<SkeletonTable />}>
         <ClientTable />
       </Suspense>
+
+      <ModalToggleClient />
+      <ModalDeleteClient />
     </SiteWrapper>
   )
 }

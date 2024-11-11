@@ -126,3 +126,12 @@ export const adminAction = editableAction.use(async ({ next, ctx }) => {
 
   return next({ ctx })
 })
+
+// admin action client for admin only requests
+export const sysAdminAction = adminAction.use(async ({ next, ctx }) => {
+  if (!hasPermissionByRank(ctx.user.role, 'system_administrator')) {
+    throw new ActionError(ACTION_ERR_UNAUTHORIZED)
+  }
+
+  return next({ ctx })
+})

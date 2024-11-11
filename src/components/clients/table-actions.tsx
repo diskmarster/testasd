@@ -27,7 +27,10 @@ export function TableClientsActions({ row }: Props) {
       </DropdownMenuItem>
       <DropdownMenuItem
         onClick={() => {
-          emitCustomEvent('ToggleClientByID', {})
+          emitCustomEvent('ToggleClientByID', {
+            customerID: row.original.id,
+            isActive: row.original.isActive
+          })
         }}>
         {t('row-actions.toggle', { context: row.original.isActive.toString() })}
       </DropdownMenuItem>
@@ -35,7 +38,9 @@ export function TableClientsActions({ row }: Props) {
       <DropdownMenuItem
         className='!text-destructive'
         onClick={() => {
-          emitCustomEvent('DeleteClientByID', {})
+          emitCustomEvent('DeleteClientByID', {
+            customerID: row.original.id,
+          })
         }}>
         {t('row-actions.delete')}
       </DropdownMenuItem>
