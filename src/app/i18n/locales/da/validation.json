@@ -41,6 +41,7 @@
   },
   "products": {
     "sku-required": "Produktnr. er påkrævet",
+    "sku-max-length": "Varenr. må maks være {{num}} tegn",
     "sku-preprocess": "Produktnr. skal minimum være 1 tegn",
     "barcode-required": "Stregkode er påkrævet",
     "barcode-preprocess": "Stregkode skal minimum være 1 tegn",
@@ -49,6 +50,9 @@
     "unit-required": "Enhed er påkrævet",
     "unit-preprocess-unknown-type": "Ukendt enhed. Prøv måske: ",
     "product-text-required": "Produkttekst er påkrævet",
+    "product1-max-length": "Varetekst må maks være {{num}} tegn",
+    "product2-max-length": "Varetekst må maks være {{num}} tegn",
+    "product3-max-length": "Varetekst må maks være {{num}} tegn",
     "product-text-preprocess": "Produkttekst skal minimum være 1 tegn",
     "cost-price-required": "Kostpris er påkrævet",
     "cost-price-type": "Kostpris skal være et tal",
