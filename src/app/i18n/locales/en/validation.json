@@ -40,6 +40,7 @@
   },
   "products": {
     "sku-required": "Product No. is required",
+    "sku-max-length": "Product No. cannot exceed {{num}} characters",
     "sku-preprocess": "Product No. must minimum be 1 character",
     "barcode-required": "Barcode is required",
     "barcode-preprocess": "Barcode must minimum be 1 character",
