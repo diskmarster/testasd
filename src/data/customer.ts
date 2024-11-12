@@ -1,4 +1,5 @@
 import { db, TRX } from '@/lib/database'
+import { userTable } from '@/lib/database/schema/auth'
 import {
   Customer,
   CustomerID,
@@ -10,7 +11,8 @@ import {
   NewCustomerLink,
   PartialCustomer,
 } from '@/lib/database/schema/customer'
-import { eq, not } from 'drizzle-orm'
+import { count, eq, getTableColumns, not } from 'drizzle-orm'
+import { CustomerWithUserCount } from './customer.types'
 
 export const customer = {
   create: async function (
@@ -88,5 +90,19 @@ export const customer = {
   updateByID: async function(customerID: CustomerID, customerData: PartialCustomer, trx: TRX =db): Promise<boolean> {
     const resultSet = await trx.update(customerTable).set(customerData).where(eq(customerTable.id, customerID))
     return resultSet.rowsAffected == 1
+  },
+  getAll: async function(trx: TRX = db): Promise<CustomerWithUserCount[]> {
+    return trx
+      .select({
+        ...getTableColumns(customerTable),
+        userCount: count(userTable.id)
+      })
+      .from(customerTable)
+      .leftJoin(userTable, eq(userTable.customerID, customerTable.id))
+      .groupBy(customerTable.id)
+  },
+  deleteByID: async function(customerID: CustomerID, trx: TRX = db): Promise<boolean> {
+    const res = await trx.delete(customerTable).where(eq(customerTable.id, customerID))
+    return res.rowsAffected == 1
   }
 }

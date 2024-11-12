@@ -30,13 +30,18 @@ type FilterOption = {
   icon?: React.ComponentType<{ className?: string }>
 }
 
+export type NumberRange = {
+ from: number | undefined, to?: number | undefined
+}
+
 export type FilterField<TRow> = {
   column: Column<TRow> | undefined
-  type: 'text' | 'date' | 'select' | 'date-range'
+  type: 'text' | 'date' | 'select' | 'date-range' | 'number-range'
   label: string
   value: any
   placeholder?: string
   options?: FilterOption[]
+  numRange?: NumberRange
 }
 
 interface Props<T> {

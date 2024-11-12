@@ -96,7 +96,7 @@ export const siteConfig: SiteConfig = {
           href: `/${lng}/sys/kunder`,
           roles: ['system_administrator'],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
         {
           label: 'site-config.sys-admin-dropdown.admin-users',
