@@ -451,7 +451,10 @@ export function getTableOverviewFilters(
         costPriceFilter,
         salesPriceFilter,
         quantityFilter,
-      ]
+      ].filter(
+        (filter): filter is FilterField<FormattedInventory> => filter !== null,
+      )
+
     case 'basis':
       return [
         skuFilter,
