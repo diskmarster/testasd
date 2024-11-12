@@ -10,9 +10,9 @@ export const createProductValidation = (
       customerID: z.coerce.number(),
       groupID: z.coerce.number(),
       unitID: z.coerce.number(),
-      text1: z.string().min(1, t('products.product-text-required')),
-      text2: z.string(),
-      text3: z.string(),
+      text1: z.string().min(1, t('products.product-text-required')).max(25, t('products.product1-max-length', {num: 25})),
+      text2: z.string().max(25, t('products.product2-max-length', { num: 25})),
+      text3: z.string().max(1000, t('products.product3-max-length', { num: 1000})),
       sku: z.string().min(1, t('products.sku-required')),
       barcode: z.string().min(1, t('products.barcode-required')),
       costPrice: z.coerce.number(),
@@ -44,9 +44,9 @@ export const updateProductValidation = (
       customerID: z.coerce.number(),
       groupID: z.coerce.number(),
       unitID: z.coerce.number(),
-      text1: z.string().min(1, t('products.product-text-required')),
-      text2: z.string(),
-      text3: z.string(),
+      text1: z.string().min(1, t('products.product-text-required')).max(25, t('products.product1-max-length', {num: 25})),
+      text2: z.string().max(25, t('products.product2-max-length', { num: 25})),
+      text3: z.string().max(1000, t('products.product3-max-length', { num: 1000})),
       sku: z.string().min(1, t('products.sku-required')),
       barcode: z.string().min(1, t('products.barcode-required')),
       costPrice: z.coerce.number(),
@@ -100,19 +100,22 @@ export const productsDataValidation = (
           val => val.toString(),
           z
             .string({ required_error: t('products.product-text-required') })
-            .min(1, {
-              message: t('products.product-text-preprocess'),
-            }),
+            .min(1, { message: t('products.product-text-preprocess') })
+            .max(25, { message: t('products.product1-max-length', {num: 25})}),
         ),
         text2: z.preprocess(
           // @ts-ignore
           val => val.toString(),
-          z.string().optional().default(''),
+          z.string()
+            .max(25, { message: t('products.product1-max-length', {num: 25})})
+            .optional().default(''),
         ),
         text3: z.preprocess(
           // @ts-ignore
           val => val.toString(),
-          z.string().optional().default(''),
+          z.string()
+            .max(25, { message: t('products.product1-max-length', {num: 25})})
+            .optional().default(''),
         ),
         costPrice: z.coerce
           .number({
