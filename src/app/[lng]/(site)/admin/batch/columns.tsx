@@ -131,8 +131,8 @@ export function getTableBatchFilters(
     label: t('batch-columns.barred'),
     value: '',
     options: [
-      { value: 'Ja', label: t('batch-columns.yes') },
-      { value: 'Nej', label: t('batch-columns.no') },
+      { value: true, label: t('batch-columns.yes') },
+      { value: false, label: t('batch-columns.no') },
     ],
   }
 
