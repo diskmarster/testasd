@@ -23,7 +23,8 @@
     "batch-placeholder": "Enter name for new Batch",
     "expiration-date": "Expiration date",
     "choose-date": "Choose date",
-    "create-batch-button": "Create batch"
+    "create-batch-button": "Create batch",
+    "credenza-description": "Please fill in the information to create a new batch number"
   },
 
   "modal-update-batch": {

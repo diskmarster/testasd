@@ -22,7 +22,8 @@
     "batch-placeholder": "Indtast navn til ny batch",
     "expiration-date": "Udløbsdato",
     "choose-date": "Vælg dato",
-    "create-batch-button": "Opret batch"
+    "create-batch-button": "Opret batch",
+    "credenza-description": "Udfyld venligst oplysningerne for at oprette en ny batch"
   },
 
   "modal-update-batch": {

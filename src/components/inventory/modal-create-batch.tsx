@@ -7,6 +7,7 @@ import {
   Credenza,
   CredenzaBody,
   CredenzaContent,
+  CredenzaDescription,
   CredenzaHeader,
   CredenzaTitle,
   CredenzaTrigger,
@@ -88,6 +89,9 @@ export function ModalCreateBatch() {
           <CredenzaTitle>
             {t('create-batch-modal.create-new-batch')}
           </CredenzaTitle>
+          <CredenzaDescription>
+            {t('create-batch-modal.credenza-description')}
+          </CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
           <form

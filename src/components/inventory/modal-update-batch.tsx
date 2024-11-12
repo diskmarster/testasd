@@ -18,23 +18,23 @@ import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { Batch } from '@/lib/database/schema/inventory'
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState, useTransition } from 'react'
+import { PopoverTrigger } from '@radix-ui/react-popover'
+import { format } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { Calendar } from '../ui/calendar'
+import { Popover, PopoverContent } from '../ui/popover'
 
-export function ModalUpdateBatch({
-  batchToEdit,
-  isOpen,
-  setOpen,
-}: {
-  batchToEdit: Batch
-  isOpen: boolean
-  setOpen: (open: boolean) => void
-}) {
+export function ModalUpdateBatch() {
   const [pending, startTransition] = useTransition()
+  const [isOpen, setOpen] = useState<boolean>(false)
   const [error, setError] = useState<string>()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'batch')
@@ -48,20 +48,11 @@ export function ModalUpdateBatch({
     defaultValues: {},
   })
 
+  const formValues = watch()
+
   async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
-      if (!batchToEdit) {
-        setError(t('modal-update-batch.no-batch-to-edit'))
-        return
-      }
-
-      const response = await updateBatchAction({
-        batchID: batchToEdit.id!,
-        data: {
-          batch: values.data.batch,
-          expiry: values.data.expiry,
-        },
-      })
+      const response = await updateBatchAction(values)
 
       if (response && response.serverError) {
         setError(response.serverError)
@@ -76,11 +67,11 @@ export function ModalUpdateBatch({
     })
   }
 
-  useEffect(() => {
-    if (batchToEdit) {
-      setValue('data.batch', batchToEdit.batch)
-    }
-  }, [batchToEdit, setValue])
+  useCustomEventListener('UpdateBatchByID', (data: { batch: Batch }) => {
+    setValue('batchID', data.batch.id)
+    setValue('data', data.batch, { shouldValidate: true })
+    setOpen(true)
+  })
 
   function onOpenChange(open: boolean) {
     setOpen(open)
@@ -88,8 +79,7 @@ export function ModalUpdateBatch({
     setError(undefined)
   }
 
-  console.log(formState.errors.data?.batch)
-  console.log(formState.errors.data?.batch?.message)
+  const date = watch('data.expiry')
 
   return (
     <Credenza open={isOpen} onOpenChange={onOpenChange}>
@@ -113,19 +103,46 @@ export function ModalUpdateBatch({
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-
-            <div className='mt-2 mb-2'>
-              <div className='grid gap-2'>
-                <Label htmlFor='sku'>
-                  {t('modal-update-batch.batch')}
-                  <span className='text-destructive'> * </span>
-                </Label>
-                <Input id='name' type='text' {...register('data.batch')} />
-                {formState.errors.data?.batch && (
-                  <p className='text-sm text-destructive'>
-                    {formState.errors.data.batch.message}
-                  </p>
-                )}
+            <div className='grid gap-2'>
+              <Label htmlFor='batch'>
+                {t('modal-update-batch.batch')}
+                <span className='text-destructive'> * </span>
+              </Label>
+              <Input id='name' type='text' {...register('data.batch')} />
+              {formState.errors.data?.batch && (
+                <p className='text-sm text-destructive'>
+                  {formState.errors.data.batch.message}
+                </p>
+              )}
+              <div className='grid gap-2 mt-2'>
+                <Label>{t('create-batch-modal.expiration-date')}</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'w-[280px] justify-start text-left font-normal',
+                        !date && 'text-muted-foreground',
+                      )}>
+                      <CalendarIcon className='mr-2 h-4 w-4' />
+                      {date ? (
+                        format(date, 'PPP')
+                      ) : (
+                        <span>{t('create-batch-modal.choose-date')}</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-auto p-0'>
+                    <Calendar
+                      mode='single'
+                      selected={date ?? undefined}
+                      onSelect={value =>
+                        setValue('data.expiry', value ?? new Date())
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
             <Button

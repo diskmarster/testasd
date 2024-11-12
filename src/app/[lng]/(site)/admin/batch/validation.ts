@@ -15,7 +15,7 @@ export const updateBatchValidation = (
     batchID: z.coerce.number(),
     data: z.object({
       batch: z.string().min(1, 'Batch navn er påkrævet'),
-      expiry: z.coerce.date({ message: 'Udløbsdatoen er ugyldig' }),
+      expiry: z.coerce.date({ message: 'Udløbsdatoen er ugyldig' }).nullable(),
     }),
   })
 

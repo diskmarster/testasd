@@ -6,9 +6,9 @@ import { LanguageContext } from '@/context/language'
 import { Batch } from '@/lib/database/schema/inventory'
 import { Row } from '@tanstack/react-table'
 import { useContext, useState, useTransition } from 'react'
+import { emitCustomEvent } from 'react-custom-events'
 import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
-import { ModalUpdateBatch } from './modal-update-batch'
 
 interface Props {
   row: Row<Batch>
@@ -44,7 +44,10 @@ export function TableBatchActions({ row }: Props) {
   return (
     <>
       <TableActionsWrapper>
-        <DropdownMenuItem onClick={() => setOpen(true)}>
+        <DropdownMenuItem
+          onClick={() =>
+            emitCustomEvent('UpdateBatchByID', { batch: row.original })
+          }>
           {t('batch-table-actions.update')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleToggleBar}>
@@ -53,12 +56,6 @@ export function TableBatchActions({ row }: Props) {
             : t('batch-table-actions.bar')}
         </DropdownMenuItem>
       </TableActionsWrapper>
-
-      <ModalUpdateBatch
-        batchToEdit={row.original}
-        isOpen={open}
-        setOpen={setOpen}
-      />
     </>
   )
 }
