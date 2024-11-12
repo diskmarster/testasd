@@ -13,7 +13,7 @@ export const createProductValidation = (
       text1: z.string().min(1, t('products.product-text-required')).max(25, t('products.product1-max-length', {num: 25})),
       text2: z.string().max(25, t('products.product2-max-length', { num: 25})),
       text3: z.string().max(1000, t('products.product3-max-length', { num: 1000})),
-      sku: z.string().min(1, t('products.sku-required')),
+      sku: z.string().min(1, t('products.sku-required')).max(25, t('products.sku-max-length', {num: 25})),
       barcode: z.string().min(1, t('products.barcode-required')),
       costPrice: z.coerce.number(),
       salesPrice: z.coerce.number(),
@@ -47,7 +47,7 @@ export const updateProductValidation = (
       text1: z.string().min(1, t('products.product-text-required')).max(25, t('products.product1-max-length', {num: 25})),
       text2: z.string().max(25, t('products.product2-max-length', { num: 25})),
       text3: z.string().max(1000, t('products.product3-max-length', { num: 1000})),
-      sku: z.string().min(1, t('products.sku-required')),
+      sku: z.string().min(1, t('products.sku-required')).max(25, t('products.sku-max-length', { num: 25})),
       barcode: z.string().min(1, t('products.barcode-required')),
       costPrice: z.coerce.number(),
       salesPrice: z.coerce.number(),
@@ -70,7 +70,8 @@ export const productsDataValidation = (
           val => val.toString().toUpperCase(),
           z.coerce
             .string({ required_error: t('products.sku-required') })
-            .min(1, { message: t('products.sku-preprocess') }),
+            .min(1, { message: t('products.sku-preprocess') })
+            .max(25, { message: t('products.sku-max-length', { num: 25})}),
         ),
         barcode: z.preprocess(
           val => {

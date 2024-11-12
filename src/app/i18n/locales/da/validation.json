@@ -41,6 +41,7 @@
   },
   "products": {
     "sku-required": "Produktnr. er påkrævet",
+    "sku-max-length": "Varenr. må maks være {{num}} tegn",
     "sku-preprocess": "Produktnr. skal minimum være 1 tegn",
     "barcode-required": "Stregkode er påkrævet",
     "barcode-preprocess": "Stregkode skal minimum være 1 tegn",
