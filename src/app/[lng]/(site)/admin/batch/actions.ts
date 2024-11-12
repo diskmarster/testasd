@@ -1,5 +1,6 @@
 'use server'
 
+import { serverTranslation } from '@/app/i18n'
 import { authedAction, editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
@@ -16,12 +17,14 @@ export const createBatchAction = authedAction
   .schema(async () => await getSchema(createBatchValidation, 'validation'))
   .action(async ({ parsedInput: { batchName, expiry }, ctx }) => {
     const location = await locationService.getLastVisited(ctx.user.id)
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
+
     if (!location) {
-      throw new ActionError('Kunne ikke finde din lokation')
+      throw new ActionError(t('batch-actions.couldnt-find-location'))
     }
     const customer = await customerService.getByID(ctx.user.customerID)
     if (!customer) {
-      throw new ActionError('Firmakonto findes ikke i systemet')
+      throw new ActionError(t('batch-actions.account-doesnt-exist'))
     }
 
     const newBatch = await inventoryService.createBatch({
@@ -31,7 +34,7 @@ export const createBatchAction = authedAction
     })
 
     if (!newBatch) {
-      throw new ActionError('Batch blev ikke oprettet')
+      throw new ActionError(t('batch-actions.batch-not-created'))
     }
 
     revalidatePath(`${ctx.lang}/admin/batch`)
@@ -45,9 +48,10 @@ export const updateBatchAction = editableAction
       batchID,
       updatedBatchData,
     )
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
     if (!updatedBatch) {
-      throw new ActionError('Batch blev ikke opdateret')
+      throw new ActionError(t('batch-actions.batch-not-updated'))
     }
 
     revalidatePath(`${ctx.lang}/admin/batch`)
@@ -63,9 +67,10 @@ export const toggleBarredBatchAction = editableAction
       batchID,
       isBarred,
     )
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
     if (!updatedBatch) {
-      throw new ActionError('Batch blev ikke opdateret')
+      throw new ActionError(t('batch-actions.batch-not-updated'))
     }
     revalidatePath(`${ctx.lang}/admin/batch`)
   })

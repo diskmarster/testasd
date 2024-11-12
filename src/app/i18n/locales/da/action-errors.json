@@ -150,5 +150,11 @@
   "password-reset-action": {
     "no-user-with-email": "Ingen bruger med denne e-mail fundet",
     "couldnt-create-link": "Kunne ikke oprette et nulstillingslink"
+  },
+  "batch-actions": {
+    "couldnt-find-location": "Kunne ikke finde din lokation",
+    "account-doesnt-exist": "Firmakonto findes ikke i systemet",
+    "batch-not-created": "Batch blev ikke oprettet",
+    "batch-not-updated": "Batch blev ikke opdateret"
   }
 }

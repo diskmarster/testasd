@@ -13,6 +13,7 @@ import {
   CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
+import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -66,7 +67,7 @@ export function ModalCreateBatch() {
         })
         return
       }
-      toast.success(t('create-batch-modal.batch-created'), {
+      toast.success(t(`common:${siteConfig.successTitle}`), {
         description: `${t('create-batch-modal.new-batch')} ${data.batchName}`,
       })
 

@@ -3,7 +3,8 @@ import { Badge } from '@/components/ui/badge'
 import { Batch } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
-import { isSameDay } from 'date-fns'
+import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { DateRange } from 'react-day-picker'
 
 export function getTableBatchColumns(
   lng: string,
@@ -45,8 +46,26 @@ export function getTableBatchColumns(
       <TableHeader column={column} title={t('batch-columns.expiration-date')} />
     ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
-    filterFn: (row, id, value) => {
-      return isSameDay(value, row.getValue(id))
+    filterFn: (row, id, value: DateRange) => {
+      const rowDate: string | number | Date = row.getValue(id)
+
+      if (!value.from && value.to) {
+        return true
+      }
+
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, new Date(value.from))
+      }
+
+      if (value.from && value.to) {
+        return (
+          (isAfter(rowDate, new Date(value.from)) &&
+            isBefore(rowDate, new Date(value.to))) ||
+          isSameDay(rowDate, new Date(value.from)) ||
+          isSameDay(rowDate, new Date(value.to))
+        )
+      }
+      return true
     },
     meta: {
       viewLabel: t('batch-columns.expiration-date'),
@@ -59,8 +78,27 @@ export function getTableBatchColumns(
       <TableHeader column={column} title={t('batch-columns.created-at')} />
     ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
-    filterFn: (row, id, value) => {
-      return isSameDay(value, row.getValue(id))
+    filterFn: (row, id, value: DateRange) => {
+      const rowDate: string | number | Date = row.getValue(id)
+
+      if (!value.from && value.to) {
+        return true
+      }
+
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, new Date(value.from))
+      }
+
+      if (value.from && value.to) {
+        return (
+          (isAfter(rowDate, new Date(value.from)) &&
+            isBefore(rowDate, new Date(value.to))) ||
+          isSameDay(rowDate, new Date(value.from)) ||
+          isSameDay(rowDate, new Date(value.to))
+        )
+      }
+
+      return true
     },
     meta: {
       viewLabel: t('batch-columns.created-at'),
@@ -73,8 +111,27 @@ export function getTableBatchColumns(
       <TableHeader column={column} title={t('batch-columns.updated-at')} />
     ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
-    filterFn: (row, id, value) => {
-      return isSameDay(value, row.getValue(id))
+    filterFn: (row, id, value: DateRange) => {
+      const rowDate: string | number | Date = row.getValue(id)
+
+      if (!value.from && value.to) {
+        return true
+      }
+
+      if (value.from && !value.to) {
+        return isSameDay(rowDate, new Date(value.from))
+      }
+
+      if (value.from && value.to) {
+        return (
+          (isAfter(rowDate, new Date(value.from)) &&
+            isBefore(rowDate, new Date(value.to))) ||
+          isSameDay(rowDate, new Date(value.from)) ||
+          isSameDay(rowDate, new Date(value.to))
+        )
+      }
+
+      return true
     },
     meta: {
       viewLabel: t('batch-columns.updated-at'),
@@ -137,21 +194,21 @@ export function getTableBatchFilters(
 
   const expiryFilter: FilterField<Batch> = {
     column: table.getColumn('expiry'),
-    type: 'date',
+    type: 'date-range',
     label: t('batch-columns.expiration-date'),
     value: '',
   }
 
   const insertedFilter: FilterField<Batch> = {
     column: table.getColumn('inserted'),
-    type: 'date',
+    type: 'date-range',
     label: t('batch-columns.created-at'),
     value: '',
   }
 
   const updatedFilter: FilterField<Batch> = {
     column: table.getColumn('updated'),
-    type: 'date',
+    type: 'date-range',
     label: t('batch-columns.updated-at'),
     value: '',
   }

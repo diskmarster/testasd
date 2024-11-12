@@ -4,8 +4,8 @@ export const createBatchValidation = (
   t: (key: string, options?: any) => string,
 ) =>
   z.object({
-    batchName: z.string().min(1, 'Batch navn er påkrævet'),
-    expiry: z.coerce.date({ message: 'Udløbsdatoen er ugyldig' }),
+    batchName: z.string().min(1, t('batch.name-required')),
+    expiry: z.coerce.date({ message: t('batch.expiration-invalid') }),
   })
 
 export const updateBatchValidation = (
@@ -14,8 +14,10 @@ export const updateBatchValidation = (
   z.object({
     batchID: z.coerce.number(),
     data: z.object({
-      batch: z.string().min(1, 'Batch navn er påkrævet'),
-      expiry: z.coerce.date({ message: 'Udløbsdatoen er ugyldig' }).nullable(),
+      batch: z.string().min(1, t('batch.name-required')),
+      expiry: z.coerce
+        .date({ message: t('batch.expiration-invalid') })
+        .nullable(),
     }),
   })
 
