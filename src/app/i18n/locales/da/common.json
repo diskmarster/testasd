@@ -8,7 +8,7 @@
   "table-filters": {
     "clear": "Fjern",
     "clear-filter": "Fjern Filter",
-    "no-fitler-choice": "Ingen filter muligheder",
+    "no-filter-choice": "Ingen filter muligheder",
     "add-filter": "Tilføj filter",
     "no-filter-found": "Ingen filter fundet",
     "choose": "Vælg",
