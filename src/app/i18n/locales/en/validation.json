@@ -109,5 +109,9 @@
   "reset-pin": {
     "pin": "The PIN must be {{length}} digits.",
     "confirm-pin": "PIN and confirm PIN must match"
+  },
+  "batch": {
+    "name-required": "Batch name is required",
+    "expiration-invalid": "The expiration date is invalid"
   }
 }

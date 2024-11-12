@@ -8,7 +8,7 @@
   "table-filters": {
     "clear": "Reset",
     "clear-filter": "Remove Filter",
-    "no-fitler-choice": "No filter choices",
+    "no-filter-choice": "No filter choices",
     "add-filter": "Add filter",
     "no-filter-found": "No filter found",
     "choose": "Choose",
@@ -123,7 +123,9 @@
       "placements": "Placements",
       "placements-description": "Here you can create and update placements",
       "organisation": "Organisation",
-      "organisation-description": "View and edit users, locations, and company information."
+      "organisation-description": "View and edit users, locations, and company information.",
+      "batch": "Batch",
+      "batch-description": "Here you can create and update batch numbers"
     },
 
     "sys-admin-dropdown": {

@@ -22,4 +22,3 @@ Follow this [guide](https://orm.drizzle.team/learn/tutorials/drizzle-with-turso)
 ## Init Lucia-Auth with Drizzle ORM
 
 Follow this [guide](https://lucia-auth.com/database/drizzle) in order to setup Lucia with Drizzle, and follow this [guide](https://lucia-auth.com/tutorials/username-and-password/nextjs-app) to setup authentication with email and password.
-

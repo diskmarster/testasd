@@ -1,9 +1,9 @@
 'use client'
 
 import {
-  getTablePlacementColumns,
-  getTablePlacementFilters,
-} from '@/app/[lng]/(site)/admin/placeringer/columns'
+  getTableBatchColumns,
+  getTableBatchFilters,
+} from '@/app/[lng]/(site)/admin/batch/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useLanguage } from '@/context/language'
-import { Placement } from '@/lib/database/schema/inventory'
+import { Batch } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
   flexRender,
@@ -40,23 +40,21 @@ import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
-const ROW_PER_PAGE = [25, 50, 75, 100]
+const ROW_PER_PAGE = [100, 250, 500, 1000]
 
 interface Props {
-  data: Placement[]
+  data: Batch[]
   user: User
 }
 
-export function TablePlacement({ data, user }: Props) {
-  const LOCALSTORAGE_KEY = 'placements_cols'
+export function TableBatch({ data, user }: Props) {
+  const LOCALSTORAGE_KEY = 'batch_cols'
   const lng = useLanguage()
-  const { t } = useTranslation(lng, 'placeringer')
-  const columns = useMemo(() => getTablePlacementColumns(lng, t), [lng, t])
-
+  const { t } = useTranslation(lng, 'batch')
+  const columns = useMemo(() => getTableBatchColumns(lng, t), [lng, t])
   const filteredData = useMemo(() => {
-    return data.filter(placement => placement.name !== '-')
+    return data.filter(batch => batch.batch !== '-')
   }, [data])
-
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     { id: 'isBarred', value: [false] },
@@ -133,7 +131,7 @@ export function TablePlacement({ data, user }: Props) {
   })
 
   const filterFields = useMemo(
-    () => getTablePlacementFilters(table, data, lng, t),
+    () => getTableBatchFilters(table, data, lng, t),
     [table, data, lng, t],
   )
 
@@ -178,7 +176,7 @@ export function TablePlacement({ data, user }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  {t('table-placements.no-placements')}
+                  {t('batch-columns.no-batches')}
                 </TableCell>
               </TableRow>
             )}

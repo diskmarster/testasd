@@ -110,5 +110,9 @@
   "reset-pin": {
     "pin": "Kodeord skal være {{length}} tal.",
     "confirm-pin": "Pin og bekræft pin skal stemme overens"
+  },
+  "batch": {
+    "name-required": "Batch navn er påkrævet",
+    "expiration-invalid": "Udløbsdatoen er ugyldig"
   }
 }
