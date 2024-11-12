@@ -7,6 +7,7 @@ import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByRank } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
+import { numberRangeFilterFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
@@ -146,7 +147,7 @@ export function getTableOverviewColumns(
         {formatNumber(getValue<number>())}
       </span>
     ),
-    filterFn: 'includesString',
+    filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
     meta: {
       rightAlign: true,
       viewLabel: t('quantity'),
@@ -179,7 +180,7 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
-    filterFn: 'includesString',
+    filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
     meta: {
       rightAlign: true,
       viewLabel: t('cost-price'),
@@ -195,7 +196,7 @@ export function getTableOverviewColumns(
     ),
     aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
     cell: () => null,
-    filterFn: 'includesString',
+    filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
     meta: {
       rightAlign: true,
       viewLabel: t('sales-price'),
@@ -414,6 +415,29 @@ export function getTableOverviewFilters(
       }
       : null
 
+  // @ts-ignore
+  const costPriceFilter: FilterField<FormattedInventory> | null = table.options.meta.user.priceAccess ? {
+    column: table.getColumn('costPrice'),
+    type: 'number-range',
+    label: t('cost-price'),
+    value: ''
+  } : null
+
+  // @ts-ignore
+  const salesPriceFilter: FilterField<FormattedInventory> | null = table.options.meta.user.priceAccess ? {
+    column: table.getColumn('salesPrice'),
+    type: 'number-range',
+    label: t('sales-price'),
+    value: ''
+  } : null
+
+  const quantityFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('quantity'),
+    type: 'number-range',
+    label: t('quantity'),
+    value: ''
+  }
+
   switch (plan) {
     case 'lite':
       return [
@@ -424,6 +448,9 @@ export function getTableOverviewFilters(
         text1Filter,
         text2Filter,
         text3Filter,
+        costPriceFilter,
+        salesPriceFilter,
+        quantityFilter,
       ]
     case 'basis':
       return [
@@ -434,6 +461,9 @@ export function getTableOverviewFilters(
         text1Filter,
         text2Filter,
         text3Filter,
+        costPriceFilter,
+        salesPriceFilter,
+        quantityFilter,
         placementFilter,
       ].filter(
         (filter): filter is FilterField<FormattedInventory> => filter !== null,
@@ -447,6 +477,9 @@ export function getTableOverviewFilters(
         text1Filter,
         text2Filter,
         text3Filter,
+        costPriceFilter,
+        salesPriceFilter,
+        quantityFilter,
         placementFilter,
         batchFilter,
       ].filter(
