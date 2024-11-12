@@ -35,8 +35,7 @@ export function getTableBatchColumns(
       viewLabel: t('batch-columns.barred'),
     },
     filterFn: (row, id, value) => {
-      const isBarredValue = value == 'Ja'
-      return row.getValue(id) === isBarredValue
+      return value.includes(row.getValue(id))
     },
   }
 
