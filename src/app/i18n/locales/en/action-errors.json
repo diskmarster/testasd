@@ -135,5 +135,11 @@
   "password-reset-action": {
     "no-user-with-email": "No user with this email found",
     "couldnt-create-link": "Couldn't create a password reset link"
+  },
+  "batch-actions": {
+    "couldnt-find-location": "Could not find your location",
+    "account-doesnt-exist": "Company account does not exist in the system",
+    "batch-not-created": "Batch was not created",
+    "batch-not-updated": "Batch was not updated"
   }
 }

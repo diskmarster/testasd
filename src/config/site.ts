@@ -74,6 +74,14 @@ export const siteConfig: SiteConfig = {
           isExternal: false,
           isDisabled: false,
         },
+        {
+          label: 'site-config.administration-dropdown.batch',
+          description: 'site-config.administration-dropdown.batch-description',
+          href: `/${lng}/admin/batch`,
+          roles: ['system_administrator', 'administrator', 'moderator'],
+          isExternal: false,
+          isDisabled: false,
+        },
       ],
     },
     {
