@@ -28,6 +28,7 @@ import {
   updateCustomerValidation,
 } from './validation'
 import { hasPermissionByRank } from '@/data/user.types'
+import { custom } from 'zod'
 
 export const toggleUserStatusAction = adminAction
   .metadata({ actionName: 'toggleUserStatus' })
@@ -118,7 +119,7 @@ export const inviteNewUserAction = adminAction
     await emailService.sendRecursively(
       [parsedInput.email],
       subject,
-      EmailInviteUser({ link: userInviteLink }),
+      EmailInviteUser({ company: customer.company, link: userInviteLink }),
     )
   })
 
