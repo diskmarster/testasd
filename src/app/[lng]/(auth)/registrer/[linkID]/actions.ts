@@ -2,12 +2,10 @@
 
 import { signUpValidation } from '@/app/[lng]/(auth)/registrer/[linkID]/validation'
 import { serverTranslation } from '@/app/i18n'
-import { EmailTest } from '@/components/email/email-test'
 import { getSchema, publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { isUserLimitReached } from '@/service/customer.utils'
-import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
@@ -96,12 +94,6 @@ export const signUpAction = publicAction
 
     locationService.setCookie(activationLink.locationID)
     await sessionService.create(newUser.id)
-
-    emailService.sendRecursively(
-      [parsedInput.email],
-      'Velkommen til Nem Lager',
-      EmailTest(),
-    )
 
     redirect(`/${ctx.lang}/oversigt`)
   })

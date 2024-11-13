@@ -2,11 +2,9 @@
 
 import { signUpInvitedValidation } from '@/app/[lng]/(auth)/invitering/[linkID]/validation'
 import { serverTranslation } from '@/app/i18n'
-import { EmailTest } from '@/components/email/email-test'
 import { getSchema, publicAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
-import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
@@ -66,12 +64,6 @@ export const signUpInvitedAction = publicAction
 
     locationService.setCookie(activationLink.locationIDs[0])
     await sessionService.create(newUser.id)
-
-    await emailService.sendRecursively(
-      [parsedInput.email],
-      'Velkommen til Nem Lager',
-      EmailTest(),
-    )
 
     redirect(`/${ctx.lang}/oversigt`)
   })
