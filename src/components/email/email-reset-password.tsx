@@ -31,7 +31,7 @@ export function EmailResetPassword({
                 nedenunder og følge instrukserne.
               </Text>
               <Button
-                className='bg-primary rounded-md text-primary-foreground text-base font-semibold text-center block w-full p-2.5'
+                className='bg-[#023eb6] rounded-md text-white text-base font-semibold text-center block w-full p-2.5'
                 href={link}>
                 Nulstil din {pwName}
               </Button>

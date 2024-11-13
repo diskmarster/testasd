@@ -23,7 +23,7 @@ export function EmailInviteUser({ company, link }: { company: string, link: User
                 oprette en bruger ved at klikke på knappen nedenunder.
               </Text>
               <Button
-                className='bg-primary rounded-md text-primary-foreground text-base font-semibold text-center block w-full p-2.5'
+                className='bg-[#023eb6] rounded-md text-white text-base font-semibold text-center block w-full p-2.5'
                 href={link}>
                 Kom i gang med at bruge {siteConfig.name}
               </Button>
