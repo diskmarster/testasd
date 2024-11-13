@@ -51,7 +51,7 @@ export const createCustomerAction = publicAction
       throw new ActionError(t('create-action.activation-mail-not-sent'))
     }
 
-    emailService.sendRecursively(
+    await emailService.sendRecursively(
       [parsedInput.email],
       'Velkommen til Nem Lager',
       EmailWelcomeCustomer({
