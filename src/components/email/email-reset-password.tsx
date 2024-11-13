@@ -23,8 +23,7 @@ export function EmailResetPassword({
               <Heading as='h4'>{siteConfig.name}</Heading>
               <Hr className='border-border my-5' />
               <Text className='text-primary-foreground text-base leading-6 text-left'>
-                Vi har modtaget en forespørgsel på at nulstille din {pwName} på
-                {siteConfig.name}.
+                Vi har modtaget en forespørgsel på at nulstille din {pwName} på {siteConfig.name}.
               </Text>
               <Text className='text-primary-foreground text-base leading-6 text-left'>
                 For at nulstille din {pwName} skal du blot klikke på knappen
