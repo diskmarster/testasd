@@ -119,7 +119,7 @@
     "sys-admin-dropdown": {
       "customers": "Kunder",
       "customers-description": "Se en oversigt over alle kunder i Nem Lager.",
-      "admin-users": "Admin Brugere",
+      "admin-users": "Brugere",
       "admin-users-description": "Se en oversigt over alle brugere i Nem Lager.",
       "units": "Enheder",
       "units-description": "Her kan du oprette og opdatere enheder.",

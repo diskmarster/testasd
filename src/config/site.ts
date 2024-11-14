@@ -115,7 +115,7 @@ export const siteConfig: SiteConfig = {
           href: `/${lng}/sys/brugere`,
           roles: ['system_administrator'],
           isExternal: false,
-          isDisabled: true,
+          isDisabled: false,
         },
         {
           label: `${t('site-config.sys-admin-dropdown.units')}`,

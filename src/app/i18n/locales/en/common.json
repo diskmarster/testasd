@@ -4,7 +4,6 @@
     "go-to-previous-page": "Go to previous page",
     "go-to-next-page": "Go to next page"
   },
-
   "table-filters": {
     "clear": "Reset",
     "clear-filter": "Remove Filter",
@@ -20,34 +19,28 @@
     "number-range-from": "From {{from}} and up",
     "number-range-both": "From {{from}} up to and including {{to}}"
   },
-
   "language-switcher": {
     "language": "Language",
     "full-lang-name-da": "Danish",
     "full-lang-name-en": "English"
   },
-
   "theme-toggle": {
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark"
   },
-
   "table-toolbar": {
     "show-hide-columns": "Save/show columns"
   },
-
   "nav-user": {
     "my-profile": "My Profile",
     "get-help": "Get Help",
     "log-out": "Log Out"
   },
-
   "nav-location-select": {
     "select-location": "Select Location",
     "inactive": "Inactive"
   },
-
   "create-customer-action": {
     "primary-location": "Primary Location",
     "welcome-email": "Welcome to Nem Lager",
@@ -57,7 +50,6 @@
     "create-location-error": "Something went wrong while creating location",
     "actvation-email-error": "Something went wrong while sending activation email"
   },
-
   "signup-action": {
     "activation-link-no-longer-exists": "The activation link no longer exists.",
     "activation-link-expired": "The activation link has expired and is no longer valid.",
@@ -67,7 +59,6 @@
     "company-account-wasnt-activated": "Your company account was not activated.",
     "location-access-error": "There was an error granting the user access to the location."
   },
-
   "plans": {
     "plan_lite": "Lite",
     "plan_basis": "Basis",
@@ -101,18 +92,15 @@
       "Unlimited locations"
     ]
   },
-
   "site-config": {
     "site-name": "Nem Lager",
     "site-description": "Keep track of your inventory.",
     "error-title": "Something went wrong",
     "success-title": "Action completed",
-
     "overview": "Overview",
     "history": "History",
     "restock": "Restock",
     "administration": "Administration",
-
     "administration-dropdown": {
       "users": "Users",
       "users-description": "Here you can create and update users",
@@ -127,24 +115,21 @@
       "batch": "Batch",
       "batch-description": "Here you can create and update batch numbers"
     },
-
     "sys-admin-dropdown": {
       "customers": "Customers",
       "customers-description": "See an overview of all customers in Nem Lager",
-      "adminusers": "Users",
-      "adminusers-description": "See an overview of all users in Nem Lager",
+      "admin-users": "Users",
+      "admin-users-description": "See an overview of all users in Nem Lager",
       "units": "Units",
       "units-description": "Here you can create and update units",
       "error-messages": "Error messages",
       "error-messages-description": "View latest error messages"
     }
   },
-
   "toasts": {
     "location-select": "Changed location to ",
     "unnamed": "Unnamed"
   },
-
   "chip": {
     "genbestil-chip-tooltip": "{{count}} items needs to be reordered"
   },
