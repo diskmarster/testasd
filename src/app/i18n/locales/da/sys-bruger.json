@@ -1,0 +1,31 @@
+{
+  "page": {
+    "title": "Brugere",
+    "description": "Administrer alle brugere i Nem Lager"
+  },
+  "columns": {
+    "isActive-null_true": "Link er udløbet",
+    "isActive-null_false": "Aktivering venter",
+    "user-name": "Navn",
+    "user-name-placeholder": "Søg efter brugernavn",
+    "company": "Firma",
+    "company-placeholder": "Søg efter firma",
+    "email": "E-mail",
+    "email-placeholder": "Søg efter e-mail",
+    "user-role": "Rolle",
+    "status": "Status",
+    "access": "Adgange",
+    "access-web": "Web adgang",
+    "access-app": "App adgang",
+    "access-price": "Pris adgang",
+    "access-none": "Ingen",
+    "access_true": "Ja",
+    "access_false": "Nej",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "waiting": "Venter",
+    "expired": "Udløbet",
+    "updated": "Opdateret",
+    "created": "Oprettet"
+  }
+}

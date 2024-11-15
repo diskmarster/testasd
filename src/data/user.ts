@@ -1,18 +1,38 @@
-import { db, TRX } from "@/lib/database";
-import { AuthProvider, AuthProviderID, authProviderTable, GenericAuthProvider, NewAuthProvider, NewUser, NewUserLink, PartialUser, User, UserID, UserLink, UserLinkID, userLinkTable, userTable } from "@/lib/database/schema/auth";
-import { CustomerID } from "@/lib/database/schema/customer";
-import { and, eq, getTableColumns, not, } from "drizzle-orm";
-import { AuthProviderDomain, inList } from '@/data/user.types'
+import {
+  AuthProviderDomain,
+  inList,
+  UserNoHashWithCompany,
+  UserRole,
+} from '@/data/user.types'
+import { db, TRX } from '@/lib/database'
+import {
+  AuthProvider,
+  AuthProviderID,
+  authProviderTable,
+  GenericAuthProvider,
+  NewAuthProvider,
+  NewUser,
+  NewUserLink,
+  PartialUser,
+  User,
+  UserID,
+  UserLink,
+  UserLinkID,
+  userLinkTable,
+  userTable,
+} from '@/lib/database/schema/auth'
+import { CustomerID, customerTable } from '@/lib/database/schema/customer'
+import { and, eq, getTableColumns, not, sql } from 'drizzle-orm'
 
 export const user = {
-  create: async function(
+  create: async function (
     newUser: NewUser,
     trx: TRX = db,
   ): Promise<User | undefined> {
     const user = await trx.insert(userTable).values(newUser).returning()
     return user[0]
   },
-  getByID: async function(
+  getByID: async function (
     userID: UserID,
     trx: TRX = db,
   ): Promise<User | undefined> {
@@ -23,7 +43,7 @@ export const user = {
       .limit(1)
     return user[0]
   },
-  getByEmail: async function(
+  getByEmail: async function (
     userEmail: string,
     trx: TRX = db,
   ): Promise<User | undefined> {
@@ -34,7 +54,7 @@ export const user = {
       .limit(1)
     return user[0]
   },
-  updateByID: async function(
+  updateByID: async function (
     userID: UserID,
     updatedUser: PartialUser,
     trx: TRX = db,
@@ -46,38 +66,64 @@ export const user = {
       .returning()
     return user[0]
   },
-  deleteByID: async function(userID: UserID, trx: TRX = db): Promise<boolean> {
+  deleteByID: async function (userID: UserID, trx: TRX = db): Promise<boolean> {
     const resultSet = await trx
       .delete(userTable)
       .where(eq(userTable.id, userID))
     return resultSet.rowsAffected == 1
   },
-  getAllByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<User[]> {
-    return await trx.select().from(userTable).where(eq(userTable.customerID, customerID))
-  },
-  createUserLink: async function(linkData: NewUserLink, trx: TRX = db): Promise<UserLink | undefined> {
-    const userLinks = await trx.insert(userLinkTable).values(linkData).returning()
-    return userLinks[0]
-  },
-  getUserLinkByID: async function(userLinkID: UserLinkID, trx: TRX = db): Promise<UserLink> {
-    const userLink = await trx.select().from(userLinkTable).where(eq(userLinkTable.id, userLinkID))
-    return userLink[0]
-  },
-  deleteUserLink: async function(linkID: UserLinkID, trx: TRX = db): Promise<boolean> {
-    const resultSet = await trx.delete(userLinkTable).where(eq(userLinkTable.id, linkID))
-    return resultSet.rowsAffected == 1
-  },
-  toggleStatus: async function(userID: UserID, trx: TRX = db): Promise<boolean> {
-    const resultSet = await trx.update(userTable).set({
-      isActive: not(userTable.isActive)
-    }).where(eq(userTable.id, userID))
-    return resultSet.rowsAffected == 1
-  },
-  getByIDs: async function(userIDs: UserID[], trx: TRX = db): Promise<User[]> {
-    return trx
+  getAllByCustomerID: async function (
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<User[]> {
+    return await trx
       .select()
       .from(userTable)
-      .where(inList(userTable.id, userIDs))
+      .where(eq(userTable.customerID, customerID))
+  },
+  createUserLink: async function (
+    linkData: NewUserLink,
+    trx: TRX = db,
+  ): Promise<UserLink | undefined> {
+    const userLinks = await trx
+      .insert(userLinkTable)
+      .values(linkData)
+      .returning()
+    return userLinks[0]
+  },
+  getUserLinkByID: async function (
+    userLinkID: UserLinkID,
+    trx: TRX = db,
+  ): Promise<UserLink> {
+    const userLink = await trx
+      .select()
+      .from(userLinkTable)
+      .where(eq(userLinkTable.id, userLinkID))
+    return userLink[0]
+  },
+  deleteUserLink: async function (
+    linkID: UserLinkID,
+    trx: TRX = db,
+  ): Promise<boolean> {
+    const resultSet = await trx
+      .delete(userLinkTable)
+      .where(eq(userLinkTable.id, linkID))
+    return resultSet.rowsAffected == 1
+  },
+  toggleStatus: async function (
+    userID: UserID,
+    trx: TRX = db,
+  ): Promise<boolean> {
+    const resultSet = await trx
+      .update(userTable)
+      .set({
+        isActive: not(userTable.isActive),
+      })
+      .where(eq(userTable.id, userID))
+    return resultSet.rowsAffected == 1
+  },
+  getByIDs: async function (userIDs: UserID[], trx: TRX = db): Promise<User[]> {
+    return trx.select().from(userTable).where(inList(userTable.id, userIDs))
   },
   getAuthProviderByDomain: async function <TDomain extends AuthProviderDomain>(
     userID: UserID,
@@ -114,7 +160,8 @@ export const user = {
           eq(authProviderTable.userID, userID),
           eq(authProviderTable.domain, domain),
         ),
-      ).returning()
+      )
+      .returning()
 
     if (!authProviderIsDomain(res, domain)) {
       return undefined
@@ -122,18 +169,15 @@ export const user = {
 
     return res
   },
-  createAuthProvider: async function(
+  createAuthProvider: async function (
     ap: NewAuthProvider,
     trx: TRX = db,
   ): Promise<AuthProvider | undefined> {
-    const [res] = await trx
-      .insert(authProviderTable)
-      .values(ap)
-      .returning()
+    const [res] = await trx.insert(authProviderTable).values(ap).returning()
 
     return res
   },
-  deleteAuthProvider: async function(
+  deleteAuthProvider: async function (
     id: AuthProviderID,
     trx: TRX = db,
   ): Promise<boolean> {
@@ -143,7 +187,7 @@ export const user = {
 
     return res.rowsAffected > 0
   },
-  getAllInfoByCustomerID: async function(
+  getAllInfoByCustomerID: async function (
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<(User & { nfcProvider: AuthProvider | null })[]> {
@@ -166,7 +210,7 @@ export const user = {
       )
       .where(eq(userTable.customerID, customerID))
   },
-  getUserInfoByUserID: async function(
+  getUserInfoByUserID: async function (
     userID: UserID,
     trx: TRX = db,
   ): Promise<(User & { nfcProvider: AuthProvider | null }) | undefined> {
@@ -195,9 +239,7 @@ export const user = {
    * uses the authID and domain to find a matching authprovider, if any
    * and joins with usertable, to include the corresponding user in the response
    */
-  getAuthProviderWithUser: async function <
-    TDomain extends AuthProviderDomain,
-  >(
+  getAuthProviderWithUser: async function <TDomain extends AuthProviderDomain>(
     authID: string,
     domain: TDomain,
     trx: TRX = db,
@@ -226,6 +268,42 @@ export const user = {
     }
 
     return res
+  },
+  getAllAndInvites: async function (
+    trx: TRX = db,
+  ): Promise<UserNoHashWithCompany[]> {
+    const customers = await trx.select().from(customerTable)
+
+    const users = await trx
+      .select({
+        id: sql<number | null>`coalesce(${userTable.id}, null)`,
+        customerID: sql<number>`coalesce(${userTable.customerID}, ${userLinkTable.customerID})`,
+        name: sql<string>`coalesce(${userTable.name}, '-')`,
+        email: sql<string>`coalesce(${userTable.email}, ${userLinkTable.email})`,
+        role: sql<UserRole>`coalesce(${userTable.role}, ${userLinkTable.role})`,
+        isActive: sql<boolean | null>`coalesce(${userTable.isActive}, null)`,
+        inserted: sql<number>`coalesce(${userTable.inserted}, ${userLinkTable.inserted})`,
+        updated: sql<number | '-'>`coalesce(${userTable.updated}, '-')`,
+        appAccess: sql<boolean>`coalesce(${userTable.appAccess}, ${userLinkTable.appAccess})`,
+        webAccess: sql<boolean>`coalesce(${userTable.webAccess}, ${userLinkTable.webAccess})`,
+        priceAccess: sql<boolean>`coalesce(${userTable.priceAccess}, ${userLinkTable.priceAccess})`,
+      })
+      .from(userTable)
+      .fullJoin(userLinkTable, eq(userTable.email, userLinkTable.email))
+
+    return users.map(u => ({
+      ...u,
+      company: customers.find(c => c.id == u.customerID)?.company ?? 'Ukendt',
+    }))
+  },
+  deleteUserLinkByEmail: async function (
+    email: string,
+    trx: TRX = db,
+  ): Promise<boolean> {
+    const resultSet = await trx
+      .delete(userLinkTable)
+      .where(eq(userLinkTable.email, email))
+    return resultSet.rowsAffected == 1
   },
 }
 

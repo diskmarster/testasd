@@ -16,6 +16,7 @@ import { location } from '@/data/location'
 import { generateIdFromEntropySize } from 'lucia'
 import { isLinkExpired } from './customer.utils'
 import { UserInfo } from '@/data/user.types'
+import { UserNoHashWithCompany } from '@/data/user.types'
 
 const ACTIVATION_LINK_BASEURL = process.env.VERCEL_ENV === 'production' ? 'https://lager.nemunivers.app' : process.env.VERCEL_ENV === 'preview' ? 'stage.lager.nemunivers.app' : 'http://localhost:3000'
 export type UserActivationLink = `${typeof ACTIVATION_LINK_BASEURL}/invitering/${UserLinkID}`
@@ -170,6 +171,7 @@ export const userService = {
   },
   createUserLink: async function(userLinkData: Omit<NewUserLink, 'id'>): Promise<UserActivationLink | undefined> {
     const id = generateIdFromEntropySize(16)
+    await user.deleteUserLinkByEmail(userLinkData.email)
     const newUserLink = await user.createUserLink({ ...userLinkData, id: id })
     if (!newUserLink) return undefined
     return `${ACTIVATION_LINK_BASEURL}/invitering/${newUserLink.id}`
@@ -257,5 +259,8 @@ export const userService = {
     if (ap == undefined) return undefined
 
     return ap.user
+  },
+  getAll: async function(): Promise<UserNoHashWithCompany[]> {
+    return user.getAllAndInvites()
   }
 }

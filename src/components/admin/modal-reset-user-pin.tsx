@@ -26,10 +26,10 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 interface Props {
-  users: UserNoHash[]
+  //users: UserNoHash[]
 }
 
-export function ModalResetUserPin({ users }: Props) {
+export function ModalResetUserPin({ }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
@@ -59,12 +59,10 @@ export function ModalResetUserPin({ users }: Props) {
         return
       }
 
-      const user = users.find(u => u.id == formValues.userID)
-
       setError(undefined)
       setOpen(false)
-      toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${t('toasts.reset-pw-email')} ${user?.name}`,
+      toast.success(t(siteConfig.successTitle), {
+        description: `${t('toasts.reset-pw-email')} ${formValues.email}`,
       })
     })
   }

@@ -8,7 +8,7 @@ import { editUserValidation } from '@/app/[lng]/(site)/admin/organisation/valida
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { UserRole } from '@/data/user.types'
+import { getUserRoles, lte, UserRole } from '@/data/user.types'
 import { UserID, UserNoHash } from '@/lib/database/schema/auth'
 import { Location, LocationID } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
@@ -37,26 +37,23 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
+import { useSession } from '@/context/session'
 
-interface Props {
-  users: UserNoHash[]
-  locations: Location[]
-  userRoles: UserRole[]
-}
+interface Props { }
 
-export function ModalEditUser({
-  users,
-  locations: allLocations,
-  userRoles,
-}: Props) {
+export function ModalEditUser({}: Props) {
+  const {session, user: sessionUser} = useSession()
+  if (!session) return null
   const [error, setError] = useState<string>()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<UserNoHash>()
   const [locations, setLocations] = useState<
-    { id: LocationID; name: string }[]
-  >(allLocations.map(l => ({ id: l.id, name: l.name })))
+    { id: LocationID; name: string }[] | undefined
+  >(undefined)
   const [pending, startTransition] = useTransition()
   const [searchRoles, setSearchRoles] = useState('')
+
+  const userRoles = getUserRoles(lte(sessionUser.role))
 
   const rolesOptions = userRoles
     .filter(
@@ -96,6 +93,8 @@ export function ModalEditUser({
 
   const onOpenChange = (val: boolean) => {
     setOpen(val)
+    setUser(undefined)
+    setLocations([])
     setError(undefined)
     reset()
   }
@@ -128,7 +127,7 @@ export function ModalEditUser({
       const userLocations = res?.data ?? []
 
       setLocations(
-        allLocations.map(l => ({
+        userLocations.map(l => ({
           id: l.id,
           name: l.name,
         })),
@@ -144,19 +143,18 @@ export function ModalEditUser({
     })
   }
 
-  useCustomEventListener('EditUserByID', (data: { userID: UserID }) => {
-    const user = users.find(u => u.id == data.userID)
-    setUser(user)
-    setSearchRoles(user?.role ?? '')
-    if (user) {
-      setValue('userID', data.userID, {
+  useCustomEventListener('EditUserByID', (data: { user: UserNoHash }) => {
+    setUser(data.user)
+    setSearchRoles(data.user.role)
+    if (data.user) {
+      setValue('userID', data.user.id, {
         shouldValidate: true,
         shouldDirty: false,
       })
       setValue(
         'data',
         {
-          ...user,
+          ...data.user,
           locationIDs: [],
         },
         {
@@ -165,7 +163,7 @@ export function ModalEditUser({
         },
       )
     }
-    fetchLocations(data.userID)
+    fetchLocations(data.user.id)
     setOpen(true)
   })
 
@@ -415,22 +413,28 @@ export function ModalEditUser({
                       'grid gap-2 w-full',
                       formValues.data.role == 'administrator' && 'hidden',
                     )}>
-                    <div className='flex items-center justify-between'>
-                      <Label>{t('modal-edit-user.access-level')}</Label>
-                      <span className='text-muted-foreground text-xs tabular-nums'>
-                        {pending
-                          ? 0
-                          : formValues.data.locationIDs.filter(id =>
-                            locations.some(l => l.id == id),
-                          ).length}
-                        {' af '}
-                        {locations.length} {t('modal-edit-user.locations-chosen')}
-                      </span>
-                    </div>
+                      <div className='flex items-center justify-between h-[14px]'>
+                        <Label>{t('modal-edit-user.access-level')}</Label>
+                    {locations && (
+                        <span className={cn('text-muted-foreground text-xs tabular-nums')}>
+                          {pending
+                            ? 0
+                            : formValues.data.locationIDs.filter(id =>
+                              locations.some(l => l.id == id),
+                            ).length}
+                          {' af '}
+                          {locations.length} {t('modal-edit-user.locations-chosen')}
+                        </span>
+                        )}
+                      </div>
                     <ScrollArea className='md:border md:p-2 md:rounded-md max-md:max-h-[125px] md:h-[300px]'>
-                      <div className='space-y-2'>
-                        {locations.length > 0 ? (
-                          locations.map(loc => (
+                      <div className=''>
+                        {!locations || pending ? (
+                          <Icons.spinner className='size-8 animate-spin' />
+                        ) : locations.length > 1 ? (
+                              <div className='space-y-2'>
+
+                          {locations.map(loc => (
                             <div
                               key={loc.id}
                               className='border rounded-sm p-2 flex items-center justify-between'>
@@ -463,7 +467,8 @@ export function ModalEditUser({
                                 />
                               )}
                             </div>
-                          ))
+                         ))}
+                              </div>
                         ) : (
                           <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>
                             {t('modal-edit-user.create-more-locations')}

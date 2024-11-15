@@ -32,6 +32,13 @@ export const authProviderDomainSchema = z.enum([
 ])
 export type AuthProviderDomain = z.infer<typeof authProviderDomainSchema>
 export const AuthProviderDomains = authProviderDomainSchema.options as readonly AuthProviderDomain[]
+export type UserNoHashWithCompany = Omit<UserNoHash, 'id' | 'isActive' | 'updated' | 'inserted'> & {
+  id: number | null
+  isActive: boolean | null
+  company: string
+  updated: number | '-'
+  inserted: number
+}
 
 export function inList<TCol extends Column>(col: TCol, list: unknown[]) {
   return sql`${col} in (${sql.raw(list.join(', '))})`

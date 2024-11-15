@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(date: Date, withTime: boolean = true) {
+export function formatDate(date: Date | number, withTime: boolean = true) {
   return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: '2-digit',

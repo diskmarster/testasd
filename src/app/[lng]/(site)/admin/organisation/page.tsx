@@ -71,10 +71,10 @@ export default async function Page({ params: { lng } }: PageProps) {
       />
 
       {/* Modals without triggers that we open with custom events from row actions */}
-      <ModalEditUser users={users} locations={locations} userRoles={getUserRoles(lte(user.role))} />
-      <ModalToggleUser users={users} />
-      <ModalResetUserPW users={users} />
-      <ModalResetUserPin users={users} />
+      <ModalEditUser />
+      <ModalToggleUser />
+      <ModalResetUserPW />
+      <ModalResetUserPin />
       <ModalEditLocation user={user} users={users} userAccesses={userAccesses} />
       <ModalToggleLocation />
     </SiteWrapper>
