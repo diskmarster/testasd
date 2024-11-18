@@ -13,6 +13,7 @@ import {
 } from './validation'
 
 export const updateInventoryAction = editableAction
+  .metadata({actionName: 'updateInventory'})
   .schema(async () => await getSchema(updateInventoryValidation, 'validation'))
   .action(
     async ({
@@ -87,6 +88,7 @@ export const updateInventoryAction = editableAction
   )
 
 export const moveInventoryAction = editableAction
+  .metadata({actionName: 'moveInventory'})
   .schema(async () => await getSchema(moveInventoryValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')

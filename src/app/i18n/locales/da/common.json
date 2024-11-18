@@ -208,5 +208,12 @@
     "error-getting-product": "Fejl ved hentning af vare for den autentificerede bruger: ",
     "error-during-regulation": "Der opstod en fejl under regulering: ",
     "maintenance": "Vedligeholdelse i gang"
+  },
+  "route-translations-users": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Brugeren har ikke adgang til appen.",
+    "error-getting-userinfo": "Fejl ved hentning af bruger information: ",
+    "couldnt-get-userinfo": "Kunne ikke hente bruger information",
+    "error-occured-getting-userinfo": "Der opstod en fejl under hentning af bruger information: "
   }
 }

@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { editableAction } from '@/lib/safe-action'
+import { editableAction, sysAdminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
@@ -12,8 +12,7 @@ import {
   updateUnitValidation,
 } from './validation'
 
-export const createUnitAction = editableAction
-  .metadata({ actionName: 'createUnit' })
+export const createUnitAction = sysAdminAction
   .schema(createUnitValidation)
   .action(async ({ parsedInput: { name }, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')

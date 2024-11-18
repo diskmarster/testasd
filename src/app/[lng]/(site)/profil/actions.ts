@@ -56,7 +56,7 @@ export const deleteProfileAction = authedAction
   })
 
 export const updatePasswordAction = authedAction
-  .metadata({ actionName: 'updatePassword' })
+  .metadata({ actionName: 'updatePassword', excludeError: true })
   .schema(async () => await getSchema(updatePasswordValidation, 'validation'))
   .action(
     async ({
@@ -82,7 +82,7 @@ export const updatePasswordAction = authedAction
   )
 
 export const updatePinAction = authedAction
-  .metadata({ actionName: 'updatePin' })
+  .metadata({ actionName: 'updatePin', excludeError: true })
   .schema(async () => await getSchema(updatePinValidation, 'validation'))
   .action(
     async ({ parsedInput: { currentPin, newPin }, ctx: { user, lang } }) => {

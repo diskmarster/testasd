@@ -9,7 +9,7 @@ interface Props {
 
 export function ButtonOpenPrint({ labelRef }: Props) {
   function openPrintWindow() {
-    const content = labelRef.current?.innerHTML
+    const content = labelRef.current?.outerHTML
 
     const newWindow = window.open('', '', 'width=800,height=600')
 

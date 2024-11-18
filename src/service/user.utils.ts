@@ -35,9 +35,7 @@ export async function verifyPassword(
 }
 
 export function userDTO(u: User): UserNoHash {
-  const { hash, pin, ...rest } = u
-  const user = { ...rest }
-  return user
+  return u
 }
 
 export type JWTObject = {

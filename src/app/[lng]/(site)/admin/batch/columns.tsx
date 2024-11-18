@@ -27,7 +27,7 @@ export function getTableBatchColumns(
     cell: ({ getValue }) => {
       const isBarred = getValue<boolean>()
       return (
-        <Badge variant={isBarred ? 'destructive' : 'outline'}>
+        <Badge variant={isBarred ? 'red' : 'gray'}>
           {isBarred ? t('batch-columns.yes') : t('batch-columns.no')}
         </Badge>
       )
@@ -45,7 +45,7 @@ export function getTableBatchColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('batch-columns.expiration-date')} />
     ),
-    cell: ({ getValue }) => formatDate(getValue<Date>()),
+    cell: ({ getValue }) => getValue() == null ? '-' : formatDate(getValue<Date>(), false),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
 
