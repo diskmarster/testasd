@@ -1,7 +1,11 @@
 import { serverTranslation } from '@/app/i18n'
 import { fallbackLng } from '@/app/i18n/settings'
 import { hasPermissionByRank } from '@/data/user.types'
-import { ACTION_ERR_MAINTENANCE, ACTION_ERR_UNAUTHORIZED, ActionError } from '@/lib/safe-action/error'
+import {
+  ACTION_ERR_MAINTENANCE,
+  ACTION_ERR_UNAUTHORIZED,
+  ActionError,
+} from '@/lib/safe-action/error'
 import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { sessionService } from '@/service/session'
@@ -23,6 +27,8 @@ export async function getSchema<T>(
 type ActionContextType = { session?: Session; user?: User }
 const metadataSchema = z.object({
   actionName: z.string().optional(),
+  excludeAnalytics: z.coerce.boolean().optional(),
+  excludeError: z.coerce.boolean().optional(),
 })
 
 const baseClient = createSafeActionClient<
@@ -52,6 +58,7 @@ const baseClient = createSafeActionClient<
     const ctx: ActionContextType | undefined = res.ctx
     if (
       res.success &&
+      !metadata.excludeAnalytics &&
       metadata.actionName &&
       ctx &&
       ctx.user &&
@@ -69,7 +76,12 @@ const baseClient = createSafeActionClient<
       })
     }
 
-    if (!res.success && ctx && ctx.user && metadata.actionName != 'signIn') {
+    if (
+      !res.success &&
+      ctx && 
+      ctx.user &&
+      !metadata.excludeError
+    ) {
       const errorLog: NewApplicationError = {
         userID: ctx.user.id,
         customerID: ctx.user.customerID,

@@ -5,15 +5,14 @@
   },
   "batch-columns": {
     "batch-number": "Batch No.",
-    "barred": "Barred",
-    "yes": "Yes",
-    "no": "No",
+    "barred": "Status",
+    "yes": "Barred",
+    "no": "Active",
     "expiration-date": "Expiration date",
     "created-at": "Created at",
     "updated-at": "Updated at",
     "no-batches": "No batches found"
   },
-
   "create-batch-modal": {
     "toast-error": "Server error",
     "batch-created": "Batch created successfully",
@@ -26,7 +25,6 @@
     "create-batch-button": "Create batch",
     "credenza-description": "Please fill in the information to create a new batch number"
   },
-
   "modal-update-batch": {
     "no-batch-to-edit": "No batch to edit",
     "batch-updated-successfully": "Batch updated successfully",

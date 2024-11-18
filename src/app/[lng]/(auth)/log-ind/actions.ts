@@ -9,7 +9,7 @@ import { userService } from '@/service/user'
 import { redirect } from 'next/navigation'
 
 export const signInAction = publicAction
-  .metadata({ actionName: 'signIn' })
+  .metadata({ actionName: 'signIn', excludeError: true })
   .schema(async () => await getSchema(signInValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')

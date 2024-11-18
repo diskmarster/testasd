@@ -14,6 +14,7 @@ import {
 } from './validation'
 
 export const createBatchAction = authedAction
+  .metadata({actionName: 'createBatch'})
   .schema(async () => await getSchema(createBatchValidation, 'validation'))
   .action(async ({ parsedInput: { batchName, expiry }, ctx }) => {
     const location = await locationService.getLastVisited(ctx.user.id)
