@@ -5,7 +5,12 @@
   "modal-show-product-label": {
     "title": "Product label",
     "description": "Print labels for your products",
-    "prod-no": "Prod. no."
+    "prod-no": "Prod. no.",
+    "size": "Label size",
+    "size_small": "Small",
+    "size-desc_small": "Best for 51x26mm",
+    "size_big": "Big",
+    "size-desc_big": "Best for 100x192mm"
   },
   "modal-show-product-card": {
     "barred": "Barred",
@@ -46,7 +51,6 @@
     "uploaded-of": "uploaded of",
     "upload-to-catalog": "Upload to product catalog"
   },
-
   "faq-page": {
     "question-user-roles": "What can the users roles do?",
     "user-roles-description": "The user roles are divided into five levels, each with different permissions. They are distributed as follows:",
@@ -60,7 +64,6 @@
     "role-departure-description": "is for limited inventory management on the warehouse floor, where users only need access to the app to process departures.",
     "role-readonly": "Read-only ",
     "role-readonly-description": "is for very limited access to only viewing the overview and history. This role is limited to the web platform.",
-
     "question-format-import": "How do I format my import file to the product catalog?",
     "title": "Frequently asked questions",
     "description": "Here you can find answers to the most common asked questions about Nem Lager",
