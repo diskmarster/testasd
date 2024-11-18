@@ -28,17 +28,36 @@ export const userService = {
     userData.hash = hashed
     const hashedPin = await hashPassword(userData.pin)
     userData.pin = hashedPin
-    const newUser = await user.create(userData)
-    if (!newUser) return undefined
-    return userDTO(newUser)
+    return await db.transaction(async trx => {
+      const newUser = await user.create(userData, trx)
+      if (!newUser) return undefined
+      const pwAuth = await user.createAuthProvider({
+        userID: newUser.id,
+        authID: hashed,
+        domain: 'pw',
+      }, trx)
+      const pinAuth = await user.createAuthProvider({
+        userID: newUser.id,
+        authID: hashedPin,
+        domain: 'pin',
+      }, trx)
+      if (!pwAuth || !pinAuth) {
+        trx.rollback()
+        return undefined
+      }
+
+      return userDTO(newUser)
+    })
   },
   verifyPassword: async function(
     email: string,
     password: string,
   ): Promise<UserNoHash | undefined> {
     const existingUser = await user.getByEmail(email)
-    if (!existingUser) return undefined
-    const isValid = await verifyPassword(existingUser.hash, password)
+    if (!existingUser) return undefined 
+    const auth = await user.getAuthProviderByDomain(existingUser.id, 'pw')
+    if (!auth) return undefined
+    const isValid = await verifyPassword(auth.authID, password)
     if (!isValid) return undefined
     return userDTO(existingUser)
   },
@@ -50,10 +69,9 @@ export const userService = {
     if (!existingUser) {
       return undefined
     }
-    if (!existingUser.pin) {
-      return undefined
-    }
-    const isValidPin = await verifyPassword(existingUser.pin, pin)
+    const auth = await user.getAuthProviderByDomain(existingUser.id, 'pin')
+    if (!auth) return undefined
+    const isValidPin = await verifyPassword(auth.authID, pin)
     if (!isValidPin) {
       return undefined
     }
@@ -84,9 +102,9 @@ export const userService = {
     newPassword: string,
   ): Promise<UserNoHash | undefined> {
     const hashedPassword = await hashPassword(newPassword)
-    const updatedUser = await user.updateByID(userID, { hash: hashedPassword })
-    if (!updatedUser) return undefined
-    return userDTO(updatedUser)
+    const updatedAuth = await user.updateAuthProvider(userID, 'pw', hashedPassword)
+    if (!updatedAuth) return undefined
+    return await user.getByID(userID)
   },
 
   updatePin: async function(
@@ -94,13 +112,9 @@ export const userService = {
     newPin: string,
   ): Promise<UserNoHash | undefined> {
     const hashedPin = await hashPassword(newPin)
-    const updatedUser = await user.updateByID(userID, {
-      pin: hashedPin,
-    })
-    if (!updatedUser) {
-      return undefined
-    }
-    return userDTO(updatedUser)
+    const updatedAuth = await user.updateAuthProvider(userID, 'pin', hashedPin)
+    if (!updatedAuth) return undefined
+    return await user.getByID(userID)
   },
 
   deleteByID: async function(userID: UserID): Promise<boolean> {
@@ -110,7 +124,7 @@ export const userService = {
     const users = await user.getAllByCustomerID(customerID)
     return users.map(u => userDTO(u))
   },
-  createInvitedUser: async function(userLinkData: UserLink, newUserData: NewUser): Promise<User | undefined> {
+  createInvitedUser: async function(userLinkData: UserLink, newUserData: NewUser): Promise<UserNoHash | undefined> {
     const transaction = await db.transaction(async trx => {
       const hashed = await hashPassword(newUserData.hash)
       newUserData.hash = hashed
@@ -118,6 +132,20 @@ export const userService = {
       newUserData.pin = hashedPin
       const newUser = await user.create(newUserData, trx)
       if (!newUser) return undefined
+      const pwAuth = await user.createAuthProvider({
+        userID: newUser.id,
+        authID: hashed,
+        domain: 'pw',
+      }, trx)
+      const pinAuth = await user.createAuthProvider({
+        userID: newUser.id,
+        authID: hashedPin,
+        domain: 'pin',
+      }, trx)
+      if (!pwAuth || !pinAuth) {
+        trx.rollback()
+        return undefined
+      }
 
       // Drizzle does apperently not convert locationIDs to a string
       // despite its type being string[]
@@ -172,11 +200,6 @@ export const userService = {
   getByIDs: async function(
     userIDs: UserID[]
   ): Promise<UserNoHash[]> {
-    const users = await user.getByIDs(userIDs)
-
-    return users.map(u => {
-      const {hash, pin, ...uNoHash} = u
-      return uNoHash
-    })
+    return await user.getByIDs(userIDs)
   }
 }
