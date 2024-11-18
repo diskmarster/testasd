@@ -7,10 +7,10 @@
     "description": "Print labels til dine vare",
     "prod-no": "Varenr.",
     "size": "Labelstørrelse",
-    "size_lille": "Lille",
-    "size-desc_lille": "Egnet til 51x26mm",
-    "size_stor": "Stor",
-    "size-desc_stor": "Egnet til 100x192mm"
+    "size_small": "Lille",
+    "size-desc_small": "Egnet til 51x26mm",
+    "size_big": "Stor",
+    "size-desc_big": "Egnet til 100x192mm"
   },
   "modal-show-product-card": {
     "barred": "Spærret",

@@ -29,8 +29,8 @@ export function ModalShowProductLabel({ product }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'other')
-  const sizes = [{ label: 'lille', desc: 'egnet til 51x26mm' }, { label: 'stor', desc: 'egnet til 100x192mm' }]
-  const [size, setSize] = useState<'lille' | 'stor'>('lille')
+  const sizes = ['small', 'big']
+  const [size, setSize] = useState<'small' | 'big'>('small')
 
   return (
     <Credenza>
@@ -53,7 +53,7 @@ export function ModalShowProductLabel({ product }: Props) {
             </Label>
             <Select
               value={size}
-              onValueChange={(value: 'lille' | 'stor') =>
+              onValueChange={(value: 'small' | 'big') =>
                 setSize(value)
               }>
               <SelectTrigger>
@@ -61,10 +61,10 @@ export function ModalShowProductLabel({ product }: Props) {
               </SelectTrigger>
               <SelectContent>
                 {sizes.map((size, index) => (
-                  <SelectItem key={index} value={size.label} className='cursor-pointer'>
+                  <SelectItem key={index} value={size} className='cursor-pointer'>
                     <div className='flex gap-1 items-center'>
-                      <span className='capitalize'>{t('modal-show-product-label.size', { context: size.label })}</span>
-                      <span className='text-muted-foreground'>- {t('modal-show-product-label.size-desc', { context: size.label })}</span>
+                      <span className='capitalize'>{t('modal-show-product-label.size', { context: size })}</span>
+                      <span className='text-muted-foreground'>- {t('modal-show-product-label.size-desc', { context: size })}</span>
                     </div>
                   </SelectItem>
                 ))}
@@ -72,7 +72,7 @@ export function ModalShowProductLabel({ product }: Props) {
             </Select>
           </div>
           <div className='border rounded-md'>
-            {size == 'lille' ? (
+            {size == 'small' ? (
               <div
                 ref={ref}
                 className={cn(

@@ -7,10 +7,10 @@
     "description": "Print labels for your products",
     "prod-no": "Prod. no.",
     "size": "Label size",
-    "size_lille": "Small",
-    "size-desc_lille": "Best for 51x26mm",
-    "size_stor": "Big",
-    "size-desc_stor": "Best for 100x192mm"
+    "size_small": "Small",
+    "size-desc_small": "Best for 51x26mm",
+    "size_big": "Big",
+    "size-desc_big": "Best for 100x192mm"
   },
   "modal-show-product-card": {
     "barred": "Barred",
