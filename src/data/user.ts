@@ -1,8 +1,8 @@
 import { db, TRX } from "@/lib/database";
-import { NewUser, NewUserLink, PartialUser, User, UserID, UserLink, UserLinkID, userLinkTable, userTable } from "@/lib/database/schema/auth";
+import { AuthProvider, AuthProviderID, authProviderTable, GenericAuthProvider, NewAuthProvider, NewUser, NewUserLink, PartialUser, User, UserID, UserLink, UserLinkID, userLinkTable, userTable } from "@/lib/database/schema/auth";
 import { CustomerID } from "@/lib/database/schema/customer";
-import { eq, not, } from "drizzle-orm";
-import { inList } from '@/data/user.types'
+import { and, eq, not, } from "drizzle-orm";
+import { AuthProviderDomain, inList } from '@/data/user.types'
 
 export const user = {
   create: async function(
@@ -78,5 +78,76 @@ export const user = {
       .select()
       .from(userTable)
       .where(inList(userTable.id, userIDs))
+  },
+  getAuthProviderByDomain: async function<TDomain extends AuthProviderDomain>(
+    userID: UserID,
+    domain: TDomain,
+    trx: TRX = db,
+  ): Promise<GenericAuthProvider<TDomain> | undefined> {
+    const [res] = await trx
+      .select()
+      .from(authProviderTable)
+      .where(
+        and(
+          eq(authProviderTable.userID, userID),
+          eq(authProviderTable.domain, domain),
+        ),
+      )
+
+    if (!authProviderIsDomain(res, domain)) {
+      return undefined
+    }
+
+    return res
+  },
+  updateAuthProvider: async function<TDomain extends AuthProviderDomain>(
+    userID: UserID,
+    domain: TDomain,
+    authID: AuthProvider['authID'],
+    trx: TRX = db,
+  ): Promise<GenericAuthProvider<TDomain> | undefined> {
+    const [res] = await trx
+      .update(authProviderTable)
+      .set({authID: authID})
+      .where(
+        and(
+          eq(authProviderTable.userID, userID),
+          eq(authProviderTable.domain, domain),
+        ),
+      ).returning()
+
+    if (!authProviderIsDomain(res, domain)) {
+      return undefined
+    }
+
+    return res
+  },
+  createAuthProvider: async function(
+    ap: NewAuthProvider,
+    trx: TRX = db,
+  ): Promise<AuthProvider | undefined> {
+    const [res] = await trx
+      .insert(authProviderTable)
+      .values(ap)
+      .returning()
+
+    return res
+  },
+  deleteAuthProvider: async function(
+    id: AuthProviderID,
+    trx: TRX = db,
+  ): Promise<boolean> {
+    const res = await trx
+      .delete(authProviderTable)
+      .where(eq(authProviderTable.id, id))
+
+    return res.rowsAffected > 0
   }
+}
+
+function authProviderIsDomain<TDomain extends AuthProviderDomain>(
+  ap: AuthProvider | undefined,
+  domain: TDomain,
+): ap is GenericAuthProvider<TDomain> {
+  return ap != undefined && ap.domain == domain
 }
