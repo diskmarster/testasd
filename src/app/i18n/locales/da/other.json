@@ -5,7 +5,12 @@
   "modal-show-product-label": {
     "title": "Varelabels",
     "description": "Print labels til dine vare",
-    "prod-no": "Varenr."
+    "prod-no": "Varenr.",
+    "size": "Labelstørrelse",
+    "size_lille": "Lille",
+    "size-desc_lille": "Egnet til 51x26mm",
+    "size_stor": "Stor",
+    "size-desc_stor": "Egnet til 100x192mm"
   },
   "modal-show-product-card": {
     "barred": "Spærret",
@@ -46,7 +51,6 @@
     "uploaded-of": "uploadet af",
     "upload-to-catalog": "Upload til varekartotek"
   },
-
   "faq-page": {
     "question-user-roles": "Hvad kan bruggerrollerne?",
     "user-roles-description": "Brugerrollerne er fordelt på fem niveauer, med hver deres forskellige rettigheder. De fordeles således:",
@@ -60,7 +64,6 @@
     "role-departure-description": "er til den begrænsede beholdningsstyring på lageret, hvor kun brugere skal have adgang til appen og lave afgange.",
     "role-readonly": "Læseadgang ",
     "role-readonly-description": "er til den helt begrænsede adgang til kun oversigt og historik. Denne brugerrolle har kun adgang til webplatformen.",
-
     "question-format-import": "Hvordan formaterer jeg min importfil til varekartoteket?",
     "title": "Ofte stillede spørgsmål",
     "description": "Her kan du finde svar på de mest almindeligt stillede spørgsmål om Nem Lager",
