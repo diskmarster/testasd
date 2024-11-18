@@ -5,14 +5,13 @@
   },
   "batch-columns": {
     "batch-number": "Batch nr.",
-    "barred": "Spærret",
-    "yes": "Ja",
-    "no": "Nej",
+    "barred": "Status",
+    "yes": "Spærret",
+    "no": "Aktiv",
     "expiration-date": "Udløbsdato",
     "created-at": "Oprettet",
     "updated-at": "Opdateret"
   },
-
   "create-batch-modal": {
     "toast-error": "Serverfejl",
     "batch-created": "Batch oprettet succesfuldt",
@@ -25,7 +24,6 @@
     "create-batch-button": "Opret batch",
     "credenza-description": "Udfyld venligst oplysningerne for at oprette en ny batch"
   },
-
   "modal-update-batch": {
     "no-batch-to-edit": "Ingen batch at redigere",
     "batch-updated-successfully": "Batch opdateret succesfuldt",
