@@ -223,5 +223,12 @@
     "error-getting-product": "Error retrieving product for authenticated user: ",
     "error-during-regulation": "An error occurred during regulation: ",
     "maintenance": "Maintenance in progress"
+  },
+  "route-translations-users": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "The user does not have access to the app.",
+    "error-getting-userinfo": "Error retrieving user information: ",
+    "couldnt-get-userinfo": "Could not retrieve user information",
+    "error-occured-getting-userinfo": "An error occurred while retrieving user information: "
   }
 }
