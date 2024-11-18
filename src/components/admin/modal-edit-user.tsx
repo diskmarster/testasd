@@ -10,7 +10,7 @@ import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { getUserRoles, lte, UserRole } from '@/data/user.types'
 import { UserID, UserNoHash } from '@/lib/database/schema/auth'
-import { Location, LocationID } from '@/lib/database/schema/customer'
+import { CustomerID, Location, LocationID } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
@@ -115,19 +115,20 @@ export function ModalEditUser({}: Props) {
     })
   }
 
-  const fetchLocations = (userID: UserID) => {
+  const fetchLocations = (userID: UserID, customerID: CustomerID) => {
     startTransition(async () => {
-      const res = await getLocationsByUserIDAction({ userID })
+      const res = await getLocationsByUserIDAction({ userID, customerID })
 
       if (res && res.serverError) {
         setError(res.serverError)
         return
       }
 
-      const userLocations = res?.data ?? []
+      const userLocations = res?.data?.userLocations ?? []
+      const allLocations = res?.data?.allLocations ?? []
 
       setLocations(
-        userLocations.map(l => ({
+        allLocations.map(l => ({
           id: l.id,
           name: l.name,
         })),
@@ -163,7 +164,7 @@ export function ModalEditUser({}: Props) {
         },
       )
     }
-    fetchLocations(data.user.id)
+    fetchLocations(data.user.id, data.user.customerID)
     setOpen(true)
   })
 
@@ -427,11 +428,14 @@ export function ModalEditUser({}: Props) {
                         </span>
                         )}
                       </div>
-                    <ScrollArea className='md:border md:p-2 md:rounded-md max-md:max-h-[125px] md:h-[300px]'>
-                      <div className=''>
+                    <ScrollArea className='md:border md:p-2 md:rounded-md max-md:max-h-[125px] md:h-[300px] [&>div>div]:h-full'>
+                      <div className='h-full'>
                         {!locations || pending ? (
+                            <div className='w-full h-full grid place-items-center'>
+
                           <Icons.spinner className='size-8 animate-spin' />
-                        ) : locations.length > 1 ? (
+                            </div>
+                        ) : (
                               <div className='space-y-2'>
 
                           {locations.map(loc => (
@@ -450,6 +454,7 @@ export function ModalEditUser({}: Props) {
                                   checked={formValues.data.locationIDs.includes(
                                     loc.id,
                                   )}
+                                  disabled={locations.length == 1}
                                   onCheckedChange={(checked: boolean) => {
                                     let users = formValues.data.locationIDs
 
@@ -469,10 +474,6 @@ export function ModalEditUser({}: Props) {
                             </div>
                          ))}
                               </div>
-                        ) : (
-                          <div className='text-center mx-auto w-4/5 text-muted-foreground text-xs leading-5'>
-                            {t('modal-edit-user.create-more-locations')}
-                          </div>
                         )}
                       </div>
                     </ScrollArea>
