@@ -74,6 +74,7 @@ export const toggleBarredProductAction = editableAction
   )
 
 export const importProductsAction = adminAction
+  .metadata({actionName: 'importProducts', excludeAnalytics: true})
   .schema(importProductsValidation)
   .action(async ({ parsedInput: importedData, ctx }) => {
     const didImport = await productService.importProducts(
