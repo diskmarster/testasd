@@ -11,8 +11,6 @@ export const userTable = sqliteTable('nl_user', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
-  hash: text('hash').notNull(),
-  pin: text('pin').notNull(),
   role: text('role').$type<UserRole>().notNull().default('bruger'),
   customerID: integer('customer_id')
     .notNull()
@@ -35,9 +33,10 @@ export const userTable = sqliteTable('nl_user', {
 
 export type User = typeof userTable.$inferSelect
 export type UserID = User['id']
-export type NewUser = typeof userTable.$inferInsert
+export type NewUser = typeof userTable.$inferInsert & { hash: string, pin: string}
 export type PartialUser = Partial<User>
 export type UserNoHash = Omit<User, 'hash' | 'pin'>
+export type UserWithAuth<TAuthDomain extends AuthProviderDomain> = User & GenericAuthProvider<TAuthDomain>
 
 export const sessionTable = sqliteTable('nl_session', {
   id: text('id').notNull().primaryKey(),
@@ -108,3 +107,10 @@ export const authProviderTable = sqliteTable(
     authIDUnq: unique().on(t.authID),
   }),
 )
+
+export type AuthProvider = typeof authProviderTable.$inferSelect
+export type AuthProviderID = AuthProvider['id']
+export type NewAuthProvider = typeof authProviderTable.$inferInsert
+export interface GenericAuthProvider<TDomain extends AuthProviderDomain> extends AuthProvider {
+  domain: TDomain 
+}
