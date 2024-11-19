@@ -83,12 +83,12 @@ export function ModalShowProductLabel({ product }: Props) {
                     <p className='font-bold truncate max-w-56 print:text-xs'>
                       {product.text1}
                     </p>
-                    <p className='truncate max-w-56 print:text-[10px] text-xs'>
+                    <p className='truncate max-w-56 print:text-[10px] font-bold text-xs'>
                       {product.text2}
                     </p>
                   </div>
                   <div className='flex items-end justify-between'>
-                    <p className='print:text-[10px] text-xs'>
+                    <p className='print:text-[10px] text-xs font-bold'>
                       {t('modal-show-product-label.prod-no')} {product.sku}
                     </p>
                     <div className='flex flex-col items-center'>
@@ -96,7 +96,7 @@ export function ModalShowProductLabel({ product }: Props) {
                         value={product.barcode}
                         className='print:size-8 size-14'
                       />
-                      <span className='text-[10px]'>{product.barcode}</span>
+                      <span className='text-[10px] font-medium'>{product.barcode}</span>
                     </div>
                   </div>
                 </div>
