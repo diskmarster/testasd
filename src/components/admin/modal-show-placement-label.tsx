@@ -17,6 +17,7 @@ import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { ButtonOpenPrint } from '../inventory/button-open-print'
 import { useCustomEventListener } from 'react-custom-events'
+import { LabelSize } from '../inventory/modal-show-product-label'
 
 interface Props { }
 
@@ -25,11 +26,16 @@ export function ModalShowPlacementLabel({ }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'placeringer')
   const sizes = ['small', 'big']
-  const [size, setSize] = useState<'small' | 'big'>('small')
+  const [size, setSize] = useState<'small' | 'big'>(
+    (localStorage.getItem('label-size') as 'small' | 'big') ?? 'small'
+  )
   const [open, setOpen] = useState(false)
   const [placementName, setPlacementName] = useState<string>('')
 
   function handleOpenChange(open: boolean) {
+    setSize(
+      localStorage.getItem('label-size') as LabelSize ?? 'small'
+    )
     setOpen(open)
   }
 
@@ -54,8 +60,10 @@ export function ModalShowPlacementLabel({ }: Props) {
             </Label>
             <Select
               value={size}
-              onValueChange={(value: 'small' | 'big') =>
+              onValueChange={(value: 'small' | 'big') => {
+                localStorage.setItem('label-size', value)
                 setSize(value)
+              }
               }>
               <SelectTrigger>
                 <SelectValue placeholder={t('modal-label.size')} />
