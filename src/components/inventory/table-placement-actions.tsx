@@ -1,7 +1,7 @@
 import { toggleBarredPlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { ModalUpdatePlacement } from '@/components/inventory/modal-update-placement'
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { Placement } from '@/lib/database/schema/inventory'
@@ -9,6 +9,9 @@ import { Row } from '@tanstack/react-table'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
+import { Icons } from '../ui/icons'
+import { Button } from '../ui/button'
+import { emitCustomEvent } from 'react-custom-events'
 
 interface Props {
   row: Row<Placement>
@@ -47,7 +50,13 @@ export function TableOverviewActions({ row }: Props) {
         <DropdownMenuItem onClick={() => setOpen(true)}>
           {t('table-placement-actions.update')}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleToggleBar}>
+        <DropdownMenuItem onClick={() => emitCustomEvent("PrintPlacementLabel", {
+          name: row.original.name
+        })}>
+          {t('table-placement-actions.print')}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleToggleBar} className='!text-destructive'>
           {row.original.isBarred
             ? t('table-placement-actions.unbar')
             : t('table-placement-actions.bar')}
