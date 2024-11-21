@@ -3,11 +3,9 @@
     "title": "Placements",
     "description": "See an overview of all your placements here."
   },
-
   "table-placements": {
     "no-placements": "No placements"
   },
-
   "placement-columns": {
     "placement": "Placement",
     "is-barred": "Status",
@@ -16,13 +14,21 @@
     "inserted": "Inserted",
     "updated": "Updated"
   },
-
   "table-placement-actions": {
     "update": "Update",
     "bar": "Bar the placement",
-    "unbar": "Unbar the placement"
+    "unbar": "Unbar the placement",
+    "print": "Print label"
   },
-
+  "modal-label": {
+    "title": "Placement labels",
+    "description": "Print labels for placements",
+    "size": "Label size",
+    "size_small": "Small",
+    "size-desc_small": "Best for 51x26mm",
+    "size_big": "Big",
+    "size-desc_big": "Best for 100x192mm"
+  },
   "modal-create-placement": {
     "title": "Create new placement",
     "description": "Here you can create a new placement.",
@@ -31,7 +37,6 @@
     "autocomplete-empty-message": "Nothing found.",
     "create-button": "Create"
   },
-
   "modal-update-placement": {
     "title": "Update placement",
     "description": "Here you can update a placement.",

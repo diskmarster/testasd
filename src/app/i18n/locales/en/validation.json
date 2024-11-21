@@ -112,6 +112,7 @@
   },
   "batch": {
     "name-required": "Batch name is required",
-    "expiration-invalid": "The expiration date is invalid"
+    "expiration-invalid": "The expiration date is invalid",
+    "name-max": "Batch cannot exceed {{num}} characters"
   }
 }

@@ -1,4 +1,5 @@
 import { serverTranslation } from '@/app/i18n'
+import { ModalShowPlacementLabel } from '@/components/admin/modal-show-placement-label'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalCreatePlacement } from '@/components/inventory/modal-create-placement'
 import { TablePlacement } from '@/components/inventory/table-placements'
@@ -30,8 +31,6 @@ export default async function Page({ params: { lng } }: PageProps) {
   if (!customer) redirect(`/${lng}/log-ind`)
 
   const allPlacement = await inventoryService.getAllPlacementsByID(location)
-  const batches = await inventoryService.getActiveBatchesByID(location)
-  const products = await inventoryService.getActiveProductsByID(customer.id)
   const { t } = await serverTranslation(lng, 'placeringer')
 
   return (
@@ -44,6 +43,8 @@ export default async function Page({ params: { lng } }: PageProps) {
         </>
       }>
       <TablePlacement data={allPlacement} user={user} />
+
+      <ModalShowPlacementLabel />
     </SiteWrapper>
   )
 }
