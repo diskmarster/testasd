@@ -65,7 +65,7 @@ export function ModalShowProductLabel({ product }: Props) {
             </Label>
             <Select
               value={size}
-              onValueChange={(value: 'small' | 'big') => {
+              onValueChange={(value: LabelSize) => {
                 localStorage.setItem('label-size', value)
                 setSize(value)
               }

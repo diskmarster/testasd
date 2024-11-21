@@ -27,7 +27,7 @@ export function ModalShowPlacementLabel({ }: Props) {
   const { t } = useTranslation(lng, 'placeringer')
   const sizes = ['small', 'big']
   const [size, setSize] = useState<'small' | 'big'>(
-    (localStorage.getItem('label-size') as 'small' | 'big') ?? 'small'
+    (localStorage.getItem('label-size') as LabelSize) ?? 'small'
   )
   const [open, setOpen] = useState(false)
   const [placementName, setPlacementName] = useState<string>('')
@@ -60,7 +60,7 @@ export function ModalShowPlacementLabel({ }: Props) {
             </Label>
             <Select
               value={size}
-              onValueChange={(value: 'small' | 'big') => {
+              onValueChange={(value: LabelSize) => {
                 localStorage.setItem('label-size', value)
                 setSize(value)
               }
