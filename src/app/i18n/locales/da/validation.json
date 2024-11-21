@@ -28,7 +28,6 @@
     "move-quantity-type": "Mængden skal være et tal",
     "move-quantity-number": "Mængden skal være større end 0"
   },
-
   "restock": {
     "product-required": "Produkt er påkrævet",
     "buffer-number": "Buffer skal være et tal",
@@ -113,6 +112,7 @@
   },
   "batch": {
     "name-required": "Batch navn er påkrævet",
-    "expiration-invalid": "Udløbsdatoen er ugyldig"
+    "expiration-invalid": "Udløbsdatoen er ugyldig",
+    "name-max": "Batchnr. må maks være {{num}} tegn"
   }
 }

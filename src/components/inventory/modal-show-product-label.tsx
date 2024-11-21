@@ -25,15 +25,27 @@ interface Props {
   product: FormattedProduct
 }
 
+export type LabelSize = 'small' | 'big'
+
 export function ModalShowProductLabel({ product }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'other')
   const sizes = ['small', 'big']
-  const [size, setSize] = useState<'small' | 'big'>('small')
+  const [size, setSize] = useState<LabelSize>(
+    localStorage.getItem('label-size') as LabelSize ?? 'small'
+  )
+  const [open, setOpen] = useState(false)
+
+  function onOpenChange(open: boolean) {
+    setOpen(open)
+    setSize(
+      localStorage.getItem('label-size') as LabelSize ?? 'small'
+    )
+  }
 
   return (
-    <Credenza>
+    <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
         <Button size='iconSm' variant='ghost'>
           <Icons.printer className='size-4' />
@@ -53,8 +65,10 @@ export function ModalShowProductLabel({ product }: Props) {
             </Label>
             <Select
               value={size}
-              onValueChange={(value: 'small' | 'big') =>
+              onValueChange={(value: LabelSize) => {
+                localStorage.setItem('label-size', value)
                 setSize(value)
+              }
               }>
               <SelectTrigger>
                 <SelectValue placeholder={t('modal-show-product-label.size')} />

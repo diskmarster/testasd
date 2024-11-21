@@ -7,7 +7,7 @@ export const createPlacementValidation = (
     name: z
       .string({ message: t('placement.name-required') })
       .min(1, t('placement.name-minLength', { minLength: 1 }))
-      .max(50, t('placement.name-maxLength', { maxLength: 50 })),
+      .max(25, t('placement.name-maxLength', { maxLength: 25 })),
   })
 
 export const updatePlacementValidation = (
@@ -19,7 +19,7 @@ export const updatePlacementValidation = (
       name: z
         .string({ message: t('placement.name-required') })
         .min(1, t('placement.name-minLength', { minLength: 1 }))
-        .max(50, t('placement.name-maxLength', { maxLength: 50 })),
+        .max(25, t('placement.name-maxLength', { maxLength: 25 })),
     }),
   })
 
