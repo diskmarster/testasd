@@ -15,7 +15,7 @@
       "same": "Your current password cannot be the same as your new password."
     },
     "new-pin": {
-      "pinLength": "PIN must be {{pinLength}} characters long",
+      "required": "PIN must be {{pinLength}} characters long",
       "equal": "New PIN and confirm PIN must match.",
       "same": "Your current PIN cannot be the same as your new PIN."
     }

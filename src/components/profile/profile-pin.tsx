@@ -138,7 +138,7 @@ export function PinDialog() {
                     setError(res.serverError)
                     return
                   }
-                  toast(t(`common:${siteConfig.errorTitle}`), {
+                  toast(t(`common:${siteConfig.successTitle}`), {
                     description: t('profile-pin.pin-updated'),
                   })
                   setError(undefined)
