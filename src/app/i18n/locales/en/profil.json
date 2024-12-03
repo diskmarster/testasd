@@ -46,7 +46,8 @@
   },
   "profile-pin": {
     "pin": "PIN",
-    "update-pin": "Update your PIN"
+    "update-pin": "Update your PIN",
+    "pin-updated": "Your PIN was updated"
   },
 
   "profile-pin-dialog": {
