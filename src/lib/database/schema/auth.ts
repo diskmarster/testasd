@@ -114,3 +114,4 @@ export type NewAuthProvider = typeof authProviderTable.$inferInsert
 export interface GenericAuthProvider<TDomain extends AuthProviderDomain> extends AuthProvider {
   domain: TDomain 
 }
+export type NfcAuthProvider = GenericAuthProvider<'nfc'>

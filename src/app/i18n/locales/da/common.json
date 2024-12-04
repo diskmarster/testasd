@@ -215,5 +215,11 @@
     "error-getting-userinfo": "Fejl ved hentning af bruger information: ",
     "couldnt-get-userinfo": "Kunne ikke hente bruger information",
     "error-occured-getting-userinfo": "Der opstod en fejl under hentning af bruger information: "
+  },
+  "route-translations-nfc": {
+    "no-access-to-resource": "Du har ikke adgang til denne ressource.",
+    "no-app-access": "Du har ikke adgang til appen.",
+    "couldnt-register-nfc": "Kunne ikke registrere NFC kort, prøv igen senere.",
+    "error-card-in-use": "Kunne ikke registrere NFC kort. Kort allerede i brug."
   }
 }

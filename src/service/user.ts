@@ -1,9 +1,9 @@
-import { user } from '@/data/user'
+import { authProviderIsDomain, user } from '@/data/user'
 import {
   NewUser,
   NewUserLink,
+  NfcAuthProvider,
   PartialUser,
-  User,
   UserID,
   UserLink,
   UserLinkID,
@@ -54,7 +54,7 @@ export const userService = {
     password: string,
   ): Promise<UserNoHash | undefined> {
     const existingUser = await user.getByEmail(email)
-    if (!existingUser) return undefined 
+    if (!existingUser) return undefined
     const auth = await user.getAuthProviderByDomain(existingUser.id, 'pw')
     if (!auth) return undefined
     const isValid = await verifyPassword(auth.authID, password)
@@ -201,5 +201,30 @@ export const userService = {
     userIDs: UserID[]
   ): Promise<UserNoHash[]> {
     return await user.getByIDs(userIDs)
-  }
+  },
+  registerNfcProvider: async function(
+    tagID: string,
+    userID: UserID,
+  ): Promise<NfcAuthProvider | undefined> {
+    const res = await user.createAuthProvider({
+      authID: tagID,
+      userID: userID,
+      domain: 'nfc',
+    })
+
+    if (!authProviderIsDomain(res, 'nfc')) {
+      return undefined
+    }
+
+    return res
+  },
+  updateNfcProvider: async function(
+    tagID: string,
+    userID: UserID,
+  ): Promise<NfcAuthProvider | undefined> {
+    return await user.updateAuthProvider(userID, 'nfc', tagID)
+  },
+  getNfcProvider: async function(userID: UserID): Promise<NfcAuthProvider | undefined> {
+    return await user.getAuthProviderByDomain(userID, 'nfc')
+  },
 }

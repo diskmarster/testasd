@@ -230,5 +230,11 @@
     "error-getting-userinfo": "Error retrieving user information: ",
     "couldnt-get-userinfo": "Could not retrieve user information",
     "error-occured-getting-userinfo": "An error occurred while retrieving user information: "
+  },
+  "route-translations-nfc": {
+    "no-access-to-resource": "You do not have access to this resource.",
+    "no-app-access": "You do not have access to the app.",
+    "couldnt-register-nfc": "Could not register NFC card, please try again later.",
+    "error-card-in-use": "Could not register NFC card. Card is already in use."
   }
 }

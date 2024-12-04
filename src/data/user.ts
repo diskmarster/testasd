@@ -145,7 +145,7 @@ export const user = {
   }
 }
 
-function authProviderIsDomain<TDomain extends AuthProviderDomain>(
+export function authProviderIsDomain<TDomain extends AuthProviderDomain>(
   ap: AuthProvider | undefined,
   domain: TDomain,
 ): ap is GenericAuthProvider<TDomain> {
