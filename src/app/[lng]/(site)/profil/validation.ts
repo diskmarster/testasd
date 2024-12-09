@@ -81,7 +81,7 @@ export const updatePinValidation = (
     .object({
       currentPin: z.string(),
       newPin: z.string().regex(/^\d{4}$/, {
-        message: t('updateProfile.new-pin.pinLength', { pinLength: 4 }),
+        message: t('updateProfile.new-pin.required', { pinLength: 4 }),
       }),
       confirmPin: z.string(),
     })
