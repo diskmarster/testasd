@@ -15,6 +15,7 @@ import { db } from '@/lib/database'
 import { location } from '@/data/location'
 import { generateIdFromEntropySize } from 'lucia'
 import { isLinkExpired } from './customer.utils'
+import { UserInfo } from '@/data/user.types'
 
 const ACTIVATION_LINK_BASEURL = process.env.VERCEL_ENV === 'production' ? 'https://lager.nemunivers.app' : process.env.VERCEL_ENV === 'preview' ? 'stage.lager.nemunivers.app' : 'http://localhost:3000'
 export type UserActivationLink = `${typeof ACTIVATION_LINK_BASEURL}/invitering/${UserLinkID}`
@@ -226,5 +227,15 @@ export const userService = {
   },
   getNfcProvider: async function(userID: UserID): Promise<NfcAuthProvider | undefined> {
     return await user.getAuthProviderByDomain(userID, 'nfc')
+  },
+  getAllInfoByCustomerID: async function(customerID: CustomerID): Promise<UserInfo[]> {
+    const users = await user.getAllInfoByCustomerID(customerID)
+    return users.map(u => {
+      const {nfcProvider, ...rest} = u
+      return {
+        ...rest,
+        hasNfc: nfcProvider != null,
+      }
+    })
   },
 }

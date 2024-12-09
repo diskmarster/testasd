@@ -35,7 +35,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 	}
 
 	try {
-		let users = await userService.getAllByCustomerID(user.customerID)
+		let users = await userService.getAllInfoByCustomerID(user.customerID)
 		const userAccesses = await locationService.getAccessesByCustomerID(
 			user.customerID,
 		)
@@ -60,6 +60,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 				data: users.map(u => ({
 					id: u.id,
 					name: u.name,
+					hasNfc: u.hasNfc,
 				})),
 			},
 			{

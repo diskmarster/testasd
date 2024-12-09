@@ -1,3 +1,4 @@
+import { UserNoHash } from '@/lib/database/schema/auth'
 import { Column, sql } from 'drizzle-orm'
 import { z } from 'zod'
 
@@ -11,6 +12,10 @@ export const userRoleZodSchema = z.enum([
 ])
 export type UserRole = z.infer<typeof userRoleZodSchema>
 export const userRoles = userRoleZodSchema.options as readonly UserRole[]
+
+export type UserInfo = UserNoHash & {
+  hasNfc: boolean,
+}
 
 export const resetPasswordTypeSchema = z.enum([
   'pw',
