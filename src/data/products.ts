@@ -98,7 +98,7 @@ export const product = {
       })
       .from(productTable)
       .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
-      .innerJoin(groupTable, eq(productTable.unitID, groupTable.id))
+      .innerJoin(groupTable, eq(productTable.groupID, groupTable.id))
       .where(eq(productTable.id, id))
 
     return res[0]
