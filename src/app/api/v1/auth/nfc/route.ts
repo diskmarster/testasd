@@ -1,6 +1,8 @@
 import { serverTranslation } from '@/app/i18n'
 import { hasPermissionByRank } from '@/data/user.types'
+import { NewApplicationError } from '@/lib/database/schema/errors'
 import { analyticsService } from '@/service/analytics'
+import { errorsService } from '@/service/errors'
 import { userService } from '@/service/user'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { LibsqlError } from '@libsql/client'
@@ -110,6 +112,17 @@ export async function POST(request: Request): Promise<NextResponse<unknown>> {
 			if (e.message.includes('UNIQUE')) {
 				console.error(`AuthID already in use: ${e}`)
 
+				const errorLog: NewApplicationError = {
+					userID: user.id,
+					customerID: user.customerID,
+					type: 'endpoint',
+					input: null,
+					error: t('route-translations-nfc.error-card-in-use'),
+					origin: `POST api/v1/auth/nfc`,
+				}
+
+				errorsService.create(errorLog)
+
 				return NextResponse.json(
 					{ msg: t('route-translations-nfc.error-card-in-use') },
 					{ status: 400 },
@@ -118,6 +131,19 @@ export async function POST(request: Request): Promise<NextResponse<unknown>> {
 		}
 
 		console.error(`Unknown error when registering NFC: ${e}`)
+
+		const errorLog: NewApplicationError = {
+			userID: user.id,
+			customerID: user.customerID,
+			type: 'endpoint',
+			input: null,
+			error:
+				(e as Error).message ??
+				t('route-translations-nfc.couldnt-register-nfc'),
+			origin: `POST api/v1/auth/nfc`,
+		}
+
+		errorsService.create(errorLog)
 
 		return NextResponse.json(
 			{ msg: t('route-translations-nfc.couldnt-register-nfc') },
