@@ -1,9 +1,9 @@
-import { user } from '@/data/user'
+import { authProviderIsDomain, user } from '@/data/user'
 import {
   NewUser,
   NewUserLink,
+  NfcAuthProvider,
   PartialUser,
-  User,
   UserID,
   UserLink,
   UserLinkID,
@@ -15,6 +15,7 @@ import { db } from '@/lib/database'
 import { location } from '@/data/location'
 import { generateIdFromEntropySize } from 'lucia'
 import { isLinkExpired } from './customer.utils'
+import { UserInfo } from '@/data/user.types'
 
 const ACTIVATION_LINK_BASEURL = process.env.VERCEL_ENV === 'production' ? 'https://lager.nemunivers.app' : process.env.VERCEL_ENV === 'preview' ? 'stage.lager.nemunivers.app' : 'http://localhost:3000'
 export type UserActivationLink = `${typeof ACTIVATION_LINK_BASEURL}/invitering/${UserLinkID}`
@@ -54,7 +55,7 @@ export const userService = {
     password: string,
   ): Promise<UserNoHash | undefined> {
     const existingUser = await user.getByEmail(email)
-    if (!existingUser) return undefined 
+    if (!existingUser) return undefined
     const auth = await user.getAuthProviderByDomain(existingUser.id, 'pw')
     if (!auth) return undefined
     const isValid = await verifyPassword(auth.authID, password)
@@ -201,5 +202,53 @@ export const userService = {
     userIDs: UserID[]
   ): Promise<UserNoHash[]> {
     return await user.getByIDs(userIDs)
-  }
+  },
+  registerNfcProvider: async function(
+    tagID: string,
+    userID: UserID,
+  ): Promise<NfcAuthProvider | undefined> {
+    const res = await user.createAuthProvider({
+      authID: tagID,
+      userID: userID,
+      domain: 'nfc',
+    })
+
+    if (!authProviderIsDomain(res, 'nfc')) {
+      return undefined
+    }
+
+    return res
+  },
+  updateNfcProvider: async function(
+    tagID: string,
+    userID: UserID,
+  ): Promise<NfcAuthProvider | undefined> {
+    return await user.updateAuthProvider(userID, 'nfc', tagID)
+  },
+  getNfcProvider: async function(userID: UserID): Promise<NfcAuthProvider | undefined> {
+    return await user.getAuthProviderByDomain(userID, 'nfc')
+  },
+  getAllInfoByCustomerID: async function(customerID: CustomerID): Promise<UserInfo[]> {
+    const users = await user.getAllInfoByCustomerID(customerID)
+    return users.map(u => {
+      const {nfcProvider, ...rest} = u
+      return {
+        ...rest,
+        hasNfc: nfcProvider != null,
+      }
+    })
+  },
+  getUserInfoByUserID: async function(userID: UserID): Promise<UserInfo | undefined> {
+    const userInfo = await user.getUserInfoByUserID(userID)
+    if (userInfo == undefined) {
+      return undefined
+    }
+
+    const {nfcProvider, ...rest} = userInfo
+
+    return {
+      ...rest,
+      hasNfc: nfcProvider != null
+    }
+  },
 }
