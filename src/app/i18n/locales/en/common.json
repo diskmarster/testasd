@@ -229,7 +229,8 @@
     "no-app-access": "The user does not have access to the app.",
     "error-getting-userinfo": "Error retrieving user information: ",
     "couldnt-get-userinfo": "Could not retrieve user information",
-    "error-occured-getting-userinfo": "An error occurred while retrieving user information: "
+    "error-occured-getting-userinfo": "An error occurred while retrieving user information: ",
+    "invalid-user-id": "Invalid user ID"
   },
   "route-translations-nfc": {
     "no-access-to-resource": "You do not have access to this resource.",

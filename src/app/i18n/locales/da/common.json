@@ -214,7 +214,8 @@
     "no-app-access": "Brugeren har ikke adgang til appen.",
     "error-getting-userinfo": "Fejl ved hentning af bruger information: ",
     "couldnt-get-userinfo": "Kunne ikke hente bruger information",
-    "error-occured-getting-userinfo": "Der opstod en fejl under hentning af bruger information: "
+    "error-occured-getting-userinfo": "Der opstod en fejl under hentning af bruger information: ",
+    "invalid-user-id": "Ugyldigt bruger ID"
   },
   "route-translations-nfc": {
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",

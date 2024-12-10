@@ -238,4 +238,17 @@ export const userService = {
       }
     })
   },
+  getUserInfoByUserID: async function(userID: UserID): Promise<UserInfo | undefined> {
+    const userInfo = await user.getUserInfoByUserID(userID)
+    if (userInfo == undefined) {
+      return undefined
+    }
+
+    const {nfcProvider, ...rest} = userInfo
+
+    return {
+      ...rest,
+      hasNfc: nfcProvider != null
+    }
+  },
 }

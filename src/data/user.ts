@@ -149,7 +149,7 @@ export const user = {
   ): Promise<(User & { nfcProvider: AuthProvider | null })[]> {
     const userCols = getTableColumns(userTable)
     const providerCols = getTableColumns(authProviderTable)
-    return trx
+    return await trx
       .select({
         ...userCols,
         nfcProvider: {
@@ -165,6 +165,31 @@ export const user = {
         ),
       )
       .where(eq(userTable.customerID, customerID))
+  },
+  getUserInfoByUserID: async function(
+    userID: UserID,
+    trx: TRX = db,
+  ): Promise<(User & { nfcProvider: AuthProvider | null }) | undefined> {
+    const userCols = getTableColumns(userTable)
+    const providerCols = getTableColumns(authProviderTable)
+    const [res] = await trx
+      .select({
+        ...userCols,
+        nfcProvider: {
+          ...providerCols,
+        },
+      })
+      .from(userTable)
+      .leftJoin(
+        authProviderTable,
+        and(
+          eq(userTable.id, authProviderTable.userID),
+          eq(authProviderTable.domain, 'nfc'),
+        ),
+      )
+      .where(eq(userTable.id, userID))
+
+    return res
   },
 }
 
