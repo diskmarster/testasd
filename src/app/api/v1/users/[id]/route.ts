@@ -104,7 +104,7 @@ export async function GET(
 			error:
 				(e as Error).message ??
 				t('route-translations-users.couldnt-get-userinfo'),
-			origin: `GET api/v1/users`,
+			origin: `GET api/v1/users/${params.id}`,
 		}
 
 		errorsService.create(errorLog)
