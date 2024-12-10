@@ -221,6 +221,7 @@
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",
     "no-app-access": "Du har ikke adgang til appen.",
     "couldnt-register-nfc": "Kunne ikke registrere NFC kort, prøv igen senere.",
+    "loading-failed": "Indlæsning af data fejlede",
     "error-card-in-use": "Kunne ikke registrere NFC kort. Kort allerede i brug."
   }
 }

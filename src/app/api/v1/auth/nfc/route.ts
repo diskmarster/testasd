@@ -41,7 +41,7 @@ export async function POST(request: Request): Promise<NextResponse<unknown>> {
 	if (!data.success) {
 		return NextResponse.json(
 			{
-				msg: 'Læsning af data fejlede',
+				msg: t('route-translations-nfc.loading-failed')
 			},
 			{ status: 400 },
 		)
