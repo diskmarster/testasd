@@ -191,6 +191,42 @@ export const user = {
 
     return res
   },
+  /**
+   * uses the authID and domain to find a matching authprovider, if any
+   * and joins with usertable, to include the corresponding user in the response
+   */
+  getAuthProviderWithUser: async function <
+    TDomain extends AuthProviderDomain,
+  >(
+    authID: string,
+    domain: TDomain,
+    trx: TRX = db,
+  ): Promise<(GenericAuthProvider<TDomain> & { user: User }) | undefined> {
+    const userCols = getTableColumns(userTable)
+    const providerCols = getTableColumns(authProviderTable)
+
+    const [res] = await trx
+      .select({
+        ...providerCols,
+        user: {
+          ...userCols,
+        },
+      })
+      .from(authProviderTable)
+      .innerJoin(userTable, eq(authProviderTable.userID, userTable.id))
+      .where(
+        and(
+          eq(authProviderTable.authID, authID),
+          eq(authProviderTable.domain, domain),
+        ),
+      )
+
+    if (!authProviderIsDomain(res, domain)) {
+      return undefined
+    }
+
+    return res
+  },
 }
 
 export function authProviderIsDomain<TDomain extends AuthProviderDomain>(

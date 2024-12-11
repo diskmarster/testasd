@@ -251,4 +251,11 @@ export const userService = {
       hasNfc: nfcProvider != null
     }
   },
+  getNfcUser: async function(tagID: string): Promise<UserNoHash | undefined> {
+    const ap = await user.getAuthProviderWithUser(tagID, "nfc")
+
+    if (ap == undefined) return undefined
+
+    return ap.user
+  }
 }

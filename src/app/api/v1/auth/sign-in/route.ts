@@ -1,3 +1,4 @@
+import { UserNoHash } from '@/lib/database/schema/auth'
 import { analyticsService } from '@/service/analytics'
 import { customerService } from '@/service/customer'
 import { sessionService } from '@/service/session'
@@ -14,6 +15,10 @@ const signInSchema = z.object({
   password: z.string({ message: 'Password mangler' }),
 })
 
+const nfcSchema = z.object({
+  tagID: z.string()
+})
+
 export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<unknown>> {
@@ -28,7 +33,10 @@ export async function POST(
 
     const body = await request.json()
 
-    const zodRes = signInSchema.safeParse(body)
+    const searchParams = request.nextUrl.searchParams
+    const signInMethod = searchParams.get("method") ?? "pw"
+
+    const zodRes = parseDataByMethod(body, signInMethod)
 
     if (!zodRes.success) {
       return NextResponse.json(
@@ -41,13 +49,7 @@ export async function POST(
       )
     }
 
-    const { email, password } = zodRes.data
-
-    let user = await userService.verifyPin(email, password)
-
-    if (user == undefined) {
-      user = await userService.verifyPassword(email, password)
-    }
+    const user = await getUserByMethod(zodRes, signInMethod)
 
     if (user == undefined) {
       return NextResponse.json(
@@ -101,5 +103,50 @@ export async function POST(
       },
       { status: 500, },
     )
+  }
+}
+
+function parseDataByMethod(body: unknown, method: string): z.SafeParseReturnType<unknown, unknown> {
+  if (method == "pw") {
+    return signInSchema.safeParse(body)
+  } else if (method == "nfc") {
+    return nfcSchema.safeParse(body)
+  } else {
+    return {
+      success: false,
+      error: new z.ZodError([{
+        message: "Unknown signin method",
+        code: "custom",
+        path: [],
+      }]),
+    }
+  }
+}
+
+async function getUserByMethod(zodData: z.SafeParseSuccess<unknown>, method: string): Promise<UserNoHash | undefined> {
+  if (method == "pw") {
+    const data  = zodData.data as {
+      email: string,
+      password: string,
+    }
+
+    const { email, password } = data
+
+    let user = await userService.verifyPin(email, password)
+
+    if (user == undefined) {
+      user = await userService.verifyPassword(email, password)
+    }
+
+    return user
+  } else if (method == "nfc") {
+    const data = zodData.data as {
+      tagID: string,
+    }
+    
+    return await userService.getNfcUser(data.tagID)
+
+  } else {
+    return undefined
   }
 }
