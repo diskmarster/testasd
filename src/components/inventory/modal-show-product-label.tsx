@@ -87,64 +87,120 @@ export function ModalShowProductLabel({ product }: Props) {
           </div>
           <div className='border rounded-md'>
             {size == 'small' ? (
-              <div
-                ref={ref}
-                className={cn(
-                  'print:w-[51mm] print:h-[21mm]',
-                )}>
-                <div className='p-1.5 space-y-1'>
-                  <div className='flex flex-col'>
-                    <p className='font-bold truncate max-w-56 print:text-xs'>
-                      {product.text1}
-                    </p>
-                    <p className='truncate max-w-56 print:text-[10px] font-bold text-xs'>
-                      {product.text2}
-                    </p>
-                  </div>
-                  <div className='flex items-end justify-between'>
-                    <p className='print:text-[10px] text-xs font-bold'>
-                      {t('modal-show-product-label.prod-no')} {product.sku}
-                    </p>
-                    <div className='flex flex-col items-center'>
-                      <QRCodeSVG
-                        value={product.barcode}
-                        className='print:size-8 size-14'
-                      />
-                      <span className='text-[10px] font-medium'>{product.barcode}</span>
+              product.text1.length > 25 || product.text2.length > 25 ? (
+
+                <div
+                  ref={ref}
+                  className={cn(
+                    'print:w-[51mm] print:h-[21mm] w-96',
+                  )}>
+                  <div className='p-1.5 space-y-1.5'>
+                    <div className='print:text-xs line-clamp-2 leading-tight font-semibold'>{product.text1}</div>
+                    <div className='flex justify-between'>
+                      <div className='flex flex-col gap-1 justify-between'>
+                        <div className='print:text-[9px] text-sm font-medium line-clamp-2 leading-tight'>{product.text2}</div>
+                        <div className='print:text-[9px] text-sm font-medium justify-self-end'>
+                          {t('modal-show-product-label.prod-no')} {product.sku}
+                        </div>
+                      </div>
+                      <div className='flex flex-col items-center justify-between'>
+                        <QRCodeSVG
+                          value={product.barcode}
+                          className='print:size-7 size-14'
+                        />
+                        <span className='print:text-[9px] text-sm font-medium w-max justify-self-end'>{product.barcode}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  ref={ref}
+                  className={cn(
+                    'print:w-[51mm] print:h-[21mm]',
+                  )}>
+                  <div className='p-1.5 space-y-1'>
+                    <div className='flex flex-col'>
+                      <p className='font-bold truncate max-w-56 print:text-xs'>
+                        {product.text1}
+                      </p>
+                      <p className='truncate max-w-56 print:text-[10px] font-bold text-xs'>
+                        {product.text2}
+                      </p>
+                    </div>
+                    <div className='flex items-end justify-between'>
+                      <p className='print:text-[10px] text-xs font-bold'>
+                        {t('modal-show-product-label.prod-no')} {product.sku}
+                      </p>
+                      <div className='flex flex-col items-center'>
+                        <QRCodeSVG
+                          value={product.barcode}
+                          className='print:size-8 size-14'
+                        />
+                        <span className='text-[10px] font-medium'>{product.barcode}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
             ) : (
-              <div
-                ref={ref}
-                className={cn(
-                  'print:w-auto print:h-auto print:border-none print:rounded-none',
-                  'w-[15cm] h-[8cm]'
-                )}>
-                <div className='p-6 print:p-10 flex flex-col justify-between h-full'>
-                  <div className='flex flex-col gap-1'>
-                    <p className='font-bold text-3xl print:leading-normal truncate print:text-5xl'>
-                      {product.text1}
-                    </p>
-                    <p className='text-2xl print:text-4xl truncate'>
-                      {product.text2}
-                    </p>
-                  </div>
-                  <div className='flex items-end justify-between'>
-                    <p className='text-2xl print:text-4xl'>
-                      {t('modal-show-product-label.prod-no')} {product.sku}
-                    </p>
-                    <div className='flex flex-col items-center gap-0.5'>
-                      <QRCodeSVG
-                        value={product.barcode}
-                        className='print:size-32 size-28'
-                      />
-                      <span className='text-xs'>{product.barcode}</span>
+              product.text1.length > 25 || product.text2.length > 25 ? (
+                <div
+                  ref={ref}
+                  className={cn(
+                    'w-[15cm] h-[8cm]',
+                    'print:w-auto print:h-auto'
+                  )}>
+                  <div className='p-6 flex flex-col space-y-4 h-full items-stretch'>
+                    <div className='print:text-5xl text-3xl font-semibold'>{product.text1}</div>
+                    <div className='flex justify-between h-full'>
+                      <div className='flex flex-col justify-between'>
+                        <div className='print:text-3xl text-2xl font-medium line-clamp-2'>{product.text2}</div>
+                        <div className='print:text-3xl text-2xl font-medium justify-self-end'>
+                          {t('modal-show-product-label.prod-no')} {product.sku}
+                        </div>
+                      </div>
+                      <div className='flex flex-col items-center justify-end'>
+                        <QRCodeSVG
+                          value={product.barcode}
+                          className='print:size-32 size-38'
+                        />
+                        <span className='print:text-xs text-xs font-medium w-max justify-self-end'>{product.barcode}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  ref={ref}
+                  className={cn(
+                    'print:w-auto print:h-auto print:border-none print:rounded-none',
+                    'w-[15cm] h-[8cm]'
+                  )}>
+                  <div className='p-6 print:p-10 flex flex-col justify-between h-full'>
+                    <div className='flex flex-col gap-1'>
+                      <p className='font-bold text-3xl print:leading-normal truncate print:text-5xl'>
+                        {product.text1}
+                      </p>
+                      <p className='text-2xl print:text-4xl truncate'>
+                        {product.text2}
+                      </p>
+                    </div>
+                    <div className='flex items-end justify-between'>
+                      <p className='text-2xl print:text-4xl'>
+                        {t('modal-show-product-label.prod-no')} {product.sku}
+                      </p>
+                      <div className='flex flex-col items-center gap-0.5'>
+                        <QRCodeSVG
+                          value={product.barcode}
+                          className='print:size-32 size-28'
+                        />
+                        <span className='text-xs'>{product.barcode}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
             )}
           </div>
           <ButtonOpenPrint labelRef={ref} />
