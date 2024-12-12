@@ -148,3 +148,15 @@ export function NewNumberParser(lng: I18NLanguage): NumberParser {
 
   return new NumberParser(locale)
 }
+
+export function tryParseInt(str: string | undefined): number | undefined {
+  try {
+    if (!str) {
+      return undefined
+    }
+
+    return parseInt(str)
+  } catch {
+    return undefined
+  }
+}

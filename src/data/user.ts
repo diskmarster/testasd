@@ -1,7 +1,7 @@
 import { db, TRX } from "@/lib/database";
 import { AuthProvider, AuthProviderID, authProviderTable, GenericAuthProvider, NewAuthProvider, NewUser, NewUserLink, PartialUser, User, UserID, UserLink, UserLinkID, userLinkTable, userTable } from "@/lib/database/schema/auth";
 import { CustomerID } from "@/lib/database/schema/customer";
-import { and, eq, not, } from "drizzle-orm";
+import { and, eq, getTableColumns, not, } from "drizzle-orm";
 import { AuthProviderDomain, inList } from '@/data/user.types'
 
 export const user = {
@@ -52,8 +52,8 @@ export const user = {
       .where(eq(userTable.id, userID))
     return resultSet.rowsAffected == 1
   },
-  getAllByCustomerID: async function(customerID:CustomerID, trx: TRX = db): Promise<User[]> {
-    return await trx.select().from(userTable).where(eq(userTable.customerID,customerID))
+  getAllByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<User[]> {
+    return await trx.select().from(userTable).where(eq(userTable.customerID, customerID))
   },
   createUserLink: async function(linkData: NewUserLink, trx: TRX = db): Promise<UserLink | undefined> {
     const userLinks = await trx.insert(userLinkTable).values(linkData).returning()
@@ -79,7 +79,7 @@ export const user = {
       .from(userTable)
       .where(inList(userTable.id, userIDs))
   },
-  getAuthProviderByDomain: async function<TDomain extends AuthProviderDomain>(
+  getAuthProviderByDomain: async function <TDomain extends AuthProviderDomain>(
     userID: UserID,
     domain: TDomain,
     trx: TRX = db,
@@ -100,7 +100,7 @@ export const user = {
 
     return res
   },
-  updateAuthProvider: async function<TDomain extends AuthProviderDomain>(
+  updateAuthProvider: async function <TDomain extends AuthProviderDomain>(
     userID: UserID,
     domain: TDomain,
     authID: AuthProvider['authID'],
@@ -108,7 +108,7 @@ export const user = {
   ): Promise<GenericAuthProvider<TDomain> | undefined> {
     const [res] = await trx
       .update(authProviderTable)
-      .set({authID: authID})
+      .set({ authID: authID })
       .where(
         and(
           eq(authProviderTable.userID, userID),
@@ -142,10 +142,94 @@ export const user = {
       .where(eq(authProviderTable.id, id))
 
     return res.rowsAffected > 0
-  }
+  },
+  getAllInfoByCustomerID: async function(
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<(User & { nfcProvider: AuthProvider | null })[]> {
+    const userCols = getTableColumns(userTable)
+    const providerCols = getTableColumns(authProviderTable)
+    return await trx
+      .select({
+        ...userCols,
+        nfcProvider: {
+          ...providerCols,
+        },
+      })
+      .from(userTable)
+      .leftJoin(
+        authProviderTable,
+        and(
+          eq(userTable.id, authProviderTable.userID),
+          eq(authProviderTable.domain, 'nfc'),
+        ),
+      )
+      .where(eq(userTable.customerID, customerID))
+  },
+  getUserInfoByUserID: async function(
+    userID: UserID,
+    trx: TRX = db,
+  ): Promise<(User & { nfcProvider: AuthProvider | null }) | undefined> {
+    const userCols = getTableColumns(userTable)
+    const providerCols = getTableColumns(authProviderTable)
+    const [res] = await trx
+      .select({
+        ...userCols,
+        nfcProvider: {
+          ...providerCols,
+        },
+      })
+      .from(userTable)
+      .leftJoin(
+        authProviderTable,
+        and(
+          eq(userTable.id, authProviderTable.userID),
+          eq(authProviderTable.domain, 'nfc'),
+        ),
+      )
+      .where(eq(userTable.id, userID))
+
+    return res
+  },
+  /**
+   * uses the authID and domain to find a matching authprovider, if any
+   * and joins with usertable, to include the corresponding user in the response
+   */
+  getAuthProviderWithUser: async function <
+    TDomain extends AuthProviderDomain,
+  >(
+    authID: string,
+    domain: TDomain,
+    trx: TRX = db,
+  ): Promise<(GenericAuthProvider<TDomain> & { user: User }) | undefined> {
+    const userCols = getTableColumns(userTable)
+    const providerCols = getTableColumns(authProviderTable)
+
+    const [res] = await trx
+      .select({
+        ...providerCols,
+        user: {
+          ...userCols,
+        },
+      })
+      .from(authProviderTable)
+      .innerJoin(userTable, eq(authProviderTable.userID, userTable.id))
+      .where(
+        and(
+          eq(authProviderTable.authID, authID),
+          eq(authProviderTable.domain, domain),
+        ),
+      )
+
+    if (!authProviderIsDomain(res, domain)) {
+      return undefined
+    }
+
+    return res
+  },
 }
 
-function authProviderIsDomain<TDomain extends AuthProviderDomain>(
+export function authProviderIsDomain<TDomain extends AuthProviderDomain>(
   ap: AuthProvider | undefined,
   domain: TDomain,
 ): ap is GenericAuthProvider<TDomain> {

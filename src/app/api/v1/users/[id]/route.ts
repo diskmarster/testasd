@@ -1,14 +1,18 @@
 import { serverTranslation } from '@/app/i18n'
 import { hasPermissionByRank } from '@/data/user.types'
 import { NewApplicationError } from '@/lib/database/schema/errors'
+import { tryParseInt } from '@/lib/utils'
 import { errorsService } from '@/service/errors'
 import { locationService } from '@/service/location'
 import { userService } from '@/service/user'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
-import { type NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
+export async function GET(
+	req: NextRequest,
+	{ params }: { params: { id: string } },
+): Promise<NextResponse<{ msg: string; data?: any }>> {
 	const { session, user } = await validateRequest(headers())
 	const lng = getLanguageFromRequest(headers())
 	const { t } = await serverTranslation(lng, 'common')
@@ -27,41 +31,61 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 		)
 	}
 
-	if (!hasPermissionByRank(user.role, 'moderator')) {
+	if (
+		!hasPermissionByRank(user.role, 'moderator') &&
+		user.id != tryParseInt(params.id)
+	) {
 		return NextResponse.json(
 			{ msg: t('route-translations-users.no-access-to-resource') },
 			{ status: 401 },
 		)
 	}
 
-	try {
-		let users = await userService.getAllInfoByCustomerID(user.customerID)
-		const userAccesses = await locationService.getAccessesByCustomerID(
-			user.customerID,
-		)
+	const userID = tryParseInt(params.id)
 
-		if (user.role == 'moderator') {
+	if (userID == undefined) {
+		return NextResponse.json(
+			{ msg: t('route-translations-users.invalid-user-id') },
+			{ status: 400 },
+		)
+	}
+
+	try {
+		const userInfo = await userService.getUserInfoByUserID(userID)
+		if (userInfo == undefined) {
+			return NextResponse.json(
+				{ msg: t('route-translations-users.invalid-user-id') },
+				{ status: 400 },
+			)
+		}
+
+		const userLocations = await locationService.getAllByUserID(userID)
+
+		if (!hasPermissionByRank(user.role, 'administrator') && user.id != userID) {
 			const signedInUserLocations = await locationService.getAllByUserID(
 				user.id,
 			)
 
-			const userIDsToView = userAccesses
-				.filter(acc =>
-					signedInUserLocations.some(loc => loc.id == acc.locationID),
-				)
-				.map(acc => acc.userID)
+			const shareLocation = userLocations.some(uLoc =>
+				signedInUserLocations.some(sLoc => sLoc.id == uLoc.id),
+			)
 
-			users = users.filter(u => userIDsToView.some(uID => u.id == uID))
+			if (!shareLocation) {
+				return NextResponse.json(
+					{ msg: t('route-translations-users.no-access-to-resource') },
+					{ status: 401 },
+				)
+			}
 		}
 
 		return NextResponse.json(
 			{
 				msg: 'Success',
-				data: users.map(u => ({
-					id: u.id,
-					name: u.name,
-					hasNfc: u.hasNfc,
-				})),
+				data: {
+					id: userInfo.id,
+					name: userInfo.name,
+					hasNfc: userInfo.hasNfc,
+				},
 			},
 			{
 				status: 200,
@@ -80,7 +104,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 			error:
 				(e as Error).message ??
 				t('route-translations-users.couldnt-get-userinfo'),
-			origin: `GET api/v1/users`,
+			origin: `GET api/v1/users/${params.id}`,
 		}
 
 		errorsService.create(errorLog)
