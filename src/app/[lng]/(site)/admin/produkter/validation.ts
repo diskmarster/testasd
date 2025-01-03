@@ -10,8 +10,8 @@ export const createProductValidation = (
       customerID: z.coerce.number(),
       groupID: z.coerce.number(),
       unitID: z.coerce.number(),
-      text1: z.string().min(1, t('products.product-text-required')).max(50, t('products.product1-max-length', {num: 50})),
-      text2: z.string().max(50, t('products.product2-max-length', { num: 50})),
+      text1: z.string().min(1, t('products.product-text-required')).max(255, t('products.product1-max-length', {num: 255})),
+      text2: z.string().max(255, t('products.product2-max-length', { num: 255})),
       text3: z.string().max(1000, t('products.product3-max-length', { num: 1000})),
       sku: z.string().min(1, t('products.sku-required')).max(25, t('products.sku-max-length', {num: 25})),
       barcode: z.string().min(1, t('products.barcode-required')),
@@ -44,8 +44,8 @@ export const updateProductValidation = (
       customerID: z.coerce.number(),
       groupID: z.coerce.number(),
       unitID: z.coerce.number(),
-      text1: z.string().min(1, t('products.product-text-required')).max(50, t('products.product1-max-length', {num: 50})),
-      text2: z.string().max(50, t('products.product2-max-length', { num: 50})),
+      text1: z.string().min(1, t('products.product-text-required')).max(255, t('products.product1-max-length', {num: 255})),
+      text2: z.string().max(255, t('products.product2-max-length', { num: 255})),
       text3: z.string().max(1000, t('products.product3-max-length', { num: 1000})),
       sku: z.string().min(1, t('products.sku-required')).max(25, t('products.sku-max-length', { num: 25})),
       barcode: z.string().min(1, t('products.barcode-required')),
@@ -102,13 +102,13 @@ export const productsDataValidation = (
           z
             .string({ required_error: t('products.product-text-required') })
             .min(1, { message: t('products.product-text-preprocess') })
-            .max(50, { message: t('products.product1-max-length', {num: 50})}),
+            .max(255, { message: t('products.product1-max-length', {num: 255})}),
         ),
         text2: z.preprocess(
           // @ts-ignore
           val => val.toString(),
           z.string()
-            .max(50, { message: t('products.product1-max-length', {num: 50})})
+            .max(255, { message: t('products.product1-max-length', {num: 255})})
             .optional().default(''),
         ),
         text3: z.preprocess(
