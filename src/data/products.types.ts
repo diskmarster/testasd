@@ -5,4 +5,18 @@ export interface FormattedProduct extends Product {
   group: string
 }
 
-export const units = ['stk', 'kg', 'kasse', 'gram', 'pose', 'plade', 'meter', 'liter', 'ark', 'rulle', 'pakke', 'm2'] as const
+export const units = [
+  'stk',
+  'kg',
+  'kasse',
+  'gram',
+  'pose',
+  'plade',
+  'meter',
+  'liter',
+  'ark',
+  'rulle',
+  'pakke',
+  'm2',
+  'palle',
+] as const
