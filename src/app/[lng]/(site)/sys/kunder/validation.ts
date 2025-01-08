@@ -1,4 +1,6 @@
 import { planZodSchema } from '@/data/customer.types'
+import { units } from '@/data/products.types'
+import { convertENotationToNumber, excelDateToJSDate } from '@/lib/utils'
 import { z } from 'zod'
 
 export const createClientValidation = (
@@ -60,3 +62,136 @@ export const updateClientValidation = (
     plan: planZodSchema,
     extraUsers: z.coerce.number().min(0).default(0),
   })
+
+export const importInventoryDataValidation = (
+  t: (key: string, opt?: any) => string,
+) =>
+  z.array(
+    z
+      .object({
+        sku: z.preprocess(
+          val => (val as string).toString().toUpperCase(),
+          z.coerce
+            .string({
+              required_error: t('import-validation.sku-required'),
+            })
+            .min(1, { message: t('import-validation.sku-min-length') })
+            .max(25, {
+              message: t('import-validation.sku-max-length', { num: 25 }),
+            }),
+        ),
+        placement: z.preprocess(
+          val => (val as string).toString().toUpperCase(),
+          z.coerce
+            .string()
+            .max(25, {
+              message: t('import-validation.sku-max-length', { num: 25 }),
+            })
+            .superRefine(v => {
+              if (v == '') {
+                v = '-'
+              }
+            }),
+        ),
+        quantity: z.coerce
+          .number({
+            required_error: t('import-validation.quantity-required'),
+          })
+          .positive({ message: t('import-validation.quantity-positive') }),
+      })
+      .strict({ message: t('import-inventory.unknown-column') }),
+  )
+
+export const importInventoryValidation = z.object({
+  customerID: z.coerce.number(),
+  locationID: z.string(),
+  items: z.array(
+    z.object({
+      sku: z.string(),
+      placement: z.string(),
+      quantity: z.coerce.number(),
+    }),
+  ),
+})
+
+export const importHistoryDataValidation = (
+  t: (key: string, opt?: any) => string,
+) =>
+  z.array(
+    z
+      .object({
+        inserted: z.coerce.number().transform(val => excelDateToJSDate(val)),
+        sku: z.preprocess(
+          val => (val as string).toString().toUpperCase(),
+          z.coerce.string(),
+        ),
+        barcode: z.preprocess(val => {
+          if (typeof val == 'string') {
+            return convertENotationToNumber(val).toUpperCase()
+          } else {
+            return val
+          }
+        }, z.coerce.string()),
+        group: z.coerce.string(),
+        text1: z.string(),
+        text2: z.string(),
+        text3: z.string(),
+        costPrice: z.coerce.number().default(0),
+        salesPrice: z.coerce.number().default(0),
+        unit: z.preprocess(
+          val => (val as string).trim().toLowerCase(),
+          z.enum(units, {
+            invalid_type_error: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
+            message: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
+          }),
+        ),
+        type: z.enum(['tilgang', 'afgang']),
+        quantity: z.coerce.number(),
+        placement: z.preprocess(
+          val => (val as string).toString().toUpperCase(),
+          z.coerce.string().superRefine(v => {
+            if (v == '') {
+              v = '-'
+            }
+          }),
+        ),
+        batch: z.preprocess(
+          val => (val as string).toString().toUpperCase(),
+          z.coerce.string().superRefine(v => {
+            if (v == '') {
+              v = '-'
+            }
+          }),
+        ),
+        user: z.coerce.string(),
+        reference: z.coerce.string().default(''),
+        platform: z.enum(['web', 'app']),
+      })
+      .strict({ message: t('import-inventory.unknown-column') }),
+  )
+
+export const importHistoryValidation = z.object({
+  customerID: z.coerce.number(),
+  locationID: z.string(),
+  items: z.array(
+    z.object({
+      inserted: z.coerce.date(),
+      sku: z.string(),
+      barcode: z.string(),
+      group: z.string(),
+      text1: z.string(),
+      text2: z.string(),
+      text3: z.string(),
+      costPrice: z.coerce.number(),
+      salesPrice: z.coerce.number(),
+      unit: z.string(),
+      type: z.string(),
+      quantity: z.coerce.number(),
+      placement: z.string(),
+      batch: z.string(),
+      user: z.coerce.string(),
+      reference: z.string(),
+      platform: z.string(),
+    }),
+  ),
+})
