@@ -10,6 +10,8 @@ import { ModalCreateClient } from "@/components/clients/modal-create-client"
 import { ModalToggleClient } from "@/components/clients/modal-toggle-client"
 import { ModalDeleteClient } from "@/components/clients/modal-delete-client"
 import { ModalUpdateClient } from "@/components/clients/modal-update-client"
+import { ModalImportClientInventory } from "@/components/clients/modal-import-inventory"
+import { ModalImportClientHistory } from "@/components/clients/modal-import-history"
 
 interface Props {
   params: { lng: string }
@@ -42,6 +44,8 @@ export default async function Page({ params: { lng } }: Props) {
       <ModalToggleClient />
       <ModalDeleteClient />
       <ModalUpdateClient />
+      <ModalImportClientInventory />
+      <ModalImportClientHistory />
     </SiteWrapper>
   )
 }

@@ -142,6 +142,11 @@ export function getTableOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('quantity')} />
     ),
+    aggregatedCell: ({ getValue }) => (
+      <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
+        {formatNumber(getValue<number>())}
+      </span>
+    ),
     cell: ({ getValue }) => (
       <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
         {formatNumber(getValue<number>())}

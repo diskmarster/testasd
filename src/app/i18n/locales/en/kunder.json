@@ -20,7 +20,40 @@
     "toggle": "Toggle status",
     "toggle_true": "Deactivate client",
     "toggle_false": "Activate client",
-    "delete": "Delete client"
+    "delete": "Delete client",
+    "import-inventory": "Import inventory",
+    "import-history": "Import history"
+  },
+  "import-inventory-modal": {
+    "title": "Import a customers inventory",
+    "description": "This function uploads the quantities of a customers inventory with placements for a location.",
+    "before-upload": "Before you upload",
+    "location-label": "Customers location",
+    "import-criteria": "Your import file must meet certain criteria before it can be uploaded. Please refer to the example file to see the structure.",
+    "drag-and-drop": "Drag and drop your file here, or click to select one",
+    "drag-and-drop2": "Drag and drop your file here",
+    "file-example": "File example",
+    "file-import-example": "See how to format your file",
+    "download": "Download",
+    "loading-the-file": "Reading file",
+    "loaded-and-ready": "Read and prepared {{amount}} rows for upload",
+    "upload-button": "Upload inventory",
+    "error-message": "Error on row {{rowNum}} in {{rowKey}}: {{rowMsg}}",
+    "more-errors": "More errors...",
+    "completed-title": "Upload done",
+    "completed-description": "Import of inventory is now finished.",
+    "upload-progress": "{{uploaded}} uploaded of {{max}}",
+    "error-from": "Something went wrong in row {{from}} to {{to}}",
+    "skipped-skus": "The following sku numbers was not imported due to them not being in the system"
+  },
+  "import-validation": {
+    "sku-required": "Sku is required",
+    "sku-min-length": "Sku must be at least {{amount}} characters",
+    "sku-max-length": "Sku can at max be {{amount}} characters",
+    "placement-max-length": "Placement must be at least {{amount}} characters",
+    "quantity-required": "Quantity is required",
+    "quantity-positive": "Quantity must be a positive number",
+    "unknown-column": "Unknown column"
   },
   "create-modal": {
     "title": "Create client",

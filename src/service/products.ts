@@ -3,14 +3,17 @@ import { location } from '@/data/location'
 import { product } from '@/data/products'
 import { FormattedProduct } from '@/data/products.types'
 import { db, TRX } from '@/lib/database'
-import { CustomerID } from '@/lib/database/schema/customer'
+import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
+  Batch,
   Group,
   Inventory,
+  NewHistory,
   NewInventory,
   NewProduct,
   NewProductHistory,
   PartialProduct,
+  Placement,
   Product,
   ProductHistory,
   ProductID,
@@ -407,7 +410,9 @@ export const productService = {
               {
                 customerID: customerID,
                 groupID: groupsMap.get(p.group)?.id!,
-                unitID: units.find(u => u.name.toLowerCase() == p.unit.toLowerCase())?.id ?? units[0].id,
+                unitID:
+                  units.find(u => u.name.toLowerCase() == p.unit.toLowerCase())
+                    ?.id ?? units[0].id,
                 text1: p.text1,
                 sku: p.sku,
                 barcode: p.barcode,
@@ -565,5 +570,134 @@ export const productService = {
     } else {
       return product.getHistoryLogsForCustomer(customerID)
     }
+  },
+  importInventoryQuantities: async function (data: {
+    customerID: CustomerID
+    locationID: LocationID
+    items: { sku: string; placement: string; quantity: number }[]
+  }): Promise<string[]> {
+    const transaction = await db.transaction(async trx => {
+      const [products, placements, batches] = await Promise.all([
+        inventory.getAllProductsByID(data.customerID, trx),
+        inventory.getAllPlacementsByID(data.locationID, trx),
+        inventory.getAllBatchesByID(data.locationID, trx),
+      ])
+
+      const productsMap = new Map<string, Product>(
+        products.map(p => [p.sku.toUpperCase(), p]),
+      )
+      const placementMap = new Map<string, Placement>(
+        placements.map(p => [p.name.trim(), p]),
+      )
+      const batchMap = new Map<string, Batch>(
+        batches.map(b => [b.batch.trim(), b]),
+      )
+
+      const defaultBatch = batchMap.get('-')
+
+      const insertPromisis = []
+      const skippedSkus = new Set<string>()
+
+      for (const item of data.items) {
+        const product = productsMap.get(item.sku)
+
+        if (!product) {
+          skippedSkus.add(item.sku)
+          continue
+        }
+
+        let placement = placementMap.get(item.placement.trim())
+
+        if (!placement) {
+          const newPlacement = await inventory.createPlacement(
+            {
+              name: item.placement.trim(),
+              locationID: data.locationID,
+            },
+            trx,
+          )
+
+          placementMap.set(newPlacement.name, newPlacement)
+          placement = newPlacement
+        }
+
+        const newInventory: NewInventory = {
+          customerID: data.customerID,
+          locationID: data.locationID,
+          batchID: defaultBatch?.id!,
+          placementID: placement.id,
+          productID: product.id,
+          quantity: item.quantity,
+        }
+
+        insertPromisis.push(inventory.createInventory(newInventory, trx))
+      }
+
+      await Promise.all(insertPromisis)
+
+      return Array.from(skippedSkus)
+    })
+
+    return transaction
+  },
+  importInventoryHistory: async function (
+    data: {
+      customerID: CustomerID
+      locationID: LocationID
+      items: {
+        inserted: Date
+        text1: string
+        text2: string
+        text3: string
+        sku: string
+        barcode: string
+        costPrice: number
+        salesPrice: number
+        type: string
+        quantity: number
+        placement: string
+        batch: string
+        user: string
+        reference: string
+        platform: string
+        group: string
+        unit: string
+      }[]
+    },
+    refSuffix?: string,
+  ): Promise<void> {
+    console.log(refSuffix, 'suffix')
+    const transaction = await db.transaction(async trx => {
+      const historyPromises = []
+      for (const item of data.items) {
+        const entry: NewHistory = {
+          customerID: data.customerID,
+          locationID: data.locationID,
+          platform: item.platform as 'web' | 'app',
+          amount: item.quantity,
+          productText1: item.text1,
+          productText2: item.text2,
+          productText3: item.text3,
+          productSku: item.sku,
+          productBarcode: item.barcode,
+          productSalesPrice: item.salesPrice,
+          productCostPrice: item.costPrice,
+          type: item.type as 'tilgang' | 'afgang' | 'regulering' | 'flyt',
+          userName: item.user,
+          inserted: item.inserted,
+          placementName: item.placement,
+          batchName: item.batch,
+          productGroupName: item.group,
+          productUnitName: item.unit,
+          reference: refSuffix
+            ? `${item.reference} ${refSuffix}`
+            : item.reference,
+        }
+
+        historyPromises.push(inventory.createHistoryLog(entry, trx))
+      }
+
+      await Promise.all(historyPromises)
+    })
   },
 }

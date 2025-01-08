@@ -42,6 +42,23 @@ export function TableClientsActions({ row }: Props) {
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem
+        onClick={() => {
+          emitCustomEvent('ImportClientInventoryByID', {
+            customerID: row.original.id,
+          })
+        }}>
+        {t('row-actions.import-inventory')}
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        onClick={() => {
+          emitCustomEvent('ImportClientHistoryByID', {
+            customerID: row.original.id,
+          })
+        }}>
+        {t('row-actions.import-history')}
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem
         className='!text-destructive'
         onClick={() => {
           emitCustomEvent('DeleteClientByID', {

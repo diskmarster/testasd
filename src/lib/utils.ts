@@ -1,5 +1,6 @@
 import { I18NLanguage } from '@/app/i18n/settings'
 import { clsx, type ClassValue } from 'clsx'
+import { addDays, addMilliseconds } from 'date-fns'
 import { emitCustomEvent } from 'react-custom-events'
 import { twMerge } from 'tailwind-merge'
 import { z } from 'zod'
@@ -159,4 +160,15 @@ export function tryParseInt(str: string | undefined): number | undefined {
   } catch {
     return undefined
   }
+}
+
+export function excelDateToJSDate(excelDate: number): Date {
+  const daysSinceZero = Math.floor(excelDate)
+  const time = excelDate - daysSinceZero
+  const zeroDay = new Date('01-01-1900')
+  const dayInMS = 86399000
+
+  const timeInMs = time * dayInMS
+  const final = addMilliseconds(addDays(zeroDay, daysSinceZero - 2), timeInMs)
+  return final
 }
