@@ -391,6 +391,7 @@ export function ModalMoveInventory({
                 <Input
                   max={fromInventoryItem?.quantity}
                   type='number'
+                  step={0.01}
                   {...register('amount')}
                   className={cn(
                     'w-full h-14 rounded-none text-center text-2xl z-10',
