@@ -102,8 +102,8 @@ export const siteConfig: SiteConfig = {
           isDisabled: false,
         },
         {
-          label: `${t('site-config.sys-admin-dropdown.customers')}`,
-          description: `${t('site-config.sys-admin-dropdown.customers.description')}`,
+          label: 'site-config.sys-admin-dropdown.customers',
+          description: `${t('site-config.sys-admin-dropdown.customers-description')}`,
           href: `/${lng}/sys/kunder`,
           roles: ['system_administrator'],
           isExternal: false,
