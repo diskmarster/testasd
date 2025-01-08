@@ -7,12 +7,16 @@ import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
+import { productService } from '@/service/products'
 import { userService } from '@/service/user'
 import { generateIdFromEntropySize } from 'lucia'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 import {
   createClientValidation,
   deleteClientStatusValidation,
+  importHistoryValidation,
+  importInventoryValidation,
   toggleClientStatusValidation,
   updateClientValidation,
 } from './validation'
@@ -104,4 +108,28 @@ export const updateClientAction = sysAdminAction
       throw new ActionError('update-action-errors.client-not-updated')
     }
     revalidatePath(`/${ctx.lang}/sys/kunder`)
+  })
+
+export const importInventoryAction = sysAdminAction
+  .schema(importInventoryValidation)
+  .action(async ({ parsedInput }) => {
+    const skippedSkus = await productService.importInventoryQuantities({
+      customerID: parsedInput.customerID,
+      locationID: parsedInput.locationID,
+      items: parsedInput.items,
+    })
+
+    return skippedSkus
+  })
+
+export const fetchLocationsForCustomerActions = sysAdminAction
+  .schema(z.object({ customerID: z.coerce.number() }))
+  .action(async ({ parsedInput }) => {
+    return await locationService.getByCustomerID(parsedInput.customerID)
+  })
+
+export const importHistoryAction = sysAdminAction
+  .schema(importHistoryValidation)
+  .action(async ({ parsedInput }) => {
+    await productService.importInventoryHistory(parsedInput, '(v1)')
   })
