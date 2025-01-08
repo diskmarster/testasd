@@ -194,7 +194,7 @@ export function ModalImportClientHistory() {
             </div>
             <a
               className={buttonVariants({ size: 'sm', variant: 'outline' })}
-              href={'/assets/inventory-import-example.xlsx'}
+              href={'/assets/history-import-example.xlsx'}
               rel='noopener noreferrer'
               download>
               {t('import-history-modal.download')}
