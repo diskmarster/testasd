@@ -93,11 +93,9 @@ export const importInventoryDataValidation = (
               }
             }),
         ),
-        quantity: z.coerce
-          .number({
-            required_error: t('import-validation.quantity-required'),
-          })
-          .positive({ message: t('import-validation.quantity-positive') }),
+        quantity: z.coerce.number({
+          required_error: t('import-validation.quantity-required'),
+        }),
       })
       .strict({ message: t('import-inventory.unknown-column') }),
   )
