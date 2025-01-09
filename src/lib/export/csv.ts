@@ -91,6 +91,11 @@ export function generateCsvContent(
             return cellValue ? 'Ja' : 'Nej'
           }
 
+          const numberFormatter = Intl.NumberFormat('da-DA')
+          if (typeof cellValue == 'number') {
+            return numberFormatter.format(cellValue)
+          }
+
           // For non-date columns, return the value as it is or escape quotes in strings
           return typeof cellValue === 'string'
             ? `"${cellValue.replace(/"/g, '""')}"`
