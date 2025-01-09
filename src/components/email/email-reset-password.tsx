@@ -42,10 +42,6 @@ export function EmailResetPassword({
                 oplevelse med Nem Lager.
               </Text>
               <Text className='text-primary-foreground text-base leading-6 text-left'>
-                Endnu en gang, velkommen ombord! Vi glæder os til at samarbejde
-                med jer.
-              </Text>
-              <Text className='text-primary-foreground text-base leading-6 text-left'>
                 - SkanCode Teamet
               </Text>
               <Hr className='border-border my-5' />

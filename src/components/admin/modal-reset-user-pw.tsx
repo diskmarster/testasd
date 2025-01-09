@@ -24,9 +24,9 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-interface Props {}
+interface Props { }
 
-export function ModalResetUserPW({}: Props) {
+export function ModalResetUserPW({ }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
