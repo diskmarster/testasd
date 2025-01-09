@@ -32,7 +32,11 @@ export function exportTableToCSV<TData>(
   })
 
   const data = (
-    onlySelected ? table.getSelectedRowModel().rows : table.getRowModel().rows
+    onlySelected
+      ? table.getSelectedRowModel().rows
+      : table.getState().columnFilters.length == 0
+        ? table.getCoreRowModel().rows
+        : table.getFilteredRowModel().rows
   ).map(row => columns.map(column => row.getValue(column.id)))
 
   // Generate rows for the CSV file
