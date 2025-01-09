@@ -263,9 +263,9 @@ export function ModalImportClientInventory() {
               <AlertDescription className=' flex flex-col gap-2'>
                 {t('import-inventory-modal.completed-description')}
                 {skippedSkus.length > 0 && (
-                  <div className="space-y-1 max-h-20">
+                  <div className="space-y-1">
                     <p>{t("import-inventory-modal.skipped-skus")}</p>
-                    <ScrollArea>
+                    <ScrollArea maxHeight="max-h-28">
                       <ul className="list-inside list-disc pl-2">
                         {skippedSkus.map((s, i) => (
                           <li key={i}>{s}</li>
