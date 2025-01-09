@@ -594,6 +594,7 @@ export const productService = {
       )
 
       const defaultBatch = batchMap.get('-')
+      const defaultPlacement = placementMap.get('-')
 
       const insertPromisis = []
       const skippedSkus = new Set<string>()
@@ -606,7 +607,12 @@ export const productService = {
           continue
         }
 
-        let placement = placementMap.get(item.placement.trim())
+        let placement: Placement | undefined
+        if (item.placement == '' || item.placement == '-') {
+          placement = defaultPlacement
+        }
+
+        placement ??= placementMap.get(item.placement.trim())
 
         if (!placement) {
           const newPlacement = await inventory.createPlacement(
@@ -630,7 +636,7 @@ export const productService = {
           quantity: item.quantity,
         }
 
-        insertPromisis.push(inventory.createInventory(newInventory, trx))
+        insertPromisis.push(inventory.upsertInventory(newInventory, trx))
       }
 
       await Promise.all(insertPromisis)
@@ -666,7 +672,6 @@ export const productService = {
     },
     refSuffix?: string,
   ): Promise<void> {
-    console.log(refSuffix, 'suffix')
     const transaction = await db.transaction(async trx => {
       const historyPromises = []
       for (const item of data.items) {
