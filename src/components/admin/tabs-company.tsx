@@ -27,6 +27,8 @@ import { TableAdminLocations } from './table-company-locations'
 import { TableAdminUsers } from './table-company-users'
 import { LocationWithCounts } from '@/data/location.types'
 import { getUserRoles, hasPermissionByRank, lte } from '@/data/user.types'
+import { Separator } from '../ui/separator'
+import { ModalInventoryReport } from './modal-inventory-report'
 
 interface Props {
   user: User
@@ -174,6 +176,11 @@ export function TabsAdmin({
       </TabsContent>
       <TabsContent value='firma'>
         <FormCompanyEdit customer={customer} />
+        <Separator className='my-8' />
+        <div>
+          <h4>Rapporter</h4>
+          <ModalInventoryReport />
+        </div>
       </TabsContent>
     </Tabs>
   )
