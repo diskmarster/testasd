@@ -52,6 +52,9 @@ export function ModalEditUser({}: Props) {
   const [pending, startTransition] = useTransition()
   const [searchRoles, setSearchRoles] = useState('')
 
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'organisation')
+
   if (!session) return null
   const userRoles = getUserRoles(lte(sessionUser.role))
 
@@ -65,9 +68,6 @@ export function ModalEditUser({}: Props) {
       label: role.replace('_', ' '),
       value: role,
     }))
-
-  const lng = useLanguage()
-  const { t } = useTranslation(lng, 'organisation')
 
   const formSchema = editUserValidation(t)
 
