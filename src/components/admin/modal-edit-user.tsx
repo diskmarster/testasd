@@ -43,7 +43,6 @@ interface Props { }
 
 export function ModalEditUser({}: Props) {
   const {session, user: sessionUser} = useSession()
-  if (!session) return null
   const [error, setError] = useState<string>()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<UserNoHash>()
@@ -53,6 +52,7 @@ export function ModalEditUser({}: Props) {
   const [pending, startTransition] = useTransition()
   const [searchRoles, setSearchRoles] = useState('')
 
+  if (!session) return null
   const userRoles = getUserRoles(lte(sessionUser.role))
 
   const rolesOptions = userRoles
