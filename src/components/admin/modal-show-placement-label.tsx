@@ -25,8 +25,8 @@ export function ModalShowPlacementLabel({ }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'placeringer')
-  const sizes = ['small', 'big']
-  const [size, setSize] = useState<'small' | 'big'>(
+  const sizes = ['small', 'medium', 'big']
+  const [size, setSize] = useState<LabelSize>(
     (localStorage.getItem('label-size') as LabelSize) ?? 'small'
   )
   const [open, setOpen] = useState(false)
@@ -99,6 +99,30 @@ export function ModalShowPlacementLabel({ }: Props) {
                       className='print:size-8 size-14'
                     />
                     <span className='text-[10px] font-medium'>{placementName}</span>
+                  </div>
+                </div>
+              </div>
+            ) : size == 'medium' ? (
+              <div
+                ref={ref}
+                className={cn(
+                  'print:w-auto print:h-auto print:border-none print:rounded-none',
+                  'w-[332px] h-[51mm]'
+                )}>
+                <div className='p-2 print:p-2 flex flex-col justify-between items-center h-full'>
+                  <div className='flex flex-col gap-1'>
+                    <p className='font-bold text-2xl print:leading-normal truncate print:text-xl'>
+                      {placementName}
+                    </p>
+                  </div>
+                  <div className='flex items-end justify-center'>
+                    <div className='flex flex-col items-center gap-0.5'>
+                      <QRCodeSVG
+                        value={placementName}
+                        className='print:size-28 size-24'
+                      />
+                      <span className='text-xs'>{placementName}</span>
+                    </div>
                   </div>
                 </div>
               </div>
