@@ -20,6 +20,12 @@ type Line = {
   totalCost: number
 }
 
+type GroupLine = {
+  name: string
+  quantity: number
+  total: number
+}
+
 export function genInventoryPDF(
   metaData: MetaData,
   inventoryLines: FormattedInventory[],
@@ -63,15 +69,6 @@ export function genInventoryPDF(
     50,
   )
 
-  const lineHeaders = [
-    'Varenr.',
-    'Varetekst 1',
-    'Varegruppe',
-    'Kostpris',
-    'Antal',
-    'Total',
-  ]
-
   const aggregatedSkus: { [key: string]: Line } = inventoryLines.reduce(
     (acc: { [key: string]: Line }, line) => {
       const sku = line.product.sku
@@ -95,7 +92,71 @@ export function genInventoryPDF(
     {},
   )
 
-  // TODO: table for groups only with total summed up
+  const aggregatedGroups: { [key: string]: GroupLine } = Object.values(
+    aggregatedSkus,
+  ).reduce((acc: { [key: string]: GroupLine }, line) => {
+    const group = line.group
+
+    if (!acc[group]) {
+      acc[group] = {
+        name: group,
+        quantity: 0,
+        total: 0,
+      }
+    }
+
+    acc[group].quantity += 1
+    acc[group].total += line.totalCost
+
+    return acc
+  }, {})
+
+  const groupData = Object.values(aggregatedGroups)
+    .map(l => [l.name, formatNumber(l.quantity), numberToDKCurrency(l.total)])
+    .sort((a, b) => {
+      const groupA = a[0]
+      const groupB = b[0]
+
+      if (groupA < groupB) return -1
+      if (groupA > groupB) return 1
+      return 0
+    })
+
+  const groupHeaders = ['Varegruppe', 'Antal vare', 'Lagerværdi']
+
+  const groupColumnWidths = [110, 40, 40]
+  const groupHeaderStyles = {
+    fillColor: [240, 240, 240],
+    textColor: [0],
+    fontStyle: 'bold',
+  }
+
+  doc.autoTable({
+    head: [groupHeaders],
+    body: groupData,
+    startY: 60,
+    theme: 'grid',
+    headStyles: {
+      fillColor: groupHeaderStyles.fillColor,
+      textColor: groupHeaderStyles.textColor,
+      fontStyle: groupHeaderStyles.fontStyle,
+      fontSize: 9,
+      halign: 'left',
+    },
+    columnStyles: {
+      0: { cellWidth: groupColumnWidths[0] },
+      1: { cellWidth: groupColumnWidths[1] },
+      2: { cellWidth: groupColumnWidths[2] },
+    },
+    alternateRowStyles: { fillColor: [255, 255, 255] },
+    bodyStyles: {
+      fontSize: 9,
+      cellPadding: { top: 1, right: 4, bottom: 1, left: 1 },
+      textColor: [0, 0, 0],
+      rowPageBreak: 'avoid',
+    },
+    margin: { top: 10, left: 10, right: 0, bottom: 20 },
+  })
 
   const lineData = Object.values(aggregatedSkus)
     .map(l => [
@@ -115,6 +176,15 @@ export function genInventoryPDF(
       return 0
     })
 
+  const lineHeaders = [
+    'Varenr.',
+    'Varetekst 1',
+    'Varegruppe',
+    'Kostpris',
+    'Antal',
+    'Total',
+  ]
+
   const columnWidths = [30, 65, 25, 25, 20, 25]
   const headerStyles = {
     fillColor: [240, 240, 240],
@@ -122,11 +192,10 @@ export function genInventoryPDF(
     fontStyle: 'bold',
   }
 
-  const itemDetailsYStart = 60
   doc.autoTable({
     head: [lineHeaders],
     body: lineData,
-    startY: itemDetailsYStart,
+    startY: Math.floor(doc.lastAutoTable.finalY + 10),
     theme: 'grid',
     headStyles: {
       fillColor: headerStyles.fillColor,
