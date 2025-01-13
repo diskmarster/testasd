@@ -133,7 +133,6 @@
     "user-rights-app": "Bruger skal have adgang til app",
     "user-rights-prices": "Bruger skal have adgang til at se priser"
   },
-
   "modal-create-location": {
     "title": "Opret ny lokation",
     "description": "Nye lokationer kan tilgås med det samme i dropdown-menuen i øverste højre hjørne.",
@@ -146,7 +145,6 @@
     "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du opretter lokationer.",
     "own-user": "Din egen bruger vil automatisk blive tildelt rettighed til den nye lokation, og er derfor ikke vist her."
   },
-
   "toasts": {
     "location-created": "blev oprettet succesfuldt",
     "location-updated": "blev opdateret succesfuldt",
@@ -158,7 +156,6 @@
     "user": "bruger",
     "users": "brugere",
     "users-toggle": " opdateret"
-    
   },
   "modal-edit-user": {
     "title": "Rediger bruger",
@@ -185,5 +182,16 @@
     "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres pinkode.",
     "cancel-button": "Luk",
     "reset-button": "Nulstil"
+  },
+  "inventory-report-modal": {
+    "report-title": "Rapporter",
+    "card-label": "Lagerværdi",
+    "card-desc": "Træk en rapport over lagerværdi for en lokation",
+    "title": "Lagerværdi rapport",
+    "desc": "Download en rapport med lagerværdi for en lokation.",
+    "location-label": "Lokation",
+    "choose-location": "Vælg lokation",
+    "loading-location": "Henter lokationer...",
+    "download-button": "Download rapport"
   }
 }
