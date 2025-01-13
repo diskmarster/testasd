@@ -71,24 +71,24 @@ export function ModalInventoryReport() {
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button variant='outline'>Lagerværdi</Button>
+        <Button variant='outline'>Download</Button>
       </CredenzaTrigger>
       <CredenzaContent className="max-w-sm">
 
         <CredenzaHeader>
-          <CredenzaTitle>Lagerværdi rapport</CredenzaTitle>
-          <CredenzaDescription>Download en rapport med lagerværdi for en lokation.</CredenzaDescription>
+          <CredenzaTitle>{t("inventory-report-modal.title")}</CredenzaTitle>
+          <CredenzaDescription>{t("inventory-report-modal.desc")}</CredenzaDescription>
         </CredenzaHeader>
         <CredenzaBody>
           <div className="flex flex-col gap-4">
             <div className="grid gap-2">
-              <Label>{t('import-history-modal.location-label')}</Label>
+              <Label>{t('inventory-report-modal.location-label')}</Label>
               <Select value={selectedLocation} onValueChange={val => setSelectedLocation(val)}>
                 <SelectTrigger>
                   {locations.length > 0 ? (
-                    <SelectValue placeholder="Vælg lokation" defaultValue={selectedLocation} />
+                    <SelectValue placeholder={t("inventory-report-modal.choose-location")} defaultValue={selectedLocation} />
                   ) : (
-                    <SelectValue placeholder="Henter lokationer..." defaultValue={selectedLocation} />
+                    <SelectValue placeholder={t("inventory-report-modal.loading-location")} defaultValue={selectedLocation} />
                   )}
                 </SelectTrigger>
                 <SelectContent>
@@ -102,7 +102,7 @@ export function ModalInventoryReport() {
               {pending && (
                 <Icons.spinner className="size-4 animate-spin" />
               )}
-              Download rapport for lagerværdi
+              {t("inventory-report-modal.download-button")}
             </Button>
           </div>
         </CredenzaBody>
