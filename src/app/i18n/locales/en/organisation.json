@@ -177,5 +177,16 @@
       "locationIDs_one": "At least {{count}} location must be selected",
       "locationIDs_other": "At least {{count}} locations must be selected"
     }
+  },
+  "inventory-report-modal": {
+    "report-title": "Reports",
+    "card-label": "Stock value",
+    "card-desc": "Get a detailed report for a location",
+    "title": "Stock value report",
+    "desc": "Download a detailed stock report for a location",
+    "location-label": "Location",
+    "choose-location": "Choose location",
+    "loading-location": "Fetching locations...",
+    "download-button": "Download report"
   }
 }
