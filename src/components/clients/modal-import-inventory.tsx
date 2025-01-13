@@ -39,7 +39,7 @@ export function ModalImportClientInventory() {
   >(undefined)
   const [uploadedAmount, setUploadedAmount] = useState(0)
   const [responseErrors, setResponseErrors] = useState<string[]>([])
-  const [locations, setLocations] = useState<LocationWithCounts[]>([])
+  const [locations, setLocations] = useState<{ id: string, name: string }[]>([])
   const [selectedLocation, setSelectedLocation] = useState<string>()
   const [skippedSkus, setSkippedSkus] = useState<string[]>([])
 

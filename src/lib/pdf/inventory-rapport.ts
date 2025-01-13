@@ -131,6 +131,7 @@ export function genInventoryPDF(
     fontStyle: 'bold',
   }
 
+  // @ts-ignore
   doc.autoTable({
     head: [groupHeaders],
     body: groupData,
@@ -192,9 +193,11 @@ export function genInventoryPDF(
     fontStyle: 'bold',
   }
 
+  // @ts-ignore
   doc.autoTable({
     head: [lineHeaders],
     body: lineData,
+    // @ts-ignore
     startY: Math.floor(doc.lastAutoTable.finalY + 10),
     theme: 'grid',
     headStyles: {

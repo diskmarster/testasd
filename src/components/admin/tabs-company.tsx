@@ -29,6 +29,7 @@ import { LocationWithCounts } from '@/data/location.types'
 import { getUserRoles, hasPermissionByRank, lte } from '@/data/user.types'
 import { Separator } from '../ui/separator'
 import { ModalInventoryReport } from './modal-inventory-report'
+import { Label } from '../ui/label'
 
 interface Props {
   user: User
@@ -177,9 +178,15 @@ export function TabsAdmin({
       <TabsContent value='firma'>
         <FormCompanyEdit customer={customer} />
         <Separator className='my-8' />
-        <div>
-          <h4>Rapporter</h4>
-          <ModalInventoryReport />
+        <div className='md:max-w-lg'>
+          <h4 className='mb-4 font-semibold'>Rapporter</h4>
+          <div className='flex items-center justify-between rounded-md border p-4 shadow-sm bg-background'>
+            <div className='grid gap-0.5'>
+              <Label>Lagerværdi</Label>
+              <p className='text-sm text-muted-foreground'>Træk en rapport over lagerværdi for en lokation</p>
+            </div>
+            <ModalInventoryReport />
+          </div>
         </div>
       </TabsContent>
     </Tabs>

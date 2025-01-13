@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react"
 import { Button } from "../ui/button"
 import { Credenza, CredenzaBody, CredenzaContent, CredenzaDescription, CredenzaHeader, CredenzaTitle, CredenzaTrigger } from "../ui/credenza"
-import { LocationWithCounts } from "@/data/location.types"
+import { LocationAccessesWithName, LocationWithCounts } from "@/data/location.types"
 import { CustomerID } from "@/lib/database/schema/customer"
 import { fetchLocationsForCustomerActions } from "@/app/[lng]/(site)/sys/kunder/actions"
 import { useSession } from "@/context/session"
@@ -21,7 +21,7 @@ export function ModalInventoryReport() {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'kunder')
   const { user } = useSession()
-  const [locations, setLocations] = useState<LocationWithCounts[]>([])
+  const [locations, setLocations] = useState<{ id: string, name: string }[]>([])
   const [selectedLocation, setSelectedLocation] = useState<string>()
   const [open, setOpen] = useState(false)
 
@@ -71,7 +71,7 @@ export function ModalInventoryReport() {
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button>Lagerværdi</Button>
+        <Button variant='outline'>Lagerværdi</Button>
       </CredenzaTrigger>
       <CredenzaContent className="max-w-sm">
 
