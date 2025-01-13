@@ -150,7 +150,7 @@ export function ModalShowProductLabel({ product }: Props) {
                     'w-[332px] h-[51mm]',
                     'print:w-auto print:h-auto'
                   )}>
-                  <div className='p-2 flex flex-col space-y-2 h-full items-stretch'>
+                  <div className='p-2.5 flex flex-col space-y-2 h-full items-stretch'>
                     <div className='print:text-xl text-base font-semibold'>{product.text1}</div>
                     <div className='flex justify-between h-full'>
                       <div className='flex flex-col justify-between'>
@@ -176,7 +176,7 @@ export function ModalShowProductLabel({ product }: Props) {
                     'print:w-auto print:h-auto print:border-none print:rounded-none',
                     'w-[332px] h-[51mm]'
                   )}>
-                  <div className='p-2 flex flex-col justify-between h-full'>
+                  <div className='p-2.5 flex flex-col justify-between h-full'>
                     <div className='flex flex-col gap-1'>
                       <p className='font-bold text-base print:leading-normal truncate print:text-xl'>
                         {product.text1}
