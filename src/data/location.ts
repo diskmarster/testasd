@@ -2,7 +2,7 @@ import { db, TRX } from "@/lib/database";
 import { UserID, userTable } from "@/lib/database/schema/auth";
 import { CustomerID, LinkLocationToUser, LinkLocationToUserPK, linkLocationToUserTable, Location, LocationID, locationTable, LocationWithPrimary, NewLinkLocationToUser, NewLocation, PartialLocation } from "@/lib/database/schema/customer";
 import { eq, and, getTableColumns, not, sql } from "drizzle-orm";
-import { LocationWithCounts } from "./location.types";
+import { LocationAccessesWithName, LocationWithCounts } from "./location.types";
 
 
 export const location = {
@@ -76,10 +76,11 @@ export const location = {
     const location = await trx.select().from(locationTable).where(and(eq(locationTable.name, name), eq(locationTable.customerID, customerID)))
     return location[0]
   },
-  getAccessesByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<LinkLocationToUser[]> {
+  getAccessesByCustomerID: async function(customerID: CustomerID, trx: TRX = db): Promise<LocationAccessesWithName[]> {
     return await trx
-      .select()
+      .select({...getTableColumns(linkLocationToUserTable), locationName: locationTable.name})
       .from(linkLocationToUserTable)
+      .innerJoin(locationTable, eq(locationTable.id, linkLocationToUserTable.locationID))
       .where(eq(linkLocationToUserTable.customerID, customerID))
   },
   getAccessesByLocationID: async function(locationID: LocationID, trx: TRX = db): Promise<LinkLocationToUser[]> {

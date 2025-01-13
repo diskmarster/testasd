@@ -19,7 +19,7 @@ import { addDays } from 'date-fns'
 import { generateIdFromEntropySize } from 'lucia'
 import { cookies } from 'next/headers'
 import { productService } from './products'
-import { LocationWithCounts } from '@/data/location.types'
+import { LocationAccessesWithName, LocationWithCounts } from '@/data/location.types'
 
 const LAST_LOCATION_COOKIE_NAME = 'nl_last_location'
 const LAST_LOCATION_COOKIE_DURATION_D = 14
@@ -181,7 +181,7 @@ export const locationService = {
   },
   getAccessesByCustomerID: async function (
     customerID: CustomerID,
-  ): Promise<LinkLocationToUser[]> {
+  ): Promise<LocationAccessesWithName[]> {
     return await location.getAccessesByCustomerID(customerID)
   },
   getAccessesByLocationID: async function (

@@ -2,7 +2,8 @@
 
 import { serverTranslation } from '@/app/i18n'
 import { EmailWelcomeCustomer } from '@/components/email/email-welcome-customer'
-import { getSchema, sysAdminAction } from '@/lib/safe-action'
+import { hasPermissionByRank } from '@/data/user.types'
+import { adminAction, getSchema, sysAdminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
@@ -122,10 +123,18 @@ export const importInventoryAction = sysAdminAction
     return skippedSkus
   })
 
-export const fetchLocationsForCustomerActions = sysAdminAction
+export const fetchLocationsForCustomerActions = adminAction
   .schema(z.object({ customerID: z.coerce.number() }))
-  .action(async ({ parsedInput }) => {
-    return await locationService.getByCustomerID(parsedInput.customerID)
+  .action(async ({ parsedInput, ctx: { user } }) => {
+    if (hasPermissionByRank(user.role, 'system_administrator')) {
+      const locations = await locationService.getByCustomerID(
+        parsedInput.customerID,
+      )
+      return locations.map(l => ({ id: l.id, name: l.name }))
+    } else {
+      const locations = await locationService.getAllActiveByUserID(user.id)
+      return locations.map(l => ({ id: l.id, name: l.name }))
+    }
   })
 
 export const importHistoryAction = sysAdminAction
