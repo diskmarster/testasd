@@ -25,13 +25,13 @@ interface Props {
   product: FormattedProduct
 }
 
-export type LabelSize = 'small' | 'big'
+export type LabelSize = 'small' | 'medium' | 'big'
 
 export function ModalShowProductLabel({ product }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'other')
-  const sizes = ['small', 'big']
+  const sizes = ['small', 'medium', 'big']
   const [size, setSize] = useState<LabelSize>(
     localStorage.getItem('label-size') as LabelSize ?? 'small'
   )
@@ -88,7 +88,6 @@ export function ModalShowProductLabel({ product }: Props) {
           <div className='border rounded-md'>
             {size == 'small' ? (
               product.text1.length > 25 || product.text2.length > 25 ? (
-
                 <div
                   ref={ref}
                   className={cn(
@@ -138,6 +137,64 @@ export function ModalShowProductLabel({ product }: Props) {
                           className='print:size-8 size-14'
                         />
                         <span className='text-[10px] font-medium'>{product.barcode}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            ) : size == 'medium' ? (
+              product.text1.length > 25 || product.text2.length > 25 ? (
+                <div
+                  ref={ref}
+                  className={cn(
+                    'w-[332px] h-[51mm]',
+                    'print:w-auto print:h-auto'
+                  )}>
+                  <div className='p-2.5 flex flex-col space-y-2 h-full items-stretch'>
+                    <div className='print:text-xl text-base font-semibold'>{product.text1}</div>
+                    <div className='flex justify-between h-full'>
+                      <div className='flex flex-col justify-between'>
+                        <div className='print:text-sm text-sm font-medium line-clamp-2'>{product.text2}</div>
+                        <div className='print:text-sm text-sm font-medium justify-self-end'>
+                          {t('modal-show-product-label.prod-no')} {product.sku}
+                        </div>
+                      </div>
+                      <div className='flex flex-col items-center justify-end'>
+                        <QRCodeSVG
+                          value={product.barcode}
+                          className='print:size-14 size-14'
+                        />
+                        <span className='print:text-xs text-xs font-medium w-max justify-self-end'>{product.barcode}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  ref={ref}
+                  className={cn(
+                    'print:w-auto print:h-auto print:border-none print:rounded-none',
+                    'w-[332px] h-[51mm]'
+                  )}>
+                  <div className='p-2.5 flex flex-col justify-between h-full'>
+                    <div className='flex flex-col gap-1'>
+                      <p className='font-bold text-base print:leading-normal truncate print:text-xl'>
+                        {product.text1}
+                      </p>
+                      <p className='text-sm print:text-sm truncate'>
+                        {product.text2}
+                      </p>
+                    </div>
+                    <div className='flex items-end justify-between'>
+                      <p className='text-sm print:text-sm'>
+                        {t('modal-show-product-label.prod-no')} {product.sku}
+                      </p>
+                      <div className='flex flex-col items-center gap-0.5'>
+                        <QRCodeSVG
+                          value={product.barcode}
+                          className='print:size-14 size-14'
+                        />
+                        <span className='text-xs'>{product.barcode}</span>
                       </div>
                     </div>
                   </div>

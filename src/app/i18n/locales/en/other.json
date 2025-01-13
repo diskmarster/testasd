@@ -10,7 +10,9 @@
     "size_small": "Small",
     "size-desc_small": "Best for 51x26mm",
     "size_big": "Big",
-    "size-desc_big": "Best for 100x192mm"
+    "size-desc_big": "Best for 100x192mm",
+    "size_medium": "Medium",
+    "size-desc_medium": "Best for 76x51mm"
   },
   "modal-show-product-card": {
     "barred": "Barred",

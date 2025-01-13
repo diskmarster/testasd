@@ -10,7 +10,9 @@
     "size_small": "Lille",
     "size-desc_small": "Egnet til 51x26mm",
     "size_big": "Stor",
-    "size-desc_big": "Egnet til 100x192mm"
+    "size-desc_big": "Egnet til 100x192mm",
+    "size_medium": "Medium",
+    "size-desc_medium": "Egnet til 76x51mm"
   },
   "modal-show-product-card": {
     "barred": "Spærret",

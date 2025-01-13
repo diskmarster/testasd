@@ -22,7 +22,6 @@ import { fetchLocationsForCustomerActions, importHistoryAction } from "@/app/[ln
 import { CustomerID } from "@/lib/database/schema/customer"
 import { LocationWithCounts } from "@/data/location.types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { addDays, addMilliseconds, addSeconds, differenceInDays, subDays } from "date-fns"
 
 export function ModalImportClientHistory() {
   const [pending, startTransition] = useTransition()
@@ -40,7 +39,7 @@ export function ModalImportClientHistory() {
   >(undefined)
   const [uploadedAmount, setUploadedAmount] = useState(0)
   const [responseErrors, setResponseErrors] = useState<string[]>([])
-  const [locations, setLocations] = useState<LocationWithCounts[]>([])
+  const [locations, setLocations] = useState<{ id: string, name: string }[]>([])
   const [selectedLocation, setSelectedLocation] = useState<string>()
   const [skippedSkus, setSkippedSkus] = useState<string[]>([])
 
