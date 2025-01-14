@@ -48,8 +48,8 @@ export function TableSysUsersActions({ table, row }: Props) {
         <DropdownMenuItem
           className='!text-destructive'
           onClick={() => {
-            emitCustomEvent('DeleteClientByID', {
-              customerID: row.original.id,
+            emitCustomEvent('DeleteInviteLinkByID', {
+              linkID: row.original.id
             })
           }}>
           Slet
@@ -101,8 +101,8 @@ export function TableSysUsersActions({ table, row }: Props) {
       <DropdownMenuItem
         className='!text-destructive'
         onClick={() => {
-          emitCustomEvent('DeleteClientByID', {
-            customerID: row.original.id,
+          emitCustomEvent('DeleteUserByID', {
+            userID: row.original.id
           })
         }}>
         Slet

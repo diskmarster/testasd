@@ -10,6 +10,8 @@ import { ModalEditUser } from "@/components/admin/modal-edit-user"
 import { ModalToggleUser } from "@/components/admin/modal-toggle-user"
 import { ModalResetUserPW } from "@/components/admin/modal-reset-user-pw"
 import { ModalResetUserPin } from "@/components/admin/modal-reset-user-pin"
+import { ModalDeleteUser } from "@/components/sys/modal-delete-user"
+import { ModalDeleteLink } from "@/components/sys/model-delete-link"
 
 interface Props {
   params: { lng: string }
@@ -43,6 +45,8 @@ export default async function Page({ params: { lng } }: Props) {
       <ModalToggleUser />
       <ModalResetUserPW />
       <ModalResetUserPin />
+      <ModalDeleteUser />
+      <ModalDeleteLink />
     </SiteWrapper>
   )
 }

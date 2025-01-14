@@ -27,5 +27,19 @@
     "expired": "Udløbet",
     "updated": "Opdateret",
     "created": "Oprettet"
+  },
+  "modal-delete-user": {
+    "title": "Slet bruger?",
+    "description": "Denne handling er permanent og kan ikke laves om. Er du helt sikker?",
+    "cancel-button": "Nej",
+    "confirm-button": "Ja",
+    "confirm-toast": "Bruger blev slettet"
+  },
+  "modal-delete-link": {
+    "title": "Slet inviteringslink?",
+    "description": "Denne handling er permanent og kan ikke laves om. Er du helt sikker?",
+    "cancel-button": "Nej",
+    "confirm-button": "Ja",
+    "confirm-toast": "Inviteringslink blev slettet"
   }
 }

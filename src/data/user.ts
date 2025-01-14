@@ -88,6 +88,10 @@ export const user = {
     const userLinks = await trx
       .insert(userLinkTable)
       .values(linkData)
+      .onConflictDoUpdate({
+        target: userLinkTable.email,
+        set: { inserted: linkData.inserted ?? new Date() },
+      })
       .returning()
     return userLinks[0]
   },
@@ -276,7 +280,7 @@ export const user = {
 
     const users = await trx
       .select({
-        id: sql<number | null>`coalesce(${userTable.id}, null)`,
+        id: sql<number | null>`coalesce(${userTable.id}, ${userLinkTable.id})`,
         customerID: sql<number>`coalesce(${userTable.customerID}, ${userLinkTable.customerID})`,
         name: sql<string>`coalesce(${userTable.name}, '-')`,
         email: sql<string>`coalesce(${userTable.email}, ${userLinkTable.email})`,

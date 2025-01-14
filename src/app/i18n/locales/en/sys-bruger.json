@@ -1,0 +1,45 @@
+{
+  "page": {
+    "title": "Users",
+    "description": "Administrate all users in Nem Lager"
+  },
+  "columns": {
+    "isActive-null_true": "Link er udløbet",
+    "isActive-null_false": "Aktivering venter",
+    "user-name": "Name",
+    "user-name-placeholder": "Search by name",
+    "company": "Company",
+    "company-placeholder": "Search by company",
+    "email": "Email",
+    "email-placeholder": "Search by email",
+    "user-role": "Role",
+    "status": "Status",
+    "access": "Access",
+    "access-web": "Web access",
+    "access-app": "App access",
+    "access-price": "Price access",
+    "access-none": "None",
+    "access_true": "Yes",
+    "access_false": "No",
+    "active": "Active",
+    "inactive": "Inactive",
+    "waiting": "Waiting",
+    "expired": "Expired",
+    "updated": "Updated",
+    "created": "Inserted"
+  },
+  "modal-delete-user": {
+    "title": "Delete user?",
+    "description": "This action is permanent and cannot be reversed. Are you sure?",
+    "cancel-button": "No",
+    "confirm-button": "Yes",
+    "confirm-toast": "User was deleted succesfully"
+  },
+  "modal-delete-link": {
+    "title": "Slet inviteringslink?",
+    "description": "Denne handling er permanent og kan ikke laves om. Er du helt sikker?",
+    "cancel-button": "Nej",
+    "confirm-button": "Ja",
+    "confirm-toast": "Invite link was deleted succesfully"
+  }
+}

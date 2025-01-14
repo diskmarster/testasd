@@ -66,7 +66,7 @@ export const userLinkTable = sqliteTable('nl_user_link', {
   customerID: integer('customer_id')
     .notNull()
     .references(() => customerTable.id, { onDelete: 'cascade' }),
-  email: text('email').notNull(),
+  email: text('email').notNull().unique(),
   role: text('role').notNull().$type<UserRole>(),
   locationIDs: text('location_ids').notNull().$type<LocationID[]>(),
   inserted: integer('inserted', { mode: 'timestamp' })
