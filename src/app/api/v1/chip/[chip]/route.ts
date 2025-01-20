@@ -21,7 +21,7 @@ export async function GET(
     )
   }
 
-  if (!user.appAccess) {
+  if (!user.webAccess) {
     return NextResponse.json(
       { msg: t('route-translations-chip.no-web-access') },
       { status: 401 },

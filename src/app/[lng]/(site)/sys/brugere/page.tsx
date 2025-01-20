@@ -12,6 +12,7 @@ import { ModalResetUserPW } from "@/components/admin/modal-reset-user-pw"
 import { ModalResetUserPin } from "@/components/admin/modal-reset-user-pin"
 import { ModalDeleteUser } from "@/components/sys/modal-delete-user"
 import { ModalDeleteLink } from "@/components/sys/model-delete-link"
+import { ModalInviteCreateUser } from "@/components/sys/modal-invite-create-user"
 
 interface Props {
   params: { lng: string }
@@ -33,7 +34,7 @@ export default async function Page({ params: { lng } }: Props) {
       description={t('page.description')}
       actions={
         <>
-          <div>inviter</div>
+          <ModalInviteCreateUser />
         </>
       }>
 
