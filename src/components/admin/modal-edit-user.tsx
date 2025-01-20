@@ -10,7 +10,7 @@ import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { getUserRoles, lte, UserRole } from '@/data/user.types'
 import { UserID, UserNoHash } from '@/lib/database/schema/auth'
-import { CustomerID, Location, LocationID } from '@/lib/database/schema/customer'
+import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
@@ -41,8 +41,8 @@ import { useSession } from '@/context/session'
 
 interface Props { }
 
-export function ModalEditUser({}: Props) {
-  const {session, user: sessionUser} = useSession()
+export function ModalEditUser({ }: Props) {
+  const { session, user: sessionUser } = useSession()
   const [error, setError] = useState<string>()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<UserNoHash>()
@@ -414,9 +414,9 @@ export function ModalEditUser({}: Props) {
                       'grid gap-2 w-full',
                       formValues.data.role == 'administrator' && 'hidden',
                     )}>
-                      <div className='flex items-center justify-between h-[14px]'>
-                        <Label>{t('modal-edit-user.access-level')}</Label>
-                    {locations && (
+                    <div className='flex items-center justify-between h-[14px]'>
+                      <Label>{t('modal-edit-user.access-level')}</Label>
+                      {locations && (
                         <span className={cn('text-muted-foreground text-xs tabular-nums')}>
                           {pending
                             ? 0
@@ -426,54 +426,54 @@ export function ModalEditUser({}: Props) {
                           {' af '}
                           {locations.length} {t('modal-edit-user.locations-chosen')}
                         </span>
-                        )}
-                      </div>
+                      )}
+                    </div>
                     <ScrollArea className='md:border md:p-2 md:rounded-md max-md:max-h-[125px] md:h-[300px] [&>div>div]:h-full'>
                       <div className='h-full'>
                         {!locations || pending ? (
-                            <div className='w-full h-full grid place-items-center'>
+                          <div className='w-full h-full grid place-items-center'>
 
-                          <Icons.spinner className='size-8 animate-spin' />
-                            </div>
+                            <Icons.spinner className='size-8 animate-spin' />
+                          </div>
                         ) : (
-                              <div className='space-y-2'>
+                          <div className='space-y-2'>
 
-                          {locations.map(loc => (
-                            <div
-                              key={loc.id}
-                              className='border rounded-sm p-2 flex items-center justify-between'>
-                              <div className='flex flex-col'>
-                                <span className='text-muted-foreground text-sm font-semibold'>
-                                  {loc.name}
-                                </span>
+                            {locations.map(loc => (
+                              <div
+                                key={loc.id}
+                                className='border rounded-sm p-2 flex items-center justify-between'>
+                                <div className='flex flex-col'>
+                                  <span className='text-muted-foreground text-sm font-semibold'>
+                                    {loc.name}
+                                  </span>
+                                </div>
+                                {pending ? (
+                                  <Loader2 className='animate-spin size-[20px]' />
+                                ) : (
+                                  <Switch
+                                    checked={formValues.data.locationIDs.includes(
+                                      loc.id,
+                                    )}
+                                    disabled={locations.length == 1}
+                                    onCheckedChange={(checked: boolean) => {
+                                      let users = formValues.data.locationIDs
+
+                                      if (checked) {
+                                        users.push(loc.id)
+                                      } else {
+                                        users = users.filter(us => us != loc.id)
+                                      }
+
+                                      setValue('data.locationIDs', users, {
+                                        shouldValidate: true,
+                                        shouldDirty: true,
+                                      })
+                                    }}
+                                  />
+                                )}
                               </div>
-                              {pending ? (
-                                <Loader2 className='animate-spin size-[20px]' />
-                              ) : (
-                                <Switch
-                                  checked={formValues.data.locationIDs.includes(
-                                    loc.id,
-                                  )}
-                                  disabled={locations.length == 1}
-                                  onCheckedChange={(checked: boolean) => {
-                                    let users = formValues.data.locationIDs
-
-                                    if (checked) {
-                                      users.push(loc.id)
-                                    } else {
-                                      users = users.filter(us => us != loc.id)
-                                    }
-
-                                    setValue('data.locationIDs', users, {
-                                      shouldValidate: true,
-                                      shouldDirty: true,
-                                    })
-                                  }}
-                                />
-                              )}
-                            </div>
-                         ))}
-                              </div>
+                            ))}
+                          </div>
                         )}
                       </div>
                     </ScrollArea>
