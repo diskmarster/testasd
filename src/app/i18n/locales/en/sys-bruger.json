@@ -75,11 +75,11 @@
     "mail-checkbox": "Send an email to the user with login information"
   },
   "invite-create-action": {
-    "email-already-exists": "En bruger med den e-mail findes allerede",
-    "client-not-found": "KundeID {{customerID}} findes ikke",
-    "client-user-limit": "Kunden har nået sin brugergrænse",
-    "link-not-created": "Der gik noget galt med at oprette inviteringslink",
-    "email-subject": "Du er blevet inviteret til {{app}} af Skancode A/S på vegne af {{customer}}",
-    "user-not-created": "Der gik noget galt med at oprette brugeren"
+    "email-already-exists": "A user with that email already exists",
+    "client-not-found": "CustomerID {{customerID}} does not exist",
+    "client-user-limit": "Customer has reached their user limit",
+    "link-not-created": "Something went wrong when creating users invite link",
+    "email-subject": "You have been invited to {{app}} by Skancode A/S on behalf of {{customer}}",
+    "user-not-created": "Something went wrong when creating the user"
   }
 }
