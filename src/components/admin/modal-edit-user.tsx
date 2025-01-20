@@ -55,8 +55,7 @@ export function ModalEditUser({ }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
 
-  if (!session) return null
-  const userRoles = getUserRoles(lte(sessionUser.role))
+  const userRoles = getUserRoles(lte(sessionUser?.role!))
 
   const rolesOptions = userRoles
     .filter(
