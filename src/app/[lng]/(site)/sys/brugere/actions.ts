@@ -2,6 +2,7 @@
 
 import { serverTranslation } from '@/app/i18n'
 import { EmailInviteUser } from '@/components/email/email-invite-user'
+import { EmailCreatedUser } from '@/components/email/email-user-created'
 import { siteConfig } from '@/config/site'
 import { sysAdminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
@@ -192,7 +193,20 @@ export const inviteOrCreateAction = sysAdminAction
       }
 
       if (mail) {
-        console.log('SEND MAIL // NOT IMPLEMENTED YET')
+        const subject = t('invite-create-action.email-subject', {
+          app: siteConfig.name,
+          customer: customer.company,
+        })
+
+        await emailService.sendRecursively(
+          [parsedInput.email],
+          subject,
+          EmailCreatedUser({
+            company: customer.company,
+            password: password!,
+            pin: pin!,
+          }),
+        )
       }
     }
 
