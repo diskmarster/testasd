@@ -17,7 +17,7 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { UserID, UserLinkID } from '@/lib/database/schema/auth'
+import { UserLinkID } from '@/lib/database/schema/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -32,7 +32,7 @@ export function ModalDeleteLink({ }: Props) {
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
   const lng = useLanguage()
-  const { t } = useTranslation(lng, 'organisation')
+  const { t } = useTranslation(lng, 'sys-bruger')
 
   const { setValue, handleSubmit, formState, reset } = useForm<
     z.infer<typeof deleteInviteLinkValidation>
