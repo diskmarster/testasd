@@ -28,7 +28,6 @@ import {
   updateCustomerValidation,
 } from './validation'
 import { hasPermissionByRank } from '@/data/user.types'
-import { custom } from 'zod'
 
 export const toggleUserStatusAction = adminAction
   .metadata({ actionName: 'toggleUserStatus' })
@@ -309,8 +308,19 @@ export const editUserAction = adminAction
 export const getLocationsByUserIDAction = adminAction
   // No metadata, since we dont need to log when querying data
   .schema(getLocationsByUserIDValidation)
-  .action(async ({ parsedInput: { userID } }) => {
-    return await locationService.getAllByUserID(userID)
+  .action(async ({ parsedInput: { userID, customerID }, ctx }) => {
+    let allLocations = await locationService.getByCustomerID(customerID)
+    const userLocations =await locationService.getAllByUserID(userID)
+    const sessionUserLocations = await locationService.getAllByUserID(ctx.user.id)
+
+    if (!hasPermissionByRank(ctx.user.role, 'administrator')) {
+    allLocations = allLocations.filter(loc => sessionUserLocations.some(l => l.id == loc.id))
+  }
+
+    return {
+    allLocations,
+    userLocations
+  }
   })
 
 export const resetUserPinAction = adminAction
@@ -326,8 +336,6 @@ export const resetUserPinAction = adminAction
     if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
       throw new ActionError(t('organisation-action.reset-higher-rank-pin-error'))
     }
-
-  console.log(parsedInput)
 
     const linkCreated = await passwordResetService.createAndSendLink(
       parsedInput.email,

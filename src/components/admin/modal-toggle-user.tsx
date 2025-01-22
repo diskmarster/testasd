@@ -17,7 +17,6 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { UserNoHash } from '@/lib/database/schema/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -33,11 +32,9 @@ import {
   SelectValue,
 } from '../ui/select'
 
-interface Props {
-  users: UserNoHash[]
-}
+interface Props {}
 
-export function ModalToggleUser({ users }: Props) {
+export function ModalToggleUser({}: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()

@@ -7,18 +7,17 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
-import { hasPermissionByRank } from '@/data/user.types'
-import { UserNoHash } from '@/lib/database/schema/auth'
+import { UserNoHashWithCompany } from '@/data/user.types'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
 
 interface Props {
-  table: Table<UserNoHash>
-  row: Row<UserNoHash>
+  table: Table<UserNoHashWithCompany>
+  row: Row<UserNoHashWithCompany>
 }
 
-export function TableUsersActions({ table, row }: Props) {
+export function TableSysUsersActions({ table, row }: Props) {
   const { user } = useSession()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
@@ -27,20 +26,43 @@ export function TableUsersActions({ table, row }: Props) {
     return null
   }
 
-  const { role: sessionUserRole, id: sessionUserID } = user
+  const { id: sessionUserID } = user
 
-  const hasPermission = hasPermissionByRank(sessionUserRole, row.original.role)
   const isSignedInUser = row.original.id == sessionUserID
+  const isUserRegistered = row.original.name != '-'
 
-  const tooltipContent = !hasPermission
-    ? t('table-users-actions.no-permission-tooltip')
-    : isSignedInUser
-      ? t('table-users-actions.same-user-tooltip')
-      : undefined
+  const tooltipContent = isSignedInUser
+    ? t('table-users-actions.same-user-tooltip')
+    : undefined
+
+  if (!isUserRegistered) {
+    return (
+      <TableActionsWrapper>
+        <DropdownMenuItem
+          onClick={() => {
+            emitCustomEvent('ResendInviteLinkByLinkID', {
+              linkID: row.original.id
+            })
+          }}>
+          Send nyt link
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className='!text-destructive'
+          onClick={() => {
+            emitCustomEvent('DeleteInviteLinkByID', {
+              linkID: row.original.id
+            })
+          }}>
+          Slet
+        </DropdownMenuItem>
+      </TableActionsWrapper>
+    )
+  }
 
   return (
     <TableActionsWrapper
-      disabled={!hasPermission || isSignedInUser}
+      disabled={isSignedInUser}
       tooltipContent={tooltipContent}>
       <DropdownMenuItem
         onClick={() => {
@@ -76,6 +98,16 @@ export function TableUsersActions({ table, row }: Props) {
           })
         }}>
         {t('table-users-actions.reset-pin')}
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem
+        className='!text-destructive'
+        onClick={() => {
+          emitCustomEvent('DeleteUserByID', {
+            userID: row.original.id
+          })
+        }}>
+        Slet
       </DropdownMenuItem>
     </TableActionsWrapper>
   )

@@ -1,45 +1,46 @@
 import { siteConfig } from '@/config/site'
-import { ResetPasswordType } from '@/data/user.types'
-import { ResetPasswordLink } from '@/service/password-reset'
-import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Section, Tailwind, Text } from '@react-email/components'
+import { Body, Container, Head, Heading, Hr, Html, Preview, Section, Tailwind, Text, CodeBlock, dracula, duotoneDark } from '@react-email/components'
 
-export function EmailResetPassword({
-  link,
-  pwType,
-}: {
-  link: ResetPasswordLink
-  pwType: ResetPasswordType
-}) {
-  const pwName = pwType == 'pw' ? 'adgangskode' : 'pinkode'
-
+export function EmailCreatedUser({ company, password, pin }: { company: string, password: string, pin: string }) {
   return (
     <Tailwind>
       <Html>
         <Head />
-        <Preview>Glemt {pwName} på {siteConfig.name}</Preview>
+        <Preview>Du er blevet oprettet i {siteConfig.name} af Skancode A/S</Preview>
         <Body className='bg-muted font-sans'>
           <Container className='bg-white mx-auto pt-5 pb-12'>
             <Section className='px-12'>
-              <Heading as='h4'>{siteConfig.name}</Heading>
+              <Heading as='h4'>Nem Lager</Heading>
               <Hr className='border-border my-5' />
               <Text className='text-primary-foreground text-base leading-6 text-left'>
-                Vi har modtaget en forespørgsel på at nulstille din {pwName} på {siteConfig.name}.
+                Du er blevet oprettet som bruger i {siteConfig.name} som en del af {company}.
+                Vi ser frem til at have dig med, og vi har gjort det nemt for dig at komme i gang.
               </Text>
               <Text className='text-primary-foreground text-base leading-6 text-left'>
-                For at nulstille din {pwName} skal du blot klikke på knappen
-                nedenunder og følge instrukserne.
+                Vi har allerede lavet en adgangskode til dig samt en PIN kode til vores app, som du finder nedenunder.
+                Vi anbefaler selvfølgelig at du ændrer dem til noget du nemmere kan huske.
               </Text>
-              <Button
-                className='bg-[#023eb6] rounded-md text-white text-base font-semibold text-center block w-full p-2.5'
-                href={link}>
-                Nulstil din {pwName}
-              </Button>
+              <CodeBlock
+                code={`
+## Adgangskode
+${password}
+
+## PIN kode
+${pin}
+`}
+                language='md'
+                theme={duotoneDark}
+              />
               <Hr className='border-border my-5' />
               <Text className='text-primary-foreground text-base leading-6 text-left'>
                 Vores supportteam står klar til at hjælpe jer, hvis I har
                 spørgsmål eller har brug for hjælp til opsætningen. Tøv ikke med
                 at kontakte os – vi er her for at sikre, at I får den bedst mulige
-                oplevelse med Nem Lager.
+                oplevelse med {siteConfig.name}.
+              </Text>
+              <Text className='text-primary-foreground text-base leading-6 text-left'>
+                Endnu en gang, velkommen ombord! Vi glæder os til at samarbejde
+                med jer.
               </Text>
               <Text className='text-primary-foreground text-base leading-6 text-left'>
                 - SkanCode Teamet
