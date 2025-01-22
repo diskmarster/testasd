@@ -81,5 +81,12 @@
     "link-not-created": "Der gik noget galt med at oprette inviteringslink",
     "email-subject": "Du er blevet inviteret til {{app}} af Skancode A/S på vegne af {{customer}}",
     "user-not-created": "Der gik noget galt med at oprette brugeren"
+  },
+  "modal-resend-link": {
+    "title": "Send nyt inviteringslink",
+    "description": "Send et nyt link til brugeren hvis deres link er udløbet eller ikke er blevet modtaget.",
+    "cancel-button": "Nej",
+    "confirm-button": "Ja",
+    "confirm-toast": "Et nyt inviteringslink er sendt"
   }
 }

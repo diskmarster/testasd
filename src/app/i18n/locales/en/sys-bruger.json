@@ -81,5 +81,12 @@
     "link-not-created": "Something went wrong when creating users invite link",
     "email-subject": "You have been invited to {{app}} by Skancode A/S on behalf of {{customer}}",
     "user-not-created": "Something went wrong when creating the user"
+  },
+  "modal-resend-link": {
+    "title": "Send new invite link",
+    "description": "Send a new invite link to user if the old link is expired or not received.",
+    "cancel-button": "No",
+    "confirm-button": "Yes",
+    "confirm-toast": "New invite link sent"
   }
 }

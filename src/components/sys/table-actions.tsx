@@ -26,7 +26,7 @@ export function TableSysUsersActions({ table, row }: Props) {
     return null
   }
 
-  const { role: sessionUserRole, id: sessionUserID } = user
+  const { id: sessionUserID } = user
 
   const isSignedInUser = row.original.id == sessionUserID
   const isUserRegistered = row.original.name != '-'
@@ -40,7 +40,9 @@ export function TableSysUsersActions({ table, row }: Props) {
       <TableActionsWrapper>
         <DropdownMenuItem
           onClick={() => {
-            console.log("send nyt link")
+            emitCustomEvent('ResendInviteLinkByLinkID', {
+              linkID: row.original.id
+            })
           }}>
           Send nyt link
         </DropdownMenuItem>

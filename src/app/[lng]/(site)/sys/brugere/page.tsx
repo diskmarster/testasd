@@ -13,6 +13,7 @@ import { ModalResetUserPin } from "@/components/admin/modal-reset-user-pin"
 import { ModalDeleteUser } from "@/components/sys/modal-delete-user"
 import { ModalDeleteLink } from "@/components/sys/model-delete-link"
 import { ModalInviteCreateUser } from "@/components/sys/modal-invite-create-user"
+import { ModalResendLink } from "@/components/sys/modal-resend-link"
 
 interface Props {
   params: { lng: string }
@@ -48,6 +49,7 @@ export default async function Page({ params: { lng } }: Props) {
       <ModalResetUserPin />
       <ModalDeleteUser />
       <ModalDeleteLink />
+      <ModalResendLink />
     </SiteWrapper>
   )
 }

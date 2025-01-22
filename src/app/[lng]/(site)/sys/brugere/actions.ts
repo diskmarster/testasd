@@ -11,6 +11,7 @@ import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
 import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 import {
   deleteInviteLinkValidation,
   deleteUserByIDValidation,
@@ -58,12 +59,58 @@ export const fetchCustomersAction = sysAdminAction.action(async () => {
   return await customerService.getAll()
 })
 
+export const resendInviteLinkAction = sysAdminAction
+  .schema(z.object({ linkID: z.string() }))
+  .action(async ({ parsedInput: { linkID }, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'sys-bruger')
+
+    const link = await userService.getInviteLinkByID(linkID)
+
+    if (!link) {
+      throw new ActionError('Kunne ikke finde link informationer')
+    }
+
+    const users = await userService.getAllByCustomerID(link.customerID)
+    const customer = await customerService.getByID(link.customerID)
+    if (!customer) {
+      throw new ActionError(t('invite-create-action.client-not-found'))
+    }
+
+    if (isUserLimitReached(customer.plan, customer.extraUsers, users.length)) {
+      throw new ActionError(t('invite-create-action.client-user-limit'))
+    }
+
+    const userInviteLink = await userService.createUserLink({
+      email: link.email,
+      role: link.role,
+      customerID: link.customerID,
+      locationIDs: link.locationIDs,
+      webAccess: link.webAccess,
+      appAccess: link.appAccess,
+      priceAccess: link.priceAccess,
+    })
+    if (!userInviteLink) {
+      throw new ActionError(t('invite-create-action.link-not-created'))
+    }
+
+    const subject = t('invite-create-action.email-subject', {
+      app: siteConfig.name,
+      customer: customer.company,
+    })
+
+    await emailService.sendRecursively(
+      [link.email],
+      subject,
+      EmailInviteUser({ company: customer.company, link: userInviteLink }),
+    )
+
+    revalidatePath(`/${ctx.lang}/sys/brugere`)
+  })
+
 export const inviteOrCreateAction = sysAdminAction
   .schema(inviteOrCreateUserValidation)
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'sys-bruger')
-
-    console.log(parsedInput)
 
     const {
       customerID,
