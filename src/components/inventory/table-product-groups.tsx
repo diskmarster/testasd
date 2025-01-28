@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  getTableGroupColumns,
-  getTableGroupFilters,
-} from '@/app/[lng]/(site)/admin/varegrupper/columns'
+import { getTableGroupColumns, getTableGroupFilters } from '@/app/[lng]/(site)/varer/varegrupper/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'

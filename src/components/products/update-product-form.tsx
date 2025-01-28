@@ -1,6 +1,4 @@
 'use client'
-import { updateProductAction } from '@/app/[lng]/(site)/admin/produkter/actions'
-import { createProductValidation } from '@/app/[lng]/(site)/admin/produkter/validation'
 import { siteConfig } from '@/config/site'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -33,6 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { createProductValidation } from '@/app/[lng]/(site)/varer/produkter/validation'
+import { updateProductAction } from '@/app/[lng]/(site)/varer/produkter/actions'
 
 export function UpdateProductsForm({
   units,

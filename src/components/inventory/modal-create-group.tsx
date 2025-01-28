@@ -1,7 +1,5 @@
 'use client'
 
-import { createGroupAction } from '@/app/[lng]/(site)/admin/varegrupper/actions'
-import { createGroupValidation } from '@/app/[lng]/(site)/admin/varegrupper/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -23,6 +21,8 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { createGroupValidation } from '@/app/[lng]/(site)/varer/varegrupper/validation'
+import { createGroupAction } from '@/app/[lng]/(site)/varer/varegrupper/actions'
 
 export function ModalCreateProductGroup() {
   const [open, setOpen] = useState(false)

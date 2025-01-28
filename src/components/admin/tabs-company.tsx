@@ -169,7 +169,7 @@ export function TabsAdmin({
         </div>
       </div>
       <TabsContent value='brugere'>
-        <TableAdminUsers data={users} user={user} customer={customer} />
+        <TableAdminUsers data={users} user={user} />
       </TabsContent>
 
       <TabsContent value='lokationer'>

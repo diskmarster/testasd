@@ -125,7 +125,13 @@
       "units-description": "Her kan du oprette og opdatere enheder.",
       "error-messages": "Fejlbeskeder",
       "error-messages-description": "Få et overblik over alle fejlbeskeder"
-    }
+    },
+    "products-title": "Varer",
+    "products-label": "Kartotek",
+    "groups-label": "Varegrupper",
+    "placements-label": "Placeringer",
+    "batch-label": "Batch",
+    "organization-title": "Organisation"
   },
   "toasts": {
     "location-select": "Skiftet lokation til ",

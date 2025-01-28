@@ -1,7 +1,7 @@
 'use client'
 
-import { resetUserPinAction } from '@/app/[lng]/(site)/admin/organisation/actions'
-import { resetUserPasswordValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
+import { resetUserPinAction } from '@/app/[lng]/(site)/(admin)/organisation/actions'
+import { resetUserPasswordValidation } from '@/app/[lng]/(site)/(admin)/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -17,7 +17,6 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { UserNoHash } from '@/lib/database/schema/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -25,9 +24,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-interface Props {
-  //users: UserNoHash[]
-}
+interface Props {}
 
 export function ModalResetUserPin({ }: Props) {
   const [open, setOpen] = useState(false)

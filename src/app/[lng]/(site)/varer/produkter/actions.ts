@@ -26,7 +26,7 @@ export const createProductAction = editableAction
     if (!newProduct) {
       throw new ActionError(t('product-action.product-not-created'))
     }
-    revalidatePath(`/${ctx.lang}/admin/produkter`)
+    revalidatePath(`/${ctx.lang}/varer/produkter`)
   })
 
 export const updateProductAction = editableAction
@@ -48,7 +48,7 @@ export const updateProductAction = editableAction
         throw new ActionError(t('product-action.product-not-updated'))
       }
 
-      revalidatePath(`/${lang}/admin/produkter`)
+      revalidatePath(`/${lang}/varer/produkter`)
     },
   )
 
@@ -69,7 +69,7 @@ export const toggleBarredProductAction = editableAction
         )
       }
 
-      revalidatePath(`/${lang}/admin/produkter`)
+      revalidatePath(`/${lang}/varer/produkter`)
     },
   )
 
@@ -83,7 +83,7 @@ export const importProductsAction = adminAction
       importedData,
     )
 
-    revalidatePath(`/${ctx.lang}/admin/produkter`)
+    revalidatePath(`/${ctx.lang}/varer/produkter`)
   })
 
 export const finishProductsAction = adminAction

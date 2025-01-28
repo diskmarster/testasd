@@ -1,5 +1,5 @@
 {
-  "product-title": "Varer",
+  "product-title": "Kartotek",
   "product-description": "Her kan du administrerer varer for hele firmaet",
   "product-modal-title": "Opret Vare",
   "product-modal-description": "Udfyld nedenstående detaljer for at oprette en vare",
@@ -16,22 +16,18 @@
   "sales-price": "Salgspris",
   "create-button": "Opret",
   "updated-time": "Opdateret",
-
   "toast-success": "Vare oprettet succesfuldt",
-
   "update-product": "Rediger vare",
   "bar-this": "Spær varen",
   "unbar-this": "Fjern spærring",
   "barred-status-yes": "Spærret",
   "barred-status-no": "Aktiv",
-
   "update-product-modal": {
     "update-product": "Redigér Vare",
     "update-product-modal-title": "Rediger Vare",
     "update-product-modal-description": "Her kan du redigere en vare",
     "update-button": "Opdater"
   },
-
   "toasts": {
     "product-updated": "Vare opdateret succesfuldt"
   }

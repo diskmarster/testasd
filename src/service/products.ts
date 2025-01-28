@@ -19,7 +19,6 @@ import {
   ProductID,
 } from '@/lib/database/schema/inventory'
 
-import { ImportProducts } from '@/app/[lng]/(site)/admin/produkter/validation'
 import { serverTranslation } from '@/app/i18n'
 import { fallbackLng } from '@/app/i18n/settings'
 import { user as userData } from '@/data/user'
@@ -31,6 +30,7 @@ import {
 } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
+import { ImportProducts } from '@/app/[lng]/(site)/varer/produkter/validation'
 
 export const productService = {
   create: async function(

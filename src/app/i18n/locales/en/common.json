@@ -124,7 +124,13 @@
       "units-description": "Here you can create and update units",
       "error-messages": "Error messages",
       "error-messages-description": "View latest error messages"
-    }
+    },
+    "products-title": "Goods",
+    "products-label": "Catalogue",
+    "groups-label": "Groups",
+    "placements-label": "Placements",
+    "batch-label": "Batch",
+    "organization-title": "Organization"
   },
   "toasts": {
     "location-select": "Changed location to ",

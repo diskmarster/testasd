@@ -1,7 +1,5 @@
 'use client'
 
-import { inviteNewUserAction } from '@/app/[lng]/(site)/admin/organisation/actions'
-import { inviteNewUserValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,6 +30,8 @@ import { AutoComplete } from '../ui/autocomplete'
 import { Checkbox } from '../ui/checkbox'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
+import { inviteNewUserValidation } from '@/app/[lng]/(site)/(admin)/organisation/validation'
+import { inviteNewUserAction } from '@/app/[lng]/(site)/(admin)/organisation/actions'
 
 interface Props {
   locations: Location[]

@@ -1,10 +1,5 @@
 'use client'
 
-import {
-  editUserAction,
-  getLocationsByUserIDAction,
-} from '@/app/[lng]/(site)/admin/organisation/actions'
-import { editUserValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
@@ -38,11 +33,13 @@ import { Label } from '../ui/label'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
 import { useSession } from '@/context/session'
+import { editUserValidation } from '@/app/[lng]/(site)/(admin)/organisation/validation'
+import { editUserAction, getLocationsByUserIDAction } from '@/app/[lng]/(site)/(admin)/organisation/actions'
 
 interface Props { }
 
 export function ModalEditUser({ }: Props) {
-  const { session, user: sessionUser } = useSession()
+  const { user: sessionUser } = useSession()
   const [error, setError] = useState<string>()
   const [open, setOpen] = useState(false)
   const [user, setUser] = useState<UserNoHash>()

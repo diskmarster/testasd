@@ -1,7 +1,5 @@
 'use client'
 
-import { resetUserPasswordAction } from '@/app/[lng]/(site)/admin/organisation/actions'
-import { resetUserPasswordValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { deleteUserAction } from '@/app/[lng]/(site)/sys/brugere/actions'
 import { deleteUserByIDValidation } from '@/app/[lng]/(site)/sys/brugere/validation'
 import { useTranslation } from '@/app/i18n/client'
