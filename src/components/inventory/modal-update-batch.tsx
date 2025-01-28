@@ -1,7 +1,5 @@
 'use client'
 
-import { updateBatchAction } from '@/app/[lng]/(site)/admin/batch/actions'
-import { updateBatchValidation } from '@/app/[lng]/(site)/admin/batch/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -31,6 +29,8 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Calendar } from '../ui/calendar'
 import { Popover, PopoverContent } from '../ui/popover'
+import { updateBatchValidation } from '@/app/[lng]/(site)/varer/batch/validation'
+import { updateBatchAction } from '@/app/[lng]/(site)/varer/batch/actions'
 
 export function ModalUpdateBatch() {
   const [pending, startTransition] = useTransition()
@@ -47,8 +47,6 @@ export function ModalUpdateBatch() {
     resolver: zodResolver(schema),
     defaultValues: {},
   })
-
-  const formValues = watch()
 
   async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {

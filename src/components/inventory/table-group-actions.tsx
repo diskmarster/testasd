@@ -1,4 +1,3 @@
-import { toggleBarredGroupAction } from '@/app/[lng]/(site)/admin/varegrupper/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { ModalUpdateGroup } from '@/components/inventory/modal-update-group'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
@@ -9,6 +8,7 @@ import { Row } from '@tanstack/react-table'
 import { useContext, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
+import { toggleBarredGroupAction } from '@/app/[lng]/(site)/varer/varegrupper/actions'
 
 interface Props {
   row: Row<Group>

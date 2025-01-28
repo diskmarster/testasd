@@ -1,4 +1,3 @@
-import { toggleBarredPlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { ModalUpdatePlacement } from '@/components/inventory/modal-update-placement'
 import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
@@ -9,9 +8,8 @@ import { Row } from '@tanstack/react-table'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
-import { Icons } from '../ui/icons'
-import { Button } from '../ui/button'
 import { emitCustomEvent } from 'react-custom-events'
+import { toggleBarredPlacementAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
 
 interface Props {
   row: Row<Placement>

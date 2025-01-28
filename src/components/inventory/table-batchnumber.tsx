@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  getTableBatchColumns,
-  getTableBatchFilters,
-} from '@/app/[lng]/(site)/admin/batch/columns'
+import { getTableBatchColumns, getTableBatchFilters } from '@/app/[lng]/(site)/varer/batch/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'

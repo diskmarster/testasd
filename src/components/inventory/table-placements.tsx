@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  getTablePlacementColumns,
-  getTablePlacementFilters,
-} from '@/app/[lng]/(site)/admin/placeringer/columns'
+import { getTablePlacementColumns, getTablePlacementFilters } from '@/app/[lng]/(site)/varer/placeringer/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'

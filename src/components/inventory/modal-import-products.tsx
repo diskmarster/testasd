@@ -1,10 +1,5 @@
 'use client'
 
-import {
-  finishProductsAction,
-  importProductsAction,
-} from '@/app/[lng]/(site)/admin/produkter/actions'
-import { productsDataValidation } from '@/app/[lng]/(site)/admin/produkter/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -29,6 +24,8 @@ import { z, ZodError } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Progress } from '../ui/progress'
 import { ScrollArea } from '../ui/scroll-area'
+import { productsDataValidation } from '@/app/[lng]/(site)/varer/produkter/validation'
+import { finishProductsAction, importProductsAction } from '@/app/[lng]/(site)/varer/produkter/actions'
 
 export function ModalImportProducts() {
   const [pending, startTransition] = useTransition()

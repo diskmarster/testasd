@@ -1,7 +1,5 @@
 'use client'
 
-import { createPlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
-import { createPlacementValidation } from '@/app/[lng]/(site)/admin/placeringer/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -24,6 +22,8 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
+import { createPlacementValidation } from '@/app/[lng]/(site)/varer/placeringer/validation'
+import { createPlacementAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
 
 export function ModalCreatePlacement() {
   const [open, setOpen] = useState(false)

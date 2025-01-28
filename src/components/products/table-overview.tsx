@@ -1,9 +1,5 @@
 'use client'
 
-import {
-  getProductOverviewColumns,
-  getProductTableOverviewFilters,
-} from '@/app/[lng]/(site)/admin/produkter/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import {
@@ -39,6 +35,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { TableToolbar } from '../table/table-toolbar'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
+import { getProductOverviewColumns, getProductTableOverviewFilters } from '@/app/[lng]/(site)/varer/produkter/columns'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true

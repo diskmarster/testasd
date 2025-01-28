@@ -1,6 +1,4 @@
 'use client'
-import { createBatchAction } from '@/app/[lng]/(site)/admin/batch/actions' // Adjust the action path
-import { createBatchValidation } from '@/app/[lng]/(site)/admin/batch/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -28,6 +26,8 @@ import { Calendar } from '../ui/calendar'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { createBatchValidation } from '@/app/[lng]/(site)/varer/batch/validation'
+import { createBatchAction } from '@/app/[lng]/(site)/varer/batch/actions'
 
 export function ModalCreateBatch() {
   const [open, setOpen] = useState(false)
