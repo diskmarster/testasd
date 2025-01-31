@@ -29,8 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
-import { changeUserStatusValidation } from '@/app/[lng]/(site)/(admin)/organisation/validation'
-import { toggleUserStatusAction } from '@/app/[lng]/(site)/(admin)/organisation/actions'
+import { changeUserStatusValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
+import { toggleUserStatusAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 
 interface Props {}
 

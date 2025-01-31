@@ -29,8 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
-import { changeLocationStatusValidation } from '@/app/[lng]/(site)/(admin)/organisation/validation'
-import { changeLocationStatusAction } from '@/app/[lng]/(site)/(admin)/organisation/actions'
+import { changeLocationStatusValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
+import { changeLocationStatusAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 
 export function ModalToggleLocation() {
   const [open, setOpen] = useState(false)

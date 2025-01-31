@@ -100,20 +100,12 @@
     "overview": "Overview",
     "history": "History",
     "restock": "Restock",
-    "administration": "Administration",
-    "administration-dropdown": {
-      "users": "Users",
-      "users-description": "Here you can create and update users",
-      "products": "Products",
-      "products-description": "Here you can create and update products",
-      "product-groups": "Product groups",
-      "product-groups-description": "Here you can create and update product groups",
-      "placements": "Placements",
-      "placements-description": "Here you can create and update placements",
-      "organisation": "Organisation",
-      "organisation-description": "View and edit users, locations, and company information.",
-      "batch": "Batch",
-      "batch-description": "Here you can create and update batch numbers"
+    "administration": {
+      "title": "Aministration",
+      "organisation": "Organization",
+      "organisation-description": "Here you can administrate users, locations and company details.",
+      "reports": "Reports",
+      "reports-description": "Here you can download reports based on your current stock."
     },
     "sys-admin-dropdown": {
       "customers": "Customers",
@@ -125,12 +117,17 @@
       "error-messages": "Error messages",
       "error-messages-description": "View latest error messages"
     },
-    "products-title": "Goods",
-    "products-label": "Catalogue",
-    "groups-label": "Groups",
-    "placements-label": "Placements",
-    "batch-label": "Batch",
-    "organization-title": "Organization"
+    "products": {
+      "title": "Goods",
+      "products": "Catalogue",
+      "products-description": "Here you can create, update and import to your catalogue",
+      "groups": "Groups",
+      "groups-description": "Here you can create and update product groups",
+      "placements": "Placements",
+      "placements-description": "Here you can create and update placements",
+      "batch": "Batch",
+      "batch-description": "Here you can create and update batch numbers"
+    }
   },
   "toasts": {
     "location-select": "Changed location to ",

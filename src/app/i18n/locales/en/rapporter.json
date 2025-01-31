@@ -1,0 +1,14 @@
+{
+  "title": "Reports",
+  "description": "Here you can download reports based on your current stock",
+  "inventory-report-modal": {
+    "card-label": "Stock value",
+    "card-desc": "Report detailing stock value for a given location",
+    "title": "Stock value report",
+    "desc": "Report detailing stock value for a given location",
+    "location-label": "Location",
+    "choose-location": "Choose locations",
+    "loading-location": "Fetching locations...",
+    "download-button": "Download report"
+  }
+}

@@ -37,7 +37,7 @@ import { TableFloatingBar } from '../table/table-floating-bar'
 import { ButtonToggleUsers } from './button-toggle-user'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
-import { getTableUsersColumns, getTableUsersFilters } from '@/app/[lng]/(site)/(admin)/organisation/user-columns'
+import { getTableUsersColumns, getTableUsersFilters } from '@/app/[lng]/(site)/administration/organisation/user-columns'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true

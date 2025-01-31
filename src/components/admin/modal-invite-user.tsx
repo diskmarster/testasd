@@ -30,8 +30,8 @@ import { AutoComplete } from '../ui/autocomplete'
 import { Checkbox } from '../ui/checkbox'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
-import { inviteNewUserValidation } from '@/app/[lng]/(site)/(admin)/organisation/validation'
-import { inviteNewUserAction } from '@/app/[lng]/(site)/(admin)/organisation/actions'
+import { inviteNewUserValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
+import { inviteNewUserAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 
 interface Props {
   locations: Location[]

@@ -17,12 +17,12 @@ import { siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
 import { User } from 'lucia'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { Suspense } from 'react'
 import { NavChip } from './nav-chip'
+import { useTranslation } from '@/app/i18n/client'
 
 export function NavMobile({ user, lng }: { user: User; lng: string }) {
-  const pathname = usePathname()
+  const { t } = useTranslation(lng, 'common')
   return (
     <div className='flex gap-6 md:hidden md:gap-10'>
       <Sheet>
@@ -58,7 +58,7 @@ export function NavMobile({ user, lng }: { user: User; lng: string }) {
                           item.isDisabled &&
                           'cursor-not-allowed pointer-events-none opacity-50',
                         )}>
-                        <span>{item.label}</span>
+                        <span>{t(item.label)}</span>
                         <Icons.chevronDown className='h-5 w-5 transition-transform' />
                       </CollapsibleTrigger>
                       <CollapsibleContent className='grid gap-2 pl-4'>
@@ -78,7 +78,7 @@ export function NavMobile({ user, lng }: { user: User; lng: string }) {
                                   'cursor-not-allowed pointer-events-none opacity-50',
                                 )}
                                 prefetch={false}>
-                                {item.label}
+                                {t(item.label)}
                               </Link>
                             </SheetClose>
                           ))}
