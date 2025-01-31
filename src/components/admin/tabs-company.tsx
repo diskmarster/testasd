@@ -177,17 +177,6 @@ export function TabsAdmin({
       </TabsContent>
       <TabsContent value='firma'>
         <FormCompanyEdit customer={customer} />
-        <Separator className='my-8' />
-        <div className='md:max-w-lg'>
-          <h4 className='mb-4 font-semibold'>{t("inventory-report-modal.report-title")}</h4>
-          <div className='flex items-center justify-between rounded-md border p-4 shadow-sm bg-background'>
-            <div className='grid gap-0.5'>
-              <Label>{t("inventory-report-modal.card-label")}</Label>
-              <p className='text-sm text-muted-foreground'>{t("inventory-report-modal.card-desc")}</p>
-            </div>
-            <ModalInventoryReport />
-          </div>
-        </div>
       </TabsContent>
     </Tabs>
   )

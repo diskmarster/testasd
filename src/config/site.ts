@@ -36,15 +36,14 @@ export const siteConfig: SiteConfig = {
       chipLabel: 'genbestil',
     },
     {
-      label: 'site-config.products-title',
+      label: 'site-config.products.title',
       roles: [],
       isDisabled: false,
       isDropdown: true,
       items: [
         {
-          label: `${t('site-config.products-label')}`,
-          description:
-            'site-config.administration-dropdown.products-description',
+          label: 'site-config.products.products',
+          description: 'site-config.products.products-description',
           href: `/${lng}/varer/produkter`,
           roles: [],
           isExternal: false,
@@ -52,25 +51,24 @@ export const siteConfig: SiteConfig = {
         },
 
         {
-          label: `${t('site-config.groups-label')}`,
-          description:
-            'site-config.administration-dropdown.product-groups-description',
+          label: 'site-config.products.groups',
+          description: 'site-config.products.groups-description',
           href: `/${lng}/varer/varegrupper`,
           roles: [],
           isExternal: false,
           isDisabled: false,
         },
         {
-          label: `${t('site-config.placements-label')}`,
-          description: `${t('site-config.administration-dropdown.placements-description')}`,
+          label: 'site-config.products.placements',
+          description: 'site-config.products.placements-description',
           href: `/${lng}/varer/placeringer`,
           roles: [],
           isExternal: false,
           isDisabled: false,
         },
         {
-          label: `${t('site-config.batch-label')}`,
-          description: `${t('site-config.administration-dropdown.batch-description')}`,
+          label: 'site-config.products.batch',
+          description: 'site-config.products.batch-description',
           href: `/${lng}/varer/batch`,
           roles: [],
           isExternal: false,
@@ -79,12 +77,28 @@ export const siteConfig: SiteConfig = {
       ],
     },
     {
-      label: 'site-config.organization-title',
+      label: 'site-config.administration.title',
       isDisabled: false,
-      isDropdown: false,
-      isExternal: false,
-      href: `/${lng}/organisation`,
+      isDropdown: true,
       roles: ['system_administrator', 'administrator', 'moderator'],
+      items: [
+        {
+          label: `${t('site-config.administration.organisation')}`,
+          description: `${t('site-config.administration.organisation-description')}`,
+          href: `/${lng}/administration/organisation`,
+          roles: [],
+          isExternal: false,
+          isDisabled: false,
+        },
+        {
+          label: `${t('site-config.administration.reports')}`,
+          description: `${t('site-config.administration.reports-description')}`,
+          href: `/${lng}/administration/rapporter`,
+          roles: [],
+          isExternal: false,
+          isDisabled: false,
+        },
+      ],
     },
     {
       label: 'Skancode',

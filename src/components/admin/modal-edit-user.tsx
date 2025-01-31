@@ -33,8 +33,8 @@ import { Label } from '../ui/label'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
 import { useSession } from '@/context/session'
-import { editUserValidation } from '@/app/[lng]/(site)/(admin)/organisation/validation'
-import { editUserAction, getLocationsByUserIDAction } from '@/app/[lng]/(site)/(admin)/organisation/actions'
+import { editUserValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
+import { editUserAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 
 interface Props { }
 

@@ -37,7 +37,7 @@ import { ButtonToggleLocations } from './button-toggle-locations'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { LocationWithCounts } from '@/data/location.types'
-import { getTableLocationsColumns, getTableLocationsFilters } from '@/app/[lng]/(site)/(admin)/organisation/location-columns'
+import { getTableLocationsColumns, getTableLocationsFilters } from '@/app/[lng]/(site)/administration/organisation/location-columns'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true

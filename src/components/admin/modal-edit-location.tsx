@@ -27,8 +27,8 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { ScrollArea } from '../ui/scroll-area'
 import { Switch } from '../ui/switch'
-import { editLocationValidation } from '@/app/[lng]/(site)/(admin)/organisation/validation'
-import { editLocationAction } from '@/app/[lng]/(site)/(admin)/organisation/actions'
+import { editLocationValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
+import { editLocationAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 
 interface Props {
   users?: UserNoHash[]
