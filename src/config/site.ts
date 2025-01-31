@@ -83,16 +83,16 @@ export const siteConfig: SiteConfig = {
       roles: ['system_administrator', 'administrator', 'moderator'],
       items: [
         {
-          label: `${t('site-config.administration.organisation')}`,
-          description: `${t('site-config.administration.organisation-description')}`,
+          label: 'site-config.administration.organisation',
+          description: 'site-config.administration.organisation-description',
           href: `/${lng}/administration/organisation`,
           roles: [],
           isExternal: false,
           isDisabled: false,
         },
         {
-          label: `${t('site-config.administration.reports')}`,
-          description: `${t('site-config.administration.reports-description')}`,
+          label: 'site-config.administration.reports',
+          description: 'site-config.administration.reports-description',
           href: `/${lng}/administration/rapporter`,
           roles: [],
           isExternal: false,
