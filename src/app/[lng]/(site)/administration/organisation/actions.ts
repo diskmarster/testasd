@@ -77,7 +77,7 @@ export const toggleUserStatusAction = adminAction
       }
     }
 
-    revalidatePath(`/${ctx.lang}/adminisration/organisation`)
+    revalidatePath(`/${ctx.lang}/administration/organisation`)
   })
 
 export const inviteNewUserAction = adminAction
@@ -206,7 +206,7 @@ export const editLocationAction = adminAction
       throw new ActionError(t('organisation-action.location-not-updated'))
     }
 
-    revalidatePath(`/${ctx.lang}/adminisration/organisation`)
+    revalidatePath(`/${ctx.lang}/administration/organisation`)
   })
 
 export const changeLocationStatusAction = adminAction
@@ -238,7 +238,7 @@ export const changeLocationStatusAction = adminAction
       }
     }
 
-    revalidatePath(`/${ctx.lang}/adminisration/organisation`)
+    revalidatePath(`/${ctx.lang}/administration/organisation`)
   })
 
 export const updateCustomerAction = adminAction
@@ -253,7 +253,7 @@ export const updateCustomerAction = adminAction
     if (!updatedCustomer) {
       throw new ActionError(t('organisation-action.customer-wasnt-updated'))
     }
-    revalidatePath(`/${lang}/organisation`)
+    revalidatePath(`/${lang}/administration/organisation`)
   })
 
 export const resetUserPasswordAction = adminAction
