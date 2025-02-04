@@ -29,7 +29,10 @@ export const user = {
     newUser: NewUser,
     trx: TRX = db,
   ): Promise<User | undefined> {
-    const user = await trx.insert(userTable).values(newUser).returning()
+    const user = await trx
+      .insert(userTable)
+      .values({ ...newUser, email: newUser.email.toLowerCase() })
+      .returning()
     return user[0]
   },
   getByID: async function (
@@ -50,7 +53,7 @@ export const user = {
     const user = await trx
       .select()
       .from(userTable)
-      .where(eq(userTable.email, userEmail))
+      .where(sql`lower(${userTable.email})=lower(${userEmail})`)
       .limit(1)
     return user[0]
   },
