@@ -50,6 +50,7 @@ interface Props {
 
 export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'product_cols'
+  const FILTERS_KEY = 'product_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'produkter')
   const columns = useMemo(
@@ -150,6 +151,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>
