@@ -91,5 +91,17 @@
     "sales-price-criteria": "must be separated with a comma (,) for decimals. A thousand separator can be used with a period (.) but is not required.",
     "barred": "Barred ",
     "barred-criteria": "must be written as either true, false, yes, or no. Truthy values are true and yes. Falsy values are false and no."
+  },
+  "modal-show-user-label": {
+    "title": "User Label",
+    "description": "Print labels for this user",
+    "prod-no": "Email",
+    "size": "Label size",
+    "size_small": "Small",
+    "size-desc_small": "Best for 51x26mm",
+    "size_big": "Big",
+    "size-desc_big": "Best for 100x192mm",
+    "size_medium": "Medium",
+    "size-desc_medium": "Best for 76x51mm"
   }
 }
