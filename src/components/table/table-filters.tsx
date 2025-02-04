@@ -1,4 +1,4 @@
-import React, { SetStateAction, useState } from 'react'
+import React, { SetStateAction, useEffect, useState } from 'react'
 
 import { useTranslation } from '@/app/i18n/client'
 import { FilterField, NumberRange } from '@/components/table/table-toolbar'
@@ -31,11 +31,13 @@ import { ScrollArea } from '../ui/scroll-area'
 type TableToolbarFiltersProps<T> = {
   table: Table<T>
   filterFields: FilterField<T>[]
+  filterLocalStorageKey?: string
 }
 
 function TableToolbarFilters<T>({
   table,
   filterFields,
+  filterLocalStorageKey
 }: TableToolbarFiltersProps<T>) {
   const [open, setOpen] = useState(false)
   const [selectedFields, setSelectedFields] = useState<FilterField<T>[]>(
@@ -43,24 +45,48 @@ function TableToolbarFilters<T>({
       table.getState().columnFilters.some(cf => cf.id == f.column?.id),
     ),
   )
+
+  useEffect(() => {
+    if (filterLocalStorageKey) {
+      const savedFilters: string[] = JSON.parse(
+        localStorage.getItem(filterLocalStorageKey) || '[]'
+      )
+	  const fields = filterFields.filter(ff => savedFilters.includes(ff.column?.id || ""))
+	  selectedFields.forEach(f => fields.push(f))
+      setSelectedFields(fields)
+    }
+  }, [filterLocalStorageKey])
+
   const [activeIndex, setActiveIndex] = useState<number>()
 
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'common')
+
   const handleClearAllFilters = () => {
     setSelectedFields([])
     table.setColumnFilters([])
+    if (filterLocalStorageKey) localStorage.removeItem(filterLocalStorageKey)
   }
 
   const handleSelectField = (field: FilterField<T>) => {
     setOpen(false)
-    setSelectedFields(prev => [...prev, { ...field }])
+    setSelectedFields(prev => {
+      const newFields = [...prev, { ...field }]
+	  const fieldIDs = newFields.map(f => f.column?.id)
+      if (filterLocalStorageKey) localStorage.setItem(filterLocalStorageKey, JSON.stringify(fieldIDs))
+      return newFields
+    })
     setActiveIndex(selectedFields.length)
   }
 
   const handleRemoveField = (field: FilterField<T>) => {
     field.column?.setFilterValue(undefined)
-    setSelectedFields(prev => prev.filter(f => f.label !== field.label))
+    setSelectedFields(prev => {
+      const newFields = prev.filter(f => f.label !== field.label)
+	  const fieldIDs = newFields.map(f => f.column?.id)
+      if (filterLocalStorageKey) localStorage.setItem(filterLocalStorageKey, JSON.stringify(fieldIDs))
+      return newFields
+    })
   }
 
   return (
@@ -116,6 +142,7 @@ function FilterPopover<T>({
   index: number
   t: (key: string, opts?: any) => string
 }) {
+	console.log(field.label, field)
   const [value, setSearched] = useState<string>('')
   const [selectValue, setSelectValue] = useState<string[]>(
     (field.column?.getFilterValue() ?? []) as any[],

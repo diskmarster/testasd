@@ -48,17 +48,19 @@ interface Props<T> {
   table: Table<T>
   options?: ToolbarOptions
   filterFields?: FilterField<T>[]
+  filterLocalStorageKey?: string
 }
 
 export function TableToolbar<T>({
   table,
   options,
   filterFields = [],
+	  filterLocalStorageKey
 }: Props<T>) {
   return (
     <div className='flex items-center gap-2 py-4'>
       <div className='mr-auto max-sm:overflow-y-auto'>
-        <TableToolbarFilters table={table} filterFields={filterFields} />
+        <TableToolbarFilters table={table} filterFields={filterFields} filterLocalStorageKey={filterLocalStorageKey}/>
       </div>
       {options && (
         <div className='ml-auto flex items-center gap-2'>
