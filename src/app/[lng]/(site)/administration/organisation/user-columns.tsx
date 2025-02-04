@@ -2,6 +2,7 @@ import { TableUsersActions } from '@/components/admin/table-users-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Icons } from '@/components/ui/icons'
 import {
@@ -15,6 +16,7 @@ import { UserNoHash } from '@/lib/database/schema/auth'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { emitCustomEvent } from 'react-custom-events'
 import { DateRange } from 'react-day-picker'
 
 export function getTableUsersColumns(
@@ -98,7 +100,7 @@ export function getTableUsersColumns(
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
-    }
+    },
   }
 
   const statusCol: ColumnDef<UserNoHash> = {
@@ -144,8 +146,16 @@ export function getTableUsersColumns(
                     <Icons.monitor className='size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2' />
                   ) : (
                     <>
-                      <Icons.monitor className={'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
-                      <Icons.ban className={'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                      <Icons.monitor
+                        className={
+                          'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'
+                        }
+                      />
+                      <Icons.ban
+                        className={
+                          'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'
+                        }
+                      />
                     </>
                   )}
                 </div>
@@ -161,8 +171,16 @@ export function getTableUsersColumns(
                     <Icons.smartphone className='size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2' />
                   ) : (
                     <>
-                      <Icons.smartphone className={'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
-                      <Icons.ban className={'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                      <Icons.smartphone
+                        className={
+                          'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'
+                        }
+                      />
+                      <Icons.ban
+                        className={
+                          'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'
+                        }
+                      />
                     </>
                   )}
                 </div>
@@ -178,8 +196,16 @@ export function getTableUsersColumns(
                     <Icons.dollarSign className='size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2' />
                   ) : (
                     <>
-                      <Icons.dollarSign className={'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
-                      <Icons.ban className={'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'} />
+                      <Icons.dollarSign
+                        className={
+                          'size-4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'
+                        }
+                      />
+                      <Icons.ban
+                        className={
+                          'size-6 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2'
+                        }
+                      />
                     </>
                   )}
                 </div>
@@ -300,7 +326,22 @@ export function getTableUsersColumns(
   const actionsCol: ColumnDef<UserNoHash> = {
     accessorKey: 'actions',
     header: () => null,
-    cell: ({ table, row }) => <TableUsersActions row={row} table={table} />,
+    cell: ({ table, row }) => (
+      <div className='flex gap-2'>
+        <Button
+          size={'iconSm'}
+          onClick={() => {
+            emitCustomEvent('PrintQrForUser', {
+              userName: row.original.email,
+            })
+          }}
+          variant='ghost'>
+          <Icons.printer className='size-4' />
+        </Button>
+
+        <TableUsersActions row={row} table={table} />
+      </div>
+    ),
     enableHiding: false,
     enableSorting: false,
     meta: {

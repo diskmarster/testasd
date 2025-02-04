@@ -91,5 +91,17 @@
     "sales-price-criteria": "skal skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
     "barred": "Spærret",
     "barred-criteria": "skal skrives som enten true, false, ja eller nej. Truthy værdier er true og ja. Falsy værdier er false og nej."
+  },
+  "modal-show-user-label": {
+    "title": "Bruger Label",
+    "description": "Print labels til {{username}}",
+    "prod-no": "Email",
+    "size": "Labelstørrelse",
+    "size_small": "Lille",
+    "size-desc_small": "Egnet til 51x26mm",
+    "size_big": "Stor",
+    "size-desc_big": "Egnet til 100x192mm",
+    "size_medium": "Medium",
+    "size-desc_medium": "Egnet til 76x51mm"
   }
 }
