@@ -4,7 +4,7 @@ import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
 import { cn, obscureEmail } from '@/lib/utils'
 import { QRCodeSVG } from 'qrcode.react'
-import { useRef, useState, useTransition } from 'react'
+import { useRef, useState } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { ButtonOpenPrint } from '../inventory/button-open-print'
 import { LabelSize } from '../inventory/modal-show-product-label'
@@ -30,8 +30,6 @@ interface Props {}
 
 export function ModalQrPrint({}: Props) {
   const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string>()
-  const [pending, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'other')
   const sizes = ['small', 'medium', 'big']
@@ -47,7 +45,6 @@ export function ModalQrPrint({}: Props) {
     setOpen(open)
   }
 
-  //add custom event listener
   useCustomEventListener('PrintQrForUser', (data: any) => {
     setOpen(true)
     setUserName(data.userName)
