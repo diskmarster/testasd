@@ -51,8 +51,11 @@ function TableToolbarFilters<T>({
       const savedFilters: string[] = JSON.parse(
         localStorage.getItem(filterLocalStorageKey) || '[]'
       )
-	  const fields = filterFields.filter(ff => savedFilters.includes(ff.column?.id || ""))
-	  selectedFields.forEach(f => fields.push(f))
+	  if (selectedFields.length > 0) {
+		  selectedFields.forEach(sf => savedFilters.push(sf.column?.id || ""))
+	  }
+	  const unqFilters = new Set(savedFilters)
+	  const fields = filterFields.filter(ff => unqFilters.has(ff.column?.id || ""))
       setSelectedFields(fields)
     }
   }, [filterLocalStorageKey])
