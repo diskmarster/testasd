@@ -49,7 +49,8 @@ interface Props {
 }
 
 export function TableAdminLocations({ data, user }: Props) {
-  const LOCALSTORAGE_KEY = 'users_cols'
+  const LOCALSTORAGE_KEY = 'locations_cols'
+  const FILTERS_KEY = 'locations_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
   const columns = useMemo(
@@ -144,6 +145,7 @@ export function TableAdminLocations({ data, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

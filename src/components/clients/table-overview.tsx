@@ -18,6 +18,7 @@ const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
 const ROW_PER_PAGE = [25, 50, 75, 100]
 const LOCALSTORAGE_KEY = 'clients_cols'
+const FILTERS_KEY = 'clients_filters'
 
 interface Props {
   data: CustomerWithUserCount[]
@@ -107,6 +108,7 @@ export function TableClients({ data }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

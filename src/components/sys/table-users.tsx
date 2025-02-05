@@ -47,6 +47,7 @@ interface Props {
 
 export function TableSysUsers({ data }: Props) {
   const LOCALSTORAGE_KEY = 'sys_users_cols'
+  const FILTERS_KEYS = 'sys_users_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'sys-bruger')
   const columns = useMemo(() => getTableSysUsersColumns(t), [t])
@@ -132,6 +133,7 @@ export function TableSysUsers({ data }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEYS}
       />
       <div className='rounded-md border'>
         <Table>

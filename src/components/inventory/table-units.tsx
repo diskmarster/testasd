@@ -49,6 +49,7 @@ interface Props {
 
 export function UnitOverview({ units, user }: Props) {
   const LOCALSTORAGE_KEY = 'unit_cols'
+  const FILTERS_KEY = 'unit_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'enheder')
   const columns = useMemo(() => getTableUnitColumns(lng, t), [lng, t])
@@ -136,6 +137,7 @@ export function UnitOverview({ units, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

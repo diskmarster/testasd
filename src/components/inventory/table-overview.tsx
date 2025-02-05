@@ -40,7 +40,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -74,6 +74,7 @@ export function TableOverview({
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'oversigt')
   const LOCALSTORAGE_KEY = 'inventory_cols'
+  const FILTERS_KEY = 'inventory_filters'
   const columns = useMemo(
     () => getTableOverviewColumns(plan, user, lng, t),
     [user, plan, lng, t],
@@ -176,6 +177,7 @@ export function TableOverview({
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}	
       />
       <div className='rounded-md border'>
         <Table>

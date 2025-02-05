@@ -46,6 +46,7 @@ interface Props {
 
 export function TableBatch({ data, user }: Props) {
   const LOCALSTORAGE_KEY = 'batch_cols'
+  const FILTERS_KEY = 'batch_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'batch')
   const columns = useMemo(() => getTableBatchColumns(lng, t), [lng, t])
@@ -140,6 +141,7 @@ export function TableBatch({ data, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

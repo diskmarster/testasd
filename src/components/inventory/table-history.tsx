@@ -63,6 +63,7 @@ export function TableHistory({
   batches,
 }: Props) {
   const LOCALSTORAGE_KEY = 'history_cols'
+  const FILTERS_KEY = 'history_filters'
   const lng = useContext(LanguageContext)
   const { t } = useTranslation(lng, 'historik')
   const columns = useMemo(
@@ -165,6 +166,7 @@ export function TableHistory({
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

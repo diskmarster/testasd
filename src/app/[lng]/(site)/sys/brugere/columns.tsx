@@ -116,8 +116,8 @@ export function getTableSysUsersColumns(
       <TableHeader column={column} title={t('columns.status')} />
     ),
     cell: ({ getValue, row }) => {
-      const value = getValue<boolean | null>()
-      const badgeVariant = value == null
+      const value = getValue<boolean | string>()
+      const badgeVariant = value == '-'
         ? !isLinkExpired(new Date(row.original.inserted * 1000), 8)
           ? 'orange'
           : 'yellow'
@@ -125,7 +125,7 @@ export function getTableSysUsersColumns(
           ? 'gray'
           : 'red'
 
-      const label = value == null
+      const label = value == '-'
         ? !isLinkExpired(new Date(row.original.inserted * 1000), 8)
           ? t('columns.expired')
           : t('columns.waiting')
@@ -403,8 +403,9 @@ export function getTableSysUsersFilters(
     label: t('columns.status'),
     value: '',
     options: [
-      { value: true, label: t('columns.active') },
-      { value: false, label: t('columns.inactive') },
+      { value: 1, label: t('columns.active') },
+      { value: 0, label: t('columns.inactive') },
+      { value: '-', label: 'Inviteret' },
     ],
   }
 
