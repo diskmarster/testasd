@@ -45,7 +45,7 @@ const TableActionsTrigger = forwardRef<
     return (
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger ref={ref}>
+          <TooltipTrigger ref={ref} asChild>
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' size='iconSm' disabled={disabled}>
                 <Icons.horizontalDots className='size-4' />
