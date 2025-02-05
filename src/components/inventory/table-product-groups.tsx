@@ -48,6 +48,7 @@ export function TableProductGroups({ groups, user }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'varegrupper')
   const LOCALSTORAGE_KEY = 'groups_cols'
+  const FILTERS_KEY = 'groups_filters'
   const columns = useMemo(() => getTableGroupColumns(lng, t), [lng, t])
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -138,6 +139,7 @@ export function TableProductGroups({ groups, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

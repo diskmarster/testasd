@@ -55,6 +55,7 @@ interface Props {
 }
 
 export function TableReorder({ data, user, units, groups }: Props) {
+  const FILTERS_KEY = 'reorder_filters'
   const LOCALSTORAGE_KEY = 'reorder_cols'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
@@ -150,6 +151,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>
