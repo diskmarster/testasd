@@ -145,7 +145,6 @@ function FilterPopover<T>({
   index: number
   t: (key: string, opts?: any) => string
 }) {
-	console.log(field.label, field)
   const [value, setSearched] = useState<string>('')
   const [selectValue, setSelectValue] = useState<string[]>(
     (field.column?.getFilterValue() ?? []) as any[],
