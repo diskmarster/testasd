@@ -285,7 +285,7 @@ export const user = {
         name: sql<string>`coalesce(${userTable.name}, '-')`,
         email: sql<string>`coalesce(${userTable.email}, ${userLinkTable.email})`,
         role: sql<UserRole>`coalesce(${userTable.role}, ${userLinkTable.role})`,
-        isActive: sql<boolean | null>`coalesce(${userTable.isActive}, null)`,
+        isActive: sql<boolean | null>`coalesce(${userTable.isActive}, '-')`,
         inserted: sql<number>`coalesce(${userTable.inserted}, ${userLinkTable.inserted})`,
         updated: sql<number | '-'>`coalesce(${userTable.updated}, '-')`,
         appAccess: sql<boolean>`coalesce(${userTable.appAccess}, ${userLinkTable.appAccess})`,
