@@ -68,7 +68,7 @@ export function Item({
           item.isDisabled &&
           'pointer-events-none cursor-not-allowed select-none opacity-60',
         )}>
-        <NavigationMenuTrigger className='gap-1.5 p-2 text-muted-foreground'>
+        <NavigationMenuTrigger className='gap-1 p-2 text-muted-foreground'>
           {t(item.label)}
         </NavigationMenuTrigger>
         <NavigationMenuContent>

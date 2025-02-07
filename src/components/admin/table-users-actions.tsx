@@ -45,7 +45,7 @@ export function TableUsersActions({ table, row }: Props) {
       <DropdownMenuItem
         onClick={() => {
           emitCustomEvent('EditUserByID', {
-            userID: row.original.id,
+            user: row.original,
           })
         }}>
         {t('table-users-actions.edit-user')}

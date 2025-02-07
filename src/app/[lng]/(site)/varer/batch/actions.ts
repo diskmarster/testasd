@@ -38,7 +38,7 @@ export const createBatchAction = authedAction
       throw new ActionError(t('batch-actions.batch-not-created'))
     }
 
-    revalidatePath(`${ctx.lang}/admin/batch`)
+    revalidatePath(`${ctx.lang}/varer/batch`)
   })
 
 export const updateBatchAction = editableAction
@@ -55,7 +55,7 @@ export const updateBatchAction = editableAction
       throw new ActionError(t('batch-actions.batch-not-updated'))
     }
 
-    revalidatePath(`${ctx.lang}/admin/batch`)
+    revalidatePath(`${ctx.lang}/varer/batch`)
   })
 
 export const toggleBarredBatchAction = editableAction
@@ -73,5 +73,5 @@ export const toggleBarredBatchAction = editableAction
     if (!updatedBatch) {
       throw new ActionError(t('batch-actions.batch-not-updated'))
     }
-    revalidatePath(`${ctx.lang}/admin/batch`)
+    revalidatePath(`${ctx.lang}/varer/batch`)
   })

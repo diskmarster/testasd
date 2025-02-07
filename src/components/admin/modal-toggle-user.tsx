@@ -1,7 +1,5 @@
 'use client'
 
-import { toggleUserStatusAction } from '@/app/[lng]/(site)/admin/organisation/actions'
-import { changeUserStatusValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -17,7 +15,6 @@ import {
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { UserNoHash } from '@/lib/database/schema/auth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -32,12 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { changeUserStatusValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
+import { toggleUserStatusAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 
-interface Props {
-  users: UserNoHash[]
-}
+interface Props {}
 
-export function ModalToggleUser({ users }: Props) {
+export function ModalToggleUser({}: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()

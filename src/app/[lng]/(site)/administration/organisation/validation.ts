@@ -114,4 +114,5 @@ export const editUserValidation = (t: (key: string, options?: any) => string) =>
 
 export const getLocationsByUserIDValidation = z.object({
   userID: z.coerce.number(),
+  customerID: z.coerce.number(),
 })

@@ -19,7 +19,6 @@ import {
   ProductID,
 } from '@/lib/database/schema/inventory'
 
-import { ImportProducts } from '@/app/[lng]/(site)/admin/produkter/validation'
 import { serverTranslation } from '@/app/i18n'
 import { fallbackLng } from '@/app/i18n/settings'
 import { user as userData } from '@/data/user'
@@ -31,9 +30,10 @@ import {
 } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
+import { ImportProducts } from '@/app/[lng]/(site)/varer/produkter/validation'
 
 export const productService = {
-  create: async function (
+  create: async function(
     productData: NewProduct,
     customerID: CustomerID,
     userID: UserID,
@@ -138,26 +138,49 @@ export const productService = {
       throw new ActionError(ACTION_ERR_INTERNAL)
     }
   },
-  getAllProductsWithInventories: async function (
+  getAllProductsWithInventories: async function(
     customerID: CustomerID,
   ): Promise<
     (Product & { unit: string; group: string; inventories: Inventory[] })[]
   > {
     try {
-      const products = await product.getAllByCustomerID(customerID)
+      const productsWithInventory =
+        await product.getWithInventoryByCustomerID(customerID)
 
-      return await Promise.all(
-        products.map(async p => {
-          const inventories = await inventoryService.getInventoryByProductID(
-            p.id,
-          )
+      const invMap: Map<ProductID, Inventory[]> = productsWithInventory.reduce<
+        Map<ProductID, Inventory[]>
+      >((acc, cur) => {
+        if (acc.has(cur.id)) {
+          const inventories = acc.get(cur.id)!
+          inventories.push(cur.inventory)
+          acc.set(cur.id, inventories)
+        } else {
+          acc.set(cur.id, [cur.inventory])
+        }
 
-          return {
-            ...p,
-            inventories,
-          }
-        }),
-      )
+        return acc
+      }, new Map())
+
+      return productsWithInventory.map(p => ({
+        id: p.id,
+        customerID: p.customerID,
+        inserted: p.inserted,
+        updated: p.updated,
+        isBarred: p.isBarred,
+        groupID: p.groupID,
+        unitID: p.unitID,
+        group: p.group,
+        unit: p.unit,
+        text1: p.text1,
+        text2: p.text2,
+        text3: p.text3,
+        sku: p.sku,
+        barcode: p.barcode,
+        costPrice: p.costPrice,
+        salesPrice: p.salesPrice,
+        note: p.note,
+        inventories: invMap.get(p.id) || [],
+      }))
     } catch (e) {
       console.error(e)
       Promise.reject(
@@ -166,13 +189,13 @@ export const productService = {
       return []
     }
   },
-  getAllByCustomerID: async function (
+  getAllByCustomerID: async function(
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<FormattedProduct[]> {
     return await product.getAllByCustomerID(customerID, trx)
   },
-  updateByID: async function (
+  updateByID: async function(
     productID: ProductID,
     updatedProductData: PartialProduct,
     userID: UserID,
@@ -237,7 +260,7 @@ export const productService = {
       }
     })
   },
-  updateBarredStatus: async function (
+  updateBarredStatus: async function(
     productID: ProductID,
     isBarred: boolean,
     userID: UserID,
@@ -286,7 +309,7 @@ export const productService = {
       }
     })
   },
-  getByID: async function (
+  getByID: async function(
     id: ProductID,
     lang: string = fallbackLng,
   ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> {
@@ -310,7 +333,7 @@ export const productService = {
       )
     }
   },
-  importProducts: async function (
+  importProducts: async function(
     customerID: CustomerID,
     userID: UserID,
     importedProducts: ImportProducts,
@@ -556,12 +579,12 @@ export const productService = {
     console.log(`${performance.now() - start} ms execution time`)
     return transaction
   },
-  createHistoryLog: async function (
+  createHistoryLog: async function(
     newProductLog: NewProductHistory,
   ): Promise<ProductHistory | undefined> {
     return await product.createHistoryLog(newProductLog)
   },
-  getHistoryLogs: async function (
+  getHistoryLogs: async function(
     customerID: CustomerID,
     productID?: ProductID,
   ): Promise<ProductHistory[]> {
@@ -571,7 +594,7 @@ export const productService = {
       return product.getHistoryLogsForCustomer(customerID)
     }
   },
-  importInventoryQuantities: async function (data: {
+  importInventoryQuantities: async function(data: {
     customerID: CustomerID
     locationID: LocationID
     items: { sku: string; placement: string; quantity: number }[]
@@ -646,7 +669,7 @@ export const productService = {
 
     return transaction
   },
-  importInventoryHistory: async function (
+  importInventoryHistory: async function(
     data: {
       customerID: CustomerID
       locationID: LocationID

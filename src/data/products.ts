@@ -2,6 +2,8 @@ import { db, TRX } from '@/lib/database'
 import { CustomerID } from '@/lib/database/schema/customer'
 import {
   groupTable,
+  Inventory,
+  inventoryTable,
   NewProduct,
   NewProductHistory,
   PartialProduct,
@@ -18,6 +20,7 @@ import { FormattedProduct } from './products.types'
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
 const PRODUCT_COLS = getTableColumns(productTable)
+const INVENTORY_COLS = getTableColumns(inventoryTable)
 
 export const product = {
   getAllByCustomerID: async function(
@@ -163,5 +166,25 @@ export const product = {
           eq(productHistoryTable.productID, productID),
         ),
       )
+  },
+  getWithInventoryByCustomerID: async function(
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<(FormattedProduct & {inventory: Inventory})[]> {
+    const product = await trx
+      .select({
+        ...PRODUCT_COLS,
+        unit: UNIT_COLS.name,
+        group: GROUP_COLS.name,
+        inventory: {
+          ...INVENTORY_COLS,
+        }
+      })
+      .from(productTable)
+      .where(eq(productTable.customerID, customerID))
+      .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
+      .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+      .innerJoin(inventoryTable, eq(inventoryTable.productID, productTable.id))
+    return product
   },
 }

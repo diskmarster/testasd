@@ -1,9 +1,5 @@
 'use client'
 
-import {
-  getTableLocationsColumns,
-   getTableLocationsFilters,
-} from '@/app/[lng]/(site)/admin/organisation/location-columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -41,6 +37,7 @@ import { ButtonToggleLocations } from './button-toggle-locations'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { LocationWithCounts } from '@/data/location.types'
+import { getTableLocationsColumns, getTableLocationsFilters } from '@/app/[lng]/(site)/administration/organisation/location-columns'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -52,7 +49,8 @@ interface Props {
 }
 
 export function TableAdminLocations({ data, user }: Props) {
-  const LOCALSTORAGE_KEY = 'users_cols'
+  const LOCALSTORAGE_KEY = 'locations_cols'
+  const FILTERS_KEY = 'locations_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
   const columns = useMemo(
@@ -147,6 +145,7 @@ export function TableAdminLocations({ data, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

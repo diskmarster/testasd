@@ -1,5 +1,3 @@
-import { updateGroupAction } from '@/app/[lng]/(site)/admin/varegrupper/actions'
-import { createGroupValidation } from '@/app/[lng]/(site)/admin/varegrupper/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { LanguageContext } from '@/context/language'
@@ -22,6 +20,8 @@ import {
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { createGroupValidation } from '@/app/[lng]/(site)/varer/varegrupper/validation'
+import { updateGroupAction } from '@/app/[lng]/(site)/varer/varegrupper/actions'
 
 export function ModalUpdateGroup({
   groupToEdit,
@@ -39,7 +39,7 @@ export function ModalUpdateGroup({
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = createGroupValidation(validationT)
 
-  const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
+  const { handleSubmit, register, formState, setValue, reset } = useForm<
     z.infer<typeof schema>
   >({
     resolver: zodResolver(schema),

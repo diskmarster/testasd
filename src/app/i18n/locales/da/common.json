@@ -101,8 +101,12 @@
     "overview": "Oversigt",
     "history": "Historik",
     "restock": "Genbestil",
-    "administration": "Administration",
-    "administration-dropdown": {
+    "administration": {
+      "title": "Administration",
+      "organisation": "Organisation",
+      "organisation-description": "Her kan du administrere dine brugere, lokationer og firma.",
+      "reports": "Rapporter",
+      "reports-description": "Her kan du trække rapporter på data om dit lager.",
       "users": "Brugere",
       "users-description": "Her kan du oprette og opdatere brugere.",
       "products": "Varer",
@@ -111,20 +115,29 @@
       "product-groups-description": "Her kan du oprette og opdatere varegrupper.",
       "placements": "Placeringer",
       "placements-description": "Her kan du oprette og opdatere placeringer.",
-      "organisation": "Lokationer",
-      "organisation-description": "Her kan du administrere dine brugere, lokationer og firma.",
       "batch": "Batchnummer",
       "batch-description": "Her kan du oprette og opdatere batchnumre."
     },
     "sys-admin-dropdown": {
       "customers": "Kunder",
       "customers-description": "Se en oversigt over alle kunder i Nem Lager.",
-      "admin-users": "Admin Brugere",
+      "admin-users": "Brugere",
       "admin-users-description": "Se en oversigt over alle brugere i Nem Lager.",
       "units": "Enheder",
       "units-description": "Her kan du oprette og opdatere enheder.",
       "error-messages": "Fejlbeskeder",
       "error-messages-description": "Få et overblik over alle fejlbeskeder"
+    },
+    "products": {
+      "title": "Varer",
+      "products": "Kartotek",
+      "products-description": "Her kan du få et overblik, redigere eller importere til dit kartotek",
+      "groups": "Varegrupper",
+      "groups-description": "Her kan du få et overblik, redigere eller oprette nye varegrupper",
+      "placements": "Placeringer",
+      "placements-description": "Her kan du få et overblik, redigere eller oprette nye placeringer",
+      "batch": "Batch",
+      "batch-description": "Her kan du få et overblik, redigere eller oprette nye batchnumre"
     }
   },
   "toasts": {

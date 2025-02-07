@@ -1,9 +1,5 @@
 'use client'
 
-import {
-  getTableUsersColumns,
-  getTableUsersFilters,
-} from '@/app/[lng]/(site)/admin/organisation/user-columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -16,7 +12,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { UserNoHash } from '@/lib/database/schema/auth'
-import { Customer } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import {
   ColumnFiltersState,
@@ -42,6 +37,7 @@ import { TableFloatingBar } from '../table/table-floating-bar'
 import { ButtonToggleUsers } from './button-toggle-user'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
+import { getTableUsersColumns, getTableUsersFilters } from '@/app/[lng]/(site)/administration/organisation/user-columns'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -50,11 +46,11 @@ const ROW_PER_PAGE = [25, 50, 75, 100]
 interface Props {
   data: UserNoHash[]
   user: User
-  customer: Customer
 }
 
-export function TableAdminUsers({ data, user, customer }: Props) {
+export function TableAdminUsers({ data, user }: Props) {
   const LOCALSTORAGE_KEY = 'users_cols'
+  const FILTERS_KEY = 'users_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
   const columns = useMemo(() => getTableUsersColumns(user.role, lng, t), [user.role, lng, t])
@@ -144,6 +140,7 @@ export function TableAdminUsers({ data, user, customer }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

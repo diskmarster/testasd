@@ -41,7 +41,7 @@ export const createGroupAction = editableAction
       throw new ActionError(t('product-group-action.product-group-not-created'))
     }
 
-    revalidatePath(`/${ctx.lang}/admin/varegrupper`)
+    revalidatePath(`/${ctx.lang}/varer/varegrupper`)
   })
 
 export const updateGroupAction = editableAction
@@ -56,7 +56,7 @@ export const updateGroupAction = editableAction
     if (!updatedGroup) {
       throw new ActionError(t('product-group-action.product-group-not-updated'))
     }
-    revalidatePath(`/${ctx.lang}/admin/varegrupper`)
+    revalidatePath(`/${ctx.lang}/varer/varegrupper`)
   })
 
 export const toggleBarredGroupAction = editableAction
@@ -73,5 +73,5 @@ export const toggleBarredGroupAction = editableAction
         t('product-group-action.product-group-not-updated-barred'),
       )
     }
-    revalidatePath(`/${ctx.lang}/admin/varegrupper`)
+    revalidatePath(`/${ctx.lang}/varer/varegrupper`)
   })

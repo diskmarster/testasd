@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  getTableBatchColumns,
-  getTableBatchFilters,
-} from '@/app/[lng]/(site)/admin/batch/columns'
+import { getTableBatchColumns, getTableBatchFilters } from '@/app/[lng]/(site)/varer/batch/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
@@ -49,6 +46,7 @@ interface Props {
 
 export function TableBatch({ data, user }: Props) {
   const LOCALSTORAGE_KEY = 'batch_cols'
+  const FILTERS_KEY = 'batch_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'batch')
   const columns = useMemo(() => getTableBatchColumns(lng, t), [lng, t])
@@ -143,6 +141,7 @@ export function TableBatch({ data, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

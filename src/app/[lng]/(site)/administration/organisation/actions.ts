@@ -3,6 +3,7 @@
 import { serverTranslation } from '@/app/i18n'
 import { EmailInviteUser } from '@/components/email/email-invite-user'
 import { siteConfig } from '@/config/site'
+import { hasPermissionByRank } from '@/data/user.types'
 import { adminAction, getSchema } from '@/lib/safe-action'
 import { ACTION_ERR_INTERNAL, ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
@@ -27,8 +28,6 @@ import {
   resetUserPasswordValidation,
   updateCustomerValidation,
 } from './validation'
-import { hasPermissionByRank } from '@/data/user.types'
-import { custom } from 'zod'
 
 export const toggleUserStatusAction = adminAction
   .metadata({ actionName: 'toggleUserStatus' })
@@ -38,14 +37,20 @@ export const toggleUserStatusAction = adminAction
 
     if (parsedInput.status == 'inactive') {
       if (parsedInput.userIDs.some(id => ctx.user.id == id)) {
-        throw new ActionError(t('organisation-action.deactivate-own-user-error'))
+        throw new ActionError(
+          t('organisation-action.deactivate-own-user-error'),
+        )
       }
       const users = await userService.getByIDs(parsedInput.userIDs)
 
-      const hasPermission = users.some(u => hasPermissionByRank(ctx.user.role, u.role))
+      const hasPermission = users.some(u =>
+        hasPermissionByRank(ctx.user.role, u.role),
+      )
 
       if (!hasPermission) {
-        throw new ActionError(t('organisation-action.deactivate-higher-rank-user-error'))
+        throw new ActionError(
+          t('organisation-action.deactivate-higher-rank-user-error'),
+        )
       }
     }
 
@@ -72,7 +77,7 @@ export const toggleUserStatusAction = adminAction
       }
     }
 
-    revalidatePath(`/${ctx.lang}/admin/organisation`)
+    revalidatePath(`/${ctx.lang}/administration/organisation`)
   })
 
 export const inviteNewUserAction = adminAction
@@ -142,7 +147,9 @@ export const createNewLocationAction = adminAction
     const locations = await locationService.getByCustomerID(ctx.user.customerID)
     const customer = await customerService.getByID(ctx.user.customerID)
     if (!customer) {
-      throw new ActionError(t('organisation-action.company-account-doesnt-exist'))
+      throw new ActionError(
+        t('organisation-action.company-account-doesnt-exist'),
+      )
     }
 
     if (isLocationLimitReached(customer.plan, locations.length)) {
@@ -199,7 +206,7 @@ export const editLocationAction = adminAction
       throw new ActionError(t('organisation-action.location-not-updated'))
     }
 
-    revalidatePath(`/${ctx.lang}/admin/organisation`)
+    revalidatePath(`/${ctx.lang}/administration/organisation`)
   })
 
 export const changeLocationStatusAction = adminAction
@@ -231,7 +238,7 @@ export const changeLocationStatusAction = adminAction
       }
     }
 
-    revalidatePath(`/${ctx.lang}/admin/organisation`)
+    revalidatePath(`/${ctx.lang}/administration/organisation`)
   })
 
 export const updateCustomerAction = adminAction
@@ -246,13 +253,13 @@ export const updateCustomerAction = adminAction
     if (!updatedCustomer) {
       throw new ActionError(t('organisation-action.customer-wasnt-updated'))
     }
-    revalidatePath(`/${lang}/admin/organisation`)
+    revalidatePath(`/${lang}/administration/organisation`)
   })
 
 export const resetUserPasswordAction = adminAction
   .metadata({ actionName: 'resetUserPassword' })
   .schema(resetUserPasswordValidation)
-  .action(async ({ parsedInput, ctx: {user, lang} }) => {
+  .action(async ({ parsedInput, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')
     if (parsedInput.userID == user.id) {
       throw new ActionError(t('organisation-action.reset-own-pw-error'))
@@ -287,10 +294,12 @@ export const editUserAction = adminAction
 
     const userToUpdate = await userService.getByID(userID)
     if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
-      throw new ActionError(t('organisation-action.edit-higher-rank-user-error'))
+      throw new ActionError(
+        t('organisation-action.edit-higher-rank-user-error'),
+      )
     }
 
-    const {locationIDs, ...userData} = data
+    const { locationIDs, ...userData } = data
 
     const updatedUser = await userService.updateByID(userID, {
       ...userData,
@@ -300,23 +309,44 @@ export const editUserAction = adminAction
       throw new ActionError(t('organisation-action.user-wasnt-updated'))
     }
 
-    const updated = await locationService.updateAccessByUserID(userID, user.customerID, locationIDs)
+    const updated = await locationService.updateAccessByUserID(
+      userID,
+      user.customerID,
+      locationIDs,
+    )
     if (!updated) {
-      throw new ActionError(t('organisation-action.user-locations-wasnt-updated'))
+      throw new ActionError(
+        t('organisation-action.user-locations-wasnt-updated'),
+      )
     }
   })
 
 export const getLocationsByUserIDAction = adminAction
   // No metadata, since we dont need to log when querying data
   .schema(getLocationsByUserIDValidation)
-  .action(async ({ parsedInput: { userID } }) => {
-    return await locationService.getAllByUserID(userID)
+  .action(async ({ parsedInput: { userID, customerID }, ctx }) => {
+    let allLocations = await locationService.getByCustomerID(customerID)
+    const userLocations = await locationService.getAllByUserID(userID)
+    const sessionUserLocations = await locationService.getAllByUserID(
+      ctx.user.id,
+    )
+
+    if (!hasPermissionByRank(ctx.user.role, 'administrator')) {
+      allLocations = allLocations.filter(loc =>
+        sessionUserLocations.some(l => l.id == loc.id),
+      )
+    }
+
+    return {
+      allLocations,
+      userLocations,
+    }
   })
 
 export const resetUserPinAction = adminAction
   .metadata({ actionName: 'resetUserPin' })
   .schema(resetUserPasswordValidation)
-  .action(async ({ parsedInput, ctx: {user, lang} }) => {
+  .action(async ({ parsedInput, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')
     if (parsedInput.userID == user.id) {
       throw new ActionError(t('organisation-action.reset-own-pin-error'))
@@ -324,10 +354,10 @@ export const resetUserPinAction = adminAction
 
     const userToUpdate = await userService.getByID(parsedInput.userID)
     if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
-      throw new ActionError(t('organisation-action.reset-higher-rank-pin-error'))
+      throw new ActionError(
+        t('organisation-action.reset-higher-rank-pin-error'),
+      )
     }
-
-  console.log(parsedInput)
 
     const linkCreated = await passwordResetService.createAndSendLink(
       parsedInput.email,

@@ -1,7 +1,5 @@
 'use client'
 
-import { changeLocationStatusAction } from '@/app/[lng]/(site)/admin/organisation/actions'
-import { changeLocationStatusValidation } from '@/app/[lng]/(site)/admin/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -31,6 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select'
+import { changeLocationStatusValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
+import { changeLocationStatusAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 
 export function ModalToggleLocation() {
   const [open, setOpen] = useState(false)

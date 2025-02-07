@@ -39,7 +39,7 @@ export const createPlacementAction = editableAction
       throw new ActionError(t('placement-action.placement-not-created'))
     }
 
-    revalidatePath(`/${ctx.lang}/admin/placeringer`)
+    revalidatePath(`/${ctx.lang}/varer/placeringer`)
   })
 
 export const updatePlacementAction = editableAction
@@ -59,7 +59,7 @@ export const updatePlacementAction = editableAction
       if (!updatedPlacement) {
         throw new ActionError(t('placement-action.placement-not-updated'))
       }
-      revalidatePath(`/${ctx.lang}/admin/placeringer`)
+      revalidatePath(`/${ctx.lang}/varer/placeringer`)
     },
   )
 
@@ -78,5 +78,5 @@ export const toggleBarredPlacementAction = editableAction
     if (!updatedPlacement) {
       throw new ActionError(t('placement-action.placement-not-updated-barred'))
     }
-    revalidatePath(`/${ctx.lang}/admin/placeringer`)
+    revalidatePath(`/${ctx.lang}/varer/placeringer`)
   })

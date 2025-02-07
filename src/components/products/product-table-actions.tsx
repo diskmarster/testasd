@@ -1,4 +1,3 @@
-import { toggleBarredProductAction } from '@/app/[lng]/(site)/admin/produkter/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { UpdateProductsForm } from '@/components/products/update-product-form'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
@@ -9,6 +8,7 @@ import { Row, Table } from '@tanstack/react-table'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
+import { toggleBarredProductAction } from '@/app/[lng]/(site)/varer/produkter/actions'
 
 interface Props {
   table: Table<FormattedProduct>

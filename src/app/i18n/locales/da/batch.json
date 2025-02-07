@@ -10,7 +10,8 @@
     "no": "Aktiv",
     "expiration-date": "Udløbsdato",
     "created-at": "Oprettet",
-    "updated-at": "Opdateret"
+    "updated-at": "Opdateret",
+	"no-batches": "Ingen batchnr. fundet"
   },
   "create-batch-modal": {
     "toast-error": "Serverfejl",

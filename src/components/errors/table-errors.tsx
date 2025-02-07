@@ -53,6 +53,7 @@ export function TableErrors({
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'errors')
   const LOCALSTORAGE_KEY = 'inventory_cols'
+  const FILTERS_KEY = 'inventory_filters'
   const columns = useMemo(() => getTableErrorsColumns(t), [t])
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -143,6 +144,7 @@ export function TableErrors({
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

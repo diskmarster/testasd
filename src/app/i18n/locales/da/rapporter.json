@@ -1,0 +1,14 @@
+{
+  "title": "Rapporter",
+  "description": "Her kan du trækker rapporter på data om dit lager",
+  "inventory-report-modal": {
+    "card-label": "Lagerværdi",
+    "card-desc": "Træk en rapport over lagerværdi for en lokation",
+    "title": "Lagerværdi rapport",
+    "desc": "Download en rapport med lagerværdi for en lokation.",
+    "location-label": "Lokation",
+    "choose-location": "Vælg lokation",
+    "loading-location": "Henter lokationer...",
+    "download-button": "Download rapport"
+  }
+}

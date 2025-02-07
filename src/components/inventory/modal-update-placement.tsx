@@ -1,5 +1,3 @@
-import { updatePlacementAction } from '@/app/[lng]/(site)/admin/placeringer/actions'
-import { createPlacementValidation } from '@/app/[lng]/(site)/admin/placeringer/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
@@ -22,6 +20,8 @@ import {
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { createPlacementValidation } from '@/app/[lng]/(site)/varer/placeringer/validation'
+import { updatePlacementAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
 
 export function ModalUpdatePlacement({
   placementToEdit,
@@ -39,7 +39,7 @@ export function ModalUpdatePlacement({
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = createPlacementValidation(validationT)
 
-  const { handleSubmit, register, formState, setValue, reset, watch } = useForm<
+  const { handleSubmit, register, formState, setValue, reset, } = useForm<
     z.infer<typeof schema>
   >({
     resolver: zodResolver(schema),

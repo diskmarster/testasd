@@ -1,14 +1,14 @@
-import { toggleBarredBatchAction } from '@/app/[lng]/(site)/admin/batch/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'
 import { LanguageContext } from '@/context/language'
 import { Batch } from '@/lib/database/schema/inventory'
 import { Row } from '@tanstack/react-table'
-import { useContext, useState, useTransition } from 'react'
+import { useContext, useTransition } from 'react'
 import { emitCustomEvent } from 'react-custom-events'
 import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
+import { toggleBarredBatchAction } from '@/app/[lng]/(site)/varer/batch/actions'
 
 interface Props {
   row: Row<Batch>
@@ -17,7 +17,6 @@ interface Props {
 export function TableBatchActions({ row }: Props) {
   const lng = useContext(LanguageContext)
   const { t } = useTranslation(lng, 'batch')
-  const [open, setOpen] = useState<boolean>(false)
   const [_, startTransition] = useTransition()
 
   const handleToggleBar = () => {

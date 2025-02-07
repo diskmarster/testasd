@@ -1,9 +1,5 @@
 'use client'
 
-import {
-  getProductOverviewColumns,
-  getProductTableOverviewFilters,
-} from '@/app/[lng]/(site)/admin/produkter/columns'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import {
@@ -39,6 +35,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { TableToolbar } from '../table/table-toolbar'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
+import { getProductOverviewColumns, getProductTableOverviewFilters } from '@/app/[lng]/(site)/varer/produkter/columns'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -53,6 +50,7 @@ interface Props {
 
 export function ProductOverview({ data, plan, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'product_cols'
+  const FILTERS_KEY = 'product_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'produkter')
   const columns = useMemo(
@@ -153,6 +151,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
+		filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

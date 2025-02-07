@@ -1,0 +1,92 @@
+{
+  "page": {
+    "title": "Users",
+    "description": "Administrate all users in Nem Lager"
+  },
+  "columns": {
+    "isActive-null_true": "Link er udløbet",
+    "isActive-null_false": "Aktivering venter",
+    "user-name": "Name",
+    "user-name-placeholder": "Search by name",
+    "company": "Company",
+    "company-placeholder": "Search by company",
+    "email": "Email",
+    "email-placeholder": "Search by email",
+    "user-role": "Role",
+    "status": "Status",
+    "access": "Access",
+    "access-web": "Web access",
+    "access-app": "App access",
+    "access-price": "Price access",
+    "access-none": "None",
+    "access_true": "Yes",
+    "access_false": "No",
+    "active": "Active",
+    "inactive": "Inactive",
+    "waiting": "Waiting",
+    "expired": "Expired",
+    "updated": "Updated",
+    "created": "Inserted"
+  },
+  "modal-delete-user": {
+    "title": "Delete user?",
+    "description": "This action is permanent and cannot be reversed. Are you sure?",
+    "cancel-button": "No",
+    "confirm-button": "Yes",
+    "confirm-toast": "User was deleted succesfully"
+  },
+  "modal-delete-link": {
+    "title": "Slet inviteringslink?",
+    "description": "Denne handling er permanent og kan ikke laves om. Er du helt sikker?",
+    "cancel-button": "Nej",
+    "confirm-button": "Ja",
+    "confirm-toast": "Invite link was deleted succesfully"
+  },
+  "modal-create-user": {
+    "title": "Invite or register a new user",
+    "description": "The user will only recieve an email upon registering if you choose to do so.",
+    "customer-label": "Customer",
+    "customer-placeholder": "Search for customers...",
+    "customer-empty": "No customers",
+    "customer-limit-reached": "Customer has reached their user limit",
+    "email-label": "Email",
+    "email-placeholder": "Users email",
+    "role-label": "Role",
+    "role-empty": "No roles",
+    "role-placeholder": "Search for roles...",
+    "role-access-label": "Which rights should the user have?",
+    "role-web-access": "The user should have access to the web",
+    "role-app-access": "The user should have access to the app",
+    "role-price-access": "The user should have access to the prices",
+    "locations-label": "Locations access",
+    "locations-placeholder": "Search or choose locations...",
+    "invite-label": "Invite",
+    "register-label": "Register",
+    "name-label": "Name",
+    "name-placeholder": "Users name",
+    "password-label": "Password",
+    "password-placeholder": "Users password",
+    "pin-label": "PIN code",
+    "pin-placeholder": "Users pin",
+    "send-button": "Send",
+    "send-button_true": "Invite",
+    "send-button_false": "Register",
+    "success-toast": "Success!",
+    "mail-checkbox": "Send an email to the user with login information"
+  },
+  "invite-create-action": {
+    "email-already-exists": "A user with that email already exists",
+    "client-not-found": "CustomerID {{customerID}} does not exist",
+    "client-user-limit": "Customer has reached their user limit",
+    "link-not-created": "Something went wrong when creating users invite link",
+    "email-subject": "You have been invited to {{app}} by Skancode A/S on behalf of {{customer}}",
+    "user-not-created": "Something went wrong when creating the user"
+  },
+  "modal-resend-link": {
+    "title": "Send new invite link",
+    "description": "Send a new invite link to user if the old link is expired or not received.",
+    "cancel-button": "No",
+    "confirm-button": "Yes",
+    "confirm-toast": "New invite link sent"
+  }
+}

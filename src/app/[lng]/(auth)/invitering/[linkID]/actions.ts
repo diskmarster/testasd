@@ -49,7 +49,7 @@ export const signUpInvitedAction = publicAction
       isActive: true,
       webAccess: activationLink.webAccess,
       appAccess: activationLink.appAccess,
-      priceAccess: activationLink.priceAccess
+      priceAccess: activationLink.priceAccess,
     })
     if (!newUser) {
       throw new ActionError(t('invited-user-action.user-not-created'))
@@ -62,6 +62,10 @@ export const signUpInvitedAction = publicAction
       )
     }
 
+    if (newUser.role == 'afgang') {
+      redirect(`/${ctx.lang}/log-ind`)
+      return
+    }
     locationService.setCookie(activationLink.locationIDs[0])
     await sessionService.create(newUser.id)
 
