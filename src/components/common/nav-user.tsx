@@ -52,9 +52,6 @@ export function NavUser({ user }: { user: User }) {
               {t('nav-user.get-help')}
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href={`/${lng}/faq`}>F.A.Q</Link>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className='focus:text-destructive' asChild>
