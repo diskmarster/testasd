@@ -4,6 +4,7 @@ import { NavLocation } from './nav-location'
 import { NavMobile } from './nav-mobile'
 import { NavSettings } from './nav-settings'
 import { NavUser } from './nav-user'
+import { NavFAQ } from './nav-faq'
 
 export async function Header({ lng }: { lng: string }) {
   const { session, user } = await sessionService.validate()
@@ -18,6 +19,7 @@ export async function Header({ lng }: { lng: string }) {
           <nav className='flex items-center space-x-2'>
             <NavLocation />
             <NavSettings lng={lng} />
+			<NavFAQ />
             <NavUser user={user} />
           </nav>
         </div>
