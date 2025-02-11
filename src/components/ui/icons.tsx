@@ -48,11 +48,13 @@ import {
   Smartphone,
   CircleDollarSign,
   Ban,
-  Hash
+  Hash,
+  CircleHelp,
 } from 'lucide-react'
 
 export const Icons = {
   updown: ChevronsUpDown,
+  help: CircleHelp,
   hash: Hash,
   copy: Copy,
   chevronRight: ChevronRight,
