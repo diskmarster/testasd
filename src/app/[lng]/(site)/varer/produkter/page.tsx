@@ -25,7 +25,7 @@ export default async function Page({ params: { lng } }: PageProps) {
     return
   }
 
-  if (!hasPermissionByRank(user.role, 'moderator')) {
+  if (!hasPermissionByRank(user.role, 'læseadgang')) {
     redirect('/oversigt')
   }
 
