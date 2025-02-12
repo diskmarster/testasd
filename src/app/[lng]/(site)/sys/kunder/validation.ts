@@ -143,7 +143,7 @@ export const importHistoryDataValidation = (
             message: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
           }),
         ),
-        type: z.enum(['tilgang', 'afgang']),
+        type: z.enum(['tilgang', 'afgang', 'regulering']),
         quantity: z.coerce.number(),
         placement: z.preprocess(
           val => (val as string).toString().toUpperCase(),
