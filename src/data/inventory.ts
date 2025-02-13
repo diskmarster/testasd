@@ -1,5 +1,6 @@
 import { FormattedInventory, FormattedReorder } from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
+import { attachmentsTable } from '@/lib/database/schema/attachments'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
@@ -36,7 +37,7 @@ import {
   UnitID,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm'
+import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
 const PLACEMENT_COLS = getTableColumns(placementTable)
@@ -64,6 +65,7 @@ export const inventory = {
           ...PRODUCT_COLS,
           unit: UNIT_COLS.name,
           group: GROUP_COLS.name,
+		  fileCount: count(attachmentsTable.id)
         },
         placement: { ...PLACEMENT_COLS },
         batch: { ...BATCH_COLS },
@@ -71,6 +73,12 @@ export const inventory = {
       .from(inventoryTable)
       .where(eq(inventoryTable.locationID, locationID))
       .innerJoin(productTable, eq(productTable.id, inventoryTable.productID))
+	  .leftJoin(attachmentsTable,
+		 and(
+			eq(attachmentsTable.refDomain, 'product'),
+			eq(attachmentsTable.refID, inventoryTable.productID)
+		 )
+		)
       .innerJoin(
         placementTable,
         eq(placementTable.id, inventoryTable.placementID),
@@ -78,6 +86,18 @@ export const inventory = {
       .innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+	  .groupBy(
+		inventoryTable.inserted,
+		inventoryTable.updated,
+		inventoryTable.quantity,
+		inventoryTable.customerID,
+		inventoryTable.locationID,
+		productTable.id,
+		UNIT_COLS.name,
+		GROUP_COLS.name,
+		placementTable.id,
+		batchTable.id
+	  )
       .limit(pageSize)
       .offset((page - 1) * pageSize)
 
