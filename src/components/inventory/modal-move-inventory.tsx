@@ -63,7 +63,12 @@ export function ModalMoveInventory({
   const schema = moveInventoryValidation(validationT)
 
   const uniqueProducts = inventory.filter((item, index, self) => {
-    return index === self.findIndex(i => i.product.id === item.product.id)
+    return (
+      index ===
+      self.findIndex(
+        i => i.product.id === item.product.id && !i.product.isBarred,
+      )
+    )
   })
 
   const productOptions = uniqueProducts

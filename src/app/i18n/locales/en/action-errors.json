@@ -121,7 +121,10 @@
     "unit-name-already-exists": "The unit name already exists",
     "unit-barring-failed": "Something went wrong trying to bar the unit",
     "product-group-barring-failed": "Something went wrong trying to bar the product group",
-    "placement-barring-failed": "Something went wrong trying to bar the placement"
+    "placement-barring-failed": "Something went wrong trying to bar the placement",
+    "restock-barred": "Could not update restock. Product is barred",
+    "move-barred": "Could not complete move. Product is barred",
+    "reorder-barred": "Could not reorder. Product is barred"
   },
   "product-service-action": {
     "barcode-already-exists": "The barcode already exists",

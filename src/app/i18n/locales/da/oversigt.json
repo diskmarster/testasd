@@ -52,6 +52,9 @@
   "unit": "Enhed",
   "updated": "Opdateret",
   "batch": "Batch",
+  "isBarred": "Status",
+  "isBarred-yes": "Spærret",
+  "isBarred-no": "Aktiv",
 
   "overview-table-actions": "",
   "update": "Opdater beholdning",
