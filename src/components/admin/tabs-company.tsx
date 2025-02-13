@@ -51,7 +51,7 @@ export function TabsAdmin({
 	const { t } = useTranslation(lng, 'organisation')
 
 	function createTabParam(val: string) {
-		const params = new URLSearchParams(searchParams.toString())
+		const params = new URLSearchParams()
 		params.set('tab', val)
 		return params.toString()
 	}

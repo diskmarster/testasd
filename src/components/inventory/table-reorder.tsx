@@ -30,7 +30,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -41,6 +40,7 @@ import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -61,7 +61,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
   const { t } = useTranslation(lng, 'genbestil')
   const columns = useMemo(() => getTableReorderColumns(user, lng, t), [user.role, lng, t])
 
-  const [sorting, setSorting] = useState<SortingState>([
+  const [sorting, handleSortingChange] = useUrlSorting([
     { id: 'recommended', desc: true },
   ])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -117,7 +117,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
 
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,

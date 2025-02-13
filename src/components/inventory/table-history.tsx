@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/table'
 import { LanguageContext } from '@/context/language'
 import { Plan } from '@/data/customer.types'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
@@ -31,7 +32,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -70,7 +70,7 @@ export function TableHistory({
     () => getTableHistoryColumns(plan, user, lng, t),
     [user, plan, lng, t],
   )
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -122,7 +122,7 @@ export function TableHistory({
 
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,

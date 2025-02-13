@@ -2,8 +2,7 @@
 
 import { useTranslation } from "@/app/i18n/client"
 import { useLanguage } from "@/context/language"
-import { Customer } from "@/lib/database/schema/customer"
-import { ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowSelectionState, SortingState, Updater, useReactTable, VisibilityState } from "@tanstack/react-table"
+import { ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowSelectionState, Updater, useReactTable, VisibilityState } from "@tanstack/react-table"
 import { useEffect, useMemo, useState } from "react"
 import { TableToolbar } from "../table/table-toolbar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
@@ -13,6 +12,7 @@ import { TableFloatingBar } from "../table/table-floating-bar"
 import { ExportSelectedButton } from "../inventory/button-export-selected"
 import { getTableClientFilters, getTableClientsColumns } from "@/app/[lng]/(site)/sys/kunder/columns"
 import { CustomerWithUserCount } from "@/data/customer.types"
+import { useUrlSorting } from "@/hooks/use-url-sorting"
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -28,7 +28,7 @@ export function TableClients({ data }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'kunder')
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -81,7 +81,7 @@ export function TableClients({ data }: Props) {
 
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,

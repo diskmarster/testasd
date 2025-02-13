@@ -17,6 +17,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useLanguage } from '@/context/language'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
@@ -30,7 +31,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -54,7 +54,7 @@ export function UnitOverview({ units, user }: Props) {
   const { t } = useTranslation(lng, 'enheder')
   const columns = useMemo(() => getTableUnitColumns(lng, t), [lng, t])
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     { id: 'isBarred', value: [false] },
   ])
@@ -105,7 +105,7 @@ export function UnitOverview({ units, user }: Props) {
 
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,

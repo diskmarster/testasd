@@ -19,6 +19,7 @@ import {
 import { useLanguage } from '@/context/language'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
   ColumnFiltersState,
@@ -34,7 +35,6 @@ import {
   getSortedRowModel,
   GroupingState,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -80,7 +80,7 @@ export function TableOverview({
     [user, plan, lng, t],
   )
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     { id: 'isBarred', value: [false] },
   ])
@@ -140,7 +140,7 @@ export function TableOverview({
 
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onGroupingChange: setGrouping,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,

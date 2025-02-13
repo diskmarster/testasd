@@ -24,7 +24,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -38,6 +37,7 @@ import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { LocationWithCounts } from '@/data/location.types'
 import { getTableLocationsColumns, getTableLocationsFilters } from '@/app/[lng]/(site)/administration/organisation/location-columns'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -58,7 +58,7 @@ export function TableAdminLocations({ data, user }: Props) {
     [user.role, lng, t],
   )
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     { id: 'isBarred', value: [false] },
   ])
@@ -114,7 +114,7 @@ export function TableAdminLocations({ data, user }: Props) {
 
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,

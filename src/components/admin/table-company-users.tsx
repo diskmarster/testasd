@@ -25,7 +25,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -38,6 +37,7 @@ import { ButtonToggleUsers } from './button-toggle-user'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { getTableUsersColumns, getTableUsersFilters } from '@/app/[lng]/(site)/administration/organisation/user-columns'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -55,7 +55,7 @@ export function TableAdminUsers({ data, user }: Props) {
   const { t } = useTranslation(lng, 'organisation')
   const columns = useMemo(() => getTableUsersColumns(user.role, lng, t), [user.role, lng, t])
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -109,7 +109,7 @@ export function TableAdminUsers({ data, user }: Props) {
 
     onColumnFiltersChange: setColumnFilters,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,

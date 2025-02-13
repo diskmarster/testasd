@@ -25,7 +25,6 @@ import {
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -36,6 +35,7 @@ import { TableToolbar } from '../table/table-toolbar'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { getProductOverviewColumns, getProductTableOverviewFilters } from '@/app/[lng]/(site)/varer/produkter/columns'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -58,7 +58,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     [user, plan, lng, t],
   )
 
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     { id: 'isBarred', value: [false] },
   ])
@@ -114,7 +114,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     groupedColumnMode: 'reorder',
 
     onColumnFiltersChange: setColumnFilters,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,
 

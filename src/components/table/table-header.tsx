@@ -17,6 +17,9 @@ export function TableHeader<TData, TValue>({
   className,
 }: TableHeaderProps<TData, TValue>) {
 
+  const handleSort = () => {
+    column.toggleSorting(column.getIsSorted() === 'asc')
+  }
 
   return (
     <div
@@ -35,7 +38,7 @@ export function TableHeader<TData, TValue>({
           // @ts-ignore
           column.columnDef.meta?.rightAlign && 'justify-end',
         )}
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        onClick={handleSort}>
         {title}
         {column.getIsSorted() === 'desc' ? (
           <Icons.arrowDown className='size-3' />
