@@ -2,15 +2,18 @@ import { TableOverviewActions } from '@/components/inventory/table-placement-act
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
+import { hasPermissionByRank } from '@/data/user.types'
 import { Placement } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { User } from 'lucia'
 import { DateRange } from 'react-day-picker'
 
 export function getTablePlacementColumns(
   lng: string,
   t: (key: string) => string,
+  user: User,
 ): ColumnDef<Placement>[] {
   const placementCol: ColumnDef<Placement> = {
     accessorKey: 'name',
@@ -29,7 +32,6 @@ export function getTablePlacementColumns(
       <TableHeader column={column} title={t('placement-columns.is-barred')} />
     ),
     cell: ({ getValue }) => {
-
       const status = getValue<boolean>()
       const badgeVariant = status ? 'red' : 'gray'
 
@@ -51,7 +53,9 @@ export function getTablePlacementColumns(
 
   const insertedCol: ColumnDef<Placement> = {
     accessorKey: 'inserted',
-    header: ({ column }) => <TableHeader column={column} title={t('placement-columns.inserted')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('placement-columns.inserted')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -82,7 +86,9 @@ export function getTablePlacementColumns(
 
   const updatedCol: ColumnDef<Placement> = {
     accessorKey: 'updated',
-    header: ({ column }) => <TableHeader column={column} title={t('placement-columns.updated')} />,
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('placement-columns.updated')} />
+    ),
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
@@ -114,7 +120,10 @@ export function getTablePlacementColumns(
   const actionsCol: ColumnDef<Placement> = {
     accessorKey: 'actions',
     header: () => null,
-    cell: ({ row }) => <TableOverviewActions row={row} />,
+    cell: ({ table, row }) =>
+      hasPermissionByRank(user.role, 'bruger') ? (
+        <TableOverviewActions row={row} />
+      ) : null,
     enableHiding: false,
     enableSorting: false,
     meta: {
@@ -122,6 +131,8 @@ export function getTablePlacementColumns(
     },
   }
 
+  if (hasPermissionByRank(user.role, 'bruger'))
+    return [placementCol, isBarredCol, insertedCol, updatedCol]
   return [placementCol, isBarredCol, insertedCol, updatedCol, actionsCol]
 }
 

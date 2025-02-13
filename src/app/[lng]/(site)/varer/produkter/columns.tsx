@@ -4,6 +4,7 @@ import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
+import { hasPermissionByRank } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -48,7 +49,7 @@ export function getProductOverviewColumns(
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
-    }
+    },
   }
 
   const text1Col: ColumnDef<FormattedProduct> = {
@@ -59,7 +60,7 @@ export function getProductOverviewColumns(
     cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: t('product-text1'),
-      className: "[&>*]:block"
+      className: '[&>*]:block',
     },
   }
 
@@ -158,15 +159,12 @@ export function getProductOverviewColumns(
     accessorKey: 'isBarred',
     header: ({ column }) => <TableHeader column={column} title='Status' />,
     cell: ({ getValue }) => {
-
       const status = getValue<boolean>()
       const badgeVariant = status ? 'red' : 'gray'
 
       return (
         <Badge variant={badgeVariant}>
-          {status
-            ? t('barred-status-yes')
-            : t('barred-status-no')}
+          {status ? t('barred-status-yes') : t('barred-status-no')}
         </Badge>
       )
     },
@@ -198,8 +196,10 @@ export function getProductOverviewColumns(
     salesPriceCol,
     updatedCol,
     isBarredCol,
-  ].filter(col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol))
-  if (user.role != 'bruger') columns.push(actionsCol)
+  ].filter(
+    col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
+  )
+  if (hasPermissionByRank(user.role, 'bruger')) columns.push(actionsCol)
   return columns
 }
 

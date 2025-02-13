@@ -18,7 +18,7 @@ export default async function Page({ params: { lng } }: PageProps) {
   const { session, user } = await sessionService.validate()
   if (!session) redirect(`/${lng}/log-ind`)
 
-  if (!hasPermissionByRank(user.role, 'moderator')) {
+  if (!hasPermissionByRank(user.role, 'læseadgang')) {
     redirect('/oversigt')
   }
 
@@ -35,7 +35,9 @@ export default async function Page({ params: { lng } }: PageProps) {
       description={t('product-group-page.description')}
       actions={
         <>
-          <ModalCreateProductGroup />
+          {hasPermissionByRank(user.role, 'bruger') && (
+            <ModalCreateProductGroup />
+          )}
         </>
       }>
       <TableProductGroups groups={groups} user={user} />
