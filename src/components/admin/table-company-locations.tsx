@@ -1,5 +1,3 @@
-'use client'
-
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -38,6 +36,7 @@ import { useTranslation } from '@/app/i18n/client'
 import { LocationWithCounts } from '@/data/location.types'
 import { getTableLocationsColumns, getTableLocationsFilters } from '@/app/[lng]/(site)/administration/organisation/location-columns'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
+import { HandleFilterChangeFN } from '@/hooks/use-url-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -46,9 +45,11 @@ const ROW_PER_PAGE = [25, 50, 75, 100]
 interface Props {
   data: LocationWithCounts[]
   user: User
+  columnFilters: ColumnFiltersState
+  handleColumnFiltersChange: HandleFilterChangeFN
 }
 
-export function TableAdminLocations({ data, user }: Props) {
+export function TableAdminLocations({ data, user, columnFilters, handleColumnFiltersChange }: Props) {
   const LOCALSTORAGE_KEY = 'locations_cols'
   const FILTERS_KEY = 'locations_filters'
   const lng = useLanguage()
@@ -59,9 +60,6 @@ export function TableAdminLocations({ data, user }: Props) {
   )
 
   const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
-    { id: 'isBarred', value: [false] },
-  ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)
@@ -69,6 +67,12 @@ export function TableAdminLocations({ data, user }: Props) {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    handleColumnFiltersChange([
+      { id: 'isBarred', value: [false] },
+    ])
+  }, [handleColumnFiltersChange])
 
   useEffect(() => {
     const visibility = JSON.parse(
@@ -112,7 +116,7 @@ export function TableAdminLocations({ data, user }: Props) {
 
     groupedColumnMode: 'reorder',
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
@@ -145,7 +149,7 @@ export function TableAdminLocations({ data, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}
+        filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

@@ -16,7 +16,6 @@ import {
 import { useLanguage } from '@/context/language'
 import { FormattedError } from '@/data/errors.types'
 import {
-  ColumnFiltersState,
   ExpandedState,
   flexRender,
   getCoreRowModel,
@@ -37,6 +36,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -56,7 +56,7 @@ export function TableErrors({
   const columns = useMemo(() => getTableErrorsColumns(t), [t])
 
   const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [grouping, setGrouping] = useState<GroupingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
@@ -110,7 +110,7 @@ export function TableErrors({
 
     groupedColumnMode: 'reorder',
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onGroupingChange: setGrouping,

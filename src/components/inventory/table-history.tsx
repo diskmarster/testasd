@@ -18,10 +18,10 @@ import {
 } from '@/components/ui/table'
 import { LanguageContext } from '@/context/language'
 import { Plan } from '@/data/customer.types'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -71,7 +71,7 @@ export function TableHistory({
     [user, plan, lng, t],
   )
   const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)
@@ -120,7 +120,7 @@ export function TableHistory({
     getExpandedRowModel: getExpandedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,

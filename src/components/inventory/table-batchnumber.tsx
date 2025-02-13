@@ -17,10 +17,10 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useLanguage } from '@/context/language'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch } from '@/lib/database/schema/inventory'
 import {
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -60,7 +60,7 @@ export function TableBatch({ data, user }: Props) {
     return data.filter(batch => batch.batch !== '-')
   }, [data])
   const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
     { id: 'isBarred', value: [false] },
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -111,7 +111,7 @@ export function TableBatch({ data, user }: Props) {
     getExpandedRowModel: getExpandedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,

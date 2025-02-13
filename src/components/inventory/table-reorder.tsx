@@ -19,7 +19,6 @@ import { FormattedReorder } from '@/data/inventory.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import {
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -41,6 +40,7 @@ import { ExportSelectedButton } from './button-export-selected'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -64,7 +64,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
   const [sorting, handleSortingChange] = useUrlSorting([
     { id: 'recommended', desc: true },
   ])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)
@@ -115,7 +115,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
 
     groupedColumnMode: 'reorder',
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,

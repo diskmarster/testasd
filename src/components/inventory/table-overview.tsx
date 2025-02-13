@@ -19,10 +19,10 @@ import {
 import { useLanguage } from '@/context/language'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
-  ColumnFiltersState,
   ExpandedState,
   flexRender,
   getCoreRowModel,
@@ -81,7 +81,7 @@ export function TableOverview({
   )
 
   const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
     { id: 'isBarred', value: [false] },
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -138,7 +138,7 @@ export function TableOverview({
 
     groupedColumnMode: 'reorder',
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onGroupingChange: setGrouping,
