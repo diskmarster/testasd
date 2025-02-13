@@ -1,6 +1,9 @@
 'use client'
 
-import { getTablePlacementColumns, getTablePlacementFilters } from '@/app/[lng]/(site)/varer/placeringer/columns'
+import {
+  getTablePlacementColumns,
+  getTablePlacementFilters,
+} from '@/app/[lng]/(site)/varer/placeringer/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
@@ -49,7 +52,10 @@ export function TablePlacement({ data, user }: Props) {
   const FILTERS_KEY = 'placements_filtes'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'placeringer')
-  const columns = useMemo(() => getTablePlacementColumns(lng, t), [lng, t])
+  const columns = useMemo(
+    () => getTablePlacementColumns(lng, t, user),
+    [lng, t, user],
+  )
 
   const filteredData = useMemo(() => {
     return data.filter(placement => placement.name !== '-')
@@ -143,7 +149,7 @@ export function TablePlacement({ data, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}
+        filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

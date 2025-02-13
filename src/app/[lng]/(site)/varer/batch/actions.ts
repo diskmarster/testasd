@@ -1,7 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { authedAction, editableAction, getSchema } from '@/lib/safe-action'
+import { editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
@@ -13,8 +13,8 @@ import {
   updateBatchValidation,
 } from './validation'
 
-export const createBatchAction = authedAction
-  .metadata({actionName: 'createBatch'})
+export const createBatchAction = editableAction
+  .metadata({ actionName: 'createBatch' })
   .schema(async () => await getSchema(createBatchValidation, 'validation'))
   .action(async ({ parsedInput: { batchName, expiry }, ctx }) => {
     const location = await locationService.getLastVisited(ctx.user.id)

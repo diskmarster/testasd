@@ -25,7 +25,7 @@ export default async function Page({ params: { lng } }: PageProps) {
     return
   }
 
-  if (!hasPermissionByRank(user.role, 'moderator')) {
+  if (!hasPermissionByRank(user.role, 'læseadgang')) {
     redirect('/oversigt')
   }
 
@@ -46,8 +46,11 @@ export default async function Page({ params: { lng } }: PageProps) {
       description={t('product-description')}
       actions={
         <>
-          <ModalImportProducts />
-          <CreateProductsForm units={units} groups={groups} />
+          {hasPermissionByRank(user.role, 'bruger') && <ModalImportProducts />}
+
+          {hasPermissionByRank(user.role, 'bruger') && (
+            <CreateProductsForm units={units} groups={groups} />
+          )}
         </>
       }>
       <ProductOverview

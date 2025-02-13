@@ -20,7 +20,7 @@ export default async function Page({ params: { lng } }: PageProps) {
   const { session, user } = await sessionService.validate()
   if (!session) redirect(`/${lng}/log-ind`)
 
-  if (!hasPermissionByRank(user.role, 'moderator')) {
+  if (!hasPermissionByRank(user.role, 'læseadgang')) {
     redirect('/oversigt')
   }
 
@@ -39,7 +39,7 @@ export default async function Page({ params: { lng } }: PageProps) {
       description={t('placement-page.description')}
       actions={
         <>
-          <ModalCreatePlacement />
+          {hasPermissionByRank(user.role, 'bruger') && <ModalCreatePlacement />}
         </>
       }>
       <TablePlacement data={allPlacement} user={user} />

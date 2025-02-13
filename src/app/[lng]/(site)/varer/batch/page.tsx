@@ -3,6 +3,7 @@ import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalCreateBatch } from '@/components/inventory/modal-create-batch'
 import { ModalUpdateBatch } from '@/components/inventory/modal-update-batch'
 import { TableBatch } from '@/components/inventory/table-batchnumber'
+import { hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -32,9 +33,7 @@ export default async function Page({ params: { lng } }: PageProps) {
       title={t('batch-page.page-title')}
       description={t('batch-page.page-description')}
       actions={
-        <>
-          <ModalCreateBatch />
-        </>
+        <>{hasPermissionByRank(user.role, 'bruger') && <ModalCreateBatch />}</>
       }>
       <TableBatch data={allBatches} user={user} />
       <ModalUpdateBatch />

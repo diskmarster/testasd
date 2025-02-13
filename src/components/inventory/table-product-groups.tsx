@@ -1,6 +1,9 @@
 'use client'
 
-import { getTableGroupColumns, getTableGroupFilters } from '@/app/[lng]/(site)/varer/varegrupper/columns'
+import {
+  getTableGroupColumns,
+  getTableGroupFilters,
+} from '@/app/[lng]/(site)/varer/varegrupper/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
@@ -49,7 +52,10 @@ export function TableProductGroups({ groups, user }: Props) {
   const { t } = useTranslation(lng, 'varegrupper')
   const LOCALSTORAGE_KEY = 'groups_cols'
   const FILTERS_KEY = 'groups_filters'
-  const columns = useMemo(() => getTableGroupColumns(lng, t), [lng, t])
+  const columns = useMemo(
+    () => getTableGroupColumns(lng, t, user),
+    [lng, t, user],
+  )
 
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -139,7 +145,7 @@ export function TableProductGroups({ groups, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}
+        filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>
@@ -151,9 +157,9 @@ export function TableProductGroups({ groups, user }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>

@@ -1,14 +1,19 @@
+import { TableBatchActions } from '@/components/inventory/table-batchnumber-actions'
 import { TableHeader } from '@/components/table/table-header'
+import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
+import { hasPermissionByRank } from '@/data/user.types'
 import { Batch } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
-import { ColumnDef } from '@tanstack/react-table'
+import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { User } from 'lucia'
 import { DateRange } from 'react-day-picker'
 
 export function getTableBatchColumns(
   lng: string,
   t: (key: string) => string,
+  user: User,
 ): ColumnDef<Batch>[] {
   const batchCol: ColumnDef<Batch> = {
     accessorKey: 'batch',
@@ -45,7 +50,8 @@ export function getTableBatchColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('batch-columns.expiration-date')} />
     ),
-    cell: ({ getValue }) => getValue() == null ? '-' : formatDate(getValue<Date>(), false),
+    cell: ({ getValue }) =>
+      getValue() == null ? '-' : formatDate(getValue<Date>(), false),
     filterFn: (row, id, value: DateRange) => {
       const rowDate: string | number | Date = row.getValue(id)
 
@@ -140,13 +146,19 @@ export function getTableBatchColumns(
   const actionsCol: ColumnDef<Batch> = {
     accessorKey: 'actions',
     header: () => null,
-    cell: ({ row }) => <TableBatchActions row={row} />,
+    cell: ({ row }) =>
+      hasPermissionByRank(user.role, 'bruger') ? (
+        <TableBatchActions row={row} />
+      ) : null,
     enableHiding: false,
     enableSorting: false,
     meta: {
       className: 'justify-end',
     },
   }
+
+  if (hasPermissionByRank(user.role, 'bruger'))
+    return [batchCol, isBarredCol, expiryCol, instertedCol, updatedCol]
 
   return [
     batchCol,
@@ -157,10 +169,6 @@ export function getTableBatchColumns(
     actionsCol,
   ]
 }
-
-import { TableBatchActions } from '@/components/inventory/table-batchnumber-actions'
-import { FilterField } from '@/components/table/table-toolbar'
-import { Table } from '@tanstack/react-table'
 
 export function getTableBatchFilters(
   table: Table<Batch>,
