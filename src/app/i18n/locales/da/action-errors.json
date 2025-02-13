@@ -121,7 +121,10 @@
     "unit-name-already-exists": "Enhedsnavnet eksisterer allerede",
     "unit-barring-failed": "Noget gik galt under spærringen af enheden",
     "product-group-barring-failed": "Noget gik galt under spærringen af produktgruppen",
-    "placement-barring-failed": "Noget gik galt under spærringen af placeringen"
+    "placement-barring-failed": "Noget gik galt under spærringen af placeringen",
+    "restock-barred": "Kunne ikke gennemføre tilgang. Varen er spærret",
+    "move-barred": "Kunne ikke gennemføre flytning. Varen er spærret",
+    "reorder-barred": "Kunne ikke genbestille. Varen er spærret"
   },
   "product-service-action": {
     "barcode-already-exists": "Stregkoden eksisterer allerede",

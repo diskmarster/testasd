@@ -180,7 +180,8 @@
     "no-app-access": "Brugeren har ikke adgang til appen.",
     "error-fetching-product": "Fejl ved hentning af vare efter ID: ",
     "server-error-product": "Der opstod en serverfejl, da der blev forsøgt at hente vare.",
-    "maintenance": "Vedligeholdelse i gang"
+    "maintenance": "Vedligeholdelse i gang",
+    "error-product-barred": "Produktet er spærret"
   },
   "route-translations-product": {
     "no-access-to-resource": "Du har ikke adgang til denne ressource.",
