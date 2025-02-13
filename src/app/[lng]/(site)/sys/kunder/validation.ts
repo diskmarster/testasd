@@ -136,13 +136,17 @@ export const importHistoryDataValidation = (
         text3: z.string(),
         costPrice: z.coerce.number().default(0),
         salesPrice: z.coerce.number().default(0),
-        unit: z.preprocess(
-          val => (val as string).trim().toLowerCase(),
-          z.enum(units, {
-            invalid_type_error: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
-            message: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
-          }),
-        ),
+        unit: z
+          .preprocess(
+            val => (val as string).trim().toLowerCase(),
+            z.enum(units, {
+              invalid_type_error: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
+              message: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
+            }),
+          )
+          .transform(
+            val => val.substring(0, 1).toUpperCase() + val.substring(1),
+          ),
         type: z.enum(['tilgang', 'afgang', 'regulering']),
         quantity: z.coerce.number(),
         placement: z.preprocess(
