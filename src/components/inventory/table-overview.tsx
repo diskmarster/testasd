@@ -81,7 +81,9 @@ export function TableOverview({
   )
 
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+    { id: 'isBarred', value: [false] },
+  ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [grouping, setGrouping] = useState<GroupingState>(['sku'])
   const [expanded, setExpanded] = useState<ExpandedState>({})
@@ -165,7 +167,15 @@ export function TableOverview({
 
   const filterFields = useMemo(
     () =>
-      getTableOverviewFilters(plan, table, units, groups, placements, batches, t),
+      getTableOverviewFilters(
+        plan,
+        table,
+        units,
+        groups,
+        placements,
+        batches,
+        t,
+      ),
     [plan, table, units, groups, placements, batches, t],
   )
 
@@ -177,7 +187,7 @@ export function TableOverview({
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}	
+        filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>
@@ -189,9 +199,9 @@ export function TableOverview({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
