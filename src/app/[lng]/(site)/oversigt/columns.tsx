@@ -7,7 +7,7 @@ import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByRank } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
-import { numberRangeFilterFn } from '@/lib/tanstack/filter-fns'
+import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
@@ -44,6 +44,9 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('barcode')), String(rb.getValue('barcode')))
+    },
     meta: {
       viewLabel: t('barcode'),
     },
@@ -58,6 +61,9 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('group')), String(rb.getValue('group')))
+    },
     meta: {
       viewLabel: t('product-group'),
     },
@@ -75,6 +81,9 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('text1')), String(rb.getValue('text1')))
+    },
     meta: {
       viewLabel: t('product-text1'),
       className: '[&>*]:block',
@@ -90,6 +99,9 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('text2')), String(rb.getValue('text2')))
+    },
     meta: {
       viewLabel: t('product-text2'),
     },
@@ -104,6 +116,10 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('text3')), String(rb.getValue('text3')))
+
+    },
     meta: {
       viewLabel: t('product-text3'),
     },
@@ -119,6 +135,9 @@ export function getTableOverviewColumns(
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
+    },
     meta: {
       viewLabel: t('placement'),
     },
@@ -131,6 +150,9 @@ export function getTableOverviewColumns(
     cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
+    },
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('batch')), String(rb.getValue('batch')))
     },
     meta: {
       viewLabel: t('batch'),
@@ -170,6 +192,9 @@ export function getTableOverviewColumns(
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
+    },
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('unit')), String(rb.getValue('unit')))
     },
     meta: {
       viewLabel: t('unit'),
