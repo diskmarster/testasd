@@ -204,7 +204,10 @@ export function ModalInviteUser({
                       </SelectTrigger>
                       <SelectContent>
                         {rolesOptions.map((l, i) => (
-                          <SelectItem key={i} value={l.value}>
+                          <SelectItem
+                            key={i}
+                            value={l.value}
+                            className='capitalize'>
                             {l.label}
                           </SelectItem>
                         ))}

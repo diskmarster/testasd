@@ -53,7 +53,7 @@
     "email-placeholder": "Indtast e-mail",
     "role-label": "Rolle",
     "role-empty": "Ingen roller",
-    "role-placeholder": "Søg efter rolle",
+    "role-placeholder": "Vælg en rolle",
     "role-access-label": "Hvilke rettigheder skal brugeren have?",
     "role-web-access": "Brugeren skal have adgang til web",
     "role-app-access": "Brugeren skal have adgang til app",

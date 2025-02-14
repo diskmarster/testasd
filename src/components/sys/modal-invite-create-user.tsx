@@ -166,13 +166,6 @@ export function ModalInviteCreateUser({}: Props) {
     })
   }
 
-  ;<Button
-    disabled={isButtonDisabled}
-    className='w-full flex items-center gap-2'>
-    {pending && <Icons.spinner className='size-4 animate-spin' />}
-    {t('modal-create-user.send-button', { context: formValues.isInvite })}
-  </Button>
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
@@ -377,7 +370,7 @@ export function ModalInviteCreateUser({}: Props) {
                 </SelectTrigger>
                 <SelectContent>
                   {rolesOptions.map((l, i) => (
-                    <SelectItem key={i} value={l.value}>
+                    <SelectItem key={i} value={l.value} className='capitalize'>
                       {l.label}
                     </SelectItem>
                   ))}
