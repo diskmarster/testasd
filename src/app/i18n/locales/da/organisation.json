@@ -193,6 +193,7 @@
     "location-label": "Lokation",
     "choose-location": "Vælg lokation",
     "loading-location": "Henter lokationer...",
-    "download-button": "Download rapport"
+    "download-button": "Download rapport",
+    "file-format-label": "Filtype"
   }
 }
