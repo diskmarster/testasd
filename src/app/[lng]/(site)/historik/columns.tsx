@@ -2,11 +2,14 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Plan } from '@/data/customer.types'
+import { HistoryPlatform, HistoryType } from '@/data/inventory.types'
 import {
-  HistoryPlatform,
-  HistoryType,
-} from '@/data/inventory.types'
-import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
+  Batch,
+  Group,
+  History,
+  Placement,
+  Unit,
+} from '@/lib/database/schema/inventory'
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
@@ -163,11 +166,7 @@ export function getTableHistoryColumns(
     cell: ({ getValue }) => {
       const type = getValue<HistoryType>()
       const variant =
-        type == 'tilgang'
-          ? 'green'
-          : type == 'afgang'
-            ? 'red'
-            : 'yellow'
+        type == 'tilgang' ? 'green' : type == 'afgang' ? 'red' : 'yellow'
 
       return (
         <Badge className='capitalize' variant={variant}>
@@ -277,9 +276,6 @@ export function getTableHistoryColumns(
     cell: ({ getValue }) => getValue<string>(),
     meta: {
       viewLabel: t('history-columns.user'),
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id))
     },
   }
 
@@ -442,7 +438,10 @@ export function getTableHistoryFilters(
     options: [
       { value: 'tilgang', label: t('history-columns.filters.type-incoming') },
       { value: 'afgang', label: t('history-columns.filters.type-outgoing') },
-      { value: 'regulering', label: t('history-columns.filters.type-adjustment') },
+      {
+        value: 'regulering',
+        label: t('history-columns.filters.type-adjustment'),
+      },
       { value: 'flyt', label: t('history-columns.filters.type-move') },
     ],
   }
@@ -477,6 +476,13 @@ export function getTableHistoryFilters(
         label: batch.batch,
       })),
     ],
+  }
+
+  const userFilter: FilterField<History> = {
+    column: table.getColumn('user'),
+    type: 'text',
+    label: t('history-columns.user'),
+    value: '',
   }
 
   const refFilter: FilterField<History> = {
@@ -514,6 +520,7 @@ export function getTableHistoryFilters(
         amountFilter,
         platformFilter,
         refFilter,
+        userFilter,
       ]
     case 'basis':
       return [
@@ -531,6 +538,7 @@ export function getTableHistoryFilters(
         placementFilter,
         platformFilter,
         refFilter,
+        userFilter,
       ]
     case 'pro':
       return [
@@ -549,6 +557,7 @@ export function getTableHistoryFilters(
         batchFilter,
         platformFilter,
         refFilter,
+        userFilter,
       ]
   }
 }
