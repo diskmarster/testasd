@@ -1,5 +1,7 @@
 'use client'
 
+import { inviteNewUserAction } from '@/app/[lng]/(site)/administration/organisation/actions'
+import { inviteNewUserValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,12 +28,16 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
-import { AutoComplete } from '../ui/autocomplete'
 import { Checkbox } from '../ui/checkbox'
 import { ScrollArea } from '../ui/scroll-area'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 import { Switch } from '../ui/switch'
-import { inviteNewUserValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
-import { inviteNewUserAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 
 interface Props {
   locations: Location[]
@@ -56,11 +62,7 @@ export function ModalInviteUser({
   const [searchRoles, setSearchRoles] = useState('bruger')
 
   const rolesOptions = userRoles
-    .filter(
-      role =>
-        role != 'system_administrator' &&
-        role.toLowerCase().includes(searchRoles.toLowerCase()),
-    )
+    .filter(role => role != 'system_administrator')
     .map(role => ({
       label: role.replace('_', ' '),
       value: role,
@@ -150,13 +152,9 @@ export function ModalInviteUser({
                 <div className='flex flex-col gap-2'>
                   <div className='grid gap-2'>
                     <Label>{t('modal-invite-user.role')}</Label>
-                    <AutoComplete
-                      className='capitalize'
-                      autoFocus={false}
-                      placeholder={t('modal-invite-user.role-placeholder')}
-                      emptyMessage={t('modal-invite-user.role-not-found')}
-                      items={rolesOptions}
-                      onSelectedValueChange={value => {
+                    <Select
+                      value={formValues.role}
+                      onValueChange={value => {
                         const role = value as UserRole
 
                         switch (role) {
@@ -198,13 +196,20 @@ export function ModalInviteUser({
                         }
 
                         setValue('role', role, { shouldValidate: true })
-                      }}
-                      onSearchValueChange={setSearchRoles}
-                      selectedValue={
-                        formValues.role ? formValues.role.toString() : ''
-                      }
-                      searchValue={searchRoles}
-                    />
+                      }}>
+                      <SelectTrigger className='capitalize'>
+                        <SelectValue
+                          placeholder={t('modal-invite-user.role-placeholder')}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {rolesOptions.map((l, i) => (
+                          <SelectItem key={i} value={l.value}>
+                            {l.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <div className='flex items-center gap-1 text-xs text-muted-foreground'>
                       <p>
                         {t('modal-invite-user.role-question')}{' '}
@@ -283,9 +288,7 @@ export function ModalInviteUser({
                     {locations.length} {t('modal-invite-user.locations-chosen')}
                   </span>
                 </div>
-                <ScrollArea
-                  className='max-md:max-h-[125px] md:h-[300px]'
-                >
+                <ScrollArea className='max-md:max-h-[125px] md:h-[300px]'>
                   <div className='space-y-2'>
                     {locations.map(loc => (
                       <div
@@ -293,7 +296,7 @@ export function ModalInviteUser({
                         className={cn(
                           'border rounded-sm py-2 px-3 flex items-center justify-between transition-colors h-9',
                           formValues.locationIDs.includes(loc.id) &&
-                          'bg-primary/5',
+                            'bg-primary/5',
                         )}>
                         <span className='text-muted-foreground text-sm'>
                           {loc.name}
