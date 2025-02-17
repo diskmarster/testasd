@@ -29,7 +29,6 @@ export function useUrlFiltering(
       updatedState = updaterOrValue
     }
 
-    console.log({updatedState, columnFiltersRef: columnFiltersRef.current})
     if (matches(updatedState, columnFiltersRef.current)) {
       return
     }
@@ -48,7 +47,6 @@ export function useUrlFiltering(
         mutableSearchParams.set('filter', btoa(queryParam))
       }
     }
-    console.log({mutableSearchParams: mutableSearchParams.toString()})
     router.push(`${pathnameRef.current}?${mutableSearchParams.toString()}`)
 
     setColumnFilters(updatedState)

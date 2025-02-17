@@ -174,10 +174,6 @@ function FilterPopover<T>({
   const isNumberRange = field.type === 'number-range'
 
   const getSelectDisplayValue = (value: any[]): string => {
-    if (!Array.isArray(value)) {
-      return 'y u no array??' + value
-    }
-  
     if (value.length == 0) {
       return `${t('table-filters.choose')} ${field.label.toLowerCase()}`
     }
