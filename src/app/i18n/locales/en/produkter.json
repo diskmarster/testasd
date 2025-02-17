@@ -30,5 +30,33 @@
   },
   "toasts": {
     "product-updated": "Product updated successfully"
-  }
+  },
+	"details-page": {
+		"history": {
+			"title": "History",
+			"log-count": "({{count}} actions)",
+			"changes": "Changes",
+			"no-changes": "No changes",
+			"see-all": "See all {{count}} actions",
+			"log-title": "Item was {{action}} by {{user}}",
+			"log-empty": "empty",
+			"via-import": "(via. import)",
+			"action": "changed",
+			"action_oprettelse": "created",
+			"action_opdatering": "updated",
+			"action_spærring": "barred",
+			"key": "unknown field",
+			"key_productGroupName": "Group",
+			"key_productUnitName": "Unit",
+			"key_productText1": "Text 1",
+			"key_productText2": "Text 2",
+			"key_productText3": "Text 3",
+			"key_productSku": "Sku",
+			"key_productBarcode": "Barcode",
+			"key_productCostPrice": "Cost price",
+			"key_productSalesPrice": "Sales price",
+			"key_productIsBarred": "Barred",
+			"key_productNote": "Note"
+		}
+	}
 }
