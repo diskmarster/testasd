@@ -42,7 +42,7 @@ export function FormCompanyEdit({ customer }: Props) {
 
   return (
     <form
-      className={cn('grid w-full items-start gap-4 md:max-w-lg mt-4')}
+      className={cn('grid w-full items-start gap-4 md:max-w-xl mt-4')}
       onSubmit={handleSubmit(values => {
         startTransition(async () => {
           const res = await updateCustomerAction({ ...values })
@@ -62,23 +62,25 @@ export function FormCompanyEdit({ customer }: Props) {
           <AlertDescription>{formError}</AlertDescription>
         </Alert>
       )}
-      <div className='grid gap-2'>
-        <Label htmlFor='name'>{t('form-company-edit.company-name')}</Label>
-        <Input id='name' type='text' {...register('company')} />
-        {formState.errors.company && (
-          <p className='text-sm text-destructive '>
-            {formState.errors.company.message}
-          </p>
-        )}
-      </div>
-      <div className='grid gap-2'>
-        <Label htmlFor='email'>{t('form-company-edit.email')}</Label>
-        <Input id='email' type='email' {...register('email')} />
-        {formState.errors.email && (
-          <p className='text-sm text-destructive '>
-            {formState.errors.email.message}
-          </p>
-        )}
+      <div className='flex flex-col w-full md:flex-row md:gap-4'>
+        <div className='grid gap-2 md:max-w-[285px]'>
+          <Label htmlFor='name'>{t('form-company-edit.company-name')}</Label>
+          <Input id='name' type='text' {...register('company')} />
+          {formState.errors.company && (
+            <p className='text-sm text-destructive '>
+              {formState.errors.company.message}
+            </p>
+          )}
+        </div>
+        <div className='grid gap-2 md:max-w-[285px]'>
+          <Label htmlFor='email'>{t('form-company-edit.email')}</Label>
+          <Input id='email' type='email' {...register('email')} />
+          {formState.errors.email && (
+            <p className='text-sm text-destructive '>
+              {formState.errors.email.message}
+            </p>
+          )}
+        </div>
       </div>
 
       <Button

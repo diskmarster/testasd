@@ -2,6 +2,9 @@
 
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
+import { LocationWithCounts } from '@/data/location.types'
+import { getUserRoles, hasPermissionByRank, lte } from '@/data/user.types'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { Customer, LocationID } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
@@ -20,14 +23,11 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '../ui/tooltip'
-import { FormCompanyEdit } from './form-company-edit'
 import { ModalCreateLocation } from './modal-create-location'
 import { ModalInviteUser } from './modal-invite-user'
+import { CompanyInfoTab } from './tab-company-info'
 import { TableAdminLocations } from './table-company-locations'
 import { TableAdminUsers } from './table-company-users'
-import { LocationWithCounts } from '@/data/location.types'
-import { getUserRoles, hasPermissionByRank, lte } from '@/data/user.types'
-import { useUrlFiltering } from '@/hooks/use-url-filtering'
 
 interface Props {
 	user: User
@@ -130,7 +130,8 @@ export function TabsAdmin({
 								userRoles={getUserRoles(lte(user.role))}
 							/>
 						</div>
-					) : (currentTab() == 'lokationer' && hasPermissionByRank(user.role, 'administrator')) ? (
+					) : currentTab() == 'lokationer' &&
+						hasPermissionByRank(user.role, 'administrator') ? (
 						<div className='flex items-center gap-4'>
 							{isLocationLimitReached(customer.plan, locations.length) && (
 								<div className='flex items-center gap-2'>
@@ -186,7 +187,7 @@ export function TabsAdmin({
 				/>
 			</TabsContent>
 			<TabsContent value='firma'>
-				<FormCompanyEdit customer={customer} />
+				<CompanyInfoTab customer={customer} />
 			</TabsContent>
 		</Tabs>
 	)

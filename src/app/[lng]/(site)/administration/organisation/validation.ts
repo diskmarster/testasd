@@ -96,6 +96,18 @@ export const getCustomerSettingsValidation = z.object({
   customerID: z.coerce.number(),
 })
 
+export const updateCustomerSettingsValidation = (
+  t: (key: string, options?: any) => string,
+) =>
+  z.object({
+    id: z.coerce.number(),
+    settings: z.object({
+      useReference: z.coerce.boolean(),
+      usePlacement: z.coerce.boolean(),
+      useBatch: z.coerce.boolean(),
+    }),
+  })
+
 export const resetUserPasswordValidation = z.object({
   userID: z.coerce.number(),
   email: z.string().email(),
