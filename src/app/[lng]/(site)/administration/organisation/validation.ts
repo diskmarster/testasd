@@ -92,6 +92,10 @@ export const updateCustomerValidation = (
     email: z.string().email({ message: t('organisation.email-valid') }),
   })
 
+export const getCustomerSettingsValidation = z.object({
+  customerID: z.coerce.number(),
+})
+
 export const resetUserPasswordValidation = z.object({
   userID: z.coerce.number(),
   email: z.string().email(),

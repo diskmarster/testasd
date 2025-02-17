@@ -62,7 +62,8 @@
     "reset-own-pw-error": "You cannot reset the password of your own account here",
     "reset-higher-rank-pw-error": "You cannot reset the password of users with higher privileges than yours",
     "reset-own-pin-error": "You cannot reset the pin code of your own account here",
-    "reset-higher-rank-pin-error": "You cannot reset the pin code of users with higher privileges than yours"
+    "reset-higher-rank-pin-error": "You cannot reset the pin code of users with higher privileges than yours",
+    "access-not-allowed": "You do not have access to this"
   },
   "placement-action": {
     "location-not-found": "Couldn't find your location",

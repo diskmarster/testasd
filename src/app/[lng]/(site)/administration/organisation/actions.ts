@@ -23,6 +23,7 @@ import {
   createNewLocationValidation,
   editLocationValidation,
   editUserValidation,
+  getCustomerSettingsValidation,
   getLocationsByUserIDValidation,
   inviteNewUserValidation,
   resetUserPasswordValidation,
@@ -271,6 +272,19 @@ export const updateCustomerAction = adminAction
       throw new ActionError(t('organisation-action.customer-wasnt-updated'))
     }
     revalidatePath(`/${lang}/administration/organisation`)
+  })
+
+export const getCustomerSettingsAction = adminAction
+  .metadata({actionName: 'getCustomerSettings', excludeAnalytics: true})
+  .schema(getCustomerSettingsValidation)
+  .action(async ({parsedInput: {customerID}, ctx: {user, lang}}) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
+
+    if (customerID != user.customerID) {
+      throw new ActionError(t('organisation-action.access-not-allowed'))
+    }
+
+    return await customerService.getSettings(customerID)
   })
 
 export const resetUserPasswordAction = adminAction
