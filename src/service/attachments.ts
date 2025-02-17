@@ -12,7 +12,13 @@ export const attachmentService = {
   deleteByID: async function (ID: AttachmentID): Promise<boolean> {
     return await attachments.deleteByID(ID)
   },
-  getByID: async function (domain: RefType, id: number): Promise<Attachment[]> {
-    return await attachments.getByID(domain, id)
+  getByRefID: async function (
+    domain: RefType,
+    id: number,
+  ): Promise<Attachment[]> {
+    return await attachments.getByRefID(domain, id)
+  },
+  getByID: async function (id: number): Promise<Attachment | undefined> {
+    return await attachments.getByID(id)
   },
 }

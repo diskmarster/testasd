@@ -50,10 +50,16 @@ import {
   Ban,
   Hash,
   CircleHelp,
+  FileText,
+  EllipsisIcon,
+  CalendarClock
 } from 'lucide-react'
 
 export const Icons = {
+	calendarClock: CalendarClock,
+	ellipsis: EllipsisIcon,
   updown: ChevronsUpDown,
+  filetext: FileText,
   help: CircleHelp,
   hash: Hash,
   copy: Copy,

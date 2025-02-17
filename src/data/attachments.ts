@@ -28,7 +28,7 @@ export const attachments = {
       .where(eq(attachmentsTable.id, ID))
     return res.rowsAffected == 1
   },
-  getByID: async function (
+  getByRefID: async function (
     domain: RefType,
     id: number,
     tx: TRX = db,
@@ -43,5 +43,15 @@ export const attachments = {
         ),
       )
       .orderBy(asc(attachmentsTable.id))
+  },
+  getByID: async function (
+    id: number,
+    tx: TRX = db,
+  ): Promise<Attachment | undefined> {
+    const res = await tx
+      .select()
+      .from(attachmentsTable)
+      .where(eq(attachmentsTable.id, id))
+    return res[0]
   },
 }

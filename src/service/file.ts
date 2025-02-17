@@ -1,7 +1,12 @@
 import { RefType } from '@/data/attachments'
 import { CustomerID } from '@/lib/database/schema/customer'
 import { BUCKET_NAME, BUCKET_REGION, s3Client } from '@/lib/s3'
-import { PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3'
+import {
+  DeleteObjectCommand,
+  DeleteObjectCommandInput,
+  PutObjectCommand,
+  PutObjectCommandInput,
+} from '@aws-sdk/client-s3'
 import crypto from 'crypto'
 
 type KeyData = {
@@ -27,6 +32,10 @@ type UploadRequest = {
   key: string
   mimeType: string
   body: Uint8Array
+}
+
+type DeleteRequest = {
+  key: string
 }
 
 export const allowedMimetypes = {
@@ -87,7 +96,20 @@ export const fileService = {
       response: res,
     }
   },
-  delete: async function () {},
+  delete: async function (input: DeleteRequest) {
+    const params: DeleteObjectCommandInput = {
+      Bucket: BUCKET_NAME,
+      Key: input.key,
+    }
+
+    const command = new DeleteObjectCommand(params)
+    const res = await s3Client.send(command)
+
+    return {
+      success: res.$metadata.httpStatusCode === 204,
+      response: res,
+    }
+  },
 }
 
 const utils = {

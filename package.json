@@ -59,6 +59,7 @@
     "lucia": "^3.2.0",
     "lucide-react": "^0.454.0",
     "next": "14.2.21",
+    "mime-types": "^2.1.35",
     "next-safe-action": "7.8.1",
     "next-themes": "^0.3.0",
     "papaparse": "^5.4.1",
@@ -71,6 +72,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
     "react-i18next": "^15.0.2",
+    "react-multiple-scrollbar": "^0.1.0",
     "recharts": "^2.13.0",
     "resend": "^4.0.0",
     "sonner": "^1.5.0",
@@ -79,6 +81,7 @@
     "use-debounce": "^10.0.4",
     "vaul": "^0.9.1",
     "xlsx": "^0.18.5",
+    "yet-another-react-lightbox": "^3.21.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -87,6 +90,7 @@
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

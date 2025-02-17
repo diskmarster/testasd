@@ -47,7 +47,11 @@ export function ModalShowProductCard({ product, user }: Props) {
 				</div>
 			</CredenzaTrigger>
 			<CredenzaContent className='max-w-xl'>
-				<CredenzaHeader>
+				<CredenzaHeader className='space-y-2'>
+					<Link target='_blank' className={cn('text-primary underline-offset-4 hover:underline text-sm flex items-center gap-1')} href={`/${lng}/varer/produkter/${product.id}`}>
+						Se mere
+						<Icons.external className='size-3.5 text-foreground' />
+					</Link>
 					<CredenzaTitle asChild>
 						<div className='flex items-center gap-3'>
 							<p className='md:max-w-[90%]'>{product.text1}</p>
@@ -107,10 +111,6 @@ export function ModalShowProductCard({ product, user }: Props) {
 							<p>Filer</p>
 							<span className='text-muted-foreground tabular-nums text-xs'>({product.fileCount} / 5)</span>
 						</div>
-						<Link target='_blank' className={cn('text-primary underline-offset-4 hover:underline text-sm flex items-center gap-1', product.fileCount == 0 && 'hidden')} href={`/${lng}/varer/produkter/${product.id}`}>
-							Se vares filer
-							<Icons.external className='size-3.5 text-foreground' />
-						</Link>
 					</div>
 				</CredenzaBody>
 			</CredenzaContent>

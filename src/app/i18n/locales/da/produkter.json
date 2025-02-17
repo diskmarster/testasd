@@ -30,5 +30,7 @@
   },
   "toasts": {
     "product-updated": "Vare opdateret succesfuldt"
+  },
+  "detail-page": {
   }
 }
