@@ -35,7 +35,7 @@ export default async function Page({ params: { lng, id } }: PageProps) {
 		<SiteWrapper>
 			<div className='flex flex-col lg:flex-row items-stretch gap-4 h-[500px]'>
 				<Suspense fallback={<p>loading...</p>}>
-					<ProductDetailsWrapper lng={lng} id={id} />
+					<ProductDetailsWrapper lng={lng} id={id} user={user} />
 				</Suspense>
 				<Suspense fallback={<p>loading...</p>}>
 					<ProductFilesWrapper lng={lng} id={id} user={user} />
