@@ -95,3 +95,64 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer base {
+  :root {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      border-radius: 12px;
+    }
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #c4c4c4;
+      border-radius: 12px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #d8d8d8;
+    }
+  }
+  .dark {
+    * {
+      @apply border-border;
+    }
+    body {
+      @apply bg-background text-foreground;
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      border-radius: 12px;
+    }
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #8584a19c;
+      border-radius: 12px;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #8584a1;
+    }
+  }
+}
