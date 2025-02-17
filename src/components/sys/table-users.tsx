@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import {
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -24,7 +23,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -36,6 +34,8 @@ import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { getTableSysUsersColumns, getTableSysUsersFilters } from '@/app/[lng]/(site)/sys/brugere/columns'
 import { UserNoHashWithCompany } from '@/data/user.types'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -52,8 +52,8 @@ export function TableSysUsers({ data }: Props) {
   const { t } = useTranslation(lng, 'sys-bruger')
   const columns = useMemo(() => getTableSysUsersColumns(t), [t])
 
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)
@@ -104,9 +104,9 @@ export function TableSysUsers({ data }: Props) {
 
     groupedColumnMode: 'reorder',
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,

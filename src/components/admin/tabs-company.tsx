@@ -27,6 +27,7 @@ import { TableAdminLocations } from './table-company-locations'
 import { TableAdminUsers } from './table-company-users'
 import { LocationWithCounts } from '@/data/location.types'
 import { getUserRoles, hasPermissionByRank, lte } from '@/data/user.types'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 
 interface Props {
 	user: User
@@ -49,9 +50,10 @@ export function TabsAdmin({
 	const tabs = ['brugere', 'lokationer', 'firma']
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'organisation')
+	const [columnFilters, handleFilterChange] = useUrlFiltering()
 
 	function createTabParam(val: string) {
-		const params = new URLSearchParams(searchParams.toString())
+		const params = new URLSearchParams()
 		params.set('tab', val)
 		return params.toString()
 	}
@@ -166,11 +168,21 @@ export function TabsAdmin({
 				</div>
 			</div>
 			<TabsContent value='brugere'>
-				<TableAdminUsers data={users} user={user} />
+				<TableAdminUsers
+					data={users}
+					user={user}
+					columnFilters={columnFilters}
+					handleColumnFiltersChange={handleFilterChange}
+				/>
 			</TabsContent>
 
 			<TabsContent value='lokationer'>
-				<TableAdminLocations data={locations} user={user} />
+				<TableAdminLocations
+					data={locations}
+					user={user}
+					columnFilters={columnFilters}
+					handleColumnFiltersChange={handleFilterChange}
+				/>
 			</TabsContent>
 			<TabsContent value='firma'>
 				<FormCompanyEdit customer={customer} />

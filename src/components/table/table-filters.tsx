@@ -37,7 +37,7 @@ type TableToolbarFiltersProps<T> = {
 function TableToolbarFilters<T>({
   table,
   filterFields,
-  filterLocalStorageKey
+  filterLocalStorageKey,
 }: TableToolbarFiltersProps<T>) {
   const [open, setOpen] = useState(false)
   const [selectedFields, setSelectedFields] = useState<FilterField<T>[]>(
@@ -49,13 +49,15 @@ function TableToolbarFilters<T>({
   useEffect(() => {
     if (filterLocalStorageKey) {
       const savedFilters: string[] = JSON.parse(
-        localStorage.getItem(filterLocalStorageKey) || '[]'
+        localStorage.getItem(filterLocalStorageKey) || '[]',
       )
-	  if (selectedFields.length > 0) {
-		  selectedFields.forEach(sf => savedFilters.push(sf.column?.id || ""))
-	  }
-	  const unqFilters = new Set(savedFilters)
-	  const fields = filterFields.filter(ff => unqFilters.has(ff.column?.id || ""))
+      if (selectedFields.length > 0) {
+        selectedFields.forEach(sf => savedFilters.push(sf.column?.id || ''))
+      }
+      const unqFilters = new Set(savedFilters)
+      const fields = filterFields.filter(ff =>
+        unqFilters.has(ff.column?.id || ''),
+      )
       setSelectedFields(fields)
     }
   }, [filterLocalStorageKey])
@@ -75,8 +77,9 @@ function TableToolbarFilters<T>({
     setOpen(false)
     setSelectedFields(prev => {
       const newFields = [...prev, { ...field }]
-	  const fieldIDs = newFields.map(f => f.column?.id)
-      if (filterLocalStorageKey) localStorage.setItem(filterLocalStorageKey, JSON.stringify(fieldIDs))
+      const fieldIDs = newFields.map(f => f.column?.id)
+      if (filterLocalStorageKey)
+        localStorage.setItem(filterLocalStorageKey, JSON.stringify(fieldIDs))
       return newFields
     })
     setActiveIndex(selectedFields.length)
@@ -86,8 +89,9 @@ function TableToolbarFilters<T>({
     field.column?.setFilterValue(undefined)
     setSelectedFields(prev => {
       const newFields = prev.filter(f => f.label !== field.label)
-	  const fieldIDs = newFields.map(f => f.column?.id)
-      if (filterLocalStorageKey) localStorage.setItem(filterLocalStorageKey, JSON.stringify(fieldIDs))
+      const fieldIDs = newFields.map(f => f.column?.id)
+      if (filterLocalStorageKey)
+        localStorage.setItem(filterLocalStorageKey, JSON.stringify(fieldIDs))
       return newFields
     })
   }
@@ -96,7 +100,7 @@ function TableToolbarFilters<T>({
     <div className='flex items-center gap-2'>
       {selectedFields.map((field, i) => (
         <FilterPopover
-          key={i}
+          key={`${field.label}_${i}`}
           field={field}
           isActive={i === activeIndex}
           setActiveIndex={setActiveIndex}
@@ -145,19 +149,25 @@ function FilterPopover<T>({
   index: number
   t: (key: string, opts?: any) => string
 }) {
-  const [value, setSearched] = useState<string>('')
+  const [value, setSearched] = useState<string>(
+    (field.column?.getFilterValue() ?? '') as string,
+  )
   const [selectValue, setSelectValue] = useState<string[]>(
     (field.column?.getFilterValue() ?? []) as any[],
   )
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: undefined,
-    to: undefined,
-  })
+  const [date, setDate] = useState<DateRange | undefined>(
+    (field.column?.getFilterValue() ?? {
+      from: undefined,
+      to: undefined,
+    }) as DateRange | undefined,
+  )
 
-  const [numRange, setNumRange] = useState<NumberRange>({
-    from: undefined,
-    to: undefined
-  })
+  const [numRange, setNumRange] = useState<NumberRange>(
+    (field.column?.getFilterValue() ?? {
+      from: undefined,
+      to: undefined,
+    }) as NumberRange,
+  )
 
   const isSelect = field.type === 'select'
   const isDateRange = field.type === 'date-range'
@@ -179,18 +189,18 @@ function FilterPopover<T>({
   }
 
   const getNumberRangeDisplayValue = (value: NumberRange): string => {
-    const {from, to} = value
+    const { from, to } = value
 
     if (!from && !to) {
-      return t('table-filters.number-range-empty', {label: field.label}) 
+      return t('table-filters.number-range-empty', { label: field.label })
     } else if (!from && to) {
-      return t('table-filters.number-range-to', {to})
+      return t('table-filters.number-range-to', { to })
     } else if (from && !to) {
-      return t('table-filters.number-range-from', {from})
+      return t('table-filters.number-range-from', { from })
     } else {
-      return t('table-filters.number-range-both', {from, to})
-    } 
-  } 
+      return t('table-filters.number-range-both', { from, to })
+    }
+  }
 
   const getDateRangeDisplayValue = (range: DateRange): string => {
     if (!range || (!range.from && !range.to))
@@ -234,7 +244,7 @@ function FilterPopover<T>({
               'flex items-center gap-1 max-w-56',
               field.type == 'date-range' && 'max-w-72',
               field.type == 'select' && 'max-w-72',
-              field.type == 'number-range' && 'max-w-96'
+              field.type == 'number-range' && 'max-w-96',
             )}
             onClick={() => setActiveIndex(isActive ? undefined : index)}>
             <span>{field.label}:</span>
@@ -247,7 +257,7 @@ function FilterPopover<T>({
           'space-y-1 p-2 max-w-56',
           field.type === 'date' && 'w-auto p-0 max-w-max',
           field.type === 'date-range' && 'w-auto p-0 max-w-max',
-          field.type === 'number-range' && 'max-w-48'
+          field.type === 'number-range' && 'max-w-48',
         )}
         align='center'>
         {field.type === 'text' ? (
@@ -280,7 +290,7 @@ function FilterNumberRange<T>({
   field,
   numberRange,
   setNumberRange,
-  t
+  t,
 }: {
   field: FilterField<T>
   numberRange: NumberRange
@@ -301,16 +311,22 @@ function FilterNumberRange<T>({
         className='[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
         onChange={e => {
           setNumberRange(prev => ({
-            from: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
-            to: prev.to
+            from: !isNaN(e.target.valueAsNumber)
+              ? e.target.valueAsNumber
+              : undefined,
+            to: prev.to,
           }))
           debouncedSeteFilter({
-            from: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
-            to: numberRange.to
+            from: !isNaN(e.target.valueAsNumber)
+              ? e.target.valueAsNumber
+              : undefined,
+            to: numberRange.to,
           })
         }}
       />
-      <span className='text-sm text-muted-foreground'>{t('table-filters.number-range')}</span>
+      <span className='text-sm text-muted-foreground'>
+        {t('table-filters.number-range')}
+      </span>
       <Input
         placeholder={field.placeholder}
         type='number'
@@ -319,11 +335,15 @@ function FilterNumberRange<T>({
         onChange={e => {
           setNumberRange(prev => ({
             from: prev.from,
-            to: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
+            to: !isNaN(e.target.valueAsNumber)
+              ? e.target.valueAsNumber
+              : undefined,
           }))
           debouncedSeteFilter({
             from: numberRange.from,
-            to: !isNaN(e.target.valueAsNumber) ? e.target.valueAsNumber : undefined,
+            to: !isNaN(e.target.valueAsNumber)
+              ? e.target.valueAsNumber
+              : undefined,
           })
         }}
       />

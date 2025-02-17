@@ -14,7 +14,6 @@ import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import {
-  ColumnFiltersState,
   ExpandedState,
   flexRender,
   getCoreRowModel,
@@ -25,7 +24,6 @@ import {
   getGroupedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -36,6 +34,8 @@ import { TableToolbar } from '../table/table-toolbar'
 import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { getProductOverviewColumns, getProductTableOverviewFilters } from '@/app/[lng]/(site)/varer/produkter/columns'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -58,8 +58,8 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     [user, plan, lng, t],
   )
 
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+  const [sorting, handleSortingChange] = useUrlSorting()
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
     { id: 'isBarred', value: [false] },
   ])
   const [expanded, setExpanded] = useState<ExpandedState>({})
@@ -113,8 +113,8 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
 
     groupedColumnMode: 'reorder',
 
-    onColumnFiltersChange: setColumnFilters,
-    onSortingChange: setSorting,
+    onColumnFiltersChange: handleColumnFiltersChange,
+    onSortingChange: handleSortingChange,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,
 

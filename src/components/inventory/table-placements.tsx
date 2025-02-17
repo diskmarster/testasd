@@ -17,9 +17,10 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useLanguage } from '@/context/language'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Placement } from '@/lib/database/schema/inventory'
 import {
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -30,7 +31,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -61,8 +61,8 @@ export function TablePlacement({ data, user }: Props) {
     return data.filter(placement => placement.name !== '-')
   }, [data])
 
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+  const [sorting, handleSortingChange] = useUrlSorting()
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
     { id: 'isBarred', value: [false] },
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -113,9 +113,9 @@ export function TablePlacement({ data, user }: Props) {
     getExpandedRowModel: getExpandedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
