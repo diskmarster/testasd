@@ -57,6 +57,26 @@
 			"key_productSalesPrice": "Salgspris",
 			"key_productIsBarred": "Spærret",
 			"key_productNote": "Note"
+		},
+		"files": {
+			"title": "Filer",
+			"documents": "Dokumenter",
+			"no-documents": "Ingen dokumenter fundet",
+			"document-show": "Vis",
+			"document-download": "Download",
+			"document-delete": "Slet",
+			"images": "Billeder",
+			"no-images": "Ingen billleder fundet",
+			"max-files-exceeded": "Du kan ikke uploade mere end {{max}} filer",
+			"upload-error": "Din fil blev ikke uploadet korrekt. Prøv igen.",
+			"currently-uploading": "Uploader {{current}} af {{max}}",
+			"drag-active": "Træk og slip her",
+			"drag-inactive": "Træk of slip filer, eller klik for at vælge",
+			"delete-success": "Din fil er nu slettet",
+			"delete-title": "Vil du slette filen?",
+			"delete-description": "Denne handling er permanent, og kan ikke gøres om.",
+			"delete-close": "Luk",
+			"delete-confirm": "Slet"
 		}
 	}
 }

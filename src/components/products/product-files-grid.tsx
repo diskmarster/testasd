@@ -18,6 +18,8 @@ import { createAttachmentAction, deleteAttachmentAction, deleteAttachmentAndFile
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 import { emitCustomEvent, useCustomEventListener } from "react-custom-events"
 import Link from "next/link"
+import { useLanguage } from "@/context/language"
+import { useTranslation } from "@/app/i18n/client"
 
 interface Props {
 	productID: number
@@ -26,6 +28,9 @@ interface Props {
 }
 
 export function ProductFilesGrid({ productID, files, user }: Props) {
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'produkter')
+
 	const [imageIndex, setImageIndex] = useState(0)
 	const [lightBoxOpen, setLightBoxOpen] = useState(false)
 
@@ -35,14 +40,14 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 		<>
 			<div className="lg:w-1/2 border rounded-md p-4 flex flex-col gap-4">
 				<div className='flex items-baseline gap-1.5'>
-					<p>Filer</p>
+					<p>{t("details-page.files.title")}</p>
 					<span className='text-muted-foreground tabular-nums text-xs'>({files.length} / 5)</span>
 				</div>
 				<div className="space-y-2">
-					<p className="text-sm text-muted-foreground">Dokumenter</p>
+					<p className="text-sm text-muted-foreground">{t("details-page.files.documents")}</p>
 					<div className="flex flex-col gap-2">
 						{!pdf && (
-							<p className="text-muted-foreground">Ingen dokumenter fundet</p>
+							<p className="text-muted-foreground">{t("details-page.files.no-documents")}</p>
 						)}
 						{pdf && pdf.map((p, i) => (
 							<PDFFile key={i} file={p} />
@@ -50,10 +55,10 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 					</div>
 				</div>
 				<div className="space-y-2">
-					<p className="text-sm text-muted-foreground">Billeder</p>
+					<p className="text-sm text-muted-foreground">{t("details-page.files.images")}</p>
 					<div className='flex gap-2 flex-wrap'>
 						{!image && (
-							<p className="text-muted-foreground">Ingen billeder fundet</p>
+							<p className="text-muted-foreground">{t("details-page.files.no-images")}</p>
 						)}
 						{image && image.map((f, i) => (
 							<ImageFile
@@ -86,6 +91,8 @@ function PDFFile({
 }: {
 	file: Attachment,
 }) {
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'produkter')
 	return (
 		<div>
 			<div className="flex items-center justify-between">
@@ -100,12 +107,12 @@ function PDFFile({
 						</Button>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<DropdownMenuItem>Vis</DropdownMenuItem>
-						<DropdownMenuItem>Download</DropdownMenuItem>
+						<DropdownMenuItem>{t("details-page.files.document-show")}</DropdownMenuItem>
+						<DropdownMenuItem>{t("details-page.files.document-download")}</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem className="text-destructive" onClick={() => {
 							emitCustomEvent("DeleteFileByID", { ID: file.id })
-						}}>Slet</DropdownMenuItem>
+						}}>{t("details-page.files.document-delete")}</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			</div>
@@ -144,6 +151,9 @@ function ImageFile({
 }
 
 function FileDropZone({ user, productID, fileCount }: { user: User, productID: number, fileCount: number }) {
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'produkter')
+
 	const [filesLoading, setFilesLoading] = useState(0)
 	const [filesDone, setFilesDone] = useState(0)
 
@@ -153,7 +163,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 		setFilesLoading(files.length)
 		for (const file of files) {
 			if (tempCount >= 5) {
-				toast.error(siteConfig.errorTitle, { description: "Du kan ikke uploade flere end 5 filer" })
+				toast.error(siteConfig.errorTitle, { description: t("details-page.files.max-files-exceeded", { max: 5 }) })
 				break
 			}
 			tempCount++
@@ -200,7 +210,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				&& !uploadResponse.data?.success
 				&& attachmentResponse
 				&& attachmentResponse.data?.success) {
-				toast.error(siteConfig.errorTitle, { description: "s3 upload was not a success but database was a success" })
+				toast.error(siteConfig.errorTitle, { description: t("details-page.files.upload-error") })
 				const deleteAttach = await deleteAttachmentAction({ ID: attachmentResponse.data.attachment.id })
 
 				if (deleteAttach && deleteAttach.serverError) {
@@ -213,7 +223,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				&& !uploadResponse.data?.success
 				&& attachmentResponse
 				&& !attachmentResponse.data?.success) {
-				toast.error(siteConfig.errorTitle, { description: 'both s3 upload and database failed' })
+				toast.error(siteConfig.errorTitle, { description: t("details-page.files.upload-error") })
 				continue
 			}
 
@@ -231,7 +241,6 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 	})
 
 	return (
-
 		<div
 			className={cn('mt-auto border-dashed border py-4 rounded-md grid place-items-center hover:border-primary transition-colors cursor-pointer group/dropzone', isDragActive && 'bg-primary/20')}
 			{...getRootProps()}>
@@ -240,12 +249,12 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				{filesLoading > 0 && filesLoading > filesDone ? (
 					<>
 						<Icons.spinner className='size-4 text-primary animate-spin' />
-						<p className='text-sm'>Uploader {filesDone} af {filesLoading} filer</p>
+						<p className='text-sm'>{t("details-page.files.currently-uploading", { current: filesDone, max: filesLoading })}</p>
 					</>
 				) : (
 					<>
 						<Icons.plus className='h-4 w-4 text-primary group-hover/dropzone:rotate-180 transition-transform' />
-						<p className='text-sm'>{isDragActive ? 'Træk og slip her' : 'Træk og slip filer, eller klik for at vælge'}</p>
+						<p className='text-sm'>{isDragActive ? t("details-page.files.drag-active") : t("details-page.files.drag-inactive")}</p>
 					</>
 				)}
 			</div>
@@ -254,6 +263,9 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 }
 
 function DeleteFileModal() {
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'produkter')
+
 	const [pending, startTransition] = useTransition()
 	const [open, setOpen] = useState(false)
 	const [ID, setID] = useState<number>()
@@ -277,7 +289,7 @@ function DeleteFileModal() {
 				return
 			}
 			onOpenChange(false)
-			toast.success("Fil blev slettet", { description: "Din fil er nu slettet" })
+			toast.success("Fil blev slettet", { description: t("details-page.files.delete-success") })
 		})
 	}
 
@@ -285,11 +297,8 @@ function DeleteFileModal() {
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent className="max-w-sm">
 				<AlertDialogHeader>
-					<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-					<AlertDialogDescription>
-						This action cannot be undone. This will permanently delete your account
-						and remove your data from our servers.
-					</AlertDialogDescription>
+					<AlertDialogTitle>{t("details-page.files.delete-title")}</AlertDialogTitle>
+					<AlertDialogDescription>{t("details-page.files.delete-description")}</AlertDialogDescription>
 				</AlertDialogHeader>
 				<div className="flex items-center gap-2">
 					<Button
@@ -298,7 +307,7 @@ function DeleteFileModal() {
 						variant='secondary'
 						className='w-full'
 						onClick={() => onOpenChange(false)}>
-						Luk
+						{t("details-page.files.delete-close")}
 					</Button>
 					<Button
 						disabled={pending}
@@ -307,7 +316,7 @@ function DeleteFileModal() {
 						className='w-full gap-2'
 						onClick={() => deleteFile()}>
 						{pending && <Icons.spinner className='size-4 animate-spin' />}
-						Slet
+						{t("details-page.files.delete-confirm")}
 					</Button>
 				</div>
 			</AlertDialogContent>

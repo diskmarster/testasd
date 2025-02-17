@@ -57,6 +57,26 @@
 			"key_productSalesPrice": "Sales price",
 			"key_productIsBarred": "Barred",
 			"key_productNote": "Note"
+		},
+		"files": {
+			"title": "Files",
+			"documents": "Documents",
+			"no-documents": "No documents found",
+			"document-show": "Show",
+			"document-download": "Download",
+			"document-delete": "Delete",
+			"images": "Images",
+			"no-images": "No images found",
+			"max-files-exceeded": "You cannot upload more than {{max}} files",
+			"upload-error": "Your file was not uploaded. Try again.",
+			"currently-uploading": "Uploading {{current}} of {{max}}",
+			"drag-active": "Drag and drop here",
+			"drag-inactive": "Drag and drop, or click to choose files",
+			"delete-success": "Your file is now deleted",
+			"delete-title": "Do you want to delete the file?",
+			"delete-description": "This action is permanent and cannot be undone.",
+			"delete-close": "Close",
+			"delete-confirm": "Delete"
 		}
 	}
 }
