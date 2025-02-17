@@ -8,6 +8,7 @@ import {
   CustomerID,
   CustomerLink,
   CustomerLinkID,
+  CustomerSettings,
   NewCustomer,
   NewCustomerLink,
   PartialCustomer,
@@ -99,5 +100,8 @@ export const customerService = {
   },
   deleteByID: async function(customerID: CustomerID): Promise<boolean> {
     return customer.deleteByID(customerID)
-  }
+  },
+  getSettings: async function(customerID: CustomerID): Promise<CustomerSettings | undefined> {
+    return await customer.getSettings(customerID)
+  },
 }

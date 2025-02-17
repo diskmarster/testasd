@@ -6,6 +6,8 @@ import {
   CustomerLink,
   CustomerLinkID,
   customerLinkTable,
+  CustomerSettings,
+  customerSettingsTable,
   customerTable,
   NewCustomer,
   NewCustomerLink,
@@ -104,5 +106,13 @@ export const customer = {
   deleteByID: async function(customerID: CustomerID, trx: TRX = db): Promise<boolean> {
     const res = await trx.delete(customerTable).where(eq(customerTable.id, customerID))
     return res.rowsAffected == 1
-  }
+  },
+  getSettings: async function(customerID: CustomerID, trx: TRX = db): Promise<CustomerSettings | undefined> {
+    const [res] = await trx
+      .select()
+      .from(customerSettingsTable)
+      .where(eq(customerSettingsTable.customerID, customerID))
+
+    return res
+  },
 }

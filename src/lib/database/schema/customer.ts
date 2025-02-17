@@ -19,6 +19,7 @@ export type NewCustomer = typeof customerTable.$inferInsert
 export type Customer = typeof customerTable.$inferSelect
 export type CustomerID = Customer['id']
 export type PartialCustomer = Partial<Customer>
+export type CustomerWithSettings = Customer & { settings: CustomerSettings }
 
 export const customerLinkTable = sqliteTable('nl_customer_link', {
   id: text("id").notNull().primaryKey(),
@@ -76,3 +77,8 @@ export const customerSettingsTable = sqliteTable('nl_customer_settings', {
   inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
   updated: integer("updated", { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>()
 })
+
+export type NewCustomerSettings = typeof customerSettingsTable.$inferInsert
+export type CustomerSettings = typeof customerSettingsTable.$inferSelect
+export type CustomerSettingsID = CustomerSettings['id']
+export type PartialCustomerSettings = Partial<CustomerSettings>
