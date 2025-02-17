@@ -66,3 +66,13 @@ export type NewLinkLocationToUser = typeof linkLocationToUserTable.$inferInsert
 export type LinkLocationToUser = typeof linkLocationToUserTable.$inferSelect
 export type LinkLocationToUserPK = { userID: LinkLocationToUser['userID'], locationID: LinkLocationToUser['locationID'] }
 export type PartialLinkLocationToUser = Partial<LinkLocationToUser>
+
+export const customerSettingsTable = sqliteTable('nl_customer_settings', {
+  id: integer("id").notNull().primaryKey({ autoIncrement: true }),
+  customerID: integer('customer_id').notNull().references(() => customerTable.id, { onDelete: 'cascade' }),
+  useReference: integer('use_reference', {mode: 'boolean'}).notNull().default(true),
+  usePlacement: integer('use_placement', {mode: 'boolean'}).notNull().default(true),
+  useBatch: integer('use_batch', {mode: 'boolean'}).notNull().default(true),
+  inserted: integer("inserted", { mode: "timestamp" }).notNull().default(sql`(unixepoch())`),
+  updated: integer("updated", { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`).$onUpdateFn(() => new Date()).$type<Date>()
+})
