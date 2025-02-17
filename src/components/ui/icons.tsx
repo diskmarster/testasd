@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils'
 import {
   ArrowDown,
   TrafficCone,
+  Zap,
   ChevronRight,
   ArrowDownUp,
   ArrowLeft,
@@ -52,13 +53,22 @@ import {
   CircleHelp,
   FileText,
   EllipsisIcon,
-  CalendarClock
+  CalendarClock,
+  PackageCheck,
+  PackagePlusIcon,
+  PackageXIcon,
+  PackageIcon,
 } from 'lucide-react'
 
 export const Icons = {
+	zap: Zap,
 	calendarClock: CalendarClock,
 	ellipsis: EllipsisIcon,
   updown: ChevronsUpDown,
+  packagePlus: PackagePlusIcon,
+  packageCross: PackageXIcon,
+  packageCheck: PackageCheck,
+  package: PackageIcon,
   filetext: FileText,
   help: CircleHelp,
   hash: Hash,
