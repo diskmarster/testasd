@@ -44,7 +44,7 @@
 			"action": "changed",
 			"action_oprettelse": "created",
 			"action_opdatering": "updated",
-			"action_spærring": "barred",
+			"action_spærring": "updated",
 			"key": "unknown field",
 			"key_productGroupName": "Group",
 			"key_productUnitName": "Unit",
