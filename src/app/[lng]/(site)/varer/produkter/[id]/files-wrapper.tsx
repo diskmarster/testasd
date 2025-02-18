@@ -8,7 +8,7 @@ interface Props {
 	user: User
 }
 
-export async function ProductFilesWrapper({ id, lng, user }: Props) {
+export async function ProductFilesWrapper({ id, user }: Props) {
 	const files = await attachmentService.getByRefID('product', parseInt(id))
 	return (
 		<ProductFilesGrid files={files} user={user} productID={Number(id)} />

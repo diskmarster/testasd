@@ -1,6 +1,5 @@
 
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
-import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { hasPermissionByRank } from '@/data/user.types'
 import { sessionService } from '@/service/session'
