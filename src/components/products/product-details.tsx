@@ -24,6 +24,7 @@ import { updateProductAction } from "@/app/[lng]/(site)/varer/produkter/actions"
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { Icons } from "../ui/icons"
+import { Skeleton } from "../ui/skeleton"
 
 interface Props {
 	product: FormattedProduct & { inventories: Inventory[] }
@@ -332,6 +333,48 @@ export function ProductDetails({ product, user }: Props) {
 						</div>
 					</div>
 				)}
+			</div>
+		</div>
+	)
+}
+
+
+export function DetailsSkeleton() {
+	return (
+		<div className="w-full lg:w-1/2 border rounded-md p-4 space-y-4">
+			<div className="flex items-center justify-between">
+				<Skeleton className="h-9 w-1/3" />
+				<Skeleton className="h-9 w-[85px]" />
+			</div>
+			<div className="space-y-4">
+				<div className="space-y-2">
+					<Skeleton className="h-4 w-1/4" />
+					<Skeleton className="h-9 w-1/3" />
+				</div>
+				<div className="space-y-2">
+					<Skeleton className="h-4 w-1/4" />
+					<Skeleton className="h-[4rem] w-full" />
+				</div>
+			</div>
+			<div className="flex gap-4">
+				<div className="flex flex-col gap-2 w-full">
+					<Skeleton className="h-4 w-1/4" />
+					<Skeleton className="h-9 w-full" />
+				</div>
+				<div className="flex flex-col gap-2 w-full">
+					<Skeleton className="h-4 w-1/4" />
+					<Skeleton className="h-9 w-full" />
+				</div>
+			</div>
+			<div className="flex gap-4">
+				<div className="flex flex-col gap-2 w-full">
+					<Skeleton className="h-4 w-1/4" />
+					<Skeleton className="h-9 w-full" />
+				</div>
+				<div className="flex flex-col gap-2 w-full">
+					<Skeleton className="h-4 w-1/4" />
+					<Skeleton className="h-9 w-full" />
+				</div>
 			</div>
 		</div>
 	)

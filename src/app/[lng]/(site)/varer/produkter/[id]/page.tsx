@@ -9,6 +9,9 @@ import { Suspense } from 'react'
 import { ProductDetailsWrapper } from './details-wrapper'
 import { ProductFilesWrapper } from './files-wrapper'
 import { ProductHistoryWrapper } from './history-wrapper'
+import { DetailsSkeleton } from '@/components/products/product-details'
+import { FilesSkeleton } from '@/components/products/product-files-grid'
+import { HistorySkeleton } from '@/components/products/product-history'
 
 interface PageProps {
 	params: {
@@ -28,21 +31,18 @@ export default async function Page({ params: { lng, id } }: PageProps) {
 		redirect('/oversigt')
 	}
 
-	const { t } = await serverTranslation(lng, 'produkter')
-
-
 	return (
 		<SiteWrapper>
 			<div className='flex flex-col lg:flex-row items-stretch gap-4 h-[500px]'>
-				<Suspense fallback={<p>loading...</p>}>
+				<Suspense fallback={<DetailsSkeleton />}>
 					<ProductDetailsWrapper lng={lng} id={id} user={user} />
 				</Suspense>
-				<Suspense fallback={<p>loading...</p>}>
+				<Suspense fallback={<FilesSkeleton />}>
 					<ProductFilesWrapper lng={lng} id={id} user={user} />
 				</Suspense>
 			</div>
 			<div>
-				<Suspense fallback={<p>loading...</p>}>
+				<Suspense fallback={<HistorySkeleton />}>
 					<ProductHistoryWrapper customerID={user.customerID} lng={lng} id={id} />
 				</Suspense>
 			</div>

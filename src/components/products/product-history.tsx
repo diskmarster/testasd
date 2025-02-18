@@ -8,6 +8,7 @@ import { useState } from "react"
 import { Button } from "../ui/button"
 import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
+import { Skeleton } from "../ui/skeleton"
 
 interface Props {
 	history: ProductHistoryType[]
@@ -136,4 +137,20 @@ export function ProductHistory({ history }: Props) {
 			</ScrollArea>
 		</div>
 	);
+}
+
+export function HistorySkeleton() {
+	return (
+		<div className="w-full border rounded-md p-4 space-y-4">
+			<Skeleton className="h-9 w-32" />
+			<div className="flex gap-4 items-start">
+				<Skeleton className="size-8" />
+				<Skeleton className="h-16 w-full" />
+			</div>
+			<div className="flex gap-4 items-start">
+				<Skeleton className="size-8" />
+				<Skeleton className="h-16 w-full" />
+			</div>
+		</div>
+	)
 }

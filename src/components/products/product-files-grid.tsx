@@ -20,6 +20,7 @@ import { emitCustomEvent, useCustomEventListener } from "react-custom-events"
 import Link from "next/link"
 import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
+import { Skeleton } from "../ui/skeleton"
 
 interface Props {
 	productID: number
@@ -321,5 +322,15 @@ function DeleteFileModal() {
 				</div>
 			</AlertDialogContent>
 		</AlertDialog>
+	)
+}
+
+export function FilesSkeleton() {
+	return (
+		<div className="lg:w-1/2 border rounded-md p-4 flex flex-col gap-4">
+			<Skeleton className="h-9 w-1/3" />
+			<Skeleton className="h-9 w-[85px]" />
+			<Skeleton className="h-9 w-[85px]" />
+		</div>
 	)
 }
