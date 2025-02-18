@@ -1,7 +1,7 @@
 "use client"
 
 import { FormattedProduct } from "@/data/products.types"
-import { Inventory } from "@/lib/database/schema/inventory"
+import { Group, Inventory, Unit } from "@/lib/database/schema/inventory"
 import { Badge } from "../ui/badge"
 import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
@@ -9,7 +9,7 @@ import { Button } from "../ui/button"
 import { Separator } from "../ui/separator"
 import { hasPermissionByRank } from "@/data/user.types"
 import { numberToDKCurrency } from "@/lib/utils"
-import { useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { User } from "lucia"
 import { updateProductValidation } from "@/app/[lng]/(site)/varer/produkter/[id]/validation"
 import { useForm } from "react-hook-form"
@@ -17,6 +17,13 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { IfElse } from "../common/if-else"
 import { Input } from "../ui/input"
+import { Textarea } from "../ui/textarea"
+import { fetchActiveGroupsAction, fetchActiveUnitsAction } from "@/app/[lng]/(site)/varer/produkter/[id]/actions"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { updateProductAction } from "@/app/[lng]/(site)/varer/produkter/actions"
+import { toast } from "sonner"
+import { siteConfig } from "@/config/site"
+import { Icons } from "../ui/icons"
 
 interface Props {
 	product: FormattedProduct & { inventories: Inventory[] }
@@ -24,12 +31,16 @@ interface Props {
 }
 
 export function ProductDetails({ product, user }: Props) {
+	const [pending, startTransition] = useTransition()
 	const lng = useLanguage()
-	const { t } = useTranslation(lng, 'product')
+	const { t } = useTranslation(lng, 'produkter')
 	const [isEditing, setIsEditing] = useState(false)
 	const schema = updateProductValidation(t)
+	const [units, setUnits] = useState<Unit[]>([])
+	const [groups, setGroups] = useState<Group[]>([])
+	const [isSubmitting, setIsSubmitting] = useState(false)
 
-	const { setValue, watch } = useForm<z.infer<typeof schema>>({
+	const { setValue, watch, reset, register, formState } = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
 			productID: product.id,
@@ -38,6 +49,59 @@ export function ProductDetails({ product, user }: Props) {
 	})
 
 	const formValues = watch()
+
+	async function onSubmit(values: z.infer<typeof schema>) {
+		setIsSubmitting(true)
+		startTransition(async () => {
+			const res = await updateProductAction({
+				productID: product.id,
+				data: values.data,
+			})
+
+			if (res && res.serverError) {
+				toast.success(t(`common:${siteConfig.successTitle}`), {
+					description: res.serverError
+				})
+				setIsSubmitting(false)
+				return
+			}
+
+			toast.success(t(`common:${siteConfig.successTitle}`), {
+				description: t('toasts.product-updated'),
+			})
+			setIsSubmitting(false)
+			setIsEditing(false)
+		})
+	}
+
+	function fetchUnits() {
+		startTransition(async () => {
+			const res = await fetchActiveUnitsAction()
+
+			if (res && res.data) {
+				setUnits(res.data)
+			}
+		})
+	}
+
+	function fetchGroups() {
+		startTransition(async () => {
+			const res = await fetchActiveGroupsAction()
+
+			if (res && res.data) {
+				setGroups(res.data)
+			}
+		})
+	}
+
+	useEffect(() => {
+		if (isEditing && units.length === 0) {
+			fetchUnits()
+		}
+		if (isEditing && groups.length === 0) {
+			fetchGroups()
+		}
+	}, [isEditing])
 
 	return (
 		<div className="w-full lg:w-1/2 border rounded-md p-4">
@@ -50,34 +114,47 @@ export function ProductDetails({ product, user }: Props) {
 								type="text"
 								className="h-9"
 								value={formValues.data.text1}
-								onChange={event => setValue("data.text1", event.target.value, { shouldValidate: true })}
+								onChange={event => setValue("data.text1", event.target.value, { shouldValidate: true, shouldDirty: true })}
 							/>
 						</div>
 					}
 					falseComp={
 						<div className='flex items-start gap-3 flex-1'>
 							<p className='md:max-w-[90%]'>{product.text1}</p>
-							{product.isBarred && <Badge variant='red'>{t('modal-show-product-card.barred')}</Badge>}
+							{product.isBarred && <Badge variant='red'>{t('details-page.details.label-barred')}</Badge>}
 						</div>
 					}
 				/>
 				<IfElse
 					condition={isEditing}
 					trueComp={
-						<div className="space-x-2">
-							<Button onClick={() => setIsEditing(false)} variant='outline'>Fortryd</Button>
-							<Button onClick={() => alert("submitting")} variant='default'>Gem</Button>
+						<div className="flex gap-2">
+							<Button onClick={() => {
+								reset()
+								setIsEditing(false)
+							}}
+								variant='outline'>{t("details-page.details.button-cancel")}</Button>
+							<Button
+								disabled={pending || !formState.isDirty}
+								onClick={() => onSubmit(formValues)}
+								variant='default'
+								className="flex items-center gap-2">
+								{isSubmitting && (
+									<Icons.spinner className="size-4 animate-spin" />
+								)}
+								{t("details-page.details.button-update")}
+							</Button>
 						</div>
 					}
 					falseComp={
-						<Button onClick={() => setIsEditing(true)} variant='outline'>Rediger</Button>
+						<Button onClick={() => setIsEditing(true)} variant='outline'>{t("details-page.details.button-edit")}</Button>
 					}
 				/>
 			</div>
 
 			<div className='space-y-2'>
 				<div className="space-y-1">
-					<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.text2')}</span>
+					<span className='text-sm text-muted-foreground'>{t('details-page.details.label-text2')}</span>
 					<IfElse
 						condition={isEditing}
 						trueComp={
@@ -85,63 +162,173 @@ export function ProductDetails({ product, user }: Props) {
 								type="text"
 								className="h-9 w-1/3"
 								value={formValues.data.text2}
-								onChange={event => setValue("data.text2", event.target.value, { shouldValidate: true })}
+								onChange={event => setValue("data.text2", event.target.value, { shouldValidate: true, shouldDirty: true })}
 							/>
 						}
 						falseComp={
-							<p className="h-9">{product.text2 != '' ? product.text2 : t('modal-show-product-card.no-text2')}</p>
+							<p className="h-9 flex items-center">{product.text2 != '' ? product.text2 : t('details-page.details.no-value')}</p>
 						}
 					/>
 				</div>
 				<div className="space-y-1">
-					<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.text3')}</span>
+					<span className='text-sm text-muted-foreground'>{t('details-page.details.label-text3')}</span>
 					<IfElse
 						condition={isEditing}
 						trueComp={
-							<Input
-								type="text"
-								className="h-9 w-1/3"
+							<Textarea
+								maxLength={1000}
+								className="h-[5rem] line-clamp-5"
 								value={formValues.data.text3}
-								onChange={event => setValue("data.text3", event.target.value, { shouldValidate: true })}
-							/>
+								onChange={event => setValue("data.text3", event.target.value, { shouldValidate: true, shouldDirty: true })}
+							></Textarea>
 						}
 						falseComp={
-							<p className="h-9 text-">{product.text3 != '' ? product.text3 : t('modal-show-product-card.no-text3')}</p>
+							<p className="line-clamp-5 h-[5rem] pt-1.5">{product.text3 != '' ? product.text3 : t('details-page.details.no-value')}</p>
 						}
 					/>
 				</div>
 				<Separator className='!my-4' />
-				<div className='flex items-center gap-2'>
+				<div className='flex items-center gap-4'>
 					<div className='w-1/2'>
 						<span className='text-sm text-muted-foreground'>
-							{t('modal-show-product-card.product-group')}
+							{t('details-page.details.label-group')}
 						</span>
-						<p>{product.group}</p>
+						<IfElse
+							condition={isEditing}
+							trueComp={
+								<Select
+									value={formValues.data.groupID.toString()}
+									onValueChange={(value: string) =>
+										setValue('data.groupID', parseInt(value), {
+											shouldValidate: true,
+											shouldDirty: true,
+										})
+									}>
+									<SelectTrigger>
+										<SelectValue placeholder={t('product-group-placeholder')} />
+									</SelectTrigger>
+									<SelectContent>
+										{groups.map(group => (
+											<SelectItem key={group.id} value={group.id.toString()}>
+												{group.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							}
+							falseComp={
+								<p className="h-9 flex items-center">{product.group}</p>
+							}
+						/>
 					</div>
 					<div className='w-1/2'>
-						<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.unit')}</span>
-						<p>{product.unit}</p>
+						<span className='text-sm text-muted-foreground'>{t('details-page.details.label-unit')}</span>
+						<IfElse
+							condition={isEditing}
+							trueComp={
+								<Select
+									value={formValues.data.unitID.toString()}
+									onValueChange={(value: string) =>
+										setValue('data.unitID', parseInt(value), {
+											shouldValidate: true,
+											shouldDirty: true,
+										})
+									}>
+									<SelectTrigger>
+										<SelectValue placeholder={t('unit-placeholder')} />
+									</SelectTrigger>
+									<SelectContent>
+										{units.map(unit => (
+											<SelectItem key={unit.id} value={unit.id.toString()}>
+												{unit.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							}
+							falseComp={
+								<p className="h-9 flex items-center">{product.unit}</p>
+							}
+						/>
 					</div>
 				</div>
-				<div className='flex items-center gap-2'>
+				<div className='flex items-center gap-4'>
 					<div className='w-1/2'>
-						<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.product-no')}</span>
-						<p>{product.sku}</p>
+						<span className='text-sm text-muted-foreground'>{t('details-page.details.label-sku')}</span>
+						<IfElse
+							condition={isEditing}
+							trueComp={
+								<Input
+									type="text"
+									className="h-9"
+									value={formValues.data.sku}
+									onChange={event => setValue("data.sku", event.target.value, { shouldValidate: true, shouldDirty: true })}
+								/>
+							}
+							falseComp={
+								<p className="h-9 flex items-center">{product.sku}</p>
+							}
+						/>
 					</div>
 					<div className='w-1/2'>
-						<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.barcode')}</span>
-						<p>{product.barcode}</p>
+						<span className='text-sm text-muted-foreground'>{t('details-page.details.label-barcode')}</span>
+						<IfElse
+							condition={isEditing}
+							trueComp={
+								<Input
+									type="text"
+									className="h-9"
+									value={formValues.data.barcode}
+									onChange={event => setValue("data.barcode", event.target.value, { shouldValidate: true, shouldDirty: true })}
+								/>
+							}
+							falseComp={
+								<p className="h-9 flex items-center">{product.barcode}</p>
+							}
+						/>
 					</div>
 				</div>
 				{hasPermissionByRank(user.role, 'bruger') && user.priceAccess && (
-					<div className='flex items-center gap-2'>
+					<div className='flex items-center gap-4'>
 						<div className='w-1/2'>
-							<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.cost-price')}</span>
-							<p>{numberToDKCurrency(product.costPrice)}</p>
+							<span className='text-sm text-muted-foreground'>{t('details-page.details.label-costPrice')}</span>
+							<IfElse
+								condition={isEditing}
+								trueComp={
+									<Input
+										step={0.01}
+										min={0}
+										required
+										id='costPrice'
+										type='number'
+										className="h-9"
+										{...register('data.costPrice')}
+									/>
+								}
+								falseComp={
+									<p className="h-9 flex items-center">{numberToDKCurrency(product.costPrice)}</p>
+								}
+							/>
 						</div>
 						<div className='w-1/2'>
-							<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.sales-price')}</span>
-							<p>{numberToDKCurrency(product.salesPrice)}</p>
+							<span className='text-sm text-muted-foreground'>{t('details-page.details.label-salesPrice')}</span>
+							<IfElse
+								condition={isEditing}
+								trueComp={
+									<Input
+										step={0.01}
+										min={0}
+										required
+										id='costPrice'
+										type='number'
+										className="h-9"
+										{...register('data.salesPrice')}
+									/>
+								}
+								falseComp={
+									<p className="h-9 flex items-center">{numberToDKCurrency(product.salesPrice)}</p>
+								}
+							/>
 						</div>
 					</div>
 				)}
