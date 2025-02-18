@@ -5,6 +5,7 @@ import { editableAction, sysAdminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { attachmentService } from '@/service/attachments'
 import { fileService } from '@/service/file'
+import { inventoryService } from '@/service/inventory'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
@@ -113,3 +114,15 @@ export const deleteAttachmentAndFileAction = editableAction
 
     revalidatePath('/[lng]/varer/produkter/[id]', 'page')
   })
+
+export const fetchActiveUnitsAction = editableAction.action(async () => {
+  const units = await inventoryService.getActiveUnits()
+  return units
+})
+
+export const fetchActiveGroupsAction = editableAction.action(
+  async ({ ctx: { user } }) => {
+    const groups = await inventoryService.getActiveGroupsByID(user.customerID)
+    return groups
+  },
+)
