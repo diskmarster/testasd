@@ -8,7 +8,7 @@ interface Props {
 }
 
 export async function ProductHistoryWrapper({ id, lng, customerID }: Props) {
-	const history = await productService.getHistoryLogs(customerID, id)
+	const history = await productService.getHistoryLogs(customerID, parseInt(id))
 	return (
 		<ProductHistory history={history} />
 	)
