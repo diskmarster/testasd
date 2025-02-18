@@ -77,6 +77,21 @@
 			"delete-description": "Denne handling er permanent, og kan ikke gøres om.",
 			"delete-close": "Luk",
 			"delete-confirm": "Slet"
+		},
+		"details": {
+			"button-edit": "Rediger",
+			"button-cancel": "Fortryd",
+			"button-update": "Gem",
+			"label-text2": "Varetekst 2",
+			"label-text3": "Varetekst 3",
+			"label-group": "Varegruppe",
+			"label-unit": "Enhed",
+			"label-sku": "Varenr.",
+			"label-barcode": "Stregkode",
+			"label-costPrice": "Kostpris",
+			"label-salesPrice": "Salgspris",
+			"label-barred": "Spærret",
+			"no-value": "Ikke angivet"
 		}
 	}
 }

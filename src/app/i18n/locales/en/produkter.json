@@ -77,6 +77,21 @@
 			"delete-description": "This action is permanent and cannot be undone.",
 			"delete-close": "Close",
 			"delete-confirm": "Delete"
+		},
+		"details": {
+			"button-edit": "Edit",
+			"button-cancel": "Cancel",
+			"button-update": "Update",
+			"label-text2": "Text 2",
+			"label-text3": "Text 3",
+			"label-group": "Group",
+			"label-unit": "Unit",
+			"label-sku": "Sku",
+			"label-barcode": "Barcode",
+			"label-costPrice": "Cost price",
+			"label-salesPrice": "Sales price",
+			"label-barred": "Barred",
+			"no-value": "No value"
 		}
 	}
 }
