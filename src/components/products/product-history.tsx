@@ -119,7 +119,9 @@ export function ProductHistory({ history }: Props) {
 										<ul className="list-disc list-outside pl-5 text-sm text-muted-foreground">
 											{log.changes.map((change, i) => (
 												<li key={i}>
-													{t("details-page.history.key", { context: change.key })}: {change.from.toString() == "" ? <span className="italic">{t("details-page.history.log-empty")}</span> : `"${change.from}"`} → "{change.to.toString()}"
+													{t("details-page.history.key", { context: change.key })}: {change.from.toString() == ""
+														? <span className="italic">{t("details-page.history.log-empty")}</span>
+														: `"${change.from}"`} → &quot;{change.to.toString()}&quot;
 												</li>
 											))}
 										</ul>
