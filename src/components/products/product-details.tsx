@@ -25,6 +25,7 @@ import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { Icons } from "../ui/icons"
 import { Skeleton } from "../ui/skeleton"
+import { emitCustomEvent } from "react-custom-events"
 
 interface Props {
 	product: FormattedProduct & { inventories: Inventory[] }
@@ -37,8 +38,9 @@ export function ProductDetails({ product, user }: Props) {
 	const { t } = useTranslation(lng, 'produkter')
 	const [isEditing, setIsEditing] = useState(false)
 	const schema = updateProductValidation(t)
-	const [units, setUnits] = useState<Unit[]>([])
-	const [groups, setGroups] = useState<Group[]>([])
+	const today = new Date()
+	const [units, setUnits] = useState<Unit[]>([{ id: product.unitID, name: product.unit, inserted: today, updated: today, isBarred: false }])
+	const [groups, setGroups] = useState<Group[]>([{ id: product.groupID, name: product.group, inserted: today, updated: today, isBarred: false }])
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const { setValue, watch, reset, register, formState } = useForm<z.infer<typeof schema>>({
@@ -70,6 +72,21 @@ export function ProductDetails({ product, user }: Props) {
 			toast.success(t(`common:${siteConfig.successTitle}`), {
 				description: t('toasts.product-updated'),
 			})
+
+			product.text1 = values.data.text1
+			product.text2 = values.data.text2
+			product.text3 = values.data.text3
+			product.groupID = values.data.groupID
+			product.group = groups.find(g => g.id == values.data.groupID)?.name ?? product.group
+			product.unitID = values.data.unitID
+			product.unit = units.find(u => u.id == values.data.unitID)?.name ?? product.unit
+			product.sku = values.data.sku
+			product.barcode = values.data.barcode
+			product.costPrice = values.data.costPrice
+			product.salesPrice = values.data.salesPrice
+
+			emitCustomEvent('FetchNewHistory', { id: values.productID })
+
 			setIsSubmitting(false)
 			setIsEditing(false)
 		})
@@ -96,10 +113,10 @@ export function ProductDetails({ product, user }: Props) {
 	}
 
 	useEffect(() => {
-		if (isEditing && units.length === 0) {
+		if (isEditing && units.length === 1) {
 			fetchUnits()
 		}
-		if (isEditing && groups.length === 0) {
+		if (isEditing && groups.length === 1) {
 			fetchGroups()
 		}
 	}, [isEditing])
@@ -236,7 +253,7 @@ export function ProductDetails({ product, user }: Props) {
 										})
 									}>
 									<SelectTrigger>
-										<SelectValue placeholder={t('unit-placeholder')} />
+										<SelectValue defaultValue={product.unitID} placeholder={t('unit-placeholder')} />
 									</SelectTrigger>
 									<SelectContent>
 										{units.map(unit => (

@@ -19,6 +19,7 @@ import { User } from 'lucia'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import Link from 'next/link'
 import { Icons } from '../ui/icons'
+import { buttonVariants } from '../ui/button'
 
 interface Props {
 	product: FormattedProduct
@@ -48,16 +49,18 @@ export function ModalShowProductCard({ product, user }: Props) {
 			</CredenzaTrigger>
 			<CredenzaContent className='max-w-xl'>
 				<CredenzaHeader className='space-y-2'>
-					<Link target='_blank' className={cn('text-primary underline-offset-4 hover:underline text-sm flex items-center gap-1')} href={`/${lng}/varer/produkter/${product.id}`}>
-						Se mere
-						<Icons.external className='size-3.5 text-foreground' />
-					</Link>
-					<CredenzaTitle asChild>
-						<div className='flex items-center gap-3'>
-							<p className='md:max-w-[90%]'>{product.text1}</p>
-							{product.isBarred && <Badge variant='red'>{t('modal-show-product-card.barred')}</Badge>}
-						</div>
-					</CredenzaTitle>
+					<div className='flex items-center gap-4'>
+						<CredenzaTitle asChild>
+							<div className='flex items-center gap-3 flex-1'>
+								<p className='md:max-w-[90%]'>{product.text1}</p>
+								{product.isBarred && <Badge variant='red'>{t('modal-show-product-card.barred')}</Badge>}
+							</div>
+						</CredenzaTitle>
+						<Link target='_blank' className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'flex items-center gap-2')} href={`/${lng}/varer/produkter/${product.id}`}>
+							Se mere
+							<Icons.external className='size-3.5 text-foreground' />
+						</Link>
+					</div>
 				</CredenzaHeader>
 				<CredenzaBody className='space-y-4 pb-4 md:pb-0'>
 					<div className='space-y-2'>

@@ -47,8 +47,6 @@ export const updateProductAction = editableAction
       if (!updatedProduct) {
         throw new ActionError(t('product-action.product-not-updated'))
       }
-
-      revalidatePath(`/${lang}/varer/produkter`)
     },
   )
 
@@ -74,7 +72,7 @@ export const toggleBarredProductAction = editableAction
   )
 
 export const importProductsAction = adminAction
-  .metadata({actionName: 'importProducts', excludeAnalytics: true})
+  .metadata({ actionName: 'importProducts', excludeAnalytics: true })
   .schema(importProductsValidation)
   .action(async ({ parsedInput: importedData, ctx }) => {
     const didImport = await productService.importProducts(

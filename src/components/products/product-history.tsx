@@ -4,11 +4,13 @@ import { ProductHistory as ProductHistoryType } from "@/lib/database/schema/inve
 import { Icons } from "../ui/icons"
 import { cn, formatDate } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
-import { useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { Button } from "../ui/button"
 import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
 import { Skeleton } from "../ui/skeleton"
+import { useCustomEventListener } from "react-custom-events"
+import { fetchProductHistory } from "@/app/[lng]/(site)/varer/produkter/[id]/actions"
 
 interface Props {
 	history: ProductHistoryType[]
@@ -23,9 +25,23 @@ interface ProductHistoryWithDiff extends ProductHistoryType {
 }
 
 export function ProductHistory({ history }: Props) {
+	const [pending, startTransition] = useTransition()
 	const [limit, setLimit] = useState(5)
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "produkter")
+
+	function fetchHistory(id: number) {
+		startTransition(async () => {
+			const res = await fetchProductHistory({ id: id })
+			if (res && res.data) {
+				history = res.data
+			}
+		})
+	}
+
+	useCustomEventListener('FetchNewHistory', (data: { id: number }) => {
+		fetchHistory(data.id)
+	})
 
 	function typeToAction(type: ProductHistoryType['type']): string {
 		return t("details-page.history.action", { context: type })
@@ -92,9 +108,12 @@ export function ProductHistory({ history }: Props) {
 
 	return (
 		<div className="w-full border rounded-md p-4 space-y-4">
-			<div className='flex items-baseline gap-1.5'>
+			<div className='flex items-center gap-1.5'>
 				<p>{t("details-page.history.title")}</p>
 				<span className='text-muted-foreground tabular-nums text-xs'>{t("details-page.history.log-count", { count: history.length })}</span>
+				{pending && (
+					<Icons.spinner className="size-3 animate-spin" />
+				)}
 			</div>
 			<ScrollArea maxHeight="max-h-[2000px]">
 				<div className="flex flex-col gap-4">

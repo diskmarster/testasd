@@ -6,7 +6,7 @@ import { ActionError } from '@/lib/safe-action/error'
 import { attachmentService } from '@/service/attachments'
 import { fileService } from '@/service/file'
 import { inventoryService } from '@/service/inventory'
-import { revalidatePath } from 'next/cache'
+import { productService } from '@/service/products'
 import { z } from 'zod'
 
 const createAttachmentValidation = z.object({
@@ -58,8 +58,6 @@ export const createAttachmentAction = sysAdminAction
       )
     }
 
-    revalidatePath('/[lng]/varer/produkter/[id]', 'page')
-
     return {
       success: true,
       attachment: newAttachment,
@@ -78,7 +76,6 @@ export const deleteAttachmentAction = sysAdminAction
 export const deleteAttachmentAndFileAction = editableAction
   .schema(z.object({ id: z.coerce.number() }))
   .action(async ({ parsedInput: { id }, ctx: { user } }) => {
-    console.log('hit')
     const attachment = await attachmentService.getByID(id)
     if (!attachment) {
       throw new ActionError('Filen findes ikke')
@@ -111,8 +108,6 @@ export const deleteAttachmentAndFileAction = editableAction
     if (!s3Delete.success && !attachDelete) {
       throw new ActionError('Filen blev ikke slettet. Prøv igen.')
     }
-
-    revalidatePath('/[lng]/varer/produkter/[id]', 'page')
   })
 
 export const fetchActiveUnitsAction = editableAction.action(async () => {
@@ -126,3 +121,17 @@ export const fetchActiveGroupsAction = editableAction.action(
     return groups
   },
 )
+
+export const fetchProductHistory = editableAction
+  .schema(z.object({ id: z.coerce.number() }))
+  .action(async ({ parsedInput: { id }, ctx: { user } }) => {
+    const history = await productService.getHistoryLogs(user.customerID, id)
+    return history
+  })
+
+export const fetchProductFiles = editableAction
+  .schema(z.object({ id: z.coerce.number() }))
+  .action(async ({ parsedInput: { id } }) => {
+    const files = await attachmentService.getByRefID('product', id)
+    return files
+  })

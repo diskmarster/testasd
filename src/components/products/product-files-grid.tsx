@@ -3,7 +3,7 @@
 import { Attachment } from "@/lib/database/schema/attachments"
 import { User } from "@/lib/database/schema/auth"
 import { allowedMimetypes, fileService } from "@/service/file"
-import {  useCallback, useState, useTransition } from "react"
+import { useCallback, useState, useTransition } from "react"
 import { useDropzone } from "react-dropzone"
 import { Icons } from "../ui/icons"
 import { cn } from "@/lib/utils"
@@ -14,7 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Button } from "../ui/button"
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
-import { createAttachmentAction, deleteAttachmentAction, deleteAttachmentAndFileAction, uploadFileAction } from "@/app/[lng]/(site)/varer/produkter/[id]/actions"
+import { createAttachmentAction, deleteAttachmentAction, deleteAttachmentAndFileAction, fetchProductFiles, uploadFileAction } from "@/app/[lng]/(site)/varer/produkter/[id]/actions"
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog"
 import { emitCustomEvent, useCustomEventListener } from "react-custom-events"
 import Link from "next/link"
@@ -29,20 +29,37 @@ interface Props {
 }
 
 export function ProductFilesGrid({ productID, files, user }: Props) {
+	const [pending, startTransition] = useTransition()
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'produkter')
 
 	const [imageIndex, setImageIndex] = useState(0)
 	const [lightBoxOpen, setLightBoxOpen] = useState(false)
 
+	function fetchFiles(id: number) {
+		startTransition(async () => {
+			const res = await fetchProductFiles({ id: id })
+			if (res && res.data) {
+				files = res.data
+			}
+		})
+	}
+
+	useCustomEventListener('FetchNewFiles', (data: { id: number }) => {
+		fetchFiles(data.id)
+	})
+
 	const { image, pdf } = Object.groupBy(files, (f) => f.type)
 
 	return (
 		<>
 			<div className="lg:w-1/2 border rounded-md p-4 flex flex-col gap-4">
-				<div className='flex items-baseline gap-1.5'>
+				<div className='flex items-center gap-1.5'>
 					<p>{t("details-page.files.title")}</p>
 					<span className='text-muted-foreground tabular-nums text-xs'>({files.length} / 5)</span>
+					{pending && (
+						<Icons.spinner className="size-3 animate-spin" />
+					)}
 				</div>
 				<div className="space-y-2">
 					<p className="text-sm text-muted-foreground">{t("details-page.files.documents")}</p>
@@ -232,6 +249,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 		}
 		setFilesLoading(0)
 		setFilesDone(0)
+		emitCustomEvent('FetchNewFiles', { id: productID })
 	}, [])
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -291,6 +309,7 @@ function DeleteFileModal() {
 			}
 			onOpenChange(false)
 			toast.success("Fil blev slettet", { description: t("details-page.files.delete-success") })
+			emitCustomEvent('FetchNewFiles', { id: ID })
 		})
 	}
 
