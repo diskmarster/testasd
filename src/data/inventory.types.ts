@@ -55,5 +55,5 @@ export interface FormattedReorder extends Reorder {
   quantity: number
   recommended: number
   disposible: number
-  product: Product & { unit: string; group: string, fileCount: number }
+  product: Product & { unit: string; group: string }
 }
