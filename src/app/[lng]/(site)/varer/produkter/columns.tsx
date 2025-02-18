@@ -10,6 +10,7 @@ import { formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
+import Link from 'next/link'
 import { DateRange } from 'react-day-picker'
 
 export function getProductOverviewColumns(
@@ -23,7 +24,14 @@ export function getProductOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('product-No.')} />
     ),
-    cell: ({ getValue }) => getValue<string>(),
+	cell: ({ row }) => (
+		<Link
+		href={`/${lng}/varer/produkter/${row.original.id}`} 
+		className='hover:underline'
+		target='_blank'>
+			{row.original.sku}
+		</Link>
+	),
     meta: {
       viewLabel: t('product-No.'),
     },
