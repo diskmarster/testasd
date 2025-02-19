@@ -18,7 +18,7 @@ const Textarea = React.forwardRef<
 				{...props}
 			/>
 			{maxLength && (
-				<span className={cn("absolute bottom-1 right-2 text-xs")}>{props.value?.toString().length} / {maxLength}</span>
+				<span className={cn("absolute bottom-1 right-2 text-xs tabular-nums")}>{props.value?.toString().length} / {maxLength}</span>
 			)}
 		</div>
 	)

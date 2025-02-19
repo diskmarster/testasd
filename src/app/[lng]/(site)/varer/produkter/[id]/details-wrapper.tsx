@@ -18,8 +18,6 @@ export async function ProductDetailsWrapper({ lng, id, user }: Props) {
 
 	const product = await productService.getByID(productID, lng)
 
-	await new Promise(res => setTimeout(res, 3000))
-
 	if (!product) {
 		redirect(`/${lng}/oversigt`)
 	}

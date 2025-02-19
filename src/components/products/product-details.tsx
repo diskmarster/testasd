@@ -40,7 +40,7 @@ export function ProductDetails({ product, user }: Props) {
 	const schema = updateProductValidation(t)
 	const today = new Date()
 	const [units, setUnits] = useState<Unit[]>([{ id: product.unitID, name: product.unit, inserted: today, updated: today, isBarred: false }])
-	const [groups, setGroups] = useState<Group[]>([{ id: product.groupID, name: product.group, inserted: today, updated: today, isBarred: false }])
+	const [groups, setGroups] = useState<Group[]>([{ id: product.groupID, name: product.group, inserted: today, updated: today, isBarred: false, customerID: user.customerID }])
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const { setValue, watch, reset, register, formState } = useForm<z.infer<typeof schema>>({
@@ -195,7 +195,7 @@ export function ProductDetails({ product, user }: Props) {
 						trueComp={
 							<Textarea
 								maxLength={1000}
-								className="h-[5rem] line-clamp-5"
+								className="h-[5rem] line-clamp-5 resize-none"
 								value={formValues.data.text3}
 								onChange={event => setValue("data.text3", event.target.value, { shouldValidate: true, shouldDirty: true })}
 							></Textarea>

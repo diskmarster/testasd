@@ -13,7 +13,7 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@node-rs/argon2'],
     serverActions: {
-      bodySizeLimit: '4mb',
+      bodySizeLimit: '5mb',
     },
   },
 }

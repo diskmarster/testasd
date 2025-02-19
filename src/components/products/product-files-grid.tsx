@@ -1,10 +1,11 @@
 "use client"
 
+import { deflate } from 'pako'
 import { Attachment } from "@/lib/database/schema/attachments"
 import { User } from "@/lib/database/schema/auth"
 import { allowedMimetypes, fileService } from "@/service/file"
 import { useCallback, useState, useTransition } from "react"
-import { useDropzone } from "react-dropzone"
+import { useDropzone, FileRejection } from "react-dropzone"
 import { Icons } from "../ui/icons"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -126,10 +127,9 @@ function PDFFile({
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuItem>{t("details-page.files.document-show")}</DropdownMenuItem>
-						<DropdownMenuItem>{t("details-page.files.document-download")}</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem className="text-destructive" onClick={() => {
-							emitCustomEvent("DeleteFileByID", { ID: file.id })
+							emitCustomEvent("DeleteFileByID", { ID: file.id, refID: file.refID })
 						}}>{t("details-page.files.document-delete")}</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -152,7 +152,7 @@ function ImageFile({
 			<div
 				className="p-1.5 rounded-sm bg-destructive hover:bg-red-500 absolute top-2 right-2 group/icon z-50 opacity-0 group-hover/file-image:opacity-100 transition-opacity"
 				onClick={() => {
-					emitCustomEvent("DeleteFileByID", { ID: file.id })
+					emitCustomEvent("DeleteFileByID", { ID: file.id, refID: file.refID })
 				}}>
 				<Icons.trash className="size-4 text-destructive-foreground" />
 			</div>
@@ -175,31 +175,31 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 	const [filesLoading, setFilesLoading] = useState(0)
 	const [filesDone, setFilesDone] = useState(0)
 
-	const onDrop = useCallback(async (files: File[]) => {
-		if (fileCount == 5) return
-		let tempCount = fileCount
+	const onDrop = useCallback(async (files: File[], rejectedFiles: FileRejection[]) => {
+		if (rejectedFiles.length > 0) {
+			for (const file of rejectedFiles) {
+				console.log(file.errors[0].code)
+				toast.error(t(siteConfig.errorTitle), { description: t('details-page.files.file-rejected', { context: file.errors[0].code, name: file.file.name }) })
+			}
+		}
+		if (files.length === 0) return
 		setFilesLoading(files.length)
 		for (const file of files) {
-			if (tempCount >= 5) {
-				toast.error(siteConfig.errorTitle, { description: t("details-page.files.max-files-exceeded", { max: 5 }) })
-				break
-			}
-			tempCount++
 			const arrayBuffer = await file.arrayBuffer()
 			const buffer = new Uint8Array(arrayBuffer)
-			let binary = ""
+			let base64: string
 
 			// @ts-ignore
 			if (Uint8Array.prototype.toBase64) {
 				// @ts-ignore 
-				binary = buffer.toBase64('base64url')
+				base64 = buffer.toBase64('base64url')
 			} else {
+				let binary = ""
 				for (let i = 0; i < buffer.length; i++) {
 					binary += String.fromCharCode(buffer[i])
 				}
+				base64 = btoa(binary)
 			}
-
-			const base64 = btoa(binary)
 
 			const isValidated = fileService.validate(file, {
 				customerID: user.customerID,
@@ -255,7 +255,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
 		maxFiles: Math.max(5 - fileCount, 0),
-		maxSize: 4_194_304,
+		maxSize: 3_000_000,
 		accept: allowedMimetypes
 	})
 
@@ -288,14 +288,16 @@ function DeleteFileModal() {
 	const [pending, startTransition] = useTransition()
 	const [open, setOpen] = useState(false)
 	const [ID, setID] = useState<number>()
+	const [refID, setRefID] = useState<number>()
 
 	function onOpenChange(open: boolean) {
 		setOpen(open)
 		setID(undefined)
 	}
 
-	useCustomEventListener("DeleteFileByID", (data: { ID: number }) => {
+	useCustomEventListener("DeleteFileByID", (data: { ID: number, refID: number }) => {
 		setID(data.ID)
+		setRefID(data.refID)
 		setOpen(true)
 	})
 
@@ -309,7 +311,7 @@ function DeleteFileModal() {
 			}
 			onOpenChange(false)
 			toast.success("Fil blev slettet", { description: t("details-page.files.delete-success") })
-			emitCustomEvent('FetchNewFiles', { id: ID })
+			emitCustomEvent('FetchNewFiles', { id: refID })
 		})
 	}
 
