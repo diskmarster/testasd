@@ -1,6 +1,5 @@
 "use client"
 
-import { deflate } from 'pako'
 import { Attachment } from "@/lib/database/schema/attachments"
 import { User } from "@/lib/database/schema/auth"
 import { allowedMimetypes, fileService } from "@/service/file"
