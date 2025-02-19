@@ -95,6 +95,15 @@
 			"label-salesPrice": "Sales price",
 			"label-barred": "Barred",
 			"no-value": "No value"
+		},
+		"server": {
+			"attachment-not-created": "File was not created in database",
+			"file-not-deleted": "File was not deleted",
+			"file-not-found": "File does not exist",
+			"file-not-yours": "File does not belong to your company",
+			"file-not-deleted-bucket": "File was deleted but is still attached to your company",
+			"file-not-deleted-database": "File was deleted but still exist in our database",
+			"file-not-deleted-both": "File was not deleted. Try again"
 		}
 	}
 }

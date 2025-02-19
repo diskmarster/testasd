@@ -1,5 +1,6 @@
 'use server'
 
+import { serverTranslation } from '@/app/i18n'
 import { attachmentRefTypeValidation } from '@/data/attachments'
 import { editableAction, sysAdminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
@@ -40,6 +41,8 @@ export const uploadFileAction = sysAdminAction
 export const createAttachmentAction = sysAdminAction
   .schema(createAttachmentValidation)
   .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'produkter')
+
     const newAttachment = await attachmentService.create({
       customerID: ctx.user.customerID,
       refDomain: parsedInput.refType,
@@ -53,9 +56,7 @@ export const createAttachmentAction = sysAdminAction
     })
 
     if (!newAttachment) {
-      throw new ActionError(
-        `Attachment blev ikke oprettet i databasen (${parsedInput.key})`,
-      )
+      throw new ActionError(t('details-page.server.attachment-not-created'))
     }
 
     return {
@@ -66,23 +67,25 @@ export const createAttachmentAction = sysAdminAction
 
 export const deleteAttachmentAction = sysAdminAction
   .schema(deleteAttachmentValidation)
-  .action(async ({ parsedInput }) => {
+  .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'produkter')
     const didDelete = await attachmentService.deleteByID(parsedInput.id)
     if (!didDelete) {
-      throw new ActionError(`Fil blev ikke slettet (${parsedInput.id})`)
+      throw new ActionError(t('details-page.server.file-not-deleted'))
     }
   })
 
 export const deleteAttachmentAndFileAction = editableAction
   .schema(z.object({ id: z.coerce.number() }))
-  .action(async ({ parsedInput: { id }, ctx: { user } }) => {
+  .action(async ({ parsedInput: { id }, ctx: { user, lang } }) => {
+    const { t } = await serverTranslation(lang, 'produkter')
     const attachment = await attachmentService.getByID(id)
     if (!attachment) {
-      throw new ActionError('Filen findes ikke')
+      throw new ActionError(t('details-page.server.file-not-found'))
     }
 
     if (attachment.customerID != user.customerID) {
-      throw new ActionError('Fil tilhører ikke jeres firma')
+      throw new ActionError(t('details-page.server.file-not-yours'))
     }
 
     const s3DeletePromise = fileService.delete({ key: attachment.key })
@@ -94,19 +97,15 @@ export const deleteAttachmentAndFileAction = editableAction
     ])
 
     if (s3Delete.success && !attachDelete) {
-      throw new ActionError(
-        'Filen blev slettet men er stadig knyttet til jeres firma',
-      )
+      throw new ActionError(t('details-page.server.file-not-deleted-database'))
     }
 
     if (!s3Delete.success && attachDelete) {
-      throw new ActionError(
-        'Filen blev ikke slettet men den er ikke længere knyttet til jeres firma',
-      )
+      throw new ActionError(t('details-page.server.file-not-deleted-bucket'))
     }
 
     if (!s3Delete.success && !attachDelete) {
-      throw new ActionError('Filen blev ikke slettet. Prøv igen.')
+      throw new ActionError(t('details-page.server.file-not-deleted-both'))
     }
   })
 

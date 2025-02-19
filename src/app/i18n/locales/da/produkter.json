@@ -53,7 +53,7 @@
 			"key_productText2": "Varetekst 2",
 			"key_productText3": "Varetekst 3",
 			"key_productSku": "Varenr.",
-			"key_productBarcode": "Stregkdoe",
+"key_productBarcode": "Stregkdoe",
 			"key_productCostPrice": "Kostpris",
 			"key_productSalesPrice": "Salgspris",
 			"key_productIsBarred": "Spærret",
@@ -95,6 +95,15 @@
 			"label-salesPrice": "Salgspris",
 			"label-barred": "Spærret",
 			"no-value": "Ikke angivet"
+		},
+		"server": {
+			"attachment-not-created": "Filen blev ikke oprettet i databasen",
+			"file-not-deleted": "Filen blev ikke slettet",
+			"file-not-found": "Filen findes ikke",
+			"file-not-yours": "Filen tilhører ikke jeres firma",
+			"file-not-deleted-bucket": "Filen blev slettet men er stadig knyttet til jeres firma",
+			"file-not-deleted-database": "Filen blev ikke slettet men den er ikke længere knyttet til jeres firma",
+			"file-not-deleted-both": "Filen blev ikke slettet. Prøv igen."
 		}
 	}
 }

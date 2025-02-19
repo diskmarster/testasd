@@ -140,12 +140,12 @@ export function ButtonRefreshOverview() {
 	const pathName = usePathname()
 
 	const onSubmit = () => {
+		setIsAnimating(true)
+		setTimeout(() => {
+			setIsAnimating(false)
+		}, 600)
 		startTransition(async () => {
-			setIsAnimating(true)
 			await refreshTableAction({ pathName })
-			setTimeout(() => {
-				setIsAnimating(false)
-			}, 600)
 		})
 	}
 
