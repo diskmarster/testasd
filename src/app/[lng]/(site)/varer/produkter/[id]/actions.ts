@@ -19,7 +19,7 @@ const createAttachmentValidation = z.object({
 })
 
 const deleteAttachmentValidation = z.object({
-  ID: z.coerce.number(),
+  id: z.coerce.number(),
 })
 
 const uploadFileValidation = z.object({
@@ -67,9 +67,9 @@ export const createAttachmentAction = sysAdminAction
 export const deleteAttachmentAction = sysAdminAction
   .schema(deleteAttachmentValidation)
   .action(async ({ parsedInput }) => {
-    const didDelete = await attachmentService.deleteByID(parsedInput.ID)
+    const didDelete = await attachmentService.deleteByID(parsedInput.id)
     if (!didDelete) {
-      throw new ActionError(`Fil blev ikke slettet (${parsedInput.ID})`)
+      throw new ActionError(`Fil blev ikke slettet (${parsedInput.id})`)
     }
   })
 

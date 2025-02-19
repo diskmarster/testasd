@@ -135,12 +135,17 @@ export function ViewOptions<T>({ table }: { table: Table<T> }) {
 	)
 }
 export function ButtonRefreshOverview() {
+	const [isAnimating, setIsAnimating] = useState(false)
 	const [pending, startTransition] = useTransition()
 	const pathName = usePathname()
 
 	const onSubmit = () => {
 		startTransition(async () => {
+			setIsAnimating(true)
 			await refreshTableAction({ pathName })
+			setTimeout(() => {
+				setIsAnimating(false)
+			}, 600)
 		})
 	}
 
@@ -161,7 +166,7 @@ export function ButtonRefreshOverview() {
 				onClick={onSubmit}
 				disabled={pending}>
 				<Icons.refresh
-					className={cn('size-4', pending && 'animate-spin-refresh')}
+					className={cn('size-4', isAnimating && 'animate-spin-refresh')}
 				/>
 			</Button>
 		</>

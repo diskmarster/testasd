@@ -68,7 +68,7 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 							<p className="text-muted-foreground">{t("details-page.files.no-documents")}</p>
 						)}
 						{pdf && pdf.map((p, i) => (
-							<PDFFile key={i} file={p} />
+							<PDFFile key={`${p.id}-${i}`} file={p} />
 						))}
 					</div>
 				</div>
@@ -80,7 +80,7 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 						)}
 						{image && image.map((f, i) => (
 							<ImageFile
-								key={i}
+								key={`${f.id}-${i}`}
 								file={f}
 								onClick={() => {
 									setImageIndex(i)
@@ -128,7 +128,7 @@ function PDFFile({
 						<DropdownMenuItem>{t("details-page.files.document-show")}</DropdownMenuItem>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem className="text-destructive" onClick={() => {
-							emitCustomEvent("DeleteFileByID", { ID: file.id, refID: file.refID })
+							emitCustomEvent("DeleteFileByID", { id: file.id, refID: file.refID })
 						}}>{t("details-page.files.document-delete")}</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
@@ -151,7 +151,7 @@ function ImageFile({
 			<div
 				className="p-1.5 rounded-sm bg-destructive hover:bg-red-500 absolute top-2 right-2 group/icon z-50 opacity-0 group-hover/file-image:opacity-100 transition-opacity"
 				onClick={() => {
-					emitCustomEvent("DeleteFileByID", { ID: file.id, refID: file.refID })
+					emitCustomEvent("DeleteFileByID", { id: file.id, refID: file.refID })
 				}}>
 				<Icons.trash className="size-4 text-destructive-foreground" />
 			</div>
@@ -228,7 +228,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				&& attachmentResponse
 				&& attachmentResponse.data?.success) {
 				toast.error(siteConfig.errorTitle, { description: t("details-page.files.upload-error") })
-				const deleteAttach = await deleteAttachmentAction({ ID: attachmentResponse.data.attachment.id })
+				const deleteAttach = await deleteAttachmentAction({ id: attachmentResponse.data.attachment.id })
 
 				if (deleteAttach && deleteAttach.serverError) {
 					toast.error(siteConfig.errorTitle, { description: deleteAttach.serverError! })
@@ -286,7 +286,7 @@ function DeleteFileModal() {
 
 	const [pending, startTransition] = useTransition()
 	const [open, setOpen] = useState(false)
-	const [ID, setID] = useState<number>()
+	const [id, setID] = useState<number>()
 	const [refID, setRefID] = useState<number>()
 
 	function onOpenChange(open: boolean) {
@@ -294,16 +294,16 @@ function DeleteFileModal() {
 		setID(undefined)
 	}
 
-	useCustomEventListener("DeleteFileByID", (data: { ID: number, refID: number }) => {
-		setID(data.ID)
+	useCustomEventListener("DeleteFileByID", (data: { id: number, refID: number }) => {
+		setID(data.id)
 		setRefID(data.refID)
 		setOpen(true)
 	})
 
 	function deleteFile() {
-		if (!ID) return
+		if (!id) return
 		startTransition(async () => {
-			const res = await deleteAttachmentAndFileAction({ id: ID })
+			const res = await deleteAttachmentAndFileAction({ id: id })
 			if (res && res.serverError) {
 				toast.error("Der gik noget galt", { description: res.serverError })
 				return

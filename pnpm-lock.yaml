@@ -173,9 +173,6 @@ importers:
       react-i18next:
         specifier: ^15.0.2
         version: 15.0.2(i18next@23.15.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      react-multiple-scrollbar:
-        specifier: ^0.1.0
-        version: 0.1.0(react@18.3.1)
       recharts:
         specifier: ^2.13.0
         version: 2.13.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -5135,12 +5132,6 @@ packages:
 
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
-
-  react-multiple-scrollbar@0.1.0:
-    resolution: {integrity: sha512-Hz9Dge8X2lwlA9rMmKL7/ko76LXzmB8H/qUUuxy5adUIBE8FQffrGJJfeJ2ODcFeeSwzSs8NwE14YWkzxnlTMA==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: '>=16'
 
   react-promise-suspense@0.3.4:
     resolution: {integrity: sha512-I42jl7L3Ze6kZaq+7zXWSunBa3b1on5yfvUW6Eo/3fFOj6dZ5Bqmcd264nJbTK/gn1HjjILAjSwnZbV4RpSaNQ==}
@@ -11329,10 +11320,6 @@ snapshots:
   react-is@17.0.2: {}
 
   react-is@18.3.1: {}
-
-  react-multiple-scrollbar@0.1.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
 
   react-promise-suspense@0.3.4:
     dependencies:

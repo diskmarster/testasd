@@ -12,6 +12,9 @@ import { Skeleton } from "../ui/skeleton"
 import { useCustomEventListener } from "react-custom-events"
 import { fetchProductHistory } from "@/app/[lng]/(site)/varer/produkter/[id]/actions"
 
+
+type Change = { key: keyof ProductHistoryType; from: any; to: any }
+
 interface Props {
 	history: ProductHistoryType[]
 }
@@ -64,47 +67,22 @@ export function ProductHistory({ history }: Props) {
 	const logsWithDiff: ProductHistoryWithDiff[] = history
 		.sort((a, b) => Number(a.inserted) - Number(b.inserted))
 		.map((log, index) => {
-			const changes: { key: string; from: any; to: any }[] = [];
-			const skippedKeys = ['id', 'inserted', 'type', 'userID', 'userName', 'userRole', 'customerID', 'isImport', 'productID'];
+			const skippedKeys: (keyof ProductHistoryType)[] = [
+				'id', 'inserted', 'type', 'userID', 'userName', 'userRole', 'customerID', 'isImport', 'productID', 'productNote'
+			]
 
-			if (index > 0) {
-				const previousLog = history[index - 1];
+			const changes: Change[] = (Object.keys(log) as (keyof ProductHistoryType)[])
+				.filter((key) => !skippedKeys.includes(key))
+				.map((key) => ({
+					key,
+					from: index > 0 ? history[index - 1][key] : "",
+					to: log[key]
+				}))
+				.filter(({ from, to }) => index === 0 || from !== to)
 
-				for (const key of Object.keys(log) as (keyof ProductHistoryType)[]) {
-					if (skippedKeys.includes(key)) continue;
-
-					const curValue = log[key];
-					const preValue = previousLog[key];
-
-					if (curValue !== preValue) {
-						changes.push({
-							key,
-							from: preValue,
-							to: curValue,
-						});
-					}
-				}
-			} else {
-				for (const key of Object.keys(log) as (keyof ProductHistoryType)[]) {
-					if (skippedKeys.includes(key)) continue;
-
-					const curValue = log[key];
-
-					changes.push({
-						key,
-						from: "",
-						to: curValue,
-					});
-				}
-			}
-
-			return {
-				...log,
-				changes,
-			};
+			return { ...log, changes }
 		})
 		.reverse()
-		.slice(0, limit);
 
 	return (
 		<div className="w-full border rounded-md p-4 space-y-4">

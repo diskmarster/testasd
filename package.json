@@ -71,7 +71,6 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
     "react-i18next": "^15.0.2",
-    "react-multiple-scrollbar": "^0.1.0",
     "recharts": "^2.13.0",
     "resend": "^4.0.0",
     "sonner": "^1.5.0",
