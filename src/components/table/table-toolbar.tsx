@@ -135,16 +135,12 @@ export function ViewOptions<T>({ table }: { table: Table<T> }) {
 	)
 }
 export function ButtonRefreshOverview() {
-	const [error, setError] = useState<string | null>(null)
 	const [pending, startTransition] = useTransition()
 	const pathName = usePathname()
 
 	const onSubmit = () => {
 		startTransition(async () => {
-			const start = Date.now()
 			await refreshTableAction({ pathName })
-			const end = Date.now()
-			setTimeout(() => { }, 600 - (end - start))
 		})
 	}
 
