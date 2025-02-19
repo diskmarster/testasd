@@ -147,6 +147,13 @@ export function ButtonRefreshOverview() {
 			setTimeout(() => { }, 600 - (end - start))
 		})
 	}
+
+	window.addEventListener('focus', () => {
+		if (!pending) {
+			onSubmit()
+		}
+	})
+
 	return (
 		<>
 			<Button
