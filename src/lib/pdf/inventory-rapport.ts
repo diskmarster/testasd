@@ -27,10 +27,7 @@ type GroupLine = {
   total: number
 }
 
-export function genInventoryExcel(
-  metaData: MetaData,
-  inventoryLines: FormattedInventory[],
-) {
+export function genInventoryExcel(inventoryLines: FormattedInventory[]) {
   const aggregatedSkus: { [key: string]: Line } = inventoryLines.reduce(
     (acc: { [key: string]: Line }, line) => {
       const sku = line.product.sku

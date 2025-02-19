@@ -3,12 +3,14 @@
 import { fetchLocationsForCustomerActions } from '@/app/[lng]/(site)/sys/kunder/actions'
 import { genInventoryReportAction } from '@/app/actions'
 import { useTranslation } from '@/app/i18n/client'
+import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import { CustomerID } from '@/lib/database/schema/customer'
 import { genInventoryExcel, genInventoryPDF } from '@/lib/pdf/inventory-rapport'
 import { formatDate } from '@/lib/utils'
 import { useEffect, useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import {
   Credenza,
@@ -37,7 +39,7 @@ export function ModalInventoryReport() {
   const [locations, setLocations] = useState<{ id: string; name: string }[]>([])
   const [selectedLocation, setSelectedLocation] = useState<string>()
   const [open, setOpen] = useState(false)
-  const [fileType, setFileType] = useState<string>()
+  const [fileType, setFileType] = useState<'PDF' | 'EXCEL'>('PDF')
 
   function onOpenChange(open: boolean) {
     setOpen(open)
@@ -51,10 +53,6 @@ export function ModalInventoryReport() {
       })
       setLocations(res?.data ?? [])
     })
-  }
-
-  function onClick(fileType: string) {
-    setFileType(fileType)
   }
 
   function onSubmit() {
@@ -83,17 +81,13 @@ export function ModalInventoryReport() {
           pdf.save(
             `lagerværdi-rapport-${location.name}-${formatDate(today, false)}.pdf`,
           )
-        } else {
-          genInventoryExcel(
-            {
-              docTitle: `Lagerværdi for ${customer?.company}`,
-              companyName: customer.company,
-              locationName: location.name,
-              userName: user.name,
-              dateOfReport: today,
-            },
-            inventory,
-          )
+        } else if (fileType == 'EXCEL') {
+          genInventoryExcel(inventory)
+        } else if (fileType != 'Excel' && fileType != 'PDF') {
+          toast(siteConfig.errorTitle, {
+            description: 'inventory-report-modal.file-type-not-supported',
+          })
+          setFileType('PDF')
         }
       }
     })
@@ -149,14 +143,14 @@ export function ModalInventoryReport() {
             <Label>{t('inventory-report-modal.file-format-label')}</Label>
             <div className='w-full flex'>
               <Button
-                onClick={() => onClick('PDF')}
+                onClick={() => setFileType('PDF')}
                 className='gap-2 rounded-r-none w-1/2'
                 variant={fileType == 'PDF' ? 'default' : 'outline'}
                 size='sm'>
                 PDF
               </Button>
               <Button
-                onClick={() => onClick('EXCEL')}
+                onClick={() => setFileType('EXCEL')}
                 className='gap-2 rounded-l-none w-1/2'
                 variant={fileType != 'PDF' ? 'default' : 'outline'}
                 size='sm'>
@@ -168,7 +162,7 @@ export function ModalInventoryReport() {
               className='flex items-center gap-2'
               disabled={pending || locations.length == 0 || !selectedLocation}>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
-              {t('inventory-report-modal.download-button')}
+              {t('inventory-report-modal.download-button') + fileType}
             </Button>
           </div>
         </CredenzaBody>

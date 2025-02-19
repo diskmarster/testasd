@@ -193,7 +193,8 @@
     "location-label": "Lokation",
     "choose-location": "Vælg lokation",
     "loading-location": "Henter lokationer...",
-    "download-button": "Download rapport",
-    "file-format-label": "Filtype"
+    "download-button": "Download rapport som ",
+    "file-format-label": "Filtype",
+    "file-type-not-supported": "Den valgte filtype understøttes ikke"
   }
 }

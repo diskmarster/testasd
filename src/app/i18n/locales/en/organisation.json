@@ -187,7 +187,8 @@
     "location-label": "Location",
     "choose-location": "Choose location",
     "loading-location": "Fetching locations...",
-    "download-button": "Download report",
-    "file-format-label": "Filetype"
+    "download-button": "Download report as ",
+    "file-format-label": "Filetype",
+    "file-type-not-supported": "The chosen file format is not supported"
   }
 }
