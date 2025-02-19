@@ -53,7 +53,7 @@
     "email-placeholder": "Users email",
     "role-label": "Role",
     "role-empty": "No roles",
-    "role-placeholder": "Search for roles...",
+    "role-placeholder": "Choose a role",
     "role-access-label": "Which rights should the user have?",
     "role-web-access": "The user should have access to the web",
     "role-app-access": "The user should have access to the app",

@@ -41,6 +41,16 @@ export async function GET(
 
     const product = await productService.getByID(productID)
 
+    if (product?.isBarred)
+      return NextResponse.json(
+        {
+          msg: t('route-translations-productid.error-product-barred'),
+        },
+        {
+          status: 404,
+        },
+      )
+
     return NextResponse.json(
       {
         msg: 'success',

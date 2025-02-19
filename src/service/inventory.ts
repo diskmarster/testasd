@@ -6,6 +6,7 @@ import {
   FormattedReorder,
   HistoryType,
 } from '@/data/inventory.types'
+import { product } from '@/data/products'
 import { db, TRX } from '@/lib/database'
 import { UserID } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
@@ -201,6 +202,11 @@ export const inventoryService = {
         }
       }
 
+      const productCheck = await product.getByID(productID, trx)
+      if (productCheck && productCheck.isBarred) {
+        throw new ActionError(t('inventory-service-action.restock-barred'))
+      }
+
       const didUpsert = await inventory.upsertInventory(
         {
           customerID,
@@ -260,6 +266,11 @@ export const inventoryService = {
   ): Promise<boolean> {
     const { t } = await serverTranslation(lang, 'action-errors')
     const result = await db.transaction(async trx => {
+      const productCheck = await product.getByID(productID, trx)
+      if (productCheck && productCheck.isBarred) {
+        throw new ActionError(t('inventory-service-action.move-barred'))
+      }
+
       const didUpdateFrom = await inventory.updateInventory(
         productID,
         fromPlacementID,
@@ -406,7 +417,15 @@ export const inventoryService = {
   },
   createReorder: async function (
     reorderData: NewReorder,
+    lang: string = fallbackLng,
   ): Promise<Reorder | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
+
+    const productCheck = await product.getByID(reorderData.productID)
+    if (productCheck && productCheck.isBarred) {
+      throw new ActionError(t('inventory-service-action.reorder-barred'))
+    }
+
     return await inventory.createReorder({
       ...reorderData,
       buffer: reorderData.buffer / 100,

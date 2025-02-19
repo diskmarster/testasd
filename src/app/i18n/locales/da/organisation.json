@@ -118,7 +118,7 @@
     "email": "E-mail",
     "email-placeholder": "Skriv e-mail til den nye bruger",
     "role": "Rolle",
-    "role-placeholder": "Søg i roller",
+    "role-placeholder": "Vælg en rolle",
     "user": "Bruger",
     "local-admin": "Lokal Admin",
     "company-admin": "Firma Admin",
@@ -193,6 +193,8 @@
     "location-label": "Lokation",
     "choose-location": "Vælg lokation",
     "loading-location": "Henter lokationer...",
-    "download-button": "Download rapport"
+    "download-button": "Download rapport som ",
+    "file-format-label": "Filtype",
+    "file-type-not-supported": "Den valgte filtype understøttes ikke"
   }
 }

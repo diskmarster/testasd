@@ -51,6 +51,9 @@
   "sales-price": "Sales price",
   "quantity": "Qty.",
   "unit": "Unit",
+  "isBarred": "Status",
+  "isBarred-yes": "Barred",
+  "isBarred-no": "Active",
 
   "toasts": {
     "was-created": " was created successfully"

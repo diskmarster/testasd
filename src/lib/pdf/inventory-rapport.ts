@@ -1,6 +1,7 @@
 import { FormattedInventory } from '@/data/inventory.types'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
+import * as XLSX from 'xlsx'
 import { formatDate, formatNumber, numberToDKCurrency } from '../utils'
 
 type MetaData = {
@@ -24,6 +25,113 @@ type GroupLine = {
   name: string
   quantity: number
   total: number
+}
+
+export function genInventoryExcel(inventoryLines: FormattedInventory[]) {
+  const aggregatedSkus: { [key: string]: Line } = inventoryLines.reduce(
+    (acc: { [key: string]: Line }, line) => {
+      const sku = line.product.sku
+
+      if (!acc[sku]) {
+        acc[sku] = {
+          sku: sku,
+          text1: line.product.text1,
+          group: line.product.group,
+          costPrice: line.product.costPrice,
+          quantity: 0,
+          totalCost: 0,
+        }
+      }
+
+      acc[sku].quantity += line.quantity
+      acc[sku].totalCost += line.product.costPrice * line.quantity
+
+      return acc
+    },
+    {},
+  )
+  const lineHeaders = [
+    'Varenr.',
+    'Varetekst 1',
+    'Varegruppe',
+    'Kostpris',
+    'Antal',
+    'Total',
+  ]
+  const lineData = Object.values(aggregatedSkus)
+    .map(l => [
+      l.sku,
+      l.text1,
+      l.group,
+      numberToDKCurrency(l.costPrice),
+      formatNumber(l.quantity),
+      numberToDKCurrency(l.totalCost),
+    ])
+    .sort((a, b) => {
+      const groupA = a[2]
+      const groupB = b[2]
+
+      if (groupA < groupB) return -1
+      if (groupA > groupB) return 1
+      return 0
+    })
+
+  const aggregatedGroups: { [key: string]: GroupLine } = Object.values(
+    aggregatedSkus,
+  ).reduce((acc: { [key: string]: GroupLine }, line) => {
+    const group = line.group
+
+    if (!acc[group]) {
+      acc[group] = {
+        name: group,
+        quantity: 0,
+        total: 0,
+      }
+    }
+
+    acc[group].quantity += 1
+    acc[group].total += line.totalCost
+
+    return acc
+  }, {})
+
+  const groupData = Object.values(aggregatedGroups)
+    .map(l => [l.name, formatNumber(l.quantity), numberToDKCurrency(l.total)])
+    .sort((a, b) => {
+      const groupA = a[0]
+      const groupB = b[0]
+
+      if (groupA < groupB) return -1
+      if (groupA > groupB) return 1
+      return 0
+    })
+
+  const groupHeaders = ['Varegruppe', 'Antal varer', 'Lagerværdi']
+
+  const groupColumnWidths = [110, 40, 40]
+  const groupHeaderStyles = {
+    fillColor: [240, 240, 240],
+    textColor: [0],
+    fontStyle: 'bold',
+  }
+
+  const workbook = XLSX.utils.book_new()
+  const worksheet1 = XLSX.utils.aoa_to_sheet([
+    lineHeaders,
+    ...Array.from(lineData),
+  ])
+
+  const worksheet2 = XLSX.utils.aoa_to_sheet([
+    groupHeaders,
+    ...Array.from(groupData),
+  ])
+
+  XLSX.utils.book_append_sheet(workbook, worksheet1, 'Lagerværdi', true)
+  XLSX.utils.book_append_sheet(workbook, worksheet2, 'Varegrupper', true)
+
+  const xlFile = XLSX.writeFile(workbook, 'TestExcel.xlsx')
+
+  return xlFile
 }
 
 export function genInventoryPDF(
@@ -122,7 +230,7 @@ export function genInventoryPDF(
       return 0
     })
 
-  const groupHeaders = ['Varegruppe', 'Antal vare', 'Lagerværdi']
+  const groupHeaders = ['Varegruppe', 'Antal varer', 'Lagerværdi']
 
   const groupColumnWidths = [110, 40, 40]
   const groupHeaderStyles = {

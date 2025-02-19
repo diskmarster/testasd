@@ -7,7 +7,7 @@ import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByRank } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
-import { numberRangeFilterFn } from '@/lib/tanstack/filter-fns'
+import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
@@ -44,6 +44,9 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('barcode')), String(rb.getValue('barcode')))
+    },
     meta: {
       viewLabel: t('barcode'),
     },
@@ -58,12 +61,15 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('group')), String(rb.getValue('group')))
+    },
     meta: {
       viewLabel: t('product-group'),
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
-    }
+    },
   }
 
   const text1Col: ColumnDef<FormattedInventory> = {
@@ -75,9 +81,12 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('text1')), String(rb.getValue('text1')))
+    },
     meta: {
       viewLabel: t('product-text1'),
-      className: "[&>*]:block"
+      className: '[&>*]:block',
     },
   }
 
@@ -90,6 +99,9 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('text2')), String(rb.getValue('text2')))
+    },
     meta: {
       viewLabel: t('product-text2'),
     },
@@ -104,6 +116,10 @@ export function getTableOverviewColumns(
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
     cell: () => null,
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('text3')), String(rb.getValue('text3')))
+
+    },
     meta: {
       viewLabel: t('product-text3'),
     },
@@ -119,6 +135,9 @@ export function getTableOverviewColumns(
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
+    },
     meta: {
       viewLabel: t('placement'),
     },
@@ -131,6 +150,9 @@ export function getTableOverviewColumns(
     cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
+    },
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('batch')), String(rb.getValue('batch')))
     },
     meta: {
       viewLabel: t('batch'),
@@ -170,6 +192,9 @@ export function getTableOverviewColumns(
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
+    },
+    sortingFn: (ra, rb) => {
+      return stringSortingFn(String(ra.getValue('unit')), String(rb.getValue('unit')))
     },
     meta: {
       viewLabel: t('unit'),
@@ -242,6 +267,19 @@ export function getTableOverviewColumns(
     },
   }
 
+  const isBarredCol: ColumnDef<FormattedInventory> = {
+    accessorKey: 'product.isBarred',
+    id: 'isBarred',
+    header: () => null,
+    aggregatedCell: () => null,
+    cell: () => null,
+    enableHiding: false,
+    enableSorting: false,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
+  }
+
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
@@ -273,6 +311,7 @@ export function getTableOverviewColumns(
         costPriceCol,
         salesPriceCol,
         actionsCol,
+        isBarredCol,
       ].filter(
         col =>
           user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
@@ -292,6 +331,7 @@ export function getTableOverviewColumns(
         salesPriceCol,
         placementCol,
         actionsCol,
+        isBarredCol,
       ].filter(
         col =>
           user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
@@ -312,6 +352,7 @@ export function getTableOverviewColumns(
         placementCol,
         batchCol,
         actionsCol,
+        isBarredCol,
       ].filter(
         col =>
           user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
@@ -391,56 +432,79 @@ export function getTableOverviewFilters(
   const placementFilter: FilterField<FormattedInventory> | null =
     plan === 'basis' || plan === 'pro'
       ? {
-        column: table.getColumn('placement'),
-        type: 'select',
-        label: t('placement'),
-        value: '',
-        options: [
-          ...placements.map(placement => ({
-            value: placement.name,
-            label: placement.name,
-          })),
-        ],
-      }
+          column: table.getColumn('placement'),
+          type: 'select',
+          label: t('placement'),
+          value: '',
+          options: [
+            ...placements.map(placement => ({
+              value: placement.name,
+              label: placement.name,
+            })),
+          ],
+        }
       : null
 
   const batchFilter: FilterField<FormattedInventory> | null =
     plan === 'pro'
       ? {
-        column: table.getColumn('batch'),
-        type: 'select',
-        label: t('batch'),
-        value: '',
-        options: [
-          ...batches.map(batch => ({
-            value: batch.batch,
-            label: batch.batch,
-          })),
-        ],
-      }
+          column: table.getColumn('batch'),
+          type: 'select',
+          label: t('batch'),
+          value: '',
+          options: [
+            ...batches.map(batch => ({
+              value: batch.batch,
+              label: batch.batch,
+            })),
+          ],
+        }
       : null
 
-  // @ts-ignore
-  const costPriceFilter: FilterField<FormattedInventory> | null = table.options.meta.user.priceAccess ? {
-    column: table.getColumn('costPrice'),
-    type: 'number-range',
-    label: t('cost-price'),
-    value: ''
-  } : null
+  const costPriceFilter: FilterField<FormattedInventory> | null =
+    // @ts-ignore
+    table.options.meta.user.priceAccess
+      ? {
+          column: table.getColumn('costPrice'),
+          type: 'number-range',
+          label: t('cost-price'),
+          value: '',
+        }
+      : null
 
-  // @ts-ignore
-  const salesPriceFilter: FilterField<FormattedInventory> | null = table.options.meta.user.priceAccess ? {
-    column: table.getColumn('salesPrice'),
-    type: 'number-range',
-    label: t('sales-price'),
-    value: ''
-  } : null
+  const salesPriceFilter: FilterField<FormattedInventory> | null =
+    // @ts-ignore
+    table.options.meta.user.priceAccess
+      ? {
+          column: table.getColumn('salesPrice'),
+          type: 'number-range',
+          label: t('sales-price'),
+          value: '',
+        }
+      : null
 
   const quantityFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('quantity'),
     type: 'number-range',
     label: t('quantity'),
-    value: ''
+    value: '',
+  }
+
+  const isBarredFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('isBarred'),
+    type: 'select',
+    label: t('isBarred'),
+    value: '',
+    options: [
+      {
+        value: true,
+        label: t('isBarred-yes'),
+      },
+      {
+        value: false,
+        label: t('isBarred-no'),
+      },
+    ],
   }
 
   switch (plan) {
@@ -456,6 +520,7 @@ export function getTableOverviewFilters(
         costPriceFilter,
         salesPriceFilter,
         quantityFilter,
+        isBarredFilter,
       ].filter(
         (filter): filter is FilterField<FormattedInventory> => filter !== null,
       )
@@ -473,6 +538,7 @@ export function getTableOverviewFilters(
         salesPriceFilter,
         quantityFilter,
         placementFilter,
+        isBarredFilter,
       ].filter(
         (filter): filter is FilterField<FormattedInventory> => filter !== null,
       )
@@ -490,6 +556,7 @@ export function getTableOverviewFilters(
         quantityFilter,
         placementFilter,
         batchFilter,
+        isBarredFilter,
       ].filter(
         (filter): filter is FilterField<FormattedInventory> => filter !== null,
       )

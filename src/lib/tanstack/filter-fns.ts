@@ -50,3 +50,7 @@ export function dateRangeFilterFn<T>(
 
   return true
 }
+
+export function stringSortingFn(rA: string, rB: string) {
+  return rA.localeCompare(rB)
+}

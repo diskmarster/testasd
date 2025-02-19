@@ -2,15 +2,18 @@ import { TableOverviewActions } from '@/components/inventory/table-group-actions
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
+import { hasPermissionByRank } from '@/data/user.types'
 import { Group } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
+import { User } from 'lucia'
 import { DateRange } from 'react-day-picker'
 
 export function getTableGroupColumns(
   lng: string,
   t: (key: string) => string,
+  user: User,
 ): ColumnDef<Group>[] {
   const groupCol: ColumnDef<Group> = {
     accessorKey: 'name',
@@ -35,7 +38,6 @@ export function getTableGroupColumns(
       />
     ),
     cell: ({ getValue }) => {
-
       const status = getValue<boolean>()
       const badgeVariant = status ? 'red' : 'gray'
 
@@ -129,7 +131,10 @@ export function getTableGroupColumns(
   const actionsCol: ColumnDef<Group> = {
     accessorKey: 'actions',
     header: () => null,
-    cell: ({ row }) => <TableOverviewActions row={row} />,
+    cell: ({ table, row }) =>
+      hasPermissionByRank(user.role, 'bruger') ? (
+        <TableOverviewActions row={row} />
+      ) : null,
     enableHiding: false,
     enableSorting: false,
     meta: {
@@ -137,6 +142,8 @@ export function getTableGroupColumns(
     },
   }
 
+  if (hasPermissionByRank(user.role, 'bruger'))
+    return [groupCol, isBarredCol, insertedCol, updatedCol]
   return [groupCol, isBarredCol, insertedCol, updatedCol, actionsCol]
 }
 

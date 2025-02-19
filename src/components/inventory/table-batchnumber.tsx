@@ -1,6 +1,9 @@
 'use client'
 
-import { getTableBatchColumns, getTableBatchFilters } from '@/app/[lng]/(site)/varer/batch/columns'
+import {
+  getTableBatchColumns,
+  getTableBatchFilters,
+} from '@/app/[lng]/(site)/varer/batch/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
@@ -14,9 +17,10 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useLanguage } from '@/context/language'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch } from '@/lib/database/schema/inventory'
 import {
-  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -27,7 +31,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -49,12 +52,15 @@ export function TableBatch({ data, user }: Props) {
   const FILTERS_KEY = 'batch_filters'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'batch')
-  const columns = useMemo(() => getTableBatchColumns(lng, t), [lng, t])
+  const columns = useMemo(
+    () => getTableBatchColumns(lng, t, user),
+    [lng, t, user],
+  )
   const filteredData = useMemo(() => {
     return data.filter(batch => batch.batch !== '-')
   }, [data])
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+  const [sorting, handleSortingChange] = useUrlSorting()
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
     { id: 'isBarred', value: [false] },
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -105,9 +111,9 @@ export function TableBatch({ data, user }: Props) {
     getExpandedRowModel: getExpandedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
@@ -141,7 +147,7 @@ export function TableBatch({ data, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}
+        filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>

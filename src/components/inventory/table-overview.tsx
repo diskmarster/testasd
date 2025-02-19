@@ -19,9 +19,10 @@ import {
 import { useLanguage } from '@/context/language'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
-  ColumnFiltersState,
   ExpandedState,
   flexRender,
   getCoreRowModel,
@@ -34,7 +35,6 @@ import {
   getSortedRowModel,
   GroupingState,
   RowSelectionState,
-  SortingState,
   Updater,
   useReactTable,
   VisibilityState,
@@ -80,8 +80,10 @@ export function TableOverview({
     [user, plan, lng, t],
   )
 
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, handleSortingChange] = useUrlSorting()
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
+    { id: 'isBarred', value: [false] },
+  ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [grouping, setGrouping] = useState<GroupingState>(['sku'])
   const [expanded, setExpanded] = useState<ExpandedState>({})
@@ -136,9 +138,9 @@ export function TableOverview({
 
     groupedColumnMode: 'reorder',
 
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     onGroupingChange: setGrouping,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,
@@ -165,7 +167,15 @@ export function TableOverview({
 
   const filterFields = useMemo(
     () =>
-      getTableOverviewFilters(plan, table, units, groups, placements, batches, t),
+      getTableOverviewFilters(
+        plan,
+        table,
+        units,
+        groups,
+        placements,
+        batches,
+        t,
+      ),
     [plan, table, units, groups, placements, batches, t],
   )
 
@@ -177,7 +187,7 @@ export function TableOverview({
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}	
+        filterLocalStorageKey={FILTERS_KEY}
       />
       <div className='rounded-md border'>
         <Table>
@@ -189,9 +199,9 @@ export function TableOverview({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
