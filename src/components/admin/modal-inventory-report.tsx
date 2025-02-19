@@ -6,7 +6,7 @@ import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import { CustomerID } from '@/lib/database/schema/customer'
-import { genInventoryPDF } from '@/lib/pdf/inventory-rapport'
+import { genInventoryExcel, genInventoryPDF } from '@/lib/pdf/inventory-rapport'
 import { formatDate } from '@/lib/utils'
 import { useEffect, useState, useTransition } from 'react'
 import { Button } from '../ui/button'
@@ -68,20 +68,33 @@ export function ModalInventoryReport() {
         const { customer, location, inventory } = res.data
         const today = new Date()
 
-        const pdf = genInventoryPDF(
-          {
-            docTitle: `Lagerværdi for ${customer?.company}`,
-            companyName: customer.company,
-            locationName: location.name,
-            userName: user.name,
-            dateOfReport: today,
-          },
-          inventory,
-        )
+        if (fileType == 'PDF') {
+          const pdf = genInventoryPDF(
+            {
+              docTitle: `Lagerværdi for ${customer?.company}`,
+              companyName: customer.company,
+              locationName: location.name,
+              userName: user.name,
+              dateOfReport: today,
+            },
+            inventory,
+          )
 
-        pdf.save(
-          `lagerværdi-rapport-${location.name}-${formatDate(today, false)}.pdf`,
-        )
+          pdf.save(
+            `lagerværdi-rapport-${location.name}-${formatDate(today, false)}.pdf`,
+          )
+        } else {
+          genInventoryExcel(
+            {
+              docTitle: `Lagerværdi for ${customer?.company}`,
+              companyName: customer.company,
+              locationName: location.name,
+              userName: user.name,
+              dateOfReport: today,
+            },
+            inventory,
+          )
+        }
       }
     })
   }
