@@ -131,8 +131,9 @@ export function getTablePlacementColumns(
     },
   }
 
-  if (hasPermissionByRank(user.role, 'bruger'))
+  if (!hasPermissionByRank(user.role, 'bruger')) {
     return [placementCol, isBarredCol, insertedCol, updatedCol]
+  }
   return [placementCol, isBarredCol, insertedCol, updatedCol, actionsCol]
 }
 
