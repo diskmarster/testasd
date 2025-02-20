@@ -1,19 +1,21 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { editableAction, getSchema } from '@/lib/safe-action'
+import { authedAction, editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
+import { attachmentService } from '@/service/attachments'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 import {
   moveInventoryValidation,
   updateInventoryValidation,
 } from './validation'
 
 export const updateInventoryAction = editableAction
-  .metadata({actionName: 'updateInventory'})
+  .metadata({ actionName: 'updateInventory' })
   .schema(async () => await getSchema(updateInventoryValidation, 'validation'))
   .action(
     async ({
@@ -88,7 +90,7 @@ export const updateInventoryAction = editableAction
   )
 
 export const moveInventoryAction = editableAction
-  .metadata({actionName: 'moveInventory'})
+  .metadata({ actionName: 'moveInventory' })
   .schema(async () => await getSchema(moveInventoryValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
@@ -117,4 +119,12 @@ export const moveInventoryAction = editableAction
     )
 
     revalidatePath(`/${ctx.lang}/oversigt`)
+  })
+
+export const fetchProductFilesAction = authedAction
+  .schema(z.object({ id: z.coerce.number() }))
+  .action(async ({ parsedInput: { id } }) => {
+    const files = await attachmentService.getByRefID('product', id)
+
+    return { files }
   })

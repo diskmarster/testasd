@@ -16,6 +16,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.741.0",
     "@hookform/resolvers": "^3.9.0",
     "@libsql/client": "^0.10.0",
     "@lucia-auth/adapter-drizzle": "^1.1.0",
@@ -78,6 +79,7 @@
     "use-debounce": "^10.0.4",
     "vaul": "^0.9.1",
     "xlsx": "^0.18.5",
+    "yet-another-react-lightbox": "^3.21.7",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -86,6 +88,7 @@
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

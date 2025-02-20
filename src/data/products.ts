@@ -14,7 +14,7 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
 
 const UNIT_COLS = getTableColumns(unitTable)
@@ -166,6 +166,7 @@ export const product = {
           eq(productHistoryTable.productID, productID),
         ),
       )
+	  .orderBy(desc(productHistoryTable.id))
   },
   getWithInventoryByCustomerID: async function(
     customerID: CustomerID,

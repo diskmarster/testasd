@@ -1,14 +1,14 @@
 import { useTranslation } from '@/app/i18n/client'
-import { UpdateProductsForm } from '@/components/products/update-product-form'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { FormattedProduct } from '@/data/products.types'
 import { Row, Table } from '@tanstack/react-table'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
 import { toggleBarredProductAction } from '@/app/[lng]/(site)/varer/produkter/actions'
+import Link from 'next/link'
 
 interface Props {
   table: Table<FormattedProduct>
@@ -16,7 +16,6 @@ interface Props {
 }
 
 export function TableOverviewActions({ table, row }: Props) {
-  const [open, setOpen] = useState<boolean>(false)
   const [_, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'produkter')
@@ -43,29 +42,18 @@ export function TableOverviewActions({ table, row }: Props) {
     })
   }
 
-  // @ts-ignore
-  const units = table.options.meta.units
-  // @ts-ignore
-  const groups = table.options.meta.groups
-
   return (
     <>
       <TableActionsWrapper>
-        <DropdownMenuItem onClick={() => setOpen(true)}>
-          {t('update-product')}
+        <DropdownMenuItem asChild>
+		<Link href={`/${lng}/varer/produkter/${row.original.id}`} target="_blank">
+          {t('view-product')}
+		</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleToggleBar}>
           {row.original.isBarred ? t('unbar-this') : t('bar-this')}
         </DropdownMenuItem>
       </TableActionsWrapper>
-
-      <UpdateProductsForm
-        units={units}
-        groups={groups}
-        productToEdit={row.original}
-        isOpen={open}
-        setOpen={setOpen}
-      />
     </>
   )
 }

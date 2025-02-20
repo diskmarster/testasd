@@ -4,7 +4,6 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormattedReorder } from '@/data/inventory.types'
-import { UserRole } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { cn, formatDate, formatNumber } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -46,7 +45,7 @@ export function getTableReorderColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('reorder-columns.productNo')} />
     ),
-    cell: ({ row }) => <ModalShowProductCard product={row.original.product} user={user} />,
+    cell: ({ getValue }) => getValue<string>(),
     enableHiding: false,
     meta: {
       viewLabel: t('reorder-columns.productNo'),

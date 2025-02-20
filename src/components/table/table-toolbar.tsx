@@ -135,18 +135,26 @@ export function ViewOptions<T>({ table }: { table: Table<T> }) {
 	)
 }
 export function ButtonRefreshOverview() {
-	const [error, setError] = useState<string | null>(null)
+	const [isAnimating, setIsAnimating] = useState(false)
 	const [pending, startTransition] = useTransition()
 	const pathName = usePathname()
 
 	const onSubmit = () => {
+		setIsAnimating(true)
+		setTimeout(() => {
+			setIsAnimating(false)
+		}, 600)
 		startTransition(async () => {
-			const start = Date.now()
 			await refreshTableAction({ pathName })
-			const end = Date.now()
-			setTimeout(() => { }, 600 - (end - start))
 		})
 	}
+
+	window.addEventListener('focus', () => {
+		if (!pending) {
+			onSubmit()
+		}
+	})
+
 	return (
 		<>
 			<Button
@@ -158,7 +166,7 @@ export function ButtonRefreshOverview() {
 				onClick={onSubmit}
 				disabled={pending}>
 				<Icons.refresh
-					className={cn('size-4', pending && 'animate-spin-refresh')}
+					className={cn('size-4', isAnimating && 'animate-spin-refresh')}
 				/>
 			</Button>
 		</>
