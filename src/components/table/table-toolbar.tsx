@@ -18,7 +18,11 @@ import { exportTableToCSV } from '@/lib/export/csv'
 import { cn } from '@/lib/utils'
 import { Column, Table } from '@tanstack/react-table'
 import { usePathname } from 'next/navigation'
-import { useContext, useState, useTransition } from 'react'
+import {
+	useContext,
+	useState,
+	useTransition,
+} from 'react'
 
 type ToolbarOptions = {
 	showExport?: boolean
@@ -31,7 +35,8 @@ type FilterOption = {
 }
 
 export type NumberRange = {
-	from: number | undefined, to?: number | undefined
+	from: number | undefined
+	to?: number | undefined
 }
 
 export type FilterField<TRow> = {
@@ -55,12 +60,16 @@ export function TableToolbar<T>({
 	table,
 	options,
 	filterFields = [],
-	filterLocalStorageKey
+	filterLocalStorageKey,
 }: Props<T>) {
 	return (
 		<div className='flex items-center gap-2 py-4'>
 			<div className='mr-auto max-sm:overflow-y-auto'>
-				<TableToolbarFilters table={table} filterFields={filterFields} filterLocalStorageKey={filterLocalStorageKey} />
+				<TableToolbarFilters
+					table={table}
+					filterFields={filterFields}
+					filterLocalStorageKey={filterLocalStorageKey}
+				/>
 			</div>
 			{options && (
 				<div className='ml-auto flex items-center gap-2'>
@@ -148,12 +157,6 @@ export function ButtonRefreshOverview() {
 			await refreshTableAction({ pathName })
 		})
 	}
-
-	window.addEventListener('focus', () => {
-		if (!pending) {
-			onSubmit()
-		}
-	})
 
 	return (
 		<>
