@@ -1,15 +1,15 @@
-import { getCustomerSettingsAction } from '@/app/[lng]/(site)/administration/organisation/actions'
+'use client'
+
 import { updateCustomerSettingsValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import {
   Customer,
-  CustomerID,
   CustomerSettings,
 } from '@/lib/database/schema/customer'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCallback, useEffect, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
@@ -18,23 +18,22 @@ import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
 import { FormCompanyEdit } from './form-company-edit'
 
-export function CompanyInfoTab({ customer }: { customer: Customer }) {
+export function CompanyInfoTab({ customer, settings }: { customer: Customer, settings: CustomerSettings | undefined  }) {
   return (
     <div className='space-y-8'>
       <FormCompanyEdit customer={customer} />
-      <CompanySettings customerID={customer.id} />
+      <CompanySettings settings={settings} />
     </div>
   )
 }
 
-function CompanySettings({ customerID }: { customerID: CustomerID }) {
+function CompanySettings({ settings }: { settings: CustomerSettings | undefined }) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'organisation')
 
   const [isLoading, startTransition] = useTransition()
   const [formError, setFormError] = useState<string>()
-  const [error, setError] = useState<string>()
-  const [settings, setSettings] = useState<CustomerSettings>()
+  const [error, setError] = useState(settings == undefined ? t('no-settings-found') : undefined)
 
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = updateCustomerSettingsValidation(validationT)
@@ -46,28 +45,12 @@ function CompanySettings({ customerID }: { customerID: CustomerID }) {
     defaultValues: {
       id: settings?.id,
       settings: {
-        useReference: settings?.useReference ?? false,
-        usePlacement: settings?.usePlacement ?? false,
-        useBatch: settings?.useBatch ?? false,
+        useReference: settings?.useReference ?? true,
+        usePlacement: settings?.usePlacement ?? true,
+        useBatch: settings?.useBatch ?? true,
       },
     },
   })
-
-  const getSettings = useCallback(() => {
-    startTransition(async () => {
-      const res = await getCustomerSettingsAction({ customerID })
-
-      if (res && res.serverError) {
-        setError(res.serverError)
-      } else if (res && res.data) {
-        setSettings(res.data)
-      }
-    })
-  }, [customerID, setError])
-
-  useEffect(() => {
-    getSettings()
-  }, [getSettings])
 
   if (error) {
     return (
@@ -79,11 +62,7 @@ function CompanySettings({ customerID }: { customerID: CustomerID }) {
     )
   }
 
-  if (isLoading && settings == undefined) {
-    return <p>LOADING...</p>
-  }
-
-  const { useReference, usePlacement, useBatch } = watch('settings')
+  const { settings: {useReference, usePlacement, useBatch} } = watch()
 
   console.log({ useReference, usePlacement, useBatch })
 
@@ -99,7 +78,7 @@ function CompanySettings({ customerID }: { customerID: CustomerID }) {
       <div className='flex flex-col w-full md:flex-row md:gap-4'>
         <div className='grid gap-2 md:max-w-[285px]'>
           <Label htmlFor='useReference'>
-            {t('form-company-edit.company-name')}
+            {t('company-page.settings.reference')}
           </Label>
           <Switch
             checked={useReference}
@@ -121,7 +100,7 @@ function CompanySettings({ customerID }: { customerID: CustomerID }) {
         </div>
         <div className='grid gap-2 md:max-w-[285px]'>
           <Label htmlFor='usePlacement'>
-            {t('form-company-edit.company-name')}
+            {t('company-page.settings.placement')}
           </Label>
           <Switch
             checked={usePlacement}
@@ -143,7 +122,7 @@ function CompanySettings({ customerID }: { customerID: CustomerID }) {
         </div>
         <div className='grid gap-2 md:max-w-[285px]'>
           <Label htmlFor='useBatch'>
-            {t('form-company-edit.company-name')}
+            {t('company-page.settings.batch')}
           </Label>
           <Switch
             checked={useBatch}

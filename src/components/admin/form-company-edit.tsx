@@ -64,7 +64,7 @@ export function FormCompanyEdit({ customer }: Props) {
       )}
       <div className='flex flex-col w-full md:flex-row md:gap-4'>
         <div className='grid gap-2 md:max-w-[285px]'>
-          <Label htmlFor='name'>{t('form-company-edit.company-name')}</Label>
+          <Label htmlFor='name'>{t('company-page.form-company-edit.company-name')}</Label>
           <Input id='name' type='text' {...register('company')} />
           {formState.errors.company && (
             <p className='text-sm text-destructive '>
@@ -73,7 +73,7 @@ export function FormCompanyEdit({ customer }: Props) {
           )}
         </div>
         <div className='grid gap-2 md:max-w-[285px]'>
-          <Label htmlFor='email'>{t('form-company-edit.email')}</Label>
+          <Label htmlFor='email'>{t('company-page.form-company-edit.email')}</Label>
           <Input id='email' type='email' {...register('email')} />
           {formState.errors.email && (
             <p className='text-sm text-destructive '>
@@ -88,7 +88,7 @@ export function FormCompanyEdit({ customer }: Props) {
         type='submit'
         className='flex items-center gap-2 md:w-fit'>
         {pending && <Icons.spinner className='size-4 animate-spin' />}
-        {t('form-company-edit.update-button')}
+        {t('company-page.form-company-edit.update-button')}
       </Button>
     </form>
   )

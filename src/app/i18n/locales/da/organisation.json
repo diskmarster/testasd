@@ -3,15 +3,6 @@
     "title": "Organisation",
     "description": "Her kan du administrere dine brugere, lokationer og firma."
   },
-  "tabs-admin": {
-    "users": "Brugere",
-    "locations": "Lokationer",
-    "company": "Firma",
-    "user-limit-reached": "Du har nået det maksimale antal brugere for din plan.",
-    "user-upgrade-plan": "Opgrader din plan for at tilføje flere brugere.",
-    "location-limit-reached": "Du har nået det maksimale antal lokationer for din plan.",
-    "location-upgrade-plan": "Opgrader din plan for at tilføje flere lokationer."
-  },
   "modal-toggle-user": {
     "title": "Skift brugerstatus",
     "description1": "Denne handling er ikke permanent. Hvis du aktiverer en bruger, vil de kunne logge ind på ",
@@ -53,6 +44,12 @@
   "table-admin-locations": {
     "no-locations-found": "Ingen lokationer fundet"
   },
+  "location-page": {
+    "title": "Lokationer",
+    "description": "Administrer din organisations lokationer",
+    "location-limit-reached": "Du har nået det maksimale antal lokationer for din plan.",
+    "location-upgrade-plan": "Opgrader din plan for at tilføje flere lokationer."
+  },
   "location-columns": {
     "location-name": "Lokationsnavn",
     "location-name-placeholder": "Søg efter lokationsnavn",
@@ -74,6 +71,12 @@
     "users-out-long": "Afgang",
     "users-read-short": "L",
     "users-read-long": "Læseadgang"
+  },
+  "user-page": {
+    "title": "Brugere",
+    "description": "Administrer din organisations brugere",
+    "user-limit-reached": "Du har nået det maksimale antal brugere for din plan.",
+    "user-upgrade-plan": "Opgrader din plan for at tilføje flere brugere."
   },
   "user-columns": {
     "user-name": "Navn",
@@ -107,10 +110,19 @@
     "no-permission-tooltip": "Du har ikke tilladelse til at ændre denne bruger",
     "delete-user": "Slet bruger"
   },
-  "form-company-edit": {
-    "company-name": "Firma navn",
-    "email": "E-mail",
-    "update-button": "Opdater"
+  "company-page": {
+    "title": "Firma",
+    "description": "Administrer firmadetaljer og indstillinger.",
+    "form-company-edit": {
+      "company-name": "Firma navn",
+      "email": "E-mail",
+      "update-button": "Opdater"
+    },
+    "settings": {
+      "reference": "Konto/sag",
+      "placement": "Placeringer",
+      "batch": "Batch nr."
+    }
   },
   "modal-invite-user": {
     "title": "Inviter ny bruger",

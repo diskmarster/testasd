@@ -9,7 +9,6 @@ import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
 import { TabsAdmin } from '@/components/admin/tabs-company'
 import { ModalQrPrint } from '@/components/auth/modal-print-qr'
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { ModalDeleteUser } from '@/components/admin/modal-delete-user'
 import { hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { locationService } from '@/service/location'
@@ -86,7 +85,6 @@ export default async function Page({ params: { lng } }: PageProps) {
       <ModalToggleUser />
       <ModalResetUserPW />
       <ModalResetUserPin />
-      <ModalDeleteUser />
       <ModalEditLocation
         user={user}
         users={users}

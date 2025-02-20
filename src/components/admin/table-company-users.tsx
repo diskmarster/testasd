@@ -1,3 +1,5 @@
+'use client'
+
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -12,7 +14,6 @@ import {
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { cn } from '@/lib/utils'
 import {
-    ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
@@ -36,8 +37,8 @@ import { useLanguage } from '@/context/language'
 import { useTranslation } from '@/app/i18n/client'
 import { getTableUsersColumns, getTableUsersFilters } from '@/app/[lng]/(site)/administration/organisation/user-columns'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
-import { HandleFilterChangeFN } from '@/hooks/use-url-filtering'
 import { useSearchParams } from 'next/navigation'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -46,11 +47,9 @@ const ROW_PER_PAGE = [25, 50, 75, 100]
 interface Props {
   data: UserNoHash[]
   user: User
-  columnFilters: ColumnFiltersState
-  handleColumnFiltersChange: HandleFilterChangeFN
 }
 
-export function TableAdminUsers({ data, user, columnFilters, handleColumnFiltersChange }: Props) {
+export function TableAdminUsers({ data, user }: Props) {
   const LOCALSTORAGE_KEY = 'users_cols'
   const FILTERS_KEY = 'users_filters'
   const lng = useLanguage()
@@ -59,6 +58,7 @@ export function TableAdminUsers({ data, user, columnFilters, handleColumnFilters
 
 	const mutableSearchParams = new URLSearchParams(useSearchParams())
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams, [])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)
@@ -66,10 +66,6 @@ export function TableAdminUsers({ data, user, columnFilters, handleColumnFilters
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  useEffect(() => {
-    handleColumnFiltersChange([])
-  }, [handleColumnFiltersChange])
 
   useEffect(() => {
     const visibility = JSON.parse(

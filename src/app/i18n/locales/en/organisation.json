@@ -3,15 +3,6 @@
     "title": "Organisation",
     "description": "View and edit users, locations and company information."
   },
-  "tabs-admin": {
-    "users": "Users",
-    "locations": "Locations",
-    "company": "Company",
-    "user-limit-reached": "You've reached the maximum number of users for your plan.",
-    "user-upgrade-plan": "Upgrade your plan to add more users.",
-    "location-limit-reached": "You've reached the maximum number of locations for your plan.",
-    "location-upgrade-plan": "Upgrade your plan to add more locations."
-  },
   "modal-toggle-user": {
     "title": "Change user status",
     "description1": "This action is not permanent. If you activate a user, they will be able to log in to ",
@@ -53,6 +44,12 @@
   "table-admin-locations": {
     "no-locations-found": "No locations found"
   },
+  "location-page": {
+    "title": "Locations",
+    "description": "Manage your organization's locations",
+    "location-limit-reached": "You've reached the maximum number of locations for your plan.",
+    "location-upgrade-plan": "Upgrade your plan to add more locations."
+  },
   "location-columns": {
     "location-name": "Location name",
     "location-name-placeholder": "Search Location name",
@@ -74,6 +71,12 @@
     "users-out-long": "Outgoing",
     "users-read-short": "R",
     "users-read-long": "Read only"
+  },
+  "user-page": {
+    "title": "Users",
+    "description": "Manage your organization's users",
+    "user-limit-reached": "You have reached the maximum number of users for your plan.",
+    "user-upgrade-plan": "Upgrade your plan to add more users."
   },
   "user-columns": {
     "user-name": "Name",
@@ -107,10 +110,19 @@
     "no-permission-tooltip": "You do not have permission to edit this user",
     "delete-user": "Delete user"
   },
-  "form-company-edit": {
-    "company-name": "Company name",
-    "email": "Email",
-    "update-button": "Update"
+  "company-page": {
+    "title": "Company",
+    "description": "Here you can manage company details and settings.",
+    "form-company-edit": {
+      "company-name": "Company Name",
+      "email": "Email",
+      "update-button": "Update"
+    },
+    "settings": {
+      "reference": "Account/case",
+      "placement": "Locations",
+      "batch": "Batch No."
+    }
   },
   "modal-invite-user": {
     "title": "Invite new user",
