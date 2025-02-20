@@ -129,6 +129,13 @@ export const productsDataValidation = (
           })
           .optional()
           .default(0),
+        note: z.preprocess(
+          // @ts-ignore
+          val => val.toString(),
+          z.string()
+            .max(1000, { message: t('products.product1-max-length', {num: 1000})})
+            .optional().default(''),
+        ),
         isBarred: z
           .preprocess(
             val => (val == '' ? 'false' : val),
@@ -166,6 +173,7 @@ export const importProductsValidation = z.array(
     text3: z.string(),
     costPrice: z.coerce.number(),
     salesPrice: z.coerce.number(),
+	note: z.string(),
     isBarred: z.coerce.boolean(),
   }),
 )

@@ -444,6 +444,7 @@ export const productService = {
                 text2: p.text2,
                 text3: p.text3,
                 salesPrice: p.salesPrice,
+				note: p.note
               },
               trx,
             ),
@@ -464,6 +465,7 @@ export const productService = {
                   text2: p.text2,
                   text3: p.text3,
                   salesPrice: p.salesPrice,
+				  note: p.note
                 },
                 trx,
               )
