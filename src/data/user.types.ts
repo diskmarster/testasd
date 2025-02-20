@@ -1,6 +1,7 @@
 import { UserNoHash } from '@/lib/database/schema/auth'
 import { Column, sql } from 'drizzle-orm'
 import { z } from 'zod'
+import { Plan, plans } from './customer.types'
 
 export const userRoleZodSchema = z.enum([
   'læseadgang',
@@ -52,6 +53,16 @@ export function hasPermissionByRank(
   const requiredRank = userRoles.indexOf(requiredRole)
 
   return userRank >= requiredRank
+}
+
+export function hasPermissionByPlan(
+  customerPlan: Plan,
+  requiredPlan: Plan,
+): boolean {
+  const customerRank = plans.indexOf(customerPlan)
+  const requiredRank = plans.indexOf(requiredPlan)
+
+  return customerRank >= requiredRank
 }
 
 export type UserRoleFilter = {
