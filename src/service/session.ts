@@ -41,11 +41,8 @@ export const sessionService = {
         if (result.session.fresh) {
           const sessionCookie = lucia.createSessionCookie(result.session.id);
           cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-        } else {
-          const sessionCookie = lucia.createBlankSessionCookie();
-          cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-        }
-      } catch { }
+        } 
+	  } catch { }
 
 	  const customer = await customerService.getByID(result.user.customerID) ?? null
 	  if (!customer) {
