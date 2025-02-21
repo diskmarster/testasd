@@ -9,9 +9,11 @@ import {
   CustomerLink,
   CustomerLinkID,
   CustomerSettings,
+  CustomerSettingsID,
   NewCustomer,
   NewCustomerLink,
   PartialCustomer,
+  PartialCustomerSettings,
 } from '@/lib/database/schema/customer'
 import { generateIdFromEntropySize } from 'lucia'
 import { isLinkExpired } from './customer.utils'
@@ -104,4 +106,14 @@ export const customerService = {
   getSettings: async function(customerID: CustomerID): Promise<CustomerSettings | undefined> {
     return await customer.getSettings(customerID)
   },
+  updateSettings: async function(id: CustomerSettingsID, data: PartialCustomerSettings): Promise<CustomerSettings | undefined> {
+    if (data.id != undefined) {
+      delete data.id
+    }
+    if (data.customerID != undefined) {
+      delete data.customerID
+    }
+
+    return customer.updateSettings(id, data)
+  }
 }

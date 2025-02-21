@@ -63,7 +63,8 @@
     "reset-higher-rank-pw-error": "Du kan ikke nulstille kodeord for brugere med flere rettigheder end dig",
     "reset-own-pin-error": "Du kan ikke nulstille pinkoden for din egen bruger her",
     "reset-higher-rank-pin-error": "Du kan ikke nulstille pinkoden for brugere med flere rettigheder end dig",
-    "access-not-allowed": "Du har ikke adgang til dette"
+    "access-not-allowed": "Du har ikke adgang til dette",
+    "setting-not-updated": "Noget gik galt under opdateringen af indstillingerne"
   },
   "placement-action": {
     "location-not-found": "Kunne ikke finde din lokation",

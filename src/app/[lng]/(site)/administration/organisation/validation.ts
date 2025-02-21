@@ -101,6 +101,7 @@ export const updateCustomerSettingsValidation = (
 ) =>
   z.object({
     id: z.coerce.number(),
+    customerID: z.coerce.number(),
     settings: z.object({
       useReference: z.coerce.boolean(),
       usePlacement: z.coerce.boolean(),

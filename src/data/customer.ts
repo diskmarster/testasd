@@ -7,11 +7,13 @@ import {
   CustomerLinkID,
   customerLinkTable,
   CustomerSettings,
+  CustomerSettingsID,
   customerSettingsTable,
   customerTable,
   NewCustomer,
   NewCustomerLink,
   PartialCustomer,
+  PartialCustomerSettings,
 } from '@/lib/database/schema/customer'
 import { count, eq, getTableColumns, not } from 'drizzle-orm'
 import { CustomerWithUserCount } from './customer.types'
@@ -115,4 +117,15 @@ export const customer = {
 
     return res
   },
+  updateSettings: async function(id: CustomerSettingsID, data: PartialCustomerSettings, trx: TRX = db): Promise<CustomerSettings | undefined> {
+    const [res] = await trx
+      .update(customerSettingsTable)
+      .set({
+        ...data
+      })
+      .where(eq(customerSettingsTable.id, id))
+      .returning()
+
+    return res
+  }
 }
