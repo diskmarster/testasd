@@ -129,8 +129,11 @@
     },
     "settings": {
       "reference": "Account/Case",
+      "reference-description": "Account/Case is recorded during incoming, outgoing, adjustment, and move",
       "placement": "Placements",
-      "batch": "Batch No."
+      "placement-description": "Placements are recorded during incoming, outgoing, adjustment, and move",
+      "batch": "Batch No.",
+      "batch-description": "Batch No. is recorded during incoming, outgoing, adjustment, and move"
     },
     "error": {
       "name": "Unknown name",

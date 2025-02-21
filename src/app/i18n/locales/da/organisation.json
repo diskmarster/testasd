@@ -129,8 +129,11 @@
     },
     "settings": {
       "reference": "Konto/sag",
+      "reference-description": "Konto/sag registreres ved tilgang, afgang, regulering og flyt",
       "placement": "Placeringer",
-      "batch": "Batch nr."
+      "placement-description": "Placeringer registreres ved tilgang, afgang, regulering og flyt",
+      "batch": "Batch nr.",
+      "batch-description": "Batch nr. registreres ved tilgang, afgang, regulering og flyt"
     },
     "error": {
       "name": "Ukendt navn",

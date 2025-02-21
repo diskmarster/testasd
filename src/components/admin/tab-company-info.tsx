@@ -1,5 +1,6 @@
 'use client'
 
+import { updateCustomerSettingsAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 import { updateCustomerSettingsValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
@@ -7,7 +8,8 @@ import { useLanguage } from '@/context/language'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
-import { FieldErrors, FieldErrorsImpl, useForm } from 'react-hook-form'
+import { FieldErrors, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
@@ -20,11 +22,18 @@ import {
   CardTitle,
 } from '../ui/card'
 import { Icons } from '../ui/icons'
-import { Label } from '../ui/label'
+import { Separator } from '../ui/separator'
+import {
+  SettingBody,
+  SettingContent,
+  SettingDescription,
+  SettingFooter,
+  SettingLabel,
+  SettingTitle,
+  SettingWrapper,
+} from '../ui/settings'
 import { Switch } from '../ui/switch'
 import { CompanyEditSkeleton, FormCompanyEdit } from './form-company-edit'
-import { updateCustomerSettingsAction } from '@/app/[lng]/(site)/administration/organisation/actions'
-import { toast } from 'sonner'
 
 export function CompanyInfoTab({
   customer,
@@ -34,7 +43,7 @@ export function CompanyInfoTab({
   settings: CustomerSettings | undefined
 }) {
   return (
-    <div className='space-y-8'>
+    <div className='space-y-8 xl:space-y-0 xl:space-x-8 xl:grid xl:grid-cols-2'>
       <FormCompanyEdit customer={customer} />
       <CompanySettings settings={settings} />
     </div>
@@ -62,9 +71,7 @@ function CompanySettings({
   const [isLoading, startTransition] = useTransition()
   const [formError, setFormError] = useState<string>()
   const [validationError, setValidationError] = useState<string[]>()
-  const [error, setError] = useState(
-    settings == undefined ? t('no-settings-found') : undefined,
-  )
+  const error = settings == undefined ? t('no-settings-found') : undefined
 
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = updateCustomerSettingsValidation(validationT)
@@ -98,7 +105,7 @@ function CompanySettings({
             useReference: res.data.useReference,
             useBatch: res.data.useBatch,
             usePlacement: res.data.usePlacement,
-          }
+          },
         })
 
         toast(t(siteConfig.successTitle), {
@@ -108,17 +115,26 @@ function CompanySettings({
     })
   }
 
-  function flatten<T extends FieldErrors>(error: T, previousKeys: string[] = []): string[] {
-    const keys: (keyof FieldErrors<z.infer<typeof schema>>)[] = Object.keys(error) as (keyof FieldErrors<z.infer<typeof schema>>)[]
+  function flatten<T extends FieldErrors>(
+    error: T,
+    previousKeys: string[] = [],
+  ): string[] {
+    const keys: (keyof FieldErrors<z.infer<typeof schema>>)[] = Object.keys(
+      error,
+    ) as (keyof FieldErrors<z.infer<typeof schema>>)[]
 
-    let errorMessage:string[] = []
+    let errorMessage: string[] = []
     for (const key of keys) {
       if (error[key] && error[key].message != undefined) {
         const context = [...previousKeys, key].join('.')
-        errorMessage.push(`${t('company-page.error.name', { context })}: ${error[key].message}`)
+        errorMessage.push(
+          `${t('company-page.error.name', { context })}: ${error[key].message}`,
+        )
       } else if (error[key]) {
-        //@ts-ignore
-        errorMessage = errorMessage.concat(flatten(error[key], [...previousKeys, key]))
+        errorMessage = errorMessage.concat(
+          //@ts-ignore
+          flatten(error[key], [...previousKeys, key]),
+        )
       }
     }
 
@@ -146,9 +162,7 @@ function CompanySettings({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          {t('company-page.title', { context })}
-        </CardTitle>
+        <CardTitle>{t('company-page.title', { context })}</CardTitle>
         <CardDescription>
           {t('company-page.description', { context })}
         </CardDescription>
@@ -156,7 +170,7 @@ function CompanySettings({
       <CardContent>
         <form
           id='company-settings-form'
-          className='grid w-full items-start gap-4 md:max-w-xl'
+          className='grid w-full items-start gap-4'
           onSubmit={handleSubmit(onSubmit, onSubmitError)}>
           {formError && (
             <Alert variant='destructive'>
@@ -171,82 +185,120 @@ function CompanySettings({
               <AlertTitle>{t('form-validation-error')}</AlertTitle>
               <AlertDescription>
                 <ul>
-                {validationError.map((e, i) => (
-                  <li key={`${e}_${i}`} className='list-disc ml-5'>
-                    <p>{e}</p>
-                  </li>
-                ))}
+                  {validationError.map((e, i) => (
+                    <li key={`${e}_${i}`} className='list-disc ml-5'>
+                      <p>{e}</p>
+                    </li>
+                  ))}
                 </ul>
               </AlertDescription>
             </Alert>
           )}
-          <div className='flex flex-col w-full md:flex-row md:gap-4'>
-            <div className='grid gap-2 md:max-w-[285px]'>
-              <Label htmlFor='useReference'>
-                {t('company-page.settings.reference')}
-              </Label>
-              <Switch
-                checked={useReference}
-                onCheckedChange={(val: boolean) => {
-                  setValue('settings.useReference', val, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }}
-                id='useReference'
-                {...register('settings.useReference')}
-              />
+          <div className='flex flex-col w-full'>
+            <SettingWrapper>
+              <SettingBody>
+                <SettingLabel>
+                  <SettingTitle>
+                    {t('company-page.settings.reference')}
+                  </SettingTitle>
+                  <SettingDescription>
+                    {t('company-page.settings.reference-description')}
+                  </SettingDescription>
+                </SettingLabel>
+                <Separator orientation='vertical' />
+                <SettingContent>
+                  <Switch
+                    checked={useReference}
+                    onCheckedChange={(val: boolean) => {
+                      setValue('settings.useReference', val, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      })
+                    }}
+                    id='useReference'
+                    {...register('settings.useReference')}
+                  />
+                </SettingContent>
+              </SettingBody>
               {formState.errors.settings &&
                 formState.errors.settings.useReference && (
-                  <p className='text-sm text-destructive '>
-                    {formState.errors.settings.useReference.message}
-                  </p>
+                  <SettingFooter>
+                    <p className='text-sm text-destructive '>
+                      {formState.errors.settings.useReference.message}
+                    </p>
+                  </SettingFooter>
                 )}
-            </div>
-            <div className='grid gap-2 md:max-w-[285px]'>
-              <Label htmlFor='usePlacement'>
-                {t('company-page.settings.placement')}
-              </Label>
-              <Switch
-                checked={usePlacement}
-                onCheckedChange={(val: boolean) => {
-                  setValue('settings.usePlacement', val, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }}
-                id='usePlacement'
-                {...register('settings.usePlacement')}
-              />
+            </SettingWrapper>
+            <Separator />
+            <SettingWrapper>
+              <SettingBody>
+                <SettingLabel>
+                  <SettingTitle>
+                    {t('company-page.settings.placement')}
+                  </SettingTitle>
+                  <SettingDescription>
+                    {t('company-page.settings.placement-description')}
+                  </SettingDescription>
+                </SettingLabel>
+                <Separator orientation='vertical' />
+                <SettingContent>
+                  <Switch
+                    checked={usePlacement}
+                    onCheckedChange={(val: boolean) => {
+                      setValue('settings.usePlacement', val, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      })
+                    }}
+                    id='usePlacement'
+                    {...register('settings.usePlacement')}
+                  />
+                </SettingContent>
+              </SettingBody>
               {formState.errors.settings &&
                 formState.errors.settings.usePlacement && (
-                  <p className='text-sm text-destructive '>
-                    {formState.errors.settings.usePlacement.message}
-                  </p>
+                  <SettingFooter>
+                    <p className='text-sm text-destructive '>
+                      {formState.errors.settings.usePlacement.message}
+                    </p>
+                  </SettingFooter>
                 )}
-            </div>
-            <div className='grid gap-2 md:max-w-[285px]'>
-              <Label htmlFor='useBatch'>
-                {t('company-page.settings.batch')}
-              </Label>
-              <Switch
-                checked={useBatch}
-                onCheckedChange={(val: boolean) => {
-                  setValue('settings.useBatch', val, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }}
-                id='useBatch'
-                {...register('settings.useBatch')}
-              />
+            </SettingWrapper>
+            <Separator />
+            <SettingWrapper>
+              <SettingBody>
+                <SettingLabel>
+                  <SettingTitle>
+                    {t('company-page.settings.batch')}
+                  </SettingTitle>
+                  <SettingDescription>
+                    {t('company-page.settings.batch-description')}
+                  </SettingDescription>
+                </SettingLabel>
+                <Separator orientation='vertical' />
+                <SettingContent>
+                  <Switch
+                    checked={useBatch}
+                    onCheckedChange={(val: boolean) => {
+                      setValue('settings.useBatch', val, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      })
+                    }}
+                    id='useBatch'
+                    {...register('settings.useBatch')}
+                  />
+                </SettingContent>
+              </SettingBody>
               {formState.errors.settings &&
                 formState.errors.settings.useBatch && (
-                  <p className='text-sm text-destructive '>
-                    {formState.errors.settings.useBatch.message}
-                  </p>
+                  <SettingFooter>
+                    <p className='text-sm text-destructive '>
+                      {formState.errors.settings.useBatch.message}
+                    </p>
+                  </SettingFooter>
                 )}
-            </div>
+            </SettingWrapper>
           </div>
         </form>
       </CardContent>
