@@ -243,5 +243,6 @@
 		"couldnt-register-nfc": "Could not register NFC card, please try again later.",
 		"loading-failed": "Loading of data failed",
 		"error-card-in-use": "Could not register NFC card. Card is already in use."
-	}
+	},
+	"form-validation-error": "There is an error in the following fields:"
 }

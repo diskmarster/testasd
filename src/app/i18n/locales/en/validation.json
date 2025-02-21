@@ -73,7 +73,14 @@
     "couldnt-find-location-information": "Couldn't find the location's information. Try to close and re-open the pop-up window.",
     "minimum-user": "At least one user must be picked",
     "company-name-minLength": "Company name must be at least {{minLength}} characters long",
-    "company-name-maxLength": "Company name must be at most {{maxLength}} characters long"
+    "company-name-maxLength": "Company name must be at most {{maxLength}} characters long",
+    "required": "$t(organisation.field, { \"context\": \"{{fieldName}}\" }) is required",
+    "field": "Unknown",
+    "field_useReference": "Account/Case",
+    "field_usePlacement": "Placement",
+    "field_useBatch": "Batch No.",
+    "field_customerSettingsID": "Company Settings ID",
+    "field_customerID": "Company ID"
   },
   "register": {
     "name-minLength": "Name must be at least {{minLength}} characters long",

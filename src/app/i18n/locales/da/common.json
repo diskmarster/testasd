@@ -243,5 +243,6 @@
 		"couldnt-register-nfc": "Kunne ikke registrere NFC kort, prøv igen senere.",
 		"loading-failed": "Indlæsning af data fejlede",
 		"error-card-in-use": "Kunne ikke registrere NFC kort. Kort allerede i brug."
-	}
+	},
+	"form-validation-error": "Der er en fejl i følgende felter:"
 }
