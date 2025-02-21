@@ -265,13 +265,14 @@ export const updateCustomerAction = adminAction
 
   .action(async ({ parsedInput, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')
-    const updatedCustomer = customerService.updateByID(user.customerID, {
+    const updatedCustomer = await customerService.updateByID(user.customerID, {
       ...parsedInput,
     })
     if (!updatedCustomer) {
       throw new ActionError(t('organisation-action.customer-wasnt-updated'))
     }
-    revalidatePath(`/${lang}/administration/organisation`)
+
+    return updatedCustomer
   })
 
 export const getCustomerSettingsAction = adminAction

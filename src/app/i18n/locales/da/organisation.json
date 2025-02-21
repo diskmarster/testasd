@@ -112,11 +112,20 @@
   },
   "company-page": {
     "title": "Firma",
+    "title_details": "Firmadetaljer",
+    "title_settings": "Firmaindstillinger",
     "description": "Administrer firmadetaljer og indstillinger.",
+    "description_details": "Se og opdater dine firmadetaljer.",
+    "description_settings": "Se og opdater dine firmaindstillinger.",
+    "update-button": "Opdater",
+    "update-button_details": "Opdater detaljer",
+    "update-button_settings": "Opdater indstillinger",
+    "update-success": "Data blev opdateret",
+    "update-success_details": "Din firmaprofil blev opdateret",
+    "update-success_settings": "Din firmaprofil blev opdateret",
     "form-company-edit": {
       "company-name": "Firma navn",
-      "email": "E-mail",
-      "update-button": "Opdater"
+      "email": "E-mail"
     },
     "settings": {
       "reference": "Konto/sag",

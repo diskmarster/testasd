@@ -112,15 +112,24 @@
   },
   "company-page": {
     "title": "Company",
-    "description": "Here you can manage company details and settings.",
+    "title_details": "Company Details",
+    "title_settings": "Company Settings",
+    "description": "Manage company details and settings.",
+    "description_details": "View and update your company details.",
+    "description_settings": "View and update your company settings.",
+    "update-button": "Update",
+    "update-button_details": "Update Details",
+    "update-button_settings": "Update Settings",
+    "update-success": "Data was updated",
+    "update-success_details": "Your company profile was updated",
+    "update-success_settings": "Your company profile was updated",
     "form-company-edit": {
       "company-name": "Company Name",
-      "email": "Email",
-      "update-button": "Update"
+      "email": "Email"
     },
     "settings": {
-      "reference": "Account/case",
-      "placement": "Locations",
+      "reference": "Account/Case",
+      "placement": "Placements",
       "batch": "Batch No."
     }
   },
