@@ -7,7 +7,7 @@ import { useLanguage } from '@/context/language'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
-import { FieldErrors, useForm } from 'react-hook-form'
+import { FieldErrors, FieldErrorsImpl, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
@@ -23,6 +23,8 @@ import { Icons } from '../ui/icons'
 import { Label } from '../ui/label'
 import { Switch } from '../ui/switch'
 import { CompanyEditSkeleton, FormCompanyEdit } from './form-company-edit'
+import { updateCustomerSettingsAction } from '@/app/[lng]/(site)/administration/organisation/actions'
+import { toast } from 'sonner'
 
 export function CompanyInfoTab({
   customer,
@@ -59,6 +61,7 @@ function CompanySettings({
 
   const [isLoading, startTransition] = useTransition()
   const [formError, setFormError] = useState<string>()
+  const [validationError, setValidationError] = useState<string[]>()
   const [error, setError] = useState(
     settings == undefined ? t('no-settings-found') : undefined,
   )
@@ -66,12 +69,13 @@ function CompanySettings({
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = updateCustomerSettingsValidation(validationT)
 
-  const { formState, register, setValue, watch, handleSubmit } = useForm<
+  const { formState, register, setValue, watch, handleSubmit, reset } = useForm<
     z.infer<typeof schema>
   >({
     resolver: zodResolver(schema),
     defaultValues: {
       id: settings?.id,
+      customerID: settings?.customerID,
       settings: {
         useReference: settings?.useReference ?? true,
         usePlacement: settings?.usePlacement ?? true,
@@ -81,14 +85,48 @@ function CompanySettings({
   })
 
   const onSubmit = (values: z.infer<typeof schema>) => {
-    console.log(values)
     startTransition(async () => {
+      const res = await updateCustomerSettingsAction(values)
 
+      if (res && res.serverError) {
+        setFormError(res.serverError)
+      } else if (res && res.data) {
+        reset({
+          id: res.data.id,
+          customerID: res.data.customerID,
+          settings: {
+            useReference: res.data.useReference,
+            useBatch: res.data.useBatch,
+            usePlacement: res.data.usePlacement,
+          }
+        })
+
+        toast(t(siteConfig.successTitle), {
+          description: t('company-page.update-success', { context }),
+        })
+      }
     })
   }
 
+  function flatten<T extends FieldErrors>(error: T, previousKeys: string[] = []): string[] {
+    const keys: (keyof FieldErrors<z.infer<typeof schema>>)[] = Object.keys(error) as (keyof FieldErrors<z.infer<typeof schema>>)[]
+
+    let errorMessage:string[] = []
+    for (const key of keys) {
+      if (error[key] && error[key].message != undefined) {
+        const context = [...previousKeys, key].join('.')
+        errorMessage.push(`${t('company-page.error.name', { context })}: ${error[key].message}`)
+      } else if (error[key]) {
+        //@ts-ignore
+        errorMessage = errorMessage.concat(flatten(error[key], [...previousKeys, key]))
+      }
+    }
+
+    return errorMessage
+  }
+
   const onSubmitError = (error: FieldErrors<z.infer<typeof schema>>) => {
-    console.log(error)
+    setValidationError(flatten(error))
   }
 
   if (error) {
@@ -125,6 +163,21 @@ function CompanySettings({
               <Icons.alert className='size-4 !top-3' />
               <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
               <AlertDescription>{formError}</AlertDescription>
+            </Alert>
+          )}
+          {validationError && (
+            <Alert variant='destructive'>
+              <Icons.alert className='size-4 !top-3' />
+              <AlertTitle>{t('form-validation-error')}</AlertTitle>
+              <AlertDescription>
+                <ul>
+                {validationError.map((e, i) => (
+                  <li key={`${e}_${i}`} className='list-disc ml-5'>
+                    <p>{e}</p>
+                  </li>
+                ))}
+                </ul>
+              </AlertDescription>
             </Alert>
           )}
           <div className='flex flex-col w-full md:flex-row md:gap-4'>

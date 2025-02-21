@@ -122,7 +122,7 @@
     "update-button_settings": "Update Settings",
     "update-success": "Data was updated",
     "update-success_details": "Your company profile was updated",
-    "update-success_settings": "Your company profile was updated",
+    "update-success_settings": "Your company settings were updated",
     "form-company-edit": {
       "company-name": "Company Name",
       "email": "Email"
@@ -131,6 +131,14 @@
       "reference": "Account/Case",
       "placement": "Placements",
       "batch": "Batch No."
+    },
+    "error": {
+      "name": "Unknown name",
+      "name_id": "Company settings ID",
+      "name_customerID": "Company ID",
+      "name_settings.useReference": "Account/Case",
+      "name_settings.usePlacement": "Placements",
+      "name_settings.useBatch": "Batch No."
     }
   },
   "modal-invite-user": {

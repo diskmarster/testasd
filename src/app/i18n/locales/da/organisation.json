@@ -122,7 +122,7 @@
     "update-button_settings": "Opdater indstillinger",
     "update-success": "Data blev opdateret",
     "update-success_details": "Din firmaprofil blev opdateret",
-    "update-success_settings": "Din firmaprofil blev opdateret",
+    "update-success_settings": "Dine firmaindstillinger blev opdateret",
     "form-company-edit": {
       "company-name": "Firma navn",
       "email": "E-mail"
@@ -131,6 +131,15 @@
       "reference": "Konto/sag",
       "placement": "Placeringer",
       "batch": "Batch nr."
+    },
+    "error": {
+      "name": "Ukendt navn",
+      "name_id": "Firmaindstilling ID",
+      "name_customerID": "Firma ID",
+      "name_settings.useReference": "Konto/Sag",
+      "name_settings.usePlacement": "Placeringer",
+      "name_settings.useBatch": "Batch nr.",
+      "name_test.nestedTest": "Test.NestedTest"
     }
   },
   "modal-invite-user": {
