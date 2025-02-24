@@ -30,7 +30,7 @@ import {
   SettingFooter,
   SettingLabel,
   SettingTitle,
-  SettingWrapper,
+  Setting,
 } from '../ui/settings'
 import { Switch } from '../ui/switch'
 import { CompanyEditSkeleton, FormCompanyEdit } from './form-company-edit'
@@ -195,9 +195,9 @@ function CompanySettings({
             </Alert>
           )}
           <div className='flex flex-col w-full'>
-            <SettingWrapper>
+            <Setting>
               <SettingBody>
-                <SettingLabel>
+                <SettingLabel className='pt-0'>
                   <SettingTitle>
                     {t('company-page.settings.reference')}
                   </SettingTitle>
@@ -205,8 +205,7 @@ function CompanySettings({
                     {t('company-page.settings.reference-description')}
                   </SettingDescription>
                 </SettingLabel>
-                <Separator orientation='vertical' />
-                <SettingContent>
+                <SettingContent className='pt-0'>
                   <Switch
                     checked={useReference}
                     onCheckedChange={(val: boolean) => {
@@ -228,9 +227,9 @@ function CompanySettings({
                     </p>
                   </SettingFooter>
                 )}
-            </SettingWrapper>
+            </Setting>
             <Separator />
-            <SettingWrapper>
+            <Setting>
               <SettingBody>
                 <SettingLabel>
                   <SettingTitle>
@@ -240,7 +239,6 @@ function CompanySettings({
                     {t('company-page.settings.placement-description')}
                   </SettingDescription>
                 </SettingLabel>
-                <Separator orientation='vertical' />
                 <SettingContent>
                   <Switch
                     checked={usePlacement}
@@ -263,9 +261,9 @@ function CompanySettings({
                     </p>
                   </SettingFooter>
                 )}
-            </SettingWrapper>
+            </Setting>
             <Separator />
-            <SettingWrapper>
+            <Setting>
               <SettingBody>
                 <SettingLabel>
                   <SettingTitle>
@@ -275,7 +273,6 @@ function CompanySettings({
                     {t('company-page.settings.batch-description')}
                   </SettingDescription>
                 </SettingLabel>
-                <Separator orientation='vertical' />
                 <SettingContent>
                   <Switch
                     checked={useBatch}
@@ -298,7 +295,7 @@ function CompanySettings({
                     </p>
                   </SettingFooter>
                 )}
-            </SettingWrapper>
+            </Setting>
           </div>
         </form>
       </CardContent>

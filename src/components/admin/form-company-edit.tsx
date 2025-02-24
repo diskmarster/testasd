@@ -12,7 +12,6 @@ import { useLanguage } from '@/context/language'
 import { Customer } from '@/lib/database/schema/customer'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Label } from '@radix-ui/react-label'
 import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -25,6 +24,16 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card'
+import { Separator } from '../ui/separator'
+import {
+  Setting,
+  SettingBody,
+  SettingContent,
+  SettingDescription,
+  SettingFooter,
+  SettingLabel,
+  SettingTitle,
+} from '../ui/settings'
 import { Skeleton } from '../ui/skeleton'
 
 interface Props {
@@ -41,28 +50,28 @@ export function FormCompanyEdit({ customer }: Props) {
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = updateCustomerValidation(validationT)
 
-  const { handleSubmit, formState, register, reset } = useForm<z.infer<typeof schema>>(
-    {
-      resolver: zodResolver(schema),
-      defaultValues: {
-        company: customer.company,
-        email: customer.email,
-      },
+  const { handleSubmit, formState, register, reset } = useForm<
+    z.infer<typeof schema>
+  >({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      company: customer.company,
+      email: customer.email,
     },
-  )
+  })
 
   return (
-    <Card>
+    <Card className='flex flex-col'>
       <CardHeader>
         <CardTitle>{t('company-page.title', { context })}</CardTitle>
         <CardDescription>
           {t('company-page.description', { context })}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className='flex-1'>
         <form
           id='company-details-form'
-          className={cn('grid w-full items-start gap-4 md:max-w-xl')}
+          className={cn('grid w-full items-start gap-4')}
           onSubmit={handleSubmit(values => {
             startTransition(async () => {
               const res = await updateCustomerAction({ ...values })
@@ -84,31 +93,53 @@ export function FormCompanyEdit({ customer }: Props) {
               <AlertDescription>{formError}</AlertDescription>
             </Alert>
           )}
-          <div className='flex flex-col w-full md:flex-row md:gap-4'>
-            <div className='grid gap-2 md:max-w-[285px]'>
-              <Label htmlFor='name'>
-                {t('company-page.form-company-edit.company-name')}
-              </Label>
-              <Input id='name' type='text' {...register('company')} />
+          <div className='flex flex-col w-full'>
+            <Setting>
+              <SettingBody>
+                <SettingLabel className='pt-0'>
+                  <SettingTitle htmlFor='name'>
+                    {t('company-page.form-company-edit.company-name')}
+                  </SettingTitle>
+                  <SettingDescription>
+                    {t('company-page.form-company-edit.company-description')}
+                  </SettingDescription>
+                </SettingLabel>
+                <SettingContent className='pt-0 max-w-[250px]'>
+                  <Input id='name' type='text' {...register('company')} />
+                </SettingContent>
+              </SettingBody>
               {formState.errors.company && (
-                <p className='text-sm text-destructive '>
-                  {formState.errors.company.message}
-                </p>
+                <SettingFooter>
+                  <p className='text-sm text-destructive '>
+                    {formState.errors.company.message}
+                  </p>
+                </SettingFooter>
               )}
-            </div>
-            <div className='grid gap-2 md:max-w-[285px]'>
-              <Label htmlFor='email'>
-                {t('company-page.form-company-edit.email')}
-              </Label>
-              <Input id='email' type='email' {...register('email')} />
+            </Setting>
+            <Separator />
+            <Setting>
+              <SettingBody>
+                <SettingLabel>
+                  <SettingTitle htmlFor='email'>
+                    {t('company-page.form-company-edit.email')}
+                  </SettingTitle>
+                  <SettingDescription>
+                    {t('company-page.form-company-edit.email-description')}
+                  </SettingDescription>
+                </SettingLabel>
+                <SettingContent className='max-w-[250px]'>
+                  <Input id='email' type='email' {...register('email')} />
+                </SettingContent>
+              </SettingBody>
               {formState.errors.email && (
-                <p className='text-sm text-destructive '>
-                  {formState.errors.email.message}
-                </p>
+                <SettingFooter>
+                  <p className='text-sm text-destructive '>
+                    {formState.errors.email.message}
+                  </p>
+                </SettingFooter>
               )}
-            </div>
+            </Setting>
           </div>
-
         </form>
       </CardContent>
       <CardFooter>

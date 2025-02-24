@@ -125,7 +125,9 @@
     "update-success_settings": "Dine firmaindstillinger blev opdateret",
     "form-company-edit": {
       "company-name": "Firma navn",
-      "email": "E-mail"
+      "company-description": "Firma navn bruges i email kommunikation",
+      "email": "E-mail",
+      "email-description": "E-mail bruges til kommunikation mellem jer og Skancode, eksempelvis service meddelelser"
     },
     "settings": {
       "reference": "Konto/sag",

@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import { HTMLProps } from "react"
 
 
-export function SettingWrapper({
+export function Setting({
   className,
   children,
   ...props
@@ -21,7 +21,7 @@ export function SettingLabel({
 }: HTMLProps<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex flex-col flex-1 justify-start p-4 pe-0', className)}
+      className={cn('flex flex-col flex-1 justify-start py-4', className)}
       {...props}>
       {children}
     </div>
@@ -60,7 +60,7 @@ export function SettingContent({
   ...props
 }: HTMLProps<HTMLDivElement>) {
   return (
-    <div className={cn('flex flex-1 justify-end p-4 ps-0', className)} {...props}>
+    <div className={cn('flex justify-end p-4 ps-0', className)} {...props}>
       {children}
     </div>
   )

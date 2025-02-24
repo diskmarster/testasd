@@ -125,7 +125,9 @@
     "update-success_settings": "Your company settings were updated",
     "form-company-edit": {
       "company-name": "Company Name",
-      "email": "Email"
+      "company-description": "Company name is used in email communication",
+      "email": "Email",
+      "email-description": "Email is used for communication between you and Skancode, such as service notifications"
     },
     "settings": {
       "reference": "Account/Case",
