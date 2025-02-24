@@ -98,6 +98,8 @@ function TableToolbarFilters<T>({
 
   return (
     <div className='flex items-center gap-2'>
+      <GlobalFilter table={table} t={t} />
+
       {selectedFields.map((field, i) => (
         <FilterPopover
           key={`${field.label}_${i}`}
@@ -372,6 +374,33 @@ function FilterText<T>({
       value={search}
       onChange={e => {
         setSearched(e.target.value)
+        debouncedSeteFilter(e.target.value)
+      }}
+    />
+  )
+}
+
+function GlobalFilter<T>({
+  table,
+  t,
+}: {
+  table: Table<T>
+  t: (key: string, opts?: any) => string
+}) {
+  const [search, setSearch] = useState<string>()
+  const debouncedSeteFilter = useDebouncedCallback((val: string) => {
+    table.setGlobalFilter(val)
+  }, 250)
+
+  return (
+    <Input
+      type='text'
+      size={12}
+      placeholder={t('table-filters.search-placeholder')}
+      id='table-searchbar'
+      value={search}
+      onChange={e => {
+        setSearch(e.target.value)
         debouncedSeteFilter(e.target.value)
       }}
     />
