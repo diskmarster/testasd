@@ -1,0 +1,83 @@
+import { Updater } from '@tanstack/react-table'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
+
+export type HandleFilterChangeFN = (updaterOrValue: Updater<string>) => void
+
+export function useUrlGlobalFiltering(
+  defaultFilter: string = '',
+): [string, HandleFilterChangeFN] {
+  const pathname = usePathname()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const pathnameRef = useRef(pathname)
+  const searchParamsRef = useRef(searchParams)
+  const defaultFilterRef = useRef(defaultFilter)
+  const globalFiltersRef = useRef(defaultFilter)
+
+  const [globalFilters, setGlobalFilters] = useState<string>(defaultFilter)
+
+  const handleFilterChange = useCallback(
+    (updaterOrValue: Updater<string>) => {
+      let updatedState: string
+
+      if (typeof updaterOrValue == 'function') {
+        updatedState = updaterOrValue(globalFiltersRef.current)
+      } else {
+        updatedState = updaterOrValue
+      }
+
+      if (updatedState == defaultFilterRef.current) {
+        return
+      }
+
+      const mutableSearchParams = new URLSearchParams(searchParamsRef.current)
+
+      if (updatedState == '') {
+        mutableSearchParams.delete('global')
+      } else {
+        if (updatedState != globalFiltersRef.current) {
+          mutableSearchParams.set('global', updatedState)
+        }
+      }
+      console.log({
+        updatedState,
+        mutableSearchParams: mutableSearchParams.get('global'),
+      })
+      router.push(`${pathnameRef.current}?${mutableSearchParams.toString()}`)
+
+      setGlobalFilters(updatedState)
+      globalFiltersRef.current = updatedState
+    },
+    [router],
+  )
+
+  useEffect(() => {
+    const initialFilters = searchParamToGlobalFilters(
+      searchParamsRef.current.get('global'),
+      defaultFilterRef.current,
+    )
+    setGlobalFilters(initialFilters)
+    globalFiltersRef.current = initialFilters
+  }, [])
+
+  useEffect(() => {
+    console.log(globalFilters)
+  }, [globalFilters])
+
+  return [globalFilters, handleFilterChange]
+}
+
+function searchParamToGlobalFilters(
+  param: string | null,
+  defaultValue: string = '',
+): string {
+  if (param == null) {
+    return defaultValue
+  }
+
+  const globalFilter = param
+
+  return globalFilter
+}

@@ -32,12 +32,14 @@ type TableToolbarFiltersProps<T> = {
   table: Table<T>
   filterFields: FilterField<T>[]
   filterLocalStorageKey?: string
+  defaultGlobalFilter: string
 }
 
 function TableToolbarFilters<T>({
   table,
   filterFields,
   filterLocalStorageKey,
+  defaultGlobalFilter,
 }: TableToolbarFiltersProps<T>) {
   const [open, setOpen] = useState(false)
   const [selectedFields, setSelectedFields] = useState<FilterField<T>[]>(
@@ -98,7 +100,7 @@ function TableToolbarFilters<T>({
 
   return (
     <div className='flex items-center gap-2'>
-      <GlobalFilter table={table} t={t} />
+      <GlobalFilter defaultValue={defaultGlobalFilter} table={table} t={t} />
 
       {selectedFields.map((field, i) => (
         <FilterPopover
@@ -383,14 +385,20 @@ function FilterText<T>({
 function GlobalFilter<T>({
   table,
   t,
+  defaultValue,
 }: {
   table: Table<T>
   t: (key: string, opts?: any) => string
+  defaultValue: string
 }) {
-  const [search, setSearch] = useState<string>()
+  const [search, setSearch] = useState<string>(defaultValue)
   const debouncedSeteFilter = useDebouncedCallback((val: string) => {
     table.setGlobalFilter(val)
   }, 250)
+
+  useEffect(() => {
+    setSearch(defaultValue)
+  }, [defaultValue])
 
   return (
     <Input
@@ -398,7 +406,7 @@ function GlobalFilter<T>({
       size={12}
       placeholder={t('table-filters.search-placeholder')}
       id='table-searchbar'
-      value={search}
+      defaultValue={search}
       onChange={e => {
         setSearch(e.target.value)
         debouncedSeteFilter(e.target.value)
