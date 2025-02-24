@@ -12,6 +12,7 @@ import {
   customerTable,
   NewCustomer,
   NewCustomerLink,
+  NewCustomerSettings,
   PartialCustomer,
   PartialCustomerSettings,
 } from '@/lib/database/schema/customer'
@@ -114,6 +115,14 @@ export const customer = {
       .select()
       .from(customerSettingsTable)
       .where(eq(customerSettingsTable.customerID, customerID))
+
+    return res
+  },
+  createSettings: async function(data: NewCustomerSettings, trx: TRX = db): Promise<CustomerSettings | undefined> {
+    const [res] = await trx
+      .insert(customerSettingsTable)
+      .values(data)
+      .returning()
 
     return res
   },
