@@ -113,13 +113,9 @@ export function SupplierDetails({ supplier }: Props) {
 							falseComp={
 								<div className="flex items-center gap-1.5 w-full h-9">
 									<ReactCountryFlag
+										className='!size-4 rounded-md'
 										countryCode={supplier.country}
 										svg
-										style={{
-											width: '17px',
-											height: '17px',
-											borderRadius: '6px',
-										}}
 									/>
 									{supplier.country}
 								</div>
@@ -140,13 +136,9 @@ export function SupplierDetails({ supplier }: Props) {
 												value={c} key={`${c}-${i}`}>
 												<div className="flex items-center gap-1.5">
 													<ReactCountryFlag
+														className='!size-4 rounded-md'
 														countryCode={c}
 														svg
-														style={{
-															width: '17px',
-															height: '17px',
-															borderRadius: '6px',
-														}}
 													/>
 													{c}
 												</div>

@@ -54,13 +54,9 @@ export function getSupplierColumns(
 		cell: ({ row }) => (
 			<div className="flex items-center gap-1.5">
 				<ReactCountryFlag
+					className='!size-4 rounded-md'
 					countryCode={row.original.country}
 					svg
-					style={{
-						width: '17px',
-						height: '17px',
-						borderRadius: '6px',
-					}}
 				/>
 				{row.original.country}
 			</div>
@@ -70,7 +66,7 @@ export function getSupplierColumns(
 		},
 	}
 
-	const cliendIDCol: ColumnDef<SupplierWithItemCount> = {
+	const clientIDCol: ColumnDef<SupplierWithItemCount> = {
 		accessorKey: 'idOfClient',
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('table.col-client-id')} />
@@ -172,7 +168,7 @@ export function getSupplierColumns(
 		selectCol,
 		countryCol,
 		nameCol,
-		cliendIDCol,
+		clientIDCol,
 		insertedCol,
 		updatedCol,
 		actionsCol,

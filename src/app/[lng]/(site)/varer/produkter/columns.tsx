@@ -74,9 +74,7 @@ export function getProductOverviewColumns(
     sortingFn: (ra, rb) => {
 		let aVal = ra.original.supplierName
 		let bVal = rb.original.supplierName
-		if (aVal == null) aVal = ""
-		if (bVal == null) bVal = ""
-		return stringSortingFn(aVal, bVal)
+		return stringSortingFn(aVal ?? "", bVal ?? "")
     },
     meta: {
       viewLabel: t('supplierName'),
