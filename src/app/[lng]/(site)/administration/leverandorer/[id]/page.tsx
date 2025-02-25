@@ -5,6 +5,8 @@ import { Suspense } from "react";
 import { DetailsWrapper } from "./details-wrapper";
 import { SupplierHistoryWrapper } from "./history-wrapper";
 import { Separator } from "@/components/ui/separator";
+import { SupplierDetailsSkeleton } from "@/components/suppliers/details";
+import { SupplierHistorySkeleton } from "@/components/suppliers/history";
 
 interface Props {
 	params: {
@@ -22,13 +24,13 @@ export default async function Page({ params: { lng, id } }: Props) {
 	return (
 		<SiteWrapper>
 			<div className='flex flex-col lg:flex-row items-stretch gap-4'>
-				<Suspense fallback={<p>loading..</p>}>
+				<Suspense fallback={<SupplierDetailsSkeleton />}>
 					<DetailsWrapper id={parseInt(id)} customerID={user.customerID} />
 				</Suspense>
 			</div>
 			<Separator />
 			<div>
-				<Suspense fallback={<p>loading..</p>}>
+				<Suspense fallback={<SupplierHistorySkeleton />}>
 					<SupplierHistoryWrapper customerID={user.customerID} id={parseInt(id)} />
 				</Suspense>
 			</div>

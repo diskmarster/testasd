@@ -8,6 +8,7 @@ import { useTranslation } from "@/app/i18n/client";
 import { ScrollArea } from "../ui/scroll-area";
 import { cn, formatDate } from "@/lib/utils";
 import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 
 interface Props {
 	logs: SupplierHisotry[]
@@ -111,4 +112,20 @@ export function SupplierLogs({ logs }: Props) {
 			</ScrollArea>
 		</div>
 	);
+}
+
+export function SupplierHistorySkeleton() {
+	return (
+		<div className="w-full space-y-4">
+			<Skeleton className="h-9 w-32" />
+			<div className="flex gap-4 items-start">
+				<Skeleton className="size-8" />
+				<Skeleton className="h-16 w-full" />
+			</div>
+			<div className="flex gap-4 items-start">
+				<Skeleton className="size-8" />
+				<Skeleton className="h-16 w-full" />
+			</div>
+		</div>
+	)
 }

@@ -20,6 +20,7 @@ import { updateSupplierAction } from "@/app/[lng]/(site)/administration/leverand
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { Supplier } from "@/lib/database/schema/suppliers"
+import { Skeleton } from "../ui/skeleton"
 
 interface Props {
 	supplier: Supplier
@@ -208,6 +209,47 @@ export function SupplierDetails({ supplier }: Props) {
 							trueComp={<Input {...register('data.email')} />}
 						/>
 					</div>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+export function SupplierDetailsSkeleton() {
+	return (
+		<div className="max-w-full lg:max-w-[50%] min-w-[36rem] space-y-4">
+			<div className="flex items-center gap-4 justify-between">
+				<Skeleton className="h-8 w-36" />
+				<Skeleton className="h-8 w-20" />
+			</div>
+			<div className="flex gap-2 items-center">
+				<div className="w-1/4 space-y-1">
+					<Skeleton className="h-3 w-8" />
+					<Skeleton className="h-9 w-11" />
+				</div>
+				<div className="w-full space-y-1">
+					<Skeleton className="h-3 w-8" />
+					<Skeleton className="h-9 w-24" />
+				</div>
+			</div>
+			<div className="w-full space-y-1">
+				<Skeleton className="h-3 w-8" />
+				<Skeleton className="h-9 w-24" />
+			</div>
+			<Separator />
+			<Skeleton className="h-6 w-24" />
+			<div className="w-full space-y-1">
+				<Skeleton className="h-3 w-8" />
+				<Skeleton className="h-9 w-24" />
+			</div>
+			<div className="flex gap-2 items-center">
+				<div className="w-1/2 space-y-1">
+					<Skeleton className="h-3 w-8" />
+					<Skeleton className="h-9 w-16" />
+				</div>
+				<div className="w-1/2 space-y-1">
+					<Skeleton className="h-3 w-8" />
+					<Skeleton className="h-9 w-16" />
 				</div>
 			</div>
 		</div>
