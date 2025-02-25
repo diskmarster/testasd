@@ -98,7 +98,7 @@ export function ModalShowPlacementLabel({ }: Props) {
                       value={placementName}
                       className='print:size-8 size-14'
                     />
-                    <span className='text-[10px] font-medium'>{placementName}</span>
+                    <span className='text-[10px] font-semibold'>{placementName}</span>
                   </div>
                 </div>
               </div>
