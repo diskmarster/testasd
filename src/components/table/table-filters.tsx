@@ -72,6 +72,7 @@ function TableToolbarFilters<T>({
   const handleClearAllFilters = () => {
     setSelectedFields([])
     table.setColumnFilters([])
+    table.setGlobalFilter('')
     if (filterLocalStorageKey) localStorage.removeItem(filterLocalStorageKey)
   }
 
@@ -125,7 +126,7 @@ function TableToolbarFilters<T>({
         />
       )}
 
-      {selectedFields.length > 0 && (
+      {(selectedFields.length > 0 ||  defaultGlobalFilter != '') && (
         <Button
           variant='ghost'
           className='gap-1'

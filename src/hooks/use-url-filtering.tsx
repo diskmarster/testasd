@@ -33,7 +33,7 @@ export function useUrlFiltering(
       return
     }
 
-    const mutableSearchParams = new URLSearchParams(searchParamsRef.current)
+    const mutableSearchParams = new URLSearchParams(searchParams)
 
     if (updatedState.length == 0) {
       mutableSearchParams.delete('filter')
@@ -51,11 +51,11 @@ export function useUrlFiltering(
 
     setColumnFilters(updatedState)
     columnFiltersRef.current = updatedState
-  }, [router])
+  }, [router, searchParams])
 
   useEffect(() => {
     const initialFilters = searchParamToColumnFiltersState(
-      searchParamsRef.current.get('filter'),
+      searchParams.get('filter'),
       defaultFilterRef.current,
     )
     setColumnFilters(initialFilters)

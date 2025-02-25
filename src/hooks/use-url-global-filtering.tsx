@@ -12,7 +12,6 @@ export function useUrlGlobalFiltering(
   const searchParams = useSearchParams()
 
   const pathnameRef = useRef(pathname)
-  const searchParamsRef = useRef(searchParams)
   const defaultFilterRef = useRef(defaultFilter)
   const globalFiltersRef = useRef(defaultFilter)
 
@@ -32,7 +31,7 @@ export function useUrlGlobalFiltering(
         return
       }
 
-      const mutableSearchParams = new URLSearchParams(searchParamsRef.current)
+      const mutableSearchParams = new URLSearchParams(searchParams)
 
       if (updatedState == '') {
         mutableSearchParams.delete('global')
@@ -44,12 +43,12 @@ export function useUrlGlobalFiltering(
       setGlobalFilters(updatedState)
       globalFiltersRef.current = updatedState
     },
-    [router],
+    [router, searchParams],
   )
 
   useEffect(() => {
     const initialFilters = searchParamToGlobalFilters(
-      searchParamsRef.current.get('global'),
+      searchParams.get('global'),
       defaultFilterRef.current,
     )
     setGlobalFilters(initialFilters)
