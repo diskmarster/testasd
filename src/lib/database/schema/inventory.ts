@@ -1,4 +1,8 @@
-import { HistoryPlatform, HistoryType, ProductHistoryType } from '@/data/inventory.types'
+import {
+  HistoryPlatform,
+  HistoryType,
+  ProductHistoryType,
+} from '@/data/inventory.types'
 import { customerTable, locationTable } from '@/lib/database/schema/customer'
 import { sql } from 'drizzle-orm'
 import {
@@ -9,6 +13,7 @@ import {
   text,
   unique,
 } from 'drizzle-orm/sqlite-core'
+import { supplierTable } from './suppliers'
 
 export const unitTable = sqliteTable('nl_unit', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
@@ -152,6 +157,9 @@ export const productTable = sqliteTable(
       .notNull()
       .default(false),
     note: text('note').notNull().default(''),
+    supplierID: integer('supplier_id').references(() => supplierTable.id, {
+      onDelete: 'set null',
+    }),
   },
   t => ({
     unqBarcodeSku: unique().on(t.customerID, t.barcode, t.sku),
@@ -305,8 +313,7 @@ export const productHistoryTable = sqliteTable('nl_product_history', {
   productIsBarred: integer('product_is_barred', { mode: 'boolean' }).notNull(),
   productNote: text('product_note').notNull(),
   type: text('type').notNull().$type<ProductHistoryType>(),
-  isImport: integer('is_import', { mode: 'boolean' })
-    .notNull(),
+  isImport: integer('is_import', { mode: 'boolean' }).notNull(),
   inserted: integer('inserted', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),

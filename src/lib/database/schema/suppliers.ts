@@ -1,4 +1,4 @@
-import { SupplierHistoryType } from '@/data/suppliers.types'
+import { SupplierContry, SupplierHistoryType } from '@/data/suppliers.types'
 import { sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { customerTable } from './customer'
@@ -17,10 +17,10 @@ export const supplierTable = sqliteTable('nl_suppliers', {
     .$onUpdateFn(() => new Date())
     .$type<Date>(),
   userID: integer('user_id').notNull(),
-  userName: text('name').notNull(),
+  userName: text('user_name').notNull(),
   name: text('name').notNull(),
-  clientID: text('clientID').notNull(),
-  country: text('country').notNull(),
+  idOfClient: text('id_of_client').notNull().default(''),
+  country: text('country').$type<SupplierContry>().notNull(),
   phone: text('phone').notNull().default(''),
   email: text('email').notNull().default(''),
   contactPerson: text('contact_person').notNull().default(''),
@@ -43,7 +43,7 @@ export const supplierHistoryTable = sqliteTable('nl_suppliers_history', {
   userID: integer('user_id').notNull(),
   userName: text('name').notNull(),
   name: text('name').notNull(),
-  clientID: text('clientID').notNull(),
+  idOfClient: text('id_of_client').notNull().default(''),
   country: text('country').notNull(),
   phone: text('phone').notNull().default(''),
   email: text('email').notNull().default(''),

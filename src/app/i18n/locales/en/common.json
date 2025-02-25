@@ -1,231 +1,233 @@
 {
-  "table-pagination": {
-    "rows-per-page": "Rows per page:",
-    "go-to-previous-page": "Go to previous page",
-    "go-to-next-page": "Go to next page"
-  },
-  "table-filters": {
-    "clear": "Reset",
-    "clear-filter": "Remove Filter",
-    "no-filter-choice": "No filter choices",
-    "add-filter": "Add filter",
-    "no-filter-found": "No filter found",
-    "choose": "Choose",
-    "choose-dates": "Choose dates",
-    "search": "Search",
-    "number-range": "to",
-    "number-range-empty": "Choose {{label}}",
-    "number-range-to": "Up to and including {{to}}",
-    "number-range-from": "From {{from}} and up",
-    "number-range-both": "From {{from}} up to and including {{to}}"
-  },
-  "language-switcher": {
-    "language": "Language",
-    "full-lang-name-da": "Danish",
-    "full-lang-name-en": "English"
-  },
-  "theme-toggle": {
-    "theme": "Theme",
-    "light": "Light",
-    "dark": "Dark"
-  },
-  "table-toolbar": {
-    "show-hide-columns": "Save/show columns"
-  },
-  "nav-user": {
-    "my-profile": "My Profile",
-    "get-help": "Get Help",
-    "log-out": "Log Out"
-  },
-  "nav-location-select": {
-    "select-location": "Select Location",
-    "inactive": "Inactive"
-  },
-  "create-customer-action": {
-    "primary-location": "Primary Location",
-    "welcome-email": "Welcome to Nem Lager",
-    "email-exist-customer": "Email already exists for a customer",
-    "email-exist-user": "Email already exists for a user",
-    "create-customer-error": "Something went wrong while creating you as a customer.",
-    "create-location-error": "Something went wrong while creating location",
-    "actvation-email-error": "Something went wrong while sending activation email"
-  },
-  "signup-action": {
-    "activation-link-no-longer-exists": "The activation link no longer exists.",
-    "activation-link-expired": "The activation link has expired and is no longer valid.",
-    "company-account-no-exist": "Your company account does not exist.",
-    "existing-email": "A user with this email already exists.",
-    "user-wasnt-created": "Your user account was not created.",
-    "company-account-wasnt-activated": "Your company account was not activated.",
-    "location-access-error": "There was an error granting the user access to the location."
-  },
-  "plans": {
-    "plan_lite": "Lite",
-    "plan_basis": "Basis",
-    "plan_pro": "Pro",
-    "description_lite": "To the single user companies",
-    "description_basis": "To the small businesses",
-    "description_pro": "To the large businesses",
-    "feature_lite": [
-      "1 user",
-      "Inventory management",
-      "Import/export",
-      "Product descriptions 1, 2, 3",
-      "Inventory list",
-      "Product groups",
-      "Account/case management",
-      "Print barcodes/labels",
-      "Scanner app",
-      "Reports via history",
-      "1 location"
-    ],
-    "feature_basis": [
-      "Everything from Lite",
-      "5 users",
-      "Location management",
-      "Automated Restock"
-    ],
-    "feature_pro": [
-      "Everything from Basis",
-      "10 users",
-      "Batch number",
-      "Unlimited locations"
-    ]
-  },
-  "site-config": {
-    "site-name": "Nem Lager",
-    "site-description": "Keep track of your inventory.",
-    "error-title": "Something went wrong",
-    "success-title": "Action completed",
-    "overview": "Overview",
-    "history": "History",
-    "restock": "Restock",
-    "administration": {
-      "title": "Administration",
-      "organisation": "Organization",
-      "organisation-description": "Here you can administrate users, locations and company details.",
-      "reports": "Reports",
-      "reports-description": "Here you can download reports based on your current stock."
-    },
-    "sys-admin-dropdown": {
-      "customers": "Customers",
-      "customers-description": "See an overview of all customers in Nem Lager",
-      "admin-users": "Users",
-      "admin-users-description": "See an overview of all users in Nem Lager",
-      "units": "Units",
-      "units-description": "Here you can create and update units",
-      "error-messages": "Error messages",
-      "error-messages-description": "View latest error messages"
-    },
-    "products": {
-      "title": "Goods",
-      "products": "Catalogue",
-      "products-description": "Here you can create, update and import to your catalogue",
-      "groups": "Groups",
-      "groups-description": "Here you can create and update product groups",
-      "placements": "Placements",
-      "placements-description": "Here you can create and update placements",
-      "batch": "Batch",
-      "batch-description": "Here you can create and update batch numbers"
-    }
-  },
-  "toasts": {
-    "location-select": "Changed location to ",
-    "unnamed": "Unnamed"
-  },
-  "chip": {
-    "genbestil-chip-tooltip": "{{count}} items needs to be reordered"
-  },
-  "route-translations-chip": {
-    "no-resource-access": "You do not have access to this resource.",
-    "no-web-access": "User does not have web access",
-    "no-location-found": "No location found",
-    "chip-count-error": "Error getting chip count for: ",
-    "chip-get-error": "An error occurred while retrieving chip value for: "
-  },
-  "route-translations-batches": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "User does not have app access.",
-    "error-getting-batch": "Error retrieving batches for authenticated user: ",
-    "error-getting-batch-number": "An error occurred while retrieving batch number: ",
-    "error-getting-batch-numbers": "Could not retrieve batch numbers.",
-    "maintenance": "Maintenance in progress"
-  },
-  "route-translations-placements": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "User does not have app access.",
-    "error-getting-placement": "Error retrieving placements for authenticated user: ",
-    "error-getting-placement-number": "An error occurred while retrieving placements: ",
-    "error-getting-placement-numbers": "Could not retrieve placements.",
-    "maintenance": "Maintenance in progress"
-  },
-  "route-translations-locations": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "User does not have app access.",
-    "server-error": "A server error occurred. ",
-    "maintenance": "Maintenance in progress"
-  },
-  "route-translations-productid": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "User does not have app access.",
-    "error-fetching-product": "Error fetching product by ID: ",
-    "server-error-product": "A server error occurred when trying to fetch product.",
-    "maintenance": "Maintenance in progress",
-    "error-product-barred": "The selected product is barred"
-  },
-  "route-translations-product": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "User does not have app access.",
-    "error-getting-product": "Error retrieving product for authenticated user: ",
-    "couldnt-get-product": "Could not retrieve product",
-    "error-occured-getting-product": "An error occurred while retrieving product: ",
-    "maintenance": "Maintenance in progress"
-  },
-  "route-translations-move": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "User does not have app access.",
-    "request-body-json": "Request body must be in JSON format",
-    "loading-failed": "Loading of data failed",
-    "error-creating-move-placement": "Error creating move: Could not find or create default placement",
-    "error-while-moving-placement": "An error occurred while moving: Couldn't find or create a standard placement",
-    "error-creating-placement-db": "Error creating a new placement in database",
-    "error-creating-move-batch": "Error creating move: Could not find or create default batch",
-    "error-while-moving-batch": "An error occurred while moving: Couldn't find or create a standard batch",
-    "error-creating-batch-db": "Error creating a new batch number in database",
-    "error-creating-move": "Error creating move: ",
-    "error-while-moving": "An error occurred while moving: ",
-    "maintenance": "Maintenance in progress"
-  },
-  "route-translations-regulations": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "User does not have app access.",
-    "request-body-json": "Request body must be in JSON format",
-    "loading-failed": "Loading of data failed",
-    "error-creating-move-placement": "Error creating move: Could not find or create default placement",
-    "error-while-moving-placement": "An error occurred while moving: Couldn't find or create a standard placement",
-    "error-creating-placement-db": "Error creating a new placement in database",
-    "error-creating-move-batch": "Error creating move: Could not find or create default batch",
-    "error-while-moving-batch": "An error occurred while moving: Couldn't find or create a standard batch",
-    "error-creating-batch-db": "Error creating a new batch number in database",
-    "error-creating-new": "Error creating new: ",
-    "try-again": "Please try again",
-    "error-getting-product": "Error retrieving product for authenticated user: ",
-    "error-during-regulation": "An error occurred during regulation: ",
-    "maintenance": "Maintenance in progress"
-  },
-  "route-translations-users": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "The user does not have access to the app.",
-    "error-getting-userinfo": "Error retrieving user information: ",
-    "couldnt-get-userinfo": "Could not retrieve user information",
-    "error-occured-getting-userinfo": "An error occurred while retrieving user information: ",
-    "invalid-user-id": "Invalid user ID"
-  },
-  "route-translations-nfc": {
-    "no-access-to-resource": "You do not have access to this resource.",
-    "no-app-access": "You do not have access to the app.",
-    "couldnt-register-nfc": "Could not register NFC card, please try again later.",
-    "loading-failed": "Loading of data failed",
-    "error-card-in-use": "Could not register NFC card. Card is already in use."
-  }
+	"table-pagination": {
+		"rows-per-page": "Rows per page:",
+		"go-to-previous-page": "Go to previous page",
+		"go-to-next-page": "Go to next page"
+	},
+	"table-filters": {
+		"clear": "Reset",
+		"clear-filter": "Remove Filter",
+		"no-filter-choice": "No filter choices",
+		"add-filter": "Add filter",
+		"no-filter-found": "No filter found",
+		"choose": "Choose",
+		"choose-dates": "Choose dates",
+		"search": "Search",
+		"number-range": "to",
+		"number-range-empty": "Choose {{label}}",
+		"number-range-to": "Up to and including {{to}}",
+		"number-range-from": "From {{from}} and up",
+		"number-range-both": "From {{from}} up to and including {{to}}"
+	},
+	"language-switcher": {
+		"language": "Language",
+		"full-lang-name-da": "Danish",
+		"full-lang-name-en": "English"
+	},
+	"theme-toggle": {
+		"theme": "Theme",
+		"light": "Light",
+		"dark": "Dark"
+	},
+	"table-toolbar": {
+		"show-hide-columns": "Save/show columns"
+	},
+	"nav-user": {
+		"my-profile": "My Profile",
+		"get-help": "Get Help",
+		"log-out": "Log Out"
+	},
+	"nav-location-select": {
+		"select-location": "Select Location",
+		"inactive": "Inactive"
+	},
+	"create-customer-action": {
+		"primary-location": "Primary Location",
+		"welcome-email": "Welcome to Nem Lager",
+		"email-exist-customer": "Email already exists for a customer",
+		"email-exist-user": "Email already exists for a user",
+		"create-customer-error": "Something went wrong while creating you as a customer.",
+		"create-location-error": "Something went wrong while creating location",
+		"actvation-email-error": "Something went wrong while sending activation email"
+	},
+	"signup-action": {
+		"activation-link-no-longer-exists": "The activation link no longer exists.",
+		"activation-link-expired": "The activation link has expired and is no longer valid.",
+		"company-account-no-exist": "Your company account does not exist.",
+		"existing-email": "A user with this email already exists.",
+		"user-wasnt-created": "Your user account was not created.",
+		"company-account-wasnt-activated": "Your company account was not activated.",
+		"location-access-error": "There was an error granting the user access to the location."
+	},
+	"plans": {
+		"plan_lite": "Lite",
+		"plan_basis": "Basis",
+		"plan_pro": "Pro",
+		"description_lite": "To the single user companies",
+		"description_basis": "To the small businesses",
+		"description_pro": "To the large businesses",
+		"feature_lite": [
+			"1 user",
+			"Inventory management",
+			"Import/export",
+			"Product descriptions 1, 2, 3",
+			"Inventory list",
+			"Product groups",
+			"Account/case management",
+			"Print barcodes/labels",
+			"Scanner app",
+			"Reports via history",
+			"1 location"
+		],
+		"feature_basis": [
+			"Everything from Lite",
+			"5 users",
+			"Location management",
+			"Automated Restock"
+		],
+		"feature_pro": [
+			"Everything from Basis",
+			"10 users",
+			"Batch number",
+			"Unlimited locations"
+		]
+	},
+	"site-config": {
+		"site-name": "Nem Lager",
+		"site-description": "Keep track of your inventory.",
+		"error-title": "Something went wrong",
+		"success-title": "Action completed",
+		"overview": "Overview",
+		"history": "History",
+		"restock": "Restock",
+		"administration": {
+			"title": "Administration",
+			"organisation": "Organization",
+			"organisation-description": "Here you can administrate users, locations and company details.",
+			"reports": "Reports",
+			"reports-description": "Here you can download reports based on your current stock.",
+			"suppliers": "Suppliers",
+			"suppliers-description": "Here you can administrate your suppliers"
+		},
+		"sys-admin-dropdown": {
+			"customers": "Customers",
+			"customers-description": "See an overview of all customers in Nem Lager",
+			"admin-users": "Users",
+			"admin-users-description": "See an overview of all users in Nem Lager",
+			"units": "Units",
+			"units-description": "Here you can create and update units",
+			"error-messages": "Error messages",
+			"error-messages-description": "View latest error messages"
+		},
+		"products": {
+			"title": "Goods",
+			"products": "Catalogue",
+			"products-description": "Here you can create, update and import to your catalogue",
+			"groups": "Groups",
+			"groups-description": "Here you can create and update product groups",
+			"placements": "Placements",
+			"placements-description": "Here you can create and update placements",
+			"batch": "Batch",
+			"batch-description": "Here you can create and update batch numbers"
+		}
+	},
+	"toasts": {
+		"location-select": "Changed location to ",
+		"unnamed": "Unnamed"
+	},
+	"chip": {
+		"genbestil-chip-tooltip": "{{count}} items needs to be reordered"
+	},
+	"route-translations-chip": {
+		"no-resource-access": "You do not have access to this resource.",
+		"no-web-access": "User does not have web access",
+		"no-location-found": "No location found",
+		"chip-count-error": "Error getting chip count for: ",
+		"chip-get-error": "An error occurred while retrieving chip value for: "
+	},
+	"route-translations-batches": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "User does not have app access.",
+		"error-getting-batch": "Error retrieving batches for authenticated user: ",
+		"error-getting-batch-number": "An error occurred while retrieving batch number: ",
+		"error-getting-batch-numbers": "Could not retrieve batch numbers.",
+		"maintenance": "Maintenance in progress"
+	},
+	"route-translations-placements": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "User does not have app access.",
+		"error-getting-placement": "Error retrieving placements for authenticated user: ",
+		"error-getting-placement-number": "An error occurred while retrieving placements: ",
+		"error-getting-placement-numbers": "Could not retrieve placements.",
+		"maintenance": "Maintenance in progress"
+	},
+	"route-translations-locations": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "User does not have app access.",
+		"server-error": "A server error occurred. ",
+		"maintenance": "Maintenance in progress"
+	},
+	"route-translations-productid": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "User does not have app access.",
+		"error-fetching-product": "Error fetching product by ID: ",
+		"server-error-product": "A server error occurred when trying to fetch product.",
+		"maintenance": "Maintenance in progress",
+		"error-product-barred": "The selected product is barred"
+	},
+	"route-translations-product": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "User does not have app access.",
+		"error-getting-product": "Error retrieving product for authenticated user: ",
+		"couldnt-get-product": "Could not retrieve product",
+		"error-occured-getting-product": "An error occurred while retrieving product: ",
+		"maintenance": "Maintenance in progress"
+	},
+	"route-translations-move": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "User does not have app access.",
+		"request-body-json": "Request body must be in JSON format",
+		"loading-failed": "Loading of data failed",
+		"error-creating-move-placement": "Error creating move: Could not find or create default placement",
+		"error-while-moving-placement": "An error occurred while moving: Couldn't find or create a standard placement",
+		"error-creating-placement-db": "Error creating a new placement in database",
+		"error-creating-move-batch": "Error creating move: Could not find or create default batch",
+		"error-while-moving-batch": "An error occurred while moving: Couldn't find or create a standard batch",
+		"error-creating-batch-db": "Error creating a new batch number in database",
+		"error-creating-move": "Error creating move: ",
+		"error-while-moving": "An error occurred while moving: ",
+		"maintenance": "Maintenance in progress"
+	},
+	"route-translations-regulations": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "User does not have app access.",
+		"request-body-json": "Request body must be in JSON format",
+		"loading-failed": "Loading of data failed",
+		"error-creating-move-placement": "Error creating move: Could not find or create default placement",
+		"error-while-moving-placement": "An error occurred while moving: Couldn't find or create a standard placement",
+		"error-creating-placement-db": "Error creating a new placement in database",
+		"error-creating-move-batch": "Error creating move: Could not find or create default batch",
+		"error-while-moving-batch": "An error occurred while moving: Couldn't find or create a standard batch",
+		"error-creating-batch-db": "Error creating a new batch number in database",
+		"error-creating-new": "Error creating new: ",
+		"try-again": "Please try again",
+		"error-getting-product": "Error retrieving product for authenticated user: ",
+		"error-during-regulation": "An error occurred during regulation: ",
+		"maintenance": "Maintenance in progress"
+	},
+	"route-translations-users": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "The user does not have access to the app.",
+		"error-getting-userinfo": "Error retrieving user information: ",
+		"couldnt-get-userinfo": "Could not retrieve user information",
+		"error-occured-getting-userinfo": "An error occurred while retrieving user information: ",
+		"invalid-user-id": "Invalid user ID"
+	},
+	"route-translations-nfc": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "You do not have access to the app.",
+		"couldnt-register-nfc": "Could not register NFC card, please try again later.",
+		"loading-failed": "Loading of data failed",
+		"error-card-in-use": "Could not register NFC card. Card is already in use."
+	}
 }

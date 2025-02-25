@@ -39,7 +39,12 @@ export type FormattedInventory = {
   quantity: number
   customerID: CustomerID
   locationID: LocationID
-  product: Product & { unit: string; group: string, fileCount: number }
+  product: Product & {
+	  unit: string 
+	  group: string
+	  fileCount: number 
+	  supplierName: string | null
+  }
   placement: Placement
   batch: Batch
 }
@@ -55,5 +60,9 @@ export interface FormattedReorder extends Reorder {
   quantity: number
   recommended: number
   disposible: number
-  product: Product & { unit: string; group: string }
+  product: Product & { 
+	  unit: string 
+	  group: string
+	  supplierName: string | null
+  }
 }

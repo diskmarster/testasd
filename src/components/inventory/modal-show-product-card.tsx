@@ -56,7 +56,7 @@ export function ModalShowProductCard({ product, user }: Props) {
 								{product.isBarred && <Badge variant='red'>{t('modal-show-product-card.barred')}</Badge>}
 							</div>
 						</CredenzaTitle>
-						<Link target='_blank' className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'flex items-center gap-2')} href={`/${lng}/varer/produkter/${product.id}`}>
+						<Link className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'flex items-center gap-2')} href={`/${lng}/varer/produkter/${product.id}`}>
 							Se mere
 							<Icons.external className='size-3.5 text-foreground' />
 						</Link>

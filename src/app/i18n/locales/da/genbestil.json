@@ -25,7 +25,9 @@
     "recommended": "Anb. gen.",
     "buffer": "Faktor (%)",
     "ordered": "Bestilt",
-    "updated": "Opdateret"
+    "updated": "Opdateret",
+	"no-value": "ikke angivet",
+	"supplier": "Leverandør"
   },
 
   "filter-placeholders": {

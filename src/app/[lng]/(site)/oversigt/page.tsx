@@ -23,7 +23,7 @@ export default async function Home({ params: { lng } }: PageProps) {
   const { t } = await serverTranslation(lng, 'oversigt')
 
   const location = await locationService.getLastVisited(user.id!)
-  if (!location) return null // TODO: make some error page
+  if (!location) return null 
 
   const customer = await customerService.getByID(user.customerID)
   if (!customer) return signOutAction()

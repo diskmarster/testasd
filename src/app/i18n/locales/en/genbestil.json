@@ -25,7 +25,9 @@
     "recommended": "Rec. reorder",
     "buffer": "Factor (%)",
     "ordered": "Ordered",
-    "updated": "Updated"
+    "updated": "Updated",
+	"no-value": "no value",
+	"supplier": "Supplier"
   },
 
   "filter-placeholders": {

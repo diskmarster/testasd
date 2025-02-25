@@ -178,6 +178,7 @@ export const productService = {
         barcode: p.barcode,
         costPrice: p.costPrice,
         salesPrice: p.salesPrice,
+		supplierID: p.supplierID,
         note: p.note,
         inventories: invMap.get(p.id) || [],
       }))

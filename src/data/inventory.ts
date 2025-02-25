@@ -37,6 +37,7 @@ import {
   UnitID,
   unitTable,
 } from '@/lib/database/schema/inventory'
+import { supplierTable } from '@/lib/database/schema/suppliers'
 import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
@@ -65,7 +66,8 @@ export const inventory = {
           ...PRODUCT_COLS,
           unit: UNIT_COLS.name,
           group: GROUP_COLS.name,
-		  fileCount: count(attachmentsTable.id)
+		  fileCount: count(attachmentsTable.id),
+		  supplierName: supplierTable.name,
         },
         placement: { ...PLACEMENT_COLS },
         batch: { ...BATCH_COLS },
@@ -86,6 +88,7 @@ export const inventory = {
       .innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
 	  .groupBy(
 		inventoryTable.inserted,
 		inventoryTable.updated,
@@ -395,6 +398,7 @@ export const inventory = {
           ...PRODUCT_COLS,
           unit: UNIT_COLS.name,
           group: GROUP_COLS.name,
+		  supplierName: supplierTable.name,
         },
       })
       .from(reorderTable)
@@ -411,6 +415,7 @@ export const inventory = {
         inventoryTable,
         eq(inventoryTable.productID, reorderTable.productID),
       )
+	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
       .groupBy(reorderTable.productID)
 
     return reorders

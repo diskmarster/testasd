@@ -44,6 +44,7 @@ export const updateProductValidation = (
       customerID: z.coerce.number(),
       groupID: z.coerce.number(),
       unitID: z.coerce.number(),
+      supplierID: z.coerce.number().nullable(),
       text1: z.string().min(1, t('products.product-text-required')).max(255, t('products.product1-max-length', {num: 255})),
       text2: z.string().max(255, t('products.product2-max-length', { num: 255})),
       text3: z.string().max(1000, t('products.product3-max-length', { num: 1000})),

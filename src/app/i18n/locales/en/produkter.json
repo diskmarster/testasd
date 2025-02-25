@@ -1,37 +1,38 @@
 {
-  "product-title": "Catalogue",
-  "product-description": "View and edit products for the entire company",
-  "product-modal-title": "Create Product",
-  "product-modal-description": "Fill in the details below to create a product",
-  "product-No.": "Product No.",
-  "barcode": "Barcode",
-  "product-group": "Product group",
-  "product-group-placeholder": "Select a product group",
-  "unit": "Unit",
-  "unit-placeholder": "Select a unit",
-  "product-text1": "ProductText 1",
-  "product-text2": "ProductText 2",
-  "product-text3": "ProductText 3",
-  "cost-price": "Cost price",
-  "sales-price": "Sales price",
-  "create-button": "Create",
-  "updated-time": "Updated",
-  "toast-success": "Product created successfully",
-  "update-product": "Edit Product",
+	"product-title": "Catalogue",
+	"product-description": "View and edit products for the entire company",
+	"product-modal-title": "Create Product",
+	"product-modal-description": "Fill in the details below to create a product",
+	"product-No.": "Product No.",
+	"barcode": "Barcode",
+	"product-group": "Product group",
+	"product-group-placeholder": "Select a product group",
+	"unit": "Unit",
+	"unit-placeholder": "Select a unit",
+	"product-text1": "ProductText 1",
+	"product-text2": "ProductText 2",
+	"product-text3": "ProductText 3",
+	"cost-price": "Cost price",
+	"sales-price": "Sales price",
+	"supplierName": "Supplier",
+	"create-button": "Create",
+	"updated-time": "Updated",
+	"toast-success": "Product created successfully",
+	"update-product": "Edit Product",
 	"view-product": "Show",
-  "bar-this": "Bar the product",
-  "unbar-this": "Unbar the product",
-  "barred-status-yes": "Barred",
-  "barred-status-no": "Active",
-  "update-product-modal": {
-    "update-product": "Update product",
-    "update-product-modal-title": "Update product",
-    "update-product-modal-description": "Here you can update a product",
-    "update-button": "Update"
-  },
-  "toasts": {
-    "product-updated": "Product updated successfully"
-  },
+	"bar-this": "Bar the product",
+	"unbar-this": "Unbar the product",
+	"barred-status-yes": "Barred",
+	"barred-status-no": "Active",
+	"update-product-modal": {
+		"update-product": "Update product",
+		"update-product-modal-title": "Update product",
+		"update-product-modal-description": "Here you can update a product",
+		"update-button": "Update"
+	},
+	"toasts": {
+		"product-updated": "Product updated successfully"
+	},
 	"details-page": {
 		"history": {
 			"title": "History",
@@ -94,7 +95,8 @@
 			"label-costPrice": "Cost price",
 			"label-salesPrice": "Sales price",
 			"label-barred": "Barred",
-			"no-value": "No value"
+			"no-value": "No value",
+			"label-supplier": "Supplier"
 		},
 		"server": {
 			"attachment-not-created": "File was not created in database",

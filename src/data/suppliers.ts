@@ -1,5 +1,6 @@
 import { db, TRX } from '@/lib/database'
 import { CustomerID } from '@/lib/database/schema/customer'
+import { productTable } from '@/lib/database/schema/inventory'
 import {
   NewSupplier,
   NewSupplierHistory,
@@ -9,7 +10,8 @@ import {
   SupplierID,
   supplierTable,
 } from '@/lib/database/schema/suppliers'
-import { and, eq } from 'drizzle-orm'
+import { and, asc, count, desc, eq, getTableColumns } from 'drizzle-orm'
+import { SupplierWithItemCount } from './suppliers.types'
 
 export const suppliers = {
   create: async function (data: NewSupplier, tx: TRX = db): Promise<Supplier> {
@@ -51,15 +53,28 @@ export const suppliers = {
           eq(supplierHistoryTable.customerID, customerID),
         ),
       )
+      .orderBy(asc(supplierHistoryTable.id))
   },
   getAllByCustomerID: async function (
     id: CustomerID,
     tx: TRX = db,
-  ): Promise<Supplier[]> {
+  ): Promise<SupplierWithItemCount[]> {
     return await tx
-      .select()
+      .select({
+        ...getTableColumns(supplierTable),
+        itemCount: count(productTable.id),
+      })
       .from(supplierTable)
       .where(eq(supplierTable.customerID, id))
+      .leftJoin(
+        productTable,
+        and(
+          eq(productTable.supplierID, supplierTable.id),
+          eq(productTable.customerID, supplierTable.customerID),
+        ),
+      )
+      .groupBy(supplierTable.id)
+      .orderBy(desc(supplierTable.id))
   },
   updateByID: async function (
     id: SupplierID,
