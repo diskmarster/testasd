@@ -28,7 +28,7 @@ export function useUrlGlobalFiltering(
         updatedState = updaterOrValue
       }
 
-      if (updatedState == defaultFilterRef.current) {
+      if (updatedState == globalFiltersRef.current) {
         return
       }
 
@@ -37,9 +37,7 @@ export function useUrlGlobalFiltering(
       if (updatedState == '') {
         mutableSearchParams.delete('global')
       } else {
-        if (updatedState != globalFiltersRef.current) {
-          mutableSearchParams.set('global', updatedState)
-        }
+        mutableSearchParams.set('global', updatedState)
       }
       console.log({
         updatedState,
