@@ -31,6 +31,7 @@ import {
 import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
 import { ImportProducts } from '@/app/[lng]/(site)/varer/produkter/validation'
+import { suppliers } from '@/data/suppliers'
 
 export const productService = {
   create: async function(
@@ -218,8 +219,7 @@ export const productService = {
           inventory.getGroupByID(updatedProduct.groupID, trx),
         ])
 
-        await product.createHistoryLog(
-          {
+		const historyLog: NewProductHistory = {
             userID: user?.id!,
             userName: user?.name!,
             userRole: user?.role!,
@@ -238,9 +238,17 @@ export const productService = {
             productNote: updatedProduct.note,
             type: 'opdatering',
             isImport: false,
-          },
-          trx,
-        )
+			supplierID: null,
+			supplierName: "",
+          }
+
+		if(updatedProductData.supplierID) {
+			const supplier = await suppliers.getByID(updatedProductData.supplierID!, user?.customerID!)
+			historyLog.supplierID = supplier.id
+			historyLog.supplierName = supplier.name
+		}
+
+        await product.createHistoryLog(historyLog, trx)
 
         return updatedProduct
       } catch (err) {

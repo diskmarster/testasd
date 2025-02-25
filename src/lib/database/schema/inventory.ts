@@ -317,6 +317,8 @@ export const productHistoryTable = sqliteTable('nl_product_history', {
   inserted: integer('inserted', { mode: 'timestamp' })
     .notNull()
     .default(sql`(unixepoch())`),
+  supplierID: integer('supplier_id'),
+  supplierName: text('supplier_name'),
 })
 
 export type ProductHistory = typeof productHistoryTable.$inferSelect

@@ -141,6 +141,13 @@
       "when": 1740479488216,
       "tag": "0019_aberrant_salo",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1740486468411,
+      "tag": "0020_wandering_squadron_supreme",
+      "breakpoints": true
     }
   ]
 }
