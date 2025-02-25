@@ -14,7 +14,7 @@
     "db:migrate": "tsx src/lib/database/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
-    "test": "NODE_ENV=test jest"
+    "test": "NODE_ENV=test NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.741.0",
