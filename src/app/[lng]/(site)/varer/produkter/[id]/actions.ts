@@ -8,6 +8,7 @@ import { attachmentService } from '@/service/attachments'
 import { fileService } from '@/service/file'
 import { inventoryService } from '@/service/inventory'
 import { productService } from '@/service/products'
+import { suppliersService } from '@/service/suppliers'
 import { z } from 'zod'
 
 const createAttachmentValidation = z.object({
@@ -134,3 +135,10 @@ export const fetchProductFiles = editableAction
     const files = await attachmentService.getByRefID('product', id)
     return files
   })
+
+export const fetchSuppliersAction = editableAction.action(
+  async ({ ctx: { user } }) => {
+    const suppliers = await suppliersService.getAllByCustomerID(user.customerID)
+    return suppliers
+  },
+)

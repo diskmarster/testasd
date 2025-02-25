@@ -14,6 +14,7 @@
 	"product-text3": "Varetekst 3",
 	"cost-price": "Kostpris",
 	"sales-price": "Salgspris",
+	"supplierName": "Leverandør",
 	"create-button": "Opret",
 	"updated-time": "Opdateret",
 	"toast-success": "Vare oprettet succesfuldt",
@@ -57,7 +58,8 @@
 			"key_productCostPrice": "Kostpris",
 			"key_productSalesPrice": "Salgspris",
 			"key_productIsBarred": "Spærret",
-			"key_productNote": "Note"
+			"key_productNote": "Note",
+			"key_supplierName": "Leverandør"
 		},
 		"files": {
 			"title": "Filer",
@@ -94,7 +96,8 @@
 			"label-costPrice": "Kostpris",
 			"label-salesPrice": "Salgspris",
 			"label-barred": "Spærret",
-			"no-value": "Ikke angivet"
+			"no-value": "Ikke angivet",
+			"label-supplier": "Leverandør"
 		},
 		"server": {
 			"attachment-not-created": "Filen blev ikke oprettet i databasen",

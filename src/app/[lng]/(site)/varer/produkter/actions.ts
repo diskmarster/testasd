@@ -38,6 +38,9 @@ export const updateProductAction = editableAction
       parsedInput: { productID, data: updatedProductData },
     }) => {
       const { t } = await serverTranslation(lang, 'action-errors')
+	  if (updatedProductData.supplierID == -1) {
+		  updatedProductData.supplierID = null
+	  }
       const updatedProduct = await productService.updateByID(
         productID,
         updatedProductData,

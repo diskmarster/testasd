@@ -72,6 +72,26 @@ export function getTableOverviewColumns(
     },
   }
 
+  const supplierCol: ColumnDef<FormattedInventory> = {
+    accessorKey: 'product.supplierName',
+    id: 'supplierName',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('supplierName')} />
+    ),
+    aggregationFn: 'unique',
+    aggregatedCell: ({ getValue }) => getValue<string | null>(),
+    cell: () => null,
+    sortingFn: (ra, rb) => {
+		let aVal = ra.original.product.supplierName
+		let bVal = rb.original.product.supplierName
+		return stringSortingFn(aVal ?? "", bVal ?? "")
+    },
+    meta: {
+      viewLabel: t('supplierName'),
+      className: '[&>*]:block',
+    },
+  }
+
   const text1Col: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.text1',
     id: 'text1',
@@ -303,6 +323,7 @@ export function getTableOverviewColumns(
         skuCol,
         barcodeCol,
         groupCol,
+		supplierCol,
         text1Col,
         text2Col,
         text3Col,
@@ -322,6 +343,7 @@ export function getTableOverviewColumns(
         skuCol,
         barcodeCol,
         groupCol,
+		supplierCol,
         text1Col,
         text2Col,
         text3Col,
@@ -342,6 +364,7 @@ export function getTableOverviewColumns(
         skuCol,
         barcodeCol,
         groupCol,
+		supplierCol,
         text1Col,
         text2Col,
         text3Col,
@@ -407,6 +430,26 @@ export function getTableOverviewFilters(
         label: group.name,
       })),
     ],
+  }
+  const supplierNameFilter: FilterField<FormattedInventory> = {
+	  column: table.getColumn('supplierName'),
+	  type: 'select',
+	  label: t('supplierName'),
+	  value: '',
+	  placeholder: t('supplierName'),
+	  options: [
+		  ...Array.from(
+			  table
+			  .getColumn('supplierName')!
+			  .getFacetedUniqueValues()
+			  .keys()
+		  )
+		  .filter(Boolean)
+		  .map(opt => ({
+			  label: opt,
+			  value: opt,
+		  }))
+	  ]
   }
   const text1Filter: FilterField<FormattedInventory> = {
     column: table.getColumn('text1'),
@@ -514,6 +557,7 @@ export function getTableOverviewFilters(
         barcodeFilter,
         unitFilter,
         groupFilter,
+		supplierNameFilter,
         text1Filter,
         text2Filter,
         text3Filter,
@@ -531,6 +575,7 @@ export function getTableOverviewFilters(
         barcodeFilter,
         unitFilter,
         groupFilter,
+		supplierNameFilter,
         text1Filter,
         text2Filter,
         text3Filter,
@@ -548,6 +593,7 @@ export function getTableOverviewFilters(
         barcodeFilter,
         unitFilter,
         groupFilter,
+		supplierNameFilter,
         text1Filter,
         text2Filter,
         text3Filter,

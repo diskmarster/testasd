@@ -6,7 +6,8 @@ import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
 import { hasPermissionByRank } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
-import { formatDate, numberToDKCurrency } from '@/lib/utils'
+import { stringSortingFn } from '@/lib/tanstack/filter-fns'
+import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
@@ -27,8 +28,7 @@ export function getProductOverviewColumns(
 	cell: ({ row }) => (
 		<Link
 		href={`/${lng}/varer/produkter/${row.original.id}`} 
-		className='hover:underline'
-		target='_blank'>
+		className='hover:underline'>
 			{row.original.sku}
 		</Link>
 	),
@@ -57,6 +57,28 @@ export function getProductOverviewColumns(
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
+    },
+  }
+
+  const supplierCol: ColumnDef<FormattedProduct> = {
+    accessorKey: 'supplierName',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('supplierName')} />
+    ),
+    aggregationFn: 'unique',
+    cell: ({ row }) => (
+		<div className={cn(!row.original.supplierName && 'italic text-muted-foreground')}>
+			{row.original.supplierName ? row.original.supplierName : 'Ikke angivet'}
+		</div>
+	),
+    sortingFn: (ra, rb) => {
+		let aVal = ra.original.supplierName
+		let bVal = rb.original.supplierName
+		return stringSortingFn(aVal ?? "", bVal ?? "")
+    },
+    meta: {
+      viewLabel: t('supplierName'),
+      className: '[&>*]:block',
     },
   }
 
@@ -196,6 +218,7 @@ export function getProductOverviewColumns(
     skuCol,
     barcodeCol,
     groupCol,
+	supplierCol,
     text1Col,
     text2Col,
     text3Col,
@@ -257,6 +280,28 @@ export function getProductTableOverviewFilters(
       })),
     ],
   }
+
+  const supplierNameFilter: FilterField<FormattedProduct> = {
+	  column: table.getColumn('supplierName'),
+	  type: 'select',
+	  label: t('supplierName'),
+	  value: '',
+	  placeholder: t('supplierName'),
+	  options: [
+		  ...Array.from(
+			  table
+			  .getColumn('supplierName')!
+			  .getFacetedUniqueValues()
+			  .keys()
+		  )
+		  .filter(Boolean)
+		  .map(opt => ({
+			  label: opt,
+			  value: opt,
+		  }))
+	  ]
+  }
+
   const text1Filter: FilterField<FormattedProduct> = {
     column: table.getColumn('text1'),
     type: 'text',
@@ -313,6 +358,7 @@ export function getProductTableOverviewFilters(
     skuFilter,
     barcodeFilter,
     groupFilter,
+	supplierNameFilter,
     text1Filter,
     text2Filter,
     text3Filter,

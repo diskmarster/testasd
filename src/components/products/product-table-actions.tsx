@@ -46,7 +46,7 @@ export function TableOverviewActions({ table, row }: Props) {
     <>
       <TableActionsWrapper>
         <DropdownMenuItem asChild>
-		<Link href={`/${lng}/varer/produkter/${row.original.id}`} target="_blank">
+		<Link href={`/${lng}/varer/produkter/${row.original.id}`}>
           {t('view-product')}
 		</Link>
         </DropdownMenuItem>

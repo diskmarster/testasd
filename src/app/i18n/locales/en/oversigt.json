@@ -54,6 +54,7 @@
   "isBarred": "Status",
   "isBarred-yes": "Barred",
   "isBarred-no": "Active",
+  "supplierName": "Supplier",
 
   "toasts": {
     "was-created": " was created successfully"

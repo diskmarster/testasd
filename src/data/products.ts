@@ -16,6 +16,7 @@ import {
 } from '@/lib/database/schema/inventory'
 import { and, asc, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
+import { supplierTable } from '@/lib/database/schema/suppliers'
 
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
@@ -32,11 +33,13 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
+		supplierName: supplierTable.name,
       })
       .from(productTable)
       .where(eq(productTable.customerID, customerID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
     return product
   },
   create: async function(
@@ -98,10 +101,12 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
+		supplierName: supplierTable.name,
       })
       .from(productTable)
       .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
       .innerJoin(groupTable, eq(productTable.groupID, groupTable.id))
+	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
       .where(eq(productTable.id, id))
 
     return res[0]
@@ -177,6 +182,7 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
+		supplierName: supplierTable.name,
         inventory: {
           ...INVENTORY_COLS,
         }
@@ -186,6 +192,7 @@ export const product = {
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .innerJoin(inventoryTable, eq(inventoryTable.productID, productTable.id))
+	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
     return product
   },
 }

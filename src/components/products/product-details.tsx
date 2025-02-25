@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { IfElse } from "../common/if-else"
 import { Input } from "../ui/input"
 import { Textarea } from "../ui/textarea"
-import { fetchActiveGroupsAction, fetchActiveUnitsAction } from "@/app/[lng]/(site)/varer/produkter/[id]/actions"
+import { fetchActiveGroupsAction, fetchActiveUnitsAction, fetchSuppliersAction } from "@/app/[lng]/(site)/varer/produkter/[id]/actions"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { updateProductAction } from "@/app/[lng]/(site)/varer/produkter/actions"
 import { toast } from "sonner"
@@ -26,11 +26,13 @@ import { siteConfig } from "@/config/site"
 import { Icons } from "../ui/icons"
 import { Skeleton } from "../ui/skeleton"
 import { emitCustomEvent } from "react-custom-events"
+import { Supplier } from "@/lib/database/schema/suppliers"
 
 interface Props {
 	product: FormattedProduct & { inventories: Inventory[] }
 	user: User
 }
+
 
 export function ProductDetails({ product, user }: Props) {
 	const [pending, startTransition] = useTransition()
@@ -41,6 +43,7 @@ export function ProductDetails({ product, user }: Props) {
 	const today = new Date()
 	const [units, setUnits] = useState<Unit[]>([{ id: product.unitID, name: product.unit, inserted: today, updated: today, isBarred: false }])
 	const [groups, setGroups] = useState<Group[]>([{ id: product.groupID, name: product.group, inserted: today, updated: today, isBarred: false, customerID: user.customerID }])
+	const [suppliers, setSuppliers] = useState<Supplier[]>([{ id: product.supplierID ?? -1, name: product.supplierName ?? "", idOfClient: "", contactPerson: "", country: "DK", email: "", phone: "", inserted: today, updated: today, customerID: 0, userID: 0, userName: "" }])
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const { setValue, watch, reset, register, formState } = useForm<z.infer<typeof schema>>({
@@ -84,6 +87,8 @@ export function ProductDetails({ product, user }: Props) {
 			product.barcode = values.data.barcode
 			product.costPrice = values.data.costPrice
 			product.salesPrice = values.data.salesPrice
+			product.supplierID = values.data.supplierID
+			product.supplierName = suppliers.find(s => s.id == values.data.supplierID)?.name ?? 'Ingen'
 
 			emitCustomEvent('FetchNewHistory', { id: values.productID })
 
@@ -112,12 +117,25 @@ export function ProductDetails({ product, user }: Props) {
 		})
 	}
 
+	function fetchSuppliers() {
+		startTransition(async () => {
+			const res = await fetchSuppliersAction()
+
+			if (res && res.data) {
+				setSuppliers(res.data)
+			}
+		})
+	}
+
 	useEffect(() => {
 		if (isEditing && units.length === 1) {
 			fetchUnits()
 		}
 		if (isEditing && groups.length === 1) {
 			fetchGroups()
+		}
+		if (isEditing && suppliers.length === 1) {
+			fetchSuppliers()
 		}
 	}, [isEditing])
 
@@ -350,6 +368,39 @@ export function ProductDetails({ product, user }: Props) {
 						</div>
 					</div>
 				)}
+				<div className='flex items-center gap-4'>
+					<div className='w-1/2'>
+						<span className='text-sm text-muted-foreground'>{t('details-page.details.label-supplier')}</span>
+						<IfElse
+							condition={isEditing}
+							trueComp={
+								<Select
+									value={formValues.data.supplierID ? formValues.data.supplierID.toString() : "-1"}
+									onValueChange={(value: string) => {
+										setValue('data.supplierID', parseInt(value), {
+											shouldValidate: true,
+											shouldDirty: true,
+										})
+									}}>
+									<SelectTrigger>
+										<SelectValue defaultValue={product.supplierID ?? undefined} placeholder={t('unit-placeholder')} />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="-1">Ingen</SelectItem>
+										{suppliers.map((unit) => (
+											<SelectItem key={unit.id} value={unit.id.toString()}>
+												{unit.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							}
+							falseComp={
+								<p className="h-9 flex items-center">{product.supplierName ?? 'Ingen'}</p>
+							}
+						/>
+					</div>
+				</div>
 			</div>
 		</div>
 	)

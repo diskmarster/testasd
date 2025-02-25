@@ -32,7 +32,7 @@ export default async function Page({ params: { lng, id } }: PageProps) {
 
 	return (
 		<SiteWrapper>
-			<div className='flex flex-col lg:flex-row items-stretch gap-4 lg:h-[500px]'>
+			<div className='flex flex-col lg:flex-row items-stretch gap-4 lg:h-[550px]'>
 				<Suspense fallback={<DetailsSkeleton />}>
 					<ProductDetailsWrapper lng={lng} id={id} user={user} />
 				</Suspense>

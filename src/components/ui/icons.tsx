@@ -58,9 +58,13 @@ import {
   PackagePlusIcon,
   PackageXIcon,
   PackageIcon,
+  SquarePlus,
+  SquareSlash,
 } from 'lucide-react'
 
 export const Icons = {
+	squareSlash: SquareSlash,
+	squarePlus: SquarePlus,
 	zap: Zap,
 	calendarClock: CalendarClock,
 	ellipsis: EllipsisIcon,

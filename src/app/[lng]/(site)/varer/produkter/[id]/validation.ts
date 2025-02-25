@@ -9,6 +9,7 @@ export const updateProductValidation = (
       customerID: z.coerce.number(),
       groupID: z.coerce.number(),
       unitID: z.coerce.number(),
+      supplierID: z.coerce.number().nullable(),
       text1: z
         .string()
         .min(1, t('products.product-text-required'))

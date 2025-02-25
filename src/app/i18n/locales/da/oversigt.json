@@ -55,6 +55,7 @@
   "isBarred": "Status",
   "isBarred-yes": "Spærret",
   "isBarred-no": "Aktiv",
+  "supplierName": "Leverandør",
 
   "overview-table-actions": "",
   "update": "Opdater beholdning",
