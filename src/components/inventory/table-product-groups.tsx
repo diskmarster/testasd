@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/table'
 import { useLanguage } from '@/context/language'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Group } from '@/lib/database/schema/inventory'
 import {
@@ -57,6 +58,7 @@ export function TableProductGroups({ groups, user }: Props) {
     [lng, t, user],
   )
 
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering('')
   const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
     { id: 'isBarred', value: [false] },
@@ -113,6 +115,7 @@ export function TableProductGroups({ groups, user }: Props) {
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
+    onGlobalFilterChange: setGlobalFilter,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -121,6 +124,7 @@ export function TableProductGroups({ groups, user }: Props) {
     filterFromLeafRows: false,
 
     state: {
+      globalFilter,
       columnFilters,
       rowSelection,
       sorting,
@@ -146,6 +150,7 @@ export function TableProductGroups({ groups, user }: Props) {
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
         filterLocalStorageKey={FILTERS_KEY}
+        defaultGlobalFilter={globalFilter}
       />
       <div className='rounded-md border'>
         <Table>

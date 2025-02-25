@@ -19,6 +19,7 @@ import {
 import { LanguageContext } from '@/context/language'
 import { Plan } from '@/data/customer.types'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
@@ -70,6 +71,7 @@ export function TableHistory({
     () => getTableHistoryColumns(plan, user, lng, t),
     [user, plan, lng, t],
   )
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering('')
   const [sorting, handleSortingChange] = useUrlSorting()
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -124,6 +126,7 @@ export function TableHistory({
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
+    onGlobalFilterChange: setGlobalFilter,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -132,6 +135,7 @@ export function TableHistory({
     filterFromLeafRows: false,
 
     state: {
+      globalFilter,
       columnFilters,
       rowSelection,
       sorting,
@@ -166,7 +170,8 @@ export function TableHistory({
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}
+		    filterLocalStorageKey={FILTERS_KEY}
+        defaultGlobalFilter={globalFilter}
       />
       <div className='rounded-md border'>
         <Table>
