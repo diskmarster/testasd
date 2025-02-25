@@ -21,7 +21,6 @@ interface LogsWithDiff extends SupplierHisotry {
 }
 
 export function SupplierLogs({ logs }: Props) {
-	const [pending, startTransition] = useTransition()
 	const [limit, setLimit] = useState(5)
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "leverandører")
@@ -66,9 +65,6 @@ export function SupplierLogs({ logs }: Props) {
 			<div className='flex items-center gap-1.5'>
 				<p className="font-medium">{t("details-page.history.title")}</p>
 				<span className='text-muted-foreground tabular-nums text-xs'>{t("details-page.history.log-count", { count: logs.length })}</span>
-				{pending && (
-					<Icons.spinner className="size-3 animate-spin" />
-				)}
 			</div>
 			<ScrollArea maxHeight="max-h-[2000px]">
 				<div className="flex flex-col gap-4">
