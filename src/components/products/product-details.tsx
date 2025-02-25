@@ -43,7 +43,7 @@ export function ProductDetails({ product, user }: Props) {
 	const today = new Date()
 	const [units, setUnits] = useState<Unit[]>([{ id: product.unitID, name: product.unit, inserted: today, updated: today, isBarred: false }])
 	const [groups, setGroups] = useState<Group[]>([{ id: product.groupID, name: product.group, inserted: today, updated: today, isBarred: false, customerID: user.customerID }])
-	const [suppliers, setSuppliers] = useState<Supplier[]>([{ id: product.supplierID ?? -1, name: product.supplierName ?? "", idOfClient: "", contactPerson: "", country: "", email: "", phone: "", inserted: today, updated: today, customerID: 0, userID: 0, userName: "" }])
+	const [suppliers, setSuppliers] = useState<Supplier[]>([{ id: product.supplierID ?? -1, name: product.supplierName ?? "", idOfClient: "", contactPerson: "", country: "DK", email: "", phone: "", inserted: today, updated: today, customerID: 0, userID: 0, userName: "" }])
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const { setValue, watch, reset, register, formState } = useForm<z.infer<typeof schema>>({
