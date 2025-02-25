@@ -39,10 +39,6 @@ export function useUrlGlobalFiltering(
       } else {
         mutableSearchParams.set('global', updatedState)
       }
-      console.log({
-        updatedState,
-        mutableSearchParams: mutableSearchParams.get('global'),
-      })
       router.push(`${pathnameRef.current}?${mutableSearchParams.toString()}`)
 
       setGlobalFilters(updatedState)
@@ -59,10 +55,6 @@ export function useUrlGlobalFiltering(
     setGlobalFilters(initialFilters)
     globalFiltersRef.current = initialFilters
   }, [])
-
-  useEffect(() => {
-    console.log(globalFilters)
-  }, [globalFilters])
 
   return [globalFilters, handleFilterChange]
 }

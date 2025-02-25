@@ -141,7 +141,7 @@ export function UnitOverview({ units, user }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		    filterLocalStorageKey={FILTERS_KEY}
+        filterLocalStorageKey={FILTERS_KEY}
         defaultGlobalFilter={globalFilter}
       />
       <div className='rounded-md border'>
