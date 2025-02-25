@@ -5,7 +5,8 @@
     "go-to-next-page": "Gå til næste side"
   },
   "table-filters": {
-    "clear": "Fjern",
+    "clear_one": "Fjern filter",
+    "clear_other": "Fjern filtre",
     "clear-filter": "Fjern Filter",
     "no-filter-choice": "Ingen filter muligheder",
     "add-filter": "Tilføj filter",

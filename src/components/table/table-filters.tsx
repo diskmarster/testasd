@@ -132,7 +132,7 @@ function TableToolbarFilters<T>({
           className='gap-1'
           onClick={handleClearAllFilters}>
           <Icons.cross className='size-4' />
-          <span className='hidden md:block'>{t('table-filters.clear')}</span>
+          <span className='hidden md:block'>{t('table-filters.clear', {count: selectedFields.length + (defaultGlobalFilter.length > 0 ? 1 : 0)})}</span>
         </Button>
       )}
     </div>
@@ -398,8 +398,8 @@ function GlobalFilter<T>({
   }, 250)
 
   useEffect(() => {
-    setSearch(defaultValue)
-  }, [defaultValue])
+    setSearch(table.getState().globalFilter)
+  }, [table.getState().globalFilter])
 
   return (
     <Input
@@ -407,7 +407,7 @@ function GlobalFilter<T>({
       size={12}
       placeholder={t('table-filters.search-placeholder')}
       id='table-searchbar'
-      defaultValue={search}
+      value={search}
       onChange={e => {
         setSearch(e.target.value)
         debouncedSeteFilter(e.target.value)

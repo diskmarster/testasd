@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 export type HandleFilterChangeFN = (updaterOrValue: Updater<string>) => void
 
 export function useUrlGlobalFiltering(
+	mutableSearchParams: URLSearchParams,
   defaultFilter: string = '',
 ): [string, HandleFilterChangeFN] {
   const pathname = usePathname()
@@ -31,7 +32,7 @@ export function useUrlGlobalFiltering(
         return
       }
 
-      const mutableSearchParams = new URLSearchParams(searchParams)
+      //const mutableSearchParams = new URLSearchParams(searchParams)
 
       if (updatedState == '') {
         mutableSearchParams.delete('global')

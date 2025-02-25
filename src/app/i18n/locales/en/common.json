@@ -5,8 +5,9 @@
     "go-to-next-page": "Go to next page"
   },
   "table-filters": {
-    "clear": "Reset",
-    "clear-filter": "Remove Filter",
+    "clear_one": "Remove filter",
+    "clear_other": "Remove filters",
+    "clear-filter": "Remove filter",
     "no-filter-choice": "No filter choices",
     "add-filter": "Add filter",
     "no-filter-found": "No filter found",
