@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "74a0903d-9b53-4567-ade9-4031335d0da9",
+  "id": "b424b51e-3b47-4b8c-9684-9c19bae06787",
   "prevId": "a84b5eb4-9911-429c-81ba-4a25797f9bab",
   "tables": {
     "nl_action_analytics": {
@@ -2157,6 +2157,13 @@
         "user_id": {
           "name": "user_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_name": {
+          "name": "user_name",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

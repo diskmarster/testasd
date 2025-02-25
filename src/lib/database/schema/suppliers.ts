@@ -41,7 +41,7 @@ export const supplierHistoryTable = sqliteTable('nl_suppliers_history', {
     .notNull()
     .default(sql`(unixepoch())`),
   userID: integer('user_id').notNull(),
-  userName: text('name').notNull(),
+  userName: text('user_name').notNull(),
   name: text('name').notNull(),
   idOfClient: text('id_of_client').notNull().default(''),
   country: text('country').notNull(),
