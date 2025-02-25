@@ -24,7 +24,7 @@ export function SupplierActionsColumn({ row }: Props) {
 	return (
 		<TableActionsWrapper>
 			<DropdownMenuItem asChild>
-				<Link href={`${lng}/administration/leverandorer/${row.original.id}`}>
+				<Link href={`/${lng}/administration/leverandorer/${row.original.id}`}>
 					{t("table.col-actions-show")}
 				</Link>
 			</DropdownMenuItem>
