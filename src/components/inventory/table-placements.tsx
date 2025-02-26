@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/table'
 import { useLanguage } from '@/context/language'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Placement } from '@/lib/database/schema/inventory'
 import {
@@ -36,6 +37,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
@@ -60,9 +62,11 @@ export function TablePlacement({ data, user }: Props) {
   const filteredData = useMemo(() => {
     return data.filter(placement => placement.name !== '-')
   }, [data])
+  const mutableSearchParams = new URLSearchParams(useSearchParams())
 
-  const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams,[
     { id: 'isBarred', value: [false] },
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -117,6 +121,7 @@ export function TablePlacement({ data, user }: Props) {
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
+    onGlobalFilterChange: setGlobalFilter,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -125,6 +130,7 @@ export function TablePlacement({ data, user }: Props) {
     filterFromLeafRows: false,
 
     state: {
+      globalFilter,
       columnFilters,
       rowSelection,
       sorting,
@@ -150,6 +156,7 @@ export function TablePlacement({ data, user }: Props) {
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
         filterLocalStorageKey={FILTERS_KEY}
+        defaultGlobalFilter={globalFilter}
       />
       <div className='rounded-md border'>
         <Table>

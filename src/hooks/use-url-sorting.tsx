@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 type HandleSortingChangeFN = (updaterOrValue: Updater<SortingState>) => void
 
 export function useUrlSorting(
+	mutableSearchParams: URLSearchParams,
   defaultSorting: SortingState = [],
 ): [SortingState, HandleSortingChangeFN] {
   const pathname = usePathname()
@@ -26,7 +27,7 @@ export function useUrlSorting(
       return
     }
 
-    const mutableSearchParams = new URLSearchParams(searchParams)
+    //const mutableSearchParams = new URLSearchParams(searchParams)
 
     if (updatedState.length == 0) {
       mutableSearchParams.delete('sort')

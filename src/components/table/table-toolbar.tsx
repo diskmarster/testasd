@@ -54,6 +54,7 @@ interface Props<T> {
 	options?: ToolbarOptions
 	filterFields?: FilterField<T>[]
 	filterLocalStorageKey?: string
+	defaultGlobalFilter?: string
 }
 
 export function TableToolbar<T>({
@@ -61,6 +62,7 @@ export function TableToolbar<T>({
 	options,
 	filterFields = [],
 	filterLocalStorageKey,
+	defaultGlobalFilter = '',
 }: Props<T>) {
 	return (
 		<div className='flex items-center gap-2 py-4'>
@@ -69,6 +71,7 @@ export function TableToolbar<T>({
 					table={table}
 					filterFields={filterFields}
 					filterLocalStorageKey={filterLocalStorageKey}
+					defaultGlobalFilter={defaultGlobalFilter}
 				/>
 			</div>
 			{options && (

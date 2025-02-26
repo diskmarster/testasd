@@ -32,12 +32,14 @@ type TableToolbarFiltersProps<T> = {
   table: Table<T>
   filterFields: FilterField<T>[]
   filterLocalStorageKey?: string
+  defaultGlobalFilter: string
 }
 
 function TableToolbarFilters<T>({
   table,
   filterFields,
   filterLocalStorageKey,
+  defaultGlobalFilter,
 }: TableToolbarFiltersProps<T>) {
   const [open, setOpen] = useState(false)
   const [selectedFields, setSelectedFields] = useState<FilterField<T>[]>(
@@ -70,6 +72,7 @@ function TableToolbarFilters<T>({
   const handleClearAllFilters = () => {
     setSelectedFields([])
     table.setColumnFilters([])
+    table.setGlobalFilter('')
     if (filterLocalStorageKey) localStorage.removeItem(filterLocalStorageKey)
   }
 
@@ -98,6 +101,8 @@ function TableToolbarFilters<T>({
 
   return (
     <div className='flex items-center gap-2'>
+      <GlobalFilter defaultValue={defaultGlobalFilter} table={table} t={t} />
+
       {selectedFields.map((field, i) => (
         <FilterPopover
           key={`${field.label}_${i}`}
@@ -121,13 +126,13 @@ function TableToolbarFilters<T>({
         />
       )}
 
-      {selectedFields.length > 0 && (
+      {(selectedFields.length > 0 ||  defaultGlobalFilter != '') && (
         <Button
           variant='ghost'
           className='gap-1'
           onClick={handleClearAllFilters}>
           <Icons.cross className='size-4' />
-          <span className='hidden md:block'>{t('table-filters.clear')}</span>
+          <span className='hidden md:block'>{t('table-filters.clear', {count: selectedFields.length + (defaultGlobalFilter.length > 0 ? 1 : 0)})}</span>
         </Button>
       )}
     </div>
@@ -372,6 +377,39 @@ function FilterText<T>({
       value={search}
       onChange={e => {
         setSearched(e.target.value)
+        debouncedSeteFilter(e.target.value)
+      }}
+    />
+  )
+}
+
+function GlobalFilter<T>({
+  table,
+  t,
+  defaultValue,
+}: {
+  table: Table<T>
+  t: (key: string, opts?: any) => string
+  defaultValue: string
+}) {
+  const [search, setSearch] = useState<string>(defaultValue)
+  const debouncedSeteFilter = useDebouncedCallback((val: string) => {
+    table.setGlobalFilter(val)
+  }, 250)
+
+  useEffect(() => {
+    setSearch(table.getState().globalFilter)
+  }, [table.getState().globalFilter])
+
+  return (
+    <Input
+      type='text'
+      size={12}
+      placeholder={t('table-filters.search-placeholder')}
+      id='table-searchbar'
+      value={search}
+      onChange={e => {
+        setSearch(e.target.value)
         debouncedSeteFilter(e.target.value)
       }}
     />

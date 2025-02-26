@@ -19,6 +19,7 @@ import {
 import { LanguageContext } from '@/context/language'
 import { Plan } from '@/data/customer.types'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
@@ -37,6 +38,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
+import { useSearchParams } from 'next/navigation'
 import { useContext, useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
@@ -70,8 +72,11 @@ export function TableHistory({
     () => getTableHistoryColumns(plan, user, lng, t),
     [user, plan, lng, t],
   )
-  const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
+  const mutableSearchParams = new URLSearchParams(useSearchParams())
+
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams, '')
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)
@@ -124,6 +129,7 @@ export function TableHistory({
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
+    onGlobalFilterChange: setGlobalFilter,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -132,6 +138,7 @@ export function TableHistory({
     filterFromLeafRows: false,
 
     state: {
+      globalFilter,
       columnFilters,
       rowSelection,
       sorting,
@@ -166,7 +173,8 @@ export function TableHistory({
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}
+        filterLocalStorageKey={FILTERS_KEY}
+        defaultGlobalFilter={globalFilter}
       />
       <div className='rounded-md border'>
         <Table>
