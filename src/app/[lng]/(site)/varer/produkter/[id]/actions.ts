@@ -2,7 +2,7 @@
 
 import { serverTranslation } from '@/app/i18n'
 import { attachmentRefTypeValidation } from '@/data/attachments'
-import { editableAction, sysAdminAction } from '@/lib/safe-action'
+import { adminAction, editableAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { attachmentService } from '@/service/attachments'
 import { fileService } from '@/service/file'
@@ -29,7 +29,7 @@ const uploadFileValidation = z.object({
   body: z.string(),
 })
 
-export const uploadFileAction = sysAdminAction
+export const uploadFileAction = adminAction
   .schema(uploadFileValidation)
   .action(async ({ parsedInput: { key, type, body } }) => {
     const b = Buffer.from(body, 'base64url')
@@ -38,7 +38,7 @@ export const uploadFileAction = sysAdminAction
     return await fileService.upload({ key, mimeType: type, body: arraybuffer })
   })
 
-export const createAttachmentAction = sysAdminAction
+export const createAttachmentAction = adminAction
   .schema(createAttachmentValidation)
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'produkter')
@@ -65,7 +65,7 @@ export const createAttachmentAction = sysAdminAction
     }
   })
 
-export const deleteAttachmentAction = sysAdminAction
+export const deleteAttachmentAction = adminAction
   .schema(deleteAttachmentValidation)
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'produkter')
