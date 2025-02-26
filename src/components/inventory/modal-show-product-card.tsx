@@ -32,10 +32,20 @@ export function ModalShowProductCard({ product, user }: Props) {
 
 	return (
 		<Credenza>
-			<CredenzaTrigger className='hover:underline flex items-center gap-2' asChild>
+			<CredenzaTrigger className='hover:underline flex items-center gap-1' asChild>
 				<div className='cursor-pointer'>
 					{product.sku}
 					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<span className={cn('hidden size-4 rounded-full cursor-pointer pb-4', (product.fileCount != undefined && product.fileCount > 0) && 'block',)}> 
+									<Icons.filetext className={cn('size-4')}/>
+								</span>
+							</TooltipTrigger>
+							<TooltipContent className='bg-foreground text-background'>
+								{t('modal-show-product-card.product-has-documents', {count: product.fileCount})}
+							</TooltipContent>
+						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<span className={cn('hidden size-1.5 rounded-full bg-destructive cursor-pointer', product.isBarred && 'block')} />
