@@ -1,5 +1,6 @@
 import { serverTranslation } from '@/app/i18n'
 import { NewApplicationError } from '@/lib/database/schema/errors'
+import { analyticsService } from '@/service/analytics'
 import { customerService } from '@/service/customer'
 import { errorsService } from '@/service/errors'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
@@ -7,6 +8,8 @@ import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
+	const start = performance.now()
+
 	const { session, user } = await validateRequest(headers())
 	const lng = getLanguageFromRequest(headers())
 	const { t } = await serverTranslation(lng, 'common')
@@ -63,6 +66,17 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 				{ status: 500 },
 			)
 		}
+
+		const end = performance.now()
+
+		await analyticsService.createAnalytic('action', {
+			actionName: 'getCustomerSettings',
+			userID: user.id,
+			customerID: user.customerID,
+			sessionID: session.id,
+			executionTimeMS: end - start,
+			platform: 'app',
+		})
 
 		return NextResponse.json(
 			{

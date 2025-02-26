@@ -1,6 +1,7 @@
 import { serverTranslation } from '@/app/i18n'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { isMaintenanceMode } from '@/lib/utils.server'
+import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { productService } from '@/service/products'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
@@ -11,6 +12,8 @@ export async function GET(
   request: NextRequest,
   { params: { id } }: { params: { id: string } },
 ): Promise<NextResponse<unknown>> {
+  const start = performance.now()
+
   const { session, user } = await validateRequest(headers())
   const lng = getLanguageFromRequest(headers())
   const { t } = await serverTranslation(lng, 'common')
@@ -50,6 +53,17 @@ export async function GET(
           status: 404,
         },
       )
+
+		const end = performance.now()
+
+		await analyticsService.createAnalytic('action', {
+			actionName: 'getProductsByID',
+			userID: user.id,
+			customerID: user.customerID,
+			sessionID: session.id,
+			executionTimeMS: end - start,
+			platform: 'app',
+		})
 
     return NextResponse.json(
       {

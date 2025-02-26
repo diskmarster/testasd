@@ -2,6 +2,7 @@ import { serverTranslation } from '@/app/i18n'
 import { hasPermissionByRank } from '@/data/user.types'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { tryParseInt } from '@/lib/utils'
+import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { locationService } from '@/service/location'
 import { userService } from '@/service/user'
@@ -13,6 +14,8 @@ export async function GET(
 	req: NextRequest,
 	{ params }: { params: { id: string } },
 ): Promise<NextResponse<{ msg: string; data?: any }>> {
+	const start = performance.now()
+
 	const { session, user } = await validateRequest(headers())
 	const lng = getLanguageFromRequest(headers())
 	const { t } = await serverTranslation(lng, 'common')
@@ -77,6 +80,17 @@ export async function GET(
 				)
 			}
 		}
+
+		const end = performance.now()
+
+		await analyticsService.createAnalytic('action', {
+			actionName: 'getUserInfoByID',
+			userID: user.id,
+			customerID: user.customerID,
+			sessionID: session.id,
+			executionTimeMS: end - start,
+			platform: 'app',
+		})
 
 		return NextResponse.json(
 			{
