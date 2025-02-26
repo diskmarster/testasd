@@ -58,7 +58,7 @@
 			"key_productCostPrice": "Cost price",
 			"key_productSalesPrice": "Sales price",
 			"key_productIsBarred": "Barred",
-			"key_productNote": "Note",
+
 			"key_supplierName": "Supplier"
 		},
 		"files": {
@@ -89,6 +89,7 @@
 			"button-update": "Update",
 			"label-text2": "Text 2",
 			"label-text3": "Text 3",
+			"label-note": "Note",
 			"label-group": "Group",
 			"label-unit": "Unit",
 			"label-sku": "Sku",

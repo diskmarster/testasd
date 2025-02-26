@@ -68,7 +68,7 @@ export function ProductHistory({ history }: Props) {
 		.sort((a, b) => Number(a.inserted) - Number(b.inserted))
 		.map((log, index) => {
 			const skippedKeys: (keyof ProductHistoryType)[] = [
-				'id', 'inserted', 'type', 'userID', 'userName', 'userRole', 'customerID', 'isImport', 'productID', 'productNote', 'supplierID'
+				'id', 'inserted', 'type', 'userID', 'userName', 'userRole', 'customerID', 'isImport', 'productID', 'supplierID'
 			]
 
 			const changes: Change[] = (Object.keys(log) as (keyof ProductHistoryType)[])

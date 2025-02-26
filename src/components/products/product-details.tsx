@@ -79,6 +79,7 @@ export function ProductDetails({ product, user }: Props) {
 			product.text1 = values.data.text1
 			product.text2 = values.data.text2
 			product.text3 = values.data.text3
+			product.note = values.data.note
 			product.groupID = values.data.groupID
 			product.group = groups.find(g => g.id == values.data.groupID)?.name ?? product.group
 			product.unitID = values.data.unitID
@@ -220,6 +221,23 @@ export function ProductDetails({ product, user }: Props) {
 						}
 						falseComp={
 							<p className="line-clamp-5 h-[5rem] pt-1.5">{product.text3 != '' ? product.text3 : t('details-page.details.no-value')}</p>
+						}
+					/>
+				</div>
+				<div className="space-y-1">
+					<span className='text-sm text-muted-foreground'>{t('details-page.details.label-note')}</span>
+					<IfElse
+						condition={isEditing}
+						trueComp={
+							<Textarea
+								maxLength={1000}
+								className="h-[5rem] line-clamp-5 resize-none"
+								value={formValues.data.note}
+								onChange={event => setValue("data.note", event.target.value, { shouldValidate: true, shouldDirty: true })}
+							></Textarea>
+						}
+						falseComp={
+							<p className="line-clamp-5 h-[5rem] pt-1.5">{product.note!= '' ? product.note : t('details-page.details.no-value')}</p>
 						}
 					/>
 				</div>
