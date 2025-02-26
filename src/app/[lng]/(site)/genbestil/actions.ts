@@ -8,6 +8,7 @@ import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
 import {
   addOrderedToReorderValidation,
+  bulkAddOrderedToReorderValidation,
   createReorderValidation,
   deleteReorderValidation,
   updateReorderValidation,
@@ -102,7 +103,6 @@ export const addOrderedToReorderAction = editableAction
   .schema(
     async () => await getSchema(addOrderedToReorderValidation, 'validation'),
   )
-
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
@@ -128,4 +128,44 @@ export const addOrderedToReorderAction = editableAction
     }
 
     revalidatePath(`/${ctx.lang}/genbestil`)
+  })
+
+export const bulkAddOrderedToReorderAction = editableAction
+  .metadata({ actionName: 'bulkAddOrderedToReorderAction' })
+  .schema(
+    async () => await getSchema(bulkAddOrderedToReorderValidation, 'genbestil'),
+  )
+  .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
+    const existsLocation = await locationService.getByID(parsedInput.locationID)
+    if (!existsLocation) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+    if (existsLocation.customerID != ctx.user.customerID) {
+      throw new ActionError(
+        t('restock-action.company-location-belongs-to-your-company'),
+      )
+    }
+
+    const promises = []
+
+    for (const reorder of parsedInput.items) {
+      const addPromise = inventoryService.updateReorderByIDs(
+        reorder.productID,
+        parsedInput.locationID,
+        ctx.user.customerID,
+        {
+          ordered: reorder.amount,
+        },
+      )
+      promises.push(addPromise)
+    }
+
+    const responses = await Promise.all(promises)
+
+    revalidatePath(`/${ctx.lang}/genbestil`)
+
+    if (responses.some(didUpdate => !didUpdate)) {
+      return 'Ikke alle bestillinger blev registreret'
+    }
   })
