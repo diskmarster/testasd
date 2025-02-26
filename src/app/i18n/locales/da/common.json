@@ -244,5 +244,12 @@
 		"loading-failed": "Indlæsning af data fejlede",
 		"error-card-in-use": "Kunne ikke registrere NFC kort. Kort allerede i brug."
 	},
+	"route-translations-settings": {
+		"no-access-to-resource": "Du har ikke adgang til denne ressource.",
+		"no-app-access": "Du har ikke adgang til appen.",
+		"error-getting-settings": "Fejl ved hentning af app indstillinger: ",
+		"couldnt-get-settings": "Kunne ikke hente app indstillinger",
+		"error-occured-getting-settings": "Der opstod en fejl under hentning af app indstillinger: "
+	},
 	"form-validation-error": "Der er en fejl i følgende felter:"
 }

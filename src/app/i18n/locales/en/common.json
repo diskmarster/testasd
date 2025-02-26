@@ -244,5 +244,12 @@
 		"loading-failed": "Loading of data failed",
 		"error-card-in-use": "Could not register NFC card. Card is already in use."
 	},
+	"route-translations-settings": {
+		"no-access-to-resource": "You do not have access to this resource.",
+		"no-app-access": "You do not have access to the app.",
+		"error-getting-settings": "Error retrieving app settings: ",
+		"couldnt-get-settings": "Could not retrieve app settings",
+		"error-occured-getting-settings": "An error occurred while retrieving app settings: "
+	},
 	"form-validation-error": "There is an error in the following fields:"
 }
