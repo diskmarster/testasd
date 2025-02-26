@@ -60,9 +60,11 @@ import {
   PackageIcon,
   SquarePlus,
   SquareSlash,
+	ListPlus,
 } from 'lucide-react'
 
 export const Icons = {
+	listPlus: ListPlus,
 	squareSlash: SquareSlash,
 	squarePlus: SquarePlus,
 	zap: Zap,
