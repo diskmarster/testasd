@@ -42,6 +42,7 @@ import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
 import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
+import { useSearchParams } from 'next/navigation'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -63,12 +64,13 @@ export function TableReorder({ data, user, units, groups }: Props) {
     () => getTableReorderColumns(user, lng, t),
     [user.role, lng, t],
   )
+  const mutableSearchParams = new URLSearchParams(useSearchParams())
 
-  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering('')
-  const [sorting, handleSortingChange] = useUrlSorting([
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams,[
     { id: 'recommended', desc: true },
   ])
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)

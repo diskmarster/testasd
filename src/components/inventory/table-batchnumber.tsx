@@ -37,6 +37,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
@@ -57,13 +58,14 @@ export function TableBatch({ data, user }: Props) {
     () => getTableBatchColumns(lng, t, user),
     [lng, t, user],
   )
+  const mutableSearchParams = new URLSearchParams(useSearchParams())
 
-  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering('')
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
   const filteredData = useMemo(() => {
     return data.filter(batch => batch.batch !== '-')
   }, [data])
-  const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams, [
     { id: 'isBarred', value: [false] },
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})

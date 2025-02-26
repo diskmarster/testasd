@@ -38,6 +38,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
+import { useSearchParams } from 'next/navigation'
 import { useContext, useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
@@ -71,9 +72,11 @@ export function TableHistory({
     () => getTableHistoryColumns(plan, user, lng, t),
     [user, plan, lng, t],
   )
-  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering('')
-  const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
+  const mutableSearchParams = new URLSearchParams(useSearchParams())
+
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams, '')
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)

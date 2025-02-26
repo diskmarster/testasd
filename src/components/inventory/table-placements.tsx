@@ -37,6 +37,7 @@ import {
   VisibilityState,
 } from '@tanstack/react-table'
 import { User } from 'lucia'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
@@ -61,10 +62,11 @@ export function TablePlacement({ data, user }: Props) {
   const filteredData = useMemo(() => {
     return data.filter(placement => placement.name !== '-')
   }, [data])
+  const mutableSearchParams = new URLSearchParams(useSearchParams())
 
-  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering('')
-  const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams,[
     { id: 'isBarred', value: [false] },
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
