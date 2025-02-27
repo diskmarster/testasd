@@ -9,12 +9,6 @@ interface Props {
 export async function CompanyInfoWrapper({customer}: Props) {
 	const settings = await customerService.getSettings(customer.id)
 
-	// await new Promise<void>((res) => {
-	// 	setTimeout(() => {
-	// 		res()
-	// 	}, 100000)
-	// })
-
 	return (
 		<CompanyInfoTab customer={customer} settings={settings} />
 	)

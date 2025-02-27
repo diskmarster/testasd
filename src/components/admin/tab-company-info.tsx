@@ -34,6 +34,8 @@ import {
 } from '../ui/settings'
 import { Switch } from '../ui/switch'
 import { CompanyEditSkeleton, FormCompanyEdit } from './form-company-edit'
+import { Plan } from '@/data/customer.types'
+import { hasPermissionByPlan } from '@/data/user.types'
 
 export function CompanyInfoTab({
   customer,
@@ -45,7 +47,7 @@ export function CompanyInfoTab({
   return (
     <div className='space-y-8 xl:space-y-0 xl:space-x-8 xl:grid xl:grid-cols-2'>
       <FormCompanyEdit customer={customer} />
-      <CompanySettings settings={settings} />
+      <CompanySettings settings={settings} companyPlan={customer.plan} />
     </div>
   )
 }
@@ -60,8 +62,10 @@ export function CompanyInfoSkeleton() {
 
 function CompanySettings({
   settings,
+  companyPlan,
 }: {
   settings: CustomerSettings | undefined
+  companyPlan: Plan
 }) {
   const context = 'settings'
 
@@ -228,74 +232,82 @@ function CompanySettings({
                   </SettingFooter>
                 )}
             </Setting>
-            <Separator />
-            <Setting>
-              <SettingBody>
-                <SettingLabel>
-                  <SettingTitle>
-                    {t('company-page.settings.placement')}
-                  </SettingTitle>
-                  <SettingDescription>
-                    {t('company-page.settings.placement-description')}
-                  </SettingDescription>
-                </SettingLabel>
-                <SettingContent>
-                  <Switch
-                    checked={usePlacement}
-                    onCheckedChange={(val: boolean) => {
-                      setValue('settings.usePlacement', val, {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      })
-                    }}
-                    id='usePlacement'
-                    {...register('settings.usePlacement')}
-                  />
-                </SettingContent>
-              </SettingBody>
-              {formState.errors.settings &&
-                formState.errors.settings.usePlacement && (
-                  <SettingFooter>
-                    <p className='text-sm text-destructive '>
-                      {formState.errors.settings.usePlacement.message}
-                    </p>
-                  </SettingFooter>
-                )}
-            </Setting>
-            <Separator />
-            <Setting>
-              <SettingBody>
-                <SettingLabel>
-                  <SettingTitle>
-                    {t('company-page.settings.batch')}
-                  </SettingTitle>
-                  <SettingDescription>
-                    {t('company-page.settings.batch-description')}
-                  </SettingDescription>
-                </SettingLabel>
-                <SettingContent>
-                  <Switch
-                    checked={useBatch}
-                    onCheckedChange={(val: boolean) => {
-                      setValue('settings.useBatch', val, {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      })
-                    }}
-                    id='useBatch'
-                    {...register('settings.useBatch')}
-                  />
-                </SettingContent>
-              </SettingBody>
-              {formState.errors.settings &&
-                formState.errors.settings.useBatch && (
-                  <SettingFooter>
-                    <p className='text-sm text-destructive '>
-                      {formState.errors.settings.useBatch.message}
-                    </p>
-                  </SettingFooter>
-                )}
-            </Setting>
+            {hasPermissionByPlan(companyPlan, 'basis') && (
+              <>
+                <Separator />
+                <Setting>
+                  <SettingBody>
+                    <SettingLabel>
+                      <SettingTitle>
+                        {t('company-page.settings.placement')}
+                      </SettingTitle>
+                      <SettingDescription>
+                        {t('company-page.settings.placement-description')}
+                      </SettingDescription>
+                    </SettingLabel>
+                    <SettingContent>
+                      <Switch
+                        checked={usePlacement}
+                        onCheckedChange={(val: boolean) => {
+                          setValue('settings.usePlacement', val, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          })
+                        }}
+                        id='usePlacement'
+                        {...register('settings.usePlacement')}
+                      />
+                    </SettingContent>
+                  </SettingBody>
+                  {formState.errors.settings &&
+                    formState.errors.settings.usePlacement && (
+                      <SettingFooter>
+                        <p className='text-sm text-destructive '>
+                          {formState.errors.settings.usePlacement.message}
+                        </p>
+                      </SettingFooter>
+                    )}
+                </Setting>
+              </>
+            )}
+            {hasPermissionByPlan(companyPlan, 'pro') && (
+              <>
+                <Separator />
+                <Setting>
+                  <SettingBody>
+                    <SettingLabel>
+                      <SettingTitle>
+                        {t('company-page.settings.batch')}
+                      </SettingTitle>
+                      <SettingDescription>
+                        {t('company-page.settings.batch-description')}
+                      </SettingDescription>
+                    </SettingLabel>
+                    <SettingContent>
+                      <Switch
+                        checked={useBatch}
+                        onCheckedChange={(val: boolean) => {
+                          setValue('settings.useBatch', val, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          })
+                        }}
+                        id='useBatch'
+                        {...register('settings.useBatch')}
+                      />
+                    </SettingContent>
+                  </SettingBody>
+                  {formState.errors.settings &&
+                    formState.errors.settings.useBatch && (
+                      <SettingFooter>
+                        <p className='text-sm text-destructive '>
+                          {formState.errors.settings.useBatch.message}
+                        </p>
+                      </SettingFooter>
+                    )}
+                </Setting>
+              </>
+            )}
           </div>
         </form>
       </CardContent>
