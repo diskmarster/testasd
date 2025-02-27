@@ -17,7 +17,6 @@ import { passwordResetService } from '@/service/password-reset'
 import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
-import { deleteUserByIDValidation } from '../../sys/brugere/validation'
 import {
   changeLocationStatusValidation,
   changeUserStatusValidation,
@@ -28,6 +27,7 @@ import {
   inviteNewUserValidation,
   resetUserPasswordValidation,
   updateCustomerValidation,
+  deleteUserByIDValidation
 } from './validation'
 
 export const toggleUserStatusAction = adminAction
