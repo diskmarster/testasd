@@ -90,7 +90,8 @@
     "extra-users-label": "Ekstra brugere",
     "extra-users-price": "49,- kr pr. bruger/md",
     "extra-users-count": "Total antal brugere: {{count}}",
-    "submit-button": "Opret kunde"
+    "submit-button": "Opret kunde",
+    "tooltip": "Opret ny kunde"
   },
   "create-validation": {
     "company-min": "Firmanavn skal være minimum {{minLength}} tegn",

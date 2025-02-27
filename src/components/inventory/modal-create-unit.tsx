@@ -59,7 +59,7 @@ export function ModalCreateUnit() {
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
+        <Button size='icon' variant='outline' tooltip={t('modal-create-unit.tooltip')}>
           <Icons.plus className='size-4' />
         </Button>
       </CredenzaTrigger>
