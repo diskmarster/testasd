@@ -173,8 +173,4 @@ export const bulkAddOrderedToReorderAction = editableAction
     await Promise.all(promises)
 
     revalidatePath(`/${ctx.lang}/genbestil`)
-    //
-    //if (responses.some(didUpdate => !didUpdate)) {
-    //  return 'Ikke alle bestillinger blev registreret'
-    //}
   })
