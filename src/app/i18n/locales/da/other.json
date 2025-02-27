@@ -26,7 +26,9 @@
     "barcode": "Stregkode",
     "cost-price": "Kostpris",
     "sales-price": "Salgspris",
-    "barred-tooltip": "Denne vare er spærret"
+    "barred-tooltip": "Denne vare er spærret",
+    "product-has-documents_one": "Der er {{count}} fil",
+    "product-has-documents": "Der er {{count}} filer"
   },
   "modal-import-products": {
     "something-went-wrong": "Noget gik galt med rækkerne fra",

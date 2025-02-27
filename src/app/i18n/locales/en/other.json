@@ -26,7 +26,9 @@
     "barcode": "Barcode",
     "cost-price": "Cost price",
     "sales-price": "Sales price",
-    "barred-tooltip": "This item is barred"
+    "barred-tooltip": "This item is barred",
+    "product-has-documents_one": "There is {{count}} file",
+    "product-has-documents": "There are {{count}} files"
   },
   "modal-import-products": {
     "something-went-wrong": "Something went wrong with the rows from",
