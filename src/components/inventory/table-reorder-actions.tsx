@@ -31,7 +31,8 @@ export function TableReorderActions({ table, row }: Props) {
             recommended: row.original.recommended,
             ordered: row.original.ordered,
           })
-        }>
+        }
+        tooltip={t('modal-add-ordered-reorder.title')}>
         <Icons.plus className='size-4' />
       </Button>
       <TableActionsWrapper>

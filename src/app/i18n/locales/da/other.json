@@ -105,5 +105,11 @@
     "size-desc_big": "Egnet til 100x192mm",
     "size_medium": "Medium",
     "size-desc_medium": "Egnet til 76x51mm"
+  },
+  "tooltips": {
+    "refresh": "Genindlæs data",
+    "download-inventory":"Download filtreret data",
+    "show-hide-show":"Gem/Vis kolonner",
+    "import-products": "Importer varekartotek"
   }
 }

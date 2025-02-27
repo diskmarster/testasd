@@ -30,7 +30,8 @@
 		"btn-close": "Close",
 		"btn-create": "Create",
 		"toast-error": "Supplier wat not created",
-		"toast-success": "Supplier was created"
+		"toast-success": "Supplier was created",
+   		"tooltip": "Create supplier"
 	},
 	"delete": {
 		"title": "Delete supplier?",

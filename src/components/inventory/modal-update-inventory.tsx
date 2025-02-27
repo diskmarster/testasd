@@ -193,7 +193,7 @@ export function ModalUpdateInventory({
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
+        <Button size='icon' variant='outline' tooltip={t('update-inventory')}>
           <Icons.plusMinus className='size-4' />
         </Button>
       </CredenzaTrigger>

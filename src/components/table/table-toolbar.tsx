@@ -17,6 +17,7 @@ import { LanguageContext } from '@/context/language'
 import { exportTableToCSV } from '@/lib/export/csv'
 import { cn } from '@/lib/utils'
 import { Column, Table } from '@tanstack/react-table'
+import { t } from 'i18next'
 import { usePathname } from 'next/navigation'
 import {
 	useContext,
@@ -87,6 +88,8 @@ export function TableToolbar<T>({
 
 function DownloadButton<T>({ table }: { table: Table<T> }) {
 	const [pending, startTransition] = useTransition()
+	const lng = useContext(LanguageContext)
+	const { t } =useTranslation(lng, 'other')
 	return (
 		<Button
 			variant='outline'
@@ -98,7 +101,8 @@ function DownloadButton<T>({ table }: { table: Table<T> }) {
 						excludeColumns: ['select', 'actions'],
 					})
 				})
-			}}>
+			}}
+			tooltip={t('tooltips.download-inventory')}>
 			{pending ? (
 				<Icons.spinner className='size-4 animate-spin' />
 			) : (
@@ -114,7 +118,7 @@ export function ViewOptions<T>({ table }: { table: Table<T> }) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant='outline' size='icon'>
+				<Button variant='outline' size='icon' tooltip={t('tooltips.show-hide-show')}>
 					<Icons.columns className='size-4' />
 				</Button>
 			</DropdownMenuTrigger>
@@ -170,7 +174,8 @@ export function ButtonRefreshOverview() {
 				variant='outline'
 				className='flex items-center justify-center'
 				onClick={onSubmit}
-				disabled={pending}>
+				disabled={pending}
+				tooltip={t('tooltips.refresh')}>
 				<Icons.refresh
 					className={cn('size-4', isAnimating && 'animate-spin-refresh')}
 				/>

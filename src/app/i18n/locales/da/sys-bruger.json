@@ -72,7 +72,8 @@
     "send-button_true": "Inviter",
     "send-button_false": "Opret",
     "success-toast": "Bruger er oprettet",
-    "mail-checkbox": "Send en mail til brugeren med login information"
+    "mail-checkbox": "Send en mail til brugeren med login information",
+    "tooltip": "Inviter/Opret ny bruger"
   },
   "invite-create-action": {
     "email-already-exists": "En bruger med den e-mail findes allerede",

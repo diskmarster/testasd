@@ -109,5 +109,8 @@
 			"file-not-deleted-database": "File was deleted but still exist in our database",
 			"file-not-deleted-both": "File was not deleted. Try again"
 		}
+	},
+	"tooltips": {
+		"create-product":"Create product"
 	}
 }

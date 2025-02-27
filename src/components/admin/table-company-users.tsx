@@ -37,6 +37,7 @@ import { useTranslation } from '@/app/i18n/client'
 import { getTableUsersColumns, getTableUsersFilters } from '@/app/[lng]/(site)/administration/organisation/user-columns'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { HandleFilterChangeFN } from '@/hooks/use-url-filtering'
+import { useSearchParams } from 'next/navigation'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -56,7 +57,8 @@ export function TableAdminUsers({ data, user, columnFilters, handleColumnFilters
   const { t } = useTranslation(lng, 'organisation')
   const columns = useMemo(() => getTableUsersColumns(user.role, lng, t), [user.role, lng, t])
 
-  const [sorting, handleSortingChange] = useUrlSorting()
+	const mutableSearchParams = new URLSearchParams(useSearchParams())
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)

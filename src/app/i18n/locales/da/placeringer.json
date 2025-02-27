@@ -36,7 +36,8 @@
     "description": "Her kan du oprette en ny placering.",
     "placement": "Placering",
     "placement-placeholder": "Indtast navn på ny placering",
-    "create-button": "Opret"
+    "create-button": "Opret",
+    "tooltip": "Opret placering"
   },
   "modal-update-placement": {
     "title": "Opdater placering",

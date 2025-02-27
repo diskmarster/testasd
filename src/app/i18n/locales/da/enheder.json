@@ -16,7 +16,8 @@
     "create-unit-description": "Her kan du oprette en ny enhed",
     "unit-name": "Enhedsnavn",
     "unit-name-placeholder": "Indtast enhedsnavn",
-    "create-button": "Opret"
+    "create-button": "Opret",
+    "tooltip":"Opret enhed"
   },
 
   "modal-update-unit": {

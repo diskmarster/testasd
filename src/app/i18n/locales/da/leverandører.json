@@ -30,7 +30,8 @@
 		"btn-close": "Luk",
 		"btn-create": "Opret",
 		"toast-error": "Leverandør blev ikke oprettet",
-		"toast-success": "Leverandør blev oprettet"
+		"toast-success": "Leverandør blev oprettet",
+   		"tooltip": "Opret leverandør"
 	},
 	"delete": {
 		"title": "Slet leverandør?",

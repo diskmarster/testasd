@@ -63,7 +63,7 @@ export function ModalCreateProductGroup() {
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
+        <Button size='icon' variant='outline' tooltip={t('create-product-group-modal.tooltip')}>
           <Icons.plus className='size-4' />
         </Button>
       </CredenzaTrigger>

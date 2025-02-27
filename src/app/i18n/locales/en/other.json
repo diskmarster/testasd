@@ -105,5 +105,11 @@
     "size-desc_big": "Best for 100x192mm",
     "size_medium": "Medium",
     "size-desc_medium": "Best for 76x51mm"
+  },
+  "tooltips": {
+    "refresh": "Reload data",
+    "download-inventory":"Download filtered data",
+    "show-hide-show":"Show/Hide Columns",
+    "import-products": "Import product catalog"
   }
 }
