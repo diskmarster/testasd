@@ -50,7 +50,8 @@ export function TabsAdmin({
 	const tabs = ['brugere', 'lokationer', 'firma']
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'organisation')
-	const [columnFilters, handleFilterChange] = useUrlFiltering()
+	const mutableSearchParams = new URLSearchParams(useSearchParams())
+	const [columnFilters, handleFilterChange] = useUrlFiltering(mutableSearchParams)
 
 	function createTabParam(val: string) {
 		const params = new URLSearchParams()
