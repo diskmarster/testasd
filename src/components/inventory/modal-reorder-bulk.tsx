@@ -2,7 +2,7 @@
 
 import { useTranslation } from "@/app/i18n/client"
 import { useLanguage } from "@/context/language"
-import { useState, useTransition } from "react"
+import { useMemo, useState, useTransition } from "react"
 import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogTriggerV2, DialogV2 } from "../ui/dialog-v2"
 import { Button } from "../ui/button"
 import { Icons } from "../ui/icons"
@@ -21,28 +21,29 @@ import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 
 interface Props {
-	locationID: string
 	reorders: FormattedReorder[]
 }
 
-export function ModalBulkReorder({ reorders, locationID }: Props) {
+export function ModalBulkReorder({ reorders }: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "genbestil")
 	const [pending, startTransition] = useTransition()
 	const [open, setOpen] = useState(false)
-	const schema = bulkAddOrderedToReorderValidation(t)
+	const schema = useMemo(() => bulkAddOrderedToReorderValidation(t), [t]);
 
-	const redReorders = reorders.filter(r => r.quantity < r.minimum && r.ordered < r.recommended)
+	const redReorders = useMemo(() => {
+		return reorders.filter(r => r.quantity < r.minimum && r.ordered < r.recommended)
+	}, [reorders])
 
 	const { handleSubmit, reset, register, setValue, watch, formState, control } = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			locationID: locationID,
 			items: redReorders.map(r => ({
 				text1: r.product.text1,
 				sku: r.product.sku,
 				productID: r.productID,
-				amount: r.recommended,
+				ordered: r.recommended,
+				alreadyOrdered: r.ordered
 			}))
 		}
 	})
@@ -51,15 +52,28 @@ export function ModalBulkReorder({ reorders, locationID }: Props) {
 
 	const formValues = watch()
 
-	const selectedProductIDs = new Set(formValues.items.map(item => item.productID))
-	const selectableReorders = reorders.filter(r => !selectedProductIDs.has(r.productID))
+	const selectedProductIDs = useMemo(() => {
+		return new Set(formValues.items.map(item => item.productID))
+	}, [formValues.items])
+
+	const selectableReorders = useMemo(() => {
+		return reorders.filter(r => !selectedProductIDs.has(r.productID))
+	}, [reorders, selectedProductIDs])
 
 	function onOpenChange(open: boolean) {
-		reset()
+		reset({
+			items: redReorders.map(r => ({
+				text1: r.product.text1,
+				sku: r.product.sku,
+				productID: r.productID,
+				ordered: r.recommended,
+				alreadyOrdered: r.ordered
+			}))
+		})
 		setOpen(open)
 	}
 
-	function onSubmit(values: any) {
+	function onSubmit(values: z.infer<typeof schema>) {
 		startTransition(async () => {
 			const res = await bulkAddOrderedToReorderAction(values)
 			if (res && res.serverError) {
@@ -100,12 +114,12 @@ export function ModalBulkReorder({ reorders, locationID }: Props) {
 						<div className="space-y-2">
 							{fields.length == 0 && (
 								<p className="text-sm text-muted-foreground">
-									Tilføj vare for at fortsætte
+									{t("bulk.add-rows-continue")}
 								</p>
 							)}
 							{fields.map((field, index) => (
 								<ReorderField
-									key={`${field.id}-${index}`}
+									key={field.id}
 									field={field}
 									index={index}
 									remove={remove}
@@ -121,17 +135,17 @@ export function ModalBulkReorder({ reorders, locationID }: Props) {
 							<Button
 								size='sm'
 								variant='outline'
-								onClick={() => append({ sku: "", amount: 0, productID: 0, text1: "" })}
+								onClick={() => append({ sku: "", ordered: 0, alreadyOrdered: 0, productID: 0, text1: "" })}
 								className="flex items-center gap-2">
 								<Icons.plus className="size-3 text-primary" />
-								Tilføj vare
+								{t("bulk.add-rows-btn")}
 							</Button>
 						)}
 					</div>
 				</form>
 				<DialogFooterV2>
 					<Button onClick={() => onOpenChange(false)} size='sm' variant='outline'>{t("bulk.btn-close")}</Button>
-					<Button disabled={pending || !formState.isValid || fields.length == 0} size='sm' form="create-form" type="submit" className="flex items-center gap-2">
+					<Button disabled={pending || !formState.isValid} size='sm' form="create-form" type="submit" className="flex items-center gap-2">
 						{pending && (
 							<Icons.spinner className="size-3.5 animate-spin" />
 						)}
@@ -144,34 +158,34 @@ export function ModalBulkReorder({ reorders, locationID }: Props) {
 }
 
 interface FieldProps {
-	field: { text1: string, sku: string, productID: number, amount: number }
+	field: { text1: string, sku: string, productID: number, ordered: number, alreadyOrdered: number }
 	index: number
 	remove: UseFieldArrayRemove
 	register: UseFormRegister<{
-		locationID: string;
 		items: {
 			text1: string
 			sku: string;
 			productID: number;
-			amount: number;
+			ordered: number;
+			alreadyOrdered: number;
 		}[];
 	}>
 	formState: FormState<{
-		locationID: string;
 		items: {
 			text1: string
 			sku: string;
 			productID: number;
-			amount: number;
+			ordered: number;
+			alreadyOrdered: number;
 		}[];
 	}>
 	setValue: UseFormSetValue<{
-		locationID: string;
 		items: {
 			text1: string;
 			sku: string;
 			productID: number;
-			amount: number;
+			ordered: number;
+			alreadyOrdered: number;
 		}[];
 	}>
 	reorders: FormattedReorder[]
@@ -186,7 +200,7 @@ function ReorderField({ field, index, remove, register, setValue, reorders, sele
 	return (
 		<div className="flex items-end gap-2">
 			<div className="grid gap-1.5 w-[60%]">
-				<Label className={cn('', index !== 0 && 'hidden')}>Varenr.</Label>
+				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.sku")}</Label>
 				<Popover open={open} onOpenChange={setOpen}>
 					<PopoverTrigger asChild>
 						<Button
@@ -197,16 +211,16 @@ function ReorderField({ field, index, remove, register, setValue, reorders, sele
 							<p className="max-w-[80%] truncate">
 								{search
 									? reorders.find((p) => p.product.text1 === search)?.product.text1
-									: "Vælg vare"}
+									: t("bulk.sku-placeholder")}
 							</p>
 							<Icons.chevronDownUp className="opacity-50 size-4" />
 						</Button>
 					</PopoverTrigger>
 					<PopoverContent className="p-0 min-w-96 max-w-96">
 						<Command>
-							<CommandInput placeholder="Søg efter vare..." className="h-9" />
+							<CommandInput placeholder={t("bulk.sku-search")} className="h-9" />
 							<CommandList>
-								<CommandEmpty>Ingen varer fundet</CommandEmpty>
+								<CommandEmpty>{t("bulk.sku-no-items")}</CommandEmpty>
 								<CommandGroup>
 									{selectableReorders.slice(0, 50).map((p, i) => (
 										<CommandItem
@@ -236,12 +250,12 @@ function ReorderField({ field, index, remove, register, setValue, reorders, sele
 				</Popover>
 			</div>
 			<div className="grid gap-1.5 w-[30%]">
-				<Label className={cn('', index !== 0 && 'hidden')}>Antal</Label>
+				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.qty")}</Label>
 				<Input
-					{...register(`items.${index}.amount`)}
+					{...register(`items.${index}.ordered` as const)}
 					className={cn(
 						'',
-						formState.errors.items && formState.errors.items[index]?.amount && 'focus-visible:ring-destructive border-destructive'
+						formState.errors.items && formState.errors.items[index]?.ordered && 'focus-visible:ring-destructive border-destructive'
 					)}
 				/>
 			</div>

@@ -19,7 +19,11 @@ export const createReorderAction = editableAction
   .schema(async () => await getSchema(createReorderValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const existsLocation = await locationService.getByID(parsedInput.locationID)
+		const locationID = await locationService.getLastVisited(ctx.user.id)
+    if (!locationID) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+    const existsLocation = await locationService.getByID(locationID)
     if (!existsLocation) {
       throw new ActionError(t('restock-action.company-location-not-found'))
     }
@@ -31,6 +35,7 @@ export const createReorderAction = editableAction
 
     const newReorder = await inventoryService.createReorder({
       ...parsedInput,
+			locationID: existsLocation.id,
       customerID: ctx.user.customerID,
     })
     if (!newReorder) {
@@ -137,7 +142,11 @@ export const bulkAddOrderedToReorderAction = editableAction
   )
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const existsLocation = await locationService.getByID(parsedInput.locationID)
+		const locationID = await locationService.getLastVisited(ctx.user.id)
+    if (!locationID) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+    const existsLocation = await locationService.getByID(locationID)
     if (!existsLocation) {
       throw new ActionError(t('restock-action.company-location-not-found'))
     }
@@ -152,20 +161,20 @@ export const bulkAddOrderedToReorderAction = editableAction
     for (const reorder of parsedInput.items) {
       const addPromise = inventoryService.updateReorderByIDs(
         reorder.productID,
-        parsedInput.locationID,
+        locationID,
         ctx.user.customerID,
         {
-          ordered: reorder.amount,
+          ordered: reorder.ordered + reorder.alreadyOrdered,
         },
       )
       promises.push(addPromise)
     }
 
-    const responses = await Promise.all(promises)
+    await Promise.all(promises)
 
     revalidatePath(`/${ctx.lang}/genbestil`)
-
-    if (responses.some(didUpdate => !didUpdate)) {
-      return 'Ikke alle bestillinger blev registreret'
-    }
+    //
+    //if (responses.some(didUpdate => !didUpdate)) {
+    //  return 'Ikke alle bestillinger blev registreret'
+    //}
   })

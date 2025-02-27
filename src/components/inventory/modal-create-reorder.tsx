@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { LocationID } from '@/lib/database/schema/customer'
 import { Product } from '@/lib/database/schema/inventory'
 import { cn, formatNumber, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -22,11 +21,10 @@ import { Label } from '../ui/label'
 import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogTriggerV2, DialogV2 } from '../ui/dialog-v2'
 
 interface Props {
-  locationID: LocationID
   products: Product[]
 }
 
-export function ModalCreateReorder({ locationID, products }: Props) {
+export function ModalCreateReorder({ products }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [searchValue, setSearchValue] = useState<string>('')
@@ -57,7 +55,6 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   >({
     resolver: zodResolver(schema),
     defaultValues: {
-      locationID: locationID,
       minimum: 0,
       buffer: 0,
     },
