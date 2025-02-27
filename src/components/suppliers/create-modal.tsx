@@ -59,7 +59,7 @@ export function CreateSupplierModal({ }: Props) {
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
 			<DialogTriggerV2 asChild>
-				<Button variant='outline' size='icon'>
+				<Button variant='outline' size='icon' tooltip={t('create.tooltip')}>
 					<Icons.plus className="size-4" />
 				</Button>
 			</DialogTriggerV2>

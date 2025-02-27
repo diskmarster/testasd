@@ -115,7 +115,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
+        <Button size='icon' variant='outline' tooltip={t('modal-create-reorder.title')}>
           <Icons.plus className='size-4' />
         </Button>
       </CredenzaTrigger>

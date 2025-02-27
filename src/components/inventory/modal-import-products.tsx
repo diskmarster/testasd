@@ -118,7 +118,7 @@ export function ModalImportProducts() {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button size='icon' variant='outline' onClick={() => setOpen(true)}>
+        <Button size='icon' variant='outline' onClick={() => setOpen(true)} tooltip={t('tooltips.import-products')}>
           <Icons.cloudUpload className='size-[18px]' />
         </Button>
       </DialogTrigger>
