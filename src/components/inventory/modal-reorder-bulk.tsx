@@ -230,6 +230,7 @@ function ReorderField({ field, index, remove, register, setValue, reorders, sele
 												setValue(`items.${index}.productID`, p.productID, { shouldValidate: true })
 												setValue(`items.${index}.sku`, p.product.sku, { shouldValidate: true })
 												setValue(`items.${index}.text1`, p.product.text1, { shouldValidate: true })
+												setValue(`items.${index}.alreadyOrdered`, p.ordered, { shouldValidate: true })
 												setSearch(currentValue === search ? "" : currentValue)
 												setOpen(false)
 											}}
