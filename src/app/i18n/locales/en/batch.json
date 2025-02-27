@@ -23,7 +23,8 @@
     "expiration-date": "Expiration date",
     "choose-date": "Choose date",
     "create-batch-button": "Create batch",
-    "credenza-description": "Please fill in the information to create a new batch number"
+    "credenza-description": "Please fill in the information to create a new batch number",
+    "tooltip": "Create batch"
   },
   "modal-update-batch": {
     "no-batch-to-edit": "No batch to edit",

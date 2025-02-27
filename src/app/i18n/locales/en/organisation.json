@@ -132,7 +132,8 @@
     "user-rights": "Rights",
     "user-rights-web": "User must have access to web",
     "user-rights-app": "User must have access to app",
-    "user-rights-prices": "User must have access to view prices"
+    "user-rights-prices": "User must have access to view prices",
+    "tooltip": "Invite new user"
   },
   "modal-create-location": {
     "title": "Create new location",

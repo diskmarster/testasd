@@ -132,7 +132,8 @@
     "user-rights": "Rettigheder",
     "user-rights-web": "Bruger skal have adgang til web",
     "user-rights-app": "Bruger skal have adgang til app",
-    "user-rights-prices": "Bruger skal have adgang til at se priser"
+    "user-rights-prices": "Bruger skal have adgang til at se priser",
+    "tooltip": "Inviter ny bruger"
   },
   "modal-create-location": {
     "title": "Opret ny lokation",

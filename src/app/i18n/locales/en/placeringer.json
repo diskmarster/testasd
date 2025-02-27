@@ -37,7 +37,8 @@
     "placement": "Placement",
     "placement-placeholder": "Enter name for new placement",
     "autocomplete-empty-message": "Nothing found.",
-    "create-button": "Create"
+    "create-button": "Create",
+    "tooltip": "Create placement"
   },
   "modal-update-placement": {
     "title": "Update placement",

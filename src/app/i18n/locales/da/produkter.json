@@ -54,7 +54,7 @@
 			"key_productText2": "Varetekst 2",
 			"key_productText3": "Varetekst 3",
 			"key_productSku": "Varenr.",
-"key_productBarcode": "Stregkdoe",
+			"key_productBarcode": "Stregkdoe",
 			"key_productCostPrice": "Kostpris",
 			"key_productSalesPrice": "Salgspris",
 			"key_productIsBarred": "Spærret",
@@ -108,5 +108,8 @@
 			"file-not-deleted-database": "Filen blev ikke slettet men den er ikke længere knyttet til jeres firma",
 			"file-not-deleted-both": "Filen blev ikke slettet. Prøv igen."
 		}
+	},
+	"tooltips": {
+		"create-product":"Opret vare"
 	}
 }
