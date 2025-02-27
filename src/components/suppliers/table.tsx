@@ -36,6 +36,7 @@ import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { getSupplierColumns, getSupplierFilters } from '@/app/[lng]/(site)/administration/leverandorer/columns'
 import { SupplierWithItemCount } from '@/data/suppliers.types'
+import { useSearchParams } from 'next/navigation'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -52,8 +53,9 @@ export function SuppliersTable({ suppliers }: Props) {
 	const { t } = useTranslation(lng, 'leverandører')
 	const columns = useMemo(() => getSupplierColumns(t), [t])
 
-	const [sorting, handleSortingChange] = useUrlSorting()
-	const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
+	const mutableSearchParams = new URLSearchParams(useSearchParams())
+	const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+	const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 	const [mounted, setMounted] = useState(false)

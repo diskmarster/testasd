@@ -37,6 +37,7 @@ import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useSearchParams } from 'next/navigation'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -55,8 +56,9 @@ export function TableErrors({
   const FILTERS_KEY = 'inventory_filters'
   const columns = useMemo(() => getTableErrorsColumns(t), [t])
 
-  const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
+	const mutableSearchParams = new URLSearchParams(useSearchParams())
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [grouping, setGrouping] = useState<GroupingState>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
