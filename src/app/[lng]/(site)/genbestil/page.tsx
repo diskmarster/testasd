@@ -25,7 +25,6 @@ async function Page({ params: { lng }, user, customer }: Props) {
 		signOutAction()
 		return
 	}
-
 	const products = await inventoryService.getActiveProductsByID(customer.id)
 	const reorders = await inventoryService.getReordersByID(location)
 	const units = await inventoryService.getActiveUnits()
@@ -42,12 +41,10 @@ async function Page({ params: { lng }, user, customer }: Props) {
 			actions={
 				<>
 					<ModalBulkReorder
-						locationID={location}
 						reorders={reorders}
 					/>
 					<ModalCreateReorder
 						products={productsWithNoReorder}
-						locationID={location}
 					/>
 				</>
 			}>
