@@ -63,10 +63,10 @@
 		"update-button": "Opdater"
 	},
 	"modal-delete-reorder": {
-		"title": "Slet minimums beholdning",
+		"title": "Slet minimums beholdning?",
 		"description": "Denne handling er permanent og kan ikke fortrydes. Hvis der er registreret et bestilt antal, vil denne ikke længere opdateres.",
-		"cancel-button": "Annuller",
-		"delete-button": "Slet"
+		"cancel-button": "Nej",
+		"delete-button": "Ja, slet minimums beholdning"
 	},
 	"modal-add-ordered-reorder": {
 		"title": "Tilføj bestilt antal",

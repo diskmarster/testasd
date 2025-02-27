@@ -24,6 +24,7 @@ import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogV2 } from '../ui/dialog-v2'
 
 interface Props {
   products: Product[]
@@ -75,18 +76,18 @@ export function ModalDeleteReorder({ products }: Props) {
   }
 
   return (
-    <Credenza open={open} onOpenChange={onOpenChange}>
-      <CredenzaContent className='md:max-w-sm'>
-        <CredenzaHeader>
-          <CredenzaTitle>{t('modal-delete-reorder.title')}</CredenzaTitle>
-          <CredenzaDescription>
-            {t('modal-delete-reorder.description')}
-          </CredenzaDescription>
-        </CredenzaHeader>
-        <CredenzaBody>
+    <DialogV2 open={open} onOpenChange={onOpenChange}>
+      <DialogContentV2 className='md:max-w-sm'>
+        <DialogHeaderV2>
+					<div className="flex items-center gap-2">
+						<Icons.trash className="size-4 text-destructive" />
+						<DialogTitleV2 className='text-sm'>{t('modal-delete-reorder.title')}</DialogTitleV2>
+					</div>
+        </DialogHeaderV2>
           <form
+						id="delete-reorder-form"
             onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4 pb-4 md:pb-0'>
+            className='space-y-4  px-3'>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
@@ -94,30 +95,29 @@ export function ModalDeleteReorder({ products }: Props) {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <div className='flex flex-col gap-2 md:flex-row md:justify-end'>
-              <CredenzaClose asChild>
+					<p className="text-sm text-muted-foreground">{t("modal-delete-reorder.description")}</p>
+          </form>
+					<DialogFooterV2>
                 <Button
+								onClick={() => setOpen(false)}
                   type='button'
-                  size='lg'
-                  variant='secondary'
-                  className='w-full'>
+                  size='sm'
+                  variant='outline'>
                   {t('modal-delete-reorder.cancel-button')}
                 </Button>
-              </CredenzaClose>
               <Button
+								form='delete-reorder-form'
                 disabled={
                   !formState.isValid || pending || formState.isSubmitting
                 }
                 variant='destructive'
-                size='lg'
-                className='w-full gap-2'>
+                size='sm'
+                className='flex items-center gap-2'>
                 {pending && <Icons.spinner className='size-4 animate-spin' />}
                 {t('modal-delete-reorder.delete-button')}
               </Button>
-            </div>
-          </form>
-        </CredenzaBody>
-      </CredenzaContent>
-    </Credenza>
+					</DialogFooterV2>
+      </DialogContentV2>
+    </DialogV2>
   )
 }

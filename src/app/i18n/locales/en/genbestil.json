@@ -63,10 +63,10 @@
     "update-button": "Update"
   },
   "modal-delete-reorder": {
-    "title": "Delete minimum stock",
+    "title": "Delete minimum stock?",
     "description": "This action is permanent and cannot be undone. If there is an ordered quantity recorded, it will no longer be updated.",
-    "cancel-button": "Cancel",
-    "delete-button": "Delete"
+    "cancel-button": "No",
+    "delete-button": "Yes, delete minimum stock"
   },
   "modal-add-ordered-reorder": {
     "title": "Add ordered quantity",
