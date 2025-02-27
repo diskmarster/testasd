@@ -14,6 +14,7 @@
 		"choose": "Vælg",
 		"choose-dates": "Vælg datoer",
 		"search": "Søg",
+		"search-placeholder": "Søg i tabel",
 		"number-range": "til",
 		"number-range-empty": "Vælg {{label}}",
 		"number-range-to": "Til og med {{to}}",
