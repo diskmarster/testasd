@@ -104,7 +104,8 @@
     "reset-password": "Reset Password",
     "reset-pin": "Reset PIN",
     "same-user-tooltip": "You cannot edit your own user, go to profile instead",
-    "no-permission-tooltip": "You do not have permission to edit this user"
+    "no-permission-tooltip": "You do not have permission to edit this user",
+    "delete-user": "Delete user"
   },
   "form-company-edit": {
     "company-name": "Company name",
@@ -179,6 +180,12 @@
       "locationIDs_other": "At least {{count}} locations must be selected"
     }
   },
+  "modal-reset-userpin": {
+    "title": "Reset the users PIN",
+    "description": "This action sends a mail to the user with a link to reset their PIN",
+    "cancel-button": "Close",
+    "reset-button": "Reset PIN"
+  },
   "inventory-report-modal": {
     "report-title": "Reports",
     "card-label": "Inventory value",
@@ -191,5 +198,12 @@
     "download-button": "Download report as ",
     "file-format-label": "Filetype",
     "file-type-not-supported": "The chosen file format is not supported"
+  },
+  "modal-delete-user":{
+    "title": "Delete user",
+    "description": "This action is permanent and cannot be reversed",
+    "confirm-toast": "User has been deleted",
+    "cancel-button": "Close",
+    "confirm-button": "Delete user"
   }
 }

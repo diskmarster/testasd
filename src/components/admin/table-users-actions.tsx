@@ -77,6 +77,15 @@ export function TableUsersActions({ table, row }: Props) {
         }}>
         {t('table-users-actions.reset-pin')}
       </DropdownMenuItem>
+      <DropdownMenuItem
+        onClick={() => {
+          emitCustomEvent('DeleteUserByID', {
+            userID: row.original.id,
+            email: row.original.email,
+          })
+        }}>
+        {t('table-users-actions.delete-user')}
+      </DropdownMenuItem>
     </TableActionsWrapper>
   )
 }

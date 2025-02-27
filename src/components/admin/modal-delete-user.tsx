@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteUserAction } from '@/app/[lng]/(site)/sys/brugere/actions'
+import { deleteUserAction } from '@/app/[lng]/(site)/administration/organisation/actions'
 import { deleteUserByIDValidation } from '@/app/[lng]/(site)/sys/brugere/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'

@@ -24,6 +24,10 @@
     "location-not-created": "Noget gik galt under oprettelsen af lokationen",
     "activation-mail-not-sent": "Noget gik galt under afsendelsen af aktiveringsmailen"
   },
+  "delete-action":{
+    "delete-own-user": "Du kan ikke slette din egen bruger",
+    "delete-user-failed": "Brugeren blev ikke slettet"
+  },
   "register-action": {
     "link-no-longer-exist": "Registreringslinket eksisterer ikke længere",
     "expired-link": "Registreringslinket er udløbet",
