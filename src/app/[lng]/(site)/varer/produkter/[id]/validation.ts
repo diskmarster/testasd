@@ -20,6 +20,9 @@ export const updateProductValidation = (
       text3: z
         .string()
         .max(1000, t('products.product3-max-length', { num: 1000 })),
+      note:z
+        .string()
+        .max(1000, t('products.note-max-length', { num: 1000 })),
       sku: z
         .string()
         .min(1, t('products.sku-required'))
