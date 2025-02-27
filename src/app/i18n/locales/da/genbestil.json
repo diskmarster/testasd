@@ -84,10 +84,17 @@
 	"bulk": {
 		"title": "Registrer flere bestillinger",
 		"description": "Registrer dine genbestillinger nemt og hold lageret opdateret. Få overblik over bestilte varer og sikre, at beholdningen altid stemmer.",
+		"add-rows-continue": "Tilføj vare for at fortsætte",
+		"add-rows-btn": "Tilføj vare",
 		"btn-close": "Luk",
 		"btn-confirm": "Opret bestillinger",
 		"errors": {
 			"positive": "Skal være et positivt tal"
-		}
+		},
+		"sku": "Varenr.",
+		"sku-placeholder": "Vælg vare",
+		"sku-search": "Søg efter vare...",
+		"sku-no-items": "Ingen varer fundet",
+		"qty": "Antal"
 	}
 }
