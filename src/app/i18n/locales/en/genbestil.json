@@ -3,16 +3,13 @@
     "title": "Restock",
     "description": "Get an overview of which items are below a minimum stock quantity"
   },
-
   "table-reorder": {
     "no-minimum-stock": "No min. stock"
   },
-
   "table-reorder-actions": {
     "update": "Update",
     "delete": "Delete"
   },
-
   "reorder-columns": {
     "productNo": "Product No",
     "barcode": "Barcode",
@@ -29,7 +26,6 @@
 	"no-value": "no value",
 	"supplier": "Supplier"
   },
-
   "filter-placeholders": {
     "productNo": "Search product no",
     "barcode": "Search barcode",
@@ -55,7 +51,6 @@
     "create-button": "Create",
     "error-occured": "An error occurred."
   },
-
   "modal-update-reorder": {
     "title": "Update minimum stock",
     "description": "Get notified when an item falls below a selected minimum threshold",
@@ -67,12 +62,11 @@
     "recommended-reorder-calculation2": "over the minimum stock",
     "update-button": "Update"
   },
-
   "modal-delete-reorder": {
-    "title": "Delete minimum stock",
+    "title": "Delete minimum stock?",
     "description": "This action is permanent and cannot be undone. If there is an ordered quantity recorded, it will no longer be updated.",
-    "cancel-button": "Cancel",
-    "delete-button": "Delete"
+    "cancel-button": "No",
+    "delete-button": "Yes, delete minimum stock"
   },
   "modal-add-ordered-reorder": {
     "title": "Add ordered quantity",
@@ -86,5 +80,21 @@
     "create-reorder": "Minimum stock created for ",
     "delete-reorder": "Restock deleted for ",
     "update-reorder": "Restock updated for "
-  }
+  },
+	"bulk": {
+		"title": "Register multiple reorders",
+		"description": "Register your reorders easily and keep your inventory up to date. Get an overview of ordered items and ensure that stock levels are always accurate.",
+		"add-rows-continue": "Add items to continue",
+		"add-rows-btn": "Add item",
+		"btn-close": "Close",
+		"btn-confirm": "Register reorders",
+		"errors": {
+			"positive": "Needs to be a positive number"
+		},
+		"sku": "Sku",
+		"sku-placeholder": "Choose item",
+		"sku-search": "Search for items",
+		"sku-no-items": "No items found",
+		"qty": "Amount"
+	}
 }

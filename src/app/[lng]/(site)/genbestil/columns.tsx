@@ -114,7 +114,7 @@ export function getTableReorderColumns(
 				className={cn(
 					row.original.quantity < row.original.minimum && 'text-destructive',
 				)}>
-				{getValue<number>()}
+				{formatNumber(getValue<number>())}
 			</span>
 		),
 		filterFn: 'includesString',

@@ -5,19 +5,9 @@ import { createReorderValidation } from '@/app/[lng]/(site)/genbestil/validation
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import {
-  Credenza,
-  CredenzaBody,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { LocationID } from '@/lib/database/schema/customer'
 import { Product } from '@/lib/database/schema/inventory'
 import { cn, formatNumber, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -28,13 +18,13 @@ import { z } from 'zod'
 import { AutoComplete } from '../ui/autocomplete'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogTriggerV2, DialogV2 } from '../ui/dialog-v2'
 
 interface Props {
-  locationID: LocationID
   products: Product[]
 }
 
-export function ModalCreateReorder({ locationID, products }: Props) {
+export function ModalCreateReorder({ products }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [searchValue, setSearchValue] = useState<string>('')
@@ -65,7 +55,6 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   >({
     resolver: zodResolver(schema),
     defaultValues: {
-      locationID: locationID,
       minimum: 0,
       buffer: 0,
     },
@@ -113,23 +102,23 @@ export function ModalCreateReorder({ locationID, products }: Props) {
   }
 
   return (
-    <Credenza open={open} onOpenChange={onOpenChange}>
-      <CredenzaTrigger asChild>
+    <DialogV2 open={open} onOpenChange={onOpenChange}>
+      <DialogTriggerV2 asChild>
         <Button size='icon' variant='outline' tooltip={t('modal-create-reorder.title')}>
           <Icons.plus className='size-4' />
         </Button>
-      </CredenzaTrigger>
-      <CredenzaContent className='md:max-w-lg'>
-        <CredenzaHeader>
-          <CredenzaTitle>{t('modal-create-reorder.title')}</CredenzaTitle>
-          <CredenzaDescription>
-            {t('modal-create-reorder.description')}
-          </CredenzaDescription>
-        </CredenzaHeader>
-        <CredenzaBody>
+      </DialogTriggerV2>
+      <DialogContentV2 className='md:max-w-lg'>
+        <DialogHeaderV2>
+				<div className='flex items-center gap-2'>
+						<Icons.plus className="size-4 text-primary" />
+          <DialogTitleV2>{t('modal-create-reorder.title')}</DialogTitleV2>
+				</div>
+        </DialogHeaderV2>
           <form
+					id='create-reorder-form'
             onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4 pb-4 md:pb-0'>
+            className='space-y-4 px-3'>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
@@ -137,6 +126,9 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+					<p className="text-sm text-muted-foreground">
+            {t('modal-create-reorder.description')}
+					</p>
             <div className='grid gap-2'>
               <Label>{t('modal-create-reorder.product')}</Label>
               <AutoComplete
@@ -167,7 +159,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-14 w-28 border-r-0 rounded-r-none'
+                  className='h-12 w-28 border-r-0 rounded-r-none'
                   onClick={decrement}>
                   <Icons.minus className='size-6' />
                 </Button>
@@ -176,7 +168,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                   step={0.01}
                   {...register('minimum')}
                   className={cn(
-                    'w-full h-14 rounded-none text-center text-2xl z-10',
+                    'w-full h-12 rounded-none text-center text-2xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                   )}
                 />
@@ -185,7 +177,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-14 w-28 border-l-0 rounded-l-none'
+                  className='h-12 w-28 border-l-0 rounded-l-none'
                   onClick={increment}>
                   <Icons.plus className='size-6' />
                 </Button>
@@ -206,7 +198,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                   type='number'
                   {...register('buffer')}
                   className={cn(
-                    'w-full h-14 rounded-b-none text-center text-2xl z-10',
+                    'w-full h-12 rounded-b-none text-center text-xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                   )}
                 />
@@ -217,7 +209,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     type='button'
                     variant='outline'
                     className={cn(
-                      'h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0',
+                      'h-10 w-1/4 rounded-tl-none rounded-r-none border-t-0',
                       formValues.minimum != 0 &&
                         formValues.buffer != 0 &&
                         'rounded-l-none',
@@ -232,7 +224,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     size='icon'
                     type='button'
                     variant='outline'
-                    className='h-14 w-1/4 rounded-none border-t-0 border-l-0'
+                    className='h-10 w-1/4 rounded-none border-t-0 border-l-0'
                     onClick={() =>
                       setValue('buffer', 50, { shouldValidate: true })
                     }>
@@ -243,7 +235,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     size='icon'
                     type='button'
                     variant='outline'
-                    className='h-14 w-1/4 rounded-none border-t-0 border-l-0'
+                    className='h-10 w-1/4 rounded-none border-t-0 border-l-0'
                     onClick={() =>
                       setValue('buffer', 75, { shouldValidate: true })
                     }>
@@ -255,7 +247,7 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                     type='button'
                     variant='outline'
                     className={cn(
-                      'h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
+                      'h-10 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
                       formValues.minimum != 0 &&
                         formValues.buffer != 0 &&
                         'rounded-r-none',
@@ -292,16 +284,18 @@ export function ModalCreateReorder({ locationID, products }: Props) {
                 </p>
               )}
             </div>
+          </form>
+					<DialogFooterV2>
             <Button
+						form='create-reorder-form'
               disabled={!formState.isValid || pending || formState.isSubmitting}
-              size='lg'
-              className='w-full gap-2'>
+              size='sm'
+              className='gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
               {t('modal-create-reorder.create-button')}
             </Button>
-          </form>
-        </CredenzaBody>
-      </CredenzaContent>
-    </Credenza>
+					</DialogFooterV2>
+      </DialogContentV2>
+    </DialogV2>
   )
 }

@@ -49,12 +49,12 @@ export function NavLocationSelect({
       if (res && res.serverError) {
         toast.error(t(siteConfig.errorTitle), { description: res.serverError })
       }
-      {
-        toast.success(t(siteConfig.successTitle), {
-          description: `${t('toasts.location-select')} ${locations.find(loc => loc.id)?.name ?? t('toasts.unnamed')}`,
-        })
-        router.refresh()
-      }
+			toast.success(t(siteConfig.successTitle), {
+				description: `${t('toasts.location-select')} ${
+					locations.find(loc => loc.id === locationID)?.name ?? t('toasts.unnamed')
+				}`
+			})
+			router.refresh()
       updateChipCount()
     })
   }

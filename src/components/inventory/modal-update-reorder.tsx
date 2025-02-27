@@ -5,14 +5,6 @@ import { updateReorderValidation } from '@/app/[lng]/(site)/genbestil/validation
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import {
-  Credenza,
-  CredenzaBody,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
-} from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
@@ -26,6 +18,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogV2 } from '../ui/dialog-v2'
 
 interface Props {
   products: Product[]
@@ -80,28 +73,32 @@ export function ModalUpdateReorder({ products }: Props) {
         return
       }
 
-      setError(undefined)
-      reset()
-      setOpen(false)
+			onOpenChange(false)
       toast.success(t(`common:${siteConfig.successTitle}`), {
         description: `${t('toasts.update-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
       })
     })
   }
 
+	function onOpenChange(open: boolean) {
+      setError(undefined)
+      reset()
+      setOpen(open)
+	}
+
   return (
-    <Credenza open={open} onOpenChange={setOpen}>
-      <CredenzaContent className='md:max-w-lg'>
-        <CredenzaHeader>
-          <CredenzaTitle>{t('modal-update-reorder.title')}</CredenzaTitle>
-          <CredenzaDescription>
-            {t('modal-update-reorder.description')}
-          </CredenzaDescription>
-        </CredenzaHeader>
-        <CredenzaBody>
+    <DialogV2 open={open} onOpenChange={onOpenChange}>
+      <DialogContentV2 className='md:max-w-lg'>
+        <DialogHeaderV2>
+					<div className='flex items-center gap-2'>
+						<Icons.pencil className="size-4 text-primary" />
+						<DialogTitleV2>{t('modal-update-reorder.title')}</DialogTitleV2>
+					</div>
+        </DialogHeaderV2>
           <form
+						id='update-reorder-form'
             onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4 pb-4 md:pb-0'>
+            className='space-y-4 px-3'>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
@@ -109,6 +106,9 @@ export function ModalUpdateReorder({ products }: Props) {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+					<p className="text-sm text-muted-foreground">
+            {t('modal-update-reorder.description')}
+					</p>
             <div className='grid gap-2'>
               <Label>{t('modal-update-reorder.product')}</Label>
               <Input
@@ -131,7 +131,7 @@ export function ModalUpdateReorder({ products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-14 w-28 border-r-0 rounded-r-none'
+                  className='h-12 w-28 border-r-0 rounded-r-none'
                   onClick={decrement}>
                   <Icons.minus className='size-6' />
                 </Button>
@@ -140,7 +140,7 @@ export function ModalUpdateReorder({ products }: Props) {
                   step={0.01}
                   {...register('minimum')}
                   className={cn(
-                    'w-full h-14 rounded-none text-center text-2xl z-10',
+                    'w-full h-12 rounded-none text-center text-xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                   )}
                 />
@@ -149,7 +149,7 @@ export function ModalUpdateReorder({ products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-14 w-28 border-l-0 rounded-l-none'
+                  className='h-12 w-28 border-l-0 rounded-l-none'
                   onClick={increment}>
                   <Icons.plus className='size-6' />
                 </Button>
@@ -171,7 +171,7 @@ export function ModalUpdateReorder({ products }: Props) {
                   step={0.01}
                   {...register('buffer')}
                   className={cn(
-                    'w-full h-14 rounded-b-none text-center text-2xl z-10',
+                    'w-full h-12 rounded-b-none text-center text-xl z-10 shadow-none',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                   )}
                 />
@@ -182,7 +182,7 @@ export function ModalUpdateReorder({ products }: Props) {
                     type='button'
                     variant='outline'
                     className={cn(
-                      'h-14 w-1/4 rounded-tl-none rounded-r-none border-t-0',
+                      'h-10 w-1/4 rounded-tl-none rounded-r-none border-t-0',
                       formValues.minimum != 0 &&
                       formValues.buffer != 0 &&
                       'rounded-1-none',
@@ -195,7 +195,7 @@ export function ModalUpdateReorder({ products }: Props) {
                     size='icon'
                     type='button'
                     variant='outline'
-                    className='h-14 w-1/4 rounded-none border-t-0 border-l-0'
+                    className='h-10 w-1/4 rounded-none border-t-0 border-l-0'
                     onClick={() => setValue('buffer', 50)}>
                     50%
                   </Button>
@@ -204,7 +204,7 @@ export function ModalUpdateReorder({ products }: Props) {
                     size='icon'
                     type='button'
                     variant='outline'
-                    className='h-14 w-1/4 rounded-none border-t-0 border-l-0'
+                    className='h-10 w-1/4 rounded-none border-t-0 border-l-0'
                     onClick={() => setValue('buffer', 75)}>
                     75%
                   </Button>
@@ -214,7 +214,7 @@ export function ModalUpdateReorder({ products }: Props) {
                     type='button'
                     variant='outline'
                     className={cn(
-                      'h-14 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
+                      'h-10 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
                       formValues.minimum != 0 &&
                       formValues.buffer != 0 &&
                       'rounded-1-none',
@@ -247,16 +247,19 @@ export function ModalUpdateReorder({ products }: Props) {
                 </p>
               )}
             </div>
+          </form>
+					<DialogFooterV2>
+						<Button onClick={() => onOpenChange(false)} size='sm' variant='outline'>{t("bulk.btn-close")}</Button>
             <Button
               disabled={!formState.isValid || pending || formState.isSubmitting}
-              size='lg'
-              className='w-full gap-2'>
+              size='sm'
+							form='update-reorder-form'
+              className='flex items-center gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
               {t('modal-update-reorder.update-button')}
             </Button>
-          </form>
-        </CredenzaBody>
-      </CredenzaContent>
-    </Credenza>
+					</DialogFooterV2>
+      </DialogContentV2>
+    </DialogV2>
   )
 }
