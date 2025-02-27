@@ -104,7 +104,8 @@
     "reset-password": "Reset Password",
     "reset-pin": "Reset PIN",
     "same-user-tooltip": "You cannot edit your own user, go to profile instead",
-    "no-permission-tooltip": "You do not have permission to edit this user"
+    "no-permission-tooltip": "You do not have permission to edit this user",
+    "delete-user": "Delete user"
   },
   "form-company-edit": {
     "company-name": "Company name",

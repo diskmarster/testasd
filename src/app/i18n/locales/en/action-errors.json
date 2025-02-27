@@ -24,6 +24,10 @@
     "location-not-created": "Something went wrong while creating the location",
     "activation-mail-not-sent": "Something went wrong while sending the activation mail"
   },
+  "delete-action":{
+    "delete-own-user": "You cannot delete your own user",
+    "delete-user-failed": "User was not deleted"
+  },
   "register-action": {
     "link-no-longer-exist": "The registration link no longer exists",
     "expired-link": "The registration link has expired",

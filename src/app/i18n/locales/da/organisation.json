@@ -105,7 +105,8 @@
     "reset-password": "Nulstil adgangskode",
     "reset-pin": "Nulstil PIN",
     "same-user-tooltip": "Du må ikke ændre din egen bruger her, gå til din profil istedet",
-    "no-permission-tooltip": "Du har ikke tilladelse til at ændre denne bruger"
+    "no-permission-tooltip": "Du har ikke tilladelse til at ændre denne bruger",
+    "delete-user": "Slet bruger"
   },
   "form-company-edit": {
     "company-name": "Firma navn",
@@ -196,5 +197,12 @@
     "download-button": "Download rapport som ",
     "file-format-label": "Filtype",
     "file-type-not-supported": "Den valgte filtype understøttes ikke"
+  },
+  "modal-delete-user":{
+    "title": "Slet bruger",
+    "description": "Denne handling er permanent og kan ikke gøres om",
+    "confirm-toast": "Brugeren er blevet slettet",
+    "cancel-button": "Luk",
+    "confirm-button": "Slet bruger"
   }
 }
