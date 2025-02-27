@@ -40,7 +40,6 @@
     "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du redigerer lokationer.",
     "own-user": "Du kan ikke redigere din egen brugers rettigheder, så derfor er den ikke vist her."
   },
-  "modal-qr-print": {},
   "modal-toggle-location": {
     "title": "Skift lokationsstatus",
     "description": "Denne handling er ikke permanent. Hvis du aktiverer en lokation, kan den tilgås igen. Hvis du deaktiverer en lokation, kan den kun tilgås af administratorer, indtil den er genaktiveret.",
@@ -183,7 +182,7 @@
     "title": "Nulstil brugerens pinkode",
     "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres pinkode.",
     "cancel-button": "Luk",
-    "reset-button": "Nulstil"
+    "reset-button": "Nulstil PIN"
   },
   "inventory-report-modal": {
     "report-title": "Rapporter",

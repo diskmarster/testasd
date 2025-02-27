@@ -4,7 +4,7 @@
   },
   "modal-show-product-label": {
     "title": "Product label",
-    "description": "Print labels for your products",
+    "description": "Print labels for your product",
     "prod-no": "Prod. no.",
     "size": "Label size",
     "size_small": "Small",
@@ -94,7 +94,7 @@
   },
   "modal-show-user-label": {
     "title": "User Label",
-    "description": "Print labels for this user",
+    "description": "Print labels for {{username}}",
     "prod-no": "Email",
     "size": "Label size",
     "size_small": "Small",
