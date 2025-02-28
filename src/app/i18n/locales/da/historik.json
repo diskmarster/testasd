@@ -15,6 +15,7 @@
     "text2": "Varetekst 2",
     "text3": "Varetekst 3",
     "cost-price": "Kostpris",
+    "sale-price": "Salgspris",
     "unit": "Enhed",
     "quantity": "Antal",
     "placement": "Placering",
@@ -27,6 +28,8 @@
     "type_import": "Import",
     "reference": "Konto/sag",
     "user": "Bruger",
+    "total-sales": "Total (Salgspris)",
+    "total-costs": "Total (Kostpris)",
     "placeholders": {
       "productNo": "Søg i varenr.",
       "barcode": "Søg i stregkode",

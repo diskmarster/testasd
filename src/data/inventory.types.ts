@@ -56,6 +56,11 @@ export interface FormattedHistory extends History {
   user: UserNoHash
 }
 
+export interface HistoryWithSums extends History {
+  costTotal: number
+  salesTotal: number
+}
+
 export interface FormattedReorder extends Reorder {
   quantity: number
   recommended: number
