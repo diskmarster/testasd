@@ -1,8 +1,9 @@
-import { ModalShowProductCard } from '@/components/inventory/modal-show-product-card'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
+import { Icons } from '@/components/ui/icons'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByRank } from '@/data/user.types'
@@ -12,13 +13,14 @@ import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
+import Link from 'next/link'
 import { DateRange } from 'react-day-picker'
 
 export function getTableOverviewColumns(
   plan: Plan,
   user: User,
   lng: string,
-  t: (key: string) => string,
+  t: (key: string, opts?: any) => string,
 ): ColumnDef<FormattedInventory>[] {
   const skuCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.sku',
@@ -27,7 +29,29 @@ export function getTableOverviewColumns(
       <TableHeader column={column} title={t('product-No.')} />
     ),
     cell: ({ row }) => (
-      <ModalShowProductCard product={row.original.product} user={user} />
+			<Link className='flex items-center gap-1 cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
+				<p>{row.original.product.sku}</p>	
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<div className={cn('hidden size-4 rounded-full cursor-pointer pb-4', (row.original.product.fileCount != undefined && row.original.product.fileCount > 0) && 'block',)}> 
+								<Icons.filetext className={cn('size-4')}/>
+							</div>
+						</TooltipTrigger>
+						<TooltipContent className='bg-foreground text-background'>
+							{t('modal-show-product-card.product-has-documents', {count: row.original.product.fileCount})}
+						</TooltipContent>
+					</Tooltip>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<span className={cn('hidden size-1.5 rounded-full bg-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
+						</TooltipTrigger>
+						<TooltipContent className='bg-foreground text-background'>
+							{t('modal-show-product-card.barred-tooltip')}
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+			</Link>
     ),
     enableHiding: false,
     meta: {

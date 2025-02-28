@@ -1,4 +1,3 @@
-import { ModalShowProductCard } from '@/components/inventory/modal-show-product-card'
 import { TableReorderActions } from '@/components/inventory/table-reorder-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'

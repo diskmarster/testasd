@@ -26,6 +26,9 @@ interface Props {
 	user: User
 }
 
+/**
+	* @deprecated
+	*/
 export function ModalShowProductCard({ product, user }: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'other')
