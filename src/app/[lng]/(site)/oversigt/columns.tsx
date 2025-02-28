@@ -29,7 +29,7 @@ export function getTableOverviewColumns(
       <TableHeader column={column} title={t('product-No.')} />
     ),
     cell: ({ row }) => (
-			<Link className='flex items-center gap-1' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
+			<Link className='flex items-center gap-1 cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
 				<p>{row.original.product.sku}</p>	
 				<TooltipProvider>
 					<Tooltip>
