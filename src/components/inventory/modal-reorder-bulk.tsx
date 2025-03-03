@@ -78,12 +78,12 @@ export function ModalBulkReorder({ reorders }: Props) {
 			const res = await bulkAddOrderedToReorderAction(values)
 			if (res && res.serverError) {
 				toast.error(t(siteConfig.errorTitle), {
-					description: "Genbestillinger blev ikke registreret"
+					description: t('toasts.registration-failed')
 				})
 				return
 			}
 			toast.success(t(siteConfig.successTitle), {
-				description: "Genbestillinger blev registreret"
+				description: t('toasts.registration-success')
 			})
 			onOpenChange(false)
 		})
@@ -92,7 +92,7 @@ export function ModalBulkReorder({ reorders }: Props) {
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
 			<DialogTriggerV2 asChild>
-				<Button variant='outline' size='icon' tooltip="Registrer flere genbestillinger">
+				<Button variant='outline' size='icon' tooltip={t('bulk.tooltip')}>
 					<Icons.listPlus className="size-4" />
 				</Button>
 			</DialogTriggerV2>

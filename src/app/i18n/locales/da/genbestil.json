@@ -79,7 +79,9 @@
 		"add-ordered": "Bestilling registreret for ",
 		"create-reorder": "Minimums beholdning oprettet for ",
 		"delete-reorder": "Genbestilling slettet for ",
-		"update-reorder": "Genbestilling opdateret for "
+		"update-reorder": "Genbestilling opdateret for ",
+		"registration-failed": "Genbestillinger blev ikke registreret",
+		"registration-success": "Genbestillinger blev registreret."
 	},
 	"bulk": {
 		"title": "Registrer flere bestillinger",
@@ -95,6 +97,7 @@
 		"sku-placeholder": "Vælg vare",
 		"sku-search": "Søg efter vare...",
 		"sku-no-items": "Ingen varer fundet",
-		"qty": "Antal"
+		"qty": "Antal",
+		"tooltip": "Registrer bestillinger"
 	}
 }
