@@ -1,8 +1,8 @@
 import { TableHeader } from '@/components/table/table-header'
-import { FilterField } from '@/components/table/table-toolbar'
+import { FilterField, NumberRange } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Plan } from '@/data/customer.types'
-import { HistoryPlatform, HistoryType } from '@/data/inventory.types'
+import { HistoryPlatform, HistoryType, HistoryWithSums } from '@/data/inventory.types'
 import {
   Batch,
   Group,
@@ -10,6 +10,7 @@ import {
   Placement,
   Unit,
 } from '@/lib/database/schema/inventory'
+import { numberRangeFilterFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
@@ -22,8 +23,8 @@ export function getTableHistoryColumns(
   user: User,
   lng: string,
   t: TFunction<'historik', undefined>,
-): ColumnDef<History>[] {
-  const insertedCol: ColumnDef<History> = {
+): ColumnDef<HistoryWithSums>[] {
+  const insertedCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'inserted',
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.created')} />
@@ -56,7 +57,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const skuCol: ColumnDef<History> = {
+  const skuCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'productSku',
     id: 'sku',
     header: ({ column }) => (
@@ -68,7 +69,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const barcodeCol: ColumnDef<History> = {
+  const barcodeCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'productBarcode',
     id: 'barcode',
     header: ({ column }) => (
@@ -80,7 +81,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const groupCol: ColumnDef<History> = {
+  const groupCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'productGroupName',
     id: 'group',
     header: ({ column }) => (
@@ -95,7 +96,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const text1Col: ColumnDef<History> = {
+  const text1Col: ColumnDef<HistoryWithSums> = {
     accessorKey: 'productText1',
     id: 'text1',
     header: ({ column }) => (
@@ -107,7 +108,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const text2Col: ColumnDef<History> = {
+  const text2Col: ColumnDef<HistoryWithSums> = {
     accessorKey: 'productText2',
     id: 'text2',
     header: ({ column }) => (
@@ -119,7 +120,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const text3Col: ColumnDef<History> = {
+  const text3Col: ColumnDef<HistoryWithSums> = {
     accessorKey: 'productText3',
     id: 'text3',
     header: ({ column }) => (
@@ -131,7 +132,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const costPriceCol: ColumnDef<History> = {
+  const costPriceCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'productCostPrice',
     id: 'costPrice',
     header: ({ column }) => (
@@ -142,10 +143,23 @@ export function getTableHistoryColumns(
       viewLabel: t('history-columns.cost-price'),
       rightAlign: true,
     },
-    filterFn: 'weakEquals',
+    filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
   }
 
-  const unitCol: ColumnDef<History> = {
+  const salePriceCol: ColumnDef<HistoryWithSums> = {
+    accessorKey: 'productSalesPrice',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.sale-price')} />
+    ),
+    cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    meta: {
+      viewLabel: t('history-columns.sale-price'),
+      rightAlign: true,
+    },
+    filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
+  }
+
+  const unitCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'productUnitName',
     id: 'unit',
     header: ({ column }) => (
@@ -160,7 +174,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const typeCol: ColumnDef<History> = {
+  const typeCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'type',
     header: ({ column }) => <TableHeader column={column} title='Type' />,
     cell: ({ getValue }) => {
@@ -182,7 +196,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const amountCol: ColumnDef<History> = {
+  const amountCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'amount',
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.quantity')} />
@@ -200,10 +214,10 @@ export function getTableHistoryColumns(
       viewLabel: t('history-columns.quantity'),
       rightAlign: true,
     },
-    filterFn: 'weakEquals',
+    filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value),
   }
 
-  const placementCol: ColumnDef<History> = {
+  const placementCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'placementName',
     id: 'placement',
     header: ({ column }) => (
@@ -218,7 +232,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const batchCol: ColumnDef<History> = {
+  const batchCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'batchName',
     id: 'batch',
     header: ({ column }) => (
@@ -233,7 +247,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const platformCol: ColumnDef<History> = {
+  const platformCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'platform',
     header: ({ column }) => <TableHeader column={column} title='Platform' />,
     cell: ({ getValue }) => {
@@ -254,7 +268,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const refCol: ColumnDef<History> = {
+  const refCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'reference',
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.reference')} />
@@ -267,7 +281,7 @@ export function getTableHistoryColumns(
     },
   }
 
-  const userCol: ColumnDef<History> = {
+  const userCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'userName',
     id: 'user',
     header: ({ column }) => (
@@ -277,6 +291,31 @@ export function getTableHistoryColumns(
     meta: {
       viewLabel: t('history-columns.user'),
     },
+   
+  }
+
+  const totalSalesCol: ColumnDef<HistoryWithSums> = {
+    accessorKey: 'salesTotal',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.total-sales')} />
+    ),
+    cell: ({ row }) => numberToDKCurrency(row.original.salesTotal),
+    meta: {
+      viewLabel: t('history-columns.total-sales'),
+    },
+        filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
+  }
+
+  const totalCostCol: ColumnDef<HistoryWithSums> = {
+    accessorKey: 'costTotal',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.total-costs')} />
+    ),
+    cell: ({ row }) => numberToDKCurrency(row.original.costTotal),
+    meta: {
+      viewLabel: t('history-columns.total-costs'),
+    },
+        filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
   }
 
   switch (plan) {
@@ -290,12 +329,15 @@ export function getTableHistoryColumns(
         text2Col,
         text3Col,
         costPriceCol,
+        salePriceCol,
         unitCol,
         typeCol,
         amountCol,
         platformCol,
         userCol,
         refCol,
+        totalCostCol,
+        totalSalesCol,
       ].filter(col => user.priceAccess || col !== costPriceCol)
       return liteCols
     case 'basis':
@@ -308,6 +350,7 @@ export function getTableHistoryColumns(
         text2Col,
         text3Col,
         costPriceCol,
+        salePriceCol,
         unitCol,
         typeCol,
         amountCol,
@@ -315,6 +358,8 @@ export function getTableHistoryColumns(
         platformCol,
         userCol,
         refCol,
+        totalCostCol,
+        totalSalesCol,
       ].filter(col => user.priceAccess || col !== costPriceCol)
       return plusCols
     case 'pro':
@@ -327,6 +372,7 @@ export function getTableHistoryColumns(
         text2Col,
         text3Col,
         costPriceCol,
+        salePriceCol,
         unitCol,
         typeCol,
         amountCol,
@@ -335,6 +381,8 @@ export function getTableHistoryColumns(
         platformCol,
         userCol,
         refCol,
+        totalCostCol,
+        totalSalesCol,
       ].filter(col => user.priceAccess || col !== costPriceCol)
       return proCols
   }
@@ -342,22 +390,22 @@ export function getTableHistoryColumns(
 
 export function getTableHistoryFilters(
   plan: Plan,
-  table: Table<History>,
+  table: Table<HistoryWithSums>,
   units: Unit[],
   groups: Group[],
   placements: Placement[],
   batches: Batch[],
   lng: string,
   t: (key: string) => string,
-): FilterField<History>[] {
-  const insertedFilter: FilterField<History> = {
+): FilterField<HistoryWithSums>[] {
+  const insertedFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('inserted'),
     type: 'date-range',
     label: t('history-columns.created'),
     value: '',
   }
 
-  const skuFilter: FilterField<History> = {
+  const skuFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('sku'),
     type: 'text',
     label: t('history-columns.productNo'),
@@ -365,7 +413,7 @@ export function getTableHistoryFilters(
     placeholder: t('history-columns.placeholders.productNo'),
   }
 
-  const barcodeFilter: FilterField<History> = {
+  const barcodeFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('barcode'),
     type: 'text',
     label: t('history-columns.barcode'),
@@ -373,7 +421,7 @@ export function getTableHistoryFilters(
     placeholder: t('history-columns.placeholders.barcode'),
   }
 
-  const groupFilter: FilterField<History> = {
+  const groupFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('group'),
     type: 'select',
     label: t('history-columns.product-group'),
@@ -386,7 +434,7 @@ export function getTableHistoryFilters(
     ],
   }
 
-  const text1Filter: FilterField<History> = {
+  const text1Filter: FilterField<HistoryWithSums> = {
     column: table.getColumn('text1'),
     type: 'text',
     label: t('history-columns.text1'),
@@ -394,7 +442,7 @@ export function getTableHistoryFilters(
     placeholder: t('history-columns.placeholders.text1'),
   }
 
-  const text2Filter: FilterField<History> = {
+  const text2Filter: FilterField<HistoryWithSums> = {
     column: table.getColumn('text2'),
     type: 'text',
     label: t('history-columns.text2'),
@@ -402,7 +450,7 @@ export function getTableHistoryFilters(
     placeholder: t('history-columns.placeholders.text2'),
   }
 
-  const text3Filter: FilterField<History> = {
+  const text3Filter: FilterField<HistoryWithSums> = {
     column: table.getColumn('text3'),
     type: 'text',
     label: t('history-columns.text3'),
@@ -410,14 +458,21 @@ export function getTableHistoryFilters(
     placeholder: t('history-columns.placeholders.text3'),
   }
 
-  const costPriceFilter: FilterField<History> = {
+  const costPriceFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('costPrice'),
-    type: 'text',
+    type: 'number-range',
     label: t('history-columns.cost-price'),
     value: '',
   }
 
-  const unitFilter: FilterField<History> = {
+  const salePriceFilter: FilterField<HistoryWithSums> = {
+    column: table.getColumn('productSalesPrice'),
+    type: 'number-range',
+    label: t('history-columns.sale-price'),
+    value: '',
+  }
+
+  const unitFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('unit'),
     type: 'select',
     label: t('history-columns.unit'),
@@ -430,7 +485,7 @@ export function getTableHistoryFilters(
     ],
   }
 
-  const typeFilter: FilterField<History> = {
+  const typeFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('type'),
     type: 'select',
     label: 'Type',
@@ -446,14 +501,14 @@ export function getTableHistoryFilters(
     ],
   }
 
-  const amountFilter: FilterField<History> = {
+  const amountFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('amount'),
-    type: 'text',
+    type: 'number-range',
     label: t('history-columns.quantity'),
     value: '',
   }
 
-  const placementFilter: FilterField<History> = {
+  const placementFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('placement'),
     type: 'select',
     label: t('history-columns.placement'),
@@ -465,7 +520,7 @@ export function getTableHistoryFilters(
       })),
     ],
   }
-  const batchFilter: FilterField<History> = {
+  const batchFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('batch'),
     type: 'select',
     label: t('history-columns.batchNo'),
@@ -478,14 +533,14 @@ export function getTableHistoryFilters(
     ],
   }
 
-  const userFilter: FilterField<History> = {
+  const userFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('user'),
     type: 'text',
     label: t('history-columns.user'),
     value: '',
   }
 
-  const refFilter: FilterField<History> = {
+  const refFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('reference'),
     type: 'text',
     label: t('history-columns.reference'),
@@ -493,7 +548,7 @@ export function getTableHistoryFilters(
     value: '',
   }
 
-  const platformFilter: FilterField<History> = {
+  const platformFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('platform'),
     type: 'select',
     label: 'Platform',
@@ -502,6 +557,20 @@ export function getTableHistoryFilters(
       { value: 'web', label: 'Web' },
       { value: 'app', label: 'App' },
     ],
+  }
+
+  const totalSalesFilter: FilterField<HistoryWithSums> = {
+    column: table.getColumn('salesTotal'),
+    type: 'number-range',
+    label: t('history-columns.total-sales'),
+    value: ''
+  }
+
+  const totalCostFilter: FilterField<HistoryWithSums> = {
+    column: table.getColumn('costTotal'),
+    type: 'number-range',
+    label: t('history-columns.total-costs'),
+    value: ''
   }
 
   switch (plan) {
@@ -515,12 +584,15 @@ export function getTableHistoryFilters(
         text2Filter,
         text3Filter,
         costPriceFilter,
+        salePriceFilter,
         unitFilter,
         typeFilter,
         amountFilter,
         platformFilter,
         refFilter,
         userFilter,
+        totalCostFilter,
+        totalSalesFilter,
       ]
     case 'basis':
       return [
@@ -532,6 +604,7 @@ export function getTableHistoryFilters(
         text2Filter,
         text3Filter,
         costPriceFilter,
+        salePriceFilter,
         unitFilter,
         typeFilter,
         amountFilter,
@@ -539,6 +612,8 @@ export function getTableHistoryFilters(
         platformFilter,
         refFilter,
         userFilter,
+        totalCostFilter,
+        totalSalesFilter,
       ]
     case 'pro':
       return [
@@ -550,6 +625,7 @@ export function getTableHistoryFilters(
         text2Filter,
         text3Filter,
         costPriceFilter,
+        salePriceFilter,
         unitFilter,
         typeFilter,
         amountFilter,
@@ -558,6 +634,8 @@ export function getTableHistoryFilters(
         platformFilter,
         refFilter,
         userFilter,
+        totalCostFilter,
+        totalSalesFilter,
       ]
   }
 }

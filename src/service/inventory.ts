@@ -5,6 +5,7 @@ import {
   FormattedInventory,
   FormattedReorder,
   HistoryType,
+  HistoryWithSums,
 } from '@/data/inventory.types'
 import { product } from '@/data/products'
 import { db, TRX } from '@/lib/database'
@@ -412,8 +413,17 @@ export const inventoryService = {
   },
   getHistoryByLocationID: async function (
     locationID: LocationID,
-  ): Promise<History[]> {
-    return await inventory.getHistoryByLocationID(locationID)
+  ): Promise<HistoryWithSums[]> {
+
+    const history = await inventory.getHistoryByLocationID(locationID)
+
+    const newHistory = history.map(h => ({
+      ...h,
+      costTotal: h.amount * (h.productCostPrice ?? 0),
+      salesTotal: h.amount * (h.productSalesPrice ?? 0)
+    }))
+
+    return newHistory
   },
   createReorder: async function (
     reorderData: NewReorder,

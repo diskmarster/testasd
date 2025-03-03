@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/table'
 import { LanguageContext } from '@/context/language'
 import { Plan } from '@/data/customer.types'
+import { HistoryWithSums } from '@/data/inventory.types'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
@@ -46,7 +47,7 @@ const COLUMN_FILTERS_ENABLED = true
 const ROW_PER_PAGE = [25, 50, 75, 100]
 
 interface Props {
-  data: History[]
+  data: HistoryWithSums[]
   user: User
   plan: Plan
   units: Unit[]
