@@ -83,7 +83,7 @@ export function TableUsersActions({ table, row }: Props) {
             userID: row.original.id,
             email: row.original.email,
           })
-        }}>
+          }} className='!text-destructive'>
         {t('table-users-actions.delete-user')}
       </DropdownMenuItem>
     </TableActionsWrapper>

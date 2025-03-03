@@ -35,6 +35,7 @@ import { Switch } from '../ui/switch'
 import { useSession } from '@/context/session'
 import { editUserValidation } from '@/app/[lng]/(site)/administration/organisation/validation'
 import { editUserAction, getLocationsByUserIDAction } from '@/app/[lng]/(site)/administration/organisation/actions'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 interface Props { }
 
@@ -58,7 +59,7 @@ export function ModalEditUser({ }: Props) {
     .filter(
       role =>
         role != 'system_administrator' &&
-        role.toLowerCase().includes(searchRoles.toLowerCase()),
+        role.toLowerCase(),
     )
     .map(role => ({
       label: role.replace('_', ' '),
@@ -224,14 +225,10 @@ export function ModalEditUser({ }: Props) {
                     <div className='flex flex-col gap-2'>
                       <div className='grid gap-2'>
                         <Label>{t('modal-invite-user.role')}</Label>
-                        <AutoComplete
+                        <Select 
                           disabled={pending}
-                          className='capitalize'
-                          autoFocus={false}
-                          placeholder={t('modal-invite-user.role-placeholder')}
-                          emptyMessage={t('modal-invite-user.role-not-found')}
-                          items={rolesOptions}
-                          onSelectedValueChange={value => {
+                          value= {formValues.data.role}
+                          onValueChange={value => {
                             const role = value as UserRole
 
                             switch (role) {
@@ -271,20 +268,26 @@ export function ModalEditUser({ }: Props) {
                                 })
                                 break
                             }
+                            setValue('data.role', role, {shouldValidate: true })
+                          }}>
+                          <SelectTrigger className='capitalize'>
+                            <SelectValue
+                              placeholder={t('modal-invite-user.role-placeholder')} 
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {rolesOptions.map((l, i)=>(
+                            <SelectItem
+                            key={i}
+                            value={l.value}
+                            className='capitalize'>
+                              {l.label}
+                            </SelectItem>
+                          ))}
+                            </SelectContent>
+                            </Select>
 
-                            setValue('data.role', role, {
-                              shouldValidate: true,
-                              shouldDirty: true,
-                            })
-                          }}
-                          onSearchValueChange={setSearchRoles}
-                          selectedValue={
-                            formValues.data.role
-                              ? formValues.data.role.toString()
-                              : ''
-                          }
-                          searchValue={searchRoles}
-                        />
+                            
                         <div className='flex items-center gap-1 text-xs text-muted-foreground'>
                           <p>
                             {t('modal-invite-user.role-question')}{' '}
