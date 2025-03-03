@@ -28,8 +28,8 @@
     "type_import": "Import",
     "reference": "Konto/sag",
     "user": "Bruger",
-    "total-sales": "Total (Salgspris)",
-    "total-costs": "Total (Kostpris)",
+    "total-sales": "Salg (Total)",
+    "total-costs": "Kost (Total)",
     "placeholders": {
       "productNo": "Søg i varenr.",
       "barcode": "Søg i stregkode",

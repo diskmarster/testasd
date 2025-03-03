@@ -415,8 +415,6 @@ export const inventoryService = {
     locationID: LocationID,
   ): Promise<HistoryWithSums[]> {
 
-    let sum = 0;
-
     const history = await inventory.getHistoryByLocationID(locationID)
 
     const newHistory = history.map(h => ({

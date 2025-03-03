@@ -28,8 +28,8 @@
     "type_import": "Import",
     "reference": "Account/case",
     "user": "User",
-    "total-sales":"Total (Sales)",
-    "total-cost": "Total (Costs)",
+    "total-sales":"Sales (Total)",
+    "total-costs": "Costs (Total)",
     "placeholders": {
       "productNo": "Search by product no.",
       "barcode": "Search by barcode",
