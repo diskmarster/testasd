@@ -13,7 +13,6 @@ import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
-import { Text } from 'lucide-react'
 import Link from 'next/link'
 import { DateRange } from 'react-day-picker'
 
