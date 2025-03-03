@@ -225,9 +225,9 @@ export function ModalEditUser({ }: Props) {
                     <div className='flex flex-col gap-2'>
                       <div className='grid gap-2'>
                         <Label>{t('modal-invite-user.role')}</Label>
-                        <Select 
+                        <Select
                           disabled={pending}
-                          value= {formValues.data.role}
+                          value={formValues.data.role}
                           onValueChange={value => {
                             const role = value as UserRole
 
@@ -268,25 +268,28 @@ export function ModalEditUser({ }: Props) {
                                 })
                                 break
                             }
-                            setValue('data.role', role, {shouldValidate: true })
+                            setValue('data.role', role, {
+                              shouldValidate: true,
+                            })
                           }}>
                           <SelectTrigger className='capitalize'>
                             <SelectValue
-                              placeholder={t('modal-invite-user.role-placeholder')} 
+                              placeholder={t(
+                                'modal-invite-user.role-placeholder',
+                              )}
                             />
                           </SelectTrigger>
                           <SelectContent>
-                            {rolesOptions.map((l, i)=>(
-                            <SelectItem
-                            key={i}
-                            value={l.value}
-                            className='capitalize'>
-                              {l.label}
-                            </SelectItem>
-                          ))}
-                            </SelectContent>
-                            </Select>
-
+                            {rolesOptions.map((l, i) => (
+                              <SelectItem
+                                key={i}
+                                value={l.value}
+                                className='capitalize'>
+                                {l.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                             
                         <div className='flex items-center gap-1 text-xs text-muted-foreground'>
                           <p>

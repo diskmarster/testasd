@@ -23,8 +23,8 @@
     "buffer": "Factor (%)",
     "ordered": "Ordered",
     "updated": "Updated",
-	"no-value": "no value",
-	"supplier": "Supplier"
+	  "no-value": "no value",
+	  "supplier": "Supplier"
   },
   "filter-placeholders": {
     "productNo": "Search product no",
