@@ -56,7 +56,7 @@
   "isBarred-no": "Active",
   "supplierName": "Supplier",
   "attachments": "Files",
-  "has-attach-yes": "More than 0",
+  "has-attach-yes": "1 or more files",
   "has-attach-no": "No files",
 
   "toasts": {

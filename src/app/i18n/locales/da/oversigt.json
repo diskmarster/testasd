@@ -57,7 +57,7 @@
   "isBarred-no": "Aktiv",
   "supplierName": "Leverandør",
   "attachments": "Filer",
-  "has-attach-yes": "Mere end 0",
+  "has-attach-yes": "1 eller flere filer",
   "has-attach-no": "Ingen filer",
 
   "overview-table-actions": "",
