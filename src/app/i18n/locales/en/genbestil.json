@@ -23,8 +23,8 @@
     "buffer": "Factor (%)",
     "ordered": "Ordered",
     "updated": "Updated",
-	"no-value": "no value",
-	"supplier": "Supplier"
+	  "no-value": "no value",
+	  "supplier": "Supplier"
   },
   "filter-placeholders": {
     "productNo": "Search product no",
@@ -79,7 +79,9 @@
     "add-ordered": "Order registered for ",
     "create-reorder": "Minimum stock created for ",
     "delete-reorder": "Restock deleted for ",
-    "update-reorder": "Restock updated for "
+    "update-reorder": "Restock updated for ",
+		"registration-failed": "Restock was not registered",
+		"registration-success": "Restock was registered."
   },
 	"bulk": {
 		"title": "Register multiple reorders",
@@ -95,6 +97,7 @@
 		"sku-placeholder": "Choose item",
 		"sku-search": "Search for items",
 		"sku-no-items": "No items found",
-		"qty": "Amount"
+		"qty": "Amount",
+    "tooltip": "Register reorders"
 	}
 }
