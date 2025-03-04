@@ -25,10 +25,13 @@ async function Page({ params: { lng }, user, customer }: Props) {
 		signOutAction()
 		return
 	}
-	const products = await inventoryService.getActiveProductsByID(customer.id)
-	const reorders = await inventoryService.getReordersByID(location)
-	const units = await inventoryService.getActiveUnits()
-	const groups = await inventoryService.getActiveGroupsByID(customer.id)
+
+	const [products, reorders, units, groups] = await Promise.all([
+		inventoryService.getActiveProductsByID(customer.id),
+		inventoryService.getReordersByID(location),
+		inventoryService.getActiveUnits(),
+		inventoryService.getActiveGroupsByID(customer.id)
+	])
 
 	const productsWithNoReorder = products.filter(
 		prod => !reorders.some(reorder => prod.id === reorder.productID),
@@ -48,12 +51,17 @@ async function Page({ params: { lng }, user, customer }: Props) {
 					/>
 				</>
 			}>
-			<TableReorder data={reorders} user={user} units={units} groups={groups} />
+			<TableReorder 
+				data={reorders} 
+				user={user} 
+				units={units} 
+				groups={groups} 
+			/>
 
 			{/* Modals without triggers that we open with custom events from row actions */}
-			<ModalUpdateReorder products={products} />
-			<ModalDeleteReorder products={products} />
-			<ModalAddOrderedReorder products={products} />
+			<ModalUpdateReorder />
+			<ModalDeleteReorder />
+			<ModalAddOrderedReorder />
 		</SiteWrapper>
 	)
 }

@@ -28,8 +28,10 @@ export function TableReorderActions({ table, row }: Props) {
           emitCustomEvent('AddOrderedReorderByIDs', {
             locationID: row.original.locationID,
             productID: row.original.productID,
-            recommended: row.original.recommended,
+            recommended: row.original.orderAmount,
             ordered: row.original.ordered,
+						text1: row.original.product.text1,
+						maxOrderAmount: row.original.maxOrderAmount,
           })
         }
         tooltip={t('modal-add-ordered-reorder.title')}>
@@ -43,7 +45,9 @@ export function TableReorderActions({ table, row }: Props) {
               productID: row.original.productID,
               customerID: row.original.customerID,
               minimum: row.original.minimum,
-              buffer: row.original.buffer * 100,
+							orderAmount: row.original.orderAmount,
+							maxOrderAmount: row.original.maxOrderAmount,
+							text1: row.original.product.text1,
             })
           }}>
           {t('table-reorder-actions.update')}
@@ -53,6 +57,7 @@ export function TableReorderActions({ table, row }: Props) {
             emitCustomEvent('DeleteReorderByIDs', {
               locationID: row.original.locationID,
               productID: row.original.productID,
+							text1: row.original.product.text1
             })
           }}>
           {t('table-reorder-actions.delete')}

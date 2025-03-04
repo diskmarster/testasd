@@ -23,8 +23,11 @@
     "buffer": "Factor (%)",
     "ordered": "Ordered",
     "updated": "Updated",
-	  "no-value": "no value",
-	  "supplier": "Supplier"
+		"no-value": "-",
+		"supplier": "Supplier",
+		"shouldReorder": "Low stock",
+		"shouldReorder_true": "Yes",
+		"shouldReorder_false": "No"
   },
   "filter-placeholders": {
     "productNo": "Search product no",
@@ -44,12 +47,15 @@
     "product-placeholder": "Search for product",
     "product-emptymessage": "No products found",
     "minimum-stock": "Minimum stock",
-    "restock-factor": "Restock factor (%)",
-    "restock-factor-description": "This is used to calculate the recommended restock quantity.",
-    "recommended-reorder-calculation1": "Recommended restock:",
-    "recommended-reorder-calculation2": "over the minimum stock",
     "create-button": "Create",
-    "error-occured": "An error occurred."
+    "error-occured": "An error occurred.",
+		"orderAmount": "Order quantity",
+		"orderAmount-description": "This is used to prefill the register reorders form. This can be edited when registrering.",
+		"maxAmount": "Max order quantity",
+		"maxAmount-description": "Leave at 0 to ignore.",
+		"orderAmount-too-big": "Max order quantity must be bigger than order quantity",
+		"value-not-positive": "Value must be a positive number",
+		"required": "This field is requried"
   },
   "modal-update-reorder": {
     "title": "Update minimum stock",
@@ -84,7 +90,7 @@
 		"registration-success": "Restock was registered."
   },
 	"bulk": {
-		"title": "Register multiple reorders",
+		"title": "Register reorders",
 		"description": "Register your reorders easily and keep your inventory up to date. Get an overview of ordered items and ensure that stock levels are always accurate.",
 		"add-rows-continue": "Add items to continue",
 		"add-rows-btn": "Add item",

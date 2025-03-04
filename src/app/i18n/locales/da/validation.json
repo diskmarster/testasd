@@ -28,13 +28,6 @@
     "move-quantity-type": "Mængden skal være et tal",
     "move-quantity-number": "Mængden skal være større end 0"
   },
-  "restock": {
-    "product-required": "Produkt er påkrævet",
-    "buffer-number": "Buffer skal være et tal",
-    "buffer-positive": "Buffer skal være større end 0",
-    "minimum-quantity-positive": "Minimumsbeholdning skal være større end 0",
-    "ordered-quantity-positive": "Bestilt beholdning skal være større end 0"
-  },
   "product-groups": {
     "name-required": "Navn er påkrævet"
   },

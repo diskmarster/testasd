@@ -8,8 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { Product } from '@/lib/database/schema/inventory'
-import { cn, formatNumber } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -20,18 +19,16 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogV2 } from '../ui/dialog-v2'
 
-interface Props {
-  products: Product[]
-}
+interface Props { }
 
-export function ModalUpdateReorder({ products }: Props) {
+export function ModalUpdateReorder({}: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
-  const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = updateReorderValidation(validationT)
+  const schema = updateReorderValidation(t)
+	const [text1, setText1] = useState<string>()
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
     z.infer<typeof schema>
@@ -44,22 +41,24 @@ export function ModalUpdateReorder({ products }: Props) {
     setValue('locationID', data.locationID)
     setValue('productID', data.productID)
     setValue('minimum', data.minimum)
-    setValue('buffer', data.buffer.toFixed(2))
+    setValue('orderAmount', data.orderAmount)
+    setValue('maxOrderAmount', data.maxOrderAmount)
+		setText1(data.text1)
   })
 
   const formValues = watch()
 
-  function increment() {
+  function increment(key: 'minimum' | 'maxOrderAmount' | 'orderAmount') {
     // @ts-ignore
-    const nextValue = parseFloat(formValues.minimum) + 1
-    setValue('minimum', parseFloat(nextValue.toFixed(4)), {
+    const nextValue = parseFloat(formValues[key] + 1)
+    setValue(key, parseFloat(nextValue.toFixed(4)), {
       shouldValidate: true,
     })
   }
 
-  function decrement() {
-    const nextValue = Math.max(0, formValues.minimum - 1)
-    setValue('minimum', parseFloat(nextValue.toFixed(4)), {
+  function decrement(key: 'minimum' | 'maxOrderAmount' | 'orderAmount') {
+    const nextValue = Math.max(0, formValues[key] - 1)
+    setValue(key, parseFloat(nextValue.toFixed(4)), {
       shouldValidate: true,
     })
   }
@@ -75,7 +74,7 @@ export function ModalUpdateReorder({ products }: Props) {
 
 			onOpenChange(false)
       toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${t('toasts.update-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+        description: `${t('toasts.update-reorder')} ${text1}`,
       })
     })
   }
@@ -112,9 +111,7 @@ export function ModalUpdateReorder({ products }: Props) {
             <div className='grid gap-2'>
               <Label>{t('modal-update-reorder.product')}</Label>
               <Input
-                defaultValue={
-                  products.find(prod => prod.id === formValues.productID)?.text1
-                }
+                defaultValue={text1}
                 disabled
               />
               {formState.errors.productID && (
@@ -131,8 +128,8 @@ export function ModalUpdateReorder({ products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-12 w-28 border-r-0 rounded-r-none'
-                  onClick={decrement}>
+                  className='h-9 w-28 border-r-0 rounded-r-none'
+                  onClick={() => decrement('minimum')}>
                   <Icons.minus className='size-6' />
                 </Button>
                 <Input
@@ -140,7 +137,7 @@ export function ModalUpdateReorder({ products }: Props) {
                   step={0.01}
                   {...register('minimum')}
                   className={cn(
-                    'w-full h-12 rounded-none text-center text-xl z-10',
+                    'w-full h-9 rounded-none text-center text-xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                   )}
                 />
@@ -149,8 +146,8 @@ export function ModalUpdateReorder({ products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-12 w-28 border-l-0 rounded-l-none'
-                  onClick={increment}>
+                  className='h-9 w-28 border-l-0 rounded-l-none'
+                  onClick={() => increment('minimum')}>
                   <Icons.plus className='size-6' />
                 </Button>
               </div>
@@ -161,89 +158,82 @@ export function ModalUpdateReorder({ products }: Props) {
               )}
             </div>
             <div className='pt-2 flex flex-col gap-2'>
-              <Label>{t('modal-update-reorder.restock-factor')}</Label>
+              <Label>{t('modal-create-reorder.orderAmount')}</Label>
               <p className='text-sm text-muted-foreground -mt-1.5'>
-                {t('modal-update-reorder.restock-factor-description')}
+                {t('modal-create-reorder.orderAmount-description')}
               </p>
-              <div className='flex flex-col'>
+              <div className='flex'>
+                <Button
+                  tabIndex={-1}
+                  size='icon'
+                  type='button'
+                  variant='outline'
+                  className='h-9 w-28 border-r-0 rounded-r-none'
+                  onClick={() => decrement('orderAmount')}>
+                  <Icons.minus className='size-6' />
+                </Button>
                 <Input
                   type='number'
                   step={0.01}
-                  {...register('buffer')}
+                  {...register('orderAmount')}
                   className={cn(
-                    'w-full h-12 rounded-b-none text-center text-xl z-10 shadow-none',
+                    'w-full h-9 rounded-none text-center text-xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                   )}
                 />
-                <div className='flex'>
-                  <Button
-                    tabIndex={-1}
-                    size='icon'
-                    type='button'
-                    variant='outline'
-                    className={cn(
-                      'h-10 w-1/4 rounded-tl-none rounded-r-none border-t-0',
-                      formValues.minimum != 0 &&
-                      formValues.buffer != 0 &&
-                      'rounded-1-none',
-                    )}
-                    onClick={() => setValue('buffer', 25)}>
-                    25%
-                  </Button>
-                  <Button
-                    tabIndex={-1}
-                    size='icon'
-                    type='button'
-                    variant='outline'
-                    className='h-10 w-1/4 rounded-none border-t-0 border-l-0'
-                    onClick={() => setValue('buffer', 50)}>
-                    50%
-                  </Button>
-                  <Button
-                    tabIndex={-1}
-                    size='icon'
-                    type='button'
-                    variant='outline'
-                    className='h-10 w-1/4 rounded-none border-t-0 border-l-0'
-                    onClick={() => setValue('buffer', 75)}>
-                    75%
-                  </Button>
-                  <Button
-                    tabIndex={-1}
-                    size='icon'
-                    type='button'
-                    variant='outline'
-                    className={cn(
-                      'h-10 w-1/4 border-t-0 border-l-0 rounded-l-none rounded-tr-none',
-                      formValues.minimum != 0 &&
-                      formValues.buffer != 0 &&
-                      'rounded-1-none',
-                    )}
-                    onClick={() => setValue('buffer', 100)}>
-                    100%
-                  </Button>
-                </div>
-                <div
-                  className={cn(
-                    'bg-border rounded-b-md text-sm h-0 transition-all text-muted-foreground flex items-center gap-2 justify-center',
-                    formValues.minimum && formValues.buffer && 'h-12 md:h-9',
-                  )}>
-                  {formValues.minimum != 0 && formValues.buffer != 0 && (
-                    <p className='text-center'>
-                      {t(
-                        'modal-update-reorder.recommended-reorder-calculation1',
-                      )}{' '}
-                      {formatNumber((formValues.minimum * (formValues.buffer / 100)))}{' '}
-                      {t(
-                        'modal-update-reorder.recommended-reorder-calculation2',
-                      )}
-                    </p>
-                  )}
-                </div>
+                <Button
+                  tabIndex={-1}
+                  size='icon'
+                  type='button'
+                  variant='outline'
+                  className='h-9 w-28 border-l-0 rounded-l-none'
+                  onClick={() => increment('orderAmount')}>
+                  <Icons.plus className='size-6' />
+                </Button>
               </div>
-              {formState.errors.buffer && (
+              {formState.errors.orderAmount && (
                 <p className='text-sm text-destructive'>
-                  {formState.errors.buffer.message}
+                  {formState.errors.orderAmount.message}
+                </p>
+              )}
+            </div>
+            <div className='pt-2 flex flex-col gap-2'>
+              <Label>{t('modal-create-reorder.maxAmount')}</Label>
+              <p className='text-sm text-muted-foreground -mt-1.5'>
+                {t('modal-create-reorder.maxAmount-description')}
+              </p>
+              <div className='flex'>
+                <Button
+                  tabIndex={-1}
+                  size='icon'
+                  type='button'
+                  variant='outline'
+                  className='h-9 w-28 border-r-0 rounded-r-none'
+                  onClick={() => decrement('maxOrderAmount')}>
+                  <Icons.minus className='size-6' />
+                </Button>
+                <Input
+                  type='number'
+                  step={0.01}
+                  {...register('maxOrderAmount')}
+                  className={cn(
+                    'w-full h-9 rounded-none text-center text-xl z-10',
+                    '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+                  )}
+                />
+                <Button
+                  tabIndex={-1}
+                  size='icon'
+                  type='button'
+                  variant='outline'
+                  className='h-9 w-28 border-l-0 rounded-l-none'
+                  onClick={() => increment('maxOrderAmount')}>
+                  <Icons.plus className='size-6' />
+                </Button>
+              </div>
+              {formState.errors.maxOrderAmount && (
+                <p className='text-sm text-destructive'>
+                  {formState.errors.maxOrderAmount.message}
                 </p>
               )}
             </div>

@@ -68,11 +68,11 @@ export function TableReorder({ data, user, units, groups }: Props) {
 
   const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams,[
-    { id: 'recommended', desc: true },
+    { id: 'quantity', desc: false },
   ])
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({'shouldReorder': false})
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -185,8 +185,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
               table.getRowModel().rows.map(row => (
                 <TableRow
                   className={cn(
-                    row.original.recommended > 0 &&
-                      row.original.ordered < row.original.recommended &&
+										row.original.shouldReorder &&
                       'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
                   )}
                   key={row.id}

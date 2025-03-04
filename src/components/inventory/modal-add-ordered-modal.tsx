@@ -5,18 +5,9 @@ import { addOrderedToReorderValidation } from '@/app/[lng]/(site)/genbestil/vali
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import {
-  Credenza,
-  CredenzaBody,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
-} from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { Product } from '@/lib/database/schema/inventory'
 import { cn, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
@@ -28,19 +19,18 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogV2 } from '../ui/dialog-v2'
 
-interface Props {
-  products: Product[]
-}
+interface Props { }
 
-export function ModalAddOrderedReorder({ products }: Props) {
+export function ModalAddOrderedReorder({ }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
   const [alreadyOrdered, setAlreadyOrdered] = useState<number>(0)
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
-  const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = addOrderedToReorderValidation(validationT)
+  const schema = addOrderedToReorderValidation(t)
+	const [text1, setText1] = useState<string>('')
+	const [maxOrderAmount, setMaxOrderAmount] = useState<number>(0)
 
   const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
     z.infer<typeof schema>
@@ -54,13 +44,16 @@ export function ModalAddOrderedReorder({ products }: Props) {
     setValue('productID', data.productID)
     setValue('ordered', data.recommended.toFixed(2))
     setAlreadyOrdered(data.ordered)
+		setText1(data.text1)
+		setMaxOrderAmount(data.maxOrderAmount)
+		console.log("max", data.maxOrderAmount)
   })
 
   const formValues = watch()
 
   function increment() {
     // @ts-ignore
-    const nextValue = parseFloat(formValues.ordered) + 1
+    const nextValue = parseFloat(formValues.ordered + 1)
     setValue('ordered', parseFloat(nextValue.toFixed(2)), {
       shouldValidate: true,
     })
@@ -89,7 +82,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
       reset()
       setOpen(false)
       toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${t('toasts.add-ordered')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+        description: `${t('toasts.add-ordered')} ${text1}`,
       })
       updateChipCount()
     })
@@ -121,9 +114,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
             <div className='grid gap-2'>
               <Label>{t('modal-add-ordered-reorder.product')}</Label>
               <Input
-                defaultValue={
-                  products.find(prod => prod.id === formValues.productID)?.text1
-                }
+                defaultValue={text1}
                 disabled
               />
               {formState.errors.productID && (
@@ -140,7 +131,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-12 w-28 border-r-0 rounded-r-none'
+                  className='h-9 w-28 border-r-0 rounded-r-none'
                   onClick={decrement}>
                   <Icons.minus className='size-6' />
                 </Button>
@@ -149,7 +140,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
                   type='number'
                   {...register('ordered')}
                   className={cn(
-                    'w-full h-12 rounded-none text-center text-xl z-10',
+                    'w-full h-9 rounded-none text-center text-xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                   )}
                 />
@@ -158,7 +149,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-12 w-28 border-l-0 rounded-l-none'
+                  className='h-9 w-28 border-l-0 rounded-l-none'
                   onClick={increment}>
                   <Icons.plus className='size-6' />
                 </Button>
@@ -174,7 +165,12 @@ export function ModalAddOrderedReorder({ products }: Props) {
 					<Button onClick={() => setOpen(false)} size='sm' variant='outline'>{t("bulk.btn-close")}</Button>
             <Button
 							form='add-reorder-amount-form'
-              disabled={!formState.isValid || pending || formState.isSubmitting}
+              disabled={
+								!formState.isValid 
+								|| pending 
+								|| formState.isSubmitting 
+								|| (maxOrderAmount>0 && formValues.ordered > maxOrderAmount)
+							}
               size='sm'
               className='flex items-center gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}

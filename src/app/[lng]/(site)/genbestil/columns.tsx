@@ -182,36 +182,6 @@ export function getTableReorderColumns(
 		},
 	}
 
-	const recAmountCol: ColumnDef<FormattedReorder> = {
-		accessorKey: 'recommended',
-		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.recommended')} />
-		),
-		cell: ({ getValue }) => formatNumber(getValue<number>()),
-		filterFn: 'includesString',
-		meta: {
-			viewLabel: t('reorder-columns.recommended'),
-			rightAlign: true,
-			className: 'justify-end',
-		},
-	}
-
-	const factorCol: ColumnDef<FormattedReorder> = {
-		accessorKey: 'buffer',
-		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.buffer')} />
-		),
-		cell: ({ getValue }) => formatNumber(getValue<number>() * 100) + '%',
-		meta: {
-			viewLabel: t('reorder-columns.buffer'),
-			rightAlign: true,
-		},
-		filterFn: (row, id, value) => {
-			const adjustedSearchValue = (value / 100).toFixed(2)
-			return adjustedSearchValue == row.getValue(id)
-		},
-	}
-
 	const orderedCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'ordered',
 		header: ({ column }) => (
@@ -269,6 +239,17 @@ export function getTableReorderColumns(
 		},
 	}
 
+	const shouldReorderCol: ColumnDef<FormattedReorder> = {
+		accessorKey: 'shouldReorder',
+		header: () => undefined,
+		cell: () => undefined,
+		enableHiding: true,
+		enableSorting: false,
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+	}
+
 	return [
 		selectCol,
 		skuCol,
@@ -279,12 +260,11 @@ export function getTableReorderColumns(
 		quantityCol,
 		unitCol,
 		minimumCol,
-		recAmountCol,
 		orderedCol,
 		disposibleCol,
-		factorCol,
 		updatedCol,
 		actionsCol,
+		shouldReorderCol,
 	]
 }
 
@@ -293,7 +273,7 @@ export function getTableReorderFilters(
 	units: Unit[],
 	groups: Group[],
 	lng: string,
-	t: (key: string) => string,
+	t: (key: string, opts?: any) => string,
 ): FilterField<FormattedReorder>[] {
 	const skuFilter: FilterField<FormattedReorder> = {
 		column: table.getColumn('sku'),
@@ -393,14 +373,6 @@ export function getTableReorderFilters(
 		placeholder: t('filter-placeholders.ordered'),
 	}
 
-	const recAmountFilter: FilterField<FormattedReorder> = {
-		column: table.getColumn('recommended'),
-		type: 'text',
-		label: t('reorder-columns.recommended'),
-		value: '',
-		placeholder: t('filter-placeholders.recommended'),
-	}
-
 	const disposibleFilter: FilterField<FormattedReorder> = {
 		column: table.getColumn('disposible'),
 		type: 'text',
@@ -409,12 +381,15 @@ export function getTableReorderFilters(
 		placeholder: t('filter-placeholders.disposible'),
 	}
 
-	const factorFilter: FilterField<FormattedReorder> = {
-		column: table.getColumn('buffer'),
-		type: 'text',
-		label: t('reorder-columns.buffer'),
+	const shouldReorderFilter: FilterField<FormattedReorder> = {
+		column: table.getColumn('shouldReorder'),
+		type: 'select',
+		label: t("reorder-columns.shouldReorder"),
 		value: '',
-		placeholder: t('filter-placeholders.buffer'),
+		options: [
+			{ label: t("reorder-columns.shouldReorder", {context: "true"}), value: true},
+			{ label: t("reorder-columns.shouldReorder", {context: "false"}), value: false},
+		],
 	}
 
 	return [
@@ -426,10 +401,9 @@ export function getTableReorderFilters(
 		quantityFilter,
 		unitFilter,
 		minimumFilter,
-		recAmountFilter,
 		orderedFilter,
 		disposibleFilter,
-		factorFilter,
+		shouldReorderFilter,
 		updatedFilter,
 	]
 }

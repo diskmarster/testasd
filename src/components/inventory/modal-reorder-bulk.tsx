@@ -3,22 +3,48 @@
 import { useTranslation } from "@/app/i18n/client"
 import { useLanguage } from "@/context/language"
 import { useMemo, useState, useTransition } from "react"
-import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogTriggerV2, DialogV2 } from "../ui/dialog-v2"
+import {
+	DialogContentV2,
+	DialogFooterV2,
+	DialogHeaderV2,
+	DialogTitleV2,
+	DialogTriggerV2,
+	DialogV2
+} from "../ui/dialog-v2"
 import { Button } from "../ui/button"
 import { Icons } from "../ui/icons"
-import { FormState, useFieldArray, UseFieldArrayRemove, useForm, UseFormRegister, UseFormSetValue } from "react-hook-form"
+import {
+	FormState,
+	useFieldArray,
+	UseFieldArrayRemove,
+	useForm,
+	UseFormRegister,
+	UseFormSetValue
+} from "react-hook-form"
 import { z } from "zod"
 import { bulkAddOrderedToReorderValidation } from "@/app/[lng]/(site)/genbestil/validation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormattedReorder } from "@/data/inventory.types"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { cn } from "@/lib/utils"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command"
+import { cn, formatNumber } from "@/lib/utils"
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger
+} from "../ui/popover"
+import {
+	Command,
+	CommandEmpty,
+	CommandGroup,
+	CommandInput,
+	CommandItem,
+	CommandList
+} from "../ui/command"
 import { bulkAddOrderedToReorderAction } from "@/app/[lng]/(site)/genbestil/actions"
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
+import { ScrollArea } from "../ui/scroll-area"
 
 interface Props {
 	reorders: FormattedReorder[]
@@ -32,7 +58,7 @@ export function ModalBulkReorder({ reorders }: Props) {
 	const schema = useMemo(() => bulkAddOrderedToReorderValidation(t), [t]);
 
 	const redReorders = useMemo(() => {
-		return reorders.filter(r => r.quantity < r.minimum && r.ordered < r.recommended)
+		return reorders.filter(r => r.quantity < r.minimum && r.ordered < r.orderAmount)
 	}, [reorders])
 
 	const { handleSubmit, reset, register, setValue, watch, formState, control } = useForm<z.infer<typeof schema>>({
@@ -42,8 +68,11 @@ export function ModalBulkReorder({ reorders }: Props) {
 				text1: r.product.text1,
 				sku: r.product.sku,
 				productID: r.productID,
-				ordered: r.recommended,
-				alreadyOrdered: r.ordered
+				ordered: r.orderAmount,
+				alreadyOrdered: r.ordered,
+				supplierName: r.product.supplierName,
+				quantity: r.quantity,
+				disposable: r.disposible
 			}))
 		}
 	})
@@ -66,8 +95,11 @@ export function ModalBulkReorder({ reorders }: Props) {
 				text1: r.product.text1,
 				sku: r.product.sku,
 				productID: r.productID,
-				ordered: r.recommended,
-				alreadyOrdered: r.ordered
+				ordered: r.orderAmount,
+				alreadyOrdered: r.ordered,
+				supplierName: r.product.supplierName,
+				quantity: r.quantity,
+				disposable: r.disposible
 			}))
 		})
 		setOpen(open)
@@ -89,6 +121,20 @@ export function ModalBulkReorder({ reorders }: Props) {
 		})
 	}
 
+	function appendSupplier(sup: string) {
+		const reordersWithSupplier = reorders.filter(r => r.product.supplierName == sup && !fields.some(f => f.productID == r.productID))
+		reordersWithSupplier.forEach(r => append({
+			sku: r.product.sku,
+			ordered: 0,
+			alreadyOrdered: r.ordered,
+			productID: r.productID,
+			text1: r.product.text1,
+			supplierName: r.product.supplierName,
+			quantity: r.quantity,
+			disposable: r.disposible
+		}))
+	}
+
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
 			<DialogTriggerV2 asChild>
@@ -96,7 +142,7 @@ export function ModalBulkReorder({ reorders }: Props) {
 					<Icons.listPlus className="size-4" />
 				</Button>
 			</DialogTriggerV2>
-			<DialogContentV2 className="max-w-xl">
+			<DialogContentV2 className="max-w-6xl">
 				<DialogHeaderV2>
 					<div className="flex items-center gap-2">
 						<Icons.listPlus className="size-4 text-primary" />
@@ -110,38 +156,60 @@ export function ModalBulkReorder({ reorders }: Props) {
 					<p className="text-sm text-muted-foreground">
 						{t("bulk.description")}
 					</p>
-					<div className="space-y-2">
+					<ScrollArea maxHeight="max-h-[550px]">
 						<div className="space-y-2">
-							{fields.length == 0 && (
-								<p className="text-sm text-muted-foreground">
-									{t("bulk.add-rows-continue")}
-								</p>
+							<div className="space-y-2">
+								{fields.length == 0 && (
+									<p className="text-sm text-muted-foreground">
+										{t("bulk.add-rows-continue")}
+									</p>
+								)}
+								{fields.map((field, index) => (
+									<ReorderField
+										key={field.id}
+										field={field}
+										index={index}
+										remove={remove}
+										register={register}
+										formState={formState}
+										setValue={setValue}
+										reorders={reorders}
+										selectableReorders={selectableReorders}
+										formValues={formValues}
+									/>
+								))}
+							</div>
+							{reorders.length != formValues.items.length && (
+								<div className="flex items-center gap-2">
+									<Button
+										size='sm'
+										variant='outline'
+										onClick={() => append({
+											sku: "",
+											ordered: 0,
+											alreadyOrdered: 0,
+											productID: 0,
+											text1: "",
+											supplierName: null,
+											quantity: 0,
+											disposable: 0
+										})}
+										className="flex items-center gap-2">
+										<Icons.plus className="size-3 text-primary" />
+										{t("bulk.add-rows-btn")}
+									</Button>
+									<Button
+										size='sm'
+										variant='outline'
+										onClick={() => appendSupplier('EET')}
+										className="flex items-center gap-2">
+										<Icons.plus className="size-3 text-primary" />
+										{t("bulk.add-rows-supplier-btn")}
+									</Button>
+								</div>
 							)}
-							{fields.map((field, index) => (
-								<ReorderField
-									key={field.id}
-									field={field}
-									index={index}
-									remove={remove}
-									register={register}
-									formState={formState}
-									setValue={setValue}
-									reorders={reorders}
-									selectableReorders={selectableReorders}
-								/>
-							))}
 						</div>
-						{reorders.length != formValues.items.length && (
-							<Button
-								size='sm'
-								variant='outline'
-								onClick={() => append({ sku: "", ordered: 0, alreadyOrdered: 0, productID: 0, text1: "" })}
-								className="flex items-center gap-2">
-								<Icons.plus className="size-3 text-primary" />
-								{t("bulk.add-rows-btn")}
-							</Button>
-						)}
-					</div>
+					</ScrollArea>
 				</form>
 				<DialogFooterV2>
 					<Button onClick={() => onOpenChange(false)} size='sm' variant='outline'>{t("bulk.btn-close")}</Button>
@@ -158,7 +226,16 @@ export function ModalBulkReorder({ reorders }: Props) {
 }
 
 interface FieldProps {
-	field: { text1: string, sku: string, productID: number, ordered: number, alreadyOrdered: number }
+	field: {
+		text1: string,
+		sku: string,
+		productID: number,
+		ordered: number,
+		alreadyOrdered: number
+		supplierName: string | null,
+		quantity: number,
+		disposable: number,
+	}
 	index: number
 	remove: UseFieldArrayRemove
 	register: UseFormRegister<{
@@ -168,6 +245,9 @@ interface FieldProps {
 			productID: number;
 			ordered: number;
 			alreadyOrdered: number;
+			supplierName: string | null,
+			quantity: number,
+			disposable: number,
 		}[];
 	}>
 	formState: FormState<{
@@ -177,6 +257,9 @@ interface FieldProps {
 			productID: number;
 			ordered: number;
 			alreadyOrdered: number;
+			supplierName: string | null,
+			quantity: number,
+			disposable: number,
 		}[];
 	}>
 	setValue: UseFormSetValue<{
@@ -186,17 +269,33 @@ interface FieldProps {
 			productID: number;
 			ordered: number;
 			alreadyOrdered: number;
+			supplierName: string | null,
+			quantity: number,
+			disposable: number,
 		}[];
 	}>
 	reorders: FormattedReorder[]
 	selectableReorders: FormattedReorder[]
+	formValues: {
+		items: {
+			text1: string;
+			sku: string;
+			productID: number;
+			ordered: number;
+			alreadyOrdered: number;
+			supplierName: string | null;
+			quantity: number;
+			disposable: number;
+		}[];
+	}
 }
 
-function ReorderField({ field, index, remove, register, setValue, reorders, selectableReorders, formState }: FieldProps) {
+function ReorderField({ field, index, remove, register, setValue, reorders, selectableReorders, formState, formValues }: FieldProps) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "genbestil")
 	const [open, setOpen] = useState(false)
 	const [search, setSearch] = useState<string>(field.text1 ?? '')
+
 	return (
 		<div className="flex items-end gap-2">
 			<div className="grid gap-1.5 w-[60%]">
@@ -231,6 +330,10 @@ function ReorderField({ field, index, remove, register, setValue, reorders, sele
 												setValue(`items.${index}.sku`, p.product.sku, { shouldValidate: true })
 												setValue(`items.${index}.text1`, p.product.text1, { shouldValidate: true })
 												setValue(`items.${index}.alreadyOrdered`, p.ordered, { shouldValidate: true })
+												setValue(`items.${index}.quantity`, p.quantity, { shouldValidate: true })
+												setValue(`items.${index}.disposable`, p.disposible, { shouldValidate: true })
+												setValue(`items.${index}.supplierName`, p.product.supplierName, { shouldValidate: true })
+												setValue(`items.${index}.ordered`, p.orderAmount, { shouldValidate: true })
 												setSearch(currentValue === search ? "" : currentValue)
 												setOpen(false)
 											}}
@@ -249,6 +352,29 @@ function ReorderField({ field, index, remove, register, setValue, reorders, sele
 						</Command>
 					</PopoverContent>
 				</Popover>
+			</div>
+			<div className="grid gap-1.5 w-[30%]">
+				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.supplier")}</Label>
+				<Input
+					defaultValue={field.supplierName ?? '-'}
+					disabled
+				/>
+			</div>
+			<div className="grid gap-1.5 w-[30%]">
+				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.quantity")}</Label>
+				<Input
+					value={formatNumber(formValues.items[index].quantity)}
+					disabled
+				/>
+			</div>
+			<div className="grid gap-1.5 w-[30%]">
+				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.disposable")}</Label>
+				<Input
+					value={formatNumber(
+						field.quantity + (Number(formValues.items[index].ordered) || 0)
+					)}
+					disabled
+				/>
 			</div>
 			<div className="grid gap-1.5 w-[30%]">
 				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.qty")}</Label>

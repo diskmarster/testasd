@@ -66,7 +66,8 @@ export const updateReorderAction = editableAction
       ctx.user.customerID,
       {
         minimum: parsedInput.minimum,
-        buffer: parsedInput.buffer / 100,
+				orderAmount: parsedInput.orderAmount,
+				maxOrderAmount: parsedInput.maxOrderAmount,
       },
     )
     if (!newReorder) {

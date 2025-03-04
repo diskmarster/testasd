@@ -28,13 +28,6 @@
     "move-quantity-type": "Quantity must be a number",
     "move-quantity-number": "Quantity must be greater than 0"
   },
-  "restock": {
-    "product-required": "Product is required",
-    "buffer-number": "Buffer must be a number",
-    "buffer-positive": "Buffer must be greater than 0",
-    "minimum-quantity-positive": "Minimum quantity must be greater than 0",
-    "ordered-quantity-positive": "Ordered quantity must be greater than 0"
-  },
   "product-groups": {
     "name-required": "Name is required"
   },

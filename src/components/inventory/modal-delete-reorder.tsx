@@ -5,19 +5,9 @@ import { deleteReorderValidation } from '@/app/[lng]/(site)/genbestil/validation
 import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import {
-  Credenza,
-  CredenzaBody,
-  CredenzaClose,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
-} from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
-import { Product } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
@@ -26,11 +16,9 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogV2 } from '../ui/dialog-v2'
 
-interface Props {
-  products: Product[]
-}
+interface Props { }
 
-export function ModalDeleteReorder({ products }: Props) {
+export function ModalDeleteReorder({ }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
@@ -38,19 +26,19 @@ export function ModalDeleteReorder({ products }: Props) {
   const { t } = useTranslation(lng, 'genbestil')
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = deleteReorderValidation(validationT)
+	const [text1, setText1] = useState<string>('')
 
-  const { setValue, handleSubmit, formState, watch, reset } = useForm<
+  const { setValue, handleSubmit, formState, reset } = useForm<
     z.infer<typeof schema>
   >({
     resolver: zodResolver(schema),
   })
 
-  const formValues = watch()
-
   useCustomEventListener('DeleteReorderByIDs', (data: any) => {
     setOpen(true)
     setValue('productID', data.productID, { shouldValidate: true })
     setValue('locationID', data.locationID, { shouldValidate: true })
+		setText1(data.text1)
   })
 
   function onSubmit(values: z.infer<typeof schema>) {
@@ -65,7 +53,7 @@ export function ModalDeleteReorder({ products }: Props) {
       setError(undefined)
       setOpen(false)
       toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${t('toasts.delete-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+        description: `${t('toasts.delete-reorder')} ${text1}`,
       })
     })
   }
