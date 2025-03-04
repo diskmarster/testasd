@@ -14,9 +14,10 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, asc, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
 import { supplierTable } from '@/lib/database/schema/suppliers'
+import { attachmentsTable } from '@/lib/database/schema/attachments'
 
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
@@ -33,13 +34,22 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
-		supplierName: supplierTable.name,
+		    supplierName: supplierTable.name,
+        fileCount: count(attachmentsTable.id),
       })
       .from(productTable)
       .where(eq(productTable.customerID, customerID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
-	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+	    .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .leftJoin(attachmentsTable,
+        and(
+        eq(attachmentsTable.refDomain, 'product'),
+        eq(attachmentsTable.refID, productTable.id)
+        )
+      )
+      .groupBy(productTable.id)
+      
     return product
   },
   create: async function(

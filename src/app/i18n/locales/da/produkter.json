@@ -24,6 +24,9 @@
 	"unbar-this": "Fjern spærring",
 	"barred-status-yes": "Spærret",
 	"barred-status-no": "Aktiv",
+	"attachments": "Filer",
+	"has-attach-yes": "1 eller flere filer",
+	"has-attach-no": "Ingen filer",
 	"update-product-modal": {
 		"update-product": "Redigér Vare",
 		"update-product-modal-title": "Rediger Vare",

@@ -36,6 +36,27 @@ export function getProductOverviewColumns(
       viewLabel: t('product-No.'),
     },
   }
+   const attachmentsCol: ColumnDef<FormattedProduct> = {
+      accessorKey: 'fileCount',
+      id: 'attachments',
+      header: ({ column }) => (
+        <TableHeader column={column} title={t('attachments')} />
+      ),
+      cell: ({ row }) => (
+        <div className={cn('tabular-nums hidden rounded-full', (row.original.fileCount != undefined && row.original.fileCount > 0) && 'block',)}> 
+          <p>{`${row.original.fileCount}/5`}</p>
+        </div>
+      ),
+
+      meta: {
+        viewLabel: t('attachments')
+      },
+      enableHiding: false,
+      enableSorting: false,
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue<number>(id)>0)
+      },
+    }
   const barcodeCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'barcode',
     header: ({ column }) => (
@@ -216,6 +237,7 @@ export function getProductOverviewColumns(
 
   const columns = [
     skuCol,
+    attachmentsCol,
     barcodeCol,
     groupCol,
 	supplierCol,
@@ -353,9 +375,24 @@ export function getProductTableOverviewFilters(
       { value: false, label: t('barred-status-no') },
     ],
   }
+    const attachmentsFilter: FilterField<FormattedProduct> = {
+      column: table.getColumn('attachments'),
+      type: 'select',
+      label: t('attachments'),
+      value: '',
+      options: [{
+        value: true,
+        label: t('has-attach-yes'),
+      },
+    {
+      value: false,
+      label: t('has-attach-no'),
+    }],
+    }
 
   return [
     skuFilter,
+    attachmentsFilter,
     barcodeFilter,
     groupFilter,
 	supplierNameFilter,

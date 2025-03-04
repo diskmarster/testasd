@@ -34,16 +34,6 @@ export function getTableOverviewColumns(
 				<TooltipProvider>
 					<Tooltip>
 						<TooltipTrigger asChild>
-							<div className={cn('hidden size-4 rounded-full cursor-pointer pb-4', (row.original.product.fileCount != undefined && row.original.product.fileCount > 0) && 'block',)}> 
-								<Icons.filetext className={cn('size-4')}/>
-							</div>
-						</TooltipTrigger>
-						<TooltipContent className='bg-foreground text-background'>
-							{t('modal-show-product-card.product-has-documents', {count: row.original.product.fileCount})}
-						</TooltipContent>
-					</Tooltip>
-					<Tooltip>
-						<TooltipTrigger asChild>
 							<span className={cn('hidden size-1.5 rounded-full bg-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
 						</TooltipTrigger>
 						<TooltipContent className='bg-foreground text-background'>
@@ -56,6 +46,28 @@ export function getTableOverviewColumns(
     enableHiding: false,
     meta: {
       viewLabel: t('product-No.'),
+    },
+  }
+
+  const attachmentsCol: ColumnDef<FormattedInventory> = {
+    accessorKey: 'product.fileCount',
+    id: 'attachments',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('attachments')} />
+    ),
+    aggregatedCell: ({ row }) => (
+							<div className={cn('tabular-nums hidden rounded-full', (row.original.product.fileCount != undefined && row.original.product.fileCount > 0) && 'block',)}> 
+                <p>{`${row.original.product.fileCount}/5`}</p>
+							</div>
+    ),
+    cell: () => null,
+    meta: {
+      viewLabel: t('attachments')
+    },
+    enableHiding: false,
+    enableSorting: false,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue<number>(id)>0)
     },
   }
 
@@ -345,6 +357,7 @@ export function getTableOverviewColumns(
     case 'lite':
       const liteCols = [
         skuCol,
+        attachmentsCol,
         barcodeCol,
         groupCol,
 		supplierCol,
@@ -365,6 +378,7 @@ export function getTableOverviewColumns(
     case 'basis':
       const plusCols = [
         skuCol,
+        attachmentsCol,
         barcodeCol,
         groupCol,
 		supplierCol,
@@ -386,6 +400,7 @@ export function getTableOverviewColumns(
     case 'pro':
       const proCols = [
         skuCol,
+        attachmentsCol,
         barcodeCol,
         groupCol,
 		supplierCol,
@@ -423,6 +438,20 @@ export function getTableOverviewFilters(
     label: t('product-No.'),
     value: '',
     placeholder: t('product-No.-placeholder'),
+  }
+  const attachmentsFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('attachments'),
+    type: 'select',
+    label: t('attachments'),
+    value: '',
+    options: [{
+      value: true,
+      label: t('has-attach-yes'),
+    },
+  {
+    value: false,
+    label: t('has-attach-no'),
+  }],
   }
   const barcodeFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('barcode'),
@@ -578,6 +607,7 @@ export function getTableOverviewFilters(
     case 'lite':
       return [
         skuFilter,
+        attachmentsFilter,
         barcodeFilter,
         unitFilter,
         groupFilter,
@@ -596,6 +626,7 @@ export function getTableOverviewFilters(
     case 'basis':
       return [
         skuFilter,
+        attachmentsFilter,
         barcodeFilter,
         unitFilter,
         groupFilter,
@@ -614,6 +645,7 @@ export function getTableOverviewFilters(
     case 'pro':
       return [
         skuFilter,
+        attachmentsFilter,
         barcodeFilter,
         unitFilter,
         groupFilter,

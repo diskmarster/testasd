@@ -24,6 +24,9 @@
 	"unbar-this": "Unbar the product",
 	"barred-status-yes": "Barred",
 	"barred-status-no": "Active",
+	"attachments": "Files",
+	"has-attach-yes": "1 or more files",
+	"has-attach-no": "No files",
 	"update-product-modal": {
 		"update-product": "Update product",
 		"update-product-modal-title": "Update product",
