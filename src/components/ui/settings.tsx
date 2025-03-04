@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils"
 import { HTMLProps } from "react"
+import { Skeleton } from "./skeleton"
 
 
 export function Setting({
@@ -89,5 +90,22 @@ export function SettingFooter({
     <div className={cn('flex p-4 pt-0', className)} {...props}>
       {children}
     </div>
+  )
+}
+
+export function SettingSkeleton() {
+  return (
+    <Setting>
+      <SettingBody>
+        <SettingLabel>
+          <Skeleton className="w-1/3 h-10" />
+          <Skeleton className="w-1/2 h-6" />
+          <Skeleton className="w-1/4 h-6" />
+        </SettingLabel>
+        <SettingContent>
+          <Skeleton className="w-1/5 h-10" />
+        </SettingContent>
+      </SettingBody>
+    </Setting>
   )
 }
