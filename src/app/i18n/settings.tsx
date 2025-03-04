@@ -11,7 +11,7 @@ export function getOptions(
   return {
     supportedLngs: languages,
     interpolation: {
-      skipOnvariables: false,
+      skipOnVariables: false,
     },
     fallbackLng,
     lng,
