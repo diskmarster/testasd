@@ -8,7 +8,8 @@
     "title": "Create new Product Group",
     "name": "Product group name",
     "name-placeholder": "Enter a name for the product group",
-    "create-button": "Create"
+    "create-button": "Create",
+    "tooltip": "Create product group"
   },
 
   "update-product-group-modal": {

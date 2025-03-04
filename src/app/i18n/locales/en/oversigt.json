@@ -54,6 +54,10 @@
   "isBarred": "Status",
   "isBarred-yes": "Barred",
   "isBarred-no": "Active",
+  "supplierName": "Supplier",
+  "attachments": "Files",
+  "has-attach-yes": "1 or more files",
+  "has-attach-no": "No files",
 
   "toasts": {
     "was-created": " was created successfully"

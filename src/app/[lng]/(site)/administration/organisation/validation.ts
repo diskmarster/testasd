@@ -1,6 +1,8 @@
 import { userRoleZodSchema } from '@/data/user.types'
 import { z } from 'zod'
 
+export const deleteUserByIDValidation = z.object({ userID: z.coerce.number() })
+
 export const inviteNewUserValidation = (
   t: (key: string, options?: any) => string,
 ) =>

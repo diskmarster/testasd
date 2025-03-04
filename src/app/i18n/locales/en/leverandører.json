@@ -1,0 +1,82 @@
+{
+	"page": {
+		"title": "Suppliers",
+		"desc": "See all of your suppliers"
+	},
+	"table": {
+		"no-rows": "No suppliers found",
+		"col-no-value": "no value",
+		"col-name": "Supplier",
+		"col-name-placeholder": "Search supplier",
+		"col-country": "Country",
+		"col-country-placeholder": "Choose country",
+		"col-client-id": "Client ID",
+		"col-client-id-placeholder": "Search client ID",
+		"col-items": "Items count",
+		"col-inserted": "Inserted",
+		"col-updated": "Updated",
+		"col-actions-show": "Show",
+		"col-actions-delete": "Delete"
+	},
+	"create": {
+		"title": "Create supplier",
+		"description": "Add your suppliers to easily link them to your products. This makes the ordering process faster, more efficient, and ensures you always know where your products come from.",
+		"country": "Country",
+		"name": "Supplier",
+		"idOfClient": "Client ID",
+		"contact-person": "Contact person",
+		"phone": "Phone",
+		"email": "Email",
+		"btn-close": "Close",
+		"btn-create": "Create",
+		"toast-error": "Supplier wat not created",
+		"toast-success": "Supplier was created",
+   		"tooltip": "Create supplier"
+	},
+	"delete": {
+		"title": "Delete supplier?",
+		"description": "Are you sure you want to delete this supplier? This action is permanent and cannot be undone.",
+		"item-over-zero": "This supplier has {{count}} items linked. If you continue, they will no longer be linked to any supplier.",
+		"btn-close": "No",
+		"btn-delete": "Yes, delete supplier",
+		"toast-error": "Supplier was not deleted",
+		"toast-success": "Suppliers was deleted"
+	},
+	"details-page": {
+		"details": {
+			"toast-error": "Supplier was not updated",
+			"toast-success": "Supplier was updated",
+			"title": "Supplier details",
+			"btn-cancel": "Cancel",
+			"btn-confirm": "Update",
+			"btn-edit": "Edit",
+			"no-value": "No value",
+			"contact-title": "Contact information",
+			"label-country": "Country",
+			"label-name": "Supplier",
+			"label-id": "Client ID",
+			"label-contact": "Contact person",
+			"label-phone": "Phone",
+			"label-email": "Email"
+		},
+		"history": {
+			"title": "History",
+			"log-count": "({{count}} actions)",
+			"changes": "Changes",
+			"no-changes": "No changes",
+			"see-all": "See all {{count}} actions",
+			"log-title": "Supplier was {{action}} by {{user}}",
+			"log-empty": "empty",
+			"action": "changed",
+			"action_oprettet": "created",
+			"action_opdateret": "updated",
+			"key": "unknown field",
+			"key_name": "Name",
+			"key_country": "Country",
+			"key_idOfClient": "Client ID",
+			"key_contactPerson": "Contact person",
+			"key_phone": "Phone",
+			"key_email": "Email"
+		}
+	}
+}

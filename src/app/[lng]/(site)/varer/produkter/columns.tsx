@@ -6,10 +6,12 @@ import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
 import { hasPermissionByRank } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
-import { formatDate, numberToDKCurrency } from '@/lib/utils'
+import { stringSortingFn } from '@/lib/tanstack/filter-fns'
+import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
+import Link from 'next/link'
 import { DateRange } from 'react-day-picker'
 
 export function getProductOverviewColumns(
@@ -23,11 +25,38 @@ export function getProductOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('product-No.')} />
     ),
-    cell: ({ getValue }) => getValue<string>(),
+	cell: ({ row }) => (
+		<Link
+		href={`/${lng}/varer/produkter/${row.original.id}`} 
+		className='hover:underline'>
+			{row.original.sku}
+		</Link>
+	),
     meta: {
       viewLabel: t('product-No.'),
     },
   }
+   const attachmentsCol: ColumnDef<FormattedProduct> = {
+      accessorKey: 'fileCount',
+      id: 'attachments',
+      header: ({ column }) => (
+        <TableHeader column={column} title={t('attachments')} />
+      ),
+      cell: ({ row }) => (
+        <div className={cn('tabular-nums hidden rounded-full', (row.original.fileCount != undefined && row.original.fileCount > 0) && 'block',)}> 
+          <p>{`${row.original.fileCount}/5`}</p>
+        </div>
+      ),
+
+      meta: {
+        viewLabel: t('attachments')
+      },
+      enableHiding: false,
+      enableSorting: false,
+      filterFn: (row, id, value) => {
+        return value.includes(row.getValue<number>(id)>0)
+      },
+    }
   const barcodeCol: ColumnDef<FormattedProduct> = {
     accessorKey: 'barcode',
     header: ({ column }) => (
@@ -49,6 +78,28 @@ export function getProductOverviewColumns(
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
+    },
+  }
+
+  const supplierCol: ColumnDef<FormattedProduct> = {
+    accessorKey: 'supplierName',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('supplierName')} />
+    ),
+    aggregationFn: 'unique',
+    cell: ({ row }) => (
+		<div className={cn(!row.original.supplierName && 'italic text-muted-foreground')}>
+			{row.original.supplierName ? row.original.supplierName : 'Ikke angivet'}
+		</div>
+	),
+    sortingFn: (ra, rb) => {
+		let aVal = ra.original.supplierName
+		let bVal = rb.original.supplierName
+		return stringSortingFn(aVal ?? "", bVal ?? "")
+    },
+    meta: {
+      viewLabel: t('supplierName'),
+      className: '[&>*]:block',
     },
   }
 
@@ -186,8 +237,10 @@ export function getProductOverviewColumns(
 
   const columns = [
     skuCol,
+    attachmentsCol,
     barcodeCol,
     groupCol,
+	supplierCol,
     text1Col,
     text2Col,
     text3Col,
@@ -249,6 +302,28 @@ export function getProductTableOverviewFilters(
       })),
     ],
   }
+
+  const supplierNameFilter: FilterField<FormattedProduct> = {
+	  column: table.getColumn('supplierName'),
+	  type: 'select',
+	  label: t('supplierName'),
+	  value: '',
+	  placeholder: t('supplierName'),
+	  options: [
+		  ...Array.from(
+			  table
+			  .getColumn('supplierName')!
+			  .getFacetedUniqueValues()
+			  .keys()
+		  )
+		  .filter(Boolean)
+		  .map(opt => ({
+			  label: opt,
+			  value: opt,
+		  }))
+	  ]
+  }
+
   const text1Filter: FilterField<FormattedProduct> = {
     column: table.getColumn('text1'),
     type: 'text',
@@ -300,11 +375,27 @@ export function getProductTableOverviewFilters(
       { value: false, label: t('barred-status-no') },
     ],
   }
+    const attachmentsFilter: FilterField<FormattedProduct> = {
+      column: table.getColumn('attachments'),
+      type: 'select',
+      label: t('attachments'),
+      value: '',
+      options: [{
+        value: true,
+        label: t('has-attach-yes'),
+      },
+    {
+      value: false,
+      label: t('has-attach-no'),
+    }],
+    }
 
   return [
     skuFilter,
+    attachmentsFilter,
     barcodeFilter,
     groupFilter,
+	supplierNameFilter,
     text1Filter,
     text2Filter,
     text3Filter,

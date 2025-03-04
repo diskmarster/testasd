@@ -68,7 +68,8 @@
     "extra-users-label": "Extra users",
     "extra-users-price": "49,- DKK per. user/mth",
     "extra-users-count": "Total user count: {{count}}",
-    "submit-button": "Create client"
+    "submit-button": "Create client",
+    "tooltip": "Create new client"
   },
   "validation": {
     "company-min": "Company name must be at least {{minLength}} characters",

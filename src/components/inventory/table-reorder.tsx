@@ -4,6 +4,7 @@ import {
   getTableReorderColumns,
   getTableReorderFilters,
 } from '@/app/[lng]/(site)/genbestil/columns'
+import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -15,7 +16,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useLanguage } from '@/context/language'
 import { FormattedReorder } from '@/data/inventory.types'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { cn } from '@/lib/utils'
 import {
@@ -37,10 +42,7 @@ import { User } from 'lucia'
 import { useEffect, useMemo, useState } from 'react'
 import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
-import { useLanguage } from '@/context/language'
-import { useTranslation } from '@/app/i18n/client'
-import { useUrlSorting } from '@/hooks/use-url-sorting'
-import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useSearchParams } from 'next/navigation'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -51,7 +53,6 @@ interface Props {
   user: User
   units: Unit[]
   groups: Group[]
-
 }
 
 export function TableReorder({ data, user, units, groups }: Props) {
@@ -59,12 +60,17 @@ export function TableReorder({ data, user, units, groups }: Props) {
   const LOCALSTORAGE_KEY = 'reorder_cols'
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
-  const columns = useMemo(() => getTableReorderColumns(user, lng, t), [user.role, lng, t])
+  const columns = useMemo(
+    () => getTableReorderColumns(user, lng, t),
+    [user.role, lng, t],
+  )
+  const mutableSearchParams = new URLSearchParams(useSearchParams())
 
-  const [sorting, handleSortingChange] = useUrlSorting([
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams,[
     { id: 'recommended', desc: true },
   ])
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering()
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)
@@ -119,6 +125,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
+    onGlobalFilterChange: setGlobalFilter,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -127,6 +134,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
     filterFromLeafRows: false,
 
     state: {
+      globalFilter,
       columnFilters,
       rowSelection,
       sorting,
@@ -151,7 +159,8 @@ export function TableReorder({ data, user, units, groups }: Props) {
         table={table}
         options={{ showExport: true, showHideShow: true }}
         filterFields={filterFields}
-		filterLocalStorageKey={FILTERS_KEY}
+        filterLocalStorageKey={FILTERS_KEY}
+        defaultGlobalFilter={globalFilter}
       />
       <div className='rounded-md border'>
         <Table>
@@ -163,9 +172,9 @@ export function TableReorder({ data, user, units, groups }: Props) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -177,8 +186,8 @@ export function TableReorder({ data, user, units, groups }: Props) {
                 <TableRow
                   className={cn(
                     row.original.recommended > 0 &&
-                    row.original.ordered < row.original.recommended &&
-                    'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
+                      row.original.ordered < row.original.recommended &&
+                      'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
                   )}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>

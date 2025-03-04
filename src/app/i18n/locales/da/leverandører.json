@@ -1,0 +1,82 @@
+{
+	"page": {
+		"title": "Leverandører",
+		"desc": "Se alle jeres leverandører"
+	},
+	"table": {
+		"no-rows": "Ingen leverandører fundet",
+		"col-no-value": "ikke angivet",
+		"col-name": "Leverandør",
+		"col-name-placeholder": "Søg i leverandør",
+		"col-country": "Land",
+		"col-country-placeholder": "Vælg land",
+		"col-client-id": "Kundenr.",
+		"col-client-id-placeholder": "Søg i kundenr.",
+		"col-items": "Antal varer",
+		"col-inserted": "Oprettet",
+		"col-updated": "Opdateret",
+		"col-actions-show": "Vis",
+		"col-actions-delete": "Slet"
+	},
+	"create": {
+		"title": "Opret leverandør",
+		"description": "Tilføj dine leverandører for nemt at knytte dem til dine varer. Det gør bestillingsprocessen hurtigere, mere effektiv og sikrer, at du altid har styr på, hvor dine varer kommer fra.",
+		"country": "Land",
+		"name": "Leverandør",
+		"idOfClient": "Kundenr.",
+		"contact-person": "Kontaktperson",
+		"phone": "Telefon",
+		"email": "E-mail",
+		"btn-close": "Luk",
+		"btn-create": "Opret",
+		"toast-error": "Leverandør blev ikke oprettet",
+		"toast-success": "Leverandør blev oprettet",
+    "tooltip": "Opret leverandør"
+	},
+	"delete": {
+		"title": "Slet leverandør?",
+		"description": "Er du sikker på du vil slette denne leverandør? Denne handling er permanent og kan derfor ikke laves om.",
+		"item-over-zero": "Denne leverandør har {{count}} varer tilknyttet. Hvis du fortsætter, vil de vare ikke længere have en leverandør",
+		"btn-close": "Nej",
+		"btn-delete": "Ja, slet leverandør",
+		"toast-error": "Leverandør blev ikke slettet",
+		"toast-success": "Leverandør blev slettet"
+	},
+	"details-page": {
+		"details": {
+			"toast-error": "Leverandør blev ikke opdateret",
+			"toast-success": "Leverandør blev opdateret",
+			"title": "Leverandør detaljer",
+			"btn-cancel": "Fortryd",
+			"btn-confirm": "Gem",
+			"btn-edit": "Rediger",
+			"no-value": "Ikke angivet",
+			"contact-title": "Kontaktinformation",
+			"label-country": "Land",
+			"label-name": "Leverandør",
+			"label-id": "Kundenr.",
+			"label-contact": "Kontaktperson",
+			"label-phone": "Tlf.",
+			"label-email": "E-mail"
+		},
+		"history": {
+			"title": "Historik",
+			"log-count": "({{count}} handlinger)",
+			"changes": "Ændringer",
+			"no-changes": "Ingen ændringer",
+			"see-all": "Se alle {{count}} handlinger",
+			"log-title": "Leverandør blev {{action}} af {{user}}",
+			"log-empty": "tom",
+			"action": "ændret",
+			"action_oprettet": "oprettet",
+			"action_opdateret": "opdateret",
+			"key": "ukendt felt",
+			"key_name": "Navn",
+			"key_country": "Land",
+			"key_idOfClient": "Kundenr.",
+			"key_contactPerson": "Kontaktperson",
+			"key_phone": "Tlf.",
+			"key_email": "E-mail"
+		}
+	}
+}

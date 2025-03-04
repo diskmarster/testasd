@@ -1,91 +1,103 @@
 {
-  "reorder-page": {
-    "title": "Genbestil",
-    "description": "Få et overblik over hvilke varer der er under en minimums beholdning"
-  },
-
-  "table-reorder": {
-    "no-minimum-stock": "Ingen min. beholdning"
-  },
-
-  "table-reorder-actions": {
-    "update": "Opdater",
-    "delete": "Slet"
-  },
-
-  "reorder-columns": {
-    "productNo": "Varenr.",
-    "barcode": "Stregkode",
-    "text1": "Tekst 1",
-    "quantity": "Beh.",
-    "unit": "Enhed",
-    "product-group": "Varegruppe",
-    "minimum-stock": "Min. beh.",
-    "disposible-stock": "Disp. beh.",
-    "recommended": "Anb. gen.",
-    "buffer": "Faktor (%)",
-    "ordered": "Bestilt",
-    "updated": "Opdateret"
-  },
-
-  "filter-placeholders": {
-    "productNo": "Søg i varenr.",
-    "barcode": "Søg i stregkode",
-    "text1": "Søg i tekst 1",
-    "quantity": "Søg i antal",
-    "minimum-stock": "Søg i min. antal/beholdning",
-    "disposible-stock": "Søg i disp. antal/beholdning",
-    "recommended": "Søg i anb. genbestil.",
-    "buffer": "Søg i buffer (%)",
-    "ordered": "Søg i bestilt"
-  },
-
-  "modal-create-reorder": {
-    "title": "Opret minimums beholdning",
-    "description": "Bliv gjort opmærksom på når en vare kommer under en angivet minimumsgrænse.",
-    "product": "Vare",
-    "product-placeholder": "Søg efter vare",
-    "product-emptymessage": "Ingen vare fundet",
-    "minimum-stock": "Minimum beholdning",
-    "restock-factor": "Genbestillingsfaktor (%)",
-    "restock-factor-description": "Dette bruges til at beregne det anbefalede genbestillingsantal.",
-    "recommended-reorder-calculation1": "Anbefalet genbestilling:",
-    "recommended-reorder-calculation2": "over minimums beholdningen",
-    "create-button": "Opret",
-    "error-occured": "Der skete en fejl."
-  },
-
-  "modal-update-reorder": {
-    "title": "Opdater minimums beholdning",
-    "description": "Bliv gjort opmærksom på når en vare kommer under en angivet minimumsgrænse",
-    "product": "Vare",
-    "minimum-stock": "Minimum beholdning",
-    "restock-factor": "Genbestillingsfaktor (%)",
-    "restock-factor-description": "Dette bruges til at beregne det anbefalede genbestillingsantal.",
-    "recommended-reorder-calculation1": "Anbefalet genbestilling:",
-    "recommended-reorder-calculation2": "over minimums beholdningen",
-    "update-button": "Opdater"
-  },
-
-  "modal-delete-reorder": {
-    "title": "Slet minimums beholdning",
-    "description": "Denne handling er permanent og kan ikke fortrydes. Hvis der er registreret et bestilt antal, vil denne ikke længere opdateres.",
-    "cancel-button": "Annuller",
-    "delete-button": "Slet"
-  },
-
-  "modal-add-ordered-reorder": {
-    "title": "Tilføj bestilt antal",
-    "description": "Det bestilte antal vil automatisk blive opdateret når der laves en tilgang på denne vare.",
-    "product": "Vare",
-    "ordered-quantity": "Bestilt antal",
-    "add-button": "Tilføj"
-  },
-
-  "toasts": {
-    "add-ordered": "Bestilling registreret for ",
-    "create-reorder": "Minimums beholdning oprettet for ",
-    "delete-reorder": "Genbestilling slettet for ",
-    "update-reorder": "Genbestilling opdateret for "
-  }
+	"reorder-page": {
+		"title": "Genbestil",
+		"description": "Få et overblik over hvilke varer der er under en minimums beholdning"
+	},
+	"table-reorder": {
+		"no-minimum-stock": "Ingen min. beholdning"
+	},
+	"table-reorder-actions": {
+		"update": "Opdater",
+		"delete": "Slet"
+	},
+	"reorder-columns": {
+		"productNo": "Varenr.",
+		"barcode": "Stregkode",
+		"text1": "Tekst 1",
+		"quantity": "Beh.",
+		"unit": "Enhed",
+		"product-group": "Varegruppe",
+		"minimum-stock": "Min. beh.",
+		"disposible-stock": "Disp. beh.",
+		"recommended": "Anb. gen.",
+		"buffer": "Faktor (%)",
+		"ordered": "Bestilt",
+		"updated": "Opdateret",
+		"no-value": "ikke angivet",
+		"supplier": "Leverandør"
+	},
+	"filter-placeholders": {
+		"productNo": "Søg i varenr.",
+		"barcode": "Søg i stregkode",
+		"text1": "Søg i tekst 1",
+		"quantity": "Søg i antal",
+		"minimum-stock": "Søg i min. antal/beholdning",
+		"disposible-stock": "Søg i disp. antal/beholdning",
+		"recommended": "Søg i anb. genbestil.",
+		"buffer": "Søg i buffer (%)",
+		"ordered": "Søg i bestilt"
+	},
+	"modal-create-reorder": {
+		"title": "Opret minimums beholdning",
+		"description": "Bliv gjort opmærksom på når en vare kommer under en angivet minimumsgrænse.",
+		"product": "Vare",
+		"product-placeholder": "Søg efter vare",
+		"product-emptymessage": "Ingen vare fundet",
+		"minimum-stock": "Minimum beholdning",
+		"restock-factor": "Genbestillingsfaktor (%)",
+		"restock-factor-description": "Dette bruges til at beregne det anbefalede genbestillingsantal.",
+		"recommended-reorder-calculation1": "Anbefalet genbestilling:",
+		"recommended-reorder-calculation2": "over minimums beholdningen",
+		"create-button": "Opret",
+		"error-occured": "Der skete en fejl."
+	},
+	"modal-update-reorder": {
+		"title": "Opdater minimums beholdning",
+		"description": "Bliv gjort opmærksom på når en vare kommer under en angivet minimumsgrænse",
+		"product": "Vare",
+		"minimum-stock": "Minimum beholdning",
+		"restock-factor": "Genbestillingsfaktor (%)",
+		"restock-factor-description": "Dette bruges til at beregne det anbefalede genbestillingsantal.",
+		"recommended-reorder-calculation1": "Anbefalet genbestilling:",
+		"recommended-reorder-calculation2": "over minimums beholdningen",
+		"update-button": "Opdater"
+	},
+	"modal-delete-reorder": {
+		"title": "Slet minimums beholdning?",
+		"description": "Denne handling er permanent og kan ikke fortrydes. Hvis der er registreret et bestilt antal, vil denne ikke længere opdateres.",
+		"cancel-button": "Nej",
+		"delete-button": "Ja, slet minimums beholdning"
+	},
+	"modal-add-ordered-reorder": {
+		"title": "Tilføj bestilt antal",
+		"description": "Det bestilte antal vil automatisk blive opdateret når der laves en tilgang på denne vare.",
+		"product": "Vare",
+		"ordered-quantity": "Bestilt antal",
+		"add-button": "Tilføj"
+	},
+	"toasts": {
+		"add-ordered": "Bestilling registreret for ",
+		"create-reorder": "Minimums beholdning oprettet for ",
+		"delete-reorder": "Genbestilling slettet for ",
+		"update-reorder": "Genbestilling opdateret for ",
+		"registration-failed": "Genbestillinger blev ikke registreret",
+		"registration-success": "Genbestillinger blev registreret."
+	},
+	"bulk": {
+		"title": "Registrer flere bestillinger",
+		"description": "Registrer dine genbestillinger nemt og hold lageret opdateret. Få overblik over bestilte varer og sikre, at beholdningen altid stemmer.",
+		"add-rows-continue": "Tilføj vare for at fortsætte",
+		"add-rows-btn": "Tilføj vare",
+		"btn-close": "Luk",
+		"btn-confirm": "Opret bestillinger",
+		"errors": {
+			"positive": "Skal være et positivt tal"
+		},
+		"sku": "Varenr.",
+		"sku-placeholder": "Vælg vare",
+		"sku-search": "Søg efter vare...",
+		"sku-no-items": "Ingen varer fundet",
+		"qty": "Antal",
+		"tooltip": "Registrer bestillinger"
+	}
 }

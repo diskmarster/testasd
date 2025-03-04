@@ -72,7 +72,8 @@
     "send-button_true": "Invite",
     "send-button_false": "Register",
     "success-toast": "Success!",
-    "mail-checkbox": "Send an email to the user with login information"
+    "mail-checkbox": "Send an email to the user with login information",
+    "tooltip": "Invite/Create new user"
   },
   "invite-create-action": {
     "email-already-exists": "A user with that email already exists",

@@ -98,6 +98,14 @@ export const siteConfig: SiteConfig = {
           isExternal: false,
           isDisabled: false,
         },
+        {
+          label: 'site-config.administration.suppliers',
+          description: 'site-config.administration.suppliers-description',
+          href: `/${lng}/administration/leverandorer`,
+          roles: [],
+          isExternal: false,
+          isDisabled: false,
+        },
       ],
     },
     {

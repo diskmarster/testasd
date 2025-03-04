@@ -169,7 +169,7 @@ export function ModalInviteCreateUser({}: Props) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button size='icon' variant='outline' className=''>
+        <Button size='icon' variant='outline' className='' tooltip={t('modal-create-user.tooltip')}>
           <Icons.userPlus className='size-4' />
         </Button>
       </DialogTrigger>

@@ -16,7 +16,8 @@
     "create-unit-description": "Here you can create a new unit",
     "unit-name": "Unit name",
     "unit-name-placeholder": "Enter unit name",
-    "create-button": "Create"
+    "create-button": "Create",
+    "tooltip":"Create unit"
   },
 
   "modal-update-unit": {

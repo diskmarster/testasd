@@ -26,6 +26,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogV2 } from '../ui/dialog-v2'
 
 interface Props {
   products: Product[]
@@ -95,18 +96,18 @@ export function ModalAddOrderedReorder({ products }: Props) {
   }
 
   return (
-    <Credenza open={open} onOpenChange={setOpen}>
-      <CredenzaContent className='md:max-w-lg'>
-        <CredenzaHeader>
-          <CredenzaTitle>{t('modal-add-ordered-reorder.title')}</CredenzaTitle>
-          <CredenzaDescription>
-            {t('modal-add-ordered-reorder.description')}
-          </CredenzaDescription>
-        </CredenzaHeader>
-        <CredenzaBody>
+	<DialogV2 open={open} onOpenChange={setOpen}>
+      <DialogContentV2 className='md:max-w-lg'>
+        <DialogHeaderV2>
+					<div className='flex items-center gap-2'>
+						<Icons.plus className="size-4 text-primary" />
+						<DialogTitleV2>{t('modal-add-ordered-reorder.title')}</DialogTitleV2>
+					</div>
+        </DialogHeaderV2>
           <form
+						id='add-reorder-amount-form'
             onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4 pb-4 md:pb-0'>
+            className='space-y-4 px-3'>
             {error && (
               <Alert variant='destructive'>
                 <Icons.alert className='size-4 !top-3' />
@@ -114,6 +115,9 @@ export function ModalAddOrderedReorder({ products }: Props) {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+					<p className="text-sm text-muted-foreground">
+            {t('modal-add-ordered-reorder.description')}
+					</p>
             <div className='grid gap-2'>
               <Label>{t('modal-add-ordered-reorder.product')}</Label>
               <Input
@@ -136,7 +140,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-14 w-28 border-r-0 rounded-r-none'
+                  className='h-12 w-28 border-r-0 rounded-r-none'
                   onClick={decrement}>
                   <Icons.minus className='size-6' />
                 </Button>
@@ -145,7 +149,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
                   type='number'
                   {...register('ordered')}
                   className={cn(
-                    'w-full h-14 rounded-none text-center text-2xl z-10',
+                    'w-full h-12 rounded-none text-center text-xl z-10',
                     '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                   )}
                 />
@@ -154,7 +158,7 @@ export function ModalAddOrderedReorder({ products }: Props) {
                   size='icon'
                   type='button'
                   variant='outline'
-                  className='h-14 w-28 border-l-0 rounded-l-none'
+                  className='h-12 w-28 border-l-0 rounded-l-none'
                   onClick={increment}>
                   <Icons.plus className='size-6' />
                 </Button>
@@ -165,16 +169,19 @@ export function ModalAddOrderedReorder({ products }: Props) {
                 </p>
               )}
             </div>
+          </form>
+					<DialogFooterV2>
+					<Button onClick={() => setOpen(false)} size='sm' variant='outline'>{t("bulk.btn-close")}</Button>
             <Button
+							form='add-reorder-amount-form'
               disabled={!formState.isValid || pending || formState.isSubmitting}
-              size='lg'
-              className='w-full gap-2'>
+              size='sm'
+              className='flex items-center gap-2'>
               {pending && <Icons.spinner className='size-4 animate-spin' />}
               {t('modal-add-ordered-reorder.add-button')}
             </Button>
-          </form>
-        </CredenzaBody>
-      </CredenzaContent>
-    </Credenza>
+					</DialogFooterV2>
+      </DialogContentV2>
+    </DialogV2>
   )
 }

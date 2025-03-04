@@ -36,6 +36,7 @@ import { useTranslation } from '@/app/i18n/client'
 import { getProductOverviewColumns, getProductTableOverviewFilters } from '@/app/[lng]/(site)/varer/produkter/columns'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useSearchParams } from 'next/navigation'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -58,8 +59,9 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     [user, plan, lng, t],
   )
 
-  const [sorting, handleSortingChange] = useUrlSorting()
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering([
+	const mutableSearchParams = new URLSearchParams(useSearchParams())
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams,[
     { id: 'isBarred', value: [false] },
   ])
   const [expanded, setExpanded] = useState<ExpandedState>({})

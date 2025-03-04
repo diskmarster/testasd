@@ -15,6 +15,7 @@
     "text2": "Product text 2",
     "text3": "Product text 3",
     "cost-price": "Cost price",
+    "sale-price": "Sale price",
     "unit": "Unit",
     "quantity": "Quantity",
     "placement": "Placement",
@@ -27,6 +28,8 @@
     "type_import": "Import",
     "reference": "Account/case",
     "user": "User",
+    "total-sales":"Sales (Total)",
+    "total-costs": "Costs (Total)",
     "placeholders": {
       "productNo": "Search by product no.",
       "barcode": "Search by barcode",

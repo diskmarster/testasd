@@ -38,6 +38,9 @@ export const updateProductAction = editableAction
       parsedInput: { productID, data: updatedProductData },
     }) => {
       const { t } = await serverTranslation(lang, 'action-errors')
+	  if (updatedProductData.supplierID == -1) {
+		  updatedProductData.supplierID = null
+	  }
       const updatedProduct = await productService.updateByID(
         productID,
         updatedProductData,
@@ -47,8 +50,6 @@ export const updateProductAction = editableAction
       if (!updatedProduct) {
         throw new ActionError(t('product-action.product-not-updated'))
       }
-
-      revalidatePath(`/${lang}/varer/produkter`)
     },
   )
 
@@ -74,7 +75,7 @@ export const toggleBarredProductAction = editableAction
   )
 
 export const importProductsAction = adminAction
-  .metadata({actionName: 'importProducts', excludeAnalytics: true})
+  .metadata({ actionName: 'importProducts', excludeAnalytics: true })
   .schema(importProductsValidation)
   .action(async ({ parsedInput: importedData, ctx }) => {
     const didImport = await productService.importProducts(

@@ -64,7 +64,7 @@ export function ModalCreatePlacement() {
   return (
     <Credenza open={open} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline' className='w-full md:w-auto'>
+        <Button size='icon' variant='outline' className='w-full md:w-auto' tooltip={t('modal-create-placement.tooltip')}>
           <Icons.plus className='size-4' />
         </Button>
       </CredenzaTrigger>

@@ -4,7 +4,7 @@
   },
   "modal-show-product-label": {
     "title": "Product label",
-    "description": "Print labels for your products",
+    "description": "Print labels for your product",
     "prod-no": "Prod. no.",
     "size": "Label size",
     "size_small": "Small",
@@ -26,7 +26,9 @@
     "barcode": "Barcode",
     "cost-price": "Cost price",
     "sales-price": "Sales price",
-    "barred-tooltip": "This item is barred"
+    "barred-tooltip": "This item is barred",
+    "product-has-documents_one": "There is {{count}} file",
+    "product-has-documents": "There are {{count}} files"
   },
   "modal-import-products": {
     "something-went-wrong": "Something went wrong with the rows from",
@@ -94,7 +96,7 @@
   },
   "modal-show-user-label": {
     "title": "User Label",
-    "description": "Print labels for this user",
+    "description": "Print labels for {{username}}",
     "prod-no": "Email",
     "size": "Label size",
     "size_small": "Small",
@@ -103,5 +105,11 @@
     "size-desc_big": "Best for 100x192mm",
     "size_medium": "Medium",
     "size-desc_medium": "Best for 76x51mm"
+  },
+  "tooltips": {
+    "refresh": "Reload data",
+    "download-inventory":"Download filtered data",
+    "show-hide-show":"Show/Hide Columns",
+    "import-products": "Import product catalog"
   }
 }

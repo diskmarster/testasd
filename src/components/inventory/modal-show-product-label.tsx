@@ -107,7 +107,7 @@ export function ModalShowProductLabel({ product }: Props) {
                           value={product.barcode}
                           className='print:size-7 size-14'
                         />
-                        <span className='print:text-[9px] text-sm font-medium w-max justify-self-end'>{product.barcode}</span>
+                        <span className='print:text-[9px] text-sm font-semibold w-max justify-self-end'>{product.barcode}</span>
                       </div>
                     </div>
                   </div>
@@ -136,7 +136,7 @@ export function ModalShowProductLabel({ product }: Props) {
                           value={product.barcode}
                           className='print:size-8 size-14'
                         />
-                        <span className='text-[10px] font-medium'>{product.barcode}</span>
+                        <span className='text-[10px] font-semibold'>{product.barcode}</span>
                       </div>
                     </div>
                   </div>

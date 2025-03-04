@@ -7,7 +7,6 @@ export const createReorderValidation = (
     productID: z.coerce.number({
       message: t('restock.product-required'),
     }),
-    locationID: z.string().min(1),
     buffer: z.coerce
       .number()
       .positive({ message: t('restock.buffer-positive') }),
@@ -48,4 +47,23 @@ export const addOrderedToReorderValidation = (
     ordered: z.coerce
       .number()
       .positive({ message: t('restock.ordered-quantity-positive') }),
+  })
+
+export const bulkAddOrderedToReorderValidation = (
+  t: (key: string, options?: any) => string,
+) =>
+  z.object({
+    items: z
+      .array(
+        z.object({
+          text1: z.string(),
+          sku: z.string(),
+          productID: z.coerce.number(),
+          ordered: z.coerce
+            .number()
+            .positive({ message: t('bulk.errors.positive') }),
+          alreadyOrdered: z.coerce.number(),
+        }),
+      )
+      .min(1),
   })

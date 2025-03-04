@@ -4,7 +4,7 @@
   },
   "modal-show-product-label": {
     "title": "Varelabels",
-    "description": "Print labels til dine vare",
+    "description": "Print labels til din vare",
     "prod-no": "Varenr.",
     "size": "Labelstørrelse",
     "size_small": "Lille",
@@ -26,7 +26,9 @@
     "barcode": "Stregkode",
     "cost-price": "Kostpris",
     "sales-price": "Salgspris",
-    "barred-tooltip": "Denne vare er spærret"
+    "barred-tooltip": "Denne vare er spærret",
+    "product-has-documents_one": "Der er {{count}} fil",
+    "product-has-documents": "Der er {{count}} filer"
   },
   "modal-import-products": {
     "something-went-wrong": "Noget gik galt med rækkerne fra",
@@ -103,5 +105,11 @@
     "size-desc_big": "Egnet til 100x192mm",
     "size_medium": "Medium",
     "size-desc_medium": "Egnet til 76x51mm"
+  },
+  "tooltips": {
+    "refresh": "Genindlæs data",
+    "download-inventory":"Download filtreret data",
+    "show-hide-show":"Gem/Vis kolonner",
+    "import-products": "Importer varekartotek"
   }
 }

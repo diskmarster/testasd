@@ -37,6 +37,7 @@ import { LocationWithCounts } from '@/data/location.types'
 import { getTableLocationsColumns, getTableLocationsFilters } from '@/app/[lng]/(site)/administration/organisation/location-columns'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { HandleFilterChangeFN } from '@/hooks/use-url-filtering'
+import { useSearchParams } from 'next/navigation'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -59,7 +60,9 @@ export function TableAdminLocations({ data, user, columnFilters, handleColumnFil
     [user.role, lng, t],
   )
 
-  const [sorting, handleSortingChange] = useUrlSorting()
+	const mutableSearchParams = new URLSearchParams(useSearchParams())
+
+  const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [mounted, setMounted] = useState(false)

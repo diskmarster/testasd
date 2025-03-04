@@ -27,6 +27,7 @@ import {
   inviteNewUserValidation,
   resetUserPasswordValidation,
   updateCustomerValidation,
+  deleteUserByIDValidation
 } from './validation'
 
 export const toggleUserStatusAction = adminAction
@@ -78,6 +79,22 @@ export const toggleUserStatusAction = adminAction
     }
 
     revalidatePath(`/${ctx.lang}/administration/organisation`)
+  })
+
+export const deleteUserAction = adminAction
+  .metadata({ actionName: 'deleteUser', excludeAnalytics: true })
+  .schema(deleteUserByIDValidation)
+  .action(async ({ parsedInput: { userID }, ctx: { user, lang } }) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
+
+    if (user.id == userID) {
+      throw new ActionError(t('delete-own-user'))
+    }
+
+    const deleted = await userService.deleteByID(userID)
+    if(!deleted) {
+      throw new ActionError(t('delete-user-failed'))
+    }
   })
 
 export const inviteNewUserAction = adminAction

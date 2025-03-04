@@ -8,6 +8,7 @@ import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
 import {
   addOrderedToReorderValidation,
+  bulkAddOrderedToReorderValidation,
   createReorderValidation,
   deleteReorderValidation,
   updateReorderValidation,
@@ -18,7 +19,11 @@ export const createReorderAction = editableAction
   .schema(async () => await getSchema(createReorderValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const existsLocation = await locationService.getByID(parsedInput.locationID)
+		const locationID = await locationService.getLastVisited(ctx.user.id)
+    if (!locationID) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+    const existsLocation = await locationService.getByID(locationID)
     if (!existsLocation) {
       throw new ActionError(t('restock-action.company-location-not-found'))
     }
@@ -30,6 +35,7 @@ export const createReorderAction = editableAction
 
     const newReorder = await inventoryService.createReorder({
       ...parsedInput,
+			locationID: existsLocation.id,
       customerID: ctx.user.customerID,
     })
     if (!newReorder) {
@@ -102,7 +108,6 @@ export const addOrderedToReorderAction = editableAction
   .schema(
     async () => await getSchema(addOrderedToReorderValidation, 'validation'),
   )
-
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
     const existsLocation = await locationService.getByID(parsedInput.locationID)
@@ -126,6 +131,46 @@ export const addOrderedToReorderAction = editableAction
     if (!newReorder) {
       throw new ActionError(t('minimum-stock-action.minimum-stock-not-updated'))
     }
+
+    revalidatePath(`/${ctx.lang}/genbestil`)
+  })
+
+export const bulkAddOrderedToReorderAction = editableAction
+  .metadata({ actionName: 'bulkAddOrderedToReorderAction' })
+  .schema(
+    async () => await getSchema(bulkAddOrderedToReorderValidation, 'genbestil'),
+  )
+  .action(async ({ parsedInput, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const locationID = await locationService.getLastVisited(ctx.user.id)
+    if (!locationID) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+    const existsLocation = await locationService.getByID(locationID)
+    if (!existsLocation) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+    if (existsLocation.customerID != ctx.user.customerID) {
+      throw new ActionError(
+        t('restock-action.company-location-belongs-to-your-company'),
+      )
+    }
+
+    const promises = []
+
+    for (const reorder of parsedInput.items) {
+      const addPromise = inventoryService.updateReorderByIDs(
+        reorder.productID,
+        locationID,
+        ctx.user.customerID,
+        {
+          ordered: reorder.ordered + reorder.alreadyOrdered,
+        },
+      )
+      promises.push(addPromise)
+    }
+
+    await Promise.all(promises)
 
     revalidatePath(`/${ctx.lang}/genbestil`)
   })

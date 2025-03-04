@@ -56,9 +56,9 @@ export function ModalDeleteUser({ }: Props) {
 
       setError(undefined)
       setOpen(false)
-      toast.success(t(siteConfig.successTitle, {
+      toast.success(t(siteConfig.successTitle), {
         description: t("modal-delete-user.confirm-toast"),
-      }))
+      })
     })
   }
 

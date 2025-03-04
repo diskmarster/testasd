@@ -7,7 +7,8 @@ type SessionContextType = Awaited<ReturnType<typeof sessionService.validate>>
 
 const SessionContext = createContext<SessionContextType>({
   session: null,
-  user: null
+  user: null,
+  customer: null
 })
 
 export const useSession = () => useContext(SessionContext)

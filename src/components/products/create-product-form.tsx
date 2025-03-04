@@ -85,7 +85,7 @@ export function CreateProductsForm({
   return (
     <Credenza open={show} onOpenChange={onOpenChange}>
       <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline'>
+        <Button size='icon' variant='outline' tooltip={t('tooltips.create-product')}>
           <Icons.plus className='size-5' />
         </Button>
       </CredenzaTrigger>

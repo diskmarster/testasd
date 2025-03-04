@@ -5,8 +5,9 @@
     "go-to-next-page": "Go to next page"
   },
   "table-filters": {
-    "clear": "Reset",
-    "clear-filter": "Remove Filter",
+    "clear_one": "Remove filter",
+    "clear_other": "Remove filters",
+    "clear-filter": "Remove filter",
     "no-filter-choice": "No filter choices",
     "add-filter": "Add filter",
     "no-filter-found": "No filter found",
@@ -17,7 +18,8 @@
     "number-range-empty": "Choose {{label}}",
     "number-range-to": "Up to and including {{to}}",
     "number-range-from": "From {{from}} and up",
-    "number-range-both": "From {{from}} up to and including {{to}}"
+    "number-range-both": "From {{from}} up to and including {{to}}",
+    "search-placeholder": "Search table"
   },
   "language-switcher": {
     "language": "Language",
@@ -31,6 +33,15 @@
   },
   "table-toolbar": {
     "show-hide-columns": "Save/show columns"
+  },
+  "table-floating-bar": {
+    "download-selected_one": "Download {{count}} selected row",
+    "download-selected_other": "Download {{count}} selected rows",
+    "toggle-selected": "Toggle status on {{count}} {{domain}}",
+    "location_one": "location",
+    "location_other": "locations",
+    "user_one": "user",
+    "user_other": "users"
   },
   "nav-user": {
     "my-profile": "My Profile",
@@ -105,7 +116,9 @@
       "organisation": "Organization",
       "organisation-description": "Here you can administrate users, locations and company details.",
       "reports": "Reports",
-      "reports-description": "Here you can download reports based on your current stock."
+      "reports-description": "Here you can download reports based on your current stock.",
+	  "suppliers": "Suppliers",
+	  "suppliers-description": "Here you can administrate your suppliers"
     },
     "sys-admin-dropdown": {
       "customers": "Customers",

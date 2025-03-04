@@ -55,6 +55,10 @@
   "isBarred": "Status",
   "isBarred-yes": "Spærret",
   "isBarred-no": "Aktiv",
+  "supplierName": "Leverandør",
+  "attachments": "Filer",
+  "has-attach-yes": "1 eller flere filer",
+  "has-attach-no": "Ingen filer",
 
   "overview-table-actions": "",
   "update": "Opdater beholdning",

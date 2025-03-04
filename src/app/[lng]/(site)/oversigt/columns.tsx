@@ -1,8 +1,9 @@
-import { ModalShowProductCard } from '@/components/inventory/modal-show-product-card'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
+import { Icons } from '@/components/ui/icons'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByRank } from '@/data/user.types'
@@ -12,13 +13,14 @@ import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
+import Link from 'next/link'
 import { DateRange } from 'react-day-picker'
 
 export function getTableOverviewColumns(
   plan: Plan,
   user: User,
   lng: string,
-  t: (key: string) => string,
+  t: (key: string, opts?: any) => string,
 ): ColumnDef<FormattedInventory>[] {
   const skuCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.sku',
@@ -27,11 +29,45 @@ export function getTableOverviewColumns(
       <TableHeader column={column} title={t('product-No.')} />
     ),
     cell: ({ row }) => (
-      <ModalShowProductCard product={row.original.product} user={user} />
+			<Link className='flex items-center gap-1 cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
+				<p>{row.original.product.sku}</p>	
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<span className={cn('hidden size-1.5 rounded-full bg-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
+						</TooltipTrigger>
+						<TooltipContent className='bg-foreground text-background'>
+							{t('modal-show-product-card.barred-tooltip')}
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+			</Link>
     ),
     enableHiding: false,
     meta: {
       viewLabel: t('product-No.'),
+    },
+  }
+
+  const attachmentsCol: ColumnDef<FormattedInventory> = {
+    accessorKey: 'product.fileCount',
+    id: 'attachments',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('attachments')} />
+    ),
+    aggregatedCell: ({ row }) => (
+							<div className={cn('tabular-nums hidden rounded-full', (row.original.product.fileCount != undefined && row.original.product.fileCount > 0) && 'block',)}> 
+                <p>{`${row.original.product.fileCount}/5`}</p>
+							</div>
+    ),
+    cell: () => null,
+    meta: {
+      viewLabel: t('attachments')
+    },
+    enableHiding: false,
+    enableSorting: false,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue<number>(id)>0)
     },
   }
 
@@ -69,6 +105,26 @@ export function getTableOverviewColumns(
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
+    },
+  }
+
+  const supplierCol: ColumnDef<FormattedInventory> = {
+    accessorKey: 'product.supplierName',
+    id: 'supplierName',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('supplierName')} />
+    ),
+    aggregationFn: 'unique',
+    aggregatedCell: ({ getValue }) => getValue<string | null>(),
+    cell: () => null,
+    sortingFn: (ra, rb) => {
+		let aVal = ra.original.product.supplierName
+		let bVal = rb.original.product.supplierName
+		return stringSortingFn(aVal ?? "", bVal ?? "")
+    },
+    meta: {
+      viewLabel: t('supplierName'),
+      className: '[&>*]:block',
     },
   }
 
@@ -301,8 +357,10 @@ export function getTableOverviewColumns(
     case 'lite':
       const liteCols = [
         skuCol,
+        attachmentsCol,
         barcodeCol,
         groupCol,
+		supplierCol,
         text1Col,
         text2Col,
         text3Col,
@@ -320,8 +378,10 @@ export function getTableOverviewColumns(
     case 'basis':
       const plusCols = [
         skuCol,
+        attachmentsCol,
         barcodeCol,
         groupCol,
+		supplierCol,
         text1Col,
         text2Col,
         text3Col,
@@ -340,8 +400,10 @@ export function getTableOverviewColumns(
     case 'pro':
       const proCols = [
         skuCol,
+        attachmentsCol,
         barcodeCol,
         groupCol,
+		supplierCol,
         text1Col,
         text2Col,
         text3Col,
@@ -377,6 +439,20 @@ export function getTableOverviewFilters(
     value: '',
     placeholder: t('product-No.-placeholder'),
   }
+  const attachmentsFilter: FilterField<FormattedInventory> = {
+    column: table.getColumn('attachments'),
+    type: 'select',
+    label: t('attachments'),
+    value: '',
+    options: [{
+      value: true,
+      label: t('has-attach-yes'),
+    },
+  {
+    value: false,
+    label: t('has-attach-no'),
+  }],
+  }
   const barcodeFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('barcode'),
     type: 'text',
@@ -407,6 +483,26 @@ export function getTableOverviewFilters(
         label: group.name,
       })),
     ],
+  }
+  const supplierNameFilter: FilterField<FormattedInventory> = {
+	  column: table.getColumn('supplierName'),
+	  type: 'select',
+	  label: t('supplierName'),
+	  value: '',
+	  placeholder: t('supplierName'),
+	  options: [
+		  ...Array.from(
+			  table
+			  .getColumn('supplierName')!
+			  .getFacetedUniqueValues()
+			  .keys()
+		  )
+		  .filter(Boolean)
+		  .map(opt => ({
+			  label: opt,
+			  value: opt,
+		  }))
+	  ]
   }
   const text1Filter: FilterField<FormattedInventory> = {
     column: table.getColumn('text1'),
@@ -511,9 +607,11 @@ export function getTableOverviewFilters(
     case 'lite':
       return [
         skuFilter,
+        attachmentsFilter,
         barcodeFilter,
         unitFilter,
         groupFilter,
+		supplierNameFilter,
         text1Filter,
         text2Filter,
         text3Filter,
@@ -528,9 +626,11 @@ export function getTableOverviewFilters(
     case 'basis':
       return [
         skuFilter,
+        attachmentsFilter,
         barcodeFilter,
         unitFilter,
         groupFilter,
+		supplierNameFilter,
         text1Filter,
         text2Filter,
         text3Filter,
@@ -545,9 +645,11 @@ export function getTableOverviewFilters(
     case 'pro':
       return [
         skuFilter,
+        attachmentsFilter,
         barcodeFilter,
         unitFilter,
         groupFilter,
+		supplierNameFilter,
         text1Filter,
         text2Filter,
         text3Filter,

@@ -22,8 +22,8 @@ import { useTransition } from 'react'
 import { toast } from 'sonner'
 import { ModalCreateLocation } from '../admin/modal-create-location'
 import { Button } from '../ui/button'
-import { emitCustomEvent } from 'react-custom-events'
 import { updateChipCount } from '@/lib/utils'
+import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
 
 export function NavLocationSelect({
   locations,
@@ -32,7 +32,7 @@ export function NavLocationSelect({
   locations: LocationWithPrimary[]
   lastVisitedID: string | undefined
 }) {
-  const { user } = useSession()
+  const { user, customer } = useSession()
   const [pending, startTransition] = useTransition()
   const router = useRouter()
   const lng = useLanguage()
@@ -49,12 +49,12 @@ export function NavLocationSelect({
       if (res && res.serverError) {
         toast.error(t(siteConfig.errorTitle), { description: res.serverError })
       }
-      {
-        toast.success(t(siteConfig.successTitle), {
-          description: `${t('toasts.location-select')} ${locations.find(loc => loc.id)?.name ?? t('toasts.unnamed')}`,
-        })
-        router.refresh()
-      }
+			toast.success(t(siteConfig.successTitle), {
+				description: `${t('toasts.location-select')} ${
+					locations.find(loc => loc.id === locationID)?.name ?? t('toasts.unnamed')
+				}`
+			})
+			router.refresh()
       updateChipCount()
     })
   }
@@ -72,7 +72,10 @@ export function NavLocationSelect({
           <SelectLabel className='text-sm font-semibold'>
             <div className='flex items-center gap-4 justify-between'>
               <p>{t('nav-location-select.select-location')}</p>
-              {user && user.role.includes('admin') && (
+              {user 
+				  && hasPermissionByRank(user.role, 'administrator') 
+				  && hasPermissionByPlan(customer.plan, 'pro') 
+				  && (
                 <ModalCreateLocation user={user}>
                   <Button size='iconSm' variant='outline'>
                     <Icons.plus className='size-3' />

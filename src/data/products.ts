@@ -14,8 +14,10 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
+import { supplierTable } from '@/lib/database/schema/suppliers'
+import { attachmentsTable } from '@/lib/database/schema/attachments'
 
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
@@ -32,11 +34,22 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
+		    supplierName: supplierTable.name,
+        fileCount: count(attachmentsTable.id),
       })
       .from(productTable)
       .where(eq(productTable.customerID, customerID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+	    .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .leftJoin(attachmentsTable,
+        and(
+        eq(attachmentsTable.refDomain, 'product'),
+        eq(attachmentsTable.refID, productTable.id)
+        )
+      )
+      .groupBy(productTable.id)
+      
     return product
   },
   create: async function(
@@ -98,10 +111,12 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
+		supplierName: supplierTable.name,
       })
       .from(productTable)
       .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
       .innerJoin(groupTable, eq(productTable.groupID, groupTable.id))
+	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
       .where(eq(productTable.id, id))
 
     return res[0]
@@ -166,6 +181,7 @@ export const product = {
           eq(productHistoryTable.productID, productID),
         ),
       )
+	  .orderBy(desc(productHistoryTable.id))
   },
   getWithInventoryByCustomerID: async function(
     customerID: CustomerID,
@@ -176,6 +192,7 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
+		supplierName: supplierTable.name,
         inventory: {
           ...INVENTORY_COLS,
         }
@@ -185,6 +202,7 @@ export const product = {
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .innerJoin(inventoryTable, eq(inventoryTable.productID, productTable.id))
+	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
     return product
   },
 }
