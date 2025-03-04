@@ -34,6 +34,15 @@
   "table-toolbar": {
     "show-hide-columns": "Save/show columns"
   },
+  "table-floating-bar": {
+    "download-selected_one": "Download {{count}} selected row",
+    "download-selected_other": "Download {{count}} selected rows",
+    "toggle-selected": "Toggle status on {{count}} {{domain}}",
+    "location_one": "location",
+    "location_other": "locations",
+    "user_one": "user",
+    "user_other": "users"
+  },
   "nav-user": {
     "my-profile": "My Profile",
     "get-help": "Get Help",

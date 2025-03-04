@@ -34,6 +34,15 @@
   "table-toolbar": {
     "show-hide-columns": "Gem/vis Kolonner"
   },
+	"table-floating-bar": {
+		"download-selected_one": "Download {{count}} valgt række",
+		"download-selected_other": "Download {{count}} valgte rækker",
+		"toggle-selected": "Skift status på {{count}} {{domain}}",
+		"location_one": "lokation",
+		"location_other": "lokationer",
+		"user_one": "bruger",
+		"user_other": "brugere"
+	},
   "nav-user": {
     "my-profile": "Min profil",
     "get-help": "Få hjælp",

@@ -1,5 +1,7 @@
+import { useTranslation } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
+import { useLanguage } from '@/context/language'
 import { exportTableToCSV } from '@/lib/export/csv'
 import { Table } from '@tanstack/react-table'
 import { useTransition } from 'react'
@@ -9,7 +11,10 @@ export function ExportSelectedButton<TData>({
 }: {
   table: Table<TData>
 }) {
+  const lng = useLanguage()
+  const { t } = useTranslation(lng, 'common')
   const [pending, startTransition] = useTransition()
+  const count = table.getFilteredSelectedRowModel().rows.length
   return (
     <Button
       variant='outline'
@@ -23,7 +28,8 @@ export function ExportSelectedButton<TData>({
             onlySelected: true,
           })
         })
-      }}>
+      }}
+      tooltip={t('table-floating-bar.download-selected', { count })}>
       {pending ? (
         <Icons.spinner className='size-4 animate-spin' />
       ) : (
