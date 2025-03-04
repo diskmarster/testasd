@@ -10,7 +10,9 @@ export function getOptions(
 ) {
   return {
     supportedLngs: languages,
-
+    interpolation: {
+      skipOnVariables: false,
+    },
     fallbackLng,
     lng,
     fallbackNS: defaultNS,
