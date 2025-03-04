@@ -13,7 +13,7 @@
 		"col-client-id": "Kundenr.",
 		"col-client-id-placeholder": "Søg i kundenr.",
 		"col-items": "Antal varer",
-		"col-inserted": "Opdateret",
+		"col-inserted": "Oprettet",
 		"col-updated": "Opdateret",
 		"col-actions-show": "Vis",
 		"col-actions-delete": "Slet"
@@ -31,7 +31,7 @@
 		"btn-create": "Opret",
 		"toast-error": "Leverandør blev ikke oprettet",
 		"toast-success": "Leverandør blev oprettet",
-   		"tooltip": "Opret leverandør"
+    "tooltip": "Opret leverandør"
 	},
 	"delete": {
 		"title": "Slet leverandør?",
