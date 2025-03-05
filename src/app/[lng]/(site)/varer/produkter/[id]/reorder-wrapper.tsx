@@ -19,6 +19,6 @@ export async function ReorderWrapper({ lng, id, user }: Props) {
 	const reorder = await inventoryService.getReorderByIDs(productID, user.customerID, user.id)
 
 	return (
-		<ProductReorder user={user} reorder={reorder} />
+		<ProductReorder user={user} productID={productID} reorder={reorder} />
 	)
 }

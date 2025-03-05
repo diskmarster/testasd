@@ -39,7 +39,6 @@ export const updateReorderValidation = (
       productID: z.coerce.number({
         message: t('restock.product-required'),
       }),
-      locationID: z.string().min(1),
       minimum: z.coerce.number().refine(val => !isNaN(val) && val > 0, {
         message: t('restock.minimum-quantity-positive'),
       }),

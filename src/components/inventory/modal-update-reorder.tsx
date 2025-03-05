@@ -38,7 +38,6 @@ export function ModalUpdateReorder({}: Props) {
 
   useCustomEventListener('UpdateReorderByIDs', (data: any) => {
     setOpen(true)
-    setValue('locationID', data.locationID)
     setValue('productID', data.productID)
     setValue('minimum', data.minimum)
     setValue('orderAmount', data.orderAmount)

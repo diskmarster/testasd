@@ -1,7 +1,7 @@
 
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { hasPermissionByRank } from '@/data/user.types'
+import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
 import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
@@ -21,7 +21,7 @@ interface PageProps {
 }
 
 export default async function Page({ params: { lng, id } }: PageProps) {
-	const { session, user } = await sessionService.validate()
+	const { session, user, customer } = await sessionService.validate()
 	if (!session) {
 		signOutAction()
 		return
@@ -42,9 +42,11 @@ export default async function Page({ params: { lng, id } }: PageProps) {
 				<Suspense fallback={<FilesSkeleton />}>
 					<ProductFilesWrapper lng={lng} id={id} user={user} />
 				</Suspense>
-				<Suspense fallback={<FilesSkeleton />}>
-					<ReorderWrapper lng={lng} id={id} user={user} />
-				</Suspense>
+				{hasPermissionByPlan(customer.plan, 'basis') && (
+					<Suspense fallback={<FilesSkeleton />}>
+						<ReorderWrapper lng={lng} id={id} user={user} />
+					</Suspense>
+				)}
 			</div>
 			<div>
 				<Suspense fallback={<HistorySkeleton />}>

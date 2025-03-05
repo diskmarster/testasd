@@ -117,10 +117,20 @@
 		},
 		"reorder": {
 			"title": "Genbestil",
-			"description": "Bliv gjort opmærksom på når en vare kommer under en angivet minimumsgrænse.",
+			"description": "Bliv gjort opmærksom, når en vare når minimumsgrænsen.",
 			"label-minimum": "Minimumsbeholdning",
 			"label-orderAmount": "Bestillingsmændge",
-			"label-maxOrderAmount": "Maks. bestillingsmændge"
+			"label-maxOrderAmount": "Maks. bestillingsmændge",
+			"no-reorder-title": "Ingen genbestil",
+			"no-reorder-description": "Denne vare har ikke nogen minimumsbeholdning. Opret en for at blive gjort opmærksom på når denne vare er under minimumsbeholdning.",
+			"btn-confrim": "Gem",
+			"btn-confirm_true": "Opdater",
+			"btn-confirm_false": "Opret",
+			"btn-no-reorder": "Opret genbestil",
+			"btn-edit": "Rediger",
+			"btn-cancel": "Fortryd",
+			"orderAmount-description": "Dette bruges til at forudfylde antal bestilte vare når du registrerer genbestillinger.",
+			"maxAmount-description": "Kan efterlades på 0 for at ignorere."
 		}
 	},
 	"tooltips": {
