@@ -112,7 +112,8 @@ export function ModalInviteUser({
           size='icon'
           variant='outline'
           disabled={isDisabled}
-          className={cn(isDisabled && 'pointer-events-none')}>
+          className={cn(isDisabled && 'pointer-events-none')}
+          tooltip={t('modal-invite-user.tooltip')}>
           <Icons.userPlus className='size-4' />
         </Button>
       </CredenzaTrigger>

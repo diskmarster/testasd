@@ -180,7 +180,8 @@
     "users-chosen": "brugere valgt",
     "create-button": "Opret",
     "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du opretter lokationer.",
-    "own-user": "Din egen bruger vil automatisk blive tildelt rettighed til den nye lokation, og er derfor ikke vist her."
+    "own-user": "Din egen bruger vil automatisk blive tildelt rettighed til den nye lokation, og er derfor ikke vist her.",
+    "tooltip": "Opret ny lokation"
   },
   "toasts": {
     "location-created": "blev oprettet succesfuldt",
