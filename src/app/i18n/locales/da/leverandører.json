@@ -5,7 +5,7 @@
 	},
 	"table": {
 		"no-rows": "Ingen leverandører fundet",
-		"col-no-value": "ikke angivet",
+		"col-no-value": "Ikke angivet",
 		"col-name": "Leverandør",
 		"col-name-placeholder": "Søg i leverandør",
 		"col-country": "Land",
@@ -36,7 +36,7 @@
 	"delete": {
 		"title": "Slet leverandør?",
 		"description": "Er du sikker på du vil slette denne leverandør? Denne handling er permanent og kan derfor ikke laves om.",
-		"item-over-zero": "Denne leverandør har {{count}} varer tilknyttet. Hvis du fortsætter, vil de vare ikke længere have en leverandør",
+		"item-over-zero": "Denne leverandør har {{count}} varer tilknyttet. Hvis du fortsætter, vil de varer ikke længere have en leverandør",
 		"btn-close": "Nej",
 		"btn-delete": "Ja, slet leverandør",
 		"toast-error": "Leverandør blev ikke slettet",
