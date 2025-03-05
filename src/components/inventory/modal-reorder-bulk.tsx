@@ -8,7 +8,6 @@ import {
 	DialogFooterV2,
 	DialogHeaderV2,
 	DialogTitleV2,
-	DialogTriggerV2,
 	DialogV2
 } from "../ui/dialog-v2"
 import { Button } from "../ui/button"
@@ -45,6 +44,7 @@ import { bulkAddOrderedToReorderAction } from "@/app/[lng]/(site)/genbestil/acti
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { ScrollArea } from "../ui/scroll-area"
+import { useCustomEventListener } from "react-custom-events"
 
 interface Props {
 	reorders: FormattedReorder[]
@@ -56,30 +56,14 @@ export function ModalBulkReorder({ reorders }: Props) {
 	const [pending, startTransition] = useTransition()
 	const [open, setOpen] = useState(false)
 	const schema = useMemo(() => bulkAddOrderedToReorderValidation(t), [t]);
-	const [search, setSearch] = useState<string>("")
 	const [supplierComboboxOpen, setSupplierComboboxOpen] = useState(false)
 	const [productComboboxOpen, setProductComboboxOpen] = useState(false)
-
-	const redReorders = useMemo(() => {
-		return reorders.filter(r => r.quantity < r.minimum && r.ordered < r.orderAmount)
-	}, [reorders])
 
 	const { handleSubmit, reset, register, setValue, watch, formState, control } = useForm<z.infer<typeof schema>>({
 		mode: 'onChange',
 		resolver: zodResolver(schema),
 		defaultValues: {
-			items: redReorders.map(r => ({
-				text1: r.product.text1,
-				sku: r.product.sku,
-				productID: r.productID,
-				ordered: r.orderAmount,
-				alreadyOrdered: r.ordered,
-				supplierName: r.product.supplierName,
-				quantity: r.quantity,
-				disposable: r.disposible,
-				maxOrderAmount: r.maxOrderAmount,
-				shouldReorder: r.shouldReorder,
-			}))
+			items: [],
 		}
 	})
 
@@ -113,8 +97,15 @@ export function ModalBulkReorder({ reorders }: Props) {
 	}, [reorders, selectedProductIDs])
 
 	function onOpenChange(open: boolean) {
+		if (!open) {
+			reset()
+		}
+		setOpen(open)
+	}
+
+	useCustomEventListener('BulkReorder', ({reorders: newReorders}: {reorders: FormattedReorder[]}) => {
 		reset({
-			items: redReorders.map(r => ({
+			items: newReorders.map(r => ({
 				text1: r.product.text1,
 				sku: r.product.sku,
 				productID: r.productID,
@@ -127,8 +118,9 @@ export function ModalBulkReorder({ reorders }: Props) {
 				shouldReorder: r.shouldReorder,
 			}))
 		})
-		setOpen(open)
-	}
+
+		onOpenChange(true)
+	})
 
 	function onSubmit(values: z.infer<typeof schema>) {
 		startTransition(async () => {
@@ -163,15 +155,8 @@ export function ModalBulkReorder({ reorders }: Props) {
 		}))
 	}
 
-	console.debug("errors", formState.errors)
-
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
-			<DialogTriggerV2 asChild>
-				<Button variant='outline' size='icon' tooltip={t("bulk.title")}>
-					<Icons.listPlus className="size-4" />
-				</Button>
-			</DialogTriggerV2>
 			<DialogContentV2 className="max-w-6xl">
 				<DialogHeaderV2>
 					<div className="flex items-center gap-2">
@@ -250,7 +235,6 @@ export function ModalBulkReorder({ reorders }: Props) {
 																		maxOrderAmount: s.maxOrderAmount,
 																		shouldReorder: Boolean(s.shouldReorder),
 																	})
-																	setSearch("")
 																	setSupplierComboboxOpen(false)
 																}}
 															>
@@ -299,7 +283,6 @@ export function ModalBulkReorder({ reorders }: Props) {
 																	value={s!}
 																	onSelect={(currentValue) => {
 																		appendSupplier(currentValue)
-																		setSearch("")
 																		setSupplierComboboxOpen(false)
 																	}}
 																>

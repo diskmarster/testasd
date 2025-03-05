@@ -10,6 +10,7 @@ import { ModalUpdateReorder } from '@/components/inventory/modal-update-reorder'
 import { TableReorder } from '@/components/inventory/table-reorder'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
+import { ReorderPageActions } from './page-actions'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -30,11 +31,15 @@ async function Page({ params: { lng }, user, customer }: Props) {
 		inventoryService.getActiveProductsByID(customer.id),
 		inventoryService.getReordersByID(location),
 		inventoryService.getActiveUnits(),
-		inventoryService.getActiveGroupsByID(customer.id)
+		inventoryService.getActiveGroupsByID(customer.id),
 	])
 
 	const productsWithNoReorder = products.filter(
 		prod => !reorders.some(reorder => prod.id === reorder.productID),
+	)
+
+	const redReorders = reorders.filter(
+		r => r.quantity < r.minimum && r.ordered < r.orderAmount,
 	)
 
 	return (
@@ -42,23 +47,15 @@ async function Page({ params: { lng }, user, customer }: Props) {
 			title={t('reorder-page.title')}
 			description={t('reorder-page.description')}
 			actions={
-				<>
-					<ModalBulkReorder
-						reorders={reorders}
-					/>
-					<ModalCreateReorder
-						products={productsWithNoReorder}
-					/>
-				</>
+				<ReorderPageActions
+					reorders={redReorders}
+					productsWithNoReorder={productsWithNoReorder} 
+				/>
 			}>
-			<TableReorder 
-				data={reorders} 
-				user={user} 
-				units={units} 
-				groups={groups} 
-			/>
+			<TableReorder data={reorders} user={user} units={units} groups={groups} />
 
 			{/* Modals without triggers that we open with custom events from row actions */}
+			<ModalBulkReorder reorders={reorders} />
 			<ModalUpdateReorder />
 			<ModalDeleteReorder />
 			<ModalAddOrderedReorder />
