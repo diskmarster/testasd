@@ -49,6 +49,7 @@ export function getProductOverviewColumns(
       ),
 
       meta: {
+        rightAlign: true,
         viewLabel: t('attachments')
       },
       enableHiding: false,
