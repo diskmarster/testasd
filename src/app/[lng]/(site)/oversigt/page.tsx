@@ -58,6 +58,7 @@ export default async function Home({ params: { lng } }: PageProps) {
               placements={placements}
               batches={batches}
               lng={lng}
+              settings={customerSettings}
             />
           )}
           {hasPermissionByPlan(customer.plan, 'basis') &&
