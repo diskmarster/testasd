@@ -86,8 +86,8 @@ export function getTableReorderColumns(
     ),
     aggregationFn: 'unique',
     cell: ({ row }) => (
-		<div className={cn(!row.original.product.supplierName && 'italic text-muted-foreground')}>
-			{row.original.product.supplierName ? row.original.product.supplierName : t("reorder-columns.no-value")}
+		<div className={cn(!row.original.product.supplierName && 'italic text-muted-foreground flex')}>
+			{row.original.product.supplierName ? row.original.product.supplierName : t("reorder-columns.no-value")} <div className='w-0.5'></div>
 		</div>
 	),
     sortingFn: (ra, rb) => {

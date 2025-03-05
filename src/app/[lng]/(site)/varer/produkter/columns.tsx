@@ -89,8 +89,8 @@ export function getProductOverviewColumns(
     ),
     aggregationFn: 'unique',
     cell: ({ row }) => (
-		<div className={cn(!row.original.supplierName && 'italic text-muted-foreground')}>
-			{row.original.supplierName ? row.original.supplierName : 'Ikke angivet'}
+		<div className={cn(!row.original.supplierName && 'italic text-muted-foreground flex')}>
+			{row.original.supplierName ? row.original.supplierName : t('no-value')} <div className='w-0.5'></div>
 		</div>
 	),
     sortingFn: (ra, rb) => {
