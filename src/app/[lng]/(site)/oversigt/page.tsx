@@ -4,7 +4,7 @@ import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
 import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
 import { TableOverview } from '@/components/inventory/table-overview'
-import { hasPermissionByRank } from '@/data/user.types'
+import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -43,6 +43,7 @@ export default async function Home({ params: { lng } }: PageProps) {
   const placements = await inventoryService.getActivePlacementsByID(location)
   const batches = await inventoryService.getActiveBatchesByID(location)
   const products = await inventoryService.getActiveProductsByID(customer.id)
+  const customerSettings = await customerService.getSettings(customer.id) ?? { usePlacement: true, useBatch: true, useReference: true }
 
   return (
     <SiteWrapper
@@ -59,13 +60,15 @@ export default async function Home({ params: { lng } }: PageProps) {
               lng={lng}
             />
           )}
-          {customer.plan != 'lite' &&
+          {hasPermissionByPlan(customer.plan, 'basis') &&
+            customerSettings.usePlacement &&
             hasPermissionByRank(user.role, 'bruger') && (
               <ModalMoveInventory
                 placements={placements}
                 customer={customer}
                 inventory={inventory}
                 batches={batches}
+                settings={customerSettings}
               />
             )}
         </>
