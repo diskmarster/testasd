@@ -44,7 +44,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.sku',
 		id: 'sku',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.productNo')} />
+			<TableHeader column={column} title={t('reorder-columns.productNo')} multiSort />
 		),
 		cell: ({ row }) => (
 			<Link 
@@ -63,7 +63,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.barcode',
 		id: 'barcode',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.barcode')} />
+			<TableHeader column={column} title={t('reorder-columns.barcode')} multiSort />
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		meta: {
@@ -76,7 +76,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.text1',
 		id: 'text1',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.text1')} />
+			<TableHeader column={column} title={t('reorder-columns.text1')} multiSort />
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		meta: {
@@ -89,7 +89,7 @@ export function getTableReorderColumns(
     accessorKey: 'product.supplierName',
     id: 'supplierName',
     header: ({ column }) => (
-      <TableHeader column={column} title={t('reorder-columns.supplier')} />
+      <TableHeader column={column} title={t('reorder-columns.supplier')} multiSort />
     ),
     aggregationFn: 'unique',
     cell: ({ row }) => (
@@ -113,7 +113,7 @@ export function getTableReorderColumns(
 	const quantityCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'quantity',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.quantity')} />
+			<TableHeader column={column} title={t('reorder-columns.quantity')} multiSort />
 		),
 		cell: ({ getValue, row }) => (
 			<span
@@ -134,7 +134,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.unit',
 		id: 'unit',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.unit')} />
+			<TableHeader column={column} title={t('reorder-columns.unit')} multiSort />
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		filterFn: (row, id, value) => {
@@ -149,7 +149,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.group',
 		id: 'group',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.product-group')} />
+			<TableHeader column={column} title={t('reorder-columns.product-group')} multiSort />
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		filterFn: (row, id, value) => {
@@ -163,7 +163,7 @@ export function getTableReorderColumns(
 	const minimumCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'minimum',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.minimum-stock')} />
+			<TableHeader column={column} title={t('reorder-columns.minimum-stock')} multiSort />
 		),
 		cell: ({ getValue }) => formatNumber(getValue<number>()),
 		filterFn: 'includesString',
@@ -179,6 +179,7 @@ export function getTableReorderColumns(
 			<TableHeader
 				column={column}
 				title={t('reorder-columns.disposible-stock')}
+				multiSort
 			/>
 		),
 		cell: ({ getValue }) => formatNumber(getValue<number>()),
@@ -192,7 +193,7 @@ export function getTableReorderColumns(
 	const orderedCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'ordered',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.ordered')} />
+			<TableHeader column={column} title={t('reorder-columns.ordered')} multiSort />
 		),
 		cell: ({ getValue }) => formatNumber(getValue<number>()),
 		filterFn: 'includesString',
@@ -205,7 +206,7 @@ export function getTableReorderColumns(
 	const updatedCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'updated',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.updated')} />
+			<TableHeader column={column} title={t('reorder-columns.updated')} multiSort />
 		),
 		cell: ({ getValue }) => formatDate(getValue<Date>()),
 		filterFn: (row, id, value: DateRange) => {
@@ -250,8 +251,8 @@ export function getTableReorderColumns(
 		accessorKey: 'shouldReorder',
 		header: () => undefined,
 		cell: () => undefined,
-		enableHiding: true,
-		enableSorting: false,
+		enableHiding: false,
+		enableSorting: true,
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},

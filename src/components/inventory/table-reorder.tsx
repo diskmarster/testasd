@@ -68,7 +68,8 @@ export function TableReorder({ data, user, units, groups }: Props) {
 
   const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams,[
-    { id: 'quantity', desc: false },
+    { id: 'shouldReorder', desc: true },
+    { id: 'supplierName', desc: true },
   ])
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
