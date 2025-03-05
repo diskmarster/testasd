@@ -40,6 +40,7 @@ import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 import { productService } from './products'
 import { userService } from './user'
+import { locationService } from './location'
 
 export const inventoryService = {
   getInventory: async function (
@@ -632,4 +633,13 @@ export const inventoryService = {
   getBatchByID: async function (batchID: BatchID): Promise<Batch | undefined> {
     return await inventory.getBatchByID(batchID)
   },
+	getReorderByIDs: async function(
+		productID: ProductID,
+		customerID: CustomerID,
+		userID: UserID
+	): Promise<Reorder | undefined> {
+		const locationID = await locationService.getLastVisited(userID)
+		if (!locationID) return undefined
+		return await inventory.getReorderByProductID(productID,locationID,customerID)
+	}
 }

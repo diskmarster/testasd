@@ -9,6 +9,7 @@ import { cn, formatDate, formatNumber } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
+import Link from 'next/link'
 import { DateRange } from 'react-day-picker'
 
 export function getTableReorderColumns(
@@ -45,7 +46,13 @@ export function getTableReorderColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('reorder-columns.productNo')} />
 		),
-		cell: ({ getValue }) => getValue<string>(),
+		cell: ({ row }) => (
+			<Link 
+			href={`/${lng}/varer/produkter/${row.original.productID}`}
+			className='hover:underline'>
+				{row.original.product.sku}
+			</Link>
+		),
 		enableHiding: false,
 		meta: {
 			viewLabel: t('reorder-columns.productNo'),

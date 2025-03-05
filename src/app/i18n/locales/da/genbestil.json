@@ -93,22 +93,29 @@
 	"bulk": {
 		"title": "Registrer bestillinger",
 		"description": "Registrer dine genbestillinger nemt og hold lageret opdateret. Få overblik over bestilte varer og sikre, at beholdningen altid stemmer.",
-		"add-rows-continue": "Tilføj vare for at fortsætte",
+		"red-products": "Røde varer indikerer at beholdningen er lav, og bør bestilles.",
+		"add-rows-continue": "Tilføj en eller flere varer for at fortsætte",
 		"add-rows-btn": "Tilføj vare",
-		"add-rows-supplier-btn": "Til leverandør",
+		"add-rows-supplier-btn": "Tilføj leverandør",
 		"btn-close": "Luk",
-		"btn-confirm": "Opret bestillinger",
+		"btn-confirm": "Registrer bestillinger",
 		"errors": {
-			"positive": "Skal være et positivt tal"
+			"positive": "Skal være et positivt tal",
+			"ordered-too-big": "Kan ikke bestille mere end {{count}}"
 		},
-		"sku": "Varenr.",
-		"sku-placeholder": "Vælg vare",
-		"sku-search": "Søg efter vare...",
-		"sku-no-items": "Ingen varer fundet",
+		"product": "Vare",
+		"product-placeholder": "Vælg vare",
+		"product-search": "Søg efter vare...",
+		"product-no-items": "Ingen varer fundet",
 		"qty": "Antal",
 		"tooltip": "Registrer bestillinger",
 		"supplier": "Leverandør",
+		"suppliers": "Leverandør",
+		"suppliers-search": "Søg efter leverandør...",
+		"suppliers-no-items": "Ingen leverandør fundet",
 		"quantity": "Beh.",
-		"disposable": "Disp. beh."
+		"disposable": "Disp. beh.",
+		"toast-error": "Genbestillinger blev ikke registreret",
+		"toast-success": "Genbestillinger blev registreret"
 	}
 }

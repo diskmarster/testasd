@@ -11,6 +11,7 @@ import { ProductHistoryWrapper } from './history-wrapper'
 import { DetailsSkeleton } from '@/components/products/product-details'
 import { FilesSkeleton } from '@/components/products/product-files-grid'
 import { HistorySkeleton } from '@/components/products/product-history'
+import { ReorderWrapper } from './reorder-wrapper'
 
 interface PageProps {
 	params: {
@@ -32,12 +33,17 @@ export default async function Page({ params: { lng, id } }: PageProps) {
 
 	return (
 		<SiteWrapper>
-			<div className='flex flex-col lg:flex-row items-stretch gap-4 lg:h-[700px]'>
+			<div className='flex flex-col lg:flex-row items-stretch gap-4'>
 				<Suspense fallback={<DetailsSkeleton />}>
 					<ProductDetailsWrapper lng={lng} id={id} user={user} />
 				</Suspense>
+			</div>
+			<div className='flex flex-col lg:flex-row items-stretch gap-4 lg:h-96'>
 				<Suspense fallback={<FilesSkeleton />}>
 					<ProductFilesWrapper lng={lng} id={id} user={user} />
+				</Suspense>
+				<Suspense fallback={<FilesSkeleton />}>
+					<ReorderWrapper lng={lng} id={id} user={user} />
 				</Suspense>
 			</div>
 			<div>

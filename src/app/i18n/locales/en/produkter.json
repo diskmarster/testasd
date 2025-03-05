@@ -61,7 +61,6 @@
 			"key_productCostPrice": "Cost price",
 			"key_productSalesPrice": "Sales price",
 			"key_productIsBarred": "Barred",
-
 			"key_supplierName": "Supplier"
 		},
 		"files": {
@@ -87,9 +86,11 @@
 			"delete-confirm": "Delete"
 		},
 		"details": {
+			"last-updated": "Last updated: ",
 			"button-edit": "Edit",
 			"button-cancel": "Cancel",
 			"button-update": "Update",
+			"label-text1": "Text 1",
 			"label-text2": "Text 2",
 			"label-text3": "Text 3",
 			"label-note": "Note",
@@ -114,6 +115,6 @@
 		}
 	},
 	"tooltips": {
-		"create-product":"Create product"
+		"create-product": "Create product"
 	}
 }

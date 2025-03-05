@@ -88,9 +88,11 @@
 			"delete-confirm": "Slet"
 		},
 		"details": {
+			"last-updated": "Sidst opdateret: ",
 			"button-edit": "Rediger",
 			"button-cancel": "Fortryd",
 			"button-update": "Gem",
+			"label-text1": "Varetekst 1",
 			"label-text2": "Varetekst 2",
 			"label-text3": "Varetekst 3",
 			"label-note": "Note",
@@ -112,9 +114,16 @@
 			"file-not-deleted-bucket": "Filen blev slettet men er stadig knyttet til jeres firma",
 			"file-not-deleted-database": "Filen blev ikke slettet men den er ikke længere knyttet til jeres firma",
 			"file-not-deleted-both": "Filen blev ikke slettet. Prøv igen."
+		},
+		"reorder": {
+			"title": "Genbestil",
+			"description": "Bliv gjort opmærksom på når en vare kommer under en angivet minimumsgrænse.",
+			"label-minimum": "Minimumsbeholdning",
+			"label-orderAmount": "Bestillingsmændge",
+			"label-maxOrderAmount": "Maks. bestillingsmændge"
 		}
 	},
 	"tooltips": {
-		"create-product":"Opret vare"
+		"create-product": "Opret vare"
 	}
 }
