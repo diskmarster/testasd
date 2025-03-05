@@ -2,7 +2,6 @@ import { ModalShowProductLabel } from '@/components/inventory/modal-show-product
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
-import { Icons } from '@/components/ui/icons'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
@@ -188,6 +187,11 @@ export function getTableOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('placement')} />
     ),
+    aggregatedCell: ({ row }) => {
+      const isSinglePlacement = row.getLeafRows().length == 1
+      if (!isSinglePlacement) return null
+      return row.original.placement.name
+    },
     cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -290,40 +294,6 @@ export function getTableOverviewColumns(
     },
   }
 
-  const updatedCol: ColumnDef<FormattedInventory> = {
-    accessorKey: 'updated',
-    header: ({ column }) => (
-      <TableHeader column={column} title={t('updated')} />
-    ),
-    aggregatedCell: ({ getValue }) => formatDate(getValue<Date[]>()[0]),
-    cell: () => null,
-    filterFn: (row, id, value: DateRange) => {
-      const rowDate: string | number | Date = row.getValue(id)
-
-      if (!value.from && value.to) {
-        return true
-      }
-
-      if (value.from && !value.to) {
-        return isSameDay(rowDate, new Date(value.from))
-      }
-
-      if (value.from && value.to) {
-        return (
-          (isAfter(rowDate, new Date(value.from)) &&
-            isBefore(rowDate, new Date(value.to))) ||
-          isSameDay(rowDate, new Date(value.from)) ||
-          isSameDay(rowDate, new Date(value.to))
-        )
-      }
-
-      return true
-    },
-    meta: {
-      viewLabel: t('updated'),
-    },
-  }
-
   const isBarredCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'product.isBarred',
     id: 'isBarred',
@@ -340,7 +310,7 @@ export function getTableOverviewColumns(
   const actionsCol: ColumnDef<FormattedInventory> = {
     accessorKey: 'actions',
     header: () => null,
-    aggregatedCell: ({ table, row }) => (
+    aggregatedCell: ({ row }) => (
       <ModalShowProductLabel product={row.original.product} />
     ),
     cell: ({ table, row }) =>
