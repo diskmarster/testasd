@@ -177,7 +177,7 @@ export function ProductDetails({ product, user }: Props) {
 				/>
 			</div>
 			<div className="w-full border rounded-md p-4 space-y-4">
-				<div className="flex gap-4 justify-stretch">
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
 					<div className="space-y-0.5 w-full">
 						<Label htmlFor="text1">{t('details-page.details.label-text1')}</Label>
 						<IfElse
@@ -196,7 +196,7 @@ export function ProductDetails({ product, user }: Props) {
 					</div>
 				</div>
 
-				<div className="flex gap-4 justify-stretch">
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
 					<div className="space-y-0.5 w-full">
 						<Label htmlFor="text3">{t('details-page.details.label-text3')}</Label>
 						<IfElse
@@ -243,7 +243,7 @@ export function ProductDetails({ product, user }: Props) {
 					</div>
 				</div>
 
-				<div className="flex gap-4 justify-stretch">
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
 					<div className="space-y-0.5 w-full">
 						<Label htmlFor="group">{t('details-page.details.label-group')}</Label>
 						<IfElse
@@ -304,7 +304,7 @@ export function ProductDetails({ product, user }: Props) {
 					</div>
 				</div>
 
-				<div className="flex gap-4 justify-stretch">
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
 					<div className="space-y-0.5 w-full">
 						<Label htmlFor="sku">{t('details-page.details.label-sku')}</Label>
 						<IfElse
@@ -342,7 +342,7 @@ export function ProductDetails({ product, user }: Props) {
 				</div>
 
 				{hasPermissionByRank(user.role, 'bruger') && user.priceAccess && (
-					<div className="flex gap-4 justify-stretch">
+					<div className="flex flex-col md:flex-row gap-4 justify-stretch">
 						<div className="space-y-0.5 w-full">
 							<Label htmlFor="costPrice">{t('details-page.details.label-costPrice')}</Label>
 							<IfElse
@@ -380,7 +380,7 @@ export function ProductDetails({ product, user }: Props) {
 					</div>
 				)}
 
-				<div className="flex gap-4 justify-stretch">
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
 					<div className="space-y-0.5 w-full">
 						<Label htmlFor="sku">{t('details-page.details.label-supplier')}</Label>
 						<IfElse

@@ -51,7 +51,7 @@ export function ProductHistory({ history }: Props) {
 	}
 
 	function typeToIcon(type: ProductHistoryType['type']) {
-		const classes = "text-white size-5"
+		const classes = "text-muted-foreground size-5"
 		switch (type) {
 			case "oprettelse":
 				return <Icons.packagePlus className={cn(classes, "")} />
@@ -98,7 +98,7 @@ export function ProductHistory({ history }: Props) {
 					{logsWithDiff.map((log, index) => (
 						<div key={index} className="flex gap-4 items-start">
 							<div className="flex flex-col items-center">
-								<div className="rounded-md bg-primary size-8 flex items-center justify-center z-10">
+								<div className="rounded-md bg-muted size-8 flex items-center justify-center z-10">
 									{typeToIcon(log.type)}
 								</div>
 							</div>
