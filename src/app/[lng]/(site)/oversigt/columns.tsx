@@ -187,6 +187,12 @@ export function getTableOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('placement')} />
     ),
+    aggregatedCell: ({ row }) => {
+      const isSinglePlacement = row.getLeafRows().length == 1
+      console.log(row.getLeafRows())      
+      if (!isSinglePlacement) return null
+      return row.original.placement.name
+    },
     cell: ({ getValue }) => getValue<string>(),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
