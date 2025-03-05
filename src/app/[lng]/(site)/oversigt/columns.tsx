@@ -62,6 +62,7 @@ export function getTableOverviewColumns(
     ),
     cell: () => null,
     meta: {
+      rightAlign: true, 
       viewLabel: t('attachments')
     },
     enableHiding: false,
