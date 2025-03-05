@@ -95,15 +95,14 @@ export function SettingFooter({
 
 export function SettingSkeleton() {
   return (
-    <Setting>
-      <SettingBody>
-        <SettingLabel>
-          <Skeleton className="w-1/3 h-10" />
-          <Skeleton className="w-1/2 h-6" />
-          <Skeleton className="w-1/4 h-6" />
+    <Setting className="w-full">
+      <SettingBody className="w-full gap-2">
+        <SettingLabel className="w-3/5">
+          <Skeleton className="w-2/5 h-6 mb-2" />
+          <Skeleton className="w-4/6 h-4 mb-1" />
         </SettingLabel>
-        <SettingContent>
-          <Skeleton className="w-1/5 h-10" />
+        <SettingContent className="w-2/5">
+          <Skeleton className="w-4/6 h-9" />
         </SettingContent>
       </SettingBody>
     </Setting>

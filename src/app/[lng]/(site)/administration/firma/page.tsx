@@ -1,6 +1,6 @@
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
-import { CompanyInfoSkeleton, CompanyInfoTab } from '@/components/admin/tab-company-info'
+import { CompanyInfoSkeleton } from '@/components/admin/tab-company-info'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { hasPermissionByRank } from '@/data/user.types'
 import { sessionService } from '@/service/session'
@@ -30,7 +30,7 @@ export default async function Page({ params: { lng } }: Props) {
 		<SiteWrapper
 			title={t('company-page.title')}
 			description={t('company-page.description')}>
-			<Suspense fallback={<CompanyInfoSkeleton />}>
+			<Suspense fallback={<CompanyInfoSkeleton plan={customer.plan} />}>
 				<CompanyInfoWrapper customer={customer} />
 			</Suspense>
 		</SiteWrapper>

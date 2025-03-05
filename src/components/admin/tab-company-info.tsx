@@ -31,11 +31,13 @@ import {
   SettingLabel,
   SettingTitle,
   Setting,
+  SettingSkeleton,
 } from '../ui/settings'
 import { Switch } from '../ui/switch'
 import { CompanyEditSkeleton, FormCompanyEdit } from './form-company-edit'
 import { Plan } from '@/data/customer.types'
 import { hasPermissionByPlan } from '@/data/user.types'
+import { Skeleton } from '../ui/skeleton'
 
 export function CompanyInfoTab({
   customer,
@@ -52,11 +54,45 @@ export function CompanyInfoTab({
   )
 }
 
-export function CompanyInfoSkeleton() {
+export function CompanyInfoSkeleton({ plan }: { plan: Plan }) {
   return (
-    <div className='space-y-8'>
+    <div className='space-y-8 xl:space-y-0 xl:space-x-8 xl:grid xl:grid-cols-2'>
       <CompanyEditSkeleton />
+      <CompanySettingsSkeleton plan={plan} />
     </div>
+  )
+}
+
+function CompanySettingsSkeleton({ plan }: { plan: Plan }) {
+  return (
+    <Card className='flex flex-col'>
+      <CardHeader>
+        <Skeleton className="w-1/3 h-6" />
+        <Skeleton className="w-2/3 h-4" />
+      </CardHeader>
+      <CardContent className='flex-1'>
+        <div className='grid w-full items-start gap-2'>
+          <div className='flex flex-col w-full'>
+            <SettingSkeleton />
+            {hasPermissionByPlan(plan, 'basis') && (
+              <>
+                <Separator />
+                <SettingSkeleton />
+              </>
+            )}
+            {hasPermissionByPlan(plan, 'pro') && (
+              <>
+                <Separator />
+                <SettingSkeleton />
+              </>
+            )}
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Skeleton className='h-10 w-40' />
+      </CardFooter>
+    </Card>
   )
 }
 

@@ -159,12 +159,23 @@ export function FormCompanyEdit({ customer }: Props) {
 
 export function CompanyEditSkeleton() {
   return (
-    <div className={cn('grid w-full items-start gap-4 md:max-w-xl mt-4')}>
-      <div className='flex flex-col w-full md:flex-row md:gap-4'>
-        <SettingSkeleton />
-        <SettingSkeleton />
-      </div>
-      <Skeleton className='h-11 w-20' />
-    </div>
+    <Card className='flex flex-col'>
+      <CardHeader>
+        <Skeleton className="w-1/3 h-6" />
+        <Skeleton className="w-2/3 h-4" />
+      </CardHeader>
+      <CardContent className='flex-1'>
+        <div className='grid w-full items-start gap-2'>
+          <div className='flex flex-col w-full'>
+            <SettingSkeleton />
+            <Separator />
+            <SettingSkeleton />
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Skeleton className='h-10 w-40' />
+      </CardFooter>
+    </Card>
   )
 }
