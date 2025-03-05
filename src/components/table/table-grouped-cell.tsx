@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { Row, flexRender } from '@tanstack/react-table'
-import { ChevronRight } from 'lucide-react'
 import { Icons } from '../ui/icons'
 
 interface Props<T> {
