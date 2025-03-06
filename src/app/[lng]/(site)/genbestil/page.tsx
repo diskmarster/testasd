@@ -2,7 +2,6 @@ import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
-import { ModalAddOrderedReorder } from '@/components/inventory/modal-add-ordered-modal'
 import { ModalDeleteReorder } from '@/components/inventory/modal-delete-reorder'
 import { ModalUpdateReorder } from '@/components/inventory/modal-update-reorder'
 import { TableReorder } from '@/components/inventory/table-reorder'
@@ -55,7 +54,6 @@ async function Page({ params: { lng }, user, customer }: Props) {
 			{/* Modals without triggers that we open with custom events from row actions */}
 			<ModalUpdateReorder />
 			<ModalDeleteReorder />
-			<ModalAddOrderedReorder />
 		</SiteWrapper>
 	)
 }
