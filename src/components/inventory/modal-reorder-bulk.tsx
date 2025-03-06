@@ -105,7 +105,7 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 		setOpen(open)
 	}
 
-	useCustomEventListener('BulkReorder', ({reorders: newReorders}: {reorders: FormattedReorder[]}) => {
+	useCustomEventListener('BulkReorder', ({ reorders: newReorders }: { reorders: FormattedReorder[] }) => {
 		reset({
 			items: newReorders.map(r => ({
 				text1: r.product.text1,
@@ -464,6 +464,11 @@ function ReorderField({
 				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.qty")}</Label>
 				<Input
 					max={max}
+					tooltip={{ 
+						condition: !!formState.errors.items?.[index]?.ordered,
+						icon: <Icons.alert className="size-4 text-destructive" />,
+							content: formState.errors.items?.[index]?.ordered?.message ?? "Forkert værdi" 
+					}}
 					{...register(`items.${index}.ordered` as const)}
 					className={cn(
 						'tabular-nums',
