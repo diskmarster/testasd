@@ -122,5 +122,19 @@
 		"tooltip": "Register reorders",
 		"tooltipWithCount_one": "Register {{count}} reorder",
 		"tooltipWithCount_other": "Register {{count}} reorders"
+	},
+	"report": {
+		"headers": {
+			"supplier": "Supplier",
+			"sku": "Sku",
+			"barcode": "Barcode",
+			"text1": "Text 1",
+			"text2": "Text 2",
+			"unit": "Unit",
+			"costPrice": "Cost price",
+			"quantity": "Quantity",
+			"sum": "Total"
+		},
+		"sheet": "Reorders"
 	}
 }

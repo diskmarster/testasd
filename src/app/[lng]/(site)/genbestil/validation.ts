@@ -101,9 +101,13 @@ export const bulkAddOrderedToReorderValidation = (
             disposable: z.coerce.number(),
             maxOrderAmount: z.coerce.number(),
             shouldReorder: z.boolean(),
+						barcode: z.string(),
+						text2: z.string(),
+						unitName: z.string(),
+						costPrice: z.coerce.number(),
           })
           .superRefine((val, ctx) => {
-            if (0 < val.maxOrderAmount && val.maxOrderAmount < val.ordered ) {
+            if (0 < val.maxOrderAmount && val.maxOrderAmount < val.ordered) {
               ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 path: ['ordered'],

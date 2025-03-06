@@ -120,5 +120,19 @@
 		"tooltip": "Registrer bestillinger",
 		"tooltipWithCount_one": "Registrer {{count}} bestilling",
 		"tooltipWithCount_other": "Registrer {{count}} bestillinger"
+	},
+	"report": {
+		"headers": {
+			"supplier": "Leverandør",
+			"sku": "Varenr.",
+			"barcode": "Stregkode",
+			"text1": "Varetekst 1",
+			"text2": "Varetekst 2",
+			"unit": "Enhed",
+			"costPrice": "Kostpris",
+			"quantity": "Antal",
+			"sum": "Linjesum"
+		},
+		"sheet": "Genbestillinger"
 	}
 }

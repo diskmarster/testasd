@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { FormattedReorder } from "@/data/inventory.types"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { cn, formatNumber, updateChipCount } from "@/lib/utils"
+import { cn, formatNumber, numberToDKCurrency, updateChipCount } from "@/lib/utils"
 import {
 	Popover,
 	PopoverContent,
@@ -43,6 +43,7 @@ import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { ScrollArea } from "../ui/scroll-area"
 import { useCustomEventListener } from "react-custom-events"
+import { ExcelRow, genReorderExcel } from "@/lib/pdf/reorder-rapport"
 
 interface Props {
 	reorders: FormattedReorder[]
@@ -118,6 +119,10 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 				disposable: r.disposible,
 				maxOrderAmount: r.maxOrderAmount,
 				shouldReorder: r.shouldReorder,
+				barcode: r.product.barcode,
+				text2: r.product.text2,
+				unitName: r.product.unit,
+				costPrice: r.product.costPrice,
 			}))
 		})
 
@@ -136,6 +141,20 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 			toast.success(t(siteConfig.successTitle), {
 				description: t("bulk.toast-success")
 			})
+
+			const rows: ExcelRow[] = values.items.map(i => ({
+				supplier: i.supplierName ?? '-',
+				sku: i.sku,
+				barcode: i.barcode,
+				text1: i.text1,
+				text2: i.text2,
+				unit: i.unitName,
+				costPrice: numberToDKCurrency(i.costPrice),
+				quantity: i.ordered,
+				sum: numberToDKCurrency(i.ordered * i.costPrice),
+			}))
+
+			genReorderExcel('bestilling', rows, t)
 			onOpenChange(false)
 			updateChipCount()
 			clearTableSelection()
@@ -155,6 +174,10 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 			disposable: r.disposible,
 			maxOrderAmount: r.maxOrderAmount,
 			shouldReorder: Boolean(r.shouldReorder),
+			barcode: r.product.barcode,
+			text2: r.product.text2,
+			unitName: r.product.unit,
+			costPrice: r.product.costPrice,
 		}))
 	}
 
@@ -237,6 +260,10 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 																		disposable: s.disposible,
 																		maxOrderAmount: s.maxOrderAmount,
 																		shouldReorder: Boolean(s.shouldReorder),
+																		barcode: s.product.barcode,
+																		text2: s.product.text2,
+																		unitName: s.product.unit,
+																		costPrice: s.product.costPrice,
 																	})
 																	setSupplierComboboxOpen(false)
 																}}
@@ -338,6 +365,10 @@ type Field = {
 	disposable: number,
 	maxOrderAmount: number,
 	shouldReorder: boolean,
+	text2: string,
+	barcode: string,
+	unitName: string,
+	costPrice: number,
 }
 
 interface FieldProps {
@@ -464,10 +495,10 @@ function ReorderField({
 				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.qty")}</Label>
 				<Input
 					max={max}
-					tooltip={{ 
+					tooltip={{
 						condition: !!formState.errors.items?.[index]?.ordered,
 						icon: <Icons.alert className="size-4 text-destructive" />,
-							content: formState.errors.items?.[index]?.ordered?.message ?? "Forkert værdi" 
+						content: formState.errors.items?.[index]?.ordered?.message ?? "Forkert værdi"
 					}}
 					{...register(`items.${index}.ordered` as const)}
 					className={cn(
