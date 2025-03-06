@@ -98,12 +98,15 @@ export function getTableReorderColumns(
 		</div>
 	),
     sortingFn: (ra, rb) => {
-		let aVal = ra.original.product.supplierName
-		let bVal = rb.original.product.supplierName
-		if (aVal == null) aVal = ""
-		if (bVal == null) bVal = ""
-		return stringSortingFn(aVal, bVal)
+			let aVal = ra.original.product.supplierName
+			let bVal = rb.original.product.supplierName
+			if (aVal == null) aVal = ""
+			if (bVal == null) bVal = ""
+			return stringSortingFn(aVal, bVal)
     },
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
     meta: {
       viewLabel: t('reorder-columns.supplier'),
       className: '[&>*]:block',
