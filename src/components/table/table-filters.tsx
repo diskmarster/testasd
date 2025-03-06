@@ -423,9 +423,10 @@ function GlobalFilter<T>({
 					placeholder={t('table-filters.search-placeholder')}
 					id='table-searchbar'
 					className={cn(
-						'transition-all w-9 placeholder:opacity-0',
-						isFocused && 'w-52 placeholder:opacity-100',
-						search != "" && 'min-w-52 w-fit'
+						'transition-all w-9 placeholder:opacity-0 cursor-pointer',
+						isFocused && 'w-52 placeholder:opacity-100 cursor-text',
+						search != "" && 'min-w-52 w-fit cursor-text',
+						(!isFocused && search == "") && 'hover:bg-accent'
 					)}
 					onFocus={() => setIsFocsued(true)}
 					onBlur={() => setIsFocsued(false)}
