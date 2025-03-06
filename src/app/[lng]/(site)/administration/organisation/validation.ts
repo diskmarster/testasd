@@ -92,6 +92,19 @@ export const updateCustomerValidation = (
     email: z.string().email({ message: t('organisation.email-valid') }),
   })
 
+export const updateCustomerSettingsValidation = (
+  t: (key: string, options?: any) => string,
+) =>
+  z.object({
+    id: z.coerce.number({message: t('organisation.required', {fieldName: 'customerSettingsID'})}),
+    customerID: z.coerce.number({message: t('organisation.required', {fieldName: 'customerID'})}),
+    settings: z.object({
+      useReference: z.coerce.boolean({message: t('organisation.required', {fieldName: 'useReference'})}),
+      usePlacement: z.coerce.boolean({message: t('organisation.required', {fieldName: 'usePlacement'})}),
+      useBatch: z.coerce.boolean({message: t('organisation.required', {fieldName: 'useBatch'})}),
+    }),
+  })
+
 export const resetUserPasswordValidation = z.object({
   userID: z.coerce.number(),
   email: z.string().email(),

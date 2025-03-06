@@ -83,9 +83,25 @@ export const siteConfig: SiteConfig = {
       roles: ['system_administrator', 'administrator', 'moderator'],
       items: [
         {
-          label: 'site-config.administration.organisation',
-          description: 'site-config.administration.organisation-description',
-          href: `/${lng}/administration/organisation`,
+          label: 'site-config.administration.company',
+          description: 'site-config.administration.company-description',
+          href: `/${lng}/administration/firma`,
+          roles: [],
+          isExternal: false,
+          isDisabled: false,
+        },
+        {
+          label: 'site-config.administration.users',
+          description: 'site-config.administration.users-description',
+          href: `/${lng}/administration/brugere`,
+          roles: [],
+          isExternal: false,
+          isDisabled: false,
+        },
+        {
+          label: 'site-config.administration.locations',
+          description: 'site-config.administration.locations-description',
+          href: `/${lng}/administration/lokationer`,
           roles: [],
           isExternal: false,
           isDisabled: false,

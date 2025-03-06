@@ -1,17 +1,15 @@
 import { serverTranslation } from '@/app/i18n'
-import { hasPermissionByRank } from '@/data/user.types'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { analyticsService } from '@/service/analytics'
+import { customerService } from '@/service/customer'
 import { errorsService } from '@/service/errors'
-import { locationService } from '@/service/location'
-import { userService } from '@/service/user'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
-import { type NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 	const start = performance.now()
-	
+
 	const { session, user } = await validateRequest(headers())
 	const lng = getLanguageFromRequest(headers())
 	const { t } = await serverTranslation(lng, 'common')
@@ -30,7 +28,17 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 		)
 	}
 
-	if (!hasPermissionByRank(user.role, 'moderator')) {
+	let customer
+	try {
+		customer = await customerService.getByID(user.customerID)
+		if (customer == undefined) {
+			return NextResponse.json(
+				{ msg: t('route-translations-users.no-access-to-resource') },
+				{ status: 401 },
+			)
+		}
+	} catch (e) {
+		console.error(`Error getting customer from user: '${(e as Error).message}'`)
 		return NextResponse.json(
 			{ msg: t('route-translations-users.no-access-to-resource') },
 			{ status: 401 },
@@ -38,29 +46,31 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 	}
 
 	try {
-		let users = await userService.getAllInfoByCustomerID(user.customerID)
-		const userAccesses = await locationService.getAccessesByCustomerID(
-			user.customerID,
-		)
+		const settings = await customerService.getSettings(customer.id)
+		if (settings == undefined) {
+			const errorLog: NewApplicationError = {
+				userID: user.id,
+				customerID: user.customerID,
+				type: 'endpoint',
+				input: null,
+				error: t('route-translations-users.couldnt-get-settings'),
+				origin: `GET api/v1/settings`,
+			}
 
-		if (user.role == 'moderator') {
-			const signedInUserLocations = await locationService.getAllByUserID(
-				user.id,
+			errorsService.create(errorLog)
+
+			return NextResponse.json(
+				{
+					msg: t('route-translations-users.couldnt-get-settings'),
+				},
+				{ status: 500 },
 			)
-
-			const userIDsToView = userAccesses
-				.filter(acc =>
-					signedInUserLocations.some(loc => loc.id == acc.locationID),
-				)
-				.map(acc => acc.userID)
-
-			users = users.filter(u => userIDsToView.some(uID => u.id == uID))
 		}
 
 		const end = performance.now()
 
 		await analyticsService.createAnalytic('action', {
-			actionName: 'getUserInfo',
+			actionName: 'getCustomerSettings',
 			userID: user.id,
 			customerID: user.customerID,
 			sessionID: session.id,
@@ -71,19 +81,13 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 		return NextResponse.json(
 			{
 				msg: 'Success',
-				data: users.map(u => ({
-					id: u.id,
-					name: u.name,
-					hasNfc: u.hasNfc,
-				})),
+				data: settings,
 			},
-			{
-				status: 200,
-			},
+			{ status: 200 },
 		)
 	} catch (e) {
 		console.error(
-			`${t('route-translations-users.error-getting-userinfo')} '${(e as Error).message}'`,
+			`${t('route-translations-users.error-getting-settings')} '${(e as Error).message}'`,
 		)
 
 		const errorLog: NewApplicationError = {
@@ -93,15 +97,15 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 			input: null,
 			error:
 				(e as Error).message ??
-				t('route-translations-users.couldnt-get-userinfo'),
-			origin: `GET api/v1/users`,
+				t('route-translations-users.couldnt-get-settings'),
+			origin: `GET api/v1/settings`,
 		}
 
 		errorsService.create(errorLog)
 
 		return NextResponse.json(
 			{
-				msg: `${t('route-translations-users.error-occured-getting-userinfo')} '${(e as Error).message}'`,
+				msg: `${t('route-translations-users.error-occured-getting-settings')} '${(e as Error).message}'`,
 			},
 			{ status: 500 },
 		)

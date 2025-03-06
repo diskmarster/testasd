@@ -73,7 +73,14 @@
     "couldnt-find-location-information": "Kunne ikke finde placeringsoplysningerne. Prøv at lukke og genåbne pop-op-vinduet.",
     "minimum-user": "Mindst én bruger skal vælges",
     "company-name-minLength": "Firmanavn skal være mindst {{minLength}} tegn langt",
-    "company-name-maxLength": "Firmanavn må højst være {{maxLength}} tegn langt"
+    "company-name-maxLength": "Firmanavn må højst være {{maxLength}} tegn langt",
+    "required": "$t(organisation.field, { \"context\": \"{{fieldName}}\" }) er påkrævet",
+    "field": "Ukendt",
+    "field_useReference": "Konto/sag",
+    "field_usePlacement": "Placering",
+    "field_useBatch": "Batch nr.",
+    "field_customerSettingsID": "Firmaindstilling ID",
+    "field_customerID": "Firma ID"
   },
   "register": {
     "name-minLength": "Navn skal være mindst {{minLength}} tegn langt",

@@ -8,12 +8,17 @@ import {
   CustomerID,
   CustomerLink,
   CustomerLinkID,
+  CustomerSettings,
+  CustomerSettingsID,
   NewCustomer,
   NewCustomerLink,
+  NewCustomerSettings,
   PartialCustomer,
+  PartialCustomerSettings,
 } from '@/lib/database/schema/customer'
 import { generateIdFromEntropySize } from 'lucia'
 import { isLinkExpired } from './customer.utils'
+import { db } from '@/lib/database'
 
 const ACTIVATION_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -29,8 +34,21 @@ export const customerService = {
   create: async function (
     customerData: NewCustomer,
   ): Promise<Customer | undefined> {
-    const newCustomer = await customer.create(customerData)
-    return newCustomer
+    return db.transaction(async (trx) => {
+      const newCustomer = await customer.create(customerData, trx)
+
+      if (newCustomer == undefined) {
+        return undefined
+      }
+
+      const settings = await customer.createSettings({customerID: newCustomer?.id}, trx)
+      if (settings == undefined) {
+        trx.rollback()
+        return undefined
+      }
+
+      return newCustomer
+    })
   },
   getByEmail: async function (email: string): Promise<Customer | undefined> {
     const existingCustomer = await customer.getByEmail(email)
@@ -99,5 +117,21 @@ export const customerService = {
   },
   deleteByID: async function(customerID: CustomerID): Promise<boolean> {
     return customer.deleteByID(customerID)
+  },
+  getSettings: async function(customerID: CustomerID): Promise<CustomerSettings | undefined> {
+    return await customer.getSettings(customerID)
+  },
+  createSettings: async function(data: NewCustomerSettings): Promise<CustomerSettings | undefined> {
+    return await customer.createSettings(data)
+  },
+  updateSettings: async function(id: CustomerSettingsID, data: PartialCustomerSettings): Promise<CustomerSettings | undefined> {
+    if (data.id != undefined) {
+      delete data.id
+    }
+    if (data.customerID != undefined) {
+      delete data.customerID
+    }
+
+    return customer.updateSettings(id, data)
   }
 }

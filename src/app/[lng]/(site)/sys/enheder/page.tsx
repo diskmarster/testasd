@@ -1,26 +1,25 @@
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { ModalCreateUnit } from '@/components/inventory/modal-create-unit'
 import { UnitOverview } from '@/components/inventory/table-units'
-import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
-import { sessionService } from '@/service/session'
 
-interface pageprops {
+interface pageprops extends WithAuthProps {
   params: {
     lng: string
   }
 }
 
-export default async function Page({ params: { lng } }: pageprops) {
-  const { session, user } = await sessionService.validate()
-  if (!session) return signOutAction()
-  const location = await locationService.getLastVisited(user.id!)
-  if (!location) return signOutAction()
-  const customer = await customerService.getByID(user.customerID)
-  if (!customer) return signOutAction()
+async function Page({ params: { lng }, user }: pageprops) {
+  const location = await locationService.getLastVisited(user.id)
+  if (!location) {
+    await signOutAction()
+    return null
+  }
+
   const units = await inventoryService.getAllUnits()
   const { t } = await serverTranslation(lng, 'enheder')
 
@@ -37,3 +36,5 @@ export default async function Page({ params: { lng } }: pageprops) {
     </SiteWrapper>
   )
 }
+
+export default withAuth(Page, undefined, 'system_administrator')
