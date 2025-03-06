@@ -23,7 +23,7 @@ export function ReorderPageActions({ reorders, productsWithNoReorder }: Props) {
 			<Button
 				variant='outline'
 				size='icon'
-				tooltip={t('bulk.title')}
+				tooltip={t('bulk.tooltip')}
 				onClick={() => {
 					emitCustomEvent('BulkReorder', { reorders })
 				}}>
