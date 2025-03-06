@@ -62,10 +62,12 @@ import {
   SquareSlash,
 	ListPlus,
 	Pencil,
+	Search,
 } from 'lucide-react'
 
 export const Icons = {
 	pencil: Pencil,
+	search: Search,
 	listPlus: ListPlus,
 	squareSlash: SquareSlash,
 	squarePlus: SquarePlus,
