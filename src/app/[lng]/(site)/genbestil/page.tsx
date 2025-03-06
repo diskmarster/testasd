@@ -3,9 +3,7 @@ import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { ModalAddOrderedReorder } from '@/components/inventory/modal-add-ordered-modal'
-import { ModalCreateReorder } from '@/components/inventory/modal-create-reorder'
 import { ModalDeleteReorder } from '@/components/inventory/modal-delete-reorder'
-import { ModalBulkReorder } from '@/components/inventory/modal-reorder-bulk'
 import { ModalUpdateReorder } from '@/components/inventory/modal-update-reorder'
 import { TableReorder } from '@/components/inventory/table-reorder'
 import { inventoryService } from '@/service/inventory'
@@ -55,7 +53,6 @@ async function Page({ params: { lng }, user, customer }: Props) {
 			<TableReorder data={reorders} user={user} units={units} groups={groups} />
 
 			{/* Modals without triggers that we open with custom events from row actions */}
-			<ModalBulkReorder reorders={reorders} />
 			<ModalUpdateReorder />
 			<ModalDeleteReorder />
 			<ModalAddOrderedReorder />
