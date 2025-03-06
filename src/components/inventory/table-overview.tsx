@@ -1,5 +1,6 @@
 'use client'
 
+import {fuzzyFilter} from '@/lib/tanstack/filter-fns'
 import {
   getTableOverviewColumns,
   getTableOverviewFilters,
@@ -156,6 +157,12 @@ export function TableOverview({
 
     autoResetExpanded: false,
     filterFromLeafRows: false,
+
+		filterFns: {
+			fuzzy: fuzzyFilter,
+		},
+		// @ts-ignore
+		globalFilterFn: 'fuzzy',
 
     state: {
       globalFilter,

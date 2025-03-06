@@ -14,7 +14,7 @@
 		"choose": "Choose",
 		"choose-dates": "Choose dates",
 		"search": "Search",
-		"search-placeholder": "Search in table",
+		"search-placeholder": "Search across columns",
 		"number-range": "to",
 		"number-range-empty": "Choose {{label}}",
 		"number-range-to": "Up to and including {{to}}",
