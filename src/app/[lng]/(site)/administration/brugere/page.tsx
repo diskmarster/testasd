@@ -4,6 +4,7 @@ import { ModalDeleteUser } from '@/components/admin/modal-delete-user'
 import { ModalInviteUser } from '@/components/admin/modal-invite-user'
 import { TableAdminUsers } from '@/components/admin/table-company-users'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { Icons } from '@/components/ui/icons'
 import {
 	Tooltip,
@@ -11,40 +12,22 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { getUserRoles, hasPermissionByRank, lte } from '@/data/user.types'
-import { customerService } from '@/service/customer'
+import { getUserRoles, lte } from '@/data/user.types'
 import { isUserLimitReached } from '@/service/customer.utils'
 import { locationService } from '@/service/location'
-import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
-import { redirect } from 'next/navigation'
 
-interface Props {
+interface Props extends WithAuthProps {
 	params: {
 		lng: string
 	}
 }
 
-export default async function Page({ params: { lng } }: Props) {
+async function Page({ params: { lng }, user, customer }: Props) {
 	const { t } = await serverTranslation(lng, 'organisation')
-	const { session, user } = await sessionService.validate()
-	if (!session) {
-		signOutAction()
-		return
-	}
-
-	if (!hasPermissionByRank(user.role, 'moderator')) {
-		redirect('/oversigt')
-	}
 
 	const currentLocationID = await locationService.getLastVisited(user.id)
 	if (!currentLocationID) {
-		signOutAction()
-		return
-	}
-
-	const customer = await customerService.getByID(user.customerID)
-	if (!customer) {
 		signOutAction()
 		return
 	}
@@ -114,3 +97,5 @@ export default async function Page({ params: { lng } }: Props) {
 		</SiteWrapper>
 	)
 }
+
+export default withAuth(Page, 'lite', 'moderator')

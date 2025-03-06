@@ -1,30 +1,18 @@
-import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { CompanyInfoSkeleton } from '@/components/admin/tab-company-info'
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { hasPermissionByRank } from '@/data/user.types'
-import { sessionService } from '@/service/session'
-import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { CompanyInfoWrapper } from './company-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 
-interface Props {
+interface Props extends WithAuthProps {
 	params: {
 		lng: string
 	}
 }
 
-export default async function Page({ params: { lng } }: Props) {
+async function Page({ params: { lng }, customer }: Props) {
 	const { t } = await serverTranslation(lng, 'organisation')
-	const { session, user, customer } = await sessionService.validate()
-	if (!session || !user || !customer) {
-		signOutAction()
-		return
-	}
-
-	if (!hasPermissionByRank(user.role, 'moderator')) {
-		redirect('/oversigt')
-	}
 
 	return (
 		<SiteWrapper
@@ -36,3 +24,5 @@ export default async function Page({ params: { lng } }: Props) {
 		</SiteWrapper>
 	)
 }
+
+export default withAuth(Page, 'lite', 'moderator')

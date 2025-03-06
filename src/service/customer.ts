@@ -31,7 +31,6 @@ export type CustomerActivationLink =
 const LINK_DURATION_HOURS = 1
 
 export const customerService = {
-  db: db,
   create: async function (
     customerData: NewCustomer,
   ): Promise<Customer | undefined> {

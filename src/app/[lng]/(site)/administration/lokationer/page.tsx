@@ -2,40 +2,22 @@ import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { TableAdminLocations } from '@/components/admin/table-company-locations'
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { hasPermissionByRank } from '@/data/user.types'
-import { customerService } from '@/service/customer'
 import { locationService } from '@/service/location'
-import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
-import { redirect } from 'next/navigation'
 import { LocationPageActions } from './page-actions'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 
-interface Props {
+interface Props extends WithAuthProps {
 	params: {
 		lng: string
 	}
 }
 
-export default async function Page({ params: { lng } }: Props) {
+async function Page({ params: { lng }, user, customer }: Props) {
 	const { t } = await serverTranslation(lng, 'organisation')
-	const { session, user } = await sessionService.validate()
-	if (!session) {
-		signOutAction()
-		return
-	}
-
-	if (!hasPermissionByRank(user.role, 'moderator')) {
-		redirect('/oversigt')
-	}
 
 	const currentLocationID = await locationService.getLastVisited(user.id)
 	if (!currentLocationID) {
-		signOutAction()
-		return
-	}
-
-	const customer = await customerService.getByID(user.customerID)
-	if (!customer) {
 		signOutAction()
 		return
 	}
@@ -77,3 +59,5 @@ export default async function Page({ params: { lng } }: Props) {
 		</SiteWrapper>
 	)
 }
+
+export default withAuth(Page, 'lite', 'moderator')

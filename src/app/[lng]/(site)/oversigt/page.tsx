@@ -1,6 +1,6 @@
-import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n/index'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
 import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
 import { TableOverview } from '@/components/inventory/table-overview'
@@ -8,25 +8,18 @@ import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
-import { sessionService } from '@/service/session'
 
-interface PageProps {
+interface PageProps extends WithAuthProps {
   params: {
     lng: string
   }
 }
 
-export default async function Home({ params: { lng } }: PageProps) {
-  const { session, user } = await sessionService.validate()
-  if (!session) return signOutAction()
-
+async function Home({ params: { lng }, user, customer }: PageProps) {
   const { t } = await serverTranslation(lng, 'oversigt')
 
   const location = await locationService.getLastVisited(user.id!)
   if (!location) return null 
-
-  const customer = await customerService.getByID(user.customerID)
-  if (!customer) return signOutAction()
 
   const inventory = await inventoryService.getInventory(location)
   inventory.sort((a, b) => {
@@ -86,3 +79,5 @@ export default async function Home({ params: { lng } }: PageProps) {
     </SiteWrapper>
   )
 }
+
+export default withAuth(Home)
