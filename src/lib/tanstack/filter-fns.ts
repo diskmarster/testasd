@@ -1,7 +1,8 @@
 import { NumberRange } from '@/components/table/table-toolbar'
-import { Row } from '@tanstack/react-table'
+import { FilterFn, Row } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { DateRange } from 'react-day-picker'
+import { rankItem } from '@tanstack/match-sorter-utils'
 
 export function numberRangeFilterFn<T>(
   row: Row<T>,
@@ -53,4 +54,10 @@ export function dateRangeFilterFn<T>(
 
 export function stringSortingFn(rA: string, rB: string) {
   return rA.localeCompare(rB)
+}
+
+export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  const itemRank = rankItem(row.getValue(columnId), value)
+  addMeta({ itemRank })
+  return itemRank.passed
 }
