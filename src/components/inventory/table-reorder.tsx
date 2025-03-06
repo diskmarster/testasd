@@ -43,6 +43,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
 import { useSearchParams } from 'next/navigation'
+import { ReorderSelectedButton } from './button-reorder-selected'
+import { ModalBulkReorder } from './modal-reorder-bulk'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -209,9 +211,16 @@ export function TableReorder({ data, user, units, groups }: Props) {
       <TablePagination table={table} pageSizes={ROW_PER_PAGE} />
       {ROW_SELECTION_ENABLED && (
         <TableFloatingBar table={table}>
-          {table => <ExportSelectedButton table={table} />}
+          {table => 
+            <>
+              <ExportSelectedButton table={table} />
+              <ReorderSelectedButton table={table} />
+            </>
+          }
         </TableFloatingBar>
       )}
+
+      <ModalBulkReorder reorders={data} clearTableSelection={() => table.resetRowSelection()} />
     </div>
   )
 }

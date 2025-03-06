@@ -116,6 +116,9 @@
 		"quantity": "Beh.",
 		"disposable": "Disp. beh.",
 		"toast-error": "Genbestillinger blev ikke registreret",
-		"toast-success": "Genbestillinger blev registreret"
+		"toast-success": "Genbestillinger blev registreret",
+		"tooltip": "Registrer bestillinger",
+		"tooltipWithCount_one": "Registrer {{count}} bestilling",
+		"tooltipWithCount_other": "Registrer {{count}} bestillinger"
 	}
 }

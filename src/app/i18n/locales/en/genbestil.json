@@ -118,6 +118,9 @@
 		"quantity": "Qty.",
 		"disposable": "Disp. Qty.",
 		"toast-error": "Reorders was not registered",
-		"toast-success": "Reorders was registered"
+		"toast-success": "Reorders was registered",
+		"tooltip": "Register reorders",
+		"tooltipWithCount_one": "Register {{count}} reorder",
+		"tooltipWithCount_other": "Register {{count}} reorders"
 	}
 }

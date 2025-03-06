@@ -1,5 +1,3 @@
-"use client"
-
 import { useTranslation } from "@/app/i18n/client"
 import { useLanguage } from "@/context/language"
 import { useMemo, useState, useTransition } from "react"
@@ -48,9 +46,13 @@ import { useCustomEventListener } from "react-custom-events"
 
 interface Props {
 	reorders: FormattedReorder[]
+	clearTableSelection: () => void
 }
 
-export function ModalBulkReorder({ reorders }: Props) {
+/**
+ * This modal is rendered from the TableReorder component, in order for it to be able to clear the table selection after bulk reorder registration
+ */
+export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "genbestil")
 	const [pending, startTransition] = useTransition()
@@ -136,6 +138,7 @@ export function ModalBulkReorder({ reorders }: Props) {
 			})
 			onOpenChange(false)
 			updateChipCount()
+			clearTableSelection()
 		})
 	}
 
