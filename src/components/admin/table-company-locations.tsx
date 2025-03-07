@@ -39,6 +39,7 @@ import { getTableLocationsColumns, getTableLocationsFilters } from '@/app/[lng]/
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useSearchParams } from 'next/navigation'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -61,6 +62,7 @@ export function TableAdminLocations({ data, user }: Props) {
 
   const mutableSearchParams = new URLSearchParams(useSearchParams())
 
+  const [globalFilter, handleGlobalFilterChange] = useUrlGlobalFiltering(mutableSearchParams)
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams, [
       { id: 'isBarred', value: [false] },
@@ -119,6 +121,7 @@ export function TableAdminLocations({ data, user }: Props) {
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
+    onGlobalFilterChange: handleGlobalFilterChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -127,6 +130,7 @@ export function TableAdminLocations({ data, user }: Props) {
     filterFromLeafRows: false,
 
     state: {
+      globalFilter,
       columnFilters,
       rowSelection,
       sorting,
