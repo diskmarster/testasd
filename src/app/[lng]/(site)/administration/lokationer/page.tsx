@@ -1,11 +1,13 @@
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
+import { ModalEditLocation } from '@/components/admin/modal-edit-location'
+import { ModalToggleLocation } from '@/components/admin/modal-toggle-location'
 import { TableAdminLocations } from '@/components/admin/table-company-locations'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { locationService } from '@/service/location'
 import { userService } from '@/service/user'
 import { LocationPageActions } from './page-actions'
-import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -56,6 +58,12 @@ async function Page({ params: { lng }, user, customer }: Props) {
 				/>
 			}>
 			<TableAdminLocations data={locations} user={user} />
+			<ModalEditLocation
+				user={user}
+				users={users}
+				userAccesses={userAccesses}
+			/>
+			<ModalToggleLocation />
 		</SiteWrapper>
 	)
 }
