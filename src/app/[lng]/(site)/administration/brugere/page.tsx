@@ -1,8 +1,13 @@
 import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { ModalDeleteUser } from '@/components/admin/modal-delete-user'
+import { ModalEditUser } from '@/components/admin/modal-edit-user'
 import { ModalInviteUser } from '@/components/admin/modal-invite-user'
+import { ModalResetUserPin } from '@/components/admin/modal-reset-user-pin'
+import { ModalResetUserPW } from '@/components/admin/modal-reset-user-pw'
+import { ModalToggleUser } from '@/components/admin/modal-toggle-user'
 import { TableAdminUsers } from '@/components/admin/table-company-users'
+import { ModalQrPrint } from '@/components/auth/modal-print-qr'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { Icons } from '@/components/ui/icons'
@@ -93,7 +98,12 @@ async function Page({ params: { lng }, user, customer }: Props) {
 				</div>
 			}>
 			<TableAdminUsers data={users} user={user} />
-      <ModalDeleteUser />
+			<ModalQrPrint />
+			<ModalEditUser />
+			<ModalToggleUser />
+			<ModalResetUserPW />
+			<ModalResetUserPin />
+			<ModalDeleteUser />
 		</SiteWrapper>
 	)
 }

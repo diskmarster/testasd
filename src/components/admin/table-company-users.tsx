@@ -39,6 +39,7 @@ import { getTableUsersColumns, getTableUsersFilters } from '@/app/[lng]/(site)/a
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useSearchParams } from 'next/navigation'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -57,6 +58,7 @@ export function TableAdminUsers({ data, user }: Props) {
   const columns = useMemo(() => getTableUsersColumns(user.role, lng, t), [user.role, lng, t])
 
 	const mutableSearchParams = new URLSearchParams(useSearchParams())
+  const [globalFilter, handleGlobalFilterChange] = useUrlGlobalFiltering(mutableSearchParams)
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams, [])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -113,6 +115,7 @@ export function TableAdminUsers({ data, user }: Props) {
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
+    onGlobalFilterChange: handleGlobalFilterChange,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -121,6 +124,7 @@ export function TableAdminUsers({ data, user }: Props) {
     filterFromLeafRows: false,
 
     state: {
+      globalFilter,
       columnFilters,
       rowSelection,
       sorting,
