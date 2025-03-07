@@ -23,8 +23,11 @@
 		"buffer": "Faktor (%)",
 		"ordered": "Bestilt",
 		"updated": "Opdateret",
-		"no-value": "Ikke angivet ",
-		"supplier": "Leverandør"
+		"no-value": "-",
+		"supplier": "Leverandør",
+		"shouldReorder": "Lav beholdning",
+		"shouldReorder_true": "Ja",
+		"shouldReorder_false": "Nej"
 	},
 	"filter-placeholders": {
 		"productNo": "Søg i varenr.",
@@ -44,12 +47,15 @@
 		"product-placeholder": "Søg efter vare",
 		"product-emptymessage": "Ingen vare fundet",
 		"minimum-stock": "Minimum beholdning",
-		"restock-factor": "Genbestillingsfaktor (%)",
-		"restock-factor-description": "Dette bruges til at beregne det anbefalede genbestillingsantal.",
-		"recommended-reorder-calculation1": "Anbefalet genbestilling:",
-		"recommended-reorder-calculation2": "over minimums beholdningen",
 		"create-button": "Opret",
-		"error-occured": "Der skete en fejl."
+		"error-occured": "Der skete en fejl.",
+		"orderAmount": "Bestillingsmængde",
+		"orderAmount-description": "Dette bruges til at forudfylde antal bestilte vare når du registrerer genbestillinger. Kan ændres når du registrerer.",
+		"maxAmount": "Maks. bestillingsmændge",
+		"maxAmount-description": "Kan efterlades på 0 for at ignorere.",
+		"orderAmount-too-big": "Maks. bestillingsmængde skal være større end bestillingsmængde",
+		"value-not-positive": "Værdi skal være et positivt tal",
+		"required": "Dette felt er påkrævet"
 	},
 	"modal-update-reorder": {
 		"title": "Opdater minimums beholdning",
@@ -73,7 +79,8 @@
 		"description": "Det bestilte antal vil automatisk blive opdateret når der laves en tilgang på denne vare.",
 		"product": "Vare",
 		"ordered-quantity": "Bestilt antal",
-		"add-button": "Tilføj"
+		"add-button": "Tilføj",
+		"exceeded-max-ordered": "Du kan ikke bestille mere end {{count}}"
 	},
 	"toasts": {
 		"add-ordered": "Bestilling registreret for ",
@@ -84,20 +91,48 @@
 		"registration-success": "Genbestillinger blev registreret."
 	},
 	"bulk": {
-		"title": "Registrer flere bestillinger",
+		"title": "Registrer bestillinger",
 		"description": "Registrer dine genbestillinger nemt og hold lageret opdateret. Få overblik over bestilte varer og sikre, at beholdningen altid stemmer.",
-		"add-rows-continue": "Tilføj vare for at fortsætte",
+		"red-products": "Røde varer indikerer at beholdningen er lav, og bør bestilles.",
+		"add-rows-continue": "Tilføj en eller flere varer for at fortsætte",
 		"add-rows-btn": "Tilføj vare",
+		"add-rows-supplier-btn": "Tilføj leverandør",
 		"btn-close": "Luk",
-		"btn-confirm": "Opret bestillinger",
+		"btn-confirm": "Registrer bestillinger",
 		"errors": {
-			"positive": "Skal være et positivt tal"
+			"positive": "Skal være et positivt tal",
+			"ordered-too-big": "Kan ikke bestille mere end {{count}}"
 		},
-		"sku": "Varenr.",
-		"sku-placeholder": "Vælg vare",
-		"sku-search": "Søg efter vare...",
-		"sku-no-items": "Ingen varer fundet",
+		"product": "Vare",
+		"product-placeholder": "Vælg vare",
+		"product-search": "Søg efter vare...",
+		"product-no-items": "Ingen varer fundet",
 		"qty": "Antal",
-		"tooltip": "Registrer bestillinger"
+		"tooltip": "Registrer bestillinger",
+		"supplier": "Leverandør",
+		"suppliers": "Leverandør",
+		"suppliers-search": "Søg efter leverandør...",
+		"suppliers-no-items": "Ingen leverandør fundet",
+		"quantity": "Beh.",
+		"disposable": "Disp. beh.",
+		"toast-error": "Genbestillinger blev ikke registreret",
+		"toast-success": "Genbestillinger blev registreret",
+		"tooltip": "Registrer bestillinger",
+		"tooltipWithCount_one": "Registrer {{count}} bestilling",
+		"tooltipWithCount_other": "Registrer {{count}} bestillinger"
+	},
+	"report": {
+		"headers": {
+			"supplier": "Leverandør",
+			"sku": "Varenr.",
+			"barcode": "Stregkode",
+			"text1": "Varetekst 1",
+			"text2": "Varetekst 2",
+			"unit": "Enhed",
+			"costPrice": "Kostpris",
+			"quantity": "Antal",
+			"sum": "Linjesum"
+		},
+		"sheet": "Genbestillinger"
 	}
 }

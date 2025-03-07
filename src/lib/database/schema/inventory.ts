@@ -271,7 +271,6 @@ export const reorderTable = sqliteTable(
       .references(() => customerTable.id, { onDelete: 'cascade' }),
     minimum: real('minimum').notNull(),
     ordered: real('ordered').notNull().default(0),
-    buffer: real('buffer').notNull(),
     inserted: integer('inserted', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
@@ -280,6 +279,8 @@ export const reorderTable = sqliteTable(
       .default(sql`(unixepoch())`)
       .$onUpdateFn(() => new Date())
       .$type<Date>(),
+    orderAmount: real('order_amount').notNull().default(0),
+    maxOrderAmount: real('max_order_amount').notNull().default(0),
   },
   t => ({
     pk: primaryKey({

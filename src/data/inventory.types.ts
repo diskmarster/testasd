@@ -63,11 +63,11 @@ export interface HistoryWithSums extends History {
 
 export interface FormattedReorder extends Reorder {
   quantity: number
-  recommended: number
   disposible: number
   product: Product & { 
 	  unit: string 
 	  group: string
 	  supplierName: string | null
   }
+	shouldReorder?: boolean
 }

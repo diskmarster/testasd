@@ -6,9 +6,8 @@ import { Badge } from "../ui/badge"
 import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
 import { Button } from "../ui/button"
-import { Separator } from "../ui/separator"
 import { hasPermissionByRank } from "@/data/user.types"
-import { numberToDKCurrency } from "@/lib/utils"
+import { formatDate, numberToDKCurrency } from "@/lib/utils"
 import { useEffect, useState, useTransition } from "react"
 import { User } from "lucia"
 import { updateProductValidation } from "@/app/[lng]/(site)/varer/produkter/[id]/validation"
@@ -27,6 +26,7 @@ import { Icons } from "../ui/icons"
 import { Skeleton } from "../ui/skeleton"
 import { emitCustomEvent } from "react-custom-events"
 import { Supplier } from "@/lib/database/schema/suppliers"
+import { Label } from "../ui/label"
 
 interface Props {
 	product: FormattedProduct & { inventories: Inventory[] }
@@ -141,27 +141,15 @@ export function ProductDetails({ product, user }: Props) {
 	}, [isEditing])
 
 	return (
-		<div className="w-full lg:w-1/2 border rounded-md p-4">
-			<div className="flex items-start gap-4 justify-between">
-				<IfElse
-					condition={isEditing}
-					trueComp={
-						<div className='flex items-start gap-3 flex-1'>
-							<Input
-								type="text"
-								className="h-9"
-								value={formValues.data.text1}
-								onChange={event => setValue("data.text1", event.target.value, { shouldValidate: true, shouldDirty: true })}
-							/>
-						</div>
-					}
-					falseComp={
-						<div className='flex items-start gap-3 flex-1'>
-							<p className='md:max-w-[90%]'>{product.text1}</p>
-							{product.isBarred && <Badge variant='red'>{t('details-page.details.label-barred')}</Badge>}
-						</div>
-					}
-				/>
+		<div className="w-full space-y-4">
+			<div className="flex items-start justify-between">
+				<div className="space-y-0.5">
+					<div className='flex items-start gap-3 flex-1'>
+						<h1 className="text-xl font-medium">{product.text1}</h1>
+						{product.isBarred && <Badge variant='red'>{t('details-page.details.label-barred')}</Badge>}
+					</div>
+					<p className="text-muted-foreground">{t('details-page.details.last-updated')}{formatDate(product.updated)}</p>
+				</div>
 				<IfElse
 					condition={isEditing}
 					trueComp={
@@ -188,69 +176,82 @@ export function ProductDetails({ product, user }: Props) {
 					}
 				/>
 			</div>
-
-			<div className='space-y-2'>
-				<div className="space-y-1">
-					<span className='text-sm text-muted-foreground'>{t('details-page.details.label-text2')}</span>
-					<IfElse
-						condition={isEditing}
-						trueComp={
-							<Input
-								type="text"
-								className="h-9 w-1/3"
-								value={formValues.data.text2}
-								onChange={event => setValue("data.text2", event.target.value, { shouldValidate: true, shouldDirty: true })}
-							/>
-						}
-						falseComp={
-							<p className="h-9 flex items-center">{product.text2 != '' ? product.text2 : t('details-page.details.no-value')}</p>
-						}
-					/>
-				</div>
-				<div className="space-y-1">
-					<span className='text-sm text-muted-foreground'>{t('details-page.details.label-text3')}</span>
-					<IfElse
-						condition={isEditing}
-						trueComp={
-							<Textarea
-								maxLength={1000}
-								className="h-[5rem] line-clamp-5 resize-none"
-								value={formValues.data.text3}
-								onChange={event => setValue("data.text3", event.target.value, { shouldValidate: true, shouldDirty: true })}
-							></Textarea>
-						}
-						falseComp={
-							<p className="line-clamp-5 h-[5rem] pt-1.5">{product.text3 != '' ? product.text3 : t('details-page.details.no-value')}</p>
-						}
-					/>
-				</div>
-				<div className="space-y-1">
-					<span className='text-sm text-muted-foreground'>{t('details-page.details.label-note')}</span>
-					<IfElse
-						condition={isEditing}
-						trueComp={
-							<Textarea
-								maxLength={1000}
-								className="h-[5rem] line-clamp-5 resize-none"
-								value={formValues.data.note}
-								onChange={event => setValue("data.note", event.target.value, { shouldValidate: true, shouldDirty: true })}
-							></Textarea>
-						}
-						falseComp={
-							<p className="line-clamp-5 h-[5rem] pt-1.5">{product.note!= '' ? product.note : t('details-page.details.no-value')}</p>
-						}
-					/>
-				</div>
-				<Separator className='!my-4' />
-				<div className='flex items-center gap-4'>
-					<div className='w-1/2'>
-						<span className='text-sm text-muted-foreground'>
-							{t('details-page.details.label-group')}
-						</span>
+			<div className="w-full border rounded-md p-4 space-y-4">
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="text1">{t('details-page.details.label-text1')}</Label>
 						<IfElse
 							condition={isEditing}
+							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.text1}</div>}
+							trueComp={<Input id="text1" name="text1" value={product.text1} onChange={event => setValue('data.text1', event.target.value, { shouldValidate: true })} />}
+						/>
+					</div>
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="text2">{t('details-page.details.label-text2')}</Label>
+						<IfElse
+							condition={isEditing}
+							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.text2}</div>}
+							trueComp={<Input id="text2" name="text2" value={product.text2} onChange={event => setValue('data.text2', event.target.value, { shouldValidate: true })} />}
+						/>
+					</div>
+				</div>
+
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="text3">{t('details-page.details.label-text3')}</Label>
+						<IfElse
+							condition={isEditing}
+							falseComp={
+								<div className="py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm">
+									{product.text3 != '' ? product.text3 : t('details-page.details.no-value')}
+								</div>
+							}
+							trueComp={
+								<Textarea
+									className="resize-none"
+									id="text3"
+									name="text3"
+									maxLength={1000}
+									rows={5}
+									value={formValues.data.text3}
+									onChange={event => setValue("data.text3", event.target.value, { shouldValidate: true, shouldDirty: true })}
+								/>
+							}
+						/>
+					</div>
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="note">{t('details-page.details.label-note')}</Label>
+						<IfElse
+							condition={isEditing}
+							falseComp={
+								<div className="py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm">
+									{product.note != '' ? product.note : t('details-page.details.no-value')}
+								</div>
+							}
+							trueComp={
+								<Textarea
+									className="resize-none"
+									id="note"
+									name="note"
+									maxLength={1000}
+									rows={5}
+									value={formValues.data.note}
+									onChange={event => setValue("data.note", event.target.value, { shouldValidate: true, shouldDirty: true })}
+								/>
+							}
+						/>
+					</div>
+				</div>
+
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="group">{t('details-page.details.label-group')}</Label>
+						<IfElse
+							condition={isEditing}
+							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.group}</div>}
 							trueComp={
 								<Select
+									disabled={pending}
 									value={formValues.data.groupID.toString()}
 									onValueChange={(value: string) =>
 										setValue('data.groupID', parseInt(value), {
@@ -270,17 +271,16 @@ export function ProductDetails({ product, user }: Props) {
 									</SelectContent>
 								</Select>
 							}
-							falseComp={
-								<p className="h-9 flex items-center">{product.group}</p>
-							}
 						/>
 					</div>
-					<div className='w-1/2'>
-						<span className='text-sm text-muted-foreground'>{t('details-page.details.label-unit')}</span>
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="unit">{t('details-page.details.label-unit')}</Label>
 						<IfElse
 							condition={isEditing}
+							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.unit}</div>}
 							trueComp={
 								<Select
+									disabled={pending}
 									value={formValues.data.unitID.toString()}
 									onValueChange={(value: string) =>
 										setValue('data.unitID', parseInt(value), {
@@ -300,99 +300,95 @@ export function ProductDetails({ product, user }: Props) {
 									</SelectContent>
 								</Select>
 							}
-							falseComp={
-								<p className="h-9 flex items-center">{product.unit}</p>
-							}
 						/>
 					</div>
 				</div>
-				<div className='flex items-center gap-4'>
-					<div className='w-1/2'>
-						<span className='text-sm text-muted-foreground'>{t('details-page.details.label-sku')}</span>
+
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="sku">{t('details-page.details.label-sku')}</Label>
 						<IfElse
 							condition={isEditing}
+							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.sku}</div>}
 							trueComp={
 								<Input
+									id="sku"
+									name="sku"
 									type="text"
 									className="h-9"
 									value={formValues.data.sku}
 									onChange={event => setValue("data.sku", event.target.value, { shouldValidate: true, shouldDirty: true })}
 								/>
 							}
-							falseComp={
-								<p className="h-9 flex items-center">{product.sku}</p>
-							}
 						/>
 					</div>
-					<div className='w-1/2'>
-						<span className='text-sm text-muted-foreground'>{t('details-page.details.label-barcode')}</span>
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="barcode">{t('details-page.details.label-barcode')}</Label>
 						<IfElse
 							condition={isEditing}
+							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.barcode}</div>}
 							trueComp={
 								<Input
-									type="text"
+									id="barcode"
+									name="barcode"
 									className="h-9"
+									type="text"
 									value={formValues.data.barcode}
 									onChange={event => setValue("data.barcode", event.target.value, { shouldValidate: true, shouldDirty: true })}
 								/>
 							}
-							falseComp={
-								<p className="h-9 flex items-center">{product.barcode}</p>
-							}
 						/>
 					</div>
 				</div>
+
 				{hasPermissionByRank(user.role, 'bruger') && user.priceAccess && (
-					<div className='flex items-center gap-4'>
-						<div className='w-1/2'>
-							<span className='text-sm text-muted-foreground'>{t('details-page.details.label-costPrice')}</span>
+					<div className="flex flex-col md:flex-row gap-4 justify-stretch">
+						<div className="space-y-0.5 w-full">
+							<Label htmlFor="costPrice">{t('details-page.details.label-costPrice')}</Label>
 							<IfElse
 								condition={isEditing}
+								falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{numberToDKCurrency(product.costPrice)}</div>}
 								trueComp={
 									<Input
+										id="costPrice"
+										type="text"
 										step={0.01}
 										min={0}
-										required
-										id='costPrice'
-										type='number'
 										className="h-9"
 										{...register('data.costPrice')}
 									/>
 								}
-								falseComp={
-									<p className="h-9 flex items-center">{numberToDKCurrency(product.costPrice)}</p>
-								}
 							/>
 						</div>
-						<div className='w-1/2'>
-							<span className='text-sm text-muted-foreground'>{t('details-page.details.label-salesPrice')}</span>
+						<div className="space-y-0.5 w-full">
+							<Label htmlFor="barcode">{t('details-page.details.label-salesPrice')}</Label>
 							<IfElse
 								condition={isEditing}
+								falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{numberToDKCurrency(product.salesPrice)}</div>}
 								trueComp={
 									<Input
+										id="salesPrice"
+										className="h-9"
 										step={0.01}
 										min={0}
-										required
-										id='costPrice'
-										type='number'
-										className="h-9"
+										type="text"
 										{...register('data.salesPrice')}
 									/>
-								}
-								falseComp={
-									<p className="h-9 flex items-center">{numberToDKCurrency(product.salesPrice)}</p>
 								}
 							/>
 						</div>
 					</div>
 				)}
-				<div className='flex items-center gap-4'>
-					<div className='w-1/2'>
-						<span className='text-sm text-muted-foreground'>{t('details-page.details.label-supplier')}</span>
+
+				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
+					<div className="space-y-0.5 w-full">
+						<Label htmlFor="sku">{t('details-page.details.label-supplier')}</Label>
 						<IfElse
 							condition={isEditing}
+							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.supplierName ?? 'Ingen'}</div>}
 							trueComp={
 								<Select
+									disabled={pending}
 									value={formValues.data.supplierID ? formValues.data.supplierID.toString() : "-1"}
 									onValueChange={(value: string) => {
 										setValue('data.supplierID', parseInt(value), {
@@ -413,11 +409,9 @@ export function ProductDetails({ product, user }: Props) {
 									</SelectContent>
 								</Select>
 							}
-							falseComp={
-								<p className="h-9 flex items-center">{product.supplierName ?? 'Ingen'}</p>
-							}
 						/>
 					</div>
+					<div className="space-y-0.5 w-full"></div>
 				</div>
 			</div>
 		</div>

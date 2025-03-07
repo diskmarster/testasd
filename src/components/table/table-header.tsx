@@ -9,16 +9,23 @@ interface TableHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>
   title: string
+  multiSort?: boolean
 }
 
 export function TableHeader<TData, TValue>({
   column,
   title,
   className,
+  multiSort = false,
 }: TableHeaderProps<TData, TValue>) {
 
   const handleSort = () => {
-    column.toggleSorting(column.getIsSorted() === 'asc')
+    const current = column.getIsSorted()
+    if (current === 'desc') {
+      column.clearSorting()
+    } else {
+      column.toggleSorting(current === 'asc', multiSort)
+    }
   }
 
   return (

@@ -55,7 +55,7 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 		<>
 			<div className="lg:w-1/2 border rounded-md p-4 flex flex-col gap-4">
 				<div className='flex items-center gap-1.5'>
-					<p>{t("details-page.files.title")}</p>
+					<p className="font-medium">{t("details-page.files.title")}</p>
 					<span className='text-muted-foreground tabular-nums text-xs'>({files.length} / 5)</span>
 					{pending && (
 						<Icons.spinner className="size-3 animate-spin" />
@@ -63,7 +63,7 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 				</div>
 				<div className="space-y-2">
 					<p className="text-sm text-muted-foreground">{t("details-page.files.documents")}</p>
-					<div className="flex flex-col gap-2">
+					<div className="flex flex-col">
 						{!pdf && (
 							<p className="text-muted-foreground">{t("details-page.files.no-documents")}</p>
 						)}
@@ -116,7 +116,7 @@ function PDFFile({
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-1.5 group/pdf cursor-pointer">
 					<div className="text-[10px] px-1 py-0.5 rounded-sm bg-red-500 font-semibold text-white">PDF</div>
-					<Link href={file.url} target="_target" className="group-hover/pdf:underline">{file.name}</Link>
+					<Link href={file.url} target="_target" className="group-hover/pdf:underline text-sm">{file.name}</Link>
 				</div>
 				<DropdownMenu>
 					<DropdownMenuTrigger>
@@ -146,7 +146,7 @@ function ImageFile({
 }) {
 	return (
 		<div
-			className="border rounded-md flex items-center justify-center overflow-hidden group/file-image cursor-pointer max-w-32 aspect-square relative"
+			className="border rounded-md flex items-center justify-center overflow-hidden group/file-image cursor-pointer max-w-20 aspect-square relative"
 		>
 			<div
 				className="p-1.5 rounded-sm bg-destructive hover:bg-red-500 absolute top-2 right-2 group/icon z-50 opacity-0 group-hover/file-image:opacity-100 transition-opacity"

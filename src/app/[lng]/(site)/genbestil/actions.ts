@@ -50,7 +50,12 @@ export const updateReorderAction = editableAction
   .schema(async () => await getSchema(updateReorderValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const existsLocation = await locationService.getByID(parsedInput.locationID)
+
+    const locationID = await locationService.getLastVisited(ctx.user.id)
+    if (!locationID) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+    const existsLocation = await locationService.getByID(locationID)
     if (!existsLocation) {
       throw new ActionError(t('restock-action.company-location-not-found'))
     }
@@ -62,11 +67,12 @@ export const updateReorderAction = editableAction
 
     const newReorder = await inventoryService.updateReorderByIDs(
       parsedInput.productID,
-      parsedInput.locationID,
+      locationID,
       ctx.user.customerID,
       {
         minimum: parsedInput.minimum,
-        buffer: parsedInput.buffer / 100,
+				orderAmount: parsedInput.orderAmount,
+				maxOrderAmount: parsedInput.maxOrderAmount,
       },
     )
     if (!newReorder) {

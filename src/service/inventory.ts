@@ -40,6 +40,7 @@ import { ActionError } from '@/lib/safe-action/error'
 import { LibsqlError } from '@libsql/client'
 import { productService } from './products'
 import { userService } from './user'
+import { locationService } from './location'
 
 export const inventoryService = {
   getInventory: async function (
@@ -436,10 +437,7 @@ export const inventoryService = {
       throw new ActionError(t('inventory-service-action.reorder-barred'))
     }
 
-    return await inventory.createReorder({
-      ...reorderData,
-      buffer: reorderData.buffer / 100,
-    })
+    return await inventory.createReorder(reorderData)
   },
   deleteReorderByIDs: async function (
     productID: ProductID,
@@ -466,26 +464,22 @@ export const inventoryService = {
   ): Promise<FormattedReorder[]> {
     const reorders = await inventory.getAllReordersByID(locationID)
 
-    const reordersWithRecommended = reorders.map(reorder => {
-      const isQuantityGreater = reorder.quantity > reorder.minimum
-      const recommended = isQuantityGreater
-        ? 0
-        : Math.max(
-            reorder.minimum -
-              reorder.quantity +
-              reorder.minimum * reorder.buffer,
-            0,
-          )
+    const newReorders = reorders.map(reorder => {
       const disposible = reorder.quantity + reorder.ordered
+			const shouldReorder = (
+				reorder.quantity < reorder.minimum 
+				&& reorder.orderAmount > 0 
+				&& reorder.ordered < reorder.orderAmount
+			)
 
       return {
         ...reorder,
-        recommended,
         disposible,
+				shouldReorder,
       }
     })
 
-    return reordersWithRecommended
+    return newReorders
   },
   getInventoryByProductID: async function (
     productID: ProductID,
@@ -639,4 +633,13 @@ export const inventoryService = {
   getBatchByID: async function (batchID: BatchID): Promise<Batch | undefined> {
     return await inventory.getBatchByID(batchID)
   },
+	getReorderByIDs: async function(
+		productID: ProductID,
+		customerID: CustomerID,
+		userID: UserID
+	): Promise<Reorder | undefined> {
+		const locationID = await locationService.getLastVisited(userID)
+		if (!locationID) return undefined
+		return await inventory.getReorderByProductID(productID,locationID,customerID)
+	}
 }

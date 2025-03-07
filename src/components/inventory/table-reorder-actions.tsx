@@ -19,45 +19,32 @@ export function TableReorderActions({ table, row }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'genbestil')
 
-  return (
-    <div className='flex items-center gap-2'>
-      <Button
-        size='iconSm'
-        variant='ghost'
-        onClick={() =>
-          emitCustomEvent('AddOrderedReorderByIDs', {
-            locationID: row.original.locationID,
-            productID: row.original.productID,
-            recommended: row.original.recommended,
-            ordered: row.original.ordered,
-          })
-        }
-        tooltip={t('modal-add-ordered-reorder.title')}>
-        <Icons.plus className='size-4' />
-      </Button>
-      <TableActionsWrapper>
-        <DropdownMenuItem
-          onClick={() => {
-            emitCustomEvent('UpdateReorderByIDs', {
-              locationID: row.original.locationID,
-              productID: row.original.productID,
-              customerID: row.original.customerID,
-              minimum: row.original.minimum,
-              buffer: row.original.buffer * 100,
-            })
-          }}>
-          {t('table-reorder-actions.update')}
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => {
-            emitCustomEvent('DeleteReorderByIDs', {
-              locationID: row.original.locationID,
-              productID: row.original.productID,
-            })
-          }}>
-          {t('table-reorder-actions.delete')}
-        </DropdownMenuItem>
-      </TableActionsWrapper>
-    </div>
-  )
+	return (
+		<TableActionsWrapper>
+		<DropdownMenuItem
+		onClick={() => {
+			emitCustomEvent('UpdateReorderByIDs', {
+				locationID: row.original.locationID,
+				productID: row.original.productID,
+				customerID: row.original.customerID,
+				minimum: row.original.minimum,
+				orderAmount: row.original.orderAmount,
+				maxOrderAmount: row.original.maxOrderAmount,
+				text1: row.original.product.text1,
+			})
+		}}>
+		{t('table-reorder-actions.update')}
+		</DropdownMenuItem>
+		<DropdownMenuItem
+		onClick={() => {
+			emitCustomEvent('DeleteReorderByIDs', {
+				locationID: row.original.locationID,
+				productID: row.original.productID,
+				text1: row.original.product.text1
+			})
+		}}>
+		{t('table-reorder-actions.delete')}
+		</DropdownMenuItem>
+		</TableActionsWrapper>
+	)
 }

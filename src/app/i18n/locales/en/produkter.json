@@ -61,7 +61,6 @@
 			"key_productCostPrice": "Cost price",
 			"key_productSalesPrice": "Sales price",
 			"key_productIsBarred": "Barred",
-
 			"key_supplierName": "Supplier"
 		},
 		"files": {
@@ -87,9 +86,11 @@
 			"delete-confirm": "Delete"
 		},
 		"details": {
+			"last-updated": "Last updated: ",
 			"button-edit": "Edit",
 			"button-cancel": "Cancel",
 			"button-update": "Update",
+			"label-text1": "Text 1",
 			"label-text2": "Text 2",
 			"label-text3": "Text 3",
 			"label-note": "Note",
@@ -111,9 +112,26 @@
 			"file-not-deleted-bucket": "File was deleted but is still attached to your company",
 			"file-not-deleted-database": "File was deleted but still exist in our database",
 			"file-not-deleted-both": "File was not deleted. Try again"
+		},
+		"reorder": {
+			"title": "Restock",
+			"description": "Get notified when a product is below minimum stock.",
+			"label-minimum": "Minimums tock",
+			"label-orderAmount": "Order quantity",
+			"label-maxOrderAmount": "Max order quantity",
+			"no-reorder-title": "No resotck",
+			"no-reorder-description": "This item has no minimum stock level. Create one to be notified when it falls below the minimum.",
+			"btn-confrim": "Save",
+			"btn-confirm_true": "Update",
+			"btn-confirm_false": "Create",
+			"btn-no-reorder": "Create restock",
+			"btn-edit": "Edit",
+			"btn-cancel": "Cancel",
+			"orderAmount-description": "This is used to prefill the ordered quantity when recording reorders.",
+			"maxAmount-description": "Can be left at 0 to ignore."
 		}
 	},
 	"tooltips": {
-		"create-product":"Create product"
+		"create-product": "Create product"
 	}
 }
