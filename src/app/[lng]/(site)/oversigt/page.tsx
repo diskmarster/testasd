@@ -75,6 +75,7 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
         groups={groups}
         placements={placements}
         batches={batches}
+        customerSettings={customerSettings}
       />
     </SiteWrapper>
   )

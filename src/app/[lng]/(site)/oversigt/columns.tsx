@@ -6,7 +6,8 @@ import { FilterField } from '@/components/table/table-toolbar'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
-import { hasPermissionByRank } from '@/data/user.types'
+import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
+import { CustomerSettings } from '@/lib/database/schema/customer'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatNumber, numberToCurrency } from '@/lib/utils'
@@ -17,6 +18,7 @@ import Link from 'next/link'
 export function getTableOverviewColumns(
   plan: Plan,
   user: User,
+  settings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
   lng: I18NLanguage,
   t: (key: string, opts?: any) => string,
 ): ColumnDef<FormattedInventory>[] {
@@ -323,74 +325,41 @@ export function getTableOverviewColumns(
     },
   }
 
-  switch (plan) {
-    case 'lite':
-      const liteCols = [
-        skuCol,
-        attachmentsCol,
-        barcodeCol,
-        groupCol,
+	let planCols: ColumnDef<FormattedInventory>[] = [
+		skuCol,
+		attachmentsCol,
+		barcodeCol,
+		groupCol,
 		supplierCol,
-        text1Col,
-        text2Col,
-        text3Col,
-        quantityCol,
-        unitCol,
-        costPriceCol,
-        salesPriceCol,
-        actionsCol,
-        isBarredCol,
-      ].filter(
-        col =>
-          user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
-      )
-      return liteCols
-    case 'basis':
-      const plusCols = [
-        skuCol,
-        attachmentsCol,
-        barcodeCol,
-        groupCol,
-		supplierCol,
-        text1Col,
-        text2Col,
-        text3Col,
-        quantityCol,
-        unitCol,
-        costPriceCol,
-        salesPriceCol,
-        placementCol,
-        actionsCol,
-        isBarredCol,
-      ].filter(
-        col =>
-          user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
-      )
-      return plusCols
-    case 'pro':
-      const proCols = [
-        skuCol,
-        attachmentsCol,
-        barcodeCol,
-        groupCol,
-		supplierCol,
-        text1Col,
-        text2Col,
-        text3Col,
-        costPriceCol,
-        salesPriceCol,
-        quantityCol,
-        unitCol,
-        placementCol,
-        batchCol,
-        actionsCol,
-        isBarredCol,
-      ].filter(
-        col =>
-          user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
-      )
-      return proCols
+		text1Col,
+		text2Col,
+		text3Col,
+		costPriceCol,
+		salesPriceCol,
+		quantityCol,
+		unitCol,
+		placementCol,
+		batchCol,
+		actionsCol,
+		isBarredCol,
+	]
+
+  if (!user.priceAccess) {
+    planCols = planCols.filter(
+      col =>
+        col != costPriceCol && col != salesPriceCol,
+    )
   }
+
+  if (!(hasPermissionByPlan(plan, 'basis') && settings.usePlacement)) {
+    planCols = planCols.filter(col => col != placementCol)
+  }
+
+  if (!(hasPermissionByPlan(plan, 'pro') && settings.useBatch)) {
+    planCols = planCols.filter(col => col != batchCol)
+  }
+
+  return planCols
 }
 
 export function getTableOverviewFilters(
@@ -400,6 +369,8 @@ export function getTableOverviewFilters(
   groups: Group[],
   placements: Placement[],
   batches: Batch[],
+  user: User,
+  settings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
   t: (key: string) => string,
 ): FilterField<FormattedInventory>[] {
   const skuFilter: FilterField<FormattedInventory> = {
@@ -495,59 +466,45 @@ export function getTableOverviewFilters(
     value: '',
     placeholder: t('product-text3-placeholder'),
   }
-  const placementFilter: FilterField<FormattedInventory> | null =
-    plan === 'basis' || plan === 'pro'
-      ? {
-          column: table.getColumn('placement'),
-          type: 'select',
-          label: t('placement'),
-          value: '',
-          options: [
-            ...placements.map(placement => ({
-              value: placement.name,
-              label: placement.name,
-            })),
-          ],
-        }
-      : null
+	const placementFilter: FilterField<FormattedInventory> = {
+		column: table.getColumn('placement'),
+		type: 'select',
+		label: t('placement'),
+		value: '',
+		options: [
+			...placements.map(placement => ({
+				value: placement.name,
+				label: placement.name,
+			})),
+		],
+	}
 
-  const batchFilter: FilterField<FormattedInventory> | null =
-    plan === 'pro'
-      ? {
-          column: table.getColumn('batch'),
-          type: 'select',
-          label: t('batch'),
-          value: '',
-          options: [
-            ...batches.map(batch => ({
-              value: batch.batch,
-              label: batch.batch,
-            })),
-          ],
-        }
-      : null
+	const batchFilter: FilterField<FormattedInventory> = {
+		column: table.getColumn('batch'),
+		type: 'select',
+		label: t('batch'),
+		value: '',
+		options: [
+			...batches.map(batch => ({
+				value: batch.batch,
+				label: batch.batch,
+			})),
+		],
+	}
 
-  const costPriceFilter: FilterField<FormattedInventory> | null =
-    // @ts-ignore
-    table.options.meta.user.priceAccess
-      ? {
-          column: table.getColumn('costPrice'),
-          type: 'number-range',
-          label: t('cost-price'),
-          value: '',
-        }
-      : null
+	const costPriceFilter: FilterField<FormattedInventory> = {
+		column: table.getColumn('costPrice'),
+		type: 'number-range',
+		label: t('cost-price'),
+		value: '',
+	}
 
-  const salesPriceFilter: FilterField<FormattedInventory> | null =
-    // @ts-ignore
-    table.options.meta.user.priceAccess
-      ? {
-          column: table.getColumn('salesPrice'),
-          type: 'number-range',
-          label: t('sales-price'),
-          value: '',
-        }
-      : null
+	const salesPriceFilter: FilterField<FormattedInventory> = {
+		column: table.getColumn('salesPrice'),
+		type: 'number-range',
+		label: t('sales-price'),
+		value: '',
+	}
 
   const quantityFilter: FilterField<FormattedInventory> = {
     column: table.getColumn('quantity'),
@@ -573,64 +530,38 @@ export function getTableOverviewFilters(
     ],
   }
 
-  switch (plan) {
-    case 'lite':
-      return [
-        skuFilter,
-        attachmentsFilter,
-        barcodeFilter,
-        unitFilter,
-        groupFilter,
+	let planFilters: FilterField<FormattedInventory>[] = [
+		skuFilter,
+		attachmentsFilter,
+		barcodeFilter,
+		unitFilter,
+		groupFilter,
 		supplierNameFilter,
-        text1Filter,
-        text2Filter,
-        text3Filter,
-        costPriceFilter,
-        salesPriceFilter,
-        quantityFilter,
-        isBarredFilter,
-      ].filter(
-        (filter): filter is FilterField<FormattedInventory> => filter !== null,
-      )
+		text1Filter,
+		text2Filter,
+		text3Filter,
+		costPriceFilter,
+		salesPriceFilter,
+		quantityFilter,
+		placementFilter,
+		batchFilter,
+		isBarredFilter,
+	]
 
-    case 'basis':
-      return [
-        skuFilter,
-        attachmentsFilter,
-        barcodeFilter,
-        unitFilter,
-        groupFilter,
-		supplierNameFilter,
-        text1Filter,
-        text2Filter,
-        text3Filter,
-        costPriceFilter,
-        salesPriceFilter,
-        quantityFilter,
-        placementFilter,
-        isBarredFilter,
-      ].filter(
-        (filter): filter is FilterField<FormattedInventory> => filter !== null,
-      )
-    case 'pro':
-      return [
-        skuFilter,
-        attachmentsFilter,
-        barcodeFilter,
-        unitFilter,
-        groupFilter,
-		supplierNameFilter,
-        text1Filter,
-        text2Filter,
-        text3Filter,
-        costPriceFilter,
-        salesPriceFilter,
-        quantityFilter,
-        placementFilter,
-        batchFilter,
-        isBarredFilter,
-      ].filter(
-        (filter): filter is FilterField<FormattedInventory> => filter !== null,
-      )
+  if (!user.priceAccess) {
+    planFilters = planFilters.filter(
+      filter =>
+        filter != costPriceFilter && filter != salesPriceFilter,
+    )
   }
+
+  if (!(hasPermissionByPlan(plan, 'basis') && settings.usePlacement)) {
+    planFilters = planFilters.filter(filter => filter != placementFilter)
+  }
+
+  if (!(hasPermissionByPlan(plan, 'pro') && settings.useBatch)) {
+    planFilters = planFilters.filter(filter => filter != batchFilter)
+  }
+
+  return planFilters
 }
