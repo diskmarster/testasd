@@ -7,7 +7,7 @@ import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
 import { Button } from "../ui/button"
 import { hasPermissionByRank } from "@/data/user.types"
-import { formatDate, numberToDKCurrency } from "@/lib/utils"
+import { formatDate, numberToCurrency } from "@/lib/utils"
 import { useEffect, useState, useTransition } from "react"
 import { User } from "lucia"
 import { updateProductValidation } from "@/app/[lng]/(site)/varer/produkter/[id]/validation"
@@ -347,7 +347,7 @@ export function ProductDetails({ product, user }: Props) {
 							<Label htmlFor="costPrice">{t('details-page.details.label-costPrice')}</Label>
 							<IfElse
 								condition={isEditing}
-								falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{numberToDKCurrency(product.costPrice)}</div>}
+								falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{numberToCurrency(product.costPrice, lng)}</div>}
 								trueComp={
 									<Input
 										id="costPrice"
@@ -364,7 +364,7 @@ export function ProductDetails({ product, user }: Props) {
 							<Label htmlFor="barcode">{t('details-page.details.label-salesPrice')}</Label>
 							<IfElse
 								condition={isEditing}
-								falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{numberToDKCurrency(product.salesPrice)}</div>}
+								falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{numberToCurrency(product.salesPrice, lng)}</div>}
 								trueComp={
 									<Input
 										id="salesPrice"

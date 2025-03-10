@@ -22,7 +22,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
-import { cn, numberToDKCurrency } from '@/lib/utils'
+import { cn, numberToCurrency } from '@/lib/utils'
 import { planUserLimits } from '@/service/customer.utils'
 import { createClientValidation } from '@/app/[lng]/(site)/sys/kunder/validation'
 import { plansConfig } from '@/config/plan'
@@ -154,7 +154,7 @@ export function ModalCreateClient({ }: Props) {
                       formValues.plan == p.plan && 'border-2 border-primary'
                     )}>
                     <span className='capitalize font-medium'>{p.plan}</span>
-                    <span className='text-xs text-muted-foreground'>{numberToDKCurrency(p.price)}</span>
+                    <span className='text-xs text-muted-foreground'>{numberToCurrency(p.price, lng)}</span>
                   </div>
                 ))}
               </div>

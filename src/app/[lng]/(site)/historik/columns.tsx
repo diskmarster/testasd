@@ -1,17 +1,18 @@
+import { I18NLanguage } from '@/app/i18n/settings'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField, NumberRange } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Plan } from '@/data/customer.types'
 import { HistoryPlatform, HistoryType, HistoryWithSums } from '@/data/inventory.types'
+import { CustomerSettings } from '@/lib/database/schema/customer'
 import {
   Batch,
   Group,
-  History,
   Placement,
   Unit,
 } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn } from '@/lib/tanstack/filter-fns'
-import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
+import { cn, formatDate, formatNumber, numberToCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { TFunction } from 'i18next'
@@ -21,7 +22,8 @@ import { DateRange } from 'react-day-picker'
 export function getTableHistoryColumns(
   plan: Plan,
   user: User,
-  lng: string,
+  settings: CustomerSettings,
+  lng: I18NLanguage,
   t: TFunction<'historik', undefined>,
 ): ColumnDef<HistoryWithSums>[] {
   const insertedCol: ColumnDef<HistoryWithSums> = {
@@ -138,7 +140,7 @@ export function getTableHistoryColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.cost-price')} />
     ),
-    cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    cell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
     meta: {
       viewLabel: t('history-columns.cost-price'),
       rightAlign: true,
@@ -151,7 +153,7 @@ export function getTableHistoryColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.sale-price')} />
     ),
-    cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    cell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
     meta: {
       viewLabel: t('history-columns.sale-price'),
       rightAlign: true,
@@ -206,7 +208,7 @@ export function getTableHistoryColumns(
 
       return (
         <span className={cn('tabular-nums', amount < 0 && 'text-destructive')}>
-          {amount}
+          {formatNumber(amount, lng)}
         </span>
       )
     },
@@ -299,7 +301,7 @@ export function getTableHistoryColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.total-sales')} />
     ),
-    cell: ({ row }) => numberToDKCurrency(row.original.salesTotal),
+    cell: ({ row }) => numberToCurrency(row.original.salesTotal, lng),
     meta: {
       viewLabel: t('history-columns.total-sales'),
     },
@@ -311,7 +313,7 @@ export function getTableHistoryColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.total-costs')} />
     ),
-    cell: ({ row }) => numberToDKCurrency(row.original.costTotal),
+    cell: ({ row }) => numberToCurrency(row.original.costTotal, lng),
     meta: {
       viewLabel: t('history-columns.total-costs'),
     },

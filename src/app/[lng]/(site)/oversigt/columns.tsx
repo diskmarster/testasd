@@ -1,3 +1,4 @@
+import { I18NLanguage } from '@/app/i18n/settings'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
@@ -8,17 +9,15 @@ import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByRank } from '@/data/user.types'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
-import { cn, formatDate, formatNumber, numberToDKCurrency } from '@/lib/utils'
+import { cn, formatNumber, numberToCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
-import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
 import Link from 'next/link'
-import { DateRange } from 'react-day-picker'
 
 export function getTableOverviewColumns(
   plan: Plan,
   user: User,
-  lng: string,
+  lng: I18NLanguage,
   t: (key: string, opts?: any) => string,
 ): ColumnDef<FormattedInventory>[] {
   const skuCol: ColumnDef<FormattedInventory> = {
@@ -227,12 +226,12 @@ export function getTableOverviewColumns(
     ),
     aggregatedCell: ({ getValue }) => (
       <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
-        {formatNumber(getValue<number>())}
+        {formatNumber(getValue<number>(), lng)}
       </span>
     ),
     cell: ({ getValue }) => (
       <span className={cn(getValue<number>() < 0 && 'text-destructive')}>
-        {formatNumber(getValue<number>())}
+        {formatNumber(getValue<number>(), lng)}
       </span>
     ),
     filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
@@ -269,7 +268,7 @@ export function getTableOverviewColumns(
       <TableHeader column={column} title={t('cost-price')} />
     ),
     aggregationFn: 'unique',
-    aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    aggregatedCell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
     cell: () => null,
     filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
     meta: {
@@ -285,7 +284,7 @@ export function getTableOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('sales-price')} />
     ),
-    aggregatedCell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    aggregatedCell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
     cell: () => null,
     filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
     meta: {

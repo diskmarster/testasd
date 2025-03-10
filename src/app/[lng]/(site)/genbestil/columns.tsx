@@ -1,3 +1,4 @@
+import { I18NLanguage } from '@/app/i18n/settings'
 import { TableReorderActions } from '@/components/inventory/table-reorder-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
@@ -14,7 +15,7 @@ import { DateRange } from 'react-day-picker'
 
 export function getTableReorderColumns(
 	user: User,
-	lng: string,
+	lng: I18NLanguage,
 	t: (key: string) => string,
 ): ColumnDef<FormattedReorder>[] {
 	const selectCol: ColumnDef<FormattedReorder> = {
@@ -123,7 +124,7 @@ export function getTableReorderColumns(
 				className={cn(
 					row.original.quantity < row.original.minimum && 'text-destructive',
 				)}>
-				{formatNumber(getValue<number>())}
+				{formatNumber(getValue<number>(), lng)}
 			</span>
 		),
 		filterFn: 'includesString',
@@ -168,7 +169,7 @@ export function getTableReorderColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('reorder-columns.minimum-stock')} multiSort />
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>()),
+		cell: ({ getValue }) => formatNumber(getValue<number>(), lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.minimum-stock'),
@@ -185,7 +186,7 @@ export function getTableReorderColumns(
 				multiSort
 			/>
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>()),
+		cell: ({ getValue }) => formatNumber(getValue<number>(), lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.disposible-stock'),
@@ -198,7 +199,7 @@ export function getTableReorderColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('reorder-columns.ordered')} multiSort />
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>()),
+		cell: ({ getValue }) => formatNumber(getValue<number>(), lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.ordered'),
