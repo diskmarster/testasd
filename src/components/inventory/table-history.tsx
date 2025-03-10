@@ -16,13 +16,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { LanguageContext } from '@/context/language'
+import { useLanguage } from '@/context/language'
 import { Plan } from '@/data/customer.types'
 import { HistoryWithSums } from '@/data/inventory.types'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
-import { Batch, Group, History, Placement, Unit } from '@/lib/database/schema/inventory'
+import { CustomerSettings } from '@/lib/database/schema/customer'
+import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
   flexRender,
   getCoreRowModel,
@@ -40,7 +41,7 @@ import {
 } from '@tanstack/react-table'
 import { User } from 'lucia'
 import { useSearchParams } from 'next/navigation'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -54,6 +55,7 @@ interface Props {
   groups: Group[]
   placements: Placement[]
   batches: Batch[]
+  customerSettings: CustomerSettings
 }
 
 export function TableHistory({
@@ -64,14 +66,15 @@ export function TableHistory({
   groups,
   placements,
   batches,
+  customerSettings
 }: Props) {
   const LOCALSTORAGE_KEY = 'history_cols'
   const FILTERS_KEY = 'history_filters'
-  const lng = useContext(LanguageContext)
+  const lng = useLanguage()
   const { t } = useTranslation(lng, 'historik')
   const columns = useMemo(
-    () => getTableHistoryColumns(plan, user, lng, t),
-    [user, plan, lng, t],
+    () => getTableHistoryColumns(plan, user, customerSettings, lng, t),
+    [user, plan, customerSettings, lng, t],
   )
   const mutableSearchParams = new URLSearchParams(useSearchParams())
 
@@ -160,10 +163,11 @@ export function TableHistory({
         groups,
         placements,
         batches,
-        lng,
+        user,
+        customerSettings,
         t,
       ),
-    [plan, table, units, groups, placements, batches, lng, t],
+    [plan, table, units, groups, placements, batches, user, customerSettings, t],
   )
 
   if (!mounted) return null

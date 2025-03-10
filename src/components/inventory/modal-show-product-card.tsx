@@ -9,7 +9,7 @@ import {
 	CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { FormattedProduct } from '@/data/products.types'
-import { cn, numberToDKCurrency } from '@/lib/utils'
+import { cn, numberToCurrency } from '@/lib/utils'
 import { Badge } from '../ui/badge'
 import { Separator } from '../ui/separator'
 import { useLanguage } from '@/context/language'
@@ -112,11 +112,11 @@ export function ModalShowProductCard({ product, user }: Props) {
 							<div className='flex items-center gap-2'>
 								<div className='w-1/2'>
 									<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.cost-price')}</span>
-									<p>{numberToDKCurrency(product.costPrice)}</p>
+									<p>{numberToCurrency(product.costPrice, lng)}</p>
 								</div>
 								<div className='w-1/2'>
 									<span className='text-sm text-muted-foreground'>{t('modal-show-product-card.sales-price')}</span>
-									<p>{numberToDKCurrency(product.salesPrice)}</p>
+									<p>{numberToCurrency(product.salesPrice, lng)}</p>
 								</div>
 							</div>
 						)}

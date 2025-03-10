@@ -1,6 +1,6 @@
 import { LanguageProvider } from '@/context/language'
 import { dir } from 'i18next'
-import { languages } from '../i18n/settings'
+import { fallbackLng, I18NLanguage, languages, strIsI18NLanguage } from '../i18n/settings'
 
 export async function generateStaticParams() {
   return languages.map(lng => ({ lng }))
@@ -17,11 +17,15 @@ export default function RootLayout({
   children,
   params: { lng },
 }: RootLayoutProps) {
+  if (!strIsI18NLanguage(lng)) {
+    lng = fallbackLng
+  }
+
   return (
     <html lang={lng} dir={dir(lng)}>
       <head />
       <body>
-        <LanguageProvider value={lng}>{children}</LanguageProvider>
+        <LanguageProvider value={lng as I18NLanguage}>{children}</LanguageProvider>
       </body>
     </html>
   )

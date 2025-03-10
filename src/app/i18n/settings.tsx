@@ -20,3 +20,8 @@ export function getOptions(
     ns,
   }
 }
+
+export function strIsI18NLanguage(str: string): str is I18NLanguage {
+  //@ts-ignore
+  return languages.includes(str)
+}

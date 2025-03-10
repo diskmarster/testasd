@@ -44,6 +44,7 @@ import {
 import { User } from 'lucia'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import { CustomerSettings } from '@/lib/database/schema/customer'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -63,6 +64,7 @@ interface Props {
   groups: Group[]
   placements: Placement[]
   batches: Batch[]
+  customerSettings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
 }
 
 export function TableOverview({
@@ -73,14 +75,15 @@ export function TableOverview({
   groups,
   placements,
   batches,
+  customerSettings
 }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'oversigt')
   const LOCALSTORAGE_KEY = 'inventory_cols'
   const FILTERS_KEY = 'inventory_filters'
   const columns = useMemo(
-    () => getTableOverviewColumns(plan, user, lng, t),
-    [user, plan, lng, t],
+    () => getTableOverviewColumns(plan, user, customerSettings, lng, t),
+    [user, plan, customerSettings, lng, t],
   )
 
   const mutableSearchParams = new URLSearchParams(useSearchParams())
@@ -188,9 +191,11 @@ export function TableOverview({
         groups,
         placements,
         batches,
+        user,
+        customerSettings,
         t,
       ),
-    [plan, table, units, groups, placements, batches, t],
+    [plan, table, units, groups, placements, batches, user, customerSettings, t],
   )
 
   if (!mounted) return null

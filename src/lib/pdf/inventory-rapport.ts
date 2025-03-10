@@ -2,7 +2,8 @@ import { FormattedInventory } from '@/data/inventory.types'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
 import * as XLSX from 'xlsx'
-import { formatDate, formatNumber, numberToDKCurrency } from '../utils'
+import { formatDate, formatNumber, numberToCurrency } from '../utils'
+import { fallbackLng, I18NLanguage } from '@/app/i18n/settings'
 
 type MetaData = {
   docTitle: string
@@ -27,7 +28,7 @@ type GroupLine = {
   total: number
 }
 
-export function genInventoryExcel(inventoryLines: FormattedInventory[]) {
+export function genInventoryExcel(inventoryLines: FormattedInventory[], lng: I18NLanguage = fallbackLng) {
   const aggregatedSkus: { [key: string]: Line } = inventoryLines.reduce(
     (acc: { [key: string]: Line }, line) => {
       const sku = line.product.sku
@@ -63,9 +64,9 @@ export function genInventoryExcel(inventoryLines: FormattedInventory[]) {
       l.sku,
       l.text1,
       l.group,
-      numberToDKCurrency(l.costPrice),
-      formatNumber(l.quantity),
-      numberToDKCurrency(l.totalCost),
+      numberToCurrency(l.costPrice, lng),
+      formatNumber(l.quantity, lng),
+      numberToCurrency(l.totalCost, lng),
     ])
     .sort((a, b) => {
       const groupA = a[2]
@@ -96,7 +97,7 @@ export function genInventoryExcel(inventoryLines: FormattedInventory[]) {
   }, {})
 
   const groupData = Object.values(aggregatedGroups)
-    .map(l => [l.name, formatNumber(l.quantity), numberToDKCurrency(l.total)])
+    .map(l => [l.name, formatNumber(l.quantity, lng), numberToCurrency(l.total, lng)])
     .sort((a, b) => {
       const groupA = a[0]
       const groupB = b[0]
@@ -137,6 +138,7 @@ export function genInventoryExcel(inventoryLines: FormattedInventory[]) {
 export function genInventoryPDF(
   metaData: MetaData,
   inventoryLines: FormattedInventory[],
+  lng: I18NLanguage = fallbackLng,
 ): jsPDF {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -172,7 +174,7 @@ export function genInventoryPDF(
   doc.text(metaData.userName, 200, 35, { align: 'right' })
 
   doc.text(
-    `Lagerværdi for ${metaData.locationName}: ${numberToDKCurrency(totalValuation)}`,
+    `Lagerværdi for ${metaData.locationName}: ${numberToCurrency(totalValuation, lng)}`,
     10,
     50,
   )
@@ -220,7 +222,7 @@ export function genInventoryPDF(
   }, {})
 
   const groupData = Object.values(aggregatedGroups)
-    .map(l => [l.name, formatNumber(l.quantity), numberToDKCurrency(l.total)])
+    .map(l => [l.name, formatNumber(l.quantity, lng), numberToCurrency(l.total, lng)])
     .sort((a, b) => {
       const groupA = a[0]
       const groupB = b[0]
@@ -272,9 +274,9 @@ export function genInventoryPDF(
       l.sku,
       l.text1,
       l.group,
-      numberToDKCurrency(l.costPrice),
-      formatNumber(l.quantity),
-      numberToDKCurrency(l.totalCost),
+      numberToCurrency(l.costPrice, lng),
+      formatNumber(l.quantity, lng),
+      numberToCurrency(l.totalCost, lng),
     ])
     .sort((a, b) => {
       const groupA = a[2]

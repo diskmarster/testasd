@@ -1,5 +1,7 @@
 import { Icons } from '@/components/ui/icons'
+import { Plan } from '@/data/customer.types'
 import { UserRole } from '@/data/user.types'
+import { CustomerSettings } from '@/lib/database/schema/customer'
 import { t } from 'i18next'
 import { LucideIcon } from 'lucide-react'
 
@@ -9,7 +11,7 @@ export const siteConfig: SiteConfig = {
   logo: Icons.boxes,
   errorTitle: 'site-config.error-title',
   successTitle: 'site-config.success-title',
-  navItems: (lng: string = 'dk') => [
+  navItems: (lng: string = 'dk', settings: Pick<CustomerSettings, 'usePlacement' | 'useBatch'> = {usePlacement: true, useBatch: true}) => [
     {
       label: `${t('site-config.overview')}`,
       isDisabled: false,
@@ -34,6 +36,7 @@ export const siteConfig: SiteConfig = {
       href: `/${lng}/genbestil`,
       roles: ['system_administrator', 'administrator', 'moderator', 'bruger'],
       chipLabel: 'genbestil',
+      plan: 'basis',
     },
     {
       label: 'site-config.products.title',
@@ -64,7 +67,8 @@ export const siteConfig: SiteConfig = {
           href: `/${lng}/varer/placeringer`,
           roles: [],
           isExternal: false,
-          isDisabled: false,
+          isDisabled: !settings.usePlacement,
+          plan: 'basis',
         },
         {
           label: 'site-config.products.batch',
@@ -72,7 +76,8 @@ export const siteConfig: SiteConfig = {
           href: `/${lng}/varer/batch`,
           roles: [],
           isExternal: false,
-          isDisabled: false,
+          isDisabled: !settings.useBatch,
+          plan: 'pro',
         },
       ],
     },
@@ -181,7 +186,7 @@ type SiteConfig = {
   logo: LucideIcon
   errorTitle: string
   successTitle: string
-  navItems: (lng?: string) => NavItem[]
+  navItems: (lng?: string, settings?: Pick<CustomerSettings, 'usePlacement' | 'useBatch'>) => NavItem[]
 }
 
 export type NavItem = NavItemNoDropdown | NavItemDropdown
@@ -194,6 +199,7 @@ type NavItemNoDropdown = {
   isDropdown: false
   href: string
   chipLabel?: string
+  plan?: Plan
 }
 
 type NavItemDropdown = {
@@ -206,6 +212,7 @@ type NavItemDropdown = {
     description: string
     href: string
     roles: UserRole[]
+    plan?: Plan
     isExternal: boolean
     isDisabled: boolean
   }[]

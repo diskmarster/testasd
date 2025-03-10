@@ -1,3 +1,4 @@
+import { I18NLanguage } from '@/app/i18n/settings'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/products/product-table-actions'
 import { TableHeader } from '@/components/table/table-header'
@@ -8,7 +9,7 @@ import { FormattedProduct } from '@/data/products.types'
 import { hasPermissionByRank } from '@/data/user.types'
 import { Group, Unit } from '@/lib/database/schema/inventory'
 import { stringSortingFn } from '@/lib/tanstack/filter-fns'
-import { cn, formatDate, numberToDKCurrency } from '@/lib/utils'
+import { cn, formatDate, numberToCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
@@ -18,7 +19,7 @@ import { DateRange } from 'react-day-picker'
 export function getProductOverviewColumns(
   plan: Plan,
   user: User,
-  lng: string,
+  lng: I18NLanguage,
   t: (key: string) => string,
 ): ColumnDef<FormattedProduct>[] {
   const skuCol: ColumnDef<FormattedProduct> = {
@@ -155,7 +156,7 @@ export function getProductOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('cost-price')} />
     ),
-    cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    cell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
     filterFn: 'includesString',
     meta: {
       rightAlign: true,
@@ -168,7 +169,7 @@ export function getProductOverviewColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('sales-price')} />
     ),
-    cell: ({ getValue }) => numberToDKCurrency(getValue<number>()),
+    cell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
     filterFn: 'includesString',
     meta: {
       rightAlign: true,

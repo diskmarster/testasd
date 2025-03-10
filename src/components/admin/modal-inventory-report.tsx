@@ -76,16 +76,17 @@ export function ModalInventoryReport() {
               dateOfReport: today,
             },
             inventory,
+            lng,
           )
 
           pdf.save(
             `lagerværdi-rapport-${location.name}-${formatDate(today, false)}.pdf`,
           )
         } else if (fileType == 'EXCEL') {
-          genInventoryExcel(inventory)
-        } else if (fileType != 'Excel' && fileType != 'PDF') {
+          genInventoryExcel(inventory, lng)
+        } else {
           toast(siteConfig.errorTitle, {
-            description: 'inventory-report-modal.file-type-not-supported',
+            description: t('inventory-report-modal.file-type-not-supported'),
           })
           setFileType('PDF')
         }

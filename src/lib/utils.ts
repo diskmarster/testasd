@@ -1,4 +1,6 @@
-import { I18NLanguage } from '@/app/i18n/settings'
+import { fallbackLng, I18NLanguage } from '@/app/i18n/settings'
+import { BadgeProps } from '@/components/ui/badge'
+import { Plan } from '@/data/customer.types'
 import { clsx, type ClassValue } from 'clsx'
 import { addDays, addMilliseconds } from 'date-fns'
 import { emitCustomEvent } from 'react-custom-events'
@@ -20,21 +22,27 @@ export function formatDate(date: Date | number, withTime: boolean = true) {
   }).format(date)
 }
 
-export function formatNumber(num: number): string {
-  if (num % 1 === 0) {
-    return num.toString()
-  } else {
-    return num.toFixed(2)
-  }
+const lngToLocaleMap: Map<I18NLanguage, string> = new Map([
+  ['da', 'da-DK'],
+  ['en', 'en-GB'],
+])
+
+export function numberToCurrency(val: number, lng: I18NLanguage = fallbackLng): string {
+  return new Intl.NumberFormat(lngToLocaleMap.get(lng) ?? 'da-dk', {
+    style: 'currency',
+    currency: 'DKK',
+  }).format(val)
 }
 
-const dkCurrencyFormat = new Intl.NumberFormat('da-DK', {
-  style: 'currency',
-  currency: 'DKK',
-})
+export function numberFormatter(lng: I18NLanguage = fallbackLng) {
+  return new Intl.NumberFormat(lngToLocaleMap.get(lng) ?? 'da-DK', {
+    style: 'decimal',
+    maximumFractionDigits: 2,
+  })
+}
 
-export function numberToDKCurrency(val: number): string {
-  return dkCurrencyFormat.format(val)
+export function formatNumber(num: number, lng: I18NLanguage = fallbackLng): string {
+  return numberFormatter(lng).format(num)
 }
 
 export function convertENotationToNumber(num: string): string {
@@ -171,4 +179,15 @@ export function excelDateToJSDate(excelDate: number): Date {
   const timeInMs = time * dayInMS
   const final = addMilliseconds(addDays(zeroDay, daysSinceZero - 2), timeInMs)
   return final
+}
+
+export function planToBadgeVariant(plan: Plan): BadgeProps['variant'] {
+  switch(plan) {
+    case 'basis':
+      return 'blue'
+    case 'pro':
+      return 'violet'
+    default:
+      return 'default'
+  }
 }

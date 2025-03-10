@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { FormattedReorder } from "@/data/inventory.types"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { cn, formatNumber, numberToDKCurrency, updateChipCount } from "@/lib/utils"
+import { cn, formatNumber, numberToCurrency, updateChipCount } from "@/lib/utils"
 import {
 	Popover,
 	PopoverContent,
@@ -149,9 +149,9 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 				text1: i.text1,
 				text2: i.text2,
 				unit: i.unitName,
-				costPrice: numberToDKCurrency(i.costPrice),
+				costPrice: numberToCurrency(i.costPrice, lng),
 				quantity: i.ordered,
-				sum: numberToDKCurrency(i.ordered * i.costPrice),
+				sum: numberToCurrency(i.ordered * i.costPrice, lng),
 			}))
 
 			genReorderExcel('bestilling', rows, t)
@@ -477,7 +477,7 @@ function ReorderField({
 				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.quantity")}</Label>
 				<Input
 					className="tabular-nums"
-					value={formatNumber(formValues.items[index].quantity)}
+					value={formatNumber(formValues.items[index].quantity, lng)}
 					disabled
 				/>
 			</div>
@@ -486,7 +486,8 @@ function ReorderField({
 				<Input
 					className="tabular-nums"
 					value={formatNumber(
-						field.quantity + (Number(formValues.items[index].ordered) || 0)
+						field.quantity + (Number(formValues.items[index].ordered) || 0),
+						lng,
 					)}
 					disabled
 				/>
