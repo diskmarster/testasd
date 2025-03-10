@@ -7,9 +7,9 @@ export type ExcelRow = {
   text1: string
   text2: string
   unit: string
-  costPrice: string
+  costPrice: number
   quantity: number
-  sum: string
+  sum: number
 }
 
 export function genReorderExcel(

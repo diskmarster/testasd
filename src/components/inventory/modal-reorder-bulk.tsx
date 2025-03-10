@@ -44,6 +44,7 @@ import { siteConfig } from "@/config/site"
 import { ScrollArea } from "../ui/scroll-area"
 import { useCustomEventListener } from "react-custom-events"
 import { ExcelRow, genReorderExcel } from "@/lib/pdf/reorder-rapport"
+import { formatDate } from "date-fns"
 
 interface Props {
 	reorders: FormattedReorder[]
@@ -142,19 +143,21 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 				description: t("bulk.toast-success")
 			})
 
-			const rows: ExcelRow[] = values.items.map(i => ({
-				supplier: i.supplierName ?? '-',
-				sku: i.sku,
-				barcode: i.barcode,
-				text1: i.text1,
-				text2: i.text2,
-				unit: i.unitName,
-				costPrice: numberToCurrency(i.costPrice, lng),
-				quantity: i.ordered,
-				sum: numberToCurrency(i.ordered * i.costPrice, lng),
-			}))
+			const rows: ExcelRow[] = values.items
+				.map(i => ({
+					supplier: i.supplierName ?? '-',
+					sku: i.sku,
+					barcode: i.barcode,
+					text1: i.text1,
+					text2: i.text2,
+					unit: i.unitName,
+					costPrice: i.costPrice,
+					quantity: i.ordered,
+					sum: i.ordered * i.costPrice,
+				}))
+				.sort((rA, rB) => rB.supplier.localeCompare(rA.supplier))
 
-			genReorderExcel('bestilling', rows, t)
+			genReorderExcel(`nemlager_genbestilling_${formatDate(new Date(), 'dd-MM-yyyy')}`, rows, t)
 			onOpenChange(false)
 			updateChipCount()
 			clearTableSelection()
