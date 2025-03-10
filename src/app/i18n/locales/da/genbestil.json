@@ -114,6 +114,8 @@
 		"suppliers-no-items": "Ingen leverandør fundet",
 		"quantity": "Beh.",
 		"disposable": "Disp. beh.",
+		"minimum": "Min. beh.",
+		"sum": "Linjesum",
 		"toast-error": "Genbestillinger blev ikke registreret",
 		"toast-success": "Genbestillinger blev registreret",
 		"tooltip": "Registrer bestillinger",

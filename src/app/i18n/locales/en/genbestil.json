@@ -85,7 +85,7 @@
 		"add-ordered": "Order registered for ",
 		"create-reorder": "Minimum stock created for ",
 		"delete-reorder": "Restock deleted for ",
-    "update-reorder": "Restock updated for ",
+		"update-reorder": "Restock updated for ",
 		"registration-failed": "Restock was not registered",
 		"registration-success": "Restock was registered."
 	},
@@ -116,6 +116,8 @@
 		"suppliers-no-items": "No suppliers found",
 		"quantity": "Qty.",
 		"disposable": "Disp. Qty.",
+		"minimum": "Min. Qty.",
+		"sum": "Total",
 		"toast-error": "Reorders was not registered",
 		"toast-success": "Reorders was registered",
 		"tooltip": "Register reorders",

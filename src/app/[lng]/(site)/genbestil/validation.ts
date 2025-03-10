@@ -105,6 +105,7 @@ export const bulkAddOrderedToReorderValidation = (
 						text2: z.string(),
 						unitName: z.string(),
 						costPrice: z.coerce.number(),
+						minimum: z.coerce.number().or(z.string())
           })
           .superRefine((val, ctx) => {
             if (0 < val.maxOrderAmount && val.maxOrderAmount < val.ordered) {

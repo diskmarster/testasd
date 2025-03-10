@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { FormattedReorder } from "@/data/inventory.types"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { cn, formatNumber, updateChipCount } from "@/lib/utils"
+import { cn, formatNumber, numberToDKCurrency, updateChipCount } from "@/lib/utils"
 import {
 	Popover,
 	PopoverContent,
@@ -125,6 +125,7 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 				text2: r.product.text2,
 				unitName: r.product.unit,
 				costPrice: r.product.costPrice,
+				minimum: r.minimum,
 			}))
 		})
 
@@ -182,12 +183,13 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 			text2: r.product.text2,
 			unitName: r.product.unit,
 			costPrice: r.product.costPrice,
+			minimum: r.minimum,
 		}))
 	}
 
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
-			<DialogContentV2 className="max-w-6xl">
+			<DialogContentV2 className="max-w-7xl">
 				<DialogHeaderV2>
 					<div className="flex items-center gap-2">
 						<Icons.listPlus className="size-4 text-primary" />
@@ -268,6 +270,7 @@ export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
 																		text2: s.product.text2,
 																		unitName: s.product.unit,
 																		costPrice: s.product.costPrice,
+																		minimum: s.minimum,
 																	})
 																	setSupplierComboboxOpen(false)
 																}}
@@ -373,6 +376,7 @@ type Field = {
 	barcode: string,
 	unitName: string,
 	costPrice: number,
+	minimum: number | string,
 }
 
 interface FieldProps {
@@ -425,7 +429,7 @@ function ReorderField({
 							className={cn("justify-between font-normal truncate", formValues.items[index].shouldReorder && " bg-destructive/10")}>
 							<p className="max-w-[80%] truncate">
 								{search
-									? reorders.find((p) => p.product.text1 === search)?.product.text1
+									? field.text1
 									: t("bulk.product-placeholder")}
 							</p>
 							<Icons.chevronDownUp className="opacity-50 size-4" />
@@ -477,17 +481,27 @@ function ReorderField({
 					disabled
 				/>
 			</div>
-			<div className="grid gap-1.5 w-[20%]">
-				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.quantity")}</Label>
+			<div className="grid gap-1.5 w-[15%]">
+				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.minimum")}</Label>
 				<Input
 					className="tabular-nums"
-					value={formatNumber(formValues.items[index].quantity, lng)}
+					value={typeof field.minimum == 'string'
+						? field.minimum
+						: formatNumber(field.minimum, lng)}
 					disabled
 				/>
 			</div>
-			<div className="grid gap-1.5 w-[20%]">
-				<div className="flex items-center gap-1">
-					<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.disposable")}</Label>
+			<div className="grid gap-1.5 w-[15%]">
+				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.quantity")}</Label>
+				<Input
+					className="tabular-nums"
+					value={formatNumber(field.quantity)}
+					disabled
+				/>
+			</div>
+			<div className="grid gap-1.5 w-[15%]">
+				<div className={cn('flex items-center gap-1', index !== 0 && 'hidden')}>
+					<Label>{t("bulk.disposable")}</Label>
 					<TooltipWrapper tooltip={t("bulk.tooltip-disposable")}>
 						<Icons.help className="size-3.5 text-muted-foreground" />
 					</TooltipWrapper>
@@ -501,7 +515,7 @@ function ReorderField({
 					disabled
 				/>
 			</div>
-			<div className="grid gap-1.5 w-[20%]">
+			<div className="grid gap-1.5 w-[15%]">
 				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.qty")}</Label>
 				<Input
 					max={max}
@@ -515,6 +529,14 @@ function ReorderField({
 						'tabular-nums',
 						formState.errors.items && formState.errors.items[index]?.ordered && 'focus-visible:ring-destructive border-destructive'
 					)}
+				/>
+			</div>
+			<div className="grid gap-1.5 w-[20%]">
+				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.sum")}</Label>
+				<Input
+					className="tabular-nums"
+					value={numberToDKCurrency(formValues.items[index].ordered * field.costPrice)}
+					disabled
 				/>
 			</div>
 			<Button
