@@ -163,10 +163,11 @@ export function TableHistory({
         groups,
         placements,
         batches,
-        lng,
+        user,
+        customerSettings,
         t,
       ),
-    [plan, table, units, groups, placements, batches, lng, t],
+    [plan, table, units, groups, placements, batches, user, customerSettings, t],
   )
 
   if (!mounted) return null

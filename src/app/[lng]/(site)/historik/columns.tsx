@@ -3,14 +3,14 @@ import { TableHeader } from '@/components/table/table-header'
 import { FilterField, NumberRange } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import { Plan } from '@/data/customer.types'
-import { HistoryPlatform, HistoryType, HistoryWithSums } from '@/data/inventory.types'
-import { CustomerSettings } from '@/lib/database/schema/customer'
 import {
-  Batch,
-  Group,
-  Placement,
-  Unit,
-} from '@/lib/database/schema/inventory'
+  HistoryPlatform,
+  HistoryType,
+  HistoryWithSums,
+} from '@/data/inventory.types'
+import { hasPermissionByPlan } from '@/data/user.types'
+import { CustomerSettings } from '@/lib/database/schema/customer'
+import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatDate, formatNumber, numberToCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -145,7 +145,8 @@ export function getTableHistoryColumns(
       viewLabel: t('history-columns.cost-price'),
       rightAlign: true,
     },
-    filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
+    filterFn: (row, id, value: NumberRange) =>
+      numberRangeFilterFn(row, id, value),
   }
 
   const salePriceCol: ColumnDef<HistoryWithSums> = {
@@ -158,7 +159,8 @@ export function getTableHistoryColumns(
       viewLabel: t('history-columns.sale-price'),
       rightAlign: true,
     },
-    filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
+    filterFn: (row, id, value: NumberRange) =>
+      numberRangeFilterFn(row, id, value),
   }
 
   const unitCol: ColumnDef<HistoryWithSums> = {
@@ -216,7 +218,8 @@ export function getTableHistoryColumns(
       viewLabel: t('history-columns.quantity'),
       rightAlign: true,
     },
-    filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value),
+    filterFn: (row, id, value: NumberRange) =>
+      numberRangeFilterFn(row, id, value),
   }
 
   const placementCol: ColumnDef<HistoryWithSums> = {
@@ -293,7 +296,6 @@ export function getTableHistoryColumns(
     meta: {
       viewLabel: t('history-columns.user'),
     },
-   
   }
 
   const totalSalesCol: ColumnDef<HistoryWithSums> = {
@@ -305,7 +307,8 @@ export function getTableHistoryColumns(
     meta: {
       viewLabel: t('history-columns.total-sales'),
     },
-        filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
+    filterFn: (row, id, value: NumberRange) =>
+      numberRangeFilterFn(row, id, value),
   }
 
   const totalCostCol: ColumnDef<HistoryWithSums> = {
@@ -317,55 +320,11 @@ export function getTableHistoryColumns(
     meta: {
       viewLabel: t('history-columns.total-costs'),
     },
-        filterFn: (row, id, value: NumberRange) => numberRangeFilterFn(row, id, value)
+    filterFn: (row, id, value: NumberRange) =>
+      numberRangeFilterFn(row, id, value),
   }
 
-  switch (plan) {
-    case 'lite':
-      const liteCols = [
-        insertedCol,
-        skuCol,
-        barcodeCol,
-        groupCol,
-        text1Col,
-        text2Col,
-        text3Col,
-        costPriceCol,
-        salePriceCol,
-        unitCol,
-        typeCol,
-        amountCol,
-        platformCol,
-        userCol,
-        refCol,
-        totalCostCol,
-        totalSalesCol,
-      ].filter(col => user.priceAccess || col !== costPriceCol)
-      return liteCols
-    case 'basis':
-      const plusCols = [
-        insertedCol,
-        skuCol,
-        barcodeCol,
-        groupCol,
-        text1Col,
-        text2Col,
-        text3Col,
-        costPriceCol,
-        salePriceCol,
-        unitCol,
-        typeCol,
-        amountCol,
-        placementCol,
-        platformCol,
-        userCol,
-        refCol,
-        totalCostCol,
-        totalSalesCol,
-      ].filter(col => user.priceAccess || col !== costPriceCol)
-      return plusCols
-    case 'pro':
-      const proCols = [
+  let planCols = [
         insertedCol,
         skuCol,
         barcodeCol,
@@ -385,9 +344,31 @@ export function getTableHistoryColumns(
         refCol,
         totalCostCol,
         totalSalesCol,
-      ].filter(col => user.priceAccess || col !== costPriceCol)
-      return proCols
+      ]
+
+  if (!user.priceAccess) {
+    planCols = planCols.filter(
+      col =>
+        col != costPriceCol &&
+        col != salePriceCol &&
+        col != totalCostCol &&
+        col != totalSalesCol,
+    )
   }
+
+  if (!settings.useReference) {
+    planCols = planCols.filter(col => col != refCol)
+  }
+
+  if (!(hasPermissionByPlan(plan, 'basis') && settings.usePlacement)) {
+    planCols = planCols.filter(col => col != placementCol)
+  }
+
+  if (!(hasPermissionByPlan(plan, 'pro') && settings.useBatch)) {
+    planCols = planCols.filter(col => col != batchCol)
+  }
+
+  return planCols
 }
 
 export function getTableHistoryFilters(
@@ -397,7 +378,8 @@ export function getTableHistoryFilters(
   groups: Group[],
   placements: Placement[],
   batches: Batch[],
-  lng: string,
+  user: User,
+  settings: CustomerSettings,
   t: (key: string) => string,
 ): FilterField<HistoryWithSums>[] {
   const insertedFilter: FilterField<HistoryWithSums> = {
@@ -565,60 +547,17 @@ export function getTableHistoryFilters(
     column: table.getColumn('salesTotal'),
     type: 'number-range',
     label: t('history-columns.total-sales'),
-    value: ''
+    value: '',
   }
 
   const totalCostFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('costTotal'),
     type: 'number-range',
     label: t('history-columns.total-costs'),
-    value: ''
+    value: '',
   }
 
-  switch (plan) {
-    case 'lite':
-      return [
-        insertedFilter,
-        skuFilter,
-        barcodeFilter,
-        groupFilter,
-        text1Filter,
-        text2Filter,
-        text3Filter,
-        costPriceFilter,
-        salePriceFilter,
-        unitFilter,
-        typeFilter,
-        amountFilter,
-        platformFilter,
-        refFilter,
-        userFilter,
-        totalCostFilter,
-        totalSalesFilter,
-      ]
-    case 'basis':
-      return [
-        insertedFilter,
-        skuFilter,
-        barcodeFilter,
-        groupFilter,
-        text1Filter,
-        text2Filter,
-        text3Filter,
-        costPriceFilter,
-        salePriceFilter,
-        unitFilter,
-        typeFilter,
-        amountFilter,
-        placementFilter,
-        platformFilter,
-        refFilter,
-        userFilter,
-        totalCostFilter,
-        totalSalesFilter,
-      ]
-    case 'pro':
-      return [
+  let planFilters = [
         insertedFilter,
         skuFilter,
         barcodeFilter,
@@ -639,5 +578,28 @@ export function getTableHistoryFilters(
         totalCostFilter,
         totalSalesFilter,
       ]
+
+  if (!user.priceAccess) {
+    planFilters = planFilters.filter(
+      filter =>
+        filter != costPriceFilter &&
+        filter != salePriceFilter &&
+        filter != totalCostFilter &&
+        filter != totalSalesFilter,
+    )
   }
+
+  if (!settings.useReference) {
+    planFilters = planFilters.filter(filter => filter != refFilter)
+  }
+
+  if (!(hasPermissionByPlan(plan, 'basis') && settings.usePlacement)) {
+    planFilters = planFilters.filter(filter => filter != placementFilter)
+  }
+
+  if (!(hasPermissionByPlan(plan, 'pro') && settings.useBatch)) {
+    planFilters = planFilters.filter(filter => filter != batchFilter)
+  }
+
+  return planFilters
 }
