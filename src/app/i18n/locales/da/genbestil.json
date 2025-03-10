@@ -117,6 +117,7 @@
 		"toast-error": "Genbestillinger blev ikke registreret",
 		"toast-success": "Genbestillinger blev registreret",
 		"tooltip": "Registrer bestillinger",
+		"tooltip-disposable": "Disponibel beholdning efter bestilling",
 		"tooltipWithCount_one": "Registrer {{count}} bestilling",
 		"tooltipWithCount_other": "Registrer {{count}} bestillinger"
 	},

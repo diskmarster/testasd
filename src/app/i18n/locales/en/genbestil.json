@@ -119,6 +119,7 @@
 		"toast-error": "Reorders was not registered",
 		"toast-success": "Reorders was registered",
 		"tooltip": "Register reorders",
+		"tooltip-disposable": "Disposable quantity after ordering",
 		"tooltipWithCount_one": "Register {{count}} reorder",
 		"tooltipWithCount_other": "Register {{count}} reorders"
 	},

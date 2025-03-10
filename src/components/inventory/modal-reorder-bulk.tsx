@@ -24,7 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { FormattedReorder } from "@/data/inventory.types"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { cn, formatNumber, numberToCurrency, updateChipCount } from "@/lib/utils"
+import { cn, formatNumber, updateChipCount } from "@/lib/utils"
 import {
 	Popover,
 	PopoverContent,
@@ -45,6 +45,7 @@ import { ScrollArea } from "../ui/scroll-area"
 import { useCustomEventListener } from "react-custom-events"
 import { ExcelRow, genReorderExcel } from "@/lib/pdf/reorder-rapport"
 import { formatDate } from "date-fns"
+import { TooltipWrapper } from "../ui/tooltip-icon"
 
 interface Props {
 	reorders: FormattedReorder[]
@@ -485,7 +486,12 @@ function ReorderField({
 				/>
 			</div>
 			<div className="grid gap-1.5 w-[20%]">
-				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.disposable")}</Label>
+				<div className="flex items-center gap-1">
+					<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.disposable")}</Label>
+					<TooltipWrapper tooltip={t("bulk.tooltip-disposable")}>
+						<Icons.help className="size-3.5 text-muted-foreground" />
+					</TooltipWrapper>
+				</div>
 				<Input
 					className="tabular-nums"
 					value={formatNumber(
