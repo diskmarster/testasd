@@ -84,9 +84,9 @@ export function ModalInventoryReport() {
           )
         } else if (fileType == 'EXCEL') {
           genInventoryExcel(inventory, lng)
-        } else if (fileType != 'Excel' && fileType != 'PDF') {
+        } else {
           toast(siteConfig.errorTitle, {
-            description: 'inventory-report-modal.file-type-not-supported',
+            description: t('inventory-report-modal.file-type-not-supported'),
           })
           setFileType('PDF')
         }
