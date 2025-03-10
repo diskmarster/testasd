@@ -37,6 +37,7 @@ import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { getSupplierColumns, getSupplierFilters } from '@/app/[lng]/(site)/administration/leverandorer/columns'
 import { SupplierWithItemCount } from '@/data/suppliers.types'
 import { useSearchParams } from 'next/navigation'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -54,6 +55,7 @@ export function SuppliersTable({ suppliers }: Props) {
 	const columns = useMemo(() => getSupplierColumns(t), [t])
 
 	const mutableSearchParams = new URLSearchParams(useSearchParams())
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams, '')
 	const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
 	const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -110,6 +112,7 @@ export function SuppliersTable({ suppliers }: Props) {
 		onRowSelectionChange: setRowSelection,
 		onSortingChange: handleSortingChange,
 		onColumnVisibilityChange: handleVisibilityChange,
+		onGlobalFilterChange: setGlobalFilter,
 
 		enableColumnFilters: COLUMN_FILTERS_ENABLED,
 		enableRowSelection: ROW_SELECTION_ENABLED,
@@ -118,6 +121,7 @@ export function SuppliersTable({ suppliers }: Props) {
 		filterFromLeafRows: false,
 
 		state: {
+			globalFilter,
 			columnFilters,
 			rowSelection,
 			sorting,

@@ -37,6 +37,7 @@ import { UserNoHashWithCompany } from '@/data/user.types'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useSearchParams } from 'next/navigation'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -54,6 +55,7 @@ export function TableSysUsers({ data }: Props) {
   const columns = useMemo(() => getTableSysUsersColumns(t), [t])
 
 	const mutableSearchParams = new URLSearchParams(useSearchParams())
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams, '')
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -110,6 +112,7 @@ export function TableSysUsers({ data }: Props) {
     onRowSelectionChange: setRowSelection,
     onSortingChange: handleSortingChange,
     onColumnVisibilityChange: handleVisibilityChange,
+		onGlobalFilterChange: setGlobalFilter,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -118,6 +121,7 @@ export function TableSysUsers({ data }: Props) {
     filterFromLeafRows: false,
 
     state: {
+			globalFilter,
       columnFilters,
       rowSelection,
       sorting,
