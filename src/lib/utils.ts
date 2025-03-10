@@ -191,3 +191,7 @@ export function planToBadgeVariant(plan: Plan): BadgeProps['variant'] {
       return 'default'
   }
 }
+
+export function clearTableSelection() {
+  emitCustomEvent('ClearTableSelection')
+}

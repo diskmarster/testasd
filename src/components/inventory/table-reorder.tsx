@@ -219,8 +219,6 @@ export function TableReorder({ data, user, units, groups }: Props) {
           }
         </TableFloatingBar>
       )}
-
-      <ModalBulkReorder reorders={data} clearTableSelection={() => table.resetRowSelection()} />
     </div>
   )
 }

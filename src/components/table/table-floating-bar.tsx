@@ -11,6 +11,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Row, Table } from '@tanstack/react-table'
 import { useEffect } from 'react'
+import { useCustomEventListener } from 'react-custom-events'
 
 interface TableFloatingBarProps<TData> {
   table: Table<TData>
@@ -33,6 +34,10 @@ export function TableFloatingBar<TData>({
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [table])
+
+	useCustomEventListener('ClearTableSelection', () => {
+		table.resetRowSelection()
+	})
 
   return (
     <div

@@ -8,6 +8,7 @@ import { TableReorder } from '@/components/inventory/table-reorder'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { ReorderPageActions } from './page-actions'
+import { ModalBulkReorder } from '@/components/inventory/modal-reorder-bulk'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -52,6 +53,7 @@ async function Page({ params: { lng }, user, customer }: Props) {
 			<TableReorder data={reorders} user={user} units={units} groups={groups} />
 
 			{/* Modals without triggers that we open with custom events from row actions */}
+      <ModalBulkReorder reorders={reorders} />
 			<ModalUpdateReorder />
 			<ModalDeleteReorder />
 		</SiteWrapper>

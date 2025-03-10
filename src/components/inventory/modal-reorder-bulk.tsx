@@ -1,3 +1,5 @@
+"use client"
+
 import { useTranslation } from "@/app/i18n/client"
 import { useLanguage } from "@/context/language"
 import { useMemo, useState, useTransition } from "react"
@@ -24,7 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { FormattedReorder } from "@/data/inventory.types"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { cn, formatNumber, numberToDKCurrency, updateChipCount } from "@/lib/utils"
+import { clearTableSelection, cn, formatNumber, numberToDKCurrency, updateChipCount } from "@/lib/utils"
 import {
 	Popover,
 	PopoverContent,
@@ -49,13 +51,12 @@ import { TooltipWrapper } from "../ui/tooltip-icon"
 
 interface Props {
 	reorders: FormattedReorder[]
-	clearTableSelection: () => void
 }
 
 /**
  * This modal is rendered from the TableReorder component, in order for it to be able to clear the table selection after bulk reorder registration
  */
-export function ModalBulkReorder({ reorders, clearTableSelection }: Props) {
+export function ModalBulkReorder({ reorders }: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "genbestil")
 	const [pending, startTransition] = useTransition()
