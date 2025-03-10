@@ -27,6 +27,7 @@ const INVENTORY_COLS = getTableColumns(inventoryTable)
 export const product = {
   getAllByCustomerID: async function(
     customerID: CustomerID,
+		includeBarred: boolean = true,
     trx: TRX = db,
   ): Promise<FormattedProduct[]> {
     const product: FormattedProduct[] = await trx
@@ -38,7 +39,11 @@ export const product = {
         fileCount: count(attachmentsTable.id),
       })
       .from(productTable)
-      .where(eq(productTable.customerID, customerID))
+      .where(
+				and(
+					eq(productTable.customerID, customerID),
+					eq(productTable.isBarred, includeBarred),
+				))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
 	    .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))

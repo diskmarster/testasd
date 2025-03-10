@@ -48,9 +48,11 @@ import { useCustomEventListener } from "react-custom-events"
 import { ExcelRow, genReorderExcel } from "@/lib/pdf/reorder-rapport"
 import { formatDate } from "date-fns"
 import { TooltipWrapper } from "../ui/tooltip-icon"
+import { FormattedProduct } from "@/data/products.types"
 
 interface Props {
 	reorders: FormattedReorder[]
+	productsWithNoReorders: FormattedProduct[]
 }
 
 /**

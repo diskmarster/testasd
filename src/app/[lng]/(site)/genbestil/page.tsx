@@ -9,6 +9,7 @@ import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { ReorderPageActions } from './page-actions'
 import { ModalBulkReorder } from '@/components/inventory/modal-reorder-bulk'
+import { productService } from '@/service/products'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -26,7 +27,7 @@ async function Page({ params: { lng }, user, customer }: Props) {
 	}
 
 	const [products, reorders, units, groups] = await Promise.all([
-		inventoryService.getActiveProductsByID(customer.id),
+		productService.getAllActiveByCustomerID(customer.id),
 		inventoryService.getReordersByID(location),
 		inventoryService.getActiveUnits(),
 		inventoryService.getActiveGroupsByID(customer.id),
@@ -53,7 +54,7 @@ async function Page({ params: { lng }, user, customer }: Props) {
 			<TableReorder data={reorders} user={user} units={units} groups={groups} />
 
 			{/* Modals without triggers that we open with custom events from row actions */}
-      <ModalBulkReorder reorders={reorders} />
+      <ModalBulkReorder reorders={reorders} productsWithNoReorders={productsWithNoReorder} />
 			<ModalUpdateReorder />
 			<ModalDeleteReorder />
 		</SiteWrapper>

@@ -195,7 +195,13 @@ export const productService = {
     customerID: CustomerID,
     trx: TRX = db,
   ): Promise<FormattedProduct[]> {
-    return await product.getAllByCustomerID(customerID, trx)
+    return await product.getAllByCustomerID(customerID, true, trx)
+  },
+  getAllActiveByCustomerID: async function(
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<FormattedProduct[]> {
+    return await product.getAllByCustomerID(customerID, false, trx)
   },
   updateByID: async function(
     productID: ProductID,
