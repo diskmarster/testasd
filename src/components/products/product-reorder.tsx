@@ -73,6 +73,7 @@ export function ProductReorder({ productID, reorder }: Props) {
 				description: "Minimumsbeholdning oprettet"
 			})
 			updateChipCount()
+			setIsEditing(false)
 		})
 	}
 
