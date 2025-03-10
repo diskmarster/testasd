@@ -182,16 +182,36 @@ export function ProductDetails({ product, user }: Props) {
 						<Label htmlFor="text1">{t('details-page.details.label-text1')}</Label>
 						<IfElse
 							condition={isEditing}
-							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.text1}</div>}
-							trueComp={<Input id="text1" name="text1" value={product.text1} onChange={event => setValue('data.text1', event.target.value, { shouldValidate: true })} />}
+							falseComp={<div className="h-[60px] px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm">{product.text1}</div>}
+							trueComp={
+								<Textarea
+									className="resize-none"
+									id="text1"
+									name="text1"
+									maxLength={255}
+									rows={2}
+									value={formValues.data.text1}
+									onChange={event => setValue("data.text1", event.target.value, { shouldValidate: true, shouldDirty: true })}
+								/>
+							}
 						/>
 					</div>
 					<div className="space-y-0.5 w-full">
 						<Label htmlFor="text2">{t('details-page.details.label-text2')}</Label>
 						<IfElse
 							condition={isEditing}
-							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.text2}</div>}
-							trueComp={<Input id="text2" name="text2" value={product.text2} onChange={event => setValue('data.text2', event.target.value, { shouldValidate: true })} />}
+							falseComp={<div className="h-[60px] px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm">{product.text2}</div>}
+							trueComp={
+								<Textarea
+									className="resize-none"
+									id="text2"
+									name="text2"
+									maxLength={255}
+									rows={2}
+									value={formValues.data.text2}
+									onChange={event => setValue("data.text2", event.target.value, { shouldValidate: true, shouldDirty: true })}
+								/>
+							}
 						/>
 					</div>
 				</div>
