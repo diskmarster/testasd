@@ -1,4 +1,6 @@
 import { fallbackLng, I18NLanguage } from '@/app/i18n/settings'
+import { BadgeProps } from '@/components/ui/badge'
+import { Plan } from '@/data/customer.types'
 import { clsx, type ClassValue } from 'clsx'
 import { addDays, addMilliseconds } from 'date-fns'
 import { emitCustomEvent } from 'react-custom-events'
@@ -177,4 +179,15 @@ export function excelDateToJSDate(excelDate: number): Date {
   const timeInMs = time * dayInMS
   const final = addMilliseconds(addDays(zeroDay, daysSinceZero - 2), timeInMs)
   return final
+}
+
+export function planToBadgeVariant(plan: Plan): BadgeProps['variant'] {
+  switch(plan) {
+    case 'basis':
+      return 'blue'
+    case 'pro':
+      return 'violet'
+    default:
+      return 'default'
+  }
 }

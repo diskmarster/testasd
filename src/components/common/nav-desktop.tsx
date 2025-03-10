@@ -12,14 +12,18 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 import { NavItem, siteConfig } from '@/config/site'
-import { cn } from '@/lib/utils'
+import { cn, planToBadgeVariant } from '@/lib/utils'
 import { User } from 'lucia'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { NavChip } from './nav-chip'
 import { Suspense } from 'react'
+import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
+import { hasPermissionByPlan } from '@/data/user.types'
+import { Plan } from '@/data/customer.types'
+import { Badge } from '../ui/badge'
 
-export function NavDesktop({ user, lng }: { user: User; lng: string }) {
+export function NavDesktop({ user, lng, customer, customerSettings }: { user: User; lng: string; customer: Customer; customerSettings: Pick<CustomerSettings, 'usePlacement' | 'useBatch'> }) {
   const pathname = usePathname()
   const { t } = useTranslation(lng, 'common')
   return (
@@ -32,12 +36,12 @@ export function NavDesktop({ user, lng }: { user: User; lng: string }) {
       <NavigationMenu>
         <NavigationMenuList>
           {siteConfig
-            .navItems(lng)
+            .navItems(lng, customerSettings)
             .filter(
               item => item.roles.includes(user.role) || item.roles.length == 0,
             )
             .map((item, index) => (
-              <Item key={index} pathname={pathname} item={item} user={user} t={t} />
+              <Item key={index} pathname={pathname} item={item} user={user} plan={customer.plan} t={t} />
             ))}
         </NavigationMenuList>
       </NavigationMenu>
@@ -45,15 +49,17 @@ export function NavDesktop({ user, lng }: { user: User; lng: string }) {
   )
 }
 
-export function Item({
+function Item({
   item,
   pathname,
   user,
+  plan,
   t,
 }: {
   item: NavItem
   pathname: string
   user: User
+  plan: Plan
   t: (key: string) => string,
 }) {
   function isActive(path: string): boolean {
@@ -86,13 +92,22 @@ export function Item({
                       className={cn(
                         'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
                         isActive(link.href) && 'bg-muted',
-                        link.isDisabled &&
+                        (link.isDisabled || !hasPermissionByPlan(plan, link.plan ?? 'lite')) &&
                         'pointer-events-none cursor-not-allowed select-none opacity-50',
                       )}>
                       <div className='space-y-1.5'>
                         <div className='flex items-center gap-1.5 text-sm font-semibold leading-none'>
                           {t(link.label)}
-                          {link.isExternal && (
+                          {!hasPermissionByPlan(plan, link.plan ?? 'lite') ? (
+                            <Badge
+                              variant={planToBadgeVariant(link.plan ?? 'lite')}
+                              className='capitalize'
+                            >
+                              {link.plan}
+                            </Badge>
+                          ) : link.isDisabled ? (
+                            <Badge variant={'red'}>{t('site-config.link-disabled')}</Badge>
+                          ) : link.isExternal && (
                             <Icons.external className='size-3' />
                           )}
                         </div>
