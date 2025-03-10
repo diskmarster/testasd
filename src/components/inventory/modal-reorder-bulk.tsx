@@ -279,11 +279,11 @@ export function ModalBulkReorder({ reorders }: Props) {
 																<div className="flex flex-col gap-0.5">
 																	<span>{s.product.text1}</span>
 																	<div className="text-xs flex items-center gap-1 text-muted-foreground">
-																		<span>Varenr.: {s.product.sku}</span>
+																		<span>{t("bulk.sku")}: {s.product.sku}</span>
 																		{s.product.supplierName && (
 																			<>
 																				<span>-</span>
-																				<span>Leverandør: {s.product.supplierName}</span>
+																				<span>{t("bulk.supplier")}: {s.product.supplierName}</span>
 																			</>
 																		)}
 																	</div>
