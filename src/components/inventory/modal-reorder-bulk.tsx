@@ -26,7 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { FormattedReorder } from "@/data/inventory.types"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { clearTableSelection, cn, formatNumber, numberToDKCurrency, updateChipCount } from "@/lib/utils"
+import { clearTableSelection, cn, formatNumber, numberToCurrency, updateChipCount } from "@/lib/utils"
 import {
 	Popover,
 	PopoverContent,
@@ -536,7 +536,7 @@ function ReorderField({
 				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.sum")}</Label>
 				<Input
 					className="tabular-nums"
-					value={numberToDKCurrency(formValues.items[index].ordered * field.costPrice)}
+					value={numberToCurrency(formValues.items[index].ordered * field.costPrice)}
 					disabled
 				/>
 			</div>
