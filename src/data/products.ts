@@ -42,7 +42,7 @@ export const product = {
       .where(
 				and(
 					eq(productTable.customerID, customerID),
-					eq(productTable.isBarred, includeBarred),
+					includeBarred ? undefined : eq(productTable.isBarred, false),
 				))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
