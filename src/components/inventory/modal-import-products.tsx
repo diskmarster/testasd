@@ -58,7 +58,7 @@ export function ModalImportProducts() {
     if (!dataRes.success) {
       setErrors(dataRes.errors)
     } else {
-      setRows(dataRes.data.slice(0, 3000))
+      setRows(dataRes.data)
     }
   }, [])
 
