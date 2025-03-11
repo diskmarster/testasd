@@ -38,7 +38,8 @@ import {
 	CommandGroup,
 	CommandInput,
 	CommandItem,
-	CommandList
+	CommandList,
+    CommandSeparator
 } from "../ui/command"
 import { bulkAddOrderedToReorderAction } from "@/app/[lng]/(site)/genbestil/actions"
 import { toast } from "sonner"
@@ -49,6 +50,7 @@ import { ExcelRow, genReorderExcel } from "@/lib/pdf/reorder-rapport"
 import { formatDate } from "date-fns"
 import { TooltipWrapper } from "../ui/tooltip-icon"
 import { FormattedProduct } from "@/data/products.types"
+import { Kbd } from "../ui/kbd"
 
 interface Props {
 	reorders: FormattedReorder[]
@@ -58,7 +60,7 @@ interface Props {
 /**
  * This modal is rendered from the TableReorder component, in order for it to be able to clear the table selection after bulk reorder registration
  */
-export function ModalBulkReorder({ reorders }: Props) {
+export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "genbestil")
 	const [pending, startTransition] = useTransition()
@@ -104,6 +106,10 @@ export function ModalBulkReorder({ reorders }: Props) {
 		return reorders.filter(r => !selectedProductIDs.has(r.productID))
 	}, [reorders, selectedProductIDs])
 
+	const selectableProducts = useMemo(() => {
+		return productsWithNoReorders.filter(p => selectableReorders.some(r => r.productID != p.id))
+	}, [selectableReorders])
+
 	function onOpenChange(open: boolean) {
 		if (!open) {
 			reset()
@@ -137,7 +143,8 @@ export function ModalBulkReorder({ reorders }: Props) {
 
 	function onSubmit(values: z.infer<typeof schema>) {
 		startTransition(async () => {
-			const res = await bulkAddOrderedToReorderAction(values)
+			const items = values.items.filter(i => typeof i.minimum == 'number')
+			const res = await bulkAddOrderedToReorderAction({items})
 			if (res && res.serverError) {
 				toast.error(t(siteConfig.errorTitle), {
 					description: t("bulk.toast-error")
@@ -248,13 +255,14 @@ export function ModalBulkReorder({ reorders }: Props) {
 											</Button>
 										</PopoverTrigger>
 										<PopoverContent className="p-0 min-w-96 max-w-96">
-											<Command>
+											<Command loop>
 												<CommandInput placeholder={t("bulk.product-search")} className="h-9" />
 												<CommandList>
 													<CommandEmpty>{t("bulk.product-no-items")}</CommandEmpty>
-													<CommandGroup>
+													<CommandGroup heading="Vare med genbestil">
 														{selectableReorders.slice(0, 50).map((s, i) => (
 															<CommandItem
+																keywords={[s.product.text1, s.product.sku, s.product.supplierName ?? ""]}
 																key={`${s.productID}-${i}`}
 																value={s.product.text1}
 																onSelect={() => {
@@ -276,8 +284,7 @@ export function ModalBulkReorder({ reorders }: Props) {
 																		minimum: s.minimum,
 																	})
 																	setSupplierComboboxOpen(false)
-																}}
-															>
+																}}>
 																<div className="flex flex-col gap-0.5">
 																	<span>{s.product.text1}</span>
 																	<div className="text-xs flex items-center gap-1 text-muted-foreground">
@@ -286,6 +293,48 @@ export function ModalBulkReorder({ reorders }: Props) {
 																			<>
 																				<span>-</span>
 																				<span>{t("bulk.supplier")}: {s.product.supplierName}</span>
+																			</>
+																		)}
+																	</div>
+																</div>
+															</CommandItem>
+														))}
+													</CommandGroup>
+													<CommandSeparator alwaysRender />
+													<CommandGroup heading="Vare uden genbestil">
+														{selectableProducts.slice(0, 50).map((p, i) => (
+															<CommandItem
+																keywords={[p.text1, p.sku, p.supplierName ?? ""]}
+																key={`${p.sku}-${i}`}
+																value={p.text1}
+																onSelect={() => {
+																	append({
+																		sku: p.sku,
+																		ordered: 0,
+																		alreadyOrdered: 0,
+																		productID: p.id,
+																		quantity: 0,
+																		disposable:0,
+																		maxOrderAmount: 0,
+																		shouldReorder: false,
+																		minimum: "-",
+																		text1: p.text1,
+																		supplierName: p.supplierName,
+																		barcode: p.barcode,
+																		text2: p.text2,
+																		unitName: p.unit,
+																		costPrice: p.costPrice,
+																	})
+																	setSupplierComboboxOpen(false)
+																}}>
+																<div className="flex flex-col gap-0.5">
+																	<span>{p.text1}</span>
+																	<div className="text-xs flex items-center gap-1 text-muted-foreground">
+																		<span>{t("bulk.sku")}: {p.sku}</span>
+																		{p.supplierName && (
+																			<>
+																				<span>-</span>
+																				<span>{t("bulk.supplier")}: {p.supplierName}</span>
 																			</>
 																		)}
 																	</div>
@@ -487,7 +536,7 @@ function ReorderField({
 			<div className="grid gap-1.5 w-[15%]">
 				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.minimum")}</Label>
 				<Input
-					className="tabular-nums"
+					className={cn("tabular-nums", field.minimum == "Ingen" && "text-destructive")}
 					value={typeof field.minimum == 'string'
 						? field.minimum
 						: formatNumber(field.minimum, lng)}
