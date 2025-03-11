@@ -69,7 +69,7 @@ export const productsDataValidation = (
       .object({
         sku: z.preprocess(
           // @ts-ignore
-          val => val.toString().toUpperCase(),
+          val => String(val).toUpperCase(),
           z.coerce
             .string({ required_error: t('products.sku-required') })
             .min(1, { message: t('products.sku-preprocess') })
@@ -100,7 +100,7 @@ export const productsDataValidation = (
         ),
         text1: z.preprocess(
           // @ts-ignore
-          val => val.toString(),
+          val => String(val),
           z
             .string({ required_error: t('products.product-text-required') })
             .min(1, { message: t('products.product-text-preprocess') })
@@ -108,14 +108,14 @@ export const productsDataValidation = (
         ),
         text2: z.preprocess(
           // @ts-ignore
-          val => val.toString(),
+          val => String(val),
           z.string()
             .max(255, { message: t('products.product1-max-length', {num: 255})})
             .optional().default(''),
         ),
         text3: z.preprocess(
           // @ts-ignore
-          val => val.toString(),
+          val => String(val),
           z.string()
             .max(1000, { message: t('products.product1-max-length', {num: 1000})})
             .optional().default(''),
@@ -133,7 +133,7 @@ export const productsDataValidation = (
           .default(0),
         note: z.preprocess(
           // @ts-ignore
-          val => val.toString(),
+          val => String(val),
           z.string()
             .max(1000, { message: t('products.product1-max-length', {num: 1000})})
             .optional().default(''),
