@@ -189,7 +189,10 @@ export function getTableOverviewColumns(
       <TableHeader column={column} title={t('placement')} />
     ),
     aggregatedCell: ({ row }) => {
-      const isSinglePlacement = row.getLeafRows().length == 1
+      const isSinglePlacement = 
+				row.getLeafRows()
+					.filter(leaf => leaf.getValue<number>('quantity') != 0)
+					.length == 1
       if (!isSinglePlacement) return null
       return row.original.placement.name
     },
