@@ -65,6 +65,7 @@ interface Props {
   placements: Placement[]
   batches: Batch[]
   customerSettings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
+  isGrouped: boolean
 }
 
 export function TableOverview({
@@ -75,7 +76,8 @@ export function TableOverview({
   groups,
   placements,
   batches,
-  customerSettings
+  customerSettings,
+  isGrouped,
 }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'oversigt')
@@ -94,7 +96,11 @@ export function TableOverview({
     { id: 'isBarred', value: [false] },
   ])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [grouping, setGrouping] = useState<GroupingState>(['sku'])
+  const [grouping, setGrouping] = useState<GroupingState>(
+    (isGrouped)
+      ? ['sku']
+      : []
+  )
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [columnVisibility, setColumnVisibility] =
     useState<VisibilityState>(defaultVisibility)
@@ -179,6 +185,7 @@ export function TableOverview({
 
     meta: {
       user,
+      isGrouped, 
     },
   })
 

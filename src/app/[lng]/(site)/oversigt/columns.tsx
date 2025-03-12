@@ -60,7 +60,16 @@ export function getTableOverviewColumns(
                 <p>{`${row.original.product.fileCount}/5`}</p>
 							</div>
     ),
-    cell: () => null,
+		cell: ({ table, row }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped 
+				? null 
+				: (
+					<div className={cn('tabular-nums hidden rounded-full', (row.original.product.fileCount != undefined && row.original.product.fileCount > 0) && 'block',)}> 
+						<p>{`${row.original.product.fileCount}/5`}</p>
+					</div>
+				)
+		),
     meta: {
       rightAlign: true, 
       viewLabel: t('attachments')
@@ -80,7 +89,10 @@ export function getTableOverviewColumns(
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+		cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped ? null : getValue<string>()
+		),
     sortingFn: (ra, rb) => {
       return stringSortingFn(String(ra.getValue('barcode')), String(rb.getValue('barcode')))
     },
@@ -97,7 +109,10 @@ export function getTableOverviewColumns(
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+		cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped ? null : getValue<string>()
+		),
     sortingFn: (ra, rb) => {
       return stringSortingFn(String(ra.getValue('group')), String(rb.getValue('group')))
     },
@@ -117,7 +132,10 @@ export function getTableOverviewColumns(
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string | null>(),
-    cell: () => null,
+    cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped ? null : getValue<string | null>()
+		),
     sortingFn: (ra, rb) => {
 		let aVal = ra.original.product.supplierName
 		let bVal = rb.original.product.supplierName
@@ -137,7 +155,10 @@ export function getTableOverviewColumns(
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+    cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped ? null : getValue<string>()
+		),
     sortingFn: (ra, rb) => {
       return stringSortingFn(String(ra.getValue('text1')), String(rb.getValue('text1')))
     },
@@ -155,7 +176,10 @@ export function getTableOverviewColumns(
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+    cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped ? null : getValue<string>()
+		),
     sortingFn: (ra, rb) => {
       return stringSortingFn(String(ra.getValue('text2')), String(rb.getValue('text2')))
     },
@@ -172,7 +196,10 @@ export function getTableOverviewColumns(
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: () => null,
+		cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped ? null : getValue<string>()
+		),
     sortingFn: (ra, rb) => {
       return stringSortingFn(String(ra.getValue('text3')), String(rb.getValue('text3')))
 
@@ -189,7 +216,10 @@ export function getTableOverviewColumns(
       <TableHeader column={column} title={t('placement')} />
     ),
     aggregatedCell: ({ row }) => {
-      const isSinglePlacement = row.getLeafRows().length == 1
+      const isSinglePlacement = 
+				row.getLeafRows()
+					.filter(leaf => leaf.getValue<number>('quantity') != 0)
+					.length == 1
       if (!isSinglePlacement) return null
       return row.original.placement.name
     },
@@ -249,8 +279,11 @@ export function getTableOverviewColumns(
     header: ({ column }) => <TableHeader column={column} title={t('unit')} />,
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => getValue<string>(),
-    cell: ({ getValue }) => (
-      <p className='text-muted-foreground'>{getValue<string>()}</p>
+    cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped 
+				? (<p className='text-muted-foreground'>{getValue<string>()}</p>) 
+				: getValue<string>()
     ),
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
@@ -271,7 +304,12 @@ export function getTableOverviewColumns(
     ),
     aggregationFn: 'unique',
     aggregatedCell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
-    cell: () => null,
+    cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped 
+				? null
+				: numberToCurrency(getValue<number>(), lng)
+		),
     filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
     meta: {
       rightAlign: true,
@@ -287,7 +325,12 @@ export function getTableOverviewColumns(
       <TableHeader column={column} title={t('sales-price')} />
     ),
     aggregatedCell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
-    cell: () => null,
+    cell: ({ table, getValue }) => (
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped 
+				? null
+				: numberToCurrency(getValue<number>(), lng)
+		),
     filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
     meta: {
       rightAlign: true,
@@ -314,10 +357,22 @@ export function getTableOverviewColumns(
     aggregatedCell: ({ row }) => (
       <ModalShowProductLabel product={row.original.product} />
     ),
-    cell: ({ table, row }) =>
-      hasPermissionByRank(user.role, 'bruger') ? (
-        <TableOverviewActions row={row} table={table} plan={plan} />
-      ) : null,
+		cell: ({ table, row }) =>(
+			/*@ts-ignore*/
+			table.options.meta?.isGrouped 
+				? (
+					hasPermissionByRank(user.role, 'bruger') ? (
+						<TableOverviewActions row={row} table={table} plan={plan} settings={settings} />
+					) : null
+				): (
+					<div className='flex gap-2'>
+						<ModalShowProductLabel product={row.original.product} />
+						{hasPermissionByRank(user.role, 'bruger') && (
+							<TableOverviewActions row={row} table={table} plan={plan} settings={settings} />
+						)}
+					</div>
+			)
+		),
     enableHiding: false,
     enableSorting: false,
     meta: {
