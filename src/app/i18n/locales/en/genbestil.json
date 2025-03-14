@@ -139,5 +139,37 @@
 			"sum": "Total"
 		},
 		"sheet": "Reorders"
+	},
+	"list-orders": {
+		"title": "Registered orders",
+		"tooltip": "List of registered orders",
+		"description": "This is a list of all registered orders on this location",
+		"amount-orders": "All orders",
+		"order-number": "Order ID",
+		"lines-amount": "Lines",
+		"user": "User",
+		"inserted": "Created at"
+	},
+	"order-details": {
+		"action-mail-tooltip": "Send order to email",
+		"action-download-tooltip": "Download order",
+		"action-print-tooltip": "Print order",
+		"sku": "Sku",
+		"supplier": "Supplier",
+		"text1": "Text 1",
+		"cost-price": "Cost price",
+		"qty": "Qty",
+		"unit": "Unit",
+		"sum": "Total",
+		"title": "Order",
+		"inserted": "Created at:",
+		"user": "User:",
+		"total": "Total",
+		"mail-title": "Send order",
+		"mail-description": "Choose from a list of users, or write an email",
+		"users": "Users",
+		"email": "Email",
+		"email-placeholder": "Choose or write an email",
+		"mail-send": "Send order"
 	}
 }

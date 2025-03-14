@@ -14,7 +14,8 @@ export const fetchUsersAction = editableAction.action(
   },
 )
 
-export const sendEmailAction = editableAction
+export const sendOrderEmailAction = editableAction
+  .metadata({ actionName: 'sendOrderEmail' })
   .schema(sendEmailValidation)
   .action(async ({ parsedInput, ctx }) => {
     const files = await attachmentService.getByRefID(
@@ -22,11 +23,11 @@ export const sendEmailAction = editableAction
       parsedInput.orderID,
     )
 
-    const fallbackURL = `https://lager.nemunivers.app/${ctx.lang}/genbestil/${files.at(0)?.refID}`
+    const fallbackURL = `https://lager.nemunivers.app/${ctx.lang}/genbestil/${parsedInput.orderID}`
 
     await emailService.sendRecursively(
       [parsedInput.email],
-      'NemLager bestilling modtaget',
+      'NemLager bestilling tilsendt',
       EmailSendOrder({
         company: ctx.customer?.company!,
         sender: ctx.user,

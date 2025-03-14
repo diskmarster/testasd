@@ -138,5 +138,37 @@
 			"sum": "Linjesum"
 		},
 		"sheet": "Genbestillinger"
+	},
+	"list-orders": {
+		"title": "Registrerede bestillinger",
+		"tooltip": "Oversigt over registrerede bestillinger",
+		"description": "Her vises en historik over bestillinger der er registreret i Nem Lager.",
+		"amount-orders": "Alle bestillinger",
+		"order-number": "Bestillingsnr.",
+		"lines-amount": "Linjer",
+		"user": "Bruger",
+		"inserted": "Oprettet"
+	},
+	"order-details": {
+		"action-mail-tooltip": "Send bestilling til email",
+		"action-download-tooltip": "Download bestilling",
+		"action-print-tooltip": "Print bestilling",
+		"sku": "Varenr.",
+		"supplier": "Leverandør",
+		"text1": "Varetekst 1",
+		"cost-price": "Kostpris",
+		"qty": "Antal",
+		"unit": "Enhed",
+		"sum": "Total",
+		"title": "Bestilling",
+		"inserted": "Oprettet:",
+		"user": "Bruger:",
+		"total": "Total",
+		"mail-title": "Send bestilling",
+		"mail-description": "Vælg fra en list af brugere eller skriv en e-mail",
+		"users": "Brugere",
+		"email": "E-mail",
+		"email-placeholder": "Vælg eller skriv en e-mail",
+		"mail-send": "Send bestilling"
 	}
 }

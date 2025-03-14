@@ -13,7 +13,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserNoHash } from "@/lib/database/schema/auth";
-import { fetchUsersAction, sendEmailAction } from "@/app/[lng]/(site)/genbestil/[id]/actions";
+import { fetchUsersAction, sendOrderEmailAction } from "@/app/[lng]/(site)/genbestil/[id]/actions";
 import { z } from "zod";
 import { sendEmailValidation } from "@/app/[lng]/(site)/genbestil/[id]/validation";
 import * as XLSX from 'xlsx'
@@ -27,6 +27,7 @@ interface Props {
 export function Details({ order }: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "genbestil")
+	const tr = (key: string) => t(`order-details.${key}`)
 	const lines = order.lines.sort((lA, lB) => lB.supplierName.localeCompare(lA.supplierName))
 	const totalCost = order.lines.reduce((acc, cur) => acc + cur.sum, 0)
 	const GRID_CLASSES =
@@ -81,51 +82,51 @@ export function Details({ order }: Props) {
 	return (
 		<div id="order" className="flex flex-col gap-8">
 			<div className='flex w-full justify-between'>
-				<MetaInfo order={order} />
+				<MetaInfo t={tr} order={order} />
 				<div className="print:hidden space-x-2">
-					<SendEmailModal order={order} />
+					<SendEmailModal t={tr} order={order} />
 					<Button
 						size='icon'
 						variant='outline'
-						tooltip="Download bestilling"
+						tooltip={tr("action-download-tooltip")}
 						onClick={() => downloadOrder()}>
 						<Icons.download className="size-4" />
 					</Button>
 					<Button
 						size='icon'
 						variant='outline'
-						tooltip="Print bestilling"
+						tooltip={tr("action-print-tooltip")}
 						onClick={() => printOrder()}>
 						<Icons.printer className="size-4" />
 					</Button>
 				</div>
 			</div>
 			<div className="border rounded-md overflow-x-scroll print:overflow-auto">
-				<ViewHeaders gridClasses={GRID_CLASSES} />
+				<ViewHeaders t={tr} gridClasses={GRID_CLASSES} />
 				<div className="divide-y divide-border max-lg:w-max print:w-auto">
 					{lines.map((l, i) => (
 						<ViewItem key={i} gridClasses={GRID_CLASSES} line={l} />
 					))}
 				</div>
-				<ViewFooter totalCost={totalCost} />
+				<ViewFooter t={tr} totalCost={totalCost} />
 			</div>
 		</div>
 	)
 }
 
-function MetaInfo({ order }: { order: FormattedOrder }) {
+function MetaInfo({ order, t }: { order: FormattedOrder, t: (key: string) => string }) {
 	return (
 		<div className='w-max print:w-full'>
 			<h1 className='whitespace-balance text-xl font-semibold leading-tight tracking-tighter md:text-2xl'>
-				Bestilling: #{order.id}
+				{t("title")}: #{order.id}
 			</h1>
 			<div className="flex gap-4 mt-2 text-sm">
 				<div className="flex flex-col">
-					<p className='text-muted-foreground'>Oprettet:</p>
-					<p className='text-muted-foreground'>Bruger:</p>
+					<p className='text-muted-foreground'>{t("inserted")}</p>
+					<p className='text-muted-foreground'>{t("user")}</p>
 				</div>
 				<div className="flex flex-col">
-					<p className='text-muted-foreground'>Oprettet: {formatDate(order.inserted)}</p>
+					<p className='text-muted-foreground'>{formatDate(order.inserted)}</p>
 					<p className='text-muted-foreground'>{order.userName}</p>
 				</div>
 			</div>
@@ -133,20 +134,20 @@ function MetaInfo({ order }: { order: FormattedOrder }) {
 	)
 }
 
-function ViewHeaders({ gridClasses }: { gridClasses: string }) {
+function ViewHeaders({ gridClasses, t }: { gridClasses: string, t: (key: string) => string }) {
 	return (
 		<div className={cn(
 			"py-2 px-3 text-xs font-semibold text-muted-foreground border-b bg-muted max-lg:w-max",
 			gridClasses,
 			"print:w-full"
 		)}>
-			<p>Varenr.</p>
-			<p>Leverandør</p>
-			<p>Varetekst 1</p>
-			<p className="text-right">Kostpris</p>
-			<p className="text-right">Antal</p>
-			<p>Enhed</p>
-			<p className="text-right">Total</p>
+			<p>{t("sku")}</p>
+			<p>{t("supplier")}</p>
+			<p>{t("text1")}</p>
+			<p className="text-right">{t("cost-price")}</p>
+			<p className="text-right">{t("qty")}</p>
+			<p>{t("unit")}</p>
+			<p className="text-right">{t("sum")}</p>
 		</div>
 	)
 }
@@ -169,19 +170,17 @@ function ViewItem({ line, gridClasses }: { line: FormattedOrderLine, gridClasses
 	)
 }
 
-function ViewFooter({ totalCost }: { totalCost: number }) {
+function ViewFooter({ totalCost, t }: { totalCost: number, t: (key: string) => string }) {
 	const lng = useLanguage()
 	return (
 		<div className="border-t flex items-center justify-between py-4 px-3 text-sm font-medium sticky left-0">
-			<p>Total</p>
+			<p>{t("total")}</p>
 			<p>{numberToCurrency(totalCost, lng)}</p>
 		</div>
 	)
 }
 
-function SendEmailModal({ order }: { order: FormattedOrder }) {
-	const lng = useLanguage()
-	const { t } = useTranslation(lng, 'genbestil')
+function SendEmailModal({ order, t }: { order: FormattedOrder, t: (key: string) => string }) {
 	const [pending, startTransition] = useTransition()
 	const [open, setOpen] = useState(false)
 	const [users, setUsers] = useState<UserNoHash[]>([])
@@ -201,19 +200,6 @@ function SendEmailModal({ order }: { order: FormattedOrder }) {
 		resolver: zodResolver(sendEmailValidation),
 		defaultValues: {
 			orderID: order.id,
-			lines: order.lines
-				.map(l => ({
-					supplier: l.supplier?.name ?? '-',
-					sku: l.sku,
-					barcode: l.barcode,
-					text1: l.text1,
-					text2: l.text2,
-					unitName: l.unitName,
-					costPrice: l.costPrice,
-					quantity: l.quantity,
-					sum: l.quantity * l.costPrice,
-				}))
-				.sort((ra, rb) => rb.supplier.localeCompare(ra.supplier))
 		}
 	})
 
@@ -221,7 +207,8 @@ function SendEmailModal({ order }: { order: FormattedOrder }) {
 
 	function onSubmit(values: z.infer<typeof sendEmailValidation>) {
 		startTransition(async () => {
-			const res = await sendEmailAction(values)
+			await sendOrderEmailAction(values)
+			setOpen(false)
 		})
 	}
 
@@ -231,7 +218,7 @@ function SendEmailModal({ order }: { order: FormattedOrder }) {
 				<Button
 					size='icon'
 					variant='outline'
-					tooltip="Send bestilling som mail">
+					tooltip={t("action-mail-tooltip")}>
 					<Icons.mail className="size-4" />
 				</Button>
 			</DialogTriggerV2>
@@ -239,16 +226,16 @@ function SendEmailModal({ order }: { order: FormattedOrder }) {
 				<DialogHeaderV2>
 					<div className="flex items-center gap-2">
 						<Icons.mail className="size-4 text-primary" />
-						<DialogTitleV2>Send bestilling som mail</DialogTitleV2>
+						<DialogTitleV2>{t("mail-title")}</DialogTitleV2>
 					</div>
 				</DialogHeaderV2>
 				<form
 					onSubmit={handleSubmit(onSubmit)}
 					className="px-3 space-y-4"
 					id="send-email">
-					<DialogDescriptionV2>Vælg fra en list af brugere eller skriv en e-mail</DialogDescriptionV2>
+					<DialogDescriptionV2>{t("mail-description")}</DialogDescriptionV2>
 					<div className="space-y-1.5">
-						<Label>Brugere</Label>
+						<Label>{t("users")}</Label>
 						<ScrollArea maxHeight="max-h-56">
 							<div className="space-y-2">
 								{users.map(u => (
@@ -273,11 +260,11 @@ function SendEmailModal({ order }: { order: FormattedOrder }) {
 						</ScrollArea>
 					</div>
 					<div className="space-y-1.5">
-						<Label htmlFor="email">E-mail</Label>
+						<Label htmlFor="email">{t("email")}</Label>
 						<Input
 							id="email"
 							type="email"
-							placeholder="Vælg eller skriv en e-mail"
+							placeholder={t("email-placeholder")}
 							{...register('email')}
 						/>
 					</div>
@@ -292,7 +279,7 @@ function SendEmailModal({ order }: { order: FormattedOrder }) {
 						{pending && (
 							<Icons.spinner className="size-4 animate-spin" />
 						)}
-						Send bestilling
+						{t("mail-send")}
 					</Button>
 				</DialogFooterV2>
 			</DialogContentV2>

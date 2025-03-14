@@ -254,6 +254,7 @@ export const bulkAddOrderedToReorderAction = editableAction
   })
 
 	export const fetchOrdersActions = editableAction
+  .metadata({ actionName: 'fetchOrders' })
 	.action(async ({ctx: {user, lang}}) => {
 		const { t } = await serverTranslation(lang, 'action-errors')
 

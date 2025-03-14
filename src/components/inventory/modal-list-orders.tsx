@@ -17,12 +17,16 @@ import { formatRelative } from "date-fns"
 import { useLanguage } from "@/context/language"
 import Link from "next/link"
 import { OrderWithCount } from "@/data/orders.types"
+import { useTranslation } from "@/app/i18n/client"
 
 export function ModalListOrders({ orders }: { orders: OrderWithCount[] }) {
+	const lng = useLanguage()
+	const {t} = useTranslation(lng, "genbestil")
+	const tr = (key: string) => t(`list-orders.${key}`)
 	return (
 		<DialogV2>
 			<DialogTriggerV2 asChild>
-				<Button size="icon" variant="outline" tooltip="Oversigt over bestillinger">
+				<Button size="icon" variant="outline" tooltip={tr("tooltip")}>
 					<Icons.list className="size-4" />
 				</Button>
 			</DialogTriggerV2>
@@ -30,18 +34,18 @@ export function ModalListOrders({ orders }: { orders: OrderWithCount[] }) {
 				<DialogHeaderV2>
 					<div className="flex items-center gap-2">
 						<Icons.list className="size-4 text-primary" />
-						<DialogTitleV2>Bestillinger</DialogTitleV2>
+						<DialogTitleV2>{tr("title")}</DialogTitleV2>
 					</div>
 				</DialogHeaderV2>
 				<div className="space-y-4 px-3 pb-4">
-					<DialogDescriptionV2 className="text-sm text-muted-foreground">Her vises en historik over bestillinger der er registreret i Nem Lager.</DialogDescriptionV2>
-					<p className="text-sm font-medium">Alle bestillinger ({orders.length})</p>
+					<DialogDescriptionV2 className="text-sm text-muted-foreground">{tr("description")}</DialogDescriptionV2>
+					<p className="text-sm font-medium">{tr("amount-orders")} ({orders.length})</p>
 					<div className="">
 						<div className="grid grid-cols-4 font-medium text-xs text-muted-foreground px-2">
-							<p>Bestillingsnr.</p>
-							<p>Linjer</p>
-							<p>Bruger</p>
-							<p>Oprettet</p>
+							<p>{tr("order-number")}</p>
+							<p>{tr("lines-amount")}</p>
+							<p>{tr("user")}</p>
+							<p>{tr("inserted")}</p>
 						</div>
 						<Separator className="my-2" />
 						<ScrollArea maxHeight="max-h-96">
