@@ -204,7 +204,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				customerID: user.customerID,
 				mimeType: file.type,
 				refType: 'product',
-				refID: 345
+				refID: productID
 			})
 			if (!isValidated.success) {
 				toast.error(siteConfig.errorTitle, { description: isValidated.error })
