@@ -93,6 +93,7 @@
 		"title": "Register reorders",
 		"description": "Register your reorders easily and keep your inventory up to date. Get an overview of ordered items and ensure that stock levels are always accurate.",
 		"red-products": "Red products indicates that stock is low, and should be reordered.",
+		"yellow-products": "Yellow products indicates that the product is requested.",
 		"add-rows-continue": "Add items to continue",
 		"add-rows-btn": "Add item",
 		"add-rows-supplier-btn": "Add supplier",

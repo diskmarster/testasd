@@ -44,7 +44,6 @@ import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
 import { useSearchParams } from 'next/navigation'
 import { ReorderSelectedButton } from './button-reorder-selected'
-import { ModalBulkReorder } from './modal-reorder-bulk'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -188,6 +187,8 @@ export function TableReorder({ data, user, units, groups }: Props) {
               table.getRowModel().rows.map(row => (
                 <TableRow
                   className={cn(
+										row.original.isRequested &&
+                      'bg-warning/10 border-b-warning/15 hover:bg-warning/15 data-[state=selected]:bg-warning/20',
 										row.original.shouldReorder &&
                       'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
                   )}

@@ -18,12 +18,10 @@ import {
   NewHistory,
   NewInventory,
   NewPlacement,
-  NewReorder,
   NewUnit,
   PartialBatch,
   PartialGroup,
   PartialPlacement,
-  PartialReorder,
   PartialUnit,
   Placement,
   PlacementID,
@@ -31,12 +29,11 @@ import {
   Product,
   ProductID,
   productTable,
-  Reorder,
-  reorderTable,
   Unit,
   UnitID,
   unitTable,
 } from '@/lib/database/schema/inventory'
+import { NewReorder, PartialReorder, Reorder, reorderTable } from '@/lib/database/schema/reorders'
 import { supplierTable } from '@/lib/database/schema/suppliers'
 import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
 

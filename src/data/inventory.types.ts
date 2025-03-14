@@ -5,8 +5,8 @@ import {
   History,
   Placement,
   Product,
-  Reorder,
 } from '@/lib/database/schema/inventory'
+import { Reorder } from '@/lib/database/schema/reorders'
 import { z } from 'zod'
 
 export const historyTypeZodSchema = z.enum([

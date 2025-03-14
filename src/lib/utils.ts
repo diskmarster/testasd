@@ -2,7 +2,8 @@ import { fallbackLng, I18NLanguage } from '@/app/i18n/settings'
 import { BadgeProps } from '@/components/ui/badge'
 import { Plan } from '@/data/customer.types'
 import { clsx, type ClassValue } from 'clsx'
-import { addDays, addMilliseconds } from 'date-fns'
+import { addDays, addMilliseconds, Locale } from 'date-fns'
+import { da, enGB } from 'date-fns/locale'
 import { emitCustomEvent } from 'react-custom-events'
 import { twMerge } from 'tailwind-merge'
 import { z } from 'zod'
@@ -194,4 +195,14 @@ export function planToBadgeVariant(plan: Plan): BadgeProps['variant'] {
 
 export function clearTableSelection() {
   emitCustomEvent('ClearTableSelection')
+}
+
+const lngToDateFnsLocaleMap: Map<I18NLanguage, Locale> = new Map([
+	['da', da],
+	['en', enGB]
+])
+
+export function getDateFnsLocale(lng: I18NLanguage): Locale {
+	const locale = lngToDateFnsLocaleMap.get(lng)
+	return locale ?? da
 }

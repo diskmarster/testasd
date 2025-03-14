@@ -43,7 +43,7 @@ export async function GET(
       case 'genbestil':
         const reorders = await inventoryService.getReordersByID(location)
         const num = reorders.filter(
-          r => r.shouldReorder
+          r => r.shouldReorder || r.isRequested
         ).length
         count = num
         break

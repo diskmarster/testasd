@@ -169,11 +169,14 @@ export function getTableReorderColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('reorder-columns.minimum-stock')} multiSort />
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>(), lng),
+		cell: ({ row }) => row.original.isRequested
+			? '-'
+			: formatNumber(row.original.minimum, lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.minimum-stock'),
 			rightAlign: true,
+			className: "justify-end"
 		},
 	}
 
@@ -186,7 +189,9 @@ export function getTableReorderColumns(
 				multiSort
 			/>
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>(), lng),
+		cell: ({ row }) => row.original.isRequested
+			? '-'
+			: formatNumber(row.original.disposible, lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.disposible-stock'),
@@ -199,7 +204,9 @@ export function getTableReorderColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('reorder-columns.ordered')} multiSort />
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>(), lng),
+		cell: ({ row }) => row.original.isRequested
+			? '-'
+			: formatNumber(row.original.ordered, lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.ordered'),

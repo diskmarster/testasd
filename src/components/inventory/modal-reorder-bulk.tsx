@@ -39,27 +39,21 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-    CommandSeparator
+	CommandSeparator
 } from "../ui/command"
 import { bulkAddOrderedToReorderAction } from "@/app/[lng]/(site)/genbestil/actions"
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { ScrollArea } from "../ui/scroll-area"
 import { useCustomEventListener } from "react-custom-events"
-import { ExcelRow, genReorderExcel } from "@/lib/pdf/reorder-rapport"
-import { formatDate } from "date-fns"
 import { TooltipWrapper } from "../ui/tooltip-icon"
 import { FormattedProduct } from "@/data/products.types"
-import { Kbd } from "../ui/kbd"
 
 interface Props {
 	reorders: FormattedReorder[]
 	productsWithNoReorders: FormattedProduct[]
 }
 
-/**
- * This modal is rendered from the TableReorder component, in order for it to be able to clear the table selection after bulk reorder registration
- */
 export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "genbestil")
@@ -134,7 +128,8 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 				text2: r.product.text2,
 				unitName: r.product.unit,
 				costPrice: r.product.costPrice,
-				minimum: r.minimum,
+				minimum: r.minimum ?? "-",
+				isRequested: r.isRequested,
 			}))
 		})
 
@@ -143,8 +138,7 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 
 	function onSubmit(values: z.infer<typeof schema>) {
 		startTransition(async () => {
-			const items = values.items.filter(i => typeof i.minimum == 'number')
-			const res = await bulkAddOrderedToReorderAction({items})
+			const res = await bulkAddOrderedToReorderAction(values)
 			if (res && res.serverError) {
 				toast.error(t(siteConfig.errorTitle), {
 					description: t("bulk.toast-error")
@@ -155,21 +149,6 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 				description: t("bulk.toast-success")
 			})
 
-			const rows: ExcelRow[] = values.items
-				.map(i => ({
-					supplier: i.supplierName ?? '-',
-					sku: i.sku,
-					barcode: i.barcode,
-					text1: i.text1,
-					text2: i.text2,
-					unit: i.unitName,
-					costPrice: i.costPrice,
-					quantity: i.ordered,
-					sum: i.ordered * i.costPrice,
-				}))
-				.sort((rA, rB) => rB.supplier.localeCompare(rA.supplier))
-
-			genReorderExcel(`nemlager_genbestilling_${formatDate(new Date(), 'dd-MM-yyyy')}`, rows, t)
 			onOpenChange(false)
 			updateChipCount()
 			clearTableSelection()
@@ -193,7 +172,8 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 			text2: r.product.text2,
 			unitName: r.product.unit,
 			costPrice: r.product.costPrice,
-			minimum: r.minimum,
+			minimum: r.minimum ?? "-",
+			isRequested: r.isRequested,
 		}))
 	}
 
@@ -213,9 +193,14 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 					<p className="text-sm text-muted-foreground max-w-prose text-pretty">
 						{t("bulk.description")}
 					</p>
+					<div className="flex flex-col gap-1">
 					<p className="text-sm text-muted-foreground max-w-prose text-pretty">
 						{t("bulk.red-products")}
 					</p>
+					{/*<p className="text-sm text-muted-foreground max-w-prose text-pretty">
+						{t("bulk.yellow-products")}
+					</p>*/}
+					</div>
 					<ScrollArea maxHeight="max-h-[550px]">
 						<div className="space-y-2">
 							<div className="space-y-2">
@@ -281,7 +266,8 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 																		text2: s.product.text2,
 																		unitName: s.product.unit,
 																		costPrice: s.product.costPrice,
-																		minimum: s.minimum,
+																		minimum: s.minimum ?? "-",
+																		isRequested: s.isRequested,
 																	})
 																	setSupplierComboboxOpen(false)
 																}}>
@@ -314,16 +300,17 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 																		alreadyOrdered: 0,
 																		productID: p.id,
 																		quantity: 0,
-																		disposable:0,
+																		disposable: 0,
 																		maxOrderAmount: 0,
 																		shouldReorder: false,
-																		minimum: "-",
+																		minimum: 0,
 																		text1: p.text1,
 																		supplierName: p.supplierName,
 																		barcode: p.barcode,
 																		text2: p.text2,
 																		unitName: p.unit,
 																		costPrice: p.costPrice,
+																		isRequested: false,
 																	})
 																	setSupplierComboboxOpen(false)
 																}}>
@@ -428,7 +415,8 @@ type Field = {
 	barcode: string,
 	unitName: string,
 	costPrice: number,
-	minimum: number | string,
+	minimum: number,
+	isRequested: boolean,
 }
 
 interface FieldProps {
@@ -478,7 +466,11 @@ function ReorderField({
 							variant="outline"
 							role="combobox"
 							aria-expanded={open}
-							className={cn("justify-between font-normal truncate", formValues.items[index].shouldReorder && " bg-destructive/10")}>
+							className={cn(
+								"justify-between font-normal truncate",
+								formValues.items[index].shouldReorder && " bg-destructive/10",
+								formValues.items[index].isRequested && " bg-warning/10",
+							)}>
 							<p className="max-w-[80%] truncate">
 								{search
 									? field.text1
@@ -507,6 +499,7 @@ function ReorderField({
 												setValue(`items.${index}.supplierName`, p.product.supplierName, { shouldValidate: true })
 												setValue(`items.${index}.ordered`, p.orderAmount, { shouldValidate: true })
 												setValue(`items.${index}.maxOrderAmount`, p.maxOrderAmount, { shouldValidate: true })
+												setValue(`items.${index}.isRequested`, p.isRequested, { shouldValidate: true })
 												setSearch(currentValue === search ? "" : currentValue)
 												setOpen(false)
 											}}
@@ -536,9 +529,9 @@ function ReorderField({
 			<div className="grid gap-1.5 w-[15%]">
 				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.minimum")}</Label>
 				<Input
-					className={cn("tabular-nums", field.minimum == "Ingen" && "text-destructive")}
-					value={typeof field.minimum == 'string'
-						? field.minimum
+					className={cn("tabular-nums")}
+					value={field.isRequested
+						? "-"
 						: formatNumber(field.minimum, lng)}
 					disabled
 				/>

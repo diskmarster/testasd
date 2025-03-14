@@ -1,19 +1,18 @@
 import * as XLSX from 'xlsx'
 
 export type ExcelRow = {
-  supplier: string
+  supplierName: string
   sku: string
   barcode: string
   text1: string
   text2: string
-  unit: string
+  unitName: string
   costPrice: number
   quantity: number
   sum: number
 }
 
-export function genReorderExcel(
-  filename: string,
+export function genReorderExcelWorkbook(
   data: ExcelRow[],
   t: (key: string, opts?: any) => string,
 ) {
@@ -29,12 +28,12 @@ export function genReorderExcel(
     t('report.headers.sum'),
   ]
   const rows = data.map(row => [
-    row.supplier,
+    row.supplierName,
     row.sku,
     row.barcode,
     row.text1,
     row.text2,
-    row.unit,
+    row.unitName,
     row.costPrice,
     row.quantity,
     row.sum,
@@ -43,5 +42,5 @@ export function genReorderExcel(
   const workbook = XLSX.utils.book_new()
   const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
   XLSX.utils.book_append_sheet(workbook, worksheet, t('report.sheet'), true)
-  XLSX.writeFile(workbook, `${filename}.xlsx`)
+  return workbook
 }

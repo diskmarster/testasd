@@ -2,7 +2,7 @@
 
 import { Attachment } from "@/lib/database/schema/attachments"
 import { User } from "@/lib/database/schema/auth"
-import { allowedMimetypes, fileService } from "@/service/file"
+import { allowedMimetypes, fileService, MimeType } from "@/service/file"
 import { useCallback, useState, useTransition } from "react"
 import { useDropzone, FileRejection } from "react-dropzone"
 import { Icons } from "../ui/icons"
@@ -200,9 +200,9 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				base64 = btoa(binary)
 			}
 
-			const isValidated = fileService.validate(file, {
+			const isValidated = fileService.validate({
 				customerID: user.customerID,
-				mimeType: file.type,
+				mimeType: file.type as MimeType,
 				refType: 'product',
 				refID: 345
 			})
