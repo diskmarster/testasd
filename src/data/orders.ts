@@ -15,12 +15,23 @@ import {
   ordersTable,
 } from '@/lib/database/schema/reorders'
 import { supplierTable } from '@/lib/database/schema/suppliers'
-import { and, count, desc, eq, getTableColumns } from 'drizzle-orm'
+import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
 import { FormattedOrderLine, OrderWithCount } from './orders.types'
+import { formatDate } from 'date-fns'
 
 export const orders = {
-  createOrder: async function (data: NewOrder, tx: TRX = db): Promise<Order> {
-    const [res] = await tx.insert(ordersTable).values(data).returning()
+  createOrder: async function (data: Omit<NewOrder, 'id'>, tx: TRX = db): Promise<Order> {
+    const [{ count }] = await tx.select({ count: sql<number>`COUNT(*)` })
+        .from(ordersTable)
+        .where(eq(ordersTable.customerID, data.customerID));
+
+    const [res] = await tx
+		.insert(ordersTable)
+		.values({
+			...data,
+			id: ('0000'+data.customerID).slice(-4) + '-' + formatDate(Date.now(), 'yyMM') + '-' + ('0000'+count).slice(-4)
+		})
+		.returning()
     return res
   },
   createOrderLine: async function (
@@ -29,7 +40,7 @@ export const orders = {
   ): Promise<OrderLine[]> {
     return await tx.insert(orderLinesTable).values(data).returning()
   },
-  getAllOrders: async function (
+getAllOrders: async function (
     customerID: CustomerID,
     locationID: LocationID,
     tx: TRX = db,
