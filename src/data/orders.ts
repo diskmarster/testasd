@@ -29,7 +29,7 @@ export const orders = {
 		.insert(ordersTable)
 		.values({
 			...data,
-			id: ('0000'+data.customerID).slice(-4) + '-' + formatDate(Date.now(), 'yyMM') + '-' + ('0000'+count+1).slice(-4)
+			id: ('0000'+data.customerID).slice(-4) + '-' + formatDate(Date.now(), 'yyMM') + '-' + ('0000'+(count+1)).slice(-4)
 		})
 		.returning()
     return res
