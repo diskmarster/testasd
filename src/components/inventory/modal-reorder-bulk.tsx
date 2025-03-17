@@ -48,6 +48,7 @@ import { ScrollArea } from "../ui/scroll-area"
 import { useCustomEventListener } from "react-custom-events"
 import { TooltipWrapper } from "../ui/tooltip-icon"
 import { FormattedProduct } from "@/data/products.types"
+import { Separator } from "../ui/separator"
 
 interface Props {
 	reorders: FormattedReorder[]
@@ -101,7 +102,7 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 	}, [reorders, selectedProductIDs])
 
 	const selectableProducts = useMemo(() => {
-		return productsWithNoReorders.filter(p => selectableReorders.some(r => r.productID != p.id))
+		return productsWithNoReorders.filter(p => selectableReorders.some(r => r.productID != p.id) || !selectedProductIDs.has(p.id))
 	}, [selectableReorders])
 
 	function onOpenChange(open: boolean) {
@@ -177,6 +178,8 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 		}))
 	}
 
+	const totalPrice = formValues.items.reduce((acc, cur) => acc + (cur.ordered * cur.costPrice), 0)
+
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
 			<DialogContentV2 className="max-w-7xl">
@@ -194,10 +197,10 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 						{t("bulk.description")}
 					</p>
 					<div className="flex flex-col gap-1">
-					<p className="text-sm text-muted-foreground max-w-prose text-pretty">
-						{t("bulk.red-products")}
-					</p>
-					{/*<p className="text-sm text-muted-foreground max-w-prose text-pretty">
+						<p className="text-sm text-muted-foreground max-w-prose text-pretty">
+							{t("bulk.red-products")}
+						</p>
+						{/*<p className="text-sm text-muted-foreground max-w-prose text-pretty">
 						{t("bulk.yellow-products")}
 					</p>*/}
 					</div>
@@ -224,108 +227,143 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 									/>
 								))}
 							</div>
-							{reorders.length != formValues.items.length && (
-								<div className="flex items-center gap-2">
-									<Popover open={productComboboxOpen} onOpenChange={setProductComboboxOpen}>
+							<div className="flex items-center gap-2">
+								<Popover open={productComboboxOpen} onOpenChange={setProductComboboxOpen}>
+									<PopoverTrigger asChild>
+										<Button
+											role="combobox"
+											aria-expanded={productComboboxOpen}
+											size='sm'
+											type="button"
+											variant='outline'
+											className="flex items-center gap-2">
+											<Icons.plus className="size-3 text-primary" />
+											{t("bulk.add-rows-btn")}
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent className="p-0 min-w-96 max-w-96">
+										<Command>
+											<CommandInput placeholder={t("bulk.product-search")} className="h-9" />
+											<CommandList>
+												<CommandEmpty>{t("bulk.product-no-items")}</CommandEmpty>
+												<CommandGroup>
+													{selectableReorders.slice(0, 50).map((s, i) => (
+														<CommandItem
+															keywords={[s.product.text1, s.product.sku, s.product.supplierName ?? ""]}
+															key={`${s.productID}-${i}`}
+															value={s.product.text1}
+															onSelect={() => {
+																append({
+																	sku: s.product.sku,
+																	ordered: s.orderAmount,
+																	alreadyOrdered: s.ordered,
+																	productID: s.productID,
+																	text1: s.product.text1,
+																	supplierName: s.product.supplierName,
+																	quantity: s.quantity,
+																	disposable: s.disposible,
+																	maxOrderAmount: s.maxOrderAmount,
+																	shouldReorder: Boolean(s.shouldReorder),
+																	barcode: s.product.barcode,
+																	text2: s.product.text2,
+																	unitName: s.product.unit,
+																	costPrice: s.product.costPrice,
+																	minimum: s.minimum ?? "-",
+																	isRequested: s.isRequested,
+																})
+																setSupplierComboboxOpen(false)
+															}}>
+															<div className="flex flex-col gap-0.5">
+																<span>{s.product.text1}</span>
+																<div className="text-xs flex items-center gap-1 text-muted-foreground">
+																	<span>{t("bulk.sku")}: {s.product.sku}</span>
+																	{s.product.supplierName && (
+																		<>
+																			<span>-</span>
+																			<span>{t("bulk.supplier")}: {s.product.supplierName}</span>
+																		</>
+																	)}
+																</div>
+															</div>
+														</CommandItem>
+													))}
+												</CommandGroup>
+												<CommandGroup>
+													{selectableProducts.slice(0, 50).map((p, i) => (
+														<CommandItem
+															keywords={[p.text1, p.sku, p.supplierName ?? ""]}
+															key={`${p.sku}-${i}`}
+															value={p.text1}
+															onSelect={() => {
+																append({
+																	sku: p.sku,
+																	ordered: 0,
+																	alreadyOrdered: 0,
+																	productID: p.id,
+																	quantity: 0,
+																	disposable: 0,
+																	maxOrderAmount: 0,
+																	shouldReorder: false,
+																	minimum: 0,
+																	text1: p.text1,
+																	supplierName: p.supplierName,
+																	barcode: p.barcode,
+																	text2: p.text2,
+																	unitName: p.unit,
+																	costPrice: p.costPrice,
+																	isRequested: false,
+																})
+																setSupplierComboboxOpen(false)
+															}}>
+															<div className="flex flex-col gap-0.5">
+																<span>{p.text1}</span>
+																<div className="text-xs flex items-center gap-1 text-muted-foreground">
+																	<span>{t("bulk.sku")}: {p.sku}</span>
+																	{p.supplierName && (
+																		<>
+																			<span>-</span>
+																			<span>{t("bulk.supplier")}: {p.supplierName}</span>
+																		</>
+																	)}
+																</div>
+															</div>
+														</CommandItem>
+													))}
+												</CommandGroup>
+											</CommandList>
+										</Command>
+									</PopoverContent>
+								</Popover>
+								{selectableSuppliers.length > 0 && (
+									<Popover open={supplierComboboxOpen} onOpenChange={setSupplierComboboxOpen}>
 										<PopoverTrigger asChild>
 											<Button
 												role="combobox"
-												aria-expanded={productComboboxOpen}
+												aria-expanded={supplierComboboxOpen}
 												size='sm'
 												type="button"
 												variant='outline'
 												className="flex items-center gap-2">
 												<Icons.plus className="size-3 text-primary" />
-												{t("bulk.add-rows-btn")}
+												{t("bulk.add-rows-supplier-btn")}
 											</Button>
 										</PopoverTrigger>
-										<PopoverContent className="p-0 min-w-96 max-w-96">
-											<Command loop>
-												<CommandInput placeholder={t("bulk.product-search")} className="h-9" />
+										<PopoverContent className="p-0 min-w-52 max-w-52">
+											<Command>
+												<CommandInput placeholder={t("bulk.suppliers-search")} className="h-9" />
 												<CommandList>
-													<CommandEmpty>{t("bulk.product-no-items")}</CommandEmpty>
-													<CommandGroup heading="Vare med genbestil">
-														{selectableReorders.slice(0, 50).map((s, i) => (
+													<CommandEmpty>{t("bulk.suppliers-no-items")}</CommandEmpty>
+													<CommandGroup>
+														{Array.from(new Set(selectableSuppliers.map(s => s.product.supplierName)).values()).slice(0, 50).map((s, i) => (
 															<CommandItem
-																keywords={[s.product.text1, s.product.sku, s.product.supplierName ?? ""]}
-																key={`${s.productID}-${i}`}
-																value={s.product.text1}
-																onSelect={() => {
-																	append({
-																		sku: s.product.sku,
-																		ordered: s.orderAmount,
-																		alreadyOrdered: s.ordered,
-																		productID: s.productID,
-																		text1: s.product.text1,
-																		supplierName: s.product.supplierName,
-																		quantity: s.quantity,
-																		disposable: s.disposible,
-																		maxOrderAmount: s.maxOrderAmount,
-																		shouldReorder: Boolean(s.shouldReorder),
-																		barcode: s.product.barcode,
-																		text2: s.product.text2,
-																		unitName: s.product.unit,
-																		costPrice: s.product.costPrice,
-																		minimum: s.minimum ?? "-",
-																		isRequested: s.isRequested,
-																	})
+																key={`${s}-${i}`}
+																value={s!}
+																onSelect={(currentValue) => {
+																	appendSupplier(currentValue)
 																	setSupplierComboboxOpen(false)
-																}}>
-																<div className="flex flex-col gap-0.5">
-																	<span>{s.product.text1}</span>
-																	<div className="text-xs flex items-center gap-1 text-muted-foreground">
-																		<span>{t("bulk.sku")}: {s.product.sku}</span>
-																		{s.product.supplierName && (
-																			<>
-																				<span>-</span>
-																				<span>{t("bulk.supplier")}: {s.product.supplierName}</span>
-																			</>
-																		)}
-																	</div>
-																</div>
-															</CommandItem>
-														))}
-													</CommandGroup>
-													<CommandSeparator alwaysRender />
-													<CommandGroup heading="Vare uden genbestil">
-														{selectableProducts.slice(0, 50).map((p, i) => (
-															<CommandItem
-																keywords={[p.text1, p.sku, p.supplierName ?? ""]}
-																key={`${p.sku}-${i}`}
-																value={p.text1}
-																onSelect={() => {
-																	append({
-																		sku: p.sku,
-																		ordered: 0,
-																		alreadyOrdered: 0,
-																		productID: p.id,
-																		quantity: 0,
-																		disposable: 0,
-																		maxOrderAmount: 0,
-																		shouldReorder: false,
-																		minimum: 0,
-																		text1: p.text1,
-																		supplierName: p.supplierName,
-																		barcode: p.barcode,
-																		text2: p.text2,
-																		unitName: p.unit,
-																		costPrice: p.costPrice,
-																		isRequested: false,
-																	})
-																	setSupplierComboboxOpen(false)
-																}}>
-																<div className="flex flex-col gap-0.5">
-																	<span>{p.text1}</span>
-																	<div className="text-xs flex items-center gap-1 text-muted-foreground">
-																		<span>{t("bulk.sku")}: {p.sku}</span>
-																		{p.supplierName && (
-																			<>
-																				<span>-</span>
-																				<span>{t("bulk.supplier")}: {p.supplierName}</span>
-																			</>
-																		)}
-																	</div>
-																</div>
+																}}
+															>
+																{s}
 															</CommandItem>
 														))}
 													</CommandGroup>
@@ -333,49 +371,18 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 											</Command>
 										</PopoverContent>
 									</Popover>
-									{selectableSuppliers.length > 0 && (
-										<Popover open={supplierComboboxOpen} onOpenChange={setSupplierComboboxOpen}>
-											<PopoverTrigger asChild>
-												<Button
-													role="combobox"
-													aria-expanded={supplierComboboxOpen}
-													size='sm'
-													type="button"
-													variant='outline'
-													className="flex items-center gap-2">
-													<Icons.plus className="size-3 text-primary" />
-													{t("bulk.add-rows-supplier-btn")}
-												</Button>
-											</PopoverTrigger>
-											<PopoverContent className="p-0 min-w-52 max-w-52">
-												<Command>
-													<CommandInput placeholder={t("bulk.suppliers-search")} className="h-9" />
-													<CommandList>
-														<CommandEmpty>{t("bulk.suppliers-no-items")}</CommandEmpty>
-														<CommandGroup>
-															{Array.from(new Set(selectableSuppliers.map(s => s.product.supplierName)).values()).slice(0, 50).map((s, i) => (
-																<CommandItem
-																	key={`${s}-${i}`}
-																	value={s!}
-																	onSelect={(currentValue) => {
-																		appendSupplier(currentValue)
-																		setSupplierComboboxOpen(false)
-																	}}
-																>
-																	{s}
-																</CommandItem>
-															))}
-														</CommandGroup>
-													</CommandList>
-												</Command>
-											</PopoverContent>
-										</Popover>
-									)}
-								</div>
-							)}
+								)}
+							</div>
 						</div>
 					</ScrollArea>
 				</form>
+				<div className="px-3">
+					<Separator />
+				</div>
+				<div className="px-3 ml-auto flex items-baseline gap-2">
+					<p className="text-sm text-muted-foreground">Total</p>
+					<p className="tabular-nums">{numberToCurrency(totalPrice, lng)}</p>
+				</div>
 				<DialogFooterV2>
 					<Button
 						onClick={() => onOpenChange(false)}
@@ -537,14 +544,6 @@ function ReorderField({
 				/>
 			</div>
 			<div className="grid gap-1.5 w-[15%]">
-				<Label className={cn('', index !== 0 && 'hidden')}>{t("bulk.quantity")}</Label>
-				<Input
-					className="tabular-nums"
-					value={formatNumber(field.quantity)}
-					disabled
-				/>
-			</div>
-			<div className="grid gap-1.5 w-[15%]">
 				<div className={cn('flex items-center gap-1', index !== 0 && 'hidden')}>
 					<Label>{t("bulk.disposable")}</Label>
 					<TooltipWrapper tooltip={t("bulk.tooltip-disposable")}>
@@ -554,7 +553,7 @@ function ReorderField({
 				<Input
 					className="tabular-nums"
 					value={formatNumber(
-						field.quantity + (Number(formValues.items[index].ordered) || 0),
+						field.quantity + (formValues.items[index].alreadyOrdered || 0),
 						lng,
 					)}
 					disabled
@@ -572,7 +571,7 @@ function ReorderField({
 					{...register(`items.${index}.ordered` as const)}
 					className={cn(
 						'tabular-nums',
-						formState.errors.items && formState.errors.items[index]?.ordered && 'focus-visible:ring-destructive border-destructive'
+						(formState.errors.items && formState.errors.items[index]?.ordered || formValues.items[index].ordered == 0) && 'focus-visible:ring-destructive border-destructive'
 					)}
 				/>
 			</div>
