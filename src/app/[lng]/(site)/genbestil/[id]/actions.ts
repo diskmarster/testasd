@@ -27,7 +27,7 @@ export const sendOrderEmailAction = editableAction
 
     await emailService.sendRecursively(
       [parsedInput.email],
-      'NemLager bestilling tilsendt',
+      `Ny bestilling via NemLager fra ${ctx.customer?.company}`,
       EmailSendOrder({
         company: ctx.customer?.company!,
         sender: ctx.user,
