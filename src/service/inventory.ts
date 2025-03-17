@@ -21,18 +21,15 @@ import {
   NewBatch,
   NewHistory,
   NewPlacement,
-  NewReorder,
   NewUnit,
   PartialBatch,
   PartialGroup,
   PartialPlacement,
-  PartialReorder,
   PartialUnit,
   Placement,
   PlacementID,
   Product,
   ProductID,
-  Reorder,
   Unit,
   UnitID,
 } from '@/lib/database/schema/inventory'
@@ -41,6 +38,7 @@ import { LibsqlError } from '@libsql/client'
 import { productService } from './products'
 import { userService } from './user'
 import { locationService } from './location'
+import { NewReorder, PartialReorder, Reorder } from '@/lib/database/schema/reorders'
 
 export const inventoryService = {
   getInventory: async function (

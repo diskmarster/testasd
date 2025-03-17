@@ -1,6 +1,5 @@
 "use client"
 
-import { Reorder } from "@/lib/database/schema/inventory"
 import { cn, updateChipCount } from "@/lib/utils"
 import { User } from "lucia"
 import { Button } from "../ui/button"
@@ -18,6 +17,7 @@ import { createReorderAction, updateReorderAction } from "@/app/[lng]/(site)/gen
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { Icons } from "../ui/icons"
+import { Reorder } from "@/lib/database/schema/reorders"
 
 interface Props {
 	productID: number
