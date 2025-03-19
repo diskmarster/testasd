@@ -459,7 +459,7 @@ export const productService = {
                 text2: p.text2,
                 text3: p.text3,
                 salesPrice: p.salesPrice,
-				note: p.note
+                note: p.note
               },
               trx,
             ),
@@ -480,7 +480,7 @@ export const productService = {
                   text2: p.text2,
                   text3: p.text3,
                   salesPrice: p.salesPrice,
-				  note: p.note
+                  note: p.note
                 },
                 trx,
               )
@@ -514,6 +514,45 @@ export const productService = {
       const updatedProducts = existingProductsResponses.filter(
         p => p != undefined,
       )
+
+      const productReorders: Map<String, {
+        minimum: number,
+        maximum: number,
+        orderAmount: number,
+      }>= importedProducts
+        .filter(p => p.minimum != undefined)
+        .reduce((acc, cur) => {
+          acc.set(cur.sku, {
+            minimum: cur.minimum!,
+            maximum: cur.maximum,
+            orderAmount: cur.orderAmount ?? cur.minimum!,
+          })
+          return acc
+        }, new Map())
+
+      const reorderPromises: Promise<any>[] = []
+      for (const p of [...newProducts, ...updatedProducts]) {
+        const reorder = productReorders.get(p.sku)
+
+        if (reorder != undefined) {
+          reorderPromises.push(
+            Promise.all(
+              locations.map(loc => (
+                inventory.upsertReorder({
+                  locationID: loc.id,
+                  customerID: customerID,
+                  productID: p.id,
+                  minimum: reorder.minimum,
+                  maxOrderAmount: reorder.maximum,
+                  orderAmount: reorder.orderAmount,
+                }, trx)
+              ))
+            )
+          )
+        }
+      }
+
+      await Promise.all(reorderPromises)
 
       const productHistoryPromises = [
         ...updatedProducts.map(p => {
