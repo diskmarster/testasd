@@ -1,9 +1,11 @@
 'use server'
 
-import { EmailSendOrder } from '@/components/email/email-send-order'
+import { EmailSendOrderInternal } from '@/components/email/email-send-order'
+import { siteConfig } from '@/config/site'
 import { editableAction } from '@/lib/safe-action'
 import { attachmentService } from '@/service/attachments'
 import { emailService } from '@/service/email'
+import { ordersService } from '@/service/orders'
 import { userService } from '@/service/user'
 import { sendEmailValidation } from './validation'
 
@@ -22,16 +24,30 @@ export const sendOrderEmailAction = editableAction
       'genbestil',
       parsedInput.orderID,
     )
-
-    const fallbackURL = `https://lager.nemunivers.app/${ctx.lang}/genbestil/${parsedInput.orderID}`
-
-    await emailService.sendRecursively(
-      [parsedInput.email],
-      `Ny bestilling via NemLager fra ${ctx.customer?.company}`,
-      EmailSendOrder({
-        company: ctx.customer?.company!,
-        sender: ctx.user,
-        link: files.at(0)?.url ?? fallbackURL,
-      }),
+    const order = await ordersService.getByID(
+      ctx.user.customerID,
+      parsedInput.orderID,
     )
+
+    const attachments = files.at(0)
+      ? [
+          {
+            path: files[0].url,
+            filename: `${siteConfig.name}-bestilling-${parsedInput.orderID}.xlsx`,
+          },
+        ]
+      : []
+
+    for (const email of parsedInput.emails) {
+      await emailService.sendRecursively(
+        [email],
+        `Ny bestilling via NemLager fra ${ctx.customer?.company}`,
+        EmailSendOrderInternal({
+          customer: ctx.customer!,
+          user: ctx.user,
+          order: order,
+        }),
+        attachments,
+      )
+    }
   })

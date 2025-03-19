@@ -2,20 +2,24 @@ CREATE TABLE `nl_order_lines` (
 	`order_id` text NOT NULL,
 	`location_id` text NOT NULL,
 	`customer_id` integer NOT NULL,
-	`product_id` integer NOT NULL,
 	`supplier` text NOT NULL,
+	`supplier_phone` text DEFAULT '' NOT NULL,
+	`supplier_email` text DEFAULT '' NOT NULL,
+	`supplier_id_of_client` text DEFAULT '' NOT NULL,
+	`supplier_country` text DEFAULT '' NOT NULL,
+	`supplier_contact_person` text DEFAULT '' NOT NULL,
 	`sku` text NOT NULL,
 	`barcode` text NOT NULL,
 	`text1` text NOT NULL,
 	`text2` text NOT NULL,
 	`unit_name` text NOT NULL,
+	`group_name` text NOT NULL,
 	`cost_price` real NOT NULL,
 	`quantity` real NOT NULL,
 	`sum` real NOT NULL,
 	FOREIGN KEY (`order_id`) REFERENCES `nl_orders`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`location_id`) REFERENCES `nl_location`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`customer_id`) REFERENCES `nl_customer`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`product_id`) REFERENCES `nl_product`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`customer_id`) REFERENCES `nl_customer`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `nl_orders` (

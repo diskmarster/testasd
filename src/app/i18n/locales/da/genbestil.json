@@ -166,9 +166,10 @@
 		"total": "Total",
 		"mail-title": "Send bestilling",
 		"mail-description": "Vælg fra en list af brugere eller skriv en e-mail",
-		"users": "Brugere",
-		"email": "E-mail",
+		"users": "Send til dine brugere",
+		"email": "Send til anden e-mail",
 		"email-placeholder": "Vælg eller skriv en e-mail",
-		"mail-send": "Send bestilling"
+		"mail-send": "Send bestilling",
+		"modal-close": "Luk"
 	}
 }

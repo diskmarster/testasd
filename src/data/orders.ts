@@ -1,11 +1,6 @@
 import { db, TRX } from '@/lib/database'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
-  groupTable,
-  productTable,
-  unitTable,
-} from '@/lib/database/schema/inventory'
-import {
   NewOrder,
   NewOrderLine,
   Order,
@@ -14,16 +9,15 @@ import {
   orderLinesTable,
   ordersTable,
 } from '@/lib/database/schema/reorders'
-import { supplierTable } from '@/lib/database/schema/suppliers'
 import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
-import { FormattedOrderLine, OrderWithCount } from './orders.types'
+import { OrderWithCount } from './orders.types'
 import { formatDate } from 'date-fns'
 
 export const orders = {
   createOrder: async function (data: Omit<NewOrder, 'id'>, tx: TRX = db): Promise<Order> {
-    const [{ count }] = await tx.select({ count: sql<number>`COUNT(*)` })
-        .from(ordersTable)
-        .where(eq(ordersTable.customerID, data.customerID));
+    const [{ count }] = await tx.select({ count: sql<number>`count(*)` })
+		.from(ordersTable)
+		.where(eq(ordersTable.customerID, data.customerID));
 
     const [res] = await tx
 		.insert(ordersTable)
@@ -48,7 +42,8 @@ getAllOrders: async function (
     return await tx
       .select({
 				...getTableColumns(ordersTable),
-				lineCount: count(orderLinesTable)
+				lineCount: count(orderLinesTable),
+				supplierCount: sql<number>`count(distinct ${orderLinesTable.supplierName})`
 			})
       .from(ordersTable)
       .where(
@@ -65,9 +60,13 @@ getAllOrders: async function (
     customerID: CustomerID,
     orderID: OrderID,
     tx: TRX = db,
-  ): Promise<Order> {
+  ): Promise<OrderWithCount> {
     const [res] = await tx
-      .select()
+      .select({
+				...getTableColumns(ordersTable),
+				lineCount: count(orderLinesTable),
+				supplierCount: sql<number>`count(distinct ${orderLinesTable.supplierName})`
+			})
       .from(ordersTable)
       .where(
         and(
@@ -81,18 +80,9 @@ getAllOrders: async function (
     customerID: CustomerID,
     orderID: OrderID,
     tx: TRX = db,
-  ): Promise<FormattedOrderLine[]> {
+  ): Promise<OrderLine[]> {
     return tx
-      .select({
-        ...getTableColumns(orderLinesTable),
-        product: {
-          ...getTableColumns(productTable),
-          unit: unitTable.name,
-          group: groupTable.name,
-          supplierName: supplierTable.name,
-        },
-        supplier: { ...getTableColumns(supplierTable) },
-      })
+      .select()
       .from(orderLinesTable)
       .where(
         and(
@@ -100,9 +90,5 @@ getAllOrders: async function (
           eq(orderLinesTable.orderID, orderID),
         ),
       )
-      .innerJoin(productTable, eq(productTable.id, orderLinesTable.productID))
-      .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
-      .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
-      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
   },
 }

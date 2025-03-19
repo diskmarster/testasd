@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "01e43113-ebc4-4b5e-a419-6a1a7bd3de21",
+  "id": "eef4ff8e-05f9-4c4d-bf3a-0752b614841b",
   "prevId": "1bd1f8c5-894a-44a8-b5a9-0610200913a1",
   "tables": {
     "nl_action_analytics": {
@@ -2113,19 +2113,52 @@
           "notNull": true,
           "autoincrement": false
         },
-        "product_id": {
-          "name": "product_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "supplier": {
           "name": "supplier",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "supplier_phone": {
+          "name": "supplier_phone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "supplier_email": {
+          "name": "supplier_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "supplier_id_of_client": {
+          "name": "supplier_id_of_client",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "supplier_country": {
+          "name": "supplier_country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        },
+        "supplier_contact_person": {
+          "name": "supplier_contact_person",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
         },
         "sku": {
           "name": "sku",
@@ -2157,6 +2190,13 @@
         },
         "unit_name": {
           "name": "unit_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "group_name": {
+          "name": "group_name",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -2223,19 +2263,6 @@
             "id"
           ],
           "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "nl_order_lines_product_id_nl_product_id_fk": {
-          "name": "nl_order_lines_product_id_nl_product_id_fk",
-          "tableFrom": "nl_order_lines",
-          "tableTo": "nl_product",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

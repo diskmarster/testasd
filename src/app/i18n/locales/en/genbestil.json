@@ -170,6 +170,9 @@
 		"users": "Users",
 		"email": "Email",
 		"email-placeholder": "Choose or write an email",
-		"mail-send": "Send order"
+		"mail-send": "Send order",
+		"modal-close": "Close",
+		"invalid-input": "An email is invalid",
+		"fetching-users": "Fetching users"
 	}
 }

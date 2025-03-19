@@ -39,7 +39,6 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-	CommandSeparator
 } from "../ui/command"
 import { bulkAddOrderedToReorderAction } from "@/app/[lng]/(site)/genbestil/actions"
 import { toast } from "sonner"
@@ -128,9 +127,11 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 				barcode: r.product.barcode,
 				text2: r.product.text2,
 				unitName: r.product.unit,
+				groupName: r.product.group,
 				costPrice: r.product.costPrice,
 				minimum: r.minimum ?? "-",
 				isRequested: r.isRequested,
+				supplierID: r.product.supplierID,
 			}))
 		})
 
@@ -172,9 +173,11 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 			barcode: r.product.barcode,
 			text2: r.product.text2,
 			unitName: r.product.unit,
+			groupName: r.product.group,
 			costPrice: r.product.costPrice,
 			minimum: r.minimum ?? "-",
 			isRequested: r.isRequested,
+			supplierID: r.product.supplierID,
 		}))
 	}
 
@@ -267,9 +270,11 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 																	barcode: s.product.barcode,
 																	text2: s.product.text2,
 																	unitName: s.product.unit,
+																	groupName: s.product.group,
 																	costPrice: s.product.costPrice,
 																	minimum: s.minimum ?? "-",
 																	isRequested: s.isRequested,
+																	supplierID: s.product.supplierID,
 																})
 																setSupplierComboboxOpen(false)
 															}}>
@@ -310,8 +315,10 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 																	barcode: p.barcode,
 																	text2: p.text2,
 																	unitName: p.unit,
+																	groupName: p.group,
 																	costPrice: p.costPrice,
 																	isRequested: false,
+																	supplierID: p.supplierID,
 																})
 																setSupplierComboboxOpen(false)
 															}}>
@@ -421,9 +428,11 @@ type Field = {
 	text2: string,
 	barcode: string,
 	unitName: string,
+	groupName: string,
 	costPrice: number,
 	minimum: number,
 	isRequested: boolean,
+	supplierID: number | null
 }
 
 interface FieldProps {
@@ -507,6 +516,9 @@ function ReorderField({
 												setValue(`items.${index}.ordered`, p.orderAmount, { shouldValidate: true })
 												setValue(`items.${index}.maxOrderAmount`, p.maxOrderAmount, { shouldValidate: true })
 												setValue(`items.${index}.isRequested`, p.isRequested, { shouldValidate: true })
+												setValue(`items.${index}.groupName`, p.product.group, { shouldValidate: true })
+												setValue(`items.${index}.unitName`, p.product.unit, { shouldValidate: true })
+												setValue(`items.${index}.supplierID`, p.product.supplierID, { shouldValidate: true })
 												setSearch(currentValue === search ? "" : currentValue)
 												setOpen(false)
 											}}

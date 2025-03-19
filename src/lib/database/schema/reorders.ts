@@ -82,17 +82,18 @@ export const orderLinesTable = sqliteTable('nl_order_lines', {
   customerID: integer('customer_id')
     .notNull()
     .references(() => customerTable.id),
-  productID: integer('product_id')
-    .notNull()
-    .references(() => productTable.id, {
-      onDelete: 'cascade',
-    }),
 	supplierName: text('supplier').notNull(),
+	supplierPhone: text('supplier_phone').notNull().default(''),
+	supplierEmail: text('supplier_email').notNull().default(''),
+	supplierIdOfClient: text('supplier_id_of_client').notNull().default(''),
+	supplierCountry: text('supplier_country').notNull().default(''),
+	supplierContactPerson: text('supplier_contact_person').notNull().default(''),
 	sku: text('sku').notNull(),
 	barcode: text('barcode').notNull(),
 	text1: text('text1').notNull(),
 	text2: text('text2').notNull(),
 	unitName: text('unit_name').notNull(),
+	groupName: text('group_name').notNull(),
 	costPrice: real('cost_price').notNull(),
   quantity: real('quantity').notNull(),
   sum: real('sum').notNull(),

@@ -1,27 +1,34 @@
 import { siteConfig } from '@/config/site'
-import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Section, Tailwind, Text } from '@react-email/components'
+import { FormattedOrder } from '@/data/orders.types'
+import { Customer } from '@/lib/database/schema/customer'
+import { Body, Container, Head, Heading, Hr, Html, Preview, Section, Tailwind, Text } from '@react-email/components'
+import { formatDate } from 'date-fns'
+import { da } from 'date-fns/locale'
 import { User } from 'lucia'
 
-export function EmailSendOrder({ company, sender, link }: { company: string, sender: User, link: string }) {
+interface Props {
+	customer: Customer,
+	user: User,
+	order: FormattedOrder
+}
+
+export function EmailSendOrderInternal({ customer, user, order }: Props) {
 	return (
 		<Tailwind>
 			<Html>
 				<Head />
-				<Preview>{company} har sendt dig en {siteConfig.name} bestilling</Preview>
+				<Preview>{user.name} har sendt dig en {siteConfig.name} bestilling</Preview>
 				<Body className='bg-muted font-sans'>
 					<Container className='bg-white mx-auto pt-5 pb-12'>
 						<Section className='px-12'>
 							<Heading as='h4'>Nem Lager</Heading>
 							<Hr className='border-border my-5' />
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
-								Du har fået sendt en {siteConfig.name} bestilling af {sender.name}. For at downloade bestillingen
-								skal du klikke på linket nedenunder.
+								En genbestilling er blevet gennemført i {siteConfig.name} af {user.name}.
 							</Text>
-							<Button
-								className='bg-[#023eb6] rounded-md text-white text-base font-semibold text-center block w-full p-2.5'
-								href={link}>
-								Download {siteConfig.name} bestilling
-							</Button>
+							<Text className='text-primary-foreground text-base leading-6 text-left'>
+								Du modtager hermed en bekræftelse på registreringen af bestilling #{order.id}, oprettet af {user.name} den {formatDate(order.inserted, 'PPP', { locale: da })}. De relevante dokumenter er vedhæftet denne mail.
+							</Text>
 							<Hr className='border-border my-5' />
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
 								Vores supportteam står klar til at hjælpe jer, hvis I har

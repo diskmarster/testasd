@@ -13,12 +13,12 @@ export const ordersService = {
   create: async function (
     meta: Omit<NewOrder, 'id'>,
     lines: Omit<NewOrderLine, 'orderID'>[],
-  ): Promise<OrderID> {
+  ): Promise<Order> {
     return await db.transaction(async tx => {
       const newOrder = await orders.createOrder(meta, tx)
 			const linesWithID = lines.map(l => ({...l, orderID: newOrder.id}))
-      const newLines = await orders.createOrderLine(linesWithID, tx)
-      return newOrder.id
+      await orders.createOrderLine(linesWithID, tx)
+      return newOrder
     })
   },
   getAll: async function (

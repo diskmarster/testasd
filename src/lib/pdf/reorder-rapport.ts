@@ -1,4 +1,7 @@
+import { User } from 'lucia'
 import * as XLSX from 'xlsx'
+import { Customer } from '../database/schema/customer'
+import { formatDate } from '../utils'
 
 export type ExcelRow = {
   supplierName: string
@@ -13,8 +16,19 @@ export type ExcelRow = {
 }
 
 export function genReorderExcelWorkbook(
-  data: ExcelRow[],
+  orderID: string,
+  inserted: Date,
+  user: User,
+  customer: Customer,
+  orderLines: ExcelRow[],
   t: (key: string, opts?: any) => string,
+  supplier?: {
+    name: string
+    phone: string | null
+    email: string | null
+    contact: string | null
+    idOfClient: string | null
+  },
 ) {
   const headers = [
     t('report.headers.supplier'),
@@ -27,7 +41,7 @@ export function genReorderExcelWorkbook(
     t('report.headers.quantity'),
     t('report.headers.sum'),
   ]
-  const rows = data.map(row => [
+  const rows = orderLines.map(row => [
     row.supplierName,
     row.sku,
     row.barcode,
@@ -39,8 +53,38 @@ export function genReorderExcelWorkbook(
     row.sum,
   ])
 
+  const emptyRow = [[]]
+  const meta = [
+    ['Bestillingsnr:', orderID],
+    ['Dato:', formatDate(inserted)],
+  ]
+
+  let supplierRows = supplier
+    ? [
+        [],
+        ['Leverandør:', supplier.name],
+        ['Tlf.:', supplier.phone],
+        ['Email:', supplier.email],
+        ['Deres ref:', supplier.contact],
+      ]
+    : []
+
+  const sender = [
+    ['Afsender:', customer.company],
+    ['Vores ref:', user.name],
+    supplier ? ['Kundenr:', supplier?.idOfClient] : [],
+  ]
+
   const workbook = XLSX.utils.book_new()
-  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  const worksheet = XLSX.utils.aoa_to_sheet([
+    ...meta,
+    ...supplierRows,
+    emptyRow,
+    ...sender.filter(t => t.length > 0),
+    emptyRow,
+    headers,
+    ...rows,
+  ])
   XLSX.utils.book_append_sheet(workbook, worksheet, t('report.sheet'), true)
   return workbook
 }

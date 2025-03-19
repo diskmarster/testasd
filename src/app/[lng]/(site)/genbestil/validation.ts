@@ -97,6 +97,7 @@ export const bulkAddOrderedToReorderValidation = (
               .positive({ message: t('bulk.errors.positive') }),
             alreadyOrdered: z.coerce.number(),
             supplierName: z.string().nullable(),
+						supplierID: z.coerce.number().nullable(),
             quantity: z.coerce.number(),
             disposable: z.coerce.number(),
             maxOrderAmount: z.coerce.number(),
@@ -104,9 +105,11 @@ export const bulkAddOrderedToReorderValidation = (
 						barcode: z.string(),
 						text2: z.string(),
 						unitName: z.string(),
+						groupName: z.string(),
 						costPrice: z.coerce.number(),
 						minimum: z.coerce.number(),
-						isRequested: z.coerce.boolean()
+						isRequested: z.coerce.boolean(),
+						supplierEmail: z.string().optional()
           })
           .superRefine((val, ctx) => {
             if (0 < val.maxOrderAmount && val.maxOrderAmount < val.ordered) {

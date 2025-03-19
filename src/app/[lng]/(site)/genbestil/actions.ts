@@ -20,6 +20,7 @@ import {
   deleteReorderValidation,
   updateReorderValidation,
 } from './validation'
+import { suppliersService } from '@/service/suppliers'
 
 export const createReorderAction = editableAction
   .metadata({ actionName: 'createReorder' })
@@ -170,6 +171,8 @@ export const bulkAddOrderedToReorderAction = editableAction
       )
     }
 
+		const suppliers = await suppliersService.getAllByCustomerID(ctx.user.customerID)
+
     const promises = []
 
     for (const reorder of parsedInput.items) {
@@ -200,34 +203,55 @@ export const bulkAddOrderedToReorderAction = editableAction
         userID: ctx.user.id,
         userName: ctx.user.name,
       },
-      lines: [
-        ...parsedInput.items.map(i => ({
-          customerID: ctx.user.customerID,
-          locationID: locationID,
-          productID: i.productID,
-          supplierName: i.supplierName ?? '-',
-          sku: i.sku,
-          barcode: i.barcode,
-          text1: i.text1,
-          text2: i.text2,
-          unitName: i.unitName,
-          costPrice: i.costPrice,
-          quantity: i.ordered,
-          sum: i.ordered * i.costPrice,
-        })),
-      ],
+			lines: [
+				...parsedInput.items.map(i => {
+					const supplier = suppliers.find(s => s.id == i.supplierID)
+
+					return {
+						customerID: ctx.user.customerID,
+						locationID: locationID,
+						productID: i.productID,
+						sku: i.sku,
+						barcode: i.barcode,
+						text1: i.text1,
+						text2: i.text2,
+						unitName: i.unitName,
+						groupName: i.groupName,
+						costPrice: i.costPrice,
+						quantity: i.ordered,
+						sum: i.ordered * i.costPrice,
+						supplierName: i.supplierName ?? '-',
+						supplierEmail: supplier && supplier.email,
+						supplierPhone: supplier && supplier.phone,
+						supplierIdOfClient: supplier && supplier.idOfClient,
+						supplierCountry: supplier && supplier.country,
+						supplierContactPerson: supplier && supplier.contactPerson,
+					}
+				}),
+			],
     }
 
-    const orderID = await ordersService.create(newOrder.meta, newOrder.lines)
+    const order = await ordersService.create(newOrder.meta, newOrder.lines)
+		const uniqSuppliers = new Set(parsedInput.items.map(i => i.supplierName))
+		const uniqSupplier = suppliers.find(s => s.id == parsedInput.items[0].supplierID)
+		const singleSupplier = (uniqSuppliers.size == 1 && !!uniqSupplier)
+			? { 
+				name: uniqSupplier.name,
+				email: uniqSupplier.email,
+				phone: uniqSupplier.phone,
+				idOfClient: uniqSupplier.idOfClient,
+				contact: uniqSupplier.contactPerson,
+			}
+				: undefined
 
-    const workbook = genReorderExcelWorkbook(newOrder.lines, reorderT)
+    const workbook = genReorderExcelWorkbook(order.id, order.inserted, ctx.user, ctx.customer!, newOrder.lines, reorderT, singleSupplier)
     const arr = XLSX.write(workbook, { type: 'array' })
     const fileInfo = fileService.validate({
       mimeType:
         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       customerID: ctx.user.customerID,
       refType: 'genbestil',
-      refID: orderID,
+      refID: order.id,
     })
     if (fileInfo.success) {
       promises.push(
@@ -241,7 +265,7 @@ export const bulkAddOrderedToReorderAction = editableAction
         attachmentService.create({
           customerID: ctx.user.customerID,
           refDomain: 'genbestil',
-          refID: orderID,
+          refID: order.id,
           name: `nemlager_genbestilling_${formatDate(new Date())}`,
           type: fileInfo.type,
           key: fileInfo.key,
@@ -254,7 +278,7 @@ export const bulkAddOrderedToReorderAction = editableAction
 
     await Promise.all(promises)
 
-    redirect(`/${ctx.lang}/genbestil/${orderID}`)
+    redirect(`/${ctx.lang}/genbestil/${order.id}`)
   })
 
 export const fetchOrdersActions = editableAction

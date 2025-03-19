@@ -1,7 +1,7 @@
 "use client"
 
 import { useLanguage } from "@/context/language";
-import { FormattedOrder, FormattedOrderLine } from "@/data/orders.types";
+import { FormattedOrder } from "@/data/orders.types";
 import { cn, formatDate, formatNumber, numberToCurrency } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Icons } from "../ui/icons";
@@ -14,17 +14,21 @@ import { Label } from "../ui/label";
 import { ScrollArea } from "../ui/scroll-area";
 import { UserNoHash } from "@/lib/database/schema/auth";
 import { fetchUsersAction, sendOrderEmailAction } from "@/app/[lng]/(site)/genbestil/[id]/actions";
-import { z } from "zod";
 import { sendEmailValidation } from "@/app/[lng]/(site)/genbestil/[id]/validation";
 import * as XLSX from 'xlsx'
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { siteConfig } from "@/config/site";
+import { Customer } from "@/lib/database/schema/customer";
+import { User } from "lucia";
+import { OrderLine } from "@/lib/database/schema/reorders";
 
 interface Props {
 	order: FormattedOrder
+	customer: Customer
+	user: User
 }
 
-export function Details({ order }: Props) {
+export function Details({ order, customer, user }: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, "genbestil")
 	const tr = (key: string) => t(`order-details.${key}`)
@@ -64,7 +68,7 @@ export function Details({ order }: Props) {
 	function downloadOrder() {
 		const rows: ExcelRow[] = order.lines
 			.map(l => ({
-				supplierName: l.supplier?.name ?? '-',
+				supplierName: l.supplierName ?? '-',
 				sku: l.sku,
 				barcode: l.barcode,
 				text1: l.text1,
@@ -75,7 +79,16 @@ export function Details({ order }: Props) {
 				sum: l.sum,
 			}))
 
-		const workbook = genReorderExcelWorkbook(rows, t)
+		const singleSupplier = order.supplierCount == 1
+			? {
+				name: order.lines[0].supplierName,
+				email: order.lines[0].supplierEmail,
+				phone: order.lines[0].supplierPhone,
+				idOfClient: order.lines[0].supplierIdOfClient,
+				contact: order.lines[0].supplierContactPerson,
+			}
+			: undefined
+		const workbook = genReorderExcelWorkbook(order.id, order.inserted, user, customer, rows, t, singleSupplier)
 		XLSX.writeFile(workbook, `nemlager_genbestilling_${formatDate(new Date())}.xlsx`)
 	}
 
@@ -152,7 +165,7 @@ function ViewHeaders({ gridClasses, t }: { gridClasses: string, t: (key: string)
 	)
 }
 
-function ViewItem({ line, gridClasses }: { line: FormattedOrderLine, gridClasses: string }) {
+function ViewItem({ line, gridClasses }: { line: OrderLine, gridClasses: string }) {
 	const lng = useLanguage()
 	return (
 		<div className={cn(
@@ -184,6 +197,18 @@ function SendEmailModal({ order, t }: { order: FormattedOrder, t: (key: string) 
 	const [pending, startTransition] = useTransition()
 	const [open, setOpen] = useState(false)
 	const [users, setUsers] = useState<UserNoHash[]>([])
+	const isSingleSupplierOrder = order.supplierCount == 1
+	const [selected, setSelected] = useState<string[]>([])
+	const [error, setError] = useState<string>()
+	const [input, setInput] = useState<string>()
+
+	function toggleEmail(email: string) {
+		if (selected.includes(email)) {
+			setSelected(selected.filter(s => s != email))
+		} else {
+			setSelected(prev => [...prev, email])
+		}
+	}
 
 	useEffect(() => {
 		if (!pending && users.length == 0) {
@@ -196,18 +221,22 @@ function SendEmailModal({ order, t }: { order: FormattedOrder, t: (key: string) 
 		}
 	}, [])
 
-	const { watch, setValue, register, handleSubmit } = useForm<z.infer<typeof sendEmailValidation>>({
-		resolver: zodResolver(sendEmailValidation),
-		defaultValues: {
-			orderID: order.id,
+	function onSubmit() {
+		const data = { orderID: order.id, emails: input ? [...selected, input] : selected }
+		const parsed = sendEmailValidation.safeParse(data)
+		if (!parsed.success) {
+			setError(t("invalid-input"))
+			return
 		}
-	})
-
-	const fv = watch()
-
-	function onSubmit(values: z.infer<typeof sendEmailValidation>) {
 		startTransition(async () => {
-			await sendOrderEmailAction(values)
+			const res = await sendOrderEmailAction(parsed.data)
+
+			if (res && res.serverError) {
+				setError(res.serverError)
+				return
+			}
+
+			setSelected([])
 			setOpen(false)
 		})
 	}
@@ -229,29 +258,66 @@ function SendEmailModal({ order, t }: { order: FormattedOrder, t: (key: string) 
 						<DialogTitleV2>{t("mail-title")}</DialogTitleV2>
 					</div>
 				</DialogHeaderV2>
+				{error && (
+					<Alert variant='destructive'>
+						<Icons.alert className='size-4 !top-3' />
+						<AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
+						<AlertDescription>{error}</AlertDescription>
+					</Alert>
+				)}
 				<form
-					onSubmit={handleSubmit(onSubmit)}
+					onSubmit={() => onSubmit()}
 					className="px-3 space-y-4"
 					id="send-email">
 					<DialogDescriptionV2>{t("mail-description")}</DialogDescriptionV2>
+					{(isSingleSupplierOrder && order.lines[0].supplierEmail) && (
+						<div className="space-y-1.5">
+							<Label>Send til leverandør</Label>
+							<div
+								onClick={() => {
+									toggleEmail(order.lines[0].supplierEmail)
+								}}
+								className={cn(
+									"rounded-md border px-2.5 py-1 flex items-center justify-between",
+									"cursor-pointer hover:bg-muted transition-all",
+									selected.includes(order.lines[0].supplierEmail) && "border-primary border"
+								)}>
+								<div>
+									<p className="text-xs font-medium">{order.lines[0].supplierName}</p>
+									<p className="text-xs text-muted-foreground">{order.lines[0].supplierEmail}</p>
+								</div>
+								{selected.includes(order.lines[0].supplierEmail) && (
+									<Icons.circleCheck className="size-4 text-primary" />
+								)}
+							</div>
+						</div>
+					)}
 					<div className="space-y-1.5">
 						<Label>{t("users")}</Label>
-						<ScrollArea maxHeight="max-h-56">
+						<ScrollArea maxHeight="max-h-[142px]">
 							<div className="space-y-2">
+								{(pending && users.length == 0) && (
+									<div className="flex items-center gap-2">
+										<p className="text-xs">{t("fetching-users")}</p>
+										<Icons.spinner className="size-3 animate-spin" />
+									</div>
+								)}
 								{users.map(u => (
 									<div
 										key={u.id}
-										onClick={() => setValue('email', u.email, { shouldValidate: true })}
+										onClick={() => {
+											toggleEmail(u.email)
+										}}
 										className={cn(
-											"rounded-md border px-3 py-1.5 flex items-center justify-between",
+											"rounded-md border px-2.5 py-1 flex items-center justify-between",
 											"cursor-pointer hover:bg-muted transition-all",
-											fv.email == u.email && "border-primary border"
+											selected.includes(u.email) && "border-primary border"
 										)}>
 										<div>
-											<p className="text-sm font-medium">{u.name}</p>
+											<p className="text-xs font-medium">{u.name}</p>
 											<p className="text-xs text-muted-foreground">{u.email}</p>
 										</div>
-										{fv.email == u.email && (
+										{selected.includes(u.email) && (
 											<Icons.circleCheck className="size-4 text-primary" />
 										)}
 									</div>
@@ -265,18 +331,22 @@ function SendEmailModal({ order, t }: { order: FormattedOrder, t: (key: string) 
 							id="email"
 							type="email"
 							placeholder={t("email-placeholder")}
-							{...register('email')}
+							value={input}
+							onChange={event => setInput(event.target.value)}
 						/>
 					</div>
 				</form>
 				<DialogFooterV2>
+					<Button size={'sm'} variant={'outline'} onClick={() => setOpen(false)}>
+						{t("modal-close")}
+					</Button>
 					<Button
 						size='sm'
 						disabled={pending}
 						className="flex items-center gap-2"
 						form="send-email"
 						type="submit">
-						{pending && (
+						{(pending && selected.length > 0) && (
 							<Icons.spinner className="size-4 animate-spin" />
 						)}
 						{t("mail-send")}
