@@ -464,11 +464,7 @@ export const inventoryService = {
 
     const newReorders = reorders.map(reorder => {
       const disposible = reorder.quantity + reorder.ordered
-			const shouldReorder = (
-				reorder.quantity < (reorder.minimum ?? 0)
-				&& reorder.orderAmount > 0 
-				&& reorder.ordered < reorder.orderAmount
-			)
+			const shouldReorder = disposible < (reorder.minimum ?? 0)
 
       return {
         ...reorder,
