@@ -51,6 +51,9 @@
     "cost-price-not-negative": "Cost price cannot be negative and must be a number.",
     "sales-price-type": "Sales price must be a number",
     "barred-values": "Unknown value in barred. Use true, false, ja or nej",
+    "minimum-type": "Minimum must be a number",
+    "maximum-type": "Maximum must be a number",
+    "order-amount-type": "Order amount must be a number",
     "unknown-column": "Unknown column"
   },
   "placement": {

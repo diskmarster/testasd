@@ -51,6 +51,9 @@
     "cost-price-not-negative": "Kostpris kan ikke være negativ og skal være et tal.",
     "sales-price-type": "Salgspris skal være et tal",
     "barred-values": "Ukendt værdi i barred. Brug true, false, ja eller nej",
+    "minimum-type": "Minimum skal være et tal",
+    "maximum-type": "Maximum skal være et tal",
+    "order-amount-type": "Bestillings antal skal være et tal",
     "unknown-column": "Ukendt kolonne"
   },
   "placement": {
