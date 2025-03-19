@@ -191,7 +191,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  Ingen beholdning
+                  {t('table-no-values')}
                 </TableCell>
               </TableRow>
             )}
