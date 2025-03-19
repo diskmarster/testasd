@@ -639,5 +639,10 @@ export const inventoryService = {
 		const locationID = await locationService.getLastVisited(userID)
 		if (!locationID) return undefined
 		return await inventory.getReorderByProductID(productID,locationID,customerID)
-	}
+	},
+  upsertReorder: async function(
+    reorderData: NewReorder,
+  ): Promise<Reorder | undefined> {
+    return await inventory.upsertReorder(reorderData)
+  }
 }
