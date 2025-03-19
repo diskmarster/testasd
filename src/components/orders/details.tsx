@@ -79,7 +79,7 @@ export function Details({ order, customer, user }: Props) {
 				sum: l.sum,
 			}))
 
-		const singleSupplier = order.supplierCount == 1
+		const singleSupplier = (order.supplierCount == 1 && order.lines[0].supplierName != "-")
 			? {
 				name: order.lines[0].supplierName,
 				email: order.lines[0].supplierEmail,

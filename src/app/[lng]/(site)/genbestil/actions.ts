@@ -234,7 +234,7 @@ export const bulkAddOrderedToReorderAction = editableAction
     const order = await ordersService.create(newOrder.meta, newOrder.lines)
 		const uniqSuppliers = new Set(parsedInput.items.map(i => i.supplierName))
 		const uniqSupplier = suppliers.find(s => s.id == parsedInput.items[0].supplierID)
-		const singleSupplier = (uniqSuppliers.size == 1 && !!uniqSupplier)
+		const singleSupplier = (uniqSuppliers.size == 1 && !!uniqSupplier && uniqSupplier?.name != "-")
 			? { 
 				name: uniqSupplier.name,
 				email: uniqSupplier.email,
