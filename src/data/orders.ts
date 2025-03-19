@@ -9,15 +9,21 @@ import {
   orderLinesTable,
   ordersTable,
 } from '@/lib/database/schema/reorders'
-import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
+import { and, count, desc, eq, getTableColumns, gt, lt, sql } from 'drizzle-orm'
 import { OrderWithCount } from './orders.types'
-import { formatDate } from 'date-fns'
+import { endOfMonth, formatDate, lastDayOfMonth, startOfMonth } from 'date-fns'
 
 export const orders = {
   createOrder: async function (data: Omit<NewOrder, 'id'>, tx: TRX = db): Promise<Order> {
     const [{ count }] = await tx.select({ count: sql<number>`count(*)` })
 		.from(ordersTable)
-		.where(eq(ordersTable.customerID, data.customerID));
+		.where(
+			and(
+				eq(ordersTable.customerID, data.customerID),
+				gt(ordersTable.inserted,startOfMonth(new Date())),
+				lt(ordersTable.inserted, endOfMonth(new Date()))
+			)
+		)
 
     const [res] = await tx
 		.insert(ordersTable)
