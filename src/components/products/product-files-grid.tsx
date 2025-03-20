@@ -53,7 +53,7 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 
 	return (
 		<>
-			<div className="lg:w-1/2 border rounded-md p-4 flex flex-col gap-4">
+			<div className="lg:w-1/2 flex-1 border rounded-md p-4 flex flex-col gap-4">
 				<div className='flex items-center gap-1.5'>
 					<p className="font-medium">{t("details-page.files.title")}</p>
 					<span className='text-muted-foreground tabular-nums text-xs'>({files.length} / 5)</span>
