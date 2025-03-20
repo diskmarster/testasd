@@ -221,11 +221,11 @@ export const bulkAddOrderedToReorderAction = editableAction
 						quantity: i.ordered,
 						sum: i.ordered * i.costPrice,
 						supplierName: i.supplierName ?? '-',
-						supplierEmail: supplier && supplier.email,
-						supplierPhone: supplier && supplier.phone,
-						supplierIdOfClient: supplier && supplier.idOfClient,
-						supplierCountry: supplier && supplier.country,
-						supplierContactPerson: supplier && supplier.contactPerson,
+						supplierEmail: supplier?.email,
+						supplierPhone: supplier?.phone,
+						supplierIdOfClient: supplier?.idOfClient,
+						supplierCountry: supplier?.country,
+						supplierContactPerson: supplier?.contactPerson,
 					}
 				}),
 			],
@@ -233,7 +233,7 @@ export const bulkAddOrderedToReorderAction = editableAction
 
     const order = await ordersService.create(newOrder.meta, newOrder.lines)
 		const uniqSuppliers = new Set(parsedInput.items.map(i => i.supplierName))
-		const uniqSupplier = suppliers.find(s => s.id == parsedInput.items[0].supplierID)
+		const uniqSupplier = suppliers.find(s => s.id == parsedInput.items.at(0)?.supplierID)
 		const singleSupplier = (uniqSuppliers.size == 1 && !!uniqSupplier && uniqSupplier?.name != "-")
 			? { 
 				name: uniqSupplier.name,
