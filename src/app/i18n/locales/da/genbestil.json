@@ -121,7 +121,7 @@
 		"toast-error": "Genbestillinger blev ikke registreret",
 		"toast-success": "Genbestillinger blev registreret",
 		"tooltip": "Registrer bestillinger",
-		"tooltip-disposable": "Disponibel beholdning efter bestilling",
+		"tooltip-disposable": "Disponibel beholdning inklusiv bestilt antal",
 		"tooltipWithCount_one": "Registrer {{count}} bestilling",
 		"tooltipWithCount_other": "Registrer {{count}} bestillinger"
 	},
@@ -170,6 +170,8 @@
 		"email": "Send til anden e-mail",
 		"email-placeholder": "Vælg eller skriv en e-mail",
 		"mail-send": "Send bestilling",
-		"modal-close": "Luk"
+		"modal-close": "Luk",
+		"invalid-input": "En email er forkert",
+		"fetching-users": "Henter brugere..."
 	}
 }
