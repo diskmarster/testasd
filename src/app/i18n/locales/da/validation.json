@@ -54,7 +54,9 @@
     "minimum-type": "Minimum skal være et tal",
     "maximum-type": "Maximum skal være et tal",
     "order-amount-type": "Bestillings antal skal være et tal",
-    "unknown-column": "Ukendt kolonne"
+    "unknown-column": "Ukendt kolonne",
+    "order-amount-bigger-than-max": "Bestillings antal ({{amount}}) må ikke være større end maximum ({{max}})",
+    "order-amount-missing": "Bestillings antal skal angives når minimum er angivet"
   },
   "placement": {
     "name-required": "Navn er påkrævet",

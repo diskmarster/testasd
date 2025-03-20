@@ -187,7 +187,26 @@ export const productsDataValidation = (
           ),
       })
       .strict({ message: t('products.unknown-column') })
-      .superRefine((val, ctx) => {}),
+      .superRefine((val, ctx) => {
+        if (val.minimum != undefined) {
+          if (val.orderAmount == undefined) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('products.order-amount-missing'),
+              path: ['orderAmount'],
+            })
+          } else if (val.maximum > 0 && val.orderAmount > val.maximum) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.too_big,
+              maximum: val.maximum,
+              type: 'number',
+              inclusive: true,
+              message: t('products.order-amount-bigger-than-max', {amount: val.orderAmount, max: val.maximum}),
+              path: ['orderAmount'],
+            })
+          }
+        }
+      }),
   )
 
 export type ImportProducts = z.infer<typeof importProductsValidation>

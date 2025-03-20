@@ -54,7 +54,9 @@
     "minimum-type": "Minimum must be a number",
     "maximum-type": "Maximum must be a number",
     "order-amount-type": "Order amount must be a number",
-    "unknown-column": "Unknown column"
+    "unknown-column": "Unknown column",
+    "order-amount-bigger-than-max": "Order amount ({{amount}}) may not be greater than the maximum ({{max}})",
+    "order-amount-missing": "Order amount must be specified when a minimum is set"
   },
   "placement": {
     "name-required": "Name is required",
