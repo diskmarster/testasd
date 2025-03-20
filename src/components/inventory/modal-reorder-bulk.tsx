@@ -224,7 +224,6 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 										register={register}
 										formState={formState}
 										setValue={setValue}
-										reorders={reorders}
 										selectableReorders={selectableReorders}
 										formValues={formValues}
 									/>
@@ -448,7 +447,6 @@ interface FieldProps {
 	setValue: UseFormSetValue<{
 		items: Field[];
 	}>
-	reorders: FormattedReorder[]
 	selectableReorders: FormattedReorder[]
 	formValues: {
 		items: Field[];
@@ -461,7 +459,6 @@ function ReorderField({
 	remove,
 	register,
 	setValue,
-	reorders,
 	selectableReorders,
 	formState,
 	formValues
