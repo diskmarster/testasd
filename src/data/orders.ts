@@ -9,29 +9,38 @@ import {
   orderLinesTable,
   ordersTable,
 } from '@/lib/database/schema/reorders'
+import { endOfMonth, formatDate, startOfMonth } from 'date-fns'
 import { and, count, desc, eq, getTableColumns, gt, lt, sql } from 'drizzle-orm'
 import { OrderWithCount } from './orders.types'
-import { endOfMonth, formatDate, lastDayOfMonth, startOfMonth } from 'date-fns'
 
 export const orders = {
-  createOrder: async function (data: Omit<NewOrder, 'id'>, tx: TRX = db): Promise<Order> {
-    const [{ count }] = await tx.select({ count: sql<number>`count(*)` })
-		.from(ordersTable)
-		.where(
-			and(
-				eq(ordersTable.customerID, data.customerID),
-				gt(ordersTable.inserted,startOfMonth(new Date())),
-				lt(ordersTable.inserted, endOfMonth(new Date()))
-			)
-		)
+  createOrder: async function (
+    data: Omit<NewOrder, 'id'>,
+    tx: TRX = db,
+  ): Promise<Order> {
+    const [{ count }] = await tx
+      .select({ count: sql<number>`count(*)` })
+      .from(ordersTable)
+      .where(
+        and(
+          eq(ordersTable.customerID, data.customerID),
+          gt(ordersTable.inserted, startOfMonth(new Date())),
+          lt(ordersTable.inserted, endOfMonth(new Date())),
+        ),
+      )
 
     const [res] = await tx
-		.insert(ordersTable)
-		.values({
-			...data,
-			id: ('0000'+data.customerID).slice(-4) + '-' + formatDate(Date.now(), 'yyMM') + '-' + ('0000'+(count+1)).slice(-4)
-		})
-		.returning()
+      .insert(ordersTable)
+      .values({
+        ...data,
+        id:
+          ('0000' + data.customerID).slice(-4) +
+          '-' +
+          formatDate(Date.now(), 'yyMM') +
+          '-' +
+          ('0000' + (count + 1)).slice(-4),
+      })
+      .returning()
     return res
   },
   createOrderLine: async function (
@@ -40,17 +49,17 @@ export const orders = {
   ): Promise<OrderLine[]> {
     return await tx.insert(orderLinesTable).values(data).returning()
   },
-getAllOrders: async function (
+  getAllOrders: async function (
     customerID: CustomerID,
     locationID: LocationID,
     tx: TRX = db,
   ): Promise<OrderWithCount[]> {
     return await tx
       .select({
-				...getTableColumns(ordersTable),
-				lineCount: count(orderLinesTable),
-				supplierCount: sql<number>`count(distinct ${orderLinesTable.supplierName})`
-			})
+        ...getTableColumns(ordersTable),
+        lineCount: count(orderLinesTable),
+        supplierCount: sql<number>`count(distinct ${orderLinesTable.supplierName})`,
+      })
       .from(ordersTable)
       .where(
         and(
@@ -58,9 +67,9 @@ getAllOrders: async function (
           eq(ordersTable.customerID, customerID),
         ),
       )
-			.orderBy(desc(ordersTable.inserted))
-			.innerJoin(orderLinesTable, eq(orderLinesTable.orderID, ordersTable.id))
-			.groupBy(ordersTable.id)
+      .orderBy(desc(ordersTable.inserted))
+      .innerJoin(orderLinesTable, eq(orderLinesTable.orderID, ordersTable.id))
+      .groupBy(ordersTable.id)
   },
   getOrderByID: async function (
     customerID: CustomerID,
@@ -69,10 +78,10 @@ getAllOrders: async function (
   ): Promise<OrderWithCount> {
     const [res] = await tx
       .select({
-				...getTableColumns(ordersTable),
-				lineCount: count(orderLinesTable),
-				supplierCount: sql<number>`count(distinct ${orderLinesTable.supplierName})`
-			})
+        ...getTableColumns(ordersTable),
+        lineCount: count(orderLinesTable),
+        supplierCount: sql<number>`count(distinct ${orderLinesTable.supplierName})`,
+      })
       .from(ordersTable)
       .where(
         and(
