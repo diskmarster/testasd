@@ -21,6 +21,7 @@ import { siteConfig } from "@/config/site";
 import { Customer } from "@/lib/database/schema/customer";
 import { User } from "lucia";
 import { OrderLine } from "@/lib/database/schema/reorders";
+import { Skeleton } from "../ui/skeleton";
 
 interface Props {
 	order: FormattedOrder
@@ -354,5 +355,25 @@ function SendEmailModal({ order, t }: { order: FormattedOrder, t: (key: string) 
 				</DialogFooterV2>
 			</DialogContentV2>
 		</DialogV2>
+	)
+}
+
+export function DetailsSkeleton() {
+	return (
+		<div id="order" className="flex flex-col gap-8">
+			<div className='flex w-full justify-between items-start'>
+				<div>
+					<Skeleton className="w-72 h-8" />
+					<Skeleton className="h-5 w-48 mt-4" />
+					<Skeleton className="h-5 w-48 mt-2" />
+				</div>
+				<div className="print:hidden space-x-2 flex items-center">
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+					<Skeleton className="h-9 w-9" />
+				</div>
+			</div>
+			<Skeleton className="w-full h-52" />
+		</div>
 	)
 }
