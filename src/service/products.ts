@@ -525,7 +525,7 @@ export const productService = {
           acc.set(cur.sku, {
             minimum: cur.minimum!,
             maximum: cur.maximum,
-            orderAmount: cur.orderAmount ?? cur.minimum!,
+            orderAmount: cur.orderAmount!, // If minimum is specified the import validation errors if no orderAmount is present
           })
           return acc
         }, new Map())
