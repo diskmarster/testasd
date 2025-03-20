@@ -112,21 +112,6 @@ export const fileService = {
       response: res,
     }
   },
-	uintArray8ToBase64: function(arr: Uint8Array): string {
-		let base64: string
-		// @ts-ignore
-		if (Uint8Array.prototype.toBase64) {
-			// @ts-ignore 
-			base64 = buffer.toBase64('base64url')
-		} else {
-			let binary = ""
-			for (let i = 0; i < arr.length; i++) {
-				binary += String.fromCharCode(arr[i])
-			}
-			base64 = btoa(binary)
-		}
-		return base64
-	}
 }
 
 const utils = {
