@@ -59,7 +59,7 @@ export function Details({ order, customer, user }: Props) {
 
 			newWindow.document.close()
 			newWindow.focus()
-			newWindow.onload = _ => {
+			newWindow.onload = () => {
 				newWindow.print()
 				newWindow.close()
 			}
