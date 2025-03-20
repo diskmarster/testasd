@@ -28,13 +28,6 @@
     "move-quantity-type": "Quantity must be a number",
     "move-quantity-number": "Quantity must be greater than 0"
   },
-  "restock": {
-    "product-required": "Product is required",
-    "buffer-number": "Buffer must be a number",
-    "buffer-positive": "Buffer must be greater than 0",
-    "minimum-quantity-positive": "Minimum quantity must be greater than 0",
-    "ordered-quantity-positive": "Ordered quantity must be greater than 0"
-  },
   "product-groups": {
     "name-required": "Name is required"
   },
@@ -58,7 +51,12 @@
     "cost-price-not-negative": "Cost price cannot be negative and must be a number.",
     "sales-price-type": "Sales price must be a number",
     "barred-values": "Unknown value in barred. Use true, false, ja or nej",
-    "unknown-column": "Unknown column"
+    "minimum-type": "Minimum must be a number",
+    "maximum-type": "Maximum must be a number",
+    "order-amount-type": "Order amount must be a number",
+    "unknown-column": "Unknown column",
+    "order-amount-bigger-than-max": "Order amount ({{amount}}) may not be greater than the maximum ({{max}})",
+    "order-amount-missing": "Order amount must be specified when a minimum is set"
   },
   "placement": {
     "name-required": "Name is required",
@@ -73,7 +71,14 @@
     "couldnt-find-location-information": "Couldn't find the location's information. Try to close and re-open the pop-up window.",
     "minimum-user": "At least one user must be picked",
     "company-name-minLength": "Company name must be at least {{minLength}} characters long",
-    "company-name-maxLength": "Company name must be at most {{maxLength}} characters long"
+    "company-name-maxLength": "Company name must be at most {{maxLength}} characters long",
+    "required": "$t(organisation.field, { \"context\": \"{{fieldName}}\" }) is required",
+    "field": "Unknown",
+    "field_useReference": "Account/Case",
+    "field_usePlacement": "Placement",
+    "field_useBatch": "Batch No.",
+    "field_customerSettingsID": "Company Settings ID",
+    "field_customerID": "Company ID"
   },
   "register": {
     "name-minLength": "Name must be at least {{minLength}} characters long",

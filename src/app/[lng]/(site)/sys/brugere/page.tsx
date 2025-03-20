@@ -1,8 +1,5 @@
 import { serverTranslation } from "@/app/i18n"
 import { SiteWrapper } from "@/components/common/site-wrapper"
-import { hasPermissionByRank } from "@/data/user.types"
-import { sessionService } from "@/service/session"
-import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import { UsersTable } from "./table"
 import { SkeletonTable } from "@/components/common/skeleton-table"
@@ -14,19 +11,13 @@ import { ModalDeleteUser } from "@/components/sys/modal-delete-user"
 import { ModalDeleteLink } from "@/components/sys/model-delete-link"
 import { ModalInviteCreateUser } from "@/components/sys/modal-invite-create-user"
 import { ModalResendLink } from "@/components/sys/modal-resend-link"
+import { withAuth, WithAuthProps } from "@/components/common/with-auth"
 
-interface Props {
+interface Props extends WithAuthProps {
   params: { lng: string }
 }
-export default async function Page({ params: { lng } }: Props) {
-  const { session, user } = await sessionService.validate()
 
-  if (!session) redirect(`${lng}/log-ind`)
-
-  if (!hasPermissionByRank(user.role, 'system_administrator')) {
-    redirect(`${lng}/oversigt`)
-  }
-
+async function Page({ params: { lng } }: Props) {
   const { t } = await serverTranslation(lng, 'sys-bruger')
 
   return (
@@ -53,3 +44,5 @@ export default async function Page({ params: { lng } }: Props) {
     </SiteWrapper>
   )
 }
+
+export default withAuth(Page, undefined, 'system_administrator')

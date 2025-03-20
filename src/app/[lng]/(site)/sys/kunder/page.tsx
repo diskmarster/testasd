@@ -1,9 +1,6 @@
 import { serverTranslation } from "@/app/i18n"
 import { SiteWrapper } from "@/components/common/site-wrapper"
 import { SkeletonTable } from "@/components/common/skeleton-table"
-import { hasPermissionByRank } from "@/data/user.types"
-import { sessionService } from "@/service/session"
-import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import { ClientTable } from "./table"
 import { ModalCreateClient } from "@/components/clients/modal-create-client"
@@ -12,20 +9,13 @@ import { ModalDeleteClient } from "@/components/clients/modal-delete-client"
 import { ModalUpdateClient } from "@/components/clients/modal-update-client"
 import { ModalImportClientInventory } from "@/components/clients/modal-import-inventory"
 import { ModalImportClientHistory } from "@/components/clients/modal-import-history"
+import { withAuth, WithAuthProps } from "@/components/common/with-auth"
 
-interface Props {
+interface Props extends WithAuthProps {
   params: { lng: string }
 }
 
-export default async function Page({ params: { lng } }: Props) {
-  const { session, user } = await sessionService.validate()
-
-  if (!session) redirect(`${lng}/log-ind`)
-
-  if (!hasPermissionByRank(user.role, 'system_administrator')) {
-    redirect(`${lng}/oversigt`)
-  }
-
+async function Page({ params: { lng } }: Props) {
   const { t } = await serverTranslation(lng, 'kunder')
 
   return (
@@ -50,3 +40,4 @@ export default async function Page({ params: { lng } }: Props) {
   )
 }
 
+export default withAuth(Page, undefined, 'system_administrator')

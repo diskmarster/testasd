@@ -43,6 +43,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
 import { useSearchParams } from 'next/navigation'
+import { ReorderSelectedButton } from './button-reorder-selected'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -68,11 +69,12 @@ export function TableReorder({ data, user, units, groups }: Props) {
 
   const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams,[
-    { id: 'recommended', desc: true },
+    { id: 'shouldReorder', desc: true },
+    { id: 'supplierName', desc: true },
   ])
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({'shouldReorder': false})
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -185,8 +187,9 @@ export function TableReorder({ data, user, units, groups }: Props) {
               table.getRowModel().rows.map(row => (
                 <TableRow
                   className={cn(
-                    row.original.recommended > 0 &&
-                      row.original.ordered < row.original.recommended &&
+										row.original.isRequested &&
+                      'bg-warning/10 border-b-warning/15 hover:bg-warning/15 data-[state=selected]:bg-warning/20',
+										row.original.shouldReorder &&
                       'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
                   )}
                   key={row.id}
@@ -209,7 +212,12 @@ export function TableReorder({ data, user, units, groups }: Props) {
       <TablePagination table={table} pageSizes={ROW_PER_PAGE} />
       {ROW_SELECTION_ENABLED && (
         <TableFloatingBar table={table}>
-          {table => <ExportSelectedButton table={table} />}
+          {table => 
+            <>
+              <ExportSelectedButton table={table} />
+              <ReorderSelectedButton table={table} />
+            </>
+          }
         </TableFloatingBar>
       )}
     </div>

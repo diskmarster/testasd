@@ -6,10 +6,15 @@ import {
   CustomerLink,
   CustomerLinkID,
   customerLinkTable,
+  CustomerSettings,
+  CustomerSettingsID,
+  customerSettingsTable,
   customerTable,
   NewCustomer,
   NewCustomerLink,
+  NewCustomerSettings,
   PartialCustomer,
+  PartialCustomerSettings,
 } from '@/lib/database/schema/customer'
 import { count, eq, getTableColumns, not } from 'drizzle-orm'
 import { CustomerWithUserCount } from './customer.types'
@@ -104,5 +109,32 @@ export const customer = {
   deleteByID: async function(customerID: CustomerID, trx: TRX = db): Promise<boolean> {
     const res = await trx.delete(customerTable).where(eq(customerTable.id, customerID))
     return res.rowsAffected == 1
+  },
+  getSettings: async function(customerID: CustomerID, trx: TRX = db): Promise<CustomerSettings | undefined> {
+    const [res] = await trx
+      .select()
+      .from(customerSettingsTable)
+      .where(eq(customerSettingsTable.customerID, customerID))
+
+    return res
+  },
+  createSettings: async function(data: NewCustomerSettings, trx: TRX = db): Promise<CustomerSettings | undefined> {
+    const [res] = await trx
+      .insert(customerSettingsTable)
+      .values(data)
+      .returning()
+
+    return res
+  },
+  updateSettings: async function(id: CustomerSettingsID, data: PartialCustomerSettings, trx: TRX = db): Promise<CustomerSettings | undefined> {
+    const [res] = await trx
+      .update(customerSettingsTable)
+      .set({
+        ...data
+      })
+      .where(eq(customerSettingsTable.id, id))
+      .returning()
+
+    return res
   }
 }

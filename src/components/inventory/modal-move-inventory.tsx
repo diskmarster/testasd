@@ -20,7 +20,7 @@ import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
 import { LanguageContext } from '@/context/language'
 import { FormattedInventory } from '@/data/inventory.types'
-import { Customer } from '@/lib/database/schema/customer'
+import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
 import {
   Batch,
   Placement,
@@ -35,12 +35,14 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { AutoComplete } from '../ui/autocomplete'
+import { hasPermissionByPlan } from '@/data/user.types'
 
 interface Props {
   customer: Customer
   placements: Placement[]
   batches: Batch[]
   inventory: FormattedInventory[]
+  settings: Pick<CustomerSettings, "useReference" | "usePlacement" | "useBatch">
 }
 
 export function ModalMoveInventory({
@@ -48,6 +50,7 @@ export function ModalMoveInventory({
   placements,
   inventory,
   batches,
+  settings,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
@@ -121,9 +124,10 @@ export function ModalMoveInventory({
       }))
 
   const fallbackBatchID =
-    customer.plan == 'basis'
-      ? batches.find(batch => batch.batch == '-')?.id
-      : undefined
+    settings.useBatch 
+      && hasPermissionByPlan(customer.plan, 'pro')
+        ? undefined
+        : batches.find(batch => batch.batch == '-')?.id
 
   const {
     reset,
@@ -297,7 +301,7 @@ export function ModalMoveInventory({
                     searchValue={searchFromPlacement}
                   />
                 </div>
-                {customer.plan == 'pro' && (
+                {settings.useBatch && hasPermissionByPlan(customer.plan, 'pro') && (
                   <div className='grid gap-2 w-full'>
                     <Label>{t('from-batch')}</Label>
                     <AutoComplete
@@ -418,27 +422,29 @@ export function ModalMoveInventory({
                 </p>
               )}
             </div>
-            <div
-              className={cn(
-                'relative flex flex-col transition-all',
-                useReference && 'gap-2',
-              )}>
-              <div className={cn('w-full flex z-10 transition-all')}>
-                <Label
-                  className='md:text-xs cursor-pointer hover:underline select-none transition-all'
-                  onClick={() => onUseReferenceChange(!useReference)}>
-                  {t('use-account-case')}
-                </Label>
-              </div>
-              <Input
-                {...register('reference')}
-                placeholder={t('use-account-case-placeholder')}
+            {settings.useReference && (
+              <div
                 className={cn(
-                  'transition-all',
-                  !useReference ? 'h-0 p-0 border-none' : 'h-[40px]',
-                )}
-              />
-            </div>
+                  'relative flex flex-col transition-all',
+                  useReference && 'gap-2',
+                )}>
+                <div className={cn('w-full flex z-10 transition-all')}>
+                  <Label
+                    className='md:text-xs cursor-pointer hover:underline select-none transition-all'
+                    onClick={() => onUseReferenceChange(!useReference)}>
+                    {t('use-account-case')}
+                  </Label>
+                </div>
+                <Input
+                  {...register('reference')}
+                  placeholder={t('use-account-case-placeholder')}
+                  className={cn(
+                    'transition-all',
+                    !useReference ? 'h-0 p-0 border-none' : 'h-[40px]',
+                  )}
+                />
+              </div>
+            )}
             <Button
               disabled={!formState.isValid || pending || formState.isSubmitting}
               size='lg'

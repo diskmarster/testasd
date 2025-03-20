@@ -26,6 +26,7 @@ import {
   getLocationsByUserIDValidation,
   inviteNewUserValidation,
   resetUserPasswordValidation,
+  updateCustomerSettingsValidation,
   updateCustomerValidation,
   deleteUserByIDValidation
 } from './validation'
@@ -264,13 +265,35 @@ export const updateCustomerAction = adminAction
 
   .action(async ({ parsedInput, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')
-    const updatedCustomer = customerService.updateByID(user.customerID, {
+    const updatedCustomer = await customerService.updateByID(user.customerID, {
       ...parsedInput,
     })
     if (!updatedCustomer) {
       throw new ActionError(t('organisation-action.customer-wasnt-updated'))
     }
-    revalidatePath(`/${lang}/administration/organisation`)
+
+    return updatedCustomer
+  })
+
+export const updateCustomerSettingsAction = adminAction
+  .metadata({ actionName: 'updateCustomerSettings' })
+  .schema(async () => await getSchema(updateCustomerSettingsValidation, 'validation'))
+  .action(async ({parsedInput, ctx: {user, lang}}) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
+
+    if (user.customerID != parsedInput.customerID) {
+      throw new ActionError(t('organisation-action.access-not-allowed'))
+    }
+
+    const updatedSettings = await customerService.updateSettings(parsedInput.id, {
+      ...parsedInput.settings,
+    })
+
+    if (updatedSettings == undefined) {
+      throw new ActionError(t('organisation-action.setting-not-updated'))
+    }
+
+    return updatedSettings
   })
 
 export const resetUserPasswordAction = adminAction

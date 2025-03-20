@@ -28,13 +28,6 @@
     "move-quantity-type": "Mængden skal være et tal",
     "move-quantity-number": "Mængden skal være større end 0"
   },
-  "restock": {
-    "product-required": "Produkt er påkrævet",
-    "buffer-number": "Buffer skal være et tal",
-    "buffer-positive": "Buffer skal være større end 0",
-    "minimum-quantity-positive": "Minimumsbeholdning skal være større end 0",
-    "ordered-quantity-positive": "Bestilt beholdning skal være større end 0"
-  },
   "product-groups": {
     "name-required": "Navn er påkrævet"
   },
@@ -58,7 +51,12 @@
     "cost-price-not-negative": "Kostpris kan ikke være negativ og skal være et tal.",
     "sales-price-type": "Salgspris skal være et tal",
     "barred-values": "Ukendt værdi i barred. Brug true, false, ja eller nej",
-    "unknown-column": "Ukendt kolonne"
+    "minimum-type": "Minimum skal være et tal",
+    "maximum-type": "Maximum skal være et tal",
+    "order-amount-type": "Bestillings antal skal være et tal",
+    "unknown-column": "Ukendt kolonne",
+    "order-amount-bigger-than-max": "Bestillings antal ({{amount}}) må ikke være større end maximum ({{max}})",
+    "order-amount-missing": "Bestillings antal skal angives når minimum er angivet"
   },
   "placement": {
     "name-required": "Navn er påkrævet",
@@ -73,7 +71,14 @@
     "couldnt-find-location-information": "Kunne ikke finde placeringsoplysningerne. Prøv at lukke og genåbne pop-op-vinduet.",
     "minimum-user": "Mindst én bruger skal vælges",
     "company-name-minLength": "Firmanavn skal være mindst {{minLength}} tegn langt",
-    "company-name-maxLength": "Firmanavn må højst være {{maxLength}} tegn langt"
+    "company-name-maxLength": "Firmanavn må højst være {{maxLength}} tegn langt",
+    "required": "$t(organisation.field, { \"context\": \"{{fieldName}}\" }) er påkrævet",
+    "field": "Ukendt",
+    "field_useReference": "Konto/sag",
+    "field_usePlacement": "Placering",
+    "field_useBatch": "Batch nr.",
+    "field_customerSettingsID": "Firmaindstilling ID",
+    "field_customerID": "Firma ID"
   },
   "register": {
     "name-minLength": "Navn skal være mindst {{minLength}} tegn langt",

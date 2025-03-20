@@ -1,30 +1,31 @@
 import { Header } from '@/components/common/header'
 import { isMaintenanceMode } from '@/lib/utils.server'
-import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
+import { withAuth, WithAuthProps } from './with-auth'
 
-export default async function LayoutSite({
-  children,
-  params: { lng },
-}: Readonly<{
+interface Props extends WithAuthProps {
   children: React.ReactNode
   params: {
     lng: string
   }
-}>) {
+}
+
+async function LayoutSite({
+  children,
+  params: { lng },
+  user,
+  customer,
+}: Readonly<Props>) {
   if (isMaintenanceMode()) {
     return redirect(`/${lng}/maintenance`)
   }
 
-  const { session } = await sessionService.validate()
-  if (!session) {
-    return redirect(`/${lng}/log-ind`)
-  }
-
   return (
     <div className='relative flex min-h-screen flex-col'>
-      <Header lng={lng} />
+      <Header lng={lng} user={user} customer={customer} />
       <main className='flex-1'>{children}</main>
     </div>
   )
 }
+
+export default withAuth(LayoutSite)

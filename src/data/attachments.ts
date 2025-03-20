@@ -8,7 +8,7 @@ import {
 import { and, asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 
-export const attachmentRefTypeValidation = z.enum(['product'])
+export const attachmentRefTypeValidation = z.enum(['product', 'genbestil'])
 export type RefType = z.infer<typeof attachmentRefTypeValidation>
 
 export const attachments = {
@@ -30,16 +30,17 @@ export const attachments = {
   },
   getByRefID: async function (
     domain: RefType,
-    id: number,
+    id: number | string,
     tx: TRX = db,
   ): Promise<Attachment[]> {
+		const stringID = String(id)
     return await tx
       .select()
       .from(attachmentsTable)
       .where(
         and(
           eq(attachmentsTable.refDomain, domain),
-          eq(attachmentsTable.refID, id),
+          eq(attachmentsTable.refID, stringID),
         ),
       )
       .orderBy(asc(attachmentsTable.id))

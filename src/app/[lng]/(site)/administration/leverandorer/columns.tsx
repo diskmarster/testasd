@@ -77,7 +77,9 @@ export function getSupplierColumns(
 			return value ? (
 				<p>{value}</p>
 			) : (
-				<p className='italic text-muted-foreground'>{t("table.col-no-value")}</p>
+				<div className='italic text-muted-foreground flex'>
+				{t("table.col-no-value")} <div className='w-0.5'></div>
+				</div>
 			)
 		},
 		meta: {

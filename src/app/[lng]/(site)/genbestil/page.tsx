@@ -2,14 +2,15 @@ import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
-import { ModalAddOrderedReorder } from '@/components/inventory/modal-add-ordered-modal'
-import { ModalCreateReorder } from '@/components/inventory/modal-create-reorder'
 import { ModalDeleteReorder } from '@/components/inventory/modal-delete-reorder'
-import { ModalBulkReorder } from '@/components/inventory/modal-reorder-bulk'
 import { ModalUpdateReorder } from '@/components/inventory/modal-update-reorder'
 import { TableReorder } from '@/components/inventory/table-reorder'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
+import { ReorderPageActions } from './page-actions'
+import { ModalBulkReorder } from '@/components/inventory/modal-reorder-bulk'
+import { productService } from '@/service/products'
+import { ordersService } from '@/service/orders'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -25,13 +26,21 @@ async function Page({ params: { lng }, user, customer }: Props) {
 		signOutAction()
 		return
 	}
-	const products = await inventoryService.getActiveProductsByID(customer.id)
-	const reorders = await inventoryService.getReordersByID(location)
-	const units = await inventoryService.getActiveUnits()
-	const groups = await inventoryService.getActiveGroupsByID(customer.id)
+
+	const [products, reorders, units, groups, orders] = await Promise.all([
+		productService.getAllActiveByCustomerID(customer.id),
+		inventoryService.getReordersByID(location),
+		inventoryService.getActiveUnits(),
+		inventoryService.getActiveGroupsByID(customer.id),
+		ordersService.getAll(customer.id, location)
+	])
 
 	const productsWithNoReorder = products.filter(
 		prod => !reorders.some(reorder => prod.id === reorder.productID),
+	)
+
+	const redReorders = reorders.filter(
+		r => r.shouldReorder || r.isRequested
 	)
 
 	return (
@@ -39,21 +48,18 @@ async function Page({ params: { lng }, user, customer }: Props) {
 			title={t('reorder-page.title')}
 			description={t('reorder-page.description')}
 			actions={
-				<>
-					<ModalBulkReorder
-						reorders={reorders}
-					/>
-					<ModalCreateReorder
-						products={productsWithNoReorder}
-					/>
-				</>
+				<ReorderPageActions
+					reorders={redReorders}
+					productsWithNoReorder={productsWithNoReorder}
+					orders={orders}
+				/>
 			}>
 			<TableReorder data={reorders} user={user} units={units} groups={groups} />
 
 			{/* Modals without triggers that we open with custom events from row actions */}
-			<ModalUpdateReorder products={products} />
-			<ModalDeleteReorder products={products} />
-			<ModalAddOrderedReorder products={products} />
+			<ModalBulkReorder reorders={reorders} productsWithNoReorders={productsWithNoReorder} />
+			<ModalUpdateReorder />
+			<ModalDeleteReorder />
 		</SiteWrapper>
 	)
 }

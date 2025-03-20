@@ -5,8 +5,8 @@ import {
   History,
   Placement,
   Product,
-  Reorder,
 } from '@/lib/database/schema/inventory'
+import { Reorder } from '@/lib/database/schema/reorders'
 import { z } from 'zod'
 
 export const historyTypeZodSchema = z.enum([
@@ -63,11 +63,11 @@ export interface HistoryWithSums extends History {
 
 export interface FormattedReorder extends Reorder {
   quantity: number
-  recommended: number
   disposible: number
   product: Product & { 
 	  unit: string 
 	  group: string
 	  supplierName: string | null
   }
+	shouldReorder?: boolean
 }

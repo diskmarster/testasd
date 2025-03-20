@@ -14,7 +14,7 @@ export const attachmentService = {
   },
   getByRefID: async function (
     domain: RefType,
-    id: number,
+    id: number | string,
   ): Promise<Attachment[]> {
     return await attachments.getByRefID(domain, id)
   },

@@ -1,11 +1,17 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
+import { genReorderExcelWorkbook } from '@/lib/pdf/reorder-rapport'
 import { editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
+import { attachmentService } from '@/service/attachments'
+import { fileService } from '@/service/file'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
+import { ordersService } from '@/service/orders'
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import * as XLSX from 'xlsx'
 import {
   addOrderedToReorderValidation,
   bulkAddOrderedToReorderValidation,
@@ -13,13 +19,15 @@ import {
   deleteReorderValidation,
   updateReorderValidation,
 } from './validation'
+import { suppliersService } from '@/service/suppliers'
+import { formatDate } from 'date-fns'
 
 export const createReorderAction = editableAction
   .metadata({ actionName: 'createReorder' })
   .schema(async () => await getSchema(createReorderValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
-		const locationID = await locationService.getLastVisited(ctx.user.id)
+    const locationID = await locationService.getLastVisited(ctx.user.id)
     if (!locationID) {
       throw new ActionError(t('restock-action.company-location-not-found'))
     }
@@ -35,7 +43,7 @@ export const createReorderAction = editableAction
 
     const newReorder = await inventoryService.createReorder({
       ...parsedInput,
-			locationID: existsLocation.id,
+      locationID: existsLocation.id,
       customerID: ctx.user.customerID,
     })
     if (!newReorder) {
@@ -50,7 +58,12 @@ export const updateReorderAction = editableAction
   .schema(async () => await getSchema(updateReorderValidation, 'validation'))
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const existsLocation = await locationService.getByID(parsedInput.locationID)
+
+    const locationID = await locationService.getLastVisited(ctx.user.id)
+    if (!locationID) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+    const existsLocation = await locationService.getByID(locationID)
     if (!existsLocation) {
       throw new ActionError(t('restock-action.company-location-not-found'))
     }
@@ -62,11 +75,12 @@ export const updateReorderAction = editableAction
 
     const newReorder = await inventoryService.updateReorderByIDs(
       parsedInput.productID,
-      parsedInput.locationID,
+      locationID,
       ctx.user.customerID,
       {
         minimum: parsedInput.minimum,
-        buffer: parsedInput.buffer / 100,
+        orderAmount: parsedInput.orderAmount,
+        maxOrderAmount: parsedInput.maxOrderAmount,
       },
     )
     if (!newReorder) {
@@ -142,7 +156,8 @@ export const bulkAddOrderedToReorderAction = editableAction
   )
   .action(async ({ parsedInput, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
-		const locationID = await locationService.getLastVisited(ctx.user.id)
+    const { t: reorderT } = await serverTranslation(ctx.lang, 'genbestil')
+    const locationID = await locationService.getLastVisited(ctx.user.id)
     if (!locationID) {
       throw new ActionError(t('restock-action.company-location-not-found'))
     }
@@ -156,21 +171,136 @@ export const bulkAddOrderedToReorderAction = editableAction
       )
     }
 
+		const suppliers = await suppliersService.getAllByCustomerID(ctx.user.customerID)
+
     const promises = []
 
     for (const reorder of parsedInput.items) {
-      const addPromise = inventoryService.updateReorderByIDs(
-        reorder.productID,
-        locationID,
-        ctx.user.customerID,
-        {
-          ordered: reorder.ordered + reorder.alreadyOrdered,
-        },
+      if (!reorder.isRequested) {
+        const addPromise = inventoryService.updateReorderByIDs(
+          reorder.productID,
+          locationID,
+          ctx.user.customerID,
+          {
+            ordered: reorder.ordered + reorder.alreadyOrdered,
+          },
+        )
+        promises.push(addPromise)
+      } else {
+        const deletePromise = inventoryService.deleteReorderByIDs(
+          reorder.productID,
+          locationID,
+          ctx.user.customerID,
+        )
+        promises.push(deletePromise)
+      }
+    }
+
+    const newOrder = {
+      meta: {
+        customerID: ctx.user.customerID,
+        locationID: locationID,
+        userID: ctx.user.id,
+        userName: ctx.user.name,
+      },
+			lines: [
+				...parsedInput.items.map(i => {
+					const supplier = suppliers.find(s => s.id == i.supplierID)
+
+					return {
+						customerID: ctx.user.customerID,
+						locationID: locationID,
+						productID: i.productID,
+						sku: i.sku,
+						barcode: i.barcode,
+						text1: i.text1,
+						text2: i.text2,
+						unitName: i.unitName,
+						groupName: i.groupName,
+						costPrice: i.costPrice,
+						quantity: i.ordered,
+						sum: i.ordered * i.costPrice,
+						supplierName: i.supplierName ?? '-',
+						supplierEmail: supplier?.email,
+						supplierPhone: supplier?.phone,
+						supplierIdOfClient: supplier?.idOfClient,
+						supplierCountry: supplier?.country,
+						supplierContactPerson: supplier?.contactPerson,
+					}
+				}),
+			],
+    }
+
+    const order = await ordersService.create(newOrder.meta, newOrder.lines)
+		const uniqSuppliers = new Set(parsedInput.items.map(i => i.supplierName))
+		const uniqSupplier = suppliers.find(s => s.id == parsedInput.items.at(0)?.supplierID)
+		const singleSupplier = (uniqSuppliers.size == 1 && !!uniqSupplier && uniqSupplier?.name != "-")
+			? { 
+				name: uniqSupplier.name,
+				email: uniqSupplier.email,
+				phone: uniqSupplier.phone,
+				idOfClient: uniqSupplier.idOfClient,
+				contact: uniqSupplier.contactPerson,
+			}
+				: undefined
+
+    const workbook = genReorderExcelWorkbook(order.id, order.inserted, ctx.user, ctx.customer!, newOrder.lines, reorderT, singleSupplier)
+    const arr = XLSX.write(workbook, { type: 'array' })
+    const fileInfo = fileService.validate({
+      mimeType:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      customerID: ctx.user.customerID,
+      refType: 'genbestil',
+      refID: order.id,
+    })
+    if (fileInfo.success) {
+      promises.push(
+        fileService.upload({
+          key: fileInfo.key,
+          mimeType: fileInfo.type,
+          body: arr,
+        }),
       )
-      promises.push(addPromise)
+      promises.push(
+        attachmentService.create({
+          customerID: ctx.user.customerID,
+          refDomain: 'genbestil',
+          refID: order.id,
+          name: `nemlager_genbestilling_${formatDate(new Date(), 'dd-MM-yyyy')}.xlsx`,
+          type: fileInfo.type,
+          key: fileInfo.key,
+          url: fileInfo.url,
+          userID: ctx.user.id,
+          userName: ctx.user.name,
+        }),
+      )
     }
 
     await Promise.all(promises)
 
-    revalidatePath(`/${ctx.lang}/genbestil`)
+    redirect(`/${ctx.lang}/genbestil/${order.id}`)
+  })
+
+export const fetchOrdersActions = editableAction
+  .metadata({ actionName: 'fetchOrders' })
+  .action(async ({ ctx: { user, lang } }) => {
+    const { t } = await serverTranslation(lang, 'action-errors')
+
+    const locationID = await locationService.getLastVisited(user.id)
+    if (!locationID) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+
+    const existsLocation = await locationService.getByID(locationID)
+    if (!existsLocation) {
+      throw new ActionError(t('restock-action.company-location-not-found'))
+    }
+
+    if (existsLocation.customerID != user.customerID) {
+      throw new ActionError(
+        t('restock-action.company-location-belongs-to-your-company'),
+      )
+    }
+
+    return await ordersService.getAll(user.customerID, locationID)
   })

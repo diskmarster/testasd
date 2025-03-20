@@ -8,14 +8,17 @@ import { FormattedInventory } from '@/data/inventory.types'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
+import { CustomerSettings } from '@/lib/database/schema/customer'
+import { hasPermissionByPlan } from '@/data/user.types'
 
 interface Props {
   table: Table<FormattedInventory>
   row: Row<FormattedInventory>
-  plan: Plan
+  plan: Plan,
+  settings: Pick<CustomerSettings, 'usePlacement'>,
 }
 
-export function TableOverviewActions({ table, row, plan }: Props) {
+export function TableOverviewActions({ table, row, plan, settings }: Props) {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'oversigt')
 
@@ -34,7 +37,7 @@ export function TableOverviewActions({ table, row, plan }: Props) {
         }}>
         {t('update-inventory')}
       </DropdownMenuItem>
-      {plan != 'lite' && (
+      {hasPermissionByPlan(plan, 'basis') && settings.usePlacement && (
         <DropdownMenuItem
           onClick={() => {
             emitCustomEvent('MoveInventoryByIDs', {

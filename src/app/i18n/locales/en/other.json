@@ -92,7 +92,13 @@
     "sales-price": "Sales price ",
     "sales-price-criteria": "must be separated with a comma (,) for decimals. A thousand separator can be used with a period (.) but is not required.",
     "barred": "Barred ",
-    "barred-criteria": "must be written as either true, false, yes, or no. Truthy values are true and yes. Falsy values are false and no."
+    "barred-criteria": "must be written as either true, false, yes, or no. Truthy values are true and yes. Falsy values are false and no.",
+    "minimum": "Minimum stock level",
+    "minimum-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required.",
+    "maximum": "Maximum order quantity",
+    "maximum-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required.",
+    "order-amount": "Order quantity",
+    "order-amount-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required."
   },
   "modal-show-user-label": {
     "title": "User Label",

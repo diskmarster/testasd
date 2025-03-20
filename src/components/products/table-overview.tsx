@@ -37,6 +37,7 @@ import { getProductOverviewColumns, getProductTableOverviewFilters } from '@/app
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useSearchParams } from 'next/navigation'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -60,6 +61,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
   )
 
 	const mutableSearchParams = new URLSearchParams(useSearchParams())
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams, '')
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams,[
     { id: 'isBarred', value: [false] },
@@ -119,6 +121,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     onSortingChange: handleSortingChange,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,
+    onGlobalFilterChange: setGlobalFilter,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -127,6 +130,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
     filterFromLeafRows: false,
 
     state: {
+			globalFilter,
       columnFilters,
       sorting,
       expanded,
@@ -187,7 +191,7 @@ export function ProductOverview({ data, plan, user, units, groups }: Props) {
                 <TableCell
                   colSpan={columns.length}
                   className='h-24 text-center'>
-                  Ingen beholdning
+                  {t('table-no-values')}
                 </TableCell>
               </TableRow>
             )}

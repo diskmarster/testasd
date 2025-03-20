@@ -38,6 +38,7 @@ import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useSearchParams } from 'next/navigation'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -57,6 +58,7 @@ export function TableErrors({
   const columns = useMemo(() => getTableErrorsColumns(t), [t])
 
 	const mutableSearchParams = new URLSearchParams(useSearchParams())
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams, '')
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -118,6 +120,7 @@ export function TableErrors({
     onGroupingChange: setGrouping,
     onExpandedChange: setExpanded,
     onColumnVisibilityChange: handleVisibilityChange,
+		onGlobalFilterChange: setGlobalFilter,
 
     enableColumnFilters: COLUMN_FILTERS_ENABLED,
     enableRowSelection: ROW_SELECTION_ENABLED,
@@ -126,6 +129,7 @@ export function TableErrors({
     filterFromLeafRows: false,
 
     state: {
+			globalFilter,
       columnFilters,
       rowSelection,
       sorting,

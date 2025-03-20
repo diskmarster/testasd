@@ -15,7 +15,7 @@ const createAttachmentValidation = z.object({
   name: z.string(),
   refType: attachmentRefTypeValidation,
   refID: z.coerce.number(),
-  type: z.enum(['image', 'pdf']),
+  type: z.enum(['image', 'pdf', 'excel']),
   key: z.string(),
   url: z.string(),
 })
@@ -47,7 +47,7 @@ export const createAttachmentAction = adminAction
     const newAttachment = await attachmentService.create({
       customerID: ctx.user.customerID,
       refDomain: parsedInput.refType,
-      refID: parsedInput.refID,
+      refID: String(parsedInput.refID),
       name: parsedInput.name,
       type: parsedInput.type,
       key: parsedInput.key,

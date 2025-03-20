@@ -4,7 +4,17 @@ import { config } from 'dotenv';
 import { SQLiteTransaction } from "drizzle-orm/sqlite-core";
 import { ExtractTablesWithRelations } from "drizzle-orm";
 
-config({ path: '.env' });
+let envPostfix = ''
+switch (process.env.NODE_ENV) {
+  case "test":
+    envPostfix = '.test'
+    break
+  default:
+    envPostfix = ''
+    break
+}
+
+config({ path: `.env${envPostfix}` });
 
 const libsql = createClient({
   url: process.env.TURSO_CONNECTION_URL as string,

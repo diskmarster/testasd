@@ -63,6 +63,14 @@ export async function POST(
       )
     }
     const customer = await customerService.getByID(user.customerID)
+    if (customer == undefined) {
+      return NextResponse.json(
+        { msg: 'Adgang nægtet', },
+        { status: 401, },
+      )
+    }
+
+    const customerSettings = await customerService.getSettings(customer.id)
 
     const sessionId = await sessionService.create(user.id)
 
@@ -88,7 +96,10 @@ export async function POST(
         data: {
           jwt,
           user,
-          customer,
+          customer: {
+            ...customer,
+            settings: customerSettings,
+          },
         },
       },
       { status: 201, },
@@ -115,7 +126,7 @@ function parseDataByMethod(body: unknown, method: string): z.SafeParseReturnType
     return {
       success: false,
       error: new z.ZodError([{
-        message: "Unknown signin method",
+        message: "Ukendt login metode",
         code: "custom",
         path: [],
       }]),
@@ -145,7 +156,6 @@ async function getUserByMethod(zodData: z.SafeParseSuccess<unknown>, method: str
     }
     
     return await userService.getNfcUser(data.tagID)
-
   } else {
     return undefined
   }

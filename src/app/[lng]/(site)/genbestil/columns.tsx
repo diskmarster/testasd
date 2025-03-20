@@ -1,3 +1,4 @@
+import { I18NLanguage } from '@/app/i18n/settings'
 import { TableReorderActions } from '@/components/inventory/table-reorder-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
@@ -9,11 +10,12 @@ import { cn, formatDate, formatNumber } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { User } from 'lucia'
+import Link from 'next/link'
 import { DateRange } from 'react-day-picker'
 
 export function getTableReorderColumns(
 	user: User,
-	lng: string,
+	lng: I18NLanguage,
 	t: (key: string) => string,
 ): ColumnDef<FormattedReorder>[] {
 	const selectCol: ColumnDef<FormattedReorder> = {
@@ -43,9 +45,15 @@ export function getTableReorderColumns(
 		accessorKey: 'product.sku',
 		id: 'sku',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.productNo')} />
+			<TableHeader column={column} title={t('reorder-columns.productNo')} multiSort />
 		),
-		cell: ({ getValue }) => getValue<string>(),
+		cell: ({ row }) => (
+			<Link 
+			href={`/${lng}/varer/produkter/${row.original.productID}`}
+			className='hover:underline'>
+				{row.original.product.sku}
+			</Link>
+		),
 		enableHiding: false,
 		meta: {
 			viewLabel: t('reorder-columns.productNo'),
@@ -56,7 +64,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.barcode',
 		id: 'barcode',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.barcode')} />
+			<TableHeader column={column} title={t('reorder-columns.barcode')} multiSort />
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		meta: {
@@ -69,7 +77,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.text1',
 		id: 'text1',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.text1')} />
+			<TableHeader column={column} title={t('reorder-columns.text1')} multiSort />
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		meta: {
@@ -82,21 +90,24 @@ export function getTableReorderColumns(
     accessorKey: 'product.supplierName',
     id: 'supplierName',
     header: ({ column }) => (
-      <TableHeader column={column} title={t('reorder-columns.supplier')} />
+      <TableHeader column={column} title={t('reorder-columns.supplier')} multiSort />
     ),
     aggregationFn: 'unique',
     cell: ({ row }) => (
-		<div className={cn(!row.original.product.supplierName && 'italic text-muted-foreground')}>
-			{row.original.product.supplierName ? row.original.product.supplierName : t("reorder-columns.no-value")}
+		<div className={cn(!row.original.product.supplierName && 'italic text-muted-foreground flex')}>
+			{row.original.product.supplierName ? row.original.product.supplierName : t("reorder-columns.no-value")} <div className='w-0.5'></div>
 		</div>
 	),
     sortingFn: (ra, rb) => {
-		let aVal = ra.original.product.supplierName
-		let bVal = rb.original.product.supplierName
-		if (aVal == null) aVal = ""
-		if (bVal == null) bVal = ""
-		return stringSortingFn(aVal, bVal)
+			let aVal = ra.original.product.supplierName
+			let bVal = rb.original.product.supplierName
+			if (aVal == null) aVal = ""
+			if (bVal == null) bVal = ""
+			return stringSortingFn(aVal, bVal)
     },
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
     meta: {
       viewLabel: t('reorder-columns.supplier'),
       className: '[&>*]:block',
@@ -106,14 +117,14 @@ export function getTableReorderColumns(
 	const quantityCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'quantity',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.quantity')} />
+			<TableHeader column={column} title={t('reorder-columns.quantity')} multiSort />
 		),
 		cell: ({ getValue, row }) => (
 			<span
 				className={cn(
 					row.original.quantity < row.original.minimum && 'text-destructive',
 				)}>
-				{formatNumber(getValue<number>())}
+				{formatNumber(getValue<number>(), lng)}
 			</span>
 		),
 		filterFn: 'includesString',
@@ -127,7 +138,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.unit',
 		id: 'unit',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.unit')} />
+			<TableHeader column={column} title={t('reorder-columns.unit')} multiSort />
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		filterFn: (row, id, value) => {
@@ -142,7 +153,7 @@ export function getTableReorderColumns(
 		accessorKey: 'product.group',
 		id: 'group',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.product-group')} />
+			<TableHeader column={column} title={t('reorder-columns.product-group')} multiSort />
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		filterFn: (row, id, value) => {
@@ -156,13 +167,16 @@ export function getTableReorderColumns(
 	const minimumCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'minimum',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.minimum-stock')} />
+			<TableHeader column={column} title={t('reorder-columns.minimum-stock')} multiSort />
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>()),
+		cell: ({ row }) => row.original.isRequested
+			? '-'
+			: formatNumber(row.original.minimum, lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.minimum-stock'),
 			rightAlign: true,
+			className: "justify-end"
 		},
 	}
 
@@ -172,9 +186,12 @@ export function getTableReorderColumns(
 			<TableHeader
 				column={column}
 				title={t('reorder-columns.disposible-stock')}
+				multiSort
 			/>
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>()),
+		cell: ({ row }) => row.original.isRequested
+			? '-'
+			: formatNumber(row.original.disposible, lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.disposible-stock'),
@@ -182,42 +199,14 @@ export function getTableReorderColumns(
 		},
 	}
 
-	const recAmountCol: ColumnDef<FormattedReorder> = {
-		accessorKey: 'recommended',
-		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.recommended')} />
-		),
-		cell: ({ getValue }) => formatNumber(getValue<number>()),
-		filterFn: 'includesString',
-		meta: {
-			viewLabel: t('reorder-columns.recommended'),
-			rightAlign: true,
-			className: 'justify-end',
-		},
-	}
-
-	const factorCol: ColumnDef<FormattedReorder> = {
-		accessorKey: 'buffer',
-		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.buffer')} />
-		),
-		cell: ({ getValue }) => formatNumber(getValue<number>() * 100) + '%',
-		meta: {
-			viewLabel: t('reorder-columns.buffer'),
-			rightAlign: true,
-		},
-		filterFn: (row, id, value) => {
-			const adjustedSearchValue = (value / 100).toFixed(2)
-			return adjustedSearchValue == row.getValue(id)
-		},
-	}
-
 	const orderedCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'ordered',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.ordered')} />
+			<TableHeader column={column} title={t('reorder-columns.ordered')} multiSort />
 		),
-		cell: ({ getValue }) => formatNumber(getValue<number>()),
+		cell: ({ row }) => row.original.isRequested
+			? '-'
+			: formatNumber(row.original.ordered, lng),
 		filterFn: 'includesString',
 		meta: {
 			viewLabel: t('reorder-columns.ordered'),
@@ -228,7 +217,7 @@ export function getTableReorderColumns(
 	const updatedCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'updated',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('reorder-columns.updated')} />
+			<TableHeader column={column} title={t('reorder-columns.updated')} multiSort />
 		),
 		cell: ({ getValue }) => formatDate(getValue<Date>()),
 		filterFn: (row, id, value: DateRange) => {
@@ -269,6 +258,17 @@ export function getTableReorderColumns(
 		},
 	}
 
+	const shouldReorderCol: ColumnDef<FormattedReorder> = {
+		accessorKey: 'shouldReorder',
+		header: () => undefined,
+		cell: () => undefined,
+		enableHiding: false,
+		enableSorting: true,
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+	}
+
 	return [
 		selectCol,
 		skuCol,
@@ -279,12 +279,11 @@ export function getTableReorderColumns(
 		quantityCol,
 		unitCol,
 		minimumCol,
-		recAmountCol,
 		orderedCol,
 		disposibleCol,
-		factorCol,
 		updatedCol,
 		actionsCol,
+		shouldReorderCol,
 	]
 }
 
@@ -293,7 +292,7 @@ export function getTableReorderFilters(
 	units: Unit[],
 	groups: Group[],
 	lng: string,
-	t: (key: string) => string,
+	t: (key: string, opts?: any) => string,
 ): FilterField<FormattedReorder>[] {
 	const skuFilter: FilterField<FormattedReorder> = {
 		column: table.getColumn('sku'),
@@ -393,14 +392,6 @@ export function getTableReorderFilters(
 		placeholder: t('filter-placeholders.ordered'),
 	}
 
-	const recAmountFilter: FilterField<FormattedReorder> = {
-		column: table.getColumn('recommended'),
-		type: 'text',
-		label: t('reorder-columns.recommended'),
-		value: '',
-		placeholder: t('filter-placeholders.recommended'),
-	}
-
 	const disposibleFilter: FilterField<FormattedReorder> = {
 		column: table.getColumn('disposible'),
 		type: 'text',
@@ -409,12 +400,15 @@ export function getTableReorderFilters(
 		placeholder: t('filter-placeholders.disposible'),
 	}
 
-	const factorFilter: FilterField<FormattedReorder> = {
-		column: table.getColumn('buffer'),
-		type: 'text',
-		label: t('reorder-columns.buffer'),
+	const shouldReorderFilter: FilterField<FormattedReorder> = {
+		column: table.getColumn('shouldReorder'),
+		type: 'select',
+		label: t("reorder-columns.shouldReorder"),
 		value: '',
-		placeholder: t('filter-placeholders.buffer'),
+		options: [
+			{ label: t("reorder-columns.shouldReorder", {context: "true"}), value: true},
+			{ label: t("reorder-columns.shouldReorder", {context: "false"}), value: false},
+		],
 	}
 
 	return [
@@ -426,10 +420,9 @@ export function getTableReorderFilters(
 		quantityFilter,
 		unitFilter,
 		minimumFilter,
-		recAmountFilter,
 		orderedFilter,
 		disposibleFilter,
-		factorFilter,
+		shouldReorderFilter,
 		updatedFilter,
 	]
 }

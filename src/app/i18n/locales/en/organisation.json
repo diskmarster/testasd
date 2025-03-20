@@ -3,15 +3,6 @@
     "title": "Organisation",
     "description": "View and edit users, locations and company information."
   },
-  "tabs-admin": {
-    "users": "Users",
-    "locations": "Locations",
-    "company": "Company",
-    "user-limit-reached": "You've reached the maximum number of users for your plan.",
-    "user-upgrade-plan": "Upgrade your plan to add more users.",
-    "location-limit-reached": "You've reached the maximum number of locations for your plan.",
-    "location-upgrade-plan": "Upgrade your plan to add more locations."
-  },
   "modal-toggle-user": {
     "title": "Change user status",
     "description1": "This action is not permanent. If you activate a user, they will be able to log in to ",
@@ -53,6 +44,12 @@
   "table-admin-locations": {
     "no-locations-found": "No locations found"
   },
+  "location-page": {
+    "title": "Locations",
+    "description": "Manage your organization's locations",
+    "location-limit-reached": "You've reached the maximum number of locations for your plan.",
+    "location-upgrade-plan": "Upgrade your plan to add more locations."
+  },
   "location-columns": {
     "location-name": "Location name",
     "location-name-placeholder": "Search Location name",
@@ -74,6 +71,12 @@
     "users-out-long": "Outgoing",
     "users-read-short": "R",
     "users-read-long": "Read only"
+  },
+  "user-page": {
+    "title": "Users",
+    "description": "Manage your organization's users",
+    "user-limit-reached": "You have reached the maximum number of users for your plan.",
+    "user-upgrade-plan": "Upgrade your plan to add more users."
   },
   "user-columns": {
     "user-name": "Name",
@@ -107,10 +110,41 @@
     "no-permission-tooltip": "You do not have permission to edit this user",
     "delete-user": "Delete user"
   },
-  "form-company-edit": {
-    "company-name": "Company name",
-    "email": "Email",
-    "update-button": "Update"
+  "company-page": {
+    "title": "Company",
+    "title_details": "Company Details",
+    "title_settings": "Company Settings",
+    "description": "Manage company details and settings.",
+    "description_details": "View and update your company details.",
+    "description_settings": "View and update your company settings.",
+    "update-button": "Update",
+    "update-button_details": "Update Details",
+    "update-button_settings": "Update Settings",
+    "update-success": "Data was updated",
+    "update-success_details": "Your company profile was updated",
+    "update-success_settings": "Your company settings were updated",
+    "form-company-edit": {
+      "company-name": "Company Name",
+      "company-description": "Company name is used in email communication",
+      "email": "Email",
+      "email-description": "Email is used for communication between you and Skancode, such as service notifications"
+    },
+    "settings": {
+      "reference": "Account/Case",
+      "reference-description": "Account/Case is recorded during incoming, outgoing, adjustment, and move",
+      "placement": "Placements",
+      "placement-description": "Placements are recorded during incoming, outgoing, adjustment, and move",
+      "batch": "Batch No.",
+      "batch-description": "Batch No. is recorded during incoming, outgoing, adjustment, and move"
+    },
+    "error": {
+      "name": "Unknown name",
+      "name_id": "Company settings ID",
+      "name_customerID": "Company ID",
+      "name_settings.useReference": "Account/Case",
+      "name_settings.usePlacement": "Placements",
+      "name_settings.useBatch": "Batch No."
+    }
   },
   "modal-invite-user": {
     "title": "Invite new user",
@@ -146,7 +180,8 @@
     "users-chosen": "users chosen",
     "create-button": "Create",
     "create-more-users": "Create more users to assign access rights when creating locations.",
-    "own-user": "Your own user will automatically get access to this location, hence why its not shown here."
+    "own-user": "Your own user will automatically get access to this location, hence why its not shown here.",
+    "tooltip": "Create new location"
   },
   "toasts": {
     "location-created": "was created successfully",

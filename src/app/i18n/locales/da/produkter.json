@@ -27,6 +27,8 @@
 	"attachments": "Filer",
 	"has-attach-yes": "1 eller flere filer",
 	"has-attach-no": "Ingen filer",
+	"no-value": "Ikke angivet",
+	"table-no-values": "Ingen produkter",
 	"update-product-modal": {
 		"update-product": "Redigér Vare",
 		"update-product-modal-title": "Rediger Vare",
@@ -87,9 +89,11 @@
 			"delete-confirm": "Slet"
 		},
 		"details": {
+			"last-updated": "Sidst opdateret: ",
 			"button-edit": "Rediger",
 			"button-cancel": "Fortryd",
 			"button-update": "Gem",
+			"label-text1": "Varetekst 1",
 			"label-text2": "Varetekst 2",
 			"label-text3": "Varetekst 3",
 			"label-note": "Note",
@@ -111,9 +115,26 @@
 			"file-not-deleted-bucket": "Filen blev slettet men er stadig knyttet til jeres firma",
 			"file-not-deleted-database": "Filen blev ikke slettet men den er ikke længere knyttet til jeres firma",
 			"file-not-deleted-both": "Filen blev ikke slettet. Prøv igen."
+		},
+		"reorder": {
+			"title": "Genbestil",
+			"description": "Bliv gjort opmærksom, når en vare når minimumsgrænsen.",
+			"label-minimum": "Minimumsbeholdning",
+			"label-orderAmount": "Bestillingsmændge",
+			"label-maxOrderAmount": "Maks. bestillingsmændge",
+			"no-reorder-title": "Ingen genbestil",
+			"no-reorder-description": "Denne vare har ikke nogen minimumsbeholdning. Opret en for at blive gjort opmærksom på når denne vare er under minimumsbeholdning.",
+			"btn-confrim": "Gem",
+			"btn-confirm_true": "Opdater",
+			"btn-confirm_false": "Opret",
+			"btn-no-reorder": "Opret genbestil",
+			"btn-edit": "Rediger",
+			"btn-cancel": "Fortryd",
+			"orderAmount-description": "Dette bruges til at forudfylde antal bestilte vare når du registrerer genbestillinger.",
+			"maxAmount-description": "Kan efterlades på 0 for at ignorere."
 		}
 	},
 	"tooltips": {
-		"create-product":"Opret vare"
+		"create-product": "Opret vare"
 	}
 }

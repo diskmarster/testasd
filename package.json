@@ -2,6 +2,7 @@
   "name": "nem-lager",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "pnpm i && next dev --turbo",
     "build": "next build",
@@ -13,7 +14,7 @@
     "db:migrate": "tsx src/lib/database/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
-    "test": "jest"
+    "test": "NODE_ENV=test NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.741.0",
@@ -41,6 +42,7 @@
     "@radix-ui/react-tabs": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
     "@react-email/components": "0.0.24",
+    "@tanstack/match-sorter-utils": "^8.19.4",
     "@tanstack/react-table": "^8.20.5",
     "@types/papaparse": "^5.3.15",
     "accept-language": "^3.0.20",
@@ -83,6 +85,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.26.9",
     "@jest/globals": "^29.7.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.5.0",
@@ -92,6 +95,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "babel-jest": "^29.7.0",
     "drizzle-kit": "^0.24.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.7",

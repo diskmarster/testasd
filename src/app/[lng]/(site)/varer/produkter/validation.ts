@@ -1,6 +1,6 @@
 import { units } from '@/data/products.types'
 import { convertENotationToNumber } from '@/lib/utils'
-import { z } from 'zod'
+import { number, z } from 'zod'
 
 export const createProductValidation = (
   t: (key: string, options?: any) => string,
@@ -157,9 +157,56 @@ export const productsDataValidation = (
             },
           )
           .transform(value => value === 'true' || value === 'ja'),
+        minimum: z
+          .preprocess(
+            val => val != '' ? val : undefined,
+            z.coerce
+              .number({
+                invalid_type_error: t('products.minimum-type'),
+              })
+              .optional(),
+          ),
+        maximum: z
+          .preprocess(
+            val => val != '' ? val : undefined,
+            z.coerce
+              .number({
+                invalid_type_error: t('products.maximum-type'),
+              })
+              .optional()
+              .default(0),
+          ),
+        orderAmount: z
+          .preprocess(
+            val => val != '' ? val : undefined,
+            z.coerce
+              .number({
+                invalid_type_error: t('products.order-amount-type'),
+              })
+              .optional(),
+          ),
       })
       .strict({ message: t('products.unknown-column') })
-      .superRefine((val, ctx) => {}),
+      .superRefine((val, ctx) => {
+        if (val.minimum != undefined) {
+          if (val.orderAmount == undefined) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: t('products.order-amount-missing'),
+              path: ['orderAmount'],
+            })
+          } else if (val.maximum > 0 && val.orderAmount > val.maximum) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.too_big,
+              maximum: val.maximum,
+              type: 'number',
+              inclusive: true,
+              message: t('products.order-amount-bigger-than-max', {amount: val.orderAmount, max: val.maximum}),
+              path: ['orderAmount'],
+            })
+          }
+        }
+      }),
   )
 
 export type ImportProducts = z.infer<typeof importProductsValidation>
@@ -175,7 +222,10 @@ export const importProductsValidation = z.array(
     text3: z.string(),
     costPrice: z.coerce.number(),
     salesPrice: z.coerce.number(),
-	note: z.string(),
+    note: z.string(),
     isBarred: z.coerce.boolean(),
+    minimum: z.coerce.number().optional(),
+    maximum: z.coerce.number(),
+    orderAmount: z.coerce.number().optional(),
   }),
 )

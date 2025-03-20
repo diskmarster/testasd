@@ -1,34 +1,28 @@
-import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n/index'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
 import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
 import { TableOverview } from '@/components/inventory/table-overview'
-import { hasPermissionByRank } from '@/data/user.types'
+import { FormattedInventory } from '@/data/inventory.types'
+import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
-import { sessionService } from '@/service/session'
 
-interface PageProps {
+interface PageProps extends WithAuthProps {
   params: {
     lng: string
   }
 }
 
-export default async function Home({ params: { lng } }: PageProps) {
-  const { session, user } = await sessionService.validate()
-  if (!session) return signOutAction()
-
+async function Home({ params: { lng }, user, customer }: PageProps) {
   const { t } = await serverTranslation(lng, 'oversigt')
 
   const location = await locationService.getLastVisited(user.id!)
-  if (!location) return null 
+  if (!location) return null
 
-  const customer = await customerService.getByID(user.customerID)
-  if (!customer) return signOutAction()
-
-  const inventory = await inventoryService.getInventory(location)
+  let inventory = await inventoryService.getInventory(location)
   inventory.sort((a, b) => {
     const skuCompare = a.product.sku.localeCompare(b.product.sku)
 
@@ -43,6 +37,36 @@ export default async function Home({ params: { lng } }: PageProps) {
   const placements = await inventoryService.getActivePlacementsByID(location)
   const batches = await inventoryService.getActiveBatchesByID(location)
   const products = await inventoryService.getActiveProductsByID(customer.id)
+  const customerSettings = (await customerService.getSettings(customer.id)) ?? {
+    usePlacement: true,
+    useBatch: true,
+    useReference: true,
+  }
+
+  const isGrouped = (
+    (hasPermissionByPlan(customer.plan, 'basis') &&
+      customerSettings.usePlacement) ||
+    (hasPermissionByPlan(customer.plan, 'pro') && customerSettings.useBatch)
+  )
+
+  if (!isGrouped) {
+    const inventoryMap: Map<number, FormattedInventory> = inventory.reduce(
+      (acc, cur) => {
+        if (acc.has(cur.product.id)) {
+          const current = acc.get(cur.product.id)!
+          current.quantity += cur.quantity
+          acc.set(cur.product.id, current)
+        } else {
+          acc.set(cur.product.id, cur)
+        }
+
+        return acc
+      },
+      new Map<number, FormattedInventory>(),
+    )
+
+    inventory = Array.from(inventoryMap.values())
+  }
 
   return (
     <SiteWrapper
@@ -57,15 +81,18 @@ export default async function Home({ params: { lng } }: PageProps) {
               placements={placements}
               batches={batches}
               lng={lng}
+              settings={customerSettings}
             />
           )}
-          {customer.plan != 'lite' &&
+          {hasPermissionByPlan(customer.plan, 'basis') &&
+            customerSettings.usePlacement &&
             hasPermissionByRank(user.role, 'bruger') && (
               <ModalMoveInventory
                 placements={placements}
                 customer={customer}
                 inventory={inventory}
                 batches={batches}
+                settings={customerSettings}
               />
             )}
         </>
@@ -78,7 +105,11 @@ export default async function Home({ params: { lng } }: PageProps) {
         groups={groups}
         placements={placements}
         batches={batches}
+        customerSettings={customerSettings}
+        isGrouped={isGrouped}
       />
     </SiteWrapper>
   )
 }
+
+export default withAuth(Home)
