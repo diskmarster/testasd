@@ -94,7 +94,7 @@
 		"title": "Registrer bestillinger",
 		"description": "Registrer dine genbestillinger nemt og hold lageret opdateret. Få overblik over bestilte varer og sikre, at beholdningen altid stemmer.",
 		"red-products": "Røde varer indikerer at beholdningen er lav, og bør bestilles.",
-		"yellow-products": "Gule varer indikerer at varen er forspurgt.",
+		"yellow-products": "Gule varer indikerer at varen er forespurgt.",
 		"add-rows-continue": "Tilføj en eller flere varer for at fortsætte",
 		"add-rows-btn": "Tilføj vare",
 		"add-rows-supplier-btn": "Tilføj leverandør",
