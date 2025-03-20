@@ -12,7 +12,7 @@ export async function Header({ lng, user, customer }: { lng: string, user: User,
   const customerSettings = await customerService.getSettings(customer.id)
 
   return (
-    <header className='sticky top-0 z-[100] w-full border-b bg-background shadow-sm'>
+    <header className='sticky top-0 z-[49] w-full border-b bg-background shadow-sm'>
       <div className='container flex h-16 items-center md:space-x-4 sm:justify-between'>
         <NavDesktop user={user} lng={lng} customer={customer} customerSettings={customerSettings ?? {usePlacement:true, useBatch: true}} />
         <NavMobile user={user} lng={lng} />
