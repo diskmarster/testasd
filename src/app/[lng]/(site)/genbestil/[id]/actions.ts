@@ -29,14 +29,10 @@ export const sendOrderEmailAction = editableAction
       parsedInput.orderID,
     )
 
-    const attachments = files.at(0)
-      ? [
-          {
-            path: files[0].url,
-            filename: `${siteConfig.name}-bestilling-${parsedInput.orderID}.xlsx`,
-          },
-        ]
-      : []
+    const attachments = files.map(f => ({
+			path: f.url,
+			filename: f.name
+		}))
 
     for (const email of parsedInput.emails) {
       await emailService.sendRecursively(

@@ -4,7 +4,6 @@ import { serverTranslation } from '@/app/i18n'
 import { genReorderExcelWorkbook } from '@/lib/pdf/reorder-rapport'
 import { editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
-import { formatDate } from '@/lib/utils'
 import { attachmentService } from '@/service/attachments'
 import { fileService } from '@/service/file'
 import { inventoryService } from '@/service/inventory'
@@ -21,6 +20,7 @@ import {
   updateReorderValidation,
 } from './validation'
 import { suppliersService } from '@/service/suppliers'
+import { formatDate } from 'date-fns'
 
 export const createReorderAction = editableAction
   .metadata({ actionName: 'createReorder' })
@@ -266,7 +266,7 @@ export const bulkAddOrderedToReorderAction = editableAction
           customerID: ctx.user.customerID,
           refDomain: 'genbestil',
           refID: order.id,
-          name: `nemlager_genbestilling_${formatDate(new Date())}`,
+          name: `nemlager_genbestilling_${formatDate(new Date(), 'dd-MM-yyyy')}.xlsx`,
           type: fileInfo.type,
           key: fileInfo.key,
           url: fileInfo.url,
