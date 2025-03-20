@@ -45,7 +45,7 @@ import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { ScrollArea } from "../ui/scroll-area"
 import { useCustomEventListener } from "react-custom-events"
-import { TooltipWrapper } from "../ui/tooltip-icon"
+import { TooltipWrapper } from "../ui/tooltip-wrapper"
 import { FormattedProduct } from "@/data/products.types"
 import { Separator } from "../ui/separator"
 
