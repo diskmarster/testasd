@@ -348,6 +348,25 @@ export const inventory = {
       )
     return resultSet.rowsAffected == 1
   },
+  upsertReorder: async function (
+    reorderData: NewReorder,
+    trx: TRX = db,
+  ): Promise<Reorder | undefined> {
+    const [res] = await trx
+      .insert(reorderTable)
+      .values(reorderData)
+      .onConflictDoUpdate({
+        target: [reorderTable.customerID, reorderTable.locationID, reorderTable.productID],
+        set: {
+          minimum: sql.raw(`excluded.${reorderTable.minimum.name}`),
+          maxOrderAmount: sql.raw(`excluded.${reorderTable.maxOrderAmount.name}`),
+          orderAmount: sql.raw(`excluded.${reorderTable.orderAmount.name}`),
+        },
+      })
+      .returning()
+
+    return res
+  },
   deleteReorderByID: async function (
     productID: ProductID,
     locationID: LocationID,

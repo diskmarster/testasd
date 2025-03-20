@@ -16,7 +16,7 @@ import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { useMediaQuery } from '@/hooks/use-media-query'
 import { readAndValidateFileData } from '@/lib/import/file-reader'
-import { chunkArray } from '@/lib/utils'
+import { chunkArray, updateChipCount } from '@/lib/utils'
 import Link from 'next/link'
 import { useCallback, useState, useTransition } from 'react'
 import { useDropzone } from 'react-dropzone'
@@ -58,7 +58,7 @@ export function ModalImportProducts() {
     if (!dataRes.success) {
       setErrors(dataRes.errors)
     } else {
-      setRows(dataRes.data.slice(0, 3000))
+      setRows(dataRes.data)
     }
   }, [])
 
@@ -110,6 +110,7 @@ export function ModalImportProducts() {
       }
       setIsDone(true)
       await finishProductsAction()
+      updateChipCount()
     })
   }
 

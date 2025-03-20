@@ -51,7 +51,12 @@
     "cost-price-not-negative": "Kostpris kan ikke være negativ og skal være et tal.",
     "sales-price-type": "Salgspris skal være et tal",
     "barred-values": "Ukendt værdi i barred. Brug true, false, ja eller nej",
-    "unknown-column": "Ukendt kolonne"
+    "minimum-type": "Minimum skal være et tal",
+    "maximum-type": "Maximum skal være et tal",
+    "order-amount-type": "Bestillings antal skal være et tal",
+    "unknown-column": "Ukendt kolonne",
+    "order-amount-bigger-than-max": "Bestillings antal ({{amount}}) må ikke være større end maximum ({{max}})",
+    "order-amount-missing": "Bestillings antal skal angives når minimum er angivet"
   },
   "placement": {
     "name-required": "Navn er påkrævet",
