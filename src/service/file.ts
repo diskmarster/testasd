@@ -12,8 +12,8 @@ import crypto from 'crypto'
 type KeyData = {
   customerID: CustomerID
   refType: RefType
-  refID: number
-  mimeType: string
+  refID: number | string
+  mimeType: MimeType
 }
 
 type ValidationResult =
@@ -24,7 +24,7 @@ type ValidationResult =
   | {
       success: true
       key: string
-      type: 'image' | 'pdf'
+      type: 'image' | 'pdf' | 'excel'
       url: string
     }
 
@@ -42,37 +42,39 @@ export const allowedMimetypes = {
   'image/jpeg': ['.jpg', '.jpeg'],
   'image/png': ['.png'],
   'application/pdf': ['.pdf'],
+	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
 } as const
 
 export type MimeType = keyof typeof allowedMimetypes
 
-const fileTypeMap: Record<MimeType, 'image' | 'pdf'> = {
+const fileTypeMap: Record<MimeType, 'image' | 'pdf' | 'excel'> = {
   'image/jpeg': 'image',
   'image/png': 'image',
   'application/pdf': 'pdf',
+	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'excel'
 } as const
 
 export type AttachmentType = (typeof fileTypeMap)[MimeType]
 
 export const fileService = {
-  validate: function (file: File, keyData: KeyData): ValidationResult {
-    if (!(file.type in allowedMimetypes)) {
+  validate: function (keyData: KeyData): ValidationResult {
+    if (!(keyData.mimeType in allowedMimetypes)) {
       return {
         success: false,
-        error: `Ikke supporteret mime type: ${file.type}`,
+        error: `Ikke supporteret mime type: ${keyData.mimeType}`,
       }
     }
 
-    const key = utils.genKey({ ...keyData, mimeType: file.type })
+    const key = utils.genKey({ ...keyData })
     if (!key) {
       return { success: false, error: `Kunne ikke generere en objekt key` }
     }
 
-    const type = utils.getType(file.type)
+    const type = utils.getType(keyData.mimeType)
     if (!type) {
       return {
         success: false,
-        error: `Ikke supporteret filtype: ${file.type}`,
+        error: `Ikke supporteret filtype: ${keyData.mimeType}`,
       }
     }
 
@@ -119,7 +121,7 @@ const utils = {
   genURL: function (name: string): string {
     return `https://${BUCKET_NAME}.s3.${BUCKET_REGION}.amazonaws.com/${name}`
   },
-  getType: function (mime: string): 'image' | 'pdf' | null {
+  getType: function (mime: string): 'image' | 'pdf' | 'excel' | null {
     return fileTypeMap[mime as MimeType] ?? null
   },
 }

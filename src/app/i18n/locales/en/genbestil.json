@@ -85,7 +85,7 @@
 		"add-ordered": "Order registered for ",
 		"create-reorder": "Minimum stock created for ",
 		"delete-reorder": "Restock deleted for ",
-    "update-reorder": "Restock updated for ",
+		"update-reorder": "Restock updated for ",
 		"registration-failed": "Restock was not registered",
 		"registration-success": "Restock was registered."
 	},
@@ -93,6 +93,7 @@
 		"title": "Register reorders",
 		"description": "Register your reorders easily and keep your inventory up to date. Get an overview of ordered items and ensure that stock levels are always accurate.",
 		"red-products": "Red products indicates that stock is low, and should be reordered.",
+		"yellow-products": "Yellow products indicate that the product is requested.",
 		"add-rows-continue": "Add items to continue",
 		"add-rows-btn": "Add item",
 		"add-rows-supplier-btn": "Add supplier",
@@ -107,7 +108,6 @@
 		"sku-search": "Search for items",
 		"sku-no-items": "No items found",
 		"qty": "Amount",
-    "tooltip": "Register reorders",
 		"product": "Product",
 		"product-placeholder": "Choose product",
 		"product-search": "Search for products",
@@ -117,9 +117,12 @@
 		"suppliers-no-items": "No suppliers found",
 		"quantity": "Qty.",
 		"disposable": "Disp. Qty.",
+		"minimum": "Min. Qty.",
+		"sum": "Total",
 		"toast-error": "Reorders was not registered",
 		"toast-success": "Reorders was registered",
 		"tooltip": "Register reorders",
+		"tooltip-disposable": "Disposable quantity including ordered quantity",
 		"tooltipWithCount_one": "Register {{count}} reorder",
 		"tooltipWithCount_other": "Register {{count}} reorders"
 	},
@@ -136,5 +139,40 @@
 			"sum": "Total"
 		},
 		"sheet": "Reorders"
+	},
+	"list-orders": {
+		"title": "Registered orders",
+		"tooltip": "List of registered orders",
+		"description": "This is a list of all registered orders on this location",
+		"amount-orders": "All orders",
+		"order-number": "Order ID",
+		"lines-amount": "Lines",
+		"user": "User",
+		"inserted": "Created at"
+	},
+	"order-details": {
+		"action-mail-tooltip": "Send order to email",
+		"action-download-tooltip": "Download order",
+		"action-print-tooltip": "Print order",
+		"sku": "Sku",
+		"supplier": "Supplier",
+		"text1": "Text 1",
+		"cost-price": "Cost price",
+		"qty": "Qty",
+		"unit": "Unit",
+		"sum": "Total",
+		"title": "Order",
+		"inserted": "Created at:",
+		"user": "User:",
+		"total": "Total",
+		"mail-title": "Send order",
+		"mail-description": "Choose from a list of users, or write an email",
+		"users": "Users",
+		"email": "Email",
+		"email-placeholder": "Choose or write an email",
+		"mail-send": "Send order",
+		"modal-close": "Close",
+		"invalid-input": "An email is invalid",
+		"fetching-users": "Fetching users"
 	}
 }

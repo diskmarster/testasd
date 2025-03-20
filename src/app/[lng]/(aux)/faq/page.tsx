@@ -138,6 +138,18 @@ function AnswerImportInventory() {
           <span className='font-semibold'>{t('faq-page.barred')} </span>
           <span>{t('faq-page.barred-criteria')}</span>
         </li>
+        <li>
+          <span className='font-semibold'>{t('faq-page.minimum')} </span>
+          <span>{t('faq-page.minimum-criteria')}</span>
+        </li>
+        <li>
+          <span className='font-semibold'>{t('faq-page.maximum')} </span>
+          <span>{t('faq-page.maximum-criteria')}</span>
+        </li>
+        <li>
+          <span className='font-semibold'>{t('faq-page.order-amount')} </span>
+          <span>{t('faq-page.order-amount-criteria')}</span>
+        </li>
       </ol>
     </div>
   )

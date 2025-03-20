@@ -18,12 +18,10 @@ import {
   NewHistory,
   NewInventory,
   NewPlacement,
-  NewReorder,
   NewUnit,
   PartialBatch,
   PartialGroup,
   PartialPlacement,
-  PartialReorder,
   PartialUnit,
   Placement,
   PlacementID,
@@ -31,12 +29,11 @@ import {
   Product,
   ProductID,
   productTable,
-  Reorder,
-  reorderTable,
   Unit,
   UnitID,
   unitTable,
 } from '@/lib/database/schema/inventory'
+import { NewReorder, PartialReorder, Reorder, reorderTable } from '@/lib/database/schema/reorders'
 import { supplierTable } from '@/lib/database/schema/suppliers'
 import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
 
@@ -350,6 +347,25 @@ export const inventory = {
         ),
       )
     return resultSet.rowsAffected == 1
+  },
+  upsertReorder: async function (
+    reorderData: NewReorder,
+    trx: TRX = db,
+  ): Promise<Reorder | undefined> {
+    const [res] = await trx
+      .insert(reorderTable)
+      .values(reorderData)
+      .onConflictDoUpdate({
+        target: [reorderTable.customerID, reorderTable.locationID, reorderTable.productID],
+        set: {
+          minimum: sql.raw(`excluded.${reorderTable.minimum.name}`),
+          maxOrderAmount: sql.raw(`excluded.${reorderTable.maxOrderAmount.name}`),
+          orderAmount: sql.raw(`excluded.${reorderTable.orderAmount.name}`),
+        },
+      })
+      .returning()
+
+    return res
   },
   deleteReorderByID: async function (
     productID: ProductID,

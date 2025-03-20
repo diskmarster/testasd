@@ -87,12 +87,18 @@
     "text2-criteria": "må ikke kun indeholde tal. F.eks. 34567 skal have minimum et bogstav. Er valgfri.",
     "text3": "varetekst 3",
     "text3-criteria": "må ikke kun indeholde tal. F.eks. 34567 skal have minimum et bogstav. Er valgfri.",
-    "cost-price": "Omkostningspris",
+    "cost-price": "Kostpris",
     "cost-price-criteria": "skal skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
     "sales-price": "Salgspris",
     "sales-price-criteria": "skal skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
     "barred": "Spærret",
-    "barred-criteria": "skal skrives som enten true, false, ja eller nej. Truthy værdier er true og ja. Falsy værdier er false og nej."
+    "barred-criteria": "skal skrives som enten true, false, ja eller nej. Truthy værdier er true og ja. Falsy værdier er false og nej.",
+    "minimum": "Minimumsbeholdning",
+    "minimum-criteria": "kan udelades. Hvis det tages med skal det skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
+    "maximum": "Maximum bestillings antal",
+    "maximum-criteria": "kan udelades. Hvis det tages med skal det skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
+    "order-amount": "Bestillings antal",
+    "order-amount-criteria": "kan udelades. Hvis det tages med skal det skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt."
   },
   "modal-show-user-label": {
     "title": "Bruger Label",

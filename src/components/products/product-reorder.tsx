@@ -1,6 +1,5 @@
 "use client"
 
-import { Reorder } from "@/lib/database/schema/inventory"
 import { cn, updateChipCount } from "@/lib/utils"
 import { User } from "lucia"
 import { Button } from "../ui/button"
@@ -18,6 +17,7 @@ import { createReorderAction, updateReorderAction } from "@/app/[lng]/(site)/gen
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { Icons } from "../ui/icons"
+import { Reorder } from "@/lib/database/schema/reorders"
 
 interface Props {
 	productID: number
@@ -73,13 +73,14 @@ export function ProductReorder({ productID, reorder }: Props) {
 				description: "Minimumsbeholdning oprettet"
 			})
 			updateChipCount()
+			setIsEditing(false)
 		})
 	}
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} className="lg:w-1/2 border rounded-md relative">
 			<div className={cn(
-				'z-50 hidden bg-foreground/30 w-full h-full absolute rounded-md place-items-center',
+				'z-40 hidden bg-foreground/30 w-full h-full absolute rounded-md place-items-center',
 				(!reorder && !isEditing) && 'grid')}>
 				<div className="flex flex-col gap-2.5 items-center bg-background rounded-md shadow-md">
 					<div className="border-b py-2 flex items-center w-full">

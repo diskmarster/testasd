@@ -21,18 +21,15 @@ import {
   NewBatch,
   NewHistory,
   NewPlacement,
-  NewReorder,
   NewUnit,
   PartialBatch,
   PartialGroup,
   PartialPlacement,
-  PartialReorder,
   PartialUnit,
   Placement,
   PlacementID,
   Product,
   ProductID,
-  Reorder,
   Unit,
   UnitID,
 } from '@/lib/database/schema/inventory'
@@ -41,6 +38,7 @@ import { LibsqlError } from '@libsql/client'
 import { productService } from './products'
 import { userService } from './user'
 import { locationService } from './location'
+import { NewReorder, PartialReorder, Reorder } from '@/lib/database/schema/reorders'
 
 export const inventoryService = {
   getInventory: async function (
@@ -466,11 +464,7 @@ export const inventoryService = {
 
     const newReorders = reorders.map(reorder => {
       const disposible = reorder.quantity + reorder.ordered
-			const shouldReorder = (
-				reorder.quantity < reorder.minimum 
-				&& reorder.orderAmount > 0 
-				&& reorder.ordered < reorder.orderAmount
-			)
+			const shouldReorder = disposible < (reorder.minimum ?? 0)
 
       return {
         ...reorder,
@@ -641,5 +635,10 @@ export const inventoryService = {
 		const locationID = await locationService.getLastVisited(userID)
 		if (!locationID) return undefined
 		return await inventory.getReorderByProductID(productID,locationID,customerID)
-	}
+	},
+  upsertReorder: async function(
+    reorderData: NewReorder,
+  ): Promise<Reorder | undefined> {
+    return await inventory.upsertReorder(reorderData)
+  }
 }

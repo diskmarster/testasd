@@ -11,7 +11,7 @@ export const attachmentsTable = sqliteTable('nl_attachments', {
     .references(() => customerTable.id, { onDelete: 'cascade' }),
   refDomain: text('ref_domain').$type<RefType>().notNull(),
   type: text('type').$type<AttachmentType>().notNull(),
-  refID: integer('ref_id').notNull(),
+  refID: text('ref_id').notNull(),
   key: text('key').notNull(),
   name: text('name').notNull(),
   url: text('url').notNull(),

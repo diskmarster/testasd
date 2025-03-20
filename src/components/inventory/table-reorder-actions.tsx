@@ -21,21 +21,24 @@ export function TableReorderActions({ table, row }: Props) {
 
 	return (
 		<TableActionsWrapper>
+		{!row.original.isRequested && (
+			<DropdownMenuItem
+			onClick={() => {
+				emitCustomEvent('UpdateReorderByIDs', {
+					locationID: row.original.locationID,
+					productID: row.original.productID,
+					customerID: row.original.customerID,
+					minimum: row.original.minimum,
+					orderAmount: row.original.orderAmount,
+					maxOrderAmount: row.original.maxOrderAmount,
+					text1: row.original.product.text1,
+				})
+			}}>
+			{t('table-reorder-actions.update')}
+			</DropdownMenuItem>
+		)}
 		<DropdownMenuItem
-		onClick={() => {
-			emitCustomEvent('UpdateReorderByIDs', {
-				locationID: row.original.locationID,
-				productID: row.original.productID,
-				customerID: row.original.customerID,
-				minimum: row.original.minimum,
-				orderAmount: row.original.orderAmount,
-				maxOrderAmount: row.original.maxOrderAmount,
-				text1: row.original.product.text1,
-			})
-		}}>
-		{t('table-reorder-actions.update')}
-		</DropdownMenuItem>
-		<DropdownMenuItem
+		className='!text-destructive'
 		onClick={() => {
 			emitCustomEvent('DeleteReorderByIDs', {
 				locationID: row.original.locationID,

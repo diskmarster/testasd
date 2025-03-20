@@ -27,6 +27,7 @@
 	"attachments": "Files",
 	"has-attach-yes": "1 or more files",
 	"has-attach-no": "No files",
+	"table-no-values": "No products",
 	"update-product-modal": {
 		"update-product": "Update product",
 		"update-product-modal-title": "Update product",
