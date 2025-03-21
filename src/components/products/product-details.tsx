@@ -7,7 +7,7 @@ import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
 import { Button } from "../ui/button"
 import { hasPermissionByRank } from "@/data/user.types"
-import { formatDate, numberToCurrency } from "@/lib/utils"
+import { cn, formatDate, numberToCurrency } from "@/lib/utils"
 import { useEffect, useState, useTransition } from "react"
 import { User } from "lucia"
 import { updateProductValidation } from "@/app/[lng]/(site)/varer/produkter/[id]/validation"
@@ -327,20 +327,7 @@ export function ProductDetails({ product, user }: Props) {
 				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
 					<div className="space-y-0.5 w-full">
 						<Label htmlFor="sku">{t('details-page.details.label-sku')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.sku}</div>}
-							trueComp={
-								<Input
-									id="sku"
-									name="sku"
-									type="text"
-									className="h-9"
-									value={formValues.data.sku}
-									onChange={event => setValue("data.sku", event.target.value, { shouldValidate: true, shouldDirty: true })}
-								/>
-							}
-						/>
+						<div className={cn("h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm", isEditing && 'cursor-not-allowed')}>{product.sku}</div>
 					</div>
 					<div className="space-y-0.5 w-full">
 						<Label htmlFor="barcode">{t('details-page.details.label-barcode')}</Label>
