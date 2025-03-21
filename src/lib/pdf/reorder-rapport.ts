@@ -70,9 +70,10 @@ export function genReorderExcelWorkbook(
     : []
 
   const sender = [
-    ['Afsender:', customer.company],
-    ['Vores ref:', user.name],
+    supplier ? ['Afsender:', customer.company]: [],
+    supplier ? ['Vores ref:', user.name] : [],
     supplier ? ['Kundenr:', supplier?.idOfClient] : [],
+		supplier ? emptyRow : []
   ]
 
   const workbook = XLSX.utils.book_new()
@@ -81,7 +82,6 @@ export function genReorderExcelWorkbook(
     ...supplierRows,
     emptyRow,
     ...sender.filter(t => t.length > 0),
-    emptyRow,
     headers,
     ...rows,
   ])
