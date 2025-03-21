@@ -10,7 +10,7 @@ import {
   ordersTable,
 } from '@/lib/database/schema/reorders'
 import { endOfMonth, formatDate, startOfMonth } from 'date-fns'
-import { and, count, desc, eq, getTableColumns, gt, lt, sql } from 'drizzle-orm'
+import { and, count, countDistinct, desc, eq, getTableColumns, gt, lt, sql } from 'drizzle-orm'
 import { OrderWithCount } from './orders.types'
 
 export const orders = {
@@ -58,7 +58,7 @@ export const orders = {
       .select({
         ...getTableColumns(ordersTable),
         lineCount: count(orderLinesTable),
-        supplierCount: sql<number>`count(distinct ${orderLinesTable.supplierName})`,
+        supplierCount: countDistinct(orderLinesTable.supplierName),
       })
       .from(ordersTable)
       .where(
@@ -80,7 +80,7 @@ export const orders = {
       .select({
         ...getTableColumns(ordersTable),
         lineCount: count(orderLinesTable),
-        supplierCount: sql<number>`count(distinct ${orderLinesTable.supplierName})`,
+        supplierCount: countDistinct(orderLinesTable.supplierName),
       })
       .from(ordersTable)
       .where(
@@ -89,6 +89,7 @@ export const orders = {
           eq(ordersTable.id, orderID),
         ),
       )
+			.innerJoin(orderLinesTable, eq(orderLinesTable.orderID, ordersTable.id))
     return res
   },
   getAllLines: async function (
