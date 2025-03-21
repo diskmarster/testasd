@@ -53,7 +53,11 @@
     "import-completed-title": "Import completed",
     "import-completed-description": "Import of your product catalog is now completed.",
     "uploaded-of": "uploaded of",
-    "upload-to-catalog": "Upload to product catalog"
+    "upload-to-catalog": "Upload to product catalog",
+    "items-updated_one": "{{count}} product were updated",
+    "items-updated_other": "{{count}} products were updated",
+    "items-created_one": "{{count}} product were created",
+    "items-created_other": "{{count}} products were created"
   },
   "faq-page": {
     "question-user-roles": "What can the users roles do?",

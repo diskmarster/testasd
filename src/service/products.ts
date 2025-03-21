@@ -352,7 +352,7 @@ export const productService = {
     customerID: CustomerID,
     userID: UserID,
     importedProducts: ImportProducts,
-  ): Promise<boolean> {
+  ): Promise<{updated: number, created: number}> {
     const start = performance.now()
     const transaction = await db.transaction(async trx => {
       const [units, groups, products, locations, importingUser] =
@@ -630,7 +630,7 @@ export const productService = {
 
       await Promise.all([zeroInventoryPromises, productHistoryPromises])
 
-      return true
+      return {updated: updatedProducts.length, created: newProducts.length}
     })
     console.log(`${performance.now() - start} ms execution time`)
     return transaction

@@ -43,6 +43,8 @@ export function ModalImportProducts() {
   const [errors, setErrors] = useState<
     ZodError<typeof productsDataValidation> | undefined
   >(undefined)
+  const [updated, setUpdated] = useState(0)
+  const [created, setCreated] = useState(0)
   const desktop = '(min-width: 768px)'
   const isDesktop = useMediaQuery(desktop)
 
@@ -78,6 +80,8 @@ export function ModalImportProducts() {
     if (pending) return
     setOpen(open)
     setRows([])
+    setUpdated(0)
+    setCreated(0)
     setErrors(undefined)
     setResponseErrors([])
     setUploadedAmount(0)
@@ -85,6 +89,8 @@ export function ModalImportProducts() {
   }
 
   function onSubmit(values: z.infer<typeof schema>) {
+    setUpdated(0)
+    setCreated(0)
     setErrors(undefined)
     setResponseErrors([])
     setUploadedAmount(0)
@@ -104,6 +110,9 @@ export function ModalImportProducts() {
         if (res && res.serverError) {
           setResponseErrors(prev => [`${errorMsg} ${res.serverError}`, ...prev])
           continue
+        } else if (res && res.data) {
+          setUpdated(prev => prev + res.data!.updated)
+          setCreated(prev => prev + res.data!.created)
         }
 
         setUploadedAmount(prev => prev + chunk.length)
@@ -238,6 +247,12 @@ export function ModalImportProducts() {
               </AlertDescription>
             </Alert>
           )}
+          {(pending || isDone) && (
+            <>
+              <p>{t('modal-import-products.items-updated', {count: updated})}</p>
+              <p>{t('modal-import-products.items-created', {count: created})}</p>
+            </>
+            )}
           {pending && (
             <Progress max={100} value={(uploadedAmount / rows.length) * 100} />
           )}

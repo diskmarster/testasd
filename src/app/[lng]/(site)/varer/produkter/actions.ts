@@ -78,13 +78,14 @@ export const importProductsAction = adminAction
   .metadata({ actionName: 'importProducts', excludeAnalytics: true })
   .schema(importProductsValidation)
   .action(async ({ parsedInput: importedData, ctx }) => {
-    const didImport = await productService.importProducts(
+    const importRes = await productService.importProducts(
       ctx.user.customerID,
       ctx.user.id,
       importedData,
     )
 
     revalidatePath(`/${ctx.lang}/varer/produkter`)
+    return importRes
   })
 
 export const finishProductsAction = adminAction
