@@ -27,6 +27,7 @@ import { Skeleton } from "../ui/skeleton"
 import { emitCustomEvent } from "react-custom-events"
 import { Supplier } from "@/lib/database/schema/suppliers"
 import { Label } from "../ui/label"
+import { useScroll } from "@/hooks/use-scroll"
 
 interface Props {
 	product: FormattedProduct & { inventories: Inventory[] }
@@ -45,6 +46,7 @@ export function ProductDetails({ product, user }: Props) {
 	const [groups, setGroups] = useState<Group[]>([{ id: product.groupID, name: product.group, inserted: today, updated: today, isBarred: false, customerID: user.customerID }])
 	const [suppliers, setSuppliers] = useState<Supplier[]>([{ id: product.supplierID ?? -1, name: product.supplierName ?? "", idOfClient: "", contactPerson: "", country: "DK", email: "", phone: "", inserted: today, updated: today, customerID: 0, userID: 0, userName: "" }])
 	const [isSubmitting, setIsSubmitting] = useState(false)
+	const {y: scrollY} = useScroll()
 
 	const { setValue, watch, reset, register, formState } = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
@@ -142,7 +144,7 @@ export function ProductDetails({ product, user }: Props) {
 
 	return (
 		<div className="w-full space-y-4">
-			<div className="flex items-start justify-between">
+			<div className={cn("rounded bg-background flex items-center transition-all justify-between sticky top-[70px] py-4 -mt-4", scrollY > 20 && "mx-2 shadow-[0px_8px_5px_-3px_rgba(0,0,0,0.15)] border p-4 z-10")}>
 				<div className="space-y-0.5">
 					<div className='flex items-start gap-3 flex-1'>
 						<h1 className="text-xl font-medium">{product.text1}</h1>
