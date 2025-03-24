@@ -56,7 +56,10 @@
     "order-amount-type": "Bestillings antal skal være et tal",
     "unknown-column": "Ukendt kolonne",
     "order-amount-bigger-than-max": "Bestillings antal ({{amount}}) må ikke være større end maximum ({{max}})",
-    "order-amount-missing": "Bestillings antal skal angives når minimum er angivet"
+    "order-amount-missing": "Bestillings antal skal angives når minimum er angivet",
+    "headers": "overskrifter",
+    "header-missing_one": "Mangler {{count}} overskrift: {{header}}",
+    "header-missing_other": "Mangler {{count}} overskrifter: {{header}}"
   },
   "placement": {
     "name-required": "Navn er påkrævet",

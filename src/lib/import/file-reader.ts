@@ -2,6 +2,7 @@ import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
 import { z } from 'zod'
 import { NewNumberParser } from '../utils'
+import { TFunction } from 'i18next'
 
 type ReadAndValidateFileSuccess<T extends z.ZodTypeAny> = {
   success: true
@@ -20,34 +21,74 @@ type ReadAndValidateFileResponse<T extends z.ZodTypeAny> =
 const SUPPORTED_TYPES: { [key: string]: string } = {
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   xls: 'application/vnd.ms-excel',
-  csv: 'text/csv',
+  //csv: 'text/csv',
 }
 
-export function readAndValidateFileData<T extends z.ZodTypeAny>(
+export type ReadAndValidateFileConfig<TKey extends string = string> = Partial<{
+  expectedHeaders: TKey[]
+  transformHeaders: (header: TKey) => TKey | string,
+  debug: boolean,
+}>
+
+const defaultConfig: Required<ReadAndValidateFileConfig> = {
+  expectedHeaders: [],
+  debug: false,
+  transformHeaders: (h) => h,
+}
+
+export function readAndValidateFileData<T extends z.ZodTypeAny, TKey extends string = string>(
   file: File,
   schema: z.ZodArray<T>,
-  debug: boolean = false,
+  t: TFunction,
+  config: ReadAndValidateFileConfig<TKey | string> = defaultConfig,
 ): Promise<ReadAndValidateFileResponse<T>> {
   return new Promise((resolve, reject) => {
+    const debug = config.debug ?? defaultConfig.debug
+    const expectedHeaders = config.expectedHeaders ?? defaultConfig.expectedHeaders
+    const transformHeaders = config.transformHeaders ?? defaultConfig.transformHeaders
+
     const reader = new FileReader()
 
     reader.onload = () => {
       try {
-        let data
+        let headers: string[]
+        let data: Record<string, any>[]
 
         switch (file.type) {
           case SUPPORTED_TYPES['xlsx']:
           case SUPPORTED_TYPES['xls']:
-            data = readWithXLSX(reader)
+            const [readHeaders, readData] = readWithXLSX(reader)
+            headers = readHeaders
+            data = readData
             break
-          case SUPPORTED_TYPES['csv']:
-            data = readWithPapaparse(reader)
-            break
+          // Leaving this here in case we need some csv parsing
+          // case SUPPORTED_TYPES['csv']:
+          //   data = readWithPapaparse(reader)
+          //   break
           default:
             console.error('wrong import file type')
             return
         }
 
+        const transformedHeaders = headers.map(transformHeaders)
+        console.log(transformedHeaders)
+        const missingHeaders = expectedHeaders.filter(h => !transformedHeaders.includes(h))
+        if (missingHeaders.length > 0) {
+          resolve({
+            success: false,
+            errors: new z.ZodError([{
+              code: z.ZodIssueCode.custom,
+              path: [-1, t('products.headers')],
+              message: t('products.header-missing', {count: missingHeaders.length, header: missingHeaders.join(', ')})
+            }])
+          })
+          return
+        }
+
+        const transformData = data.map((row) => {
+          // take keys for row, transform key with provided transform function
+          // use transformed key to create new data object
+        })
         const parseRes = schema.safeParse(data)
 
         if (debug) {
@@ -85,28 +126,39 @@ export function readAndValidateFileData<T extends z.ZodTypeAny>(
   })
 }
 
-function readWithXLSX(reader: FileReader): Record<string, any>[] {
-  const workbook = XLSX.read(reader.result, { type: 'binary' })
+function readWithXLSX(reader: FileReader): [string[], Record<string, any>[]] {
+  const workbook = XLSX.read(reader.result, { type: 'binary', sheets: 0 })
   const sheetName = workbook.SheetNames[0]
   const sheet = workbook.Sheets[sheetName]
   const sheetData = XLSX.utils.sheet_to_json(sheet, {
     blankrows: true,
     defval: '',
+    header: 1,
+  })
+
+  const readHeaders = sheetData[0] as string[]
+
+  const data = (sheetData.slice(1) as any[]).map((row) => {
+    const rowObj: Record<string, any> = {}
+    readHeaders.forEach((header, i) => rowObj[header] = row[i])
+
+    return rowObj
   })
 
   // lowercasing first letter of the headers value in case users capitalizes it
-  const lowercasedKeysArray = sheetData.map((row: any) => {
-    return Object.keys(row as Record<string, any>).reduce(
-      (acc, key) => {
-        const lowercasedKey = key.charAt(0).toLowerCase() + key.slice(1)
-        acc[lowercasedKey] = row[key]
-        return acc
-      },
-      {} as Record<string, any>,
-    )
-  })
+  //
+  // const lowercasedKeysArray = sheetData.map((row: any) => {
+  //   return Object.keys(row as Record<string, any>).reduce(
+  //     (acc, key) => {
+  //       const lowercasedKey = key.charAt(0).toLowerCase() + key.slice(1)
+  //       acc[lowercasedKey] = row[key]
+  //       return acc
+  //     },
+  //     {} as Record<string, any>,
+  //   )
+  // })
 
-  return lowercasedKeysArray
+  return [readHeaders, data]
 }
 
 function readWithPapaparse(reader: FileReader): Record<string, any>[] {

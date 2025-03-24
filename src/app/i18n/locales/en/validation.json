@@ -56,7 +56,10 @@
     "order-amount-type": "Order amount must be a number",
     "unknown-column": "Unknown column",
     "order-amount-bigger-than-max": "Order amount ({{amount}}) may not be greater than the maximum ({{max}})",
-    "order-amount-missing": "Order amount must be specified when a minimum is set"
+    "order-amount-missing": "Order amount must be specified when a minimum is set",
+    "headers": "headers",
+    "header-missing_one": "Missing {{count}} header: {{header}}",
+    "header-missing_other": "Missing {{count}} headers: {{header}}"
   },
   "placement": {
     "name-required": "Name is required",
