@@ -159,19 +159,6 @@ function readWithXLSX(reader: FileReader): [string[], Record<string, any>[]] {
     return rowObj
   })
 
-  // lowercasing first letter of the headers value in case users capitalizes it
-  //
-  // const lowercasedKeysArray = sheetData.map((row: any) => {
-  //   return Object.keys(row as Record<string, any>).reduce(
-  //     (acc, key) => {
-  //       const lowercasedKey = key.charAt(0).toLowerCase() + key.slice(1)
-  //       acc[lowercasedKey] = row[key]
-  //       return acc
-  //     },
-  //     {} as Record<string, any>,
-  //   )
-  // })
-
   return [readHeaders, data]
 }
 
