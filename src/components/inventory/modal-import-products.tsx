@@ -46,13 +46,13 @@ const headerMap: Map<string, string> = new Map([
   ['barcode', 'barcode'],
   ['product_group', 'group'],
   ['unit', 'unit'],
-  ['producttext_1', 'text1'],
-  ['producttext_2', 'text2'],
-  ['producttext_3', 'text3'],
+  ['product_text_1', 'text1'],
+  ['product_text_2', 'text2'],
+  ['product_text_3', 'text3'],
   ['cost_price', 'costPrice'],
   ['sales_price', 'salesPrice'],
   ['barred', 'isBarred'],
-  ['min_qty', 'minimum'],
+  ['min_stock', 'minimum'],
   ['max_order', 'maximum'],
   ['order_amount', 'orderAmount'],
 ])
@@ -261,7 +261,7 @@ export function ModalImportProducts() {
 
                 return (
                   <div key={i}>
-                    <p>{`${t('modal-import-products.error-on-row')} ${rowNumber} ${t('modal-import-products.in')} ${rowKey}: ${rowMsg}`}</p>
+                    <p>{`${t('modal-import-products.error-on-row')} ${rowNumber} ${t('modal-import-products.in')} ${validationT('products.header-name', {context: rowKey})}: ${rowMsg}`}</p>
                   </div>
                 )
               })}

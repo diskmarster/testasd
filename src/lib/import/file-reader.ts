@@ -71,7 +71,8 @@ export function readAndValidateFileData<T extends z.ZodTypeAny, TKey extends str
         }
 
         const transformedHeaders = headers.map(transformHeaders)
-        console.log(transformedHeaders)
+        if (debug) console.log(transformedHeaders)
+
         const missingHeaders = expectedHeaders.filter(h => !transformedHeaders.includes(h))
         if (missingHeaders.length > 0) {
           resolve({
@@ -79,17 +80,30 @@ export function readAndValidateFileData<T extends z.ZodTypeAny, TKey extends str
             errors: new z.ZodError([{
               code: z.ZodIssueCode.custom,
               path: [-1, t('products.headers')],
-              message: t('products.header-missing', {count: missingHeaders.length, header: missingHeaders.join(', ')})
+              message: t('products.header-missing', {
+                count: missingHeaders.length,
+                header: missingHeaders.map(h => t('products.header-name', {context: h})).join(', ')
+              })
             }])
           })
           return
         }
 
-        const transformData = data.map((row) => {
+        const transformedData = data.map((row) => {
           // take keys for row, transform key with provided transform function
           // use transformed key to create new data object
+          const res: Record<string, any> = {}
+
+          for (const key of Object.keys(row)) {
+            const transformedKey = transformHeaders(key)
+            res[transformedKey] = row[key]
+          }
+
+          return res
         })
-        const parseRes = schema.safeParse(data)
+
+        if (debug) console.log({data: data.slice(0,5), transformedData: transformedData.slice(0, 5)})
+        const parseRes = schema.safeParse(transformedData)
 
         if (debug) {
           console.log('read and validate debugging enabled')

@@ -107,13 +107,13 @@ export const productsDataValidation = (
         text2: z.preprocess(
           val => !isNullOrUndefined(val) ? String(val) : undefined,
           z.string()
-            .max(255, { message: t('products.product1-max-length', {num: 255})})
+            .max(255, { message: t('products.product2-max-length', {num: 255})})
             .optional().default(''),
         ),
         text3: z.preprocess(
           val => !isNullOrUndefined(val) ? String(val) : undefined,
           z.string()
-            .max(1000, { message: t('products.product1-max-length', {num: 1000})})
+            .max(1000, { message: t('products.product3-max-length', {num: 1000})})
             .optional().default(''),
         ),
         costPrice: z.coerce
