@@ -28,6 +28,7 @@ export function ModalImportClientInventory() {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'kunder')
   const validationSchema = importInventoryDataValidation(t)
+  const { t: validationT } = useTranslation(lng, 'validation')
 
   const [customerID, setCustomerID] = useState<number>()
   const [open, setOpen] = useState(false)
@@ -58,7 +59,9 @@ export function ModalImportClientInventory() {
     setRows([])
     setIsDone(false)
 
-    const dataRes = await readAndValidateFileData(files[0], validationSchema, true)
+    const dataRes = await readAndValidateFileData(files[0], validationSchema, validationT, {
+      debug: true,
+    })
     setIsReading(false)
 
     if (!dataRes.success) {
