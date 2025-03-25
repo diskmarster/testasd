@@ -218,7 +218,7 @@ export function ModalImportProducts() {
             </div>
             <a
               className={buttonVariants({ size: 'sm', variant: 'outline' })}
-              href={'/assets/product-import-example.xlsx'}
+              href={`/assets/product-import-example-${lng}.xlsx`}
               rel='noopener noreferrer'
               download>
               {t('modal-import-products.download')}
