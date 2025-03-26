@@ -59,9 +59,7 @@ export function ModalImportClientInventory() {
     setRows([])
     setIsDone(false)
 
-    const dataRes = await readAndValidateFileData(files[0], validationSchema, validationT, {
-      debug: true,
-    })
+    const dataRes = await readAndValidateFileData(files[0], validationSchema, validationT)
     setIsReading(false)
 
     if (!dataRes.success) {

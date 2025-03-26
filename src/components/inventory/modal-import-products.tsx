@@ -91,7 +91,6 @@ export function ModalImportProducts() {
     const headers = schema.element.innerType().keyof().options
     const dataRes = await readAndValidateFileData(files[0], schema, validationT, {
       expectedHeaders: headers,
-      debug: true,
       transformHeaders: (h) => headerMap.get(sanitizeHeader(h)) ?? h,
     },
     ).catch(err => {
