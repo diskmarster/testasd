@@ -71,6 +71,7 @@
     "header-name_costPrice": "Kostpris",
     "header-name_salesPrice": "Salgspris",
     "header-name_isBarred": "Spærret",
+    "header-name_note": "Note",
     "header-name_minimum": "Min. beh.",
     "header-name_maximum": "Max. bestilling",
     "header-name_orderAmount": "Bestillingsmængde"

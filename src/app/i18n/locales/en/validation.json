@@ -71,6 +71,7 @@
     "header-name_costPrice": "Cost Price",
     "header-name_salesPrice": "Sales Price",
     "header-name_isBarred": "Barred",
+    "header-name_note": "Note",
     "header-name_minimum": "Min. Stock",
     "header-name_maximum": "Max. Order",
     "header-name_orderAmount": "Order amount"
