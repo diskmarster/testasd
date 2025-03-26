@@ -62,6 +62,7 @@
 			"key_productCostPrice": "Cost price",
 			"key_productSalesPrice": "Sales price",
 			"key_productIsBarred": "Barred",
+			"key_productNote": "Note",
 			"key_supplierName": "Supplier"
 		},
 		"files": {
