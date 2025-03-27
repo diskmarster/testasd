@@ -25,7 +25,7 @@ export function EmailWelcomeCustomer({ company, link }: { company: string, link:
               </Text>
               <Text className='text-primary-foreground text-base leading-6 text-left'>
                 For at komme i gang og få mest muligt ud af vores system, bedes I
-                oprette jeres første administratorprofil.
+                oprette jeres første administratorprofil. Dit link er aktivt i 24 timer.
               </Text>
               <Button
                 className='bg-[#023eb6] rounded-md text-white text-base font-semibold text-center block w-full p-2.5'
