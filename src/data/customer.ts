@@ -1,23 +1,32 @@
 import { db, TRX } from '@/lib/database'
-import { userTable } from '@/lib/database/schema/auth'
+import { UserID, userTable } from '@/lib/database/schema/auth'
 import {
   Customer,
   CustomerID,
   CustomerLink,
   CustomerLinkID,
   customerLinkTable,
+  CustomerMailSetting,
+  CustomerMailSettingID,
+  customerMailSettingsTable,
   CustomerSettings,
   CustomerSettingsID,
   customerSettingsTable,
   customerTable,
+  LocationID,
+  locationTable,
   NewCustomer,
   NewCustomerLink,
+  NewCustomerMailSetting,
   NewCustomerSettings,
   PartialCustomer,
   PartialCustomerSettings,
 } from '@/lib/database/schema/customer'
-import { count, eq, getTableColumns, not } from 'drizzle-orm'
-import { CustomerWithUserCount } from './customer.types'
+import { and, count, desc, eq, getTableColumns, inArray, not } from 'drizzle-orm'
+import {
+  CustomerMailSettingWithEmail,
+  CustomerWithUserCount,
+} from './customer.types'
 
 export const customer = {
   create: async function (
@@ -137,4 +146,76 @@ export const customer = {
 
     return res
   }
+  },
+  createMailSetting: async function (
+    data: NewCustomerMailSetting,
+    tx: TRX = db,
+  ): Promise<CustomerMailSetting | undefined> {
+    const [res] = await tx
+      .insert(customerMailSettingsTable)
+      .values(data)
+      .returning()
+    return res
+  },
+  getAllMailSettings: async function (
+    customerID: CustomerID,
+    tx: TRX = db,
+  ): Promise<CustomerMailSettingWithEmail[]> {
+    return await tx
+      .select({
+        ...getTableColumns(customerMailSettingsTable),
+        userEmail: userTable.email,
+				locationName: locationTable.name,
+      })
+      .from(customerMailSettingsTable)
+      .where(and(eq(customerMailSettingsTable.customerID, customerID)))
+			.orderBy(customerMailSettingsTable.locationID, desc(customerMailSettingsTable.id))
+			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
+      .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
+  },
+  getAccessibleMailSettings: async function (
+    customerID: CustomerID,
+		locationIDs: LocationID[],
+    tx: TRX = db,
+  ): Promise<CustomerMailSettingWithEmail[]> {
+    return await tx
+      .select({
+        ...getTableColumns(customerMailSettingsTable),
+        userEmail: userTable.email,
+				locationName: locationTable.name,
+      })
+      .from(customerMailSettingsTable)
+      .where(
+				and(
+					eq(customerMailSettingsTable.customerID, customerID),
+					inArray(customerMailSettingsTable.locationID, locationIDs)
+				)
+			)
+			.orderBy(customerMailSettingsTable.locationID, desc(customerMailSettingsTable.id))
+			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
+      .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
+  },
+  deleteMailSetting: async function (
+    mailSettingID: CustomerMailSettingID,
+    tx: TRX = db,
+  ): Promise<boolean> {
+    const res = await tx
+      .delete(customerMailSettingsTable)
+      .where(eq(customerMailSettingsTable.id, mailSettingID))
+    return res.rowsAffected == 1
+  },
+  getMailSettingsForCron: async function (
+    tx: TRX = db,
+  ): Promise<CustomerMailSettingWithEmail[]> {
+    return await tx
+      .select({
+        ...getTableColumns(customerMailSettingsTable),
+        userEmail: userTable.email,
+				locationName: locationTable.name,
+      })
+      .from(customerMailSettingsTable)
+			.orderBy(customerMailSettingsTable.locationID, desc(customerMailSettingsTable.id))
+			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
+      .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
+  },
 }
