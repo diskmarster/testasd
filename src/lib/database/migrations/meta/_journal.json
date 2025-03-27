@@ -169,6 +169,13 @@
       "when": 1742370136343,
       "tag": "0023_wild_captain_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1743069479489,
+      "tag": "0024_lovely_dragon_man",
+      "breakpoints": true
     }
   ]
 }
