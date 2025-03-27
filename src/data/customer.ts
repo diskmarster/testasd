@@ -145,7 +145,6 @@ export const customer = {
       .returning()
 
     return res
-  }
   },
   createMailSetting: async function (
     data: NewCustomerMailSetting,
