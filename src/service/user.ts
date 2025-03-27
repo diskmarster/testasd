@@ -20,7 +20,7 @@ import { UserNoHashWithCompany } from '@/data/user.types'
 
 const ACTIVATION_LINK_BASEURL = process.env.VERCEL_ENV === 'production' ? 'https://lager.nemunivers.app' : process.env.VERCEL_ENV === 'preview' ? 'stage.lager.nemunivers.app' : 'http://localhost:3000'
 export type UserActivationLink = `${typeof ACTIVATION_LINK_BASEURL}/invitering/${UserLinkID}`
-const LINK_DURATION_HOURS = 8
+const LINK_DURATION_HOURS = 168
 
 export const userService = {
   register: async function(
