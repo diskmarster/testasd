@@ -64,9 +64,13 @@ import {
 	Pencil,
 	Search,
 	CircleCheck,
+	Circle,
+	FileDigit,
 } from 'lucide-react'
 
 export const Icons = {
+	fileDigit: FileDigit,
+	circle: Circle,
 	circleCheck: CircleCheck,
 	pencil: Pencil,
 	search: Search,
