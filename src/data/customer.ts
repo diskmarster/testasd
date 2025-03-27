@@ -204,8 +204,11 @@ export const customer = {
     return res.rowsAffected == 1
   },
   getMailSettingsForCron: async function (
+		mailType?: keyof CustomerMailSetting,
     tx: TRX = db,
   ): Promise<CustomerMailSettingWithEmail[]> {
+			const cols = getTableColumns(customerMailSettingsTable)
+			const typeCol = mailType ? cols[mailType] : undefined
     return await tx
       .select({
         ...getTableColumns(customerMailSettingsTable),
@@ -213,6 +216,9 @@ export const customer = {
 				locationName: locationTable.name,
       })
       .from(customerMailSettingsTable)
+			.where(
+				typeCol ? eq(typeCol, true) : undefined
+			)
 			.orderBy(customerMailSettingsTable.locationID, desc(customerMailSettingsTable.id))
 			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
       .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))

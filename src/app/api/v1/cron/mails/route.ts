@@ -3,6 +3,7 @@ import { customerService } from '@/service/customer'
 import { NextRequest, NextResponse } from 'next/server'
 
 const CRON_SECRET = process.env.NL_CRON_SECRET
+const validMailTypes = ['sendStockMail']
 
 export async function GET(request: NextRequest) {
   const secret = request.headers.get('Authorization')
@@ -18,6 +19,13 @@ export async function GET(request: NextRequest) {
 
   if (parts[1] != CRON_SECRET) {
     return sendResponse(401, { error: 'authorization is denied' })
+  }
+
+  const searchParams = request.nextUrl.searchParams
+  const mailType = searchParams.get('mailType') ?? undefined
+
+  if (mailType && !validMailTypes.includes(mailType)) {
+    return sendResponse(400, { error: 'invalid mail type query parameter' })
   }
 
   let mails: CustomerMailSettingWithEmail[] = []
