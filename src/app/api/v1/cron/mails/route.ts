@@ -2,7 +2,7 @@ import { CustomerMailSettingWithEmail } from '@/data/customer.types'
 import { customerService } from '@/service/customer'
 import { NextRequest, NextResponse } from 'next/server'
 
-const CRON_SECRET = process.env.CRON_SECRET
+const CRON_SECRET = process.env.NL_CRON_SECRET
 
 export async function GET(request: NextRequest) {
   const secret = request.headers.get('Authorization')
