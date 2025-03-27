@@ -1,17 +1,19 @@
 import { fallbackLng } from '@/app/i18n/settings'
 import { customer } from '@/data/customer'
-import { CustomerWithUserCount } from '@/data/customer.types'
+import { CustomerMailSettingWithEmail, CustomerWithUserCount } from '@/data/customer.types'
 import { user } from '@/data/user'
-import { UserLinkID } from '@/lib/database/schema/auth'
+import { UserID, UserLinkID } from '@/lib/database/schema/auth'
 import {
   Customer,
   CustomerID,
   CustomerLink,
   CustomerLinkID,
+  CustomerMailSetting,
   CustomerSettings,
   CustomerSettingsID,
   NewCustomer,
   NewCustomerLink,
+  NewCustomerMailSetting,
   NewCustomerSettings,
   PartialCustomer,
   PartialCustomerSettings,
@@ -19,6 +21,8 @@ import {
 import { generateIdFromEntropySize } from 'lucia'
 import { isLinkExpired } from './customer.utils'
 import { db } from '@/lib/database'
+import { location } from '@/data/location'
+import { hasPermissionByRank } from '@/data/user.types'
 
 const ACTIVATION_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -133,5 +137,27 @@ export const customerService = {
     }
 
     return customer.updateSettings(id, data)
-  }
+  },
+	getMailSettings: async function(
+		customerID: CustomerID,
+		userID?: UserID
+	): Promise<CustomerMailSettingWithEmail[]> {
+		return await db.transaction(async tx => {
+				const loggedInUser = userID && await user.getByID(userID, tx)
+				if (loggedInUser && !hasPermissionByRank(loggedInUser.role, 'administrator')) {
+					const userAccess = await location.getAllActiveByUserID(loggedInUser.id, tx)
+					const locationIDs = userAccess.map(a => a.id)
+					return await customer.getAccessibleMailSettings(customerID, locationIDs, tx)
+				}
+				return await customer.getAllMailSettings(customerID, tx)
+		})
+	},
+	createMailSetting: async function(
+		data: NewCustomerMailSetting
+	): Promise<CustomerMailSetting | undefined> {
+		return await customer.createMailSetting(data)
+	},
+	getMailsForCron: async function(): Promise<CustomerMailSettingWithEmail[]> {
+		return customer.getMailSettingsForCron()
+	}
 }
