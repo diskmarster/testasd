@@ -53,13 +53,13 @@ export async function POST(
     const parsed = createRequestValidation.safeParse(json)
 
     if (!parsed.success) {
-      const errors = parsed.error.flatten().formErrors.join('. ')
+      const errors = parsed.error.errors.flatMap(e => e.message).join(". ")
       const msg = t('route-translations-productid.error-request-loading-failed')
       const errorLog: NewApplicationError = {
         userID: user.id,
         customerID: user.customerID,
         type: 'endpoint',
-        input: { query: { id: productID }, body: { json } },
+        input: { query: { id: productID }, body: { ...json } },
         error: errors,
         origin: `POST api/v1/products/{id}/request`,
       }
@@ -142,7 +142,7 @@ export async function POST(
       userID: user.id,
       customerID: user.customerID,
       type: 'endpoint',
-      input: { query: { id: id }, body: { json } },
+      input: { query: { id: id }, body: { ...json } },
       error:
         (error as Error).message ??
         `${t('route-translations-productid.error-fetching-product')} ${id}`,
