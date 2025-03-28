@@ -11,8 +11,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 const createRequestValidation = z.object({
-	locationID: z.string(),
-	orderAmount: z.coerce.number()
+  locationID: z.string(),
+  orderAmount: z.coerce.number(),
 })
 
 export async function POST(
@@ -26,60 +26,71 @@ export async function POST(
   const { t } = await serverTranslation(lng, 'common')
 
   if (isMaintenanceMode()) {
-		return sendResponse(423, { msg: t('route-translations-productid.maintenance') })
+    return sendResponse(423, {
+      msg: t('route-translations-productid.maintenance'),
+    })
   }
 
   if (session == null || user == null) {
-		return sendResponse(401, { msg: t('route-translations-productid.no-access-to-resource') })
+    return sendResponse(401, {
+      msg: t('route-translations-productid.no-access-to-resource'),
+    })
   }
 
   if (!user.appAccess) {
-		return sendResponse(401, { msg: t('route-translations-productid.no-app-access') })
+    return sendResponse(401, {
+      msg: t('route-translations-productid.no-app-access'),
+    })
   }
 
-	try {
-		const json = await request.json()
+  try {
+    const productID = parseInt(id)
+    const json = await request.json()
 
-		const parsed = createRequestValidation.safeParse(json)
+    const parsed = createRequestValidation.safeParse(json)
 
-		if (!parsed.success) {
+    if (!parsed.success) {
       const msg = t('route-translations-productid.error-request-loading-failed')
       const errorLog: NewApplicationError = {
         userID: user.id,
         customerID: user.customerID,
         type: 'endpoint',
-        input: json,
+        input: { query: { id: productID }, body: { json } },
         error: msg,
         origin: 'POST /api/v1/regulations/move',
       }
       errorsService.create(errorLog)
 
-			return sendResponse(400, { msg })
-		}
-
-    const productID = parseInt(id)
+      return sendResponse(400, { msg })
+    }
 
     const product = await productService.getByID(productID)
 
     if (!product) {
-			return sendResponse(404, { msg: t('route-translations-productid.error-product-notfound') })
-		}
+      return sendResponse(404, {
+        msg: t('route-translations-productid.error-product-notfound'),
+      })
+    }
     if (product.isBarred) {
-			return sendResponse(400, { msg: t('route-translations-productid.error-product-barred') })
-		}
+      return sendResponse(400, {
+        msg: t('route-translations-productid.error-product-barred'),
+      })
+    }
 
-		const reorder = await inventoryService.createReorder({
-			customerID: user.customerID,
-			productID: productID,
-			locationID: parsed.data.locationID,
-			minimum: 0,
-			orderAmount: parsed.data.orderAmount,
-			isRequested: true
-		})
+    const reorder = await inventoryService.createReorder({
+      customerID: user.customerID,
+      productID: productID,
+      locationID: parsed.data.locationID,
+      minimum: 0,
+      orderAmount: parsed.data.orderAmount,
+      isRequested: true,
+    })
 
-		if (!reorder) {
-			return sendResponse(500, { msg: t('route-translations-productid.error-request-notcreated')})
-		}
+    if (!reorder) {
+      return sendResponse(500, {
+        msg: t('route-translations-productid.error-request-notcreated'),
+      })
+    }
 
     const end = performance.now()
 
@@ -92,9 +103,14 @@ export async function POST(
       platform: 'app',
     })
 
-		return sendResponse(201, { msg: t('route-translations-productid.error-request-created')})
-	} catch (error) {
-    console.error(t('route-translations-productid.error-request-product'), error)
+    return sendResponse(201, {
+      msg: t('route-translations-productid.error-request-created'),
+    })
+  } catch (error) {
+    console.error(
+      t('route-translations-productid.error-request-product'),
+      error,
+    )
 
     const errorLog: NewApplicationError = {
       userID: user.id,
@@ -109,8 +125,10 @@ export async function POST(
 
     errorsService.create(errorLog)
 
-		return sendResponse(401, { msg: t('route-translations-productid.server-error-product') })
-	}
+    return sendResponse(401, {
+      msg: t('route-translations-productid.server-error-product'),
+    })
+  }
 }
 
 function sendResponse(code: number, data: any) {
