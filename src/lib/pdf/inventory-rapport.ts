@@ -130,6 +130,8 @@ export function genInventoryExcel(inventoryLines: FormattedInventory[], lng: I18
   XLSX.utils.book_append_sheet(workbook, worksheet1, 'Lagerværdi', true)
   XLSX.utils.book_append_sheet(workbook, worksheet2, 'Varegrupper', true)
 
+	return workbook
+
   const xlFile = XLSX.writeFile(workbook, 'TestExcel.xlsx')
 
   return xlFile
