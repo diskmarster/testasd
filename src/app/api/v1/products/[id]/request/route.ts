@@ -44,9 +44,11 @@ export async function POST(
     })
   }
 
+  let json: any = {}
+
   try {
+    json = await request.json()
     const productID = parseInt(id)
-    const json = await request.json()
 
     const parsed = createRequestValidation.safeParse(json)
 
@@ -127,8 +129,6 @@ export async function POST(
       t('route-translations-productid.error-request-product'),
       error,
     )
-
-    const json = await request.json()
 
     const errorLog: NewApplicationError = {
       userID: user.id,
