@@ -95,6 +95,14 @@ export async function POST(
       })
     }
 
+		const existingReorder = await inventoryService.getReorderByIDs(productID, user.customerID, user.id)
+		if (existingReorder) {
+			const msg = existingReorder.isRequested 
+				? t("route-translations-productid.error-product-already-requested") 
+				: t("route-translations-productid.error-product-already-minimum", {num: existingReorder.minimum})
+			return sendResponse(400, { msg })
+		}
+
     const reorder = await inventoryService.createReorder({
       customerID: user.customerID,
       productID: productID,

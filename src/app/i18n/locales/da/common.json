@@ -196,7 +196,9 @@
 		"error-request-created": "Din forspørgsel blev oprettet",
 		"error-request-loading-failed": "Indlæsning af data fejlede",
 		"error-request-location-notfound": "Lokation med id {{id}} findes ikke",
-		"error-request-location-denied": "Lokation tilhører ikke dit firma"
+		"error-request-location-denied": "Lokation tilhører ikke dit firma",
+		"error-product-already-requested": "Vare er allerede forspurgt til bestilling",
+		"error-product-already-minimum": "Vare er allerede styret af genbestil med en minimumbeholdning på {{num}}"
 	},
 	"route-translations-product": {
 		"no-access-to-resource": "Du har ikke adgang til denne ressource.",
