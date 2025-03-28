@@ -57,7 +57,7 @@ export async function POST(
         type: 'endpoint',
         input: { query: { id: productID }, body: { json } },
         error: msg,
-        origin: 'POST /api/v1/regulations/move',
+        origin: `POST api/v1/products/{id}/request`,
       }
       errorsService.create(errorLog)
 
@@ -112,11 +112,13 @@ export async function POST(
       error,
     )
 
+    const json = await request.json()
+
     const errorLog: NewApplicationError = {
       userID: user.id,
       customerID: user.customerID,
       type: 'endpoint',
-      input: { id: id },
+      input: { query: { id: id }, body: { json } },
       error:
         (error as Error).message ??
         `${t('route-translations-productid.error-fetching-product')} ${id}`,
@@ -125,7 +127,7 @@ export async function POST(
 
     errorsService.create(errorLog)
 
-    return sendResponse(401, {
+    return sendResponse(500, {
       msg: t('route-translations-productid.server-error-product'),
     })
   }
