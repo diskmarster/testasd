@@ -30,6 +30,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../ui/select'
+import * as XLSX from 'xlsx'
 
 export function ModalInventoryReport() {
 	const [pending, startTransition] = useTransition()
@@ -84,6 +85,7 @@ export function ModalInventoryReport() {
 					)
 				} else if (fileType == 'EXCEL') {
 					const workbook = genInventoryExcel(inventory, lng)
+					XLSX.writeFile(workbook, 'lagerværdi.xlsx')
 				} else {
 					toast(siteConfig.errorTitle, {
 						description: t('inventory-report-modal.file-type-not-supported'),

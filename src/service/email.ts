@@ -8,6 +8,14 @@ const MAX_ATTEMPTS = 5
 const WAIT_MS = 1000
 const MAX_WAIT = 60000 / MAX_ATTEMPTS
 
+type Attachment = {
+	content: string,
+	filename: string
+} | {
+	path: string,
+	filename: string
+}
+
 export const emailService = {
   sendOnce: async function (
     to: string[],
@@ -26,7 +34,7 @@ export const emailService = {
     to: string[],
     subject: string,
     comp: React.ReactElement,
-    attachments: { path: string; filename: string }[] = [],
+    attachments: Attachment[] = [],
     attempt: number = 0,
     waitMs: number = WAIT_MS,
   ): Promise<void> {

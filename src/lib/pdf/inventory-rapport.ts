@@ -28,7 +28,7 @@ type GroupLine = {
   total: number
 }
 
-export function genInventoryExcel(inventoryLines: FormattedInventory[], lng: I18NLanguage = fallbackLng) {
+export function genInventoryExcel(inventoryLines: FormattedInventory[], lng: I18NLanguage = fallbackLng): XLSX.WorkBook {
   const aggregatedSkus: { [key: string]: Line } = inventoryLines.reduce(
     (acc: { [key: string]: Line }, line) => {
       const sku = line.product.sku
@@ -64,9 +64,9 @@ export function genInventoryExcel(inventoryLines: FormattedInventory[], lng: I18
       l.sku,
       l.text1,
       l.group,
-      numberToCurrency(l.costPrice, lng),
+      l.costPrice,
       formatNumber(l.quantity, lng),
-      numberToCurrency(l.totalCost, lng),
+      l.totalCost,
     ])
     .sort((a, b) => {
       const groupA = a[2]
@@ -97,7 +97,7 @@ export function genInventoryExcel(inventoryLines: FormattedInventory[], lng: I18
   }, {})
 
   const groupData = Object.values(aggregatedGroups)
-    .map(l => [l.name, formatNumber(l.quantity, lng), numberToCurrency(l.total, lng)])
+    .map(l => [l.name, formatNumber(l.quantity, lng), l.total])
     .sort((a, b) => {
       const groupA = a[0]
       const groupB = b[0]
@@ -131,10 +131,6 @@ export function genInventoryExcel(inventoryLines: FormattedInventory[], lng: I18
   XLSX.utils.book_append_sheet(workbook, worksheet2, 'Varegrupper', true)
 
 	return workbook
-
-  const xlFile = XLSX.writeFile(workbook, 'TestExcel.xlsx')
-
-  return xlFile
 }
 
 export function genInventoryPDF(

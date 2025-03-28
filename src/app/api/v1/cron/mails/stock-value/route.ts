@@ -1,6 +1,10 @@
+import { EmailSendMonthlyStock } from '@/components/email/email-monthly-stock'
+import { genInventoryExcel } from '@/lib/pdf/inventory-rapport'
 import { tryCatch } from '@/lib/utils.server'
+import { emailService } from '@/service/email'
 import { inventoryService } from '@/service/inventory'
 import { NextRequest, NextResponse } from 'next/server'
+import * as XLSX from 'xlsx'
 import { z } from 'zod'
 
 const CRON_SECRET = process.env.NL_CRON_SECRET
@@ -46,6 +50,19 @@ export async function POST(request: NextRequest) {
   if (!inventory.success) {
     return sendResponse(500, { error: inventory.error.message })
   }
+
+  const workbook = genInventoryExcel(inventory.data)
+  const b64 = XLSX.write(workbook, { type: 'base64' })
+  const email = parsed.data.userID ? parsed.data.userEmail! : parsed.data.email!
+
+  await emailService.sendRecursively(
+    [email],
+    `Månedlig lagerværdi rapport for ${parsed.data.locationName}`,
+    EmailSendMonthlyStock({}),
+    [{ content: b64, filename: 'lagerværdi.xlsx' }],
+  )
+
+  return sendResponse(200, {})
 }
 
 function sendResponse(code: number, data: any) {
