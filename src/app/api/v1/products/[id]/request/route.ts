@@ -51,7 +51,7 @@ export async function POST(
     const parsed = createRequestValidation.safeParse(json)
 
     if (!parsed.success) {
-      const errors = parsed.error.issues.map(i => i.message).join('. ')
+      const errors = parsed.error.flatten().formErrors.join('. ')
       const msg = t('route-translations-productid.error-request-loading-failed')
       const errorLog: NewApplicationError = {
         userID: user.id,
@@ -63,7 +63,7 @@ export async function POST(
       }
       errorsService.create(errorLog)
 
-      return sendResponse(400, { errors })
+      return sendResponse(400, { msg: errors })
     }
 
     const location = await locationService.getByID(parsed.data.locationID)
