@@ -194,7 +194,9 @@
 		"error-product-notfound": "Produktet findes ikke",
 		"error-request-notcreated": "Din forspørgsel blev ikke oprettet",
 		"error-request-created": "Din forspørgsel blev oprettet",
-		"error-request-loading-failed": "Indlæsning af data fejlede"
+		"error-request-loading-failed": "Indlæsning af data fejlede",
+		"error-request-location-notfound": "Lokation med id {{id}} findes ikke",
+		"error-request-location-denied": "Lokation tilhører ikke dit firma"
 	},
 	"route-translations-product": {
 		"no-access-to-resource": "Du har ikke adgang til denne ressource.",

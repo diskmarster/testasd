@@ -4,6 +4,7 @@ import { isMaintenanceMode } from '@/lib/utils.server'
 import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { inventoryService } from '@/service/inventory'
+import { locationService } from '@/service/location'
 import { productService } from '@/service/products'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
@@ -62,6 +63,20 @@ export async function POST(
       errorsService.create(errorLog)
 
       return sendResponse(400, { msg })
+    }
+
+    const location = await locationService.getByID(parsed.data.locationID)
+
+    if (!location) {
+      return sendResponse(404, {
+        msg: t('route-translations-productid.error-location-notfound'),
+      })
+    }
+
+    if (location.customerID != user.customerID) {
+      return sendResponse(401, {
+        msg: t('route-translations-productid.error-location-denied'),
+      })
     }
 
     const product = await productService.getByID(productID)

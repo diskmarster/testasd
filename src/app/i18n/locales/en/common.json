@@ -201,7 +201,10 @@
 		"error-request-product": "Error requesting product",
 		"error-product-notfound": "Product not found",
 		"error-request-notcreated": "Request was not created",
-		"error-request-created": "Request was created"
+		"error-request-created": "Request was created",
+		"error-request-loading-failed": "Loading of data failed",
+		"error-request-location-notfound": "Location with id {{id}} does not exist",
+		"error-request-location-denied": "Location does not belong to your company"
 	},
 	"route-translations-move": {
 		"no-access-to-resource": "You do not have access to this resource.",
