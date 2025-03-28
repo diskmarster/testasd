@@ -1,4 +1,5 @@
 import { CustomerMailSettingWithEmail } from '@/data/customer.types'
+import { CustomerMailSetting } from '@/lib/database/schema/customer'
 import { customerService } from '@/service/customer'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -22,16 +23,21 @@ export async function GET(request: NextRequest) {
   }
 
   const searchParams = request.nextUrl.searchParams
-  const mailType = searchParams.get('mailType') ?? undefined
+  const mailType = searchParams.get('mailtype') ?? undefined
 
   if (mailType && !validMailTypes.includes(mailType)) {
     return sendResponse(400, { error: 'invalid mail type query parameter' })
   }
 
+  // to shutup typescript. suggestions are welcome
+  const parsedMailType: keyof CustomerMailSetting | undefined = mailType as
+    | keyof CustomerMailSetting
+    | undefined
+
   let mails: CustomerMailSettingWithEmail[] = []
 
   try {
-    mails = await customerService.getMailsForCron()
+    mails = await customerService.getMailsForCron(parsedMailType)
   } catch (error) {
     const errMsg =
       error instanceof Error ? error.message : 'unknown error occured'
