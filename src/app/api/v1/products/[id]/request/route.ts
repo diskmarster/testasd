@@ -150,5 +150,5 @@ export async function POST(
 }
 
 function sendResponse(code: number, data: any) {
-  return NextResponse.json(code, data)
+  return NextResponse.json(data, { status: code })
 }
