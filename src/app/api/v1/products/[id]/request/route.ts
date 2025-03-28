@@ -53,19 +53,18 @@ export async function POST(
     const parsed = createRequestValidation.safeParse(json)
 
     if (!parsed.success) {
-      const errors = parsed.error.errors.flatMap(e => e.message).join(". ")
       const msg = t('route-translations-productid.error-request-loading-failed')
       const errorLog: NewApplicationError = {
         userID: user.id,
         customerID: user.customerID,
         type: 'endpoint',
         input: { query: { id: productID }, body: { ...json } },
-        error: errors,
+        error: msg,
         origin: `POST api/v1/products/{id}/request`,
       }
       errorsService.create(errorLog)
 
-      return sendResponse(400, { msg: errors })
+      return sendResponse(400, { msg })
     }
 
     const location = await locationService.getByID(parsed.data.locationID)
