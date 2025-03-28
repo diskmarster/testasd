@@ -197,7 +197,11 @@
 		"error-getting-product": "Error retrieving product for authenticated user: ",
 		"couldnt-get-product": "Could not retrieve product",
 		"error-occured-getting-product": "An error occurred while retrieving product: ",
-		"maintenance": "Maintenance in progress"
+		"maintenance": "Maintenance in progress",
+		"error-request-product": "Error requesting product",
+		"error-product-notfound": "Product not found",
+		"error-request-notcreated": "Request was not created",
+		"error-request-created": "Request was created"
 	},
 	"route-translations-move": {
 		"no-access-to-resource": "You do not have access to this resource.",
