@@ -37,6 +37,7 @@ export function ModalQrPrint({}: Props) {
     (localStorage?.getItem('label-size') as LabelSize) ?? 'small',
   )
   const [userName, setUserName] = useState<string>('')
+	const [userEmail, setUserEmail] = useState<string>('')
   const [pinCode, setPinCode] = useState<string>('')
   const [pinEntered, setPinEntered] = useState(false)
 
@@ -48,6 +49,7 @@ export function ModalQrPrint({}: Props) {
   useCustomEventListener('PrintQrForUser', (data: any) => {
     setOpen(true)
     setUserName(data.userName)
+		setUserEmail(data.userEmail)
     setPinEntered(false)
     setPinCode('')
   })
@@ -80,10 +82,10 @@ export function ModalQrPrint({}: Props) {
             <ShowFinalUserLabel
               sizes={sizes}
               t={t}
-              qrValue={`${userName};${pinCode}`}
+              qrValue={`${userEmail};${pinCode}`}
               size={size}
               setSize={setSize}
-              title={obscureEmail(userName)}
+              title={userName}
             />
           )}
         </CredenzaBody>

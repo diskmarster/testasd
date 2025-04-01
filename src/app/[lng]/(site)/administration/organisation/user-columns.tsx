@@ -332,7 +332,8 @@ export function getTableUsersColumns(
           size={'iconSm'}
           onClick={() => {
             emitCustomEvent('PrintQrForUser', {
-              userName: row.original.email,
+							userEmail: row.original.email,
+              userName: row.original.name,
             })
           }}
           variant='ghost'>
