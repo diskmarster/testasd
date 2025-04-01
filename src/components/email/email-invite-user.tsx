@@ -20,7 +20,7 @@ export function EmailInviteUser({ company, link }: { company: string, link: User
               </Text>
               <Text className='text-primary-foreground text-base leading-6 text-left'>
                 For at komme i gang og få mest muligt ud af vores system, bedes du
-                oprette en bruger ved at klikke på knappen nedenunder.
+                oprette en bruger ved at klikke på knappen nedenunder. Dit link er aktivt i en uge.
               </Text>
               <Button
                 className='bg-[#023eb6] rounded-md text-white text-base font-semibold text-center block w-full p-2.5'

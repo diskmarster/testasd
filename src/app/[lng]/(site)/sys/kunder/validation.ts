@@ -70,7 +70,7 @@ export const importInventoryDataValidation = (
     z
       .object({
         sku: z.preprocess(
-          val => (val as string).toString().toUpperCase(),
+          val => String(val).toUpperCase(),
           z.coerce
             .string({
               required_error: t('import-validation.sku-required'),
@@ -81,7 +81,7 @@ export const importInventoryDataValidation = (
             }),
         ),
         placement: z.preprocess(
-          val => (val as string).toString().toUpperCase(),
+          val => String(val).toUpperCase(),
           z.coerce
             .string()
             .max(25, {
@@ -120,7 +120,7 @@ export const importHistoryDataValidation = (
       .object({
         inserted: z.coerce.number().transform(val => excelDateToJSDate(val)),
         sku: z.preprocess(
-          val => (val as string).toString().toUpperCase(),
+          val => String(val).toUpperCase(),
           z.coerce.string(),
         ),
         barcode: z.preprocess(val => {
@@ -150,7 +150,7 @@ export const importHistoryDataValidation = (
         type: z.enum(['tilgang', 'afgang', 'regulering']),
         quantity: z.coerce.number(),
         placement: z.preprocess(
-          val => (val as string).toString().toUpperCase(),
+          val => String(val).toUpperCase(),
           z.coerce.string().superRefine(v => {
             if (v == '') {
               v = '-'
@@ -158,7 +158,7 @@ export const importHistoryDataValidation = (
           }),
         ),
         batch: z.preprocess(
-          val => (val as string).toString().toUpperCase(),
+          val => String(val).toUpperCase(),
           z.coerce.string().superRefine(v => {
             if (v == '') {
               v = '-'

@@ -28,7 +28,7 @@ const ACTIVATION_LINK_BASEURL =
       : 'http://localhost:3000'
 export type CustomerActivationLink =
   `${typeof ACTIVATION_LINK_BASEURL}/${string}/registrer/${CustomerLinkID}`
-const LINK_DURATION_HOURS = 1
+const LINK_DURATION_HOURS = 24
 
 export const customerService = {
   create: async function (

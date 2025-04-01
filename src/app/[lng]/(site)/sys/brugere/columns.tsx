@@ -118,7 +118,7 @@ export function getTableSysUsersColumns(
     cell: ({ getValue, row }) => {
       const value = getValue<boolean | string>()
       const badgeVariant = value == '-'
-        ? !isLinkExpired(new Date(row.original.inserted * 1000), 8)
+        ? !isLinkExpired(new Date(row.original.inserted * 1000), 168)
           ? 'orange'
           : 'yellow'
         : value == true
@@ -126,7 +126,7 @@ export function getTableSysUsersColumns(
           : 'red'
 
       const label = value == '-'
-        ? !isLinkExpired(new Date(row.original.inserted * 1000), 8)
+        ? !isLinkExpired(new Date(row.original.inserted * 1000), 168)
           ? t('columns.expired')
           : t('columns.waiting')
         : value == true
