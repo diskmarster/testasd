@@ -196,9 +196,9 @@
 		"error-request-loading-failed": "Loading of data failed",
 		"error-request-location-notfound": "Location with id {{id}} does not exist",
 		"error-request-location-denied": "Location does not belong to your company",
-		"error-product-already-requested": "Product is already requested for new orders",
+		"error-product-already-requested": "Product is already in the cart",
 		"error-product-already-minimum": "Product is already has a managed minimum stock of {{num}}",
-		"error-request-product": "Error requesting product"
+		"error-request-product": "Error putting product in cart"
 	},
 	"route-translations-product": {
 		"no-access-to-resource": "You do not have access to this resource.",
