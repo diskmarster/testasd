@@ -189,7 +189,16 @@
 		"error-fetching-product": "Fejl ved hentning af vare efter ID: ",
 		"server-error-product": "Der opstod en serverfejl, da der blev forsøgt at hente vare.",
 		"maintenance": "Vedligeholdelse i gang",
-		"error-product-barred": "Produktet er spærret"
+		"error-product-barred": "Produktet er spærret",
+		"error-product-notfound": "Produktet findes ikke",
+		"error-request-notcreated": "Din forspørgsel blev ikke oprettet",
+		"error-request-created": "Din forspørgsel blev oprettet",
+		"error-request-loading-failed": "Indlæsning af data fejlede",
+		"error-request-location-notfound": "Lokation med id {{id}} findes ikke",
+		"error-request-location-denied": "Lokation tilhører ikke dit firma",
+		"error-product-already-requested": "Vare er allerede lagt i kurven",
+		"error-product-already-minimum": "Vare er allerede styret af genbestil med en minimumbeholdning på {{num}}",
+		"error-request-product": "Der opstod en fejl med at lægge varen i kurven"
 	},
 	"route-translations-product": {
 		"no-access-to-resource": "Du har ikke adgang til denne ressource.",
