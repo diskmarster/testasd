@@ -28,6 +28,7 @@ export function ModalImportClientHistory() {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'kunder')
   const validationSchema = importHistoryDataValidation(t)
+  const { t: validationT } = useTranslation(lng, 'validation')
 
   const [customerID, setCustomerID] = useState<number>()
   const [open, setOpen] = useState(false)
@@ -58,7 +59,7 @@ export function ModalImportClientHistory() {
     setRows([])
     setIsDone(false)
 
-    const dataRes = await readAndValidateFileData(files[0], validationSchema, true)
+    const dataRes = await readAndValidateFileData(files[0], validationSchema, validationT)
     setIsReading(false)
 
     if (!dataRes.success) {

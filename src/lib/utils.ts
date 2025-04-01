@@ -206,3 +206,7 @@ export function getDateFnsLocale(lng: I18NLanguage): Locale {
 	const locale = lngToDateFnsLocaleMap.get(lng)
 	return locale ?? da
 }
+
+export function isNullOrUndefined(val: unknown): boolean {
+  return val === undefined || val === null
+}

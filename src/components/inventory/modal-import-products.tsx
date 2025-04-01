@@ -27,6 +27,40 @@ import { ScrollArea } from '../ui/scroll-area'
 import { productsDataValidation } from '@/app/[lng]/(site)/varer/produkter/validation'
 import { finishProductsAction, importProductsAction } from '@/app/[lng]/(site)/varer/produkter/actions'
 
+const headerMap: Map<string, string> = new Map([
+  ['vare_nr', 'sku'],
+  ['stregkode', 'barcode'],
+  ['varegruppe', 'group'],
+  ['enhed', 'unit'],
+  ['varetekst_1', 'text1'],
+  ['varetekst_2', 'text2'],
+  ['varetekst_3', 'text3'],
+  ['kostpris', 'costPrice'],
+  ['salgspris', 'salesPrice'],
+  ['spaerret', 'isBarred'],
+  ['note', 'note'],
+  ['min_beh', 'minimum'],
+  ['max_bestilling', 'maximum'],
+  ['bestillingsmaengde', 'orderAmount'],
+  ['product_no', 'sku'],
+  ['barcode', 'barcode'],
+  ['product_group', 'group'],
+  ['unit', 'unit'],
+  ['product_text_1', 'text1'],
+  ['product_text_2', 'text2'],
+  ['product_text_3', 'text3'],
+  ['cost_price', 'costPrice'],
+  ['sales_price', 'salesPrice'],
+  ['barred', 'isBarred'],
+  ['min_stock', 'minimum'],
+  ['max_order', 'maximum'],
+  ['order_amount', 'orderAmount'],
+])
+
+function sanitizeHeader(header: string): string {
+  return header.replaceAll(/æ/ig, 'ae').toLowerCase().replaceAll(' ', '_').replaceAll(/[^a-zA-Z0-9_]/g, '')
+}
+
 export function ModalImportProducts() {
   const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
@@ -41,8 +75,10 @@ export function ModalImportProducts() {
 
   const [rows, setRows] = useState<z.infer<typeof schema>>([])
   const [errors, setErrors] = useState<
-    ZodError<typeof productsDataValidation> | undefined
+    ZodError<ReturnType<typeof productsDataValidation>> | undefined
   >(undefined)
+  const [updated, setUpdated] = useState(0)
+  const [created, setCreated] = useState(0)
   const desktop = '(min-width: 768px)'
   const isDesktop = useMediaQuery(desktop)
 
@@ -52,7 +88,19 @@ export function ModalImportProducts() {
     setRows([])
     setIsDone(false)
 
-    const dataRes = await readAndValidateFileData(files[0], schema)
+    const headers = schema.element.innerType().keyof().options
+    const dataRes = await readAndValidateFileData(files[0], schema, validationT, {
+      expectedHeaders: headers,
+      transformHeaders: (h) => headerMap.get(sanitizeHeader(h)) ?? h,
+    },
+    ).catch(err => {
+        console.log(err)
+        return {
+          success: false,
+          errors: err?.errors ?? new z.ZodError([]),
+          data: []
+        }
+      })
     setIsReading(false)
 
     if (!dataRes.success) {
@@ -70,7 +118,7 @@ export function ModalImportProducts() {
         '.xlsx',
       ],
       'application/vnd.ms-excel': ['.xls'],
-      'text/csv': ['.csv'],
+      //'text/csv': ['.csv'],
     },
   })
 
@@ -78,6 +126,8 @@ export function ModalImportProducts() {
     if (pending) return
     setOpen(open)
     setRows([])
+    setUpdated(0)
+    setCreated(0)
     setErrors(undefined)
     setResponseErrors([])
     setUploadedAmount(0)
@@ -85,6 +135,8 @@ export function ModalImportProducts() {
   }
 
   function onSubmit(values: z.infer<typeof schema>) {
+    setUpdated(0)
+    setCreated(0)
     setErrors(undefined)
     setResponseErrors([])
     setUploadedAmount(0)
@@ -104,11 +156,15 @@ export function ModalImportProducts() {
         if (res && res.serverError) {
           setResponseErrors(prev => [`${errorMsg} ${res.serverError}`, ...prev])
           continue
+        } else if (res && res.data) {
+          setUpdated(prev => prev + res.data!.updated)
+          setCreated(prev => prev + res.data!.created)
         }
 
         setUploadedAmount(prev => prev + chunk.length)
       }
       setIsDone(true)
+      setRows([])
       await finishProductsAction()
       updateChipCount()
     })
@@ -161,7 +217,7 @@ export function ModalImportProducts() {
             </div>
             <a
               className={buttonVariants({ size: 'sm', variant: 'outline' })}
-              href={'/assets/product-import-example.xlsx'}
+              href={`/assets/product-import-example-${lng}.xlsx`}
               rel='noopener noreferrer'
               download>
               {t('modal-import-products.download')}
@@ -191,7 +247,7 @@ export function ModalImportProducts() {
               )}
             </div>
           </div>
-          {errors && (
+          {errors && errors.issues && (
             <div className='flex flex-col gap-1 text-destructive text-sm'>
               <p className='font-semibold'>{t(siteConfig.errorTitle)}</p>
               {errors.issues.slice(0, 5).map((issue, i) => {
@@ -204,7 +260,7 @@ export function ModalImportProducts() {
 
                 return (
                   <div key={i}>
-                    <p>{`${t('modal-import-products.error-on-row')} ${rowNumber} ${t('modal-import-products.in')} ${rowKey}: ${rowMsg}`}</p>
+                    <p>{`${t('modal-import-products.error-on-row')} ${rowNumber} ${t('modal-import-products.in')} ${validationT('products.header-name', {context: rowKey})}: ${rowMsg}`}</p>
                   </div>
                 )
               })}
@@ -234,7 +290,9 @@ export function ModalImportProducts() {
                 {t('modal-import-products.import-completed-title')}
               </AlertTitle>
               <AlertDescription className='text-success'>
-                {t('modal-import-products.import-completed-description')}
+                {t('modal-import-products.import-completed-description')}{' '}
+                {t('modal-import-products.items-created', { count: created })}{'. '}
+                {t('modal-import-products.items-updated', { count: updated })}{'. '}
               </AlertDescription>
             </Alert>
           )}
