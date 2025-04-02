@@ -1,23 +1,38 @@
 import { siteConfig } from '@/config/site'
+import { CustomerMailSettingWithEmail } from '@/data/customer.types'
+import { Customer } from '@/lib/database/schema/customer'
 import { Body, Container, Head, Heading, Hr, Html, Preview, Section, Tailwind, Text } from '@react-email/components'
+import { formatDate } from 'date-fns'
+import { da } from 'date-fns/locale'
+import { Boxes } from 'lucide-react'
 
-interface Props { }
+interface Props {
+	mailInfo: CustomerMailSettingWithEmail
+	customer: Customer
+}
 
-export function EmailSendMonthlyStock({ }: Props) {
+export function EmailSendMonthlyStock({ mailInfo, customer }: Props) {
+	const dateStr = formatDate(Date.now(), 'MMMM yyyy', { locale: da })
 	return (
 		<Tailwind>
 			<Html>
 				<Head />
-				<Preview>TEST</Preview>
 				<Body className='bg-muted font-sans'>
+					<Preview>{siteConfig.name} Rapport Mail Service</Preview>
 					<Container className='bg-white mx-auto pt-5 pb-12'>
 						<Section className='px-12'>
 							<Heading as='h4'>Nem Lager</Heading>
-							<Hr className='border-border my-5' />
+							<Hr className='border-[#e6ebf1] dark:border-[#6b6b6b] my-5' />
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
-								Din månedlig lagerværdi rapport for TEST
+								Hej {customer.company}
 							</Text>
-							<Hr className='border-border my-5' />
+							<Text className='text-primary-foreground text-base leading-6 text-left'>
+								Vedhæftet finder du den seneste lagerværdirapport for {mailInfo.locationName}. Rapporten indeholder en opgørelse over din lagerbeholdning og værdi pr. {dateStr}.
+							</Text>
+							<Text className='text-primary-foreground text-base leading-6 text-left'>
+								Du finder rapporten i både PDF- og Excelformat, så du nemt kan gennemgå og bearbejde dine data.
+							</Text>
+							<Hr className='border-[#e6ebf1] dark:border-[#6b6b6b] my-5' />
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
 								Vores supportteam står klar til at hjælpe jer, hvis I har
 								spørgsmål eller har brug for hjælp til opsætningen. Tøv ikke med
@@ -27,7 +42,7 @@ export function EmailSendMonthlyStock({ }: Props) {
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
 								- SkanCode Teamet
 							</Text>
-							<Hr className='border-border my-5' />
+							<Hr className='border-[#e6ebf1] dark:border-[#6b6b6b] my-5' />
 							<Text className='text-muted-foreground text-xs leading-5'>
 								SkanCode A/S
 								<br />
