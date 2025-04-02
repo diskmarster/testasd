@@ -8,6 +8,7 @@ import {
   sqliteTable,
   text,
   unique,
+  uniqueIndex,
 } from 'drizzle-orm/sqlite-core'
 import { userTable } from './auth'
 
@@ -174,7 +175,11 @@ export const customerMailSettingsTable = sqliteTable(
       'email_check',
       sql`(${t.userID} IS NULL AND ${t.email} IS NOT NULL) OR (${t.userID} IS NOT NULL AND ${t.email} IS NULL)`,
     ),
-    unique().on(t.customerID, t.locationID, t.userID, t.email),
+		// this will give you a starting point in your migration files but the expression will get escaped incorrectly
+		// see: https://github.com/drizzle-team/drizzle-orm/issues/3350
+		// needs to be like this in migration files:
+		// CREATE UNIQUE INDEX `unq` ON `nl_customer_mail_settings` (`customer_id`,`location_id`,ifnull(`user_id`, 0),ifnull(`email`, 0));
+		uniqueIndex('unq').on(t.customerID, t.locationID, sql`ifnull(${t.userID}, 0)`, sql`ifnull(${t.email}, 0)`),
   ],
 )
 

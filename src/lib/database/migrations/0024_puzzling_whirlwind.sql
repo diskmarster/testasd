@@ -13,4 +13,4 @@ CREATE TABLE `nl_customer_mail_settings` (
 	CONSTRAINT "email_check" CHECK(("nl_customer_mail_settings"."user_id" IS NULL AND "nl_customer_mail_settings"."email" IS NOT NULL) OR ("nl_customer_mail_settings"."user_id" IS NOT NULL AND "nl_customer_mail_settings"."email" IS NULL))
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `nl_customer_mail_settings_customer_id_location_id_user_id_email_unique` ON `nl_customer_mail_settings` (`customer_id`,`location_id`,`user_id`,`email`);
+CREATE UNIQUE INDEX `unq` ON `nl_customer_mail_settings` (`customer_id`,`location_id`,ifnull(`user_id`, 0),ifnull(`email`, 0));
