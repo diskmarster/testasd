@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server"
+
 export function isMaintenanceMode() {
   return process.env.MAINTENANCE_MODE === '1'
 }
@@ -25,4 +27,8 @@ export async function tryCatch<T, E = Error>(
   } catch (error) {
     return { data: undefined, error: error as E, success: false }
   }
+}
+
+export function sendResponse(code: number, data: any = null) {
+  return new Response(data, { status: code })
 }
