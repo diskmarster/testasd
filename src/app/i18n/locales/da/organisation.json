@@ -242,36 +242,35 @@
     "confirm-button": "Slet bruger"
   },
 	"mail-settings": {
-		"title": "Mailindstillinger",
-		"description": "Se og opdater dine mailindstillinger",
-		"link-to-faq": "Hvilke mails kan jeg få tilsendt?",
+		"title": "Planlagte e-mails",
+		"description": "Se og planlæg dine e-mails",
+		"link-to-faq": "Hvilke e-mails kan jeg få tilsendt?",
 		"button-add": "Tilføj ny",
 		"button-cancel": "Fortryd",
-		"button-apply": "Opdater {{num}} rækker",
+		"button-apply": "Opdater {{num}} emails",
 		"col-updated": "Opdateret",
 		"col-location": "Lokation",
-		"col-email": "Email",
+		"col-email": "E-mail",
 		"col-stock-value": "Lagerværdi",
-		"actions-mark-unchecked": "Marker alle fra",
 		"actions-delete": "Slet",
 		"errors": {
-			"update-settings-success": "Mailindstillinger er blevet opdateret",
-			"update-settings-failed": "{{count}} of {{max}} mailindstillinger blev ikke opdateret",
-			"create-settings-success": "Mailindstilling er blevet oprettet",
-			"create-settings-failed": "Mailindstilling er ikke blevet oprettet",
-			"delete-setting-success": "Mailindstilling blev slettet",
-			"delete-setting-failed": "Mailindstilling blev ikke slettet. Prøv igen"
+			"update-settings-success": "E-mail er blevet opdateret",
+			"update-settings-failed": "{{count}} af {{max}} e-mails blev ikke opdateret",
+			"create-settings-success": "E-mail er blevet oprettet",
+			"create-settings-failed": "E-mail blevet ikke oprettet",
+			"delete-setting-success": "E-mail blev slettet",
+			"delete-setting-failed": "E-mail blev ikke slettet. Prøv igen"
 		},
 		"add-modal": {
-			"title": "Tilføj ny mailindstilling",
-			"type": "Hvilke mails skal sendes?",
-			"type-error-message": "Mindst én mail skal vælges",
+			"title": "Tilføj ny planlagt e-mail",
+			"type": "Hvilke e-mails skal sendes?",
+			"type-error-message": "Mindst én mail type skal vælges",
 			"locations": "For hvilke lokationer?",
 			"locations-placeholder": "Vælg lokation",
 			"email": "Til hvilken e-mail?",
 			"email-external-mail": "Sender til mail uden for Nem Lager",
 			"button-close": "Luk",
-			"button-confirm": "Tilføj mailindstilling",
+			"button-confirm": "Tilføj planlagt e-mail",
 			"button-show-all": "Vis alle",
 			"mail-types": {
 				"stock-value-title": "Lagerværdi",
@@ -279,10 +278,10 @@
 			}
 		},
 		"delete-modal": {
-			"title": "Slet mailindstilling?",
-			"description": "Denne handling er permanent og kan ikke gøres om. Vil du slette denne mailindstilling?",
+			"title": "Slet planlagt e-mail?",
+			"description": "Denne handling er permanent og kan ikke gøres om. Vil du slette denne planlagte e-mail?",
 			"button-no": "Nej",
-			"button-yes": "Ja, slet mailindstilling"
+			"button-yes": "Ja, slet planlagt e-mail"
 		}
 	}
 }

@@ -98,7 +98,13 @@
     "maximum": "Maximum order quantity",
     "maximum-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required.",
     "order-amount": "Order quantity",
-    "order-amount-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required."
+    "order-amount-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required.",
+		"cron-mails": {
+			"question": "Which scheduled mails can I receive?",
+			"sub": "Nem Lager offers the following list of scheduled mails to be sent to its users or outside emails.",
+			"answer-title": "Monthly stock value",
+			"answer": "Get an email containing an Excel- and PDF-file with your entire inventory value summed up and ready for further processing if needed."
+		}
   },
   "modal-show-user-label": {
     "title": "User Label",
