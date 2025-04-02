@@ -1,9 +1,11 @@
 import { EmailSendMonthlyStock } from '@/components/email/email-monthly-stock'
-import { genInventoryExcel } from '@/lib/pdf/inventory-rapport'
-import { tryCatch } from '@/lib/utils.server'
+import { genInventoryExcel, genInventoryPDF } from '@/lib/pdf/inventory-rapport'
+import { sendResponse, tryCatch } from '@/lib/utils.server'
+import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
 import { inventoryService } from '@/service/inventory'
-import { NextRequest, NextResponse } from 'next/server'
+import { formatDate } from 'date-fns'
+import { NextRequest } from 'next/server'
 import * as XLSX from 'xlsx'
 import { z } from 'zod'
 
@@ -44,6 +46,13 @@ export async function POST(request: NextRequest) {
     return sendResponse(400, { error: 'invalid data in request body' })
   }
 
+  const customer = await tryCatch(
+    customerService.getByID(parsed.data.customerID),
+  )
+  if (!customer.success) {
+    return sendResponse(500, { error: customer.error.message })
+  }
+
   const inventory = await tryCatch(
     inventoryService.getInventory(parsed.data.locationID),
   )
@@ -52,19 +61,43 @@ export async function POST(request: NextRequest) {
   }
 
   const workbook = genInventoryExcel(inventory.data)
-  const b64 = XLSX.write(workbook, { type: 'base64' })
+  const excelb64 = XLSX.write(workbook, { type: 'base64' })
   const email = parsed.data.userID ? parsed.data.userEmail! : parsed.data.email!
+  const today = new Date()
+  const dateStr = formatDate(today, 'dd-MM-yy')
+
+  const pdf = genInventoryPDF(
+    {
+      docTitle: `Lagerværdi for ${customer.data?.company}, ${parsed.data.locationName}`,
+      companyName: customer.data?.company!,
+      locationName: parsed.data.locationName,
+      userName: email,
+      dateOfReport: today,
+    },
+    inventory.data,
+    'da',
+  )
+  const pdfbufarr = pdf.output('arraybuffer')
+  const pdfb64 = Buffer.from(pdfbufarr).toString('base64')
 
   await emailService.sendRecursively(
     [email],
-    `Månedlig lagerværdi rapport for ${parsed.data.locationName}`,
-    EmailSendMonthlyStock({}),
-    [{ content: b64, filename: 'lagerværdi.xlsx' }],
+    `Rapport: Månedlig lagerværdi rapport for ${customer.data?.company}, ${parsed.data.locationName}`,
+    EmailSendMonthlyStock({
+      mailInfo: parsed.data,
+      customer: customer.data!,
+    }),
+    [
+      {
+        content: excelb64,
+        filename: `nem_lager_${parsed.data.locationName}_lagerværdi_${dateStr}.xlsx`,
+      },
+      {
+        content: pdfb64,
+        filename: `nem_lager_${parsed.data.locationName}_lagerværdi_${dateStr}.pdf`,
+      },
+    ],
   )
 
-  return sendResponse(200, {})
-}
-
-function sendResponse(code: number, data: any) {
-  return NextResponse.json(data, { status: code })
+  return sendResponse(204)
 }
