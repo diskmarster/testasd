@@ -1,7 +1,8 @@
 import { CustomerMailSettingWithEmail } from '@/data/customer.types'
 import { CustomerMailSetting } from '@/lib/database/schema/customer'
+import { sendResponse } from '@/lib/utils.server'
 import { customerService } from '@/service/customer'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 
 const CRON_SECRET = process.env.NL_CRON_SECRET
 const validMailTypes = ['sendStockMail']
@@ -45,8 +46,4 @@ export async function GET(request: NextRequest) {
   }
 
   return sendResponse(200, { mails })
-}
-
-function sendResponse(code: number, data: any) {
-  return NextResponse.json(data, { status: code })
 }
