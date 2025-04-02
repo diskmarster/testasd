@@ -5,6 +5,7 @@ import { Suspense } from 'react'
 import { CompanyInfoWrapper } from './company-wrapper'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { MailSettingWrapper } from './mail-wrapper'
+import { DeleteSettingModal } from '@/components/admin/mail-settings'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -25,6 +26,8 @@ async function Page({ params: { lng }, customer, user }: Props) {
 			<Suspense fallback={<p>loading mail settings...</p>}>
 				<MailSettingWrapper customer={customer} user={user} />
 			</Suspense>
+
+			<DeleteSettingModal />
 		</SiteWrapper>
 	)
 }

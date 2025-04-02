@@ -1,27 +1,62 @@
 "use client"
 
 import { CustomerMailSettingWithEmail } from "@/data/customer.types"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle
+} from "../ui/card"
 import { ScrollArea } from "../ui/scroll-area"
 import { Button } from "../ui/button"
 import { Icons } from "../ui/icons"
 import { cn, formatDate } from "@/lib/utils"
-import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogTriggerV2, DialogV2 } from "../ui/dialog-v2"
+import {
+	DialogContentV2,
+	DialogDescriptionV2,
+	DialogFooterV2,
+	DialogHeaderV2,
+	DialogTitleV2,
+	DialogTriggerV2,
+	DialogV2
+} from "../ui/dialog-v2"
 import { useForm } from "react-hook-form"
 import { createMailSetting } from "@/app/[lng]/(site)/administration/firma/validation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ReactNode, useEffect, useState, useTransition } from "react"
-import { fetchLocationsForCustomerActions } from "@/app/[lng]/(site)/sys/kunder/actions"
+import {
+	Dispatch,
+	ReactNode,
+	SetStateAction,
+	useEffect,
+	useState,
+	useTransition
+} from "react"
 import { User } from "lucia"
-import { fetchUsersAction } from "@/app/[lng]/(site)/genbestil/[id]/actions"
 import { UserNoHash } from "@/lib/database/schema/auth"
 import { Label } from "../ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from "../ui/select"
 import { Input } from "../ui/input"
-import { createMailSettingAction } from "@/app/[lng]/(site)/administration/firma/actions"
+import {
+	createMailSettingAction,
+	deleteMailSettingAction,
+	fetchLocationsForMailSettings,
+	fetchUsersAction,
+	updateMultipleMailSettings
+} from "@/app/[lng]/(site)/administration/firma/actions"
 import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { z } from "zod"
+import Link from "next/link"
+import { useLanguage } from "@/context/language"
+import { emitCustomEvent, useCustomEventListener } from "react-custom-events"
+import { useTranslation } from "@/app/i18n/client"
 
 interface Props {
 	user: User
@@ -29,83 +64,300 @@ interface Props {
 }
 
 export function MailSettings({ settings, user }: Props) {
+	const lang = useLanguage()
+	const { t } = useTranslation(lang, 'organisation')
+	const [pending, startTransition] = useTransition()
+	const [settingsChanges, setSettingsChanges] = useState(new Map<number, Partial<CustomerMailSettingWithEmail>>())
+	const hasChanges = settingsChanges.size > 0
+	const [localSettings, setLocalSettings] = useState(settings);
+
+	function updateMailSettings() {
+		let payload = []
+		for (const [key, val] of Array.from(settingsChanges.entries())) {
+			payload.push({ id: key, ...val })
+		}
+
+		const previousSettings = [...localSettings]
+
+		startTransition(async () => {
+			const res = await updateMultipleMailSettings(payload)
+
+			if (res && res.serverError) {
+				setLocalSettings(previousSettings)
+				toast.error(t(siteConfig.errorTitle), {
+					description: res.serverError
+				})
+				return
+			}
+
+			let toaster = res?.data?.fullUpdate
+				? toast.success
+				: toast.warning
+
+			let msg = res?.data?.fullUpdate
+				? t('mail-settings.errors.update-settings-success')
+				: t('mail-settings.errors.update-settings-failed', { count: (res?.data?.ids.length || 0), max: payload.length })
+
+			const newMap = new Map()
+			const updatedSettings = localSettings.map(setting => {
+				const hasChange = settingsChanges.get(setting.id)
+				const wasUpdated = res?.data?.ids.includes(setting.id)
+				if (hasChange && !wasUpdated) newMap.set(setting.id, hasChange)
+				return (hasChange && wasUpdated) ? { ...setting, ...hasChange } : setting
+			})
+
+			setLocalSettings(updatedSettings)
+			setSettingsChanges(newMap)
+			toaster(t(siteConfig.successTitle), { description: msg })
+		})
+	}
+
 	return (
 		<Card>
 			<CardHeader className="flex flex-row items-start justify-between">
 				<div className="space-y-1.5">
-					<CardTitle>Mailindstillinger</CardTitle>
-					<CardDescription>Se og opdater dine mailindstillinger.</CardDescription>
+					<CardTitle>{t('mail-settings.title')}</CardTitle>
+					<CardDescription>{t('mail-settings.description')}</CardDescription>
 				</div>
 				<div className="flex items-center gap-4">
-					<div className="text-sm leading-none text-muted-foreground hover:underline cursor-pointer">
-						Hvilke mails kan jeg få sendt?
-					</div>
-					<CreateMailSetting user={user} />
+					<Link
+						className="hover:underline text-sm text-muted-foreground"
+						href={`/${lang}/faq/?spørgsmål=Hvilke mails jeg få tilsendt?`}
+					>
+						{t('mail-settings.link-to-faq')}
+					</Link>
+					{hasChanges ? (
+						<div className="flex items-center gap-2">
+							<Button variant='outline' onClick={() => {
+								const newMap = new Map()
+								setSettingsChanges(newMap)
+							}}>
+								{t('mail-settings.button-cancel')}
+							</Button>
+							<Button
+								onClick={() => updateMailSettings()}
+								className="flex items-center gap-2">
+								{pending && <Icons.spinner className="size-4 animate-spin" />}
+								{t('mail-settings.button-apply', { num: settingsChanges.size })}
+							</Button>
+						</div>
+					) : (
+						<CreateMailSetting user={user} />
+					)}
 				</div>
 			</CardHeader>
 			<CardContent>
-				<EmailList settings={settings} />
+				<EmailList settings={localSettings} changes={settingsChanges} setChanges={setSettingsChanges} />
 			</CardContent>
 		</Card>
 	)
 }
 
-function EmailList({ settings }: { settings: CustomerMailSettingWithEmail[] }) {
+function EmailList({
+	settings,
+	changes,
+	setChanges,
+}: {
+	settings: CustomerMailSettingWithEmail[],
+	changes: Map<number, Partial<CustomerMailSettingWithEmail>>,
+	setChanges: Dispatch<SetStateAction<Map<number, Partial<CustomerMailSettingWithEmail>>>>
+}) {
+	const lang = useLanguage()
+	const { t } = useTranslation(lang, 'organisation')
+	const [limit, setLimit] = useState(10)
 	// TODO: remember small screens
-	const layoutClasses = "px-3 grid gap-2 grid-cols-[150px_100px_1fr_100px_130px_50px] items-center"
+	const layoutClasses = "px-3 grid gap-2 grid-cols-[150px_100px_1fr_100px_50px] items-center"
 	return (
-		<div className="space-y-2">
+		<div className="flex flex-col gap-2">
 			<SettingsHeader layoutClasses={layoutClasses} />
 			<ScrollArea>
-				<div>
-					{settings.map(s => (
-						<SingleSetting key={s.id} layoutClasses={layoutClasses} setting={s} />
+				<div className="flex flex-col gap-1">
+					{settings.slice(0, limit).map(s => (
+						<SingleSetting
+							key={s.id}
+							layoutClasses={layoutClasses}
+							setting={s}
+							changes={changes}
+							setChanges={setChanges} />
 					))}
 				</div>
 			</ScrollArea>
+			{limit < settings.length && (
+				<Button
+					size='sm'
+					className="mx-auto"
+					onClick={() => setLimit(settings.length)}
+				>
+					{t('mail-settings.button-show-all')}
+				</Button>
+			)}
 		</div>
 	)
 }
 
 function SettingsHeader({ layoutClasses }: { layoutClasses: string }) {
+	const lang = useLanguage()
+	const { t } = useTranslation(lang, 'organisation')
 	return (
 		<div className={cn(layoutClasses, "py-2 rounded-md bg-muted text-muted-foreground text-xs font-semibold")}>
-			<p>Opdateret</p>
-			<p>Lokation</p>
-			<p>Email</p>
-			<p className="text-right">Lagerværdi</p>
-			<p className="text-right">Registreringer (snart)</p>
+			<p>{t('mail-settings.col-updated')}</p>
+			<p>{t('mail-settings.col-location')}</p>
+			<p>{t('mail-settings.col-email')}</p>
+			<p className="text-center">{t('mail-settings.col-stock-value')}</p>
 			<div />
 		</div>
 	)
 }
 
-function SingleSetting({ layoutClasses, setting }: { layoutClasses: string, setting: CustomerMailSettingWithEmail }) {
+function SingleSetting({
+	layoutClasses,
+	setting,
+	changes,
+	setChanges,
+}: {
+	layoutClasses: string,
+	setting: CustomerMailSettingWithEmail,
+	changes: Map<number, Partial<CustomerMailSettingWithEmail>>,
+	setChanges: Dispatch<SetStateAction<Map<number, Partial<CustomerMailSettingWithEmail>>>>
+}) {
+	const hasChange = changes.get(setting.id)
+
+	function update(key: number, val: Partial<CustomerMailSettingWithEmail>) {
+		const newMap = new Map(changes)
+		if (newMap.has(key)) {
+			newMap.delete(key)
+		} else {
+			const existing = newMap.get(key)
+			newMap.set(key, { ...existing, ...val })
+		}
+		setChanges(newMap)
+	}
 	return (
-		<article className={cn(layoutClasses, "text-sm py-1.5")}>
+		<article className={cn(layoutClasses, "text-sm")}>
 			<p>{formatDate(setting.updated)}</p>
 			<p>{setting.locationName}</p>
 			<p>{setting.userID ? setting.userEmail : setting.email}</p>
-			<div className="ml-auto">
-				{setting.sendStockMail ? <Icons.circleCheck className="size-4 text-success" /> : <Icons.circle className="size-4" />}
+			<div
+				className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
+				onClick={() => update(setting.id, { ...setting, sendStockMail: !setting.sendStockMail })}>
+				{hasChange
+					? hasChange.sendStockMail
+						? <Icons.dashedCheck />
+						: <Icons.circleDashed className="size-5 text-amber-500" />
+					: setting.sendStockMail
+						? <Icons.circleCheck className="size-5 text-success" />
+						: <Icons.circle className="size-5" />
+				}
 			</div>
 			<div className="ml-auto">
-				<Icons.circle className="size-4 text-muted-foreground" />
-			</div>
-			<div className="ml-auto">
-				<Icons.horizontalDots className="size-4" />
+				<SingleSettingActions setting={setting} />
 			</div>
 		</article>
 	)
 }
 
+function SingleSettingActions({
+	setting,
+}: {
+	setting: CustomerMailSettingWithEmail,
+}) {
+	return (
+		<Button
+			size='iconSm'
+			variant='ghost'
+			className="group"
+			onClick={() => emitCustomEvent('DeleteMailSettingByID', { id: setting.id })}
+		>
+			<Icons.cross className="size-4 text-muted-foreground group-hover:text-destructive" />
+		</Button>
+	)
+}
+
+export function DeleteSettingModal() {
+	// rendered in page.tsx
+	const lang = useLanguage()
+	const { t } = useTranslation(lang, 'organisation')
+	const [pending, startTransition] = useTransition()
+	const [open, setOpen] = useState(false)
+	const [settingID, setSettingID] = useState<number>()
+
+	useCustomEventListener('DeleteMailSettingByID', ({ id }: { id: number }) => {
+		setSettingID(id)
+		setOpen(true)
+	})
+
+	function onOpenChange(open: boolean) {
+		setOpen(open)
+		setSettingID(undefined)
+	}
+
+	function deleteSetting() {
+		if (!settingID) {
+			toast.error(t(siteConfig.errorTitle), {
+				description: t('mail-settings.errors.delete-setting-failed')
+			})
+			return
+		}
+		startTransition(async () => {
+			const res = await deleteMailSettingAction({ settingID })
+			if (res && res.serverError) {
+				toast.error(t(siteConfig.errorTitle), {
+					description: res.serverError
+				})
+				return
+			}
+			toast.success(t(siteConfig.successTitle), {
+				description: t('mail-settings.errors.delete-setting-success')
+			})
+			onOpenChange(false)
+		})
+	}
+
+	return (
+		<DialogV2 open={open} onOpenChange={onOpenChange}>
+			<DialogContentV2 className="max-w-md">
+				<DialogHeaderV2>
+					<div className="flex items-center gap-2">
+						<Icons.trash className="size-4 text-destructive" />
+						<DialogTitleV2 className="text-sm">{t('mail-settings.delete-modal.title')}</DialogTitleV2>
+					</div>
+				</DialogHeaderV2>
+				<div className="px-3 space-y-4">
+					<DialogDescriptionV2>{t('mail-settings.delete-modal.description')}</DialogDescriptionV2>
+				</div>
+				<DialogFooterV2>
+					<Button
+						onClick={() => onOpenChange(false)}
+						size='sm'
+						variant='outline'>
+						{t('mail-settings.delete-modal.button-no')}
+					</Button>
+					<Button
+						size='sm'
+						form="create-form"
+						type="submit"
+						className="flex items-center gap-2"
+						onClick={() => deleteSetting()}
+						variant='destructive'>
+						{pending && (
+							<Icons.spinner className="size-3.5 animate-spin" />
+						)}
+						{t('mail-settings.delete-modal.button-yes')}
+					</Button>
+				</DialogFooterV2>
+			</DialogContentV2>
+		</DialogV2>
+	)
+}
+
 function CreateMailSetting({ user }: { user: User }) {
+	const lang = useLanguage()
+	const { t } = useTranslation(lang, 'organisation')
 	const [open, setOpen] = useState(false)
 	const [pending, startTransition] = useTransition()
 	const [locations, setLocations] = useState<{ id: string; name: string }[]>([])
 	const [users, setUsers] = useState<UserNoHash[]>([])
 	const [search, setSearch] = useState('')
-	const [error, setError] = useState<string>()
 
 	const filteredUsers = users.filter(u => u.email.toLowerCase().includes(search.toLowerCase()))
 	const userMap = new Map(users.map(u => [u.email, u.id]))
@@ -128,8 +380,7 @@ function CreateMailSetting({ user }: { user: User }) {
 	useEffect(() => {
 		if (!pending && locations.length == 0) {
 			startTransition(async () => {
-				// TODO: make seperate action for this feature
-				const res = await fetchLocationsForCustomerActions({
+				const res = await fetchLocationsForMailSettings({
 					customerID: user.customerID,
 				})
 				setLocations(res?.data ?? [])
@@ -138,7 +389,6 @@ function CreateMailSetting({ user }: { user: User }) {
 
 		if (!pending && users.length == 0) {
 			startTransition(async () => {
-				// TODO: make seperate action for this feature
 				const res = await fetchUsersAction()
 				if (res && res.data) {
 					setUsers(res.data)
@@ -151,7 +401,6 @@ function CreateMailSetting({ user }: { user: User }) {
 		setOpen(open)
 		reset()
 		setSearch('')
-		setError(undefined)
 	}
 
 	function hasMailsSelected(): boolean {
@@ -179,11 +428,13 @@ function CreateMailSetting({ user }: { user: User }) {
 		startTransition(async () => {
 			const res = await createMailSettingAction(values)
 			if (res && res.serverError) {
-				setError(res.serverError)
+				toast.error(t(siteConfig.successTitle), {
+					description: res.serverError
+				})
 				return
 			}
-			toast.success(siteConfig.successTitle, {
-				description: "Mailindstilling er blevet oprettet"
+			toast.success(t(siteConfig.successTitle), {
+				description: t('mail-settings.errors.create-settings-success')
 			})
 			onOpenChange(false)
 		})
@@ -192,13 +443,13 @@ function CreateMailSetting({ user }: { user: User }) {
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
 			<DialogTriggerV2 asChild>
-				<Button>Tilføj ny</Button>
+				<Button>{t('mail-settings.button-add')}</Button>
 			</DialogTriggerV2>
 			<DialogContentV2 className="max-w-md">
 				<DialogHeaderV2>
 					<div className="flex gap-2 items-center">
 						<Icons.plus className="size-4 text-primary" />
-						<DialogTitleV2>Tilføj ny mailindstilling</DialogTitleV2>
+						<DialogTitleV2>{t('mail-settings.add-modal.title')}</DialogTitleV2>
 					</div>
 				</DialogHeaderV2>
 				<div className="px-3 flex flex-col gap-4">
@@ -207,27 +458,27 @@ function CreateMailSetting({ user }: { user: User }) {
 						id="create-mail-setting"
 						className="space-y-4">
 						<div className="grid gap-2">
-							<Label>Hvilke mails skal sendes?</Label>
+							<Label>{t('mail-settings.add-modal.type')}</Label>
 							{(isDirty && !hasMailsSelected()) && (
-								<p className="text-sm text-destructive">Du skal mindst vælge én mail som skal sendes</p>
+								<p className="text-sm text-destructive">{t('mail-settings.add-modal.type-error-message')}</p>
 							)}
 							<div className="grid grid-cols-2 gap-2">
 								<MailTypeCard
 									icon={<Icons.fileDigit className="size-4 text-muted-foreground" />}
-									title="Lagerværdi"
-									description="Sendes i slutningen af måneden"
+									title={t('mail-settings.add-modal.mail-types.stock-value-title')}
+									description={t('mail-settings.add-modal.mail-types.stock-value-description')}
 									selected={fv.mails.sendStockMail}
 									onClick={() => setValue('mails.sendStockMail', !fv.mails.sendStockMail, { shouldValidate: true, shouldDirty: true })}
 								/>
 							</div>
 						</div>
 						<div className="grid gap-2">
-							<Label>For hvilken lokation?</Label>
+							<Label>{t('mail-settings.add-modal.locations')}</Label>
 							<Select
 								onValueChange={val => setValue('locationID', val, { shouldValidate: true, shouldDirty: true })}
 								disabled={pending && users.length == 0}>
 								<SelectTrigger>
-									<SelectValue placeholder="Vælg lokation" />
+									<SelectValue placeholder={t('mail-settings.add-modal.locations-placeholder')} />
 								</SelectTrigger>
 								<SelectContent>
 									{locations.map(l => (
@@ -237,7 +488,7 @@ function CreateMailSetting({ user }: { user: User }) {
 							</Select>
 						</div>
 						<div className="grid gap-2">
-							<Label>Til hvilken mail?</Label>
+							<Label>{t('mail-settings.add-modal.email')}</Label>
 							<div>
 								<Input
 									list="users"
@@ -250,7 +501,7 @@ function CreateMailSetting({ user }: { user: User }) {
 									maxHeight="max-h-36"
 									className={cn("rounded-b-md border-x border-b border-t-0 bg-background")}>
 									{filteredUsers.length == 0 && (
-										<p className="text-sm">Sender til mail uden for NemLager</p>
+										<p className="text-sm px-3 py-2 text-muted-foreground">{t('mail-settings.add-modal.email-external-mail')}</p>
 									)}
 									{filteredUsers.map(u => (
 										<UserCard
@@ -269,14 +520,16 @@ function CreateMailSetting({ user }: { user: User }) {
 						size="sm"
 						variant="outline"
 						onClick={() => onOpenChange(false)}>
-						Luk
+						{t('mail-settings.add-modal.button-close')}
 					</Button>
 					<Button
 						disabled={!isValid || (pending && users.length > 0 && locations.length > 0)}
 						type="submit"
 						form="create-mail-setting"
+						className="flex items-center gap-2"
 						size="sm">
-						Tilføj
+						{pending && <Icons.spinner className="size-4 animate-spin" />}
+						{t('mail-settings.add-modal.button-confirm')}
 					</Button>
 				</DialogFooterV2>
 			</DialogContentV2>
@@ -301,7 +554,7 @@ function UserCard({ user, selected, className, ...props }: UserCardProps) {
 		>
 			<div className="flex flex-col">
 				<p className="text-sm font-medium">{user.name}</p>
-				<p className="text-sm text-muted-foreground">{user.email}</p>
+				<p className="text-xs text-muted-foreground">{user.email}</p>
 			</div>
 			{selected && <Icons.circleCheck className="size-4 text-primary" />}
 		</div>

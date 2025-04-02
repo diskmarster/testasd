@@ -42,3 +42,10 @@ export const createMailSetting = z
       })
     }
   })
+
+export const updateMailSettingsValidation = z.array(
+  z.object({
+    id: z.coerce.number(),
+    sendStockMail: z.coerce.boolean().nullish().optional(),
+  }),
+)
