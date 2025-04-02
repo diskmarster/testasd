@@ -9,6 +9,7 @@ import {
   CustomerLink,
   CustomerLinkID,
   CustomerMailSetting,
+  CustomerMailSettingID,
   CustomerSettings,
   CustomerSettingsID,
   NewCustomer,
@@ -161,5 +162,18 @@ export const customerService = {
 		mailType?: keyof CustomerMailSetting,
 	): Promise<CustomerMailSettingWithEmail[]> {
 		return customer.getMailSettingsForCron(mailType)
-	}
+	},
+	deleteMailSetting: async function(settingID: CustomerMailSettingID): Promise<boolean> {
+		return await customer.deleteMailSetting(settingID)
+	},
+  updateMailSetting: async function(id: CustomerMailSettingID, data: Partial<CustomerMailSettingWithEmail>): Promise<CustomerMailSetting | undefined> {
+    if (data.id != undefined) {
+      delete data.id
+    }
+    if (data.customerID != undefined) {
+      delete data.customerID
+    }
+
+    return customer.updateMailSetting(id, data)
+  },
 }

@@ -223,4 +223,15 @@ export const customer = {
 			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
       .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
   },
+  updateMailSetting: async function(id: CustomerMailSettingID, data: Partial<CustomerMailSettingWithEmail>, trx: TRX = db): Promise<CustomerMailSetting | undefined> {
+    const [res] = await trx
+      .update(customerMailSettingsTable)
+      .set({
+        ...data
+      })
+      .where(eq(customerMailSettingsTable.id, id))
+      .returning()
+
+    return res
+  },
 }
