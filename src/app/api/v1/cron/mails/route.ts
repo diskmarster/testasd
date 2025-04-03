@@ -5,7 +5,6 @@ import { customerService } from '@/service/customer'
 import { NextRequest } from 'next/server'
 
 const CRON_SECRET = process.env.NL_CRON_SECRET
-const validMailTypes = ['sendStockMail']
 
 export async function GET(request: NextRequest) {
   const secret = request.headers.get('Authorization')
@@ -26,19 +25,14 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const mailType = searchParams.get('mailtype') ?? undefined
 
-  if (mailType && !validMailTypes.includes(mailType)) {
+  if (mailType && !isKeyofCustomerMailSetting(mailType) {
     return sendResponse(400, { error: 'invalid mail type query parameter' })
   }
-
-  // to shutup typescript. suggestions are welcome
-  const parsedMailType: keyof CustomerMailSetting | undefined = mailType as
-    | keyof CustomerMailSetting
-    | undefined
 
   let mails: CustomerMailSettingWithEmail[] = []
 
   try {
-    mails = await customerService.getMailsForCron(parsedMailType)
+    mails = await customerService.getMailsForCron(mailType as keyof CustomerMailSetting | undefined)
   } catch (error) {
     const errMsg =
       error instanceof Error ? error.message : 'unknown error occured'
@@ -46,4 +40,9 @@ export async function GET(request: NextRequest) {
   }
 
   return sendResponse(200, { mails })
+}
+
+function isKeyofCustomerMailSetting(key: string): key is keyof CustomerMailSettingWithEmail {
+	const validMailTypes: (keyof CustomerMailSetting)[] = ['sendStockMail']
+	return validMailTypes.includes(key as keyof CustomerMailSetting)
 }
