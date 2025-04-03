@@ -19,6 +19,8 @@ const nfcSchema = z.object({
   tagID: z.string()
 })
 
+const DEFAULT_AUTH_TIMEOUT_MINUTES = 5
+
 export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<unknown>> {
@@ -98,7 +100,10 @@ export async function POST(
           user,
           customer: {
             ...customer,
-            settings: customerSettings,
+            settings: {
+              ...customerSettings,
+              authTimeoutMin: DEFAULT_AUTH_TIMEOUT_MINUTES,
+            },
           },
         },
       },
