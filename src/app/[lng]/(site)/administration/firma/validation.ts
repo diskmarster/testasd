@@ -9,36 +9,18 @@ export const createMailSetting = z
     locationID: z.string(),
     email: z.string().email().nullable(),
     userID: z.coerce.number().nullable(),
-    mails: mailTypes.superRefine((val, ctx) => {
-      let hasSelectedEmail = false
-      for (const key of Object.keys(val)) {
-        if (val[key as keyof typeof val]) {
-          hasSelectedEmail = true
-          break
-        }
-      }
-
-      if (!hasSelectedEmail) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Mindst én mail skal vælges',
-          fatal: true,
-        })
-      }
-
-      return z.NEVER
-    }),
+    mails: mailTypes,
   })
   .superRefine((val, ctx) => {
     if (val.email && val.userID) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Både e-mail og user ID kan ikke udfyldes',
+        message: 'bruger ikke denne. har den bare for at formen ikke er valid',
       })
     } else if (!val.email && !val.userID) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Enten e-mail eller user ID skal udfyldes',
+        message: 'bruger ikke denne. har den bare for at formen ikke er valid',
       })
     }
   })
