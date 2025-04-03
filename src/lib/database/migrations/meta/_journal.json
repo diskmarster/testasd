@@ -176,6 +176,13 @@
       "when": 1743581091103,
       "tag": "0024_puzzling_whirlwind",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1743668432771,
+      "tag": "0025_flippant_slyde",
+      "breakpoints": true
     }
   ]
 }

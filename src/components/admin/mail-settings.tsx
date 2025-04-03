@@ -63,18 +63,26 @@ interface Props {
 	settings: CustomerMailSettingWithEmail[]
 }
 
+type SettingChange = [keyof Omit<CustomerMailSettingWithEmail, 'id' | 'customerID'>, unknown]
+
 export function MailSettings({ settings, user }: Props) {
 	const lang = useLanguage()
 	const { t } = useTranslation(lang, 'organisation')
 	const [pending, startTransition] = useTransition()
-	const [settingsChanges, setSettingsChanges] = useState(new Map<number, Partial<CustomerMailSettingWithEmail>>())
-	const hasChanges = settingsChanges.size > 0
+	const [settingsChanges, setSettingsChanges] = useState(new Map<number, SettingChange[]>(settings.map(s => [s.id, []])))
+	const hasChanges = settingsChanges.size > 0 && Array.from(settingsChanges.values()).some((val) => val.length > 0)
 	const [localSettings, setLocalSettings] = useState(settings);
 
 	function updateMailSettings() {
 		let payload = []
-		for (const [key, val] of Array.from(settingsChanges.entries())) {
-			payload.push({ id: key, ...val })
+		const changes = Array.from(settingsChanges.entries()).filter(([_, val]) => val.length > 0)
+		for (const [key, val] of changes) {
+			const valObj: Partial<{[Property in keyof Omit<CustomerMailSettingWithEmail, 'id'>]: any}> = {}
+
+			val.forEach(([changeKey, changeVal]) => {
+				valObj[changeKey] = changeVal
+			})
+			payload.push({ id: key, ...valObj })
 		}
 
 		const previousSettings = [...localSettings]
@@ -103,7 +111,16 @@ export function MailSettings({ settings, user }: Props) {
 				const hasChange = settingsChanges.get(setting.id)
 				const wasUpdated = res?.data?.ids.includes(setting.id)
 				if (hasChange && !wasUpdated) newMap.set(setting.id, hasChange)
-				return (hasChange && wasUpdated) ? { ...setting, ...hasChange } : setting
+				if (hasChange && wasUpdated) {
+					const valObj: Partial<{[Property in keyof Omit<CustomerMailSettingWithEmail, 'id'>]: any}> = {}
+
+					hasChange.forEach(([changeKey, changeVal]) => {
+						valObj[changeKey] = changeVal
+					})
+					return {...setting, ...valObj}
+				} else {
+					return setting
+				}
 			})
 
 			setLocalSettings(updatedSettings)
@@ -129,8 +146,7 @@ export function MailSettings({ settings, user }: Props) {
 					{hasChanges ? (
 						<div className="flex items-center gap-2">
 							<Button variant='outline' onClick={() => {
-								const newMap = new Map()
-								setSettingsChanges(newMap)
+								setSettingsChanges(new Map(settings.map(s => [s.id, []])))
 							}}>
 								{t('mail-settings.button-cancel')}
 							</Button>
@@ -138,7 +154,11 @@ export function MailSettings({ settings, user }: Props) {
 								onClick={() => updateMailSettings()}
 								className="flex items-center gap-2">
 								{pending && <Icons.spinner className="size-4 animate-spin" />}
-								{t('mail-settings.button-apply', { count: settingsChanges.size })}
+								{t('mail-settings.button-apply', {
+									count: Array.from(settingsChanges.values())
+									.filter((val) => val.length > 0)
+									.length 
+								})}
 							</Button>
 						</div>
 					) : (
@@ -159,14 +179,14 @@ function EmailList({
 	setChanges,
 }: {
 	settings: CustomerMailSettingWithEmail[],
-	changes: Map<number, Partial<CustomerMailSettingWithEmail>>,
-	setChanges: Dispatch<SetStateAction<Map<number, Partial<CustomerMailSettingWithEmail>>>>
+	changes: Map<number, SettingChange[]>,
+	setChanges: Dispatch<SetStateAction<Map<number, SettingChange[]>>>
 }) {
 	const lang = useLanguage()
 	const { t } = useTranslation(lang, 'organisation')
 	const [limit, setLimit] = useState(10)
 	// TODO: remember small screens
-	const layoutClasses = "px-3 grid gap-2 grid-cols-[150px_100px_1fr_100px_50px] items-center"
+	const layoutClasses = "px-3 grid gap-2 grid-cols-[150px_100px_1fr_100px_100px_50px] items-center"
 	return (
 		<div className="flex flex-col gap-2">
 			<SettingsHeader layoutClasses={layoutClasses} />
@@ -204,6 +224,7 @@ function SettingsHeader({ layoutClasses }: { layoutClasses: string }) {
 			<p>{t('mail-settings.col-location')}</p>
 			<p>{t('mail-settings.col-email')}</p>
 			<p className="text-center">{t('mail-settings.col-stock-value')}</p>
+			<p className="text-center">{t('mail-settings.col-reorder')}</p>
 			<div />
 		</div>
 	)
@@ -217,18 +238,24 @@ function SingleSetting({
 }: {
 	layoutClasses: string,
 	setting: CustomerMailSettingWithEmail,
-	changes: Map<number, Partial<CustomerMailSettingWithEmail>>,
-	setChanges: Dispatch<SetStateAction<Map<number, Partial<CustomerMailSettingWithEmail>>>>
+	changes: Map<number, SettingChange[]>,
+	setChanges: Dispatch<SetStateAction<Map<number, SettingChange[]>>>
 }) {
 	const hasChange = changes.get(setting.id)
 
-	function update(key: number, val: Partial<CustomerMailSettingWithEmail>) {
+	function update(key: number, change: SettingChange) {
 		const newMap = new Map(changes)
-		if (newMap.has(key)) {
-			newMap.delete(key)
-		} else {
-			const existing = newMap.get(key)
-			newMap.set(key, { ...existing, ...val })
+		if (!newMap.has(key)) {
+			newMap.set(key, [change])
+		} else if (newMap.has(key)) {
+			const existing = newMap.get(key)!
+
+			const [changeKey] = change
+			if (existing.some((prev) => prev[0] == changeKey)) {
+				newMap.set(key, existing.filter((prev) => prev[0] != changeKey))
+			} else {
+				newMap.set(key, [...existing, change])
+			}
 		}
 		setChanges(newMap)
 	}
@@ -239,12 +266,24 @@ function SingleSetting({
 			<p>{setting.userID ? setting.userEmail : setting.email}</p>
 			<div
 				className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
-				onClick={() => update(setting.id, { ...setting, sendStockMail: !setting.sendStockMail })}>
-				{hasChange
-					? hasChange.sendStockMail
+				onClick={() => update(setting.id, ['sendStockMail', !setting.sendStockMail])}>
+				{hasChange && hasChange.some(([key]) => key == 'sendStockMail')
+					? hasChange.find(([key]) => key == 'sendStockMail')?.at(1)
 						? <Icons.dashedCheck />
 						: <Icons.circleDashed className="size-5 text-amber-500" />
 					: setting.sendStockMail
+						? <Icons.circleCheck className="size-5 text-success" />
+						: <Icons.circle className="size-5" />
+				}
+			</div>
+			<div
+				className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
+				onClick={() => update(setting.id, ['sendReorderMail', !setting.sendReorderMail])}>
+				{hasChange && hasChange.some(([key]) => key == 'sendReorderMail')
+					? hasChange.find(([key]) => key == 'sendReorderMail')?.at(1)
+						? <Icons.dashedCheck />
+						: <Icons.circleDashed className="size-5 text-amber-500" />
+					: setting.sendReorderMail
 						? <Icons.circleCheck className="size-5 text-success" />
 						: <Icons.circle className="size-5" />
 				}
@@ -366,7 +405,8 @@ function CreateMailSetting({ user }: { user: User }) {
 		resolver: zodResolver(createMailSetting),
 		defaultValues: {
 			mails: {
-				sendStockMail: false
+				sendStockMail: false,
+				sendReorderMail: false,
 			},
 			email: null,
 			userID: null,
@@ -469,6 +509,14 @@ function CreateMailSetting({ user }: { user: User }) {
 									description={t('mail-settings.add-modal.mail-types.stock-value-description')}
 									selected={fv.mails.sendStockMail}
 									onClick={() => setValue('mails.sendStockMail', !fv.mails.sendStockMail, { shouldValidate: true, shouldDirty: true })}
+								/>
+
+								<MailTypeCard
+									icon={<Icons.fileDigit className="size-4 text-muted-foreground" />}
+									title={t('mail-settings.add-modal.mail-types.reorder-title')}
+									description={t('mail-settings.add-modal.mail-types.reorder-description')}
+									selected={fv.mails.sendReorderMail}
+									onClick={() => setValue('mails.sendReorderMail', !fv.mails.sendReorderMail, { shouldValidate: true, shouldDirty: true })}
 								/>
 							</div>
 						</div>
