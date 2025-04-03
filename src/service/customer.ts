@@ -159,7 +159,7 @@ export const customerService = {
 		return await customer.createMailSetting(data)
 	},
 	getMailsForCron: async function(
-		mailType?: keyof CustomerMailSetting,
+		mailType?: keyof Pick<CustomerMailSetting, 'sendStockMail'>,
 	): Promise<CustomerMailSettingWithEmail[]> {
 		return customer.getMailSettingsForCron(mailType)
 	},

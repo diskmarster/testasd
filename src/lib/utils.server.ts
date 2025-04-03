@@ -30,5 +30,9 @@ export async function tryCatch<T, E = Error>(
 }
 
 export function sendResponse(code: number, data: any = null) {
-  return new Response(data, { status: code })
+	if (data) {
+		return new Response(JSON.stringify(data), { status: code })
+	} else {
+		return new Response(null,{ status: code })
+	}
 }

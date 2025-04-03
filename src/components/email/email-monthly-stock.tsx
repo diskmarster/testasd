@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function EmailSendMonthlyStock({ mailInfo, customer }: Props) {
-	const dateStr = formatDate(Date.now(), 'MMMM yyyy', { locale: da })
+	const dateStr = formatDate(Date.now(), 'do MMMM yyyy', { locale: da })
 	return (
 		<Tailwind>
 			<Html>

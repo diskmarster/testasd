@@ -25,24 +25,27 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const mailType = searchParams.get('mailtype') ?? undefined
 
-  if (mailType && !isKeyofCustomerMailSetting(mailType)) {
+  if (!isKeyofCustomerMailSetting(mailType)) {
     return sendResponse(400, { error: 'invalid mail type query parameter' })
   }
 
   let mails: CustomerMailSettingWithEmail[] = []
 
   try {
-    mails = await customerService.getMailsForCron(mailType as keyof CustomerMailSetting | undefined)
+    mails = await customerService.getMailsForCron(mailType)
   } catch (error) {
     const errMsg =
       error instanceof Error ? error.message : 'unknown error occured'
     return sendResponse(500, { error: errMsg })
   }
 
+  console.log(mails)
   return sendResponse(200, { mails })
 }
 
-function isKeyofCustomerMailSetting(key: string): key is keyof CustomerMailSettingWithEmail {
-	const validMailTypes: (keyof CustomerMailSetting)[] = ['sendStockMail']
-	return validMailTypes.includes(key as keyof CustomerMailSetting)
+function isKeyofCustomerMailSetting(
+  key: string | undefined,
+): key is keyof Pick<CustomerMailSetting, 'sendStockMail'> | undefined {
+  const validMailTypes: (keyof CustomerMailSetting)[] = ['sendStockMail']
+  return key ? validMailTypes.includes(key as keyof CustomerMailSetting) : true
 }
