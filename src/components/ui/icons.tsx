@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import {
 	ArrowDown,
+	CircleDashed,
 	TrafficCone,
 	Zap,
 	ChevronRight,
@@ -64,9 +65,13 @@ import {
 	Pencil,
 	Search,
 	CircleCheck,
+	Circle,
+	FileDigit,
 } from 'lucide-react'
 
 export const Icons = {
+	fileDigit: FileDigit,
+	circle: Circle,
 	circleCheck: CircleCheck,
 	pencil: Pencil,
 	search: Search,
@@ -86,6 +91,7 @@ export const Icons = {
 	hash: Hash,
 	copy: Copy,
 	chevronRight: ChevronRight,
+	circleDashed: CircleDashed,
 	triangleAlert: TriangleAlert,
 	sheet: Sheet,
 	cloudUpload: CloudUpload,
@@ -132,6 +138,12 @@ export const Icons = {
 		<div className={cn('relative overflow-none size-4')}>
 			<Monitor className={cn('absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2', className)} />
 			<Ban className={cn('size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2')} />
+		</div>
+	),
+	dashedCheck: ({ className }: { className?: string }) => (
+		<div className={cn('relative overflow-none size-5 group', className)}>
+			<CircleDashed className={cn('size-5 absolute text-amber-500 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 group-hover:text-amber-900')} />
+			<Check className={cn('absolute size-2 text-amber-500 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 stroke-[5px] group-hover:text-amber-900')} />
 		</div>
 	),
 	smartphone: Smartphone,

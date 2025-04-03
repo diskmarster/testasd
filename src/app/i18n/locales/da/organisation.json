@@ -240,5 +240,50 @@
     "confirm-toast": "Brugeren er blevet slettet",
     "cancel-button": "Luk",
     "confirm-button": "Slet bruger"
-  }
+  },
+	"mail-settings": {
+		"title": "Planlagte e-mails",
+		"description": "Se og planlæg dine e-mails",
+		"link-to-faq": "Hvilke e-mails kan jeg få tilsendt?",
+		"button-add": "Tilføj ny",
+		"button-cancel": "Fortryd",
+		"button-apply_one": "Opdater {{count}} email",
+		"button-apply_other": "Opdater {{count}} emails",
+		"col-updated": "Opdateret",
+		"col-location": "Lokation",
+		"col-email": "E-mail",
+		"col-stock-value": "Lagerværdi",
+		"actions-delete": "Slet",
+		"errors": {
+			"update-settings-success": "E-mail er blevet opdateret",
+			"update-settings-failed": "{{count}} af {{max}} e-mails blev ikke opdateret",
+			"create-settings-success": "E-mail er blevet oprettet",
+			"create-settings-failed": "E-mail blevet ikke oprettet",
+			"delete-setting-success": "E-mail blev slettet",
+			"delete-setting-failed": "E-mail blev ikke slettet. Prøv igen"
+		},
+		"add-modal": {
+			"title": "Tilføj ny planlagt e-mail",
+			"type": "Hvilke e-mails skal sendes?",
+			"type-error-message": "Mindst én mail type skal vælges",
+			"locations": "For hvilke lokationer?",
+			"locations-placeholder": "Vælg lokation",
+			"email": "Til hvilken e-mail?",
+			"email-external-mail": "Sender til mail uden for Nem Lager",
+			"button-close": "Luk",
+			"button-confirm": "Tilføj planlagt e-mail",
+			"button-show-all": "Vis alle",
+			"mail-types": {
+				"stock-value-title": "Lagerværdi",
+				"stock-value-description": "Sendes i slutningen af måneden"
+			}
+		},
+		"delete-modal": {
+			"title": "Slet planlagt e-mail?",
+			"description": "Denne handling er permanent og kan ikke gøres om. Vil du slette denne planlagte e-mail?",
+			"button-no": "Nej",
+			"button-yes": "Ja, slet planlagt e-mail"
+		}
+	}
 }
+
