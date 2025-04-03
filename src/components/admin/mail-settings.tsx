@@ -138,7 +138,7 @@ export function MailSettings({ settings, user }: Props) {
 								onClick={() => updateMailSettings()}
 								className="flex items-center gap-2">
 								{pending && <Icons.spinner className="size-4 animate-spin" />}
-								{t('mail-settings.button-apply', { num: settingsChanges.size })}
+								{t('mail-settings.button-apply', { count: settingsChanges.size })}
 							</Button>
 						</div>
 					) : (
