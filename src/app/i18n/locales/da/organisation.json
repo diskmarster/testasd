@@ -253,6 +253,7 @@
 		"col-location": "Lokation",
 		"col-email": "E-mail",
 		"col-stock-value": "Lagerværdi",
+		"col-reorder": "Genbestilling",
 		"actions-delete": "Slet",
 		"errors": {
 			"update-settings-success": "E-mail er blevet opdateret",
@@ -275,7 +276,9 @@
 			"button-show-all": "Vis alle",
 			"mail-types": {
 				"stock-value-title": "Lagerværdi",
-				"stock-value-description": "Sendes i slutningen af måneden"
+				"stock-value-description": "Sendes i slutningen af måneden",
+				"reorder-title": "Genbestilling",
+				"reorder-description": "Sendes når vare skal genbestilles"
 			}
 		},
 		"delete-modal": {

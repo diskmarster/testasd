@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const mailTypes = z.object({
   sendStockMail: z.coerce.boolean(),
+  sendReorderMail: z.coerce.boolean(),
 })
 
 export const createMailSetting = z
@@ -29,5 +30,6 @@ export const updateMailSettingsValidation = z.array(
   z.object({
     id: z.coerce.number(),
     sendStockMail: z.coerce.boolean().nullish().optional(),
+    sendReorderMail: z.coerce.boolean().nullish().optional(),
   }),
 )

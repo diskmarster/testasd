@@ -253,6 +253,7 @@
 		"col-location": "Location",
 		"col-email": "Email",
 		"col-stock-value": "Stock value",
+		"col-reorder": "Reorder",
 		"actions-delete": "Delete",
 		"errors": {
 			"update-settings-success": "Email was updated",
@@ -275,7 +276,9 @@
 			"button-show-all": "Show all",
 			"mail-types": {
 				"stock-value-title": "Stock value",
-				"stock-value-description": "Sent at the end of the month"
+				"stock-value-description": "Sent at the end of the month",
+				"reorder-title": "Reorder",
+				"reorder-description": "Sent when items are ready for reorder"
 			}
 		},
 		"delete-modal": {
