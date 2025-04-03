@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const mailType = searchParams.get('mailtype') ?? undefined
 
-  if (mailType && !isKeyofCustomerMailSetting(mailType) {
+  if (mailType && !isKeyofCustomerMailSetting(mailType)) {
     return sendResponse(400, { error: 'invalid mail type query parameter' })
   }
 
