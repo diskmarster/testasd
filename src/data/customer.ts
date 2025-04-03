@@ -167,7 +167,7 @@ export const customer = {
 				locationName: locationTable.name,
       })
       .from(customerMailSettingsTable)
-      .where(and(eq(customerMailSettingsTable.customerID, customerID)))
+      .where(eq(customerMailSettingsTable.customerID, customerID))
 			.orderBy(customerMailSettingsTable.locationID, desc(customerMailSettingsTable.id))
 			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
       .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
