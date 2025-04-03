@@ -234,4 +234,29 @@ export const customer = {
 
     return res
   },
+  getMailSettingsForIDs: async function(
+    customerID: CustomerID,
+    locationID: LocationID,
+		mailType: keyof Pick<CustomerMailSetting, 'sendStockMail' | 'sendReorderMail'>,
+    tx: TRX = db,
+  ): Promise<CustomerMailSettingWithEmail[]> {
+    const typeCol = getTableColumns(customerMailSettingsTable)[mailType]
+    return await tx
+      .select({
+        ...getTableColumns(customerMailSettingsTable),
+        userEmail: userTable.email,
+				locationName: locationTable.name,
+      })
+      .from(customerMailSettingsTable)
+      .where(
+				and(
+					eq(customerMailSettingsTable.customerID, customerID),
+					eq(customerMailSettingsTable.locationID, locationID),
+          eq(typeCol, true),
+				)
+			)
+			.orderBy(customerMailSettingsTable.locationID, desc(customerMailSettingsTable.id))
+			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
+      .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
+  }
 }

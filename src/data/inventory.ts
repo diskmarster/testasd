@@ -35,7 +35,7 @@ import {
 } from '@/lib/database/schema/inventory'
 import { NewReorder, PartialReorder, Reorder, reorderTable } from '@/lib/database/schema/reorders'
 import { supplierTable } from '@/lib/database/schema/suppliers'
-import { and, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
+import { and, count, desc, eq, getTableColumns, sql, sum } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
 const PLACEMENT_COLS = getTableColumns(placementTable)
@@ -581,4 +581,23 @@ export const inventory = {
       .where(eq(groupTable.id, groupID))
     return res
   },
+  getProductInventory: async function(
+    locationID: LocationID,
+    productID: ProductID,
+    trx: TRX = db,
+  ): Promise<number> {
+    const [res] = await trx
+      .select({
+        quantity: sql<number>`total(${inventoryTable.quantity})`,
+      })
+      .from(inventoryTable)
+      .where(
+        and(
+          eq(inventoryTable.locationID, locationID),
+          eq(inventoryTable.productID, productID),
+        )
+      )
+
+    return res?.quantity ?? 0
+  }
 }
