@@ -1,9 +1,15 @@
 import { analytics } from '@/data/analytics'
-import { ActiveUser, AnalyticsCategory } from '@/data/analytics.types'
+import {
+  ActiveUser,
+  AnalyticsCategory,
+  AnalyticsFilter,
+  AnalyticsPlatform,
+} from '@/data/analytics.types'
 import {
   ActionAnalytic,
   NewActionAnalytic,
 } from '@/lib/database/schema/analytics'
+import { CustomerID } from '@/lib/database/schema/customer'
 import * as dateFns from 'date-fns'
 
 export type Duration = {
@@ -89,6 +95,50 @@ export const analyticsService = {
     }
 
     return activeUsers
+  },
+  getFilteredAnalytics: async function(
+    {
+      start,
+      end,
+      platform,
+      customerID,
+      actionName,
+      executionMin,
+      executionMax,
+    }: {
+      start: Duration
+      end?: Duration
+      platform?: AnalyticsPlatform
+      customerID?: CustomerID
+      actionName?: string
+      executionMin?: number
+      executionMax?: number
+    } = {
+        start: { days: 6 },
+      },
+  ): Promise<ActionAnalytic[]> {
+    const now = Date.now()
+    const analyticsFilter: AnalyticsFilter = {
+      date:
+        end == undefined
+          ? dateFns.sub(now, start)
+          : {
+            from: dateFns.sub(now, start),
+            to: dateFns.add(now, end),
+          },
+      platform,
+      customerID,
+      actionName,
+      executionTime:
+        executionMin != undefined || executionMax != undefined
+          ? {
+            min: executionMin,
+            max: executionMax,
+          }
+          : undefined,
+    }
+
+    return await analytics.getFilteredAnalytics(analyticsFilter)
   },
 }
 

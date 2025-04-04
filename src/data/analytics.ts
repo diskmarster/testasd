@@ -20,7 +20,7 @@ export const analytics = {
     return res
   },
   getActiveUsers: async function(
-    filter?: AnalyticsFilter,
+    filter?: Pick<AnalyticsFilter, 'date' | 'platform'>,
     groupBy: 'date' | 'week' | 'month' | 'year' = 'date',
     trx: TRX = db,
   ): Promise<ActivePlatformUser[]> {
@@ -67,5 +67,54 @@ export const analytics = {
       .from(actionAnalyticsTable)
       .where(and(...whereClauses))
       .groupBy(sql`date`)
+  },
+  getFilteredAnalytics: async function(
+    filter?: AnalyticsFilter,
+    trx: TRX = db,
+  ): Promise<ActionAnalytic[]> {
+    const whereClauses: SQLWrapper[] = []
+
+    if (filter) {
+      if (filter.date instanceof Date) {
+        whereClauses.push(gte(actionAnalyticsTable.inserted, filter.date))
+      } else if (filter.date) {
+        whereClauses.push(gte(actionAnalyticsTable.inserted, filter.date.from))
+        whereClauses.push(lte(actionAnalyticsTable.inserted, filter.date.to))
+      }
+
+      if (filter.platform) {
+        whereClauses.push(eq(actionAnalyticsTable.platform, filter.platform))
+      }
+
+      if (filter.customerID) {
+        whereClauses.push(
+          eq(actionAnalyticsTable.customerID, filter.customerID),
+        )
+      }
+
+      if (filter.actionName) {
+        whereClauses.push(
+          eq(actionAnalyticsTable.actionName, filter.actionName),
+        )
+      }
+
+      if (filter.executionTime) {
+        if (filter.executionTime.max != undefined) {
+          whereClauses.push(
+            lte(actionAnalyticsTable.executionTimeMS, filter.executionTime.max),
+          )
+        }
+        if (filter.executionTime.min != undefined) {
+          whereClauses.push(
+            gte(actionAnalyticsTable.executionTimeMS, filter.executionTime.min),
+          )
+        }
+      }
+    }
+
+    return trx
+      .select()
+      .from(actionAnalyticsTable)
+      .where(and(...whereClauses))
   },
 }

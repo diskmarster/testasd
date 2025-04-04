@@ -1,3 +1,5 @@
+import { CustomerID } from "@/lib/database/schema/customer"
+
 export type AnalyticsPlatform = 'web' | 'app'
 export type AnalyticsCategory = 'action'
 
@@ -18,4 +20,10 @@ export type AnalyticsFilter = {
     to: Date,
   },
   platform?: AnalyticsPlatform,
+  customerID?: CustomerID,
+  actionName?: string,
+  executionTime?: {
+    min?: number,
+    max?: number,
+  },
 }
