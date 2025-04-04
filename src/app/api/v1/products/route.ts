@@ -1,6 +1,6 @@
 import { serverTranslation } from '@/app/i18n'
 import { NewApplicationError } from '@/lib/database/schema/errors'
-import { isMaintenanceMode } from '@/lib/utils.server'
+import { isMaintenanceMode, tryCatch } from '@/lib/utils.server'
 import { analyticsService } from '@/service/analytics'
 import { errorsService } from '@/service/errors'
 import { productService } from '@/service/products'
@@ -38,59 +38,10 @@ export async function GET(
     )
   }
 
-  try {
-    const products = await productService
-      .getAllProductsWithInventories(user.customerID)
-      .catch(async (e) => {
-        console.error(
-          `${t('route-translations-product.error-getting-product')} '${e}'`,
-        )
-        const errorLog: NewApplicationError = {
-          userID: user.id,
-          customerID: user.customerID,
-          type: 'endpoint',
-          input: null,
-          error:
-          (e as Error).message ??
-            t('route-translations-product.error-getting-product'),
-          origin: `GET api/v1/products`,
-        }
-
-        await errorsService.create(errorLog)
-
-        return NextResponse.json(
-          {
-            msg: `${t('route-translations-product.error-getting-product')} '${e}'`,
-          },
-          { status: 500 },
-        )
-      })
-
-    if (products instanceof NextResponse) {
-      return products
-    }
-
-		const end = performance.now()
-
-		await analyticsService.createAnalytic('action', {
-			actionName: 'getProducts',
-			userID: user.id,
-			customerID: user.customerID,
-			sessionID: session.id,
-			executionTimeMS: end - start,
-			platform: 'app',
-		})
-
-    return NextResponse.json(
-      {
-        msg: 'Success',
-        data: products,
-      },
-      { status: 200 },
-    )
-  } catch (e) {
+  const productRes = await tryCatch(productService.getAllProductsWithInventories(user.customerID))
+  if (!productRes.success) {
     console.error(
-      `${t('route-translations-product.error-getting-product')} '${(e as Error).message}'`,
+      `${t('route-translations-product.error-getting-product')} '${productRes.error.message}'`,
     )
 
     const errorLog: NewApplicationError = {
@@ -99,7 +50,7 @@ export async function GET(
       type: 'endpoint',
       input: null,
       error:
-        (e as Error).message ??
+        productRes.error.message ??
         t('route-translations-product.couldnt-get-product'),
       origin: `GET api/v1/products`,
     }
@@ -108,9 +59,28 @@ export async function GET(
 
     return NextResponse.json(
       {
-        msg: `${t('route-translations-product.error-occured-getting-product')} '${(e as Error).message}'`,
+        msg: `${t('route-translations-product.error-occured-getting-product')} '${productRes.error.message}'`,
       },
       { status: 500 },
     )
   }
+
+  const end = performance.now()
+
+  await analyticsService.createAnalytic('action', {
+    actionName: 'getProducts',
+    userID: user.id,
+    customerID: user.customerID,
+    sessionID: session.id,
+    executionTimeMS: end - start,
+    platform: 'app',
+  })
+
+  return NextResponse.json(
+    {
+      msg: 'Success',
+      data: productRes.data,
+    },
+    { status: 200 },
+  )
 }
