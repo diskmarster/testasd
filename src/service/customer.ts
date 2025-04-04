@@ -12,6 +12,7 @@ import {
   CustomerMailSettingID,
   CustomerSettings,
   CustomerSettingsID,
+  LocationID,
   NewCustomer,
   NewCustomerLink,
   NewCustomerMailSetting,
