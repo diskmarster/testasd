@@ -41,10 +41,22 @@ export async function GET(
   try {
     const products = await productService
       .getAllProductsWithInventories(user.customerID)
-      .catch(e => {
+      .catch(async (e) => {
         console.error(
           `${t('route-translations-product.error-getting-product')} '${e}'`,
         )
+        const errorLog: NewApplicationError = {
+          userID: user.id,
+          customerID: user.customerID,
+          type: 'endpoint',
+          input: null,
+          error:
+          (e as Error).message ??
+            t('route-translations-product.error-getting-product'),
+          origin: `GET api/v1/products`,
+        }
+
+        await errorsService.create(errorLog)
 
         return NextResponse.json(
           {
@@ -92,7 +104,7 @@ export async function GET(
       origin: `GET api/v1/products`,
     }
 
-    errorsService.create(errorLog)
+    await errorsService.create(errorLog)
 
     return NextResponse.json(
       {

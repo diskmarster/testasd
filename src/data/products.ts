@@ -197,7 +197,7 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
-		supplierName: supplierTable.name,
+        supplierName: supplierTable.name,
         inventory: {
           ...INVENTORY_COLS,
         }
@@ -207,7 +207,7 @@ export const product = {
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .innerJoin(inventoryTable, eq(inventoryTable.productID, productTable.id))
-	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
     return product
   },
 }
