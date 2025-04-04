@@ -43,6 +43,13 @@ import { customerService } from './customer'
 import { emailService } from './email'
 import { EmailSendReorder } from '@/components/email/email-reorder'
 
+const EMAIL_LINK_BASEURL =
+  process.env.VERCEL_ENV === 'production'
+    ? 'https://lager.nemunivers.app'
+    : process.env.VERCEL_ENV === 'preview'
+      ? 'stage.lager.nemunivers.app'
+      : 'http://localhost:3000'
+
 export const inventoryService = {
   getInventory: async function(
     locationID: LocationID,
@@ -269,10 +276,10 @@ export const inventoryService = {
 
               return emailService.sendRecursively(
                 [email],
-                'Så skal du fandme i gang chris!',
+                'Der er nye varer til genbestil i NemLager',
                 EmailSendReorder({
                   mailInfo: setting,
-                  link: 'https://www.erdetfredag.dk/',
+                  link: `${EMAIL_LINK_BASEURL}/${lang}/genbestil`,
                 })
               )
             })

@@ -19,6 +19,13 @@ const createRequestValidation = z.object({
   orderAmount: z.coerce.number(),
 })
 
+const EMAIL_LINK_BASEURL =
+  process.env.VERCEL_ENV === 'production'
+    ? 'https://lager.nemunivers.app'
+    : process.env.VERCEL_ENV === 'preview'
+      ? 'stage.lager.nemunivers.app'
+      : 'http://localhost:3000'
+
 export async function POST(
   request: NextRequest,
   { params: { id } }: { params: { id: string } },
@@ -137,10 +144,10 @@ export async function POST(
 
         return emailService.sendRecursively(
           [email],
-          'Så skal du fandme i gang chris!',
+          'Der er nye varer til genbestil i NemLager',
           EmailSendReorder({
             mailInfo: setting,
-            link: 'https://www.erdetfredag.dk/',
+            link: `${EMAIL_LINK_BASEURL}/${lng}/genbestil`,
           })
         )
       })
