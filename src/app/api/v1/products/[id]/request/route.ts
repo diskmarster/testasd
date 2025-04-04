@@ -1,7 +1,10 @@
 import { serverTranslation } from '@/app/i18n'
+import { EmailSendReorder } from '@/components/email/email-reorder'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { isMaintenanceMode } from '@/lib/utils.server'
 import { analyticsService } from '@/service/analytics'
+import { customerService } from '@/service/customer'
+import { emailService } from '@/service/email'
 import { errorsService } from '@/service/errors'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -115,6 +118,34 @@ export async function POST(
       return sendResponse(500, {
         msg: t('route-translations-productid.error-request-notcreated'),
       })
+    }
+
+    const otherReorders = await inventoryService.getReordersByID(parsed.data.locationID)
+      .then(rs => rs.filter(r => r.productID != productID))
+    console.log({otherReorders})
+
+    if (otherReorders.every(r => !r.isRequested && r.minimum <= (r.quantity + r.ordered))) {
+      console.log("SENDING EMAILS!")
+      const mailSettings = await customerService.getMailSettingsForIDs(
+        user.customerID,
+        parsed.data.locationID,
+        'sendReorderMail',
+      )
+
+      const mailPromises = mailSettings.map(setting => {
+        const email = setting.userID ? setting.userEmail! : setting.email!
+
+        return emailService.sendRecursively(
+          [email],
+          'Så skal du fandme i gang chris!',
+          EmailSendReorder({
+            mailInfo: setting,
+            link: 'https://www.erdetfredag.dk/',
+          })
+        )
+      })
+
+      await Promise.all(mailPromises)
     }
 
     const end = performance.now()

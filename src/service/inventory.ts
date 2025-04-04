@@ -254,7 +254,7 @@ export const inventoryService = {
         if (isReorderOnProduct &&
           isReorderOnProduct.minimum > (newAmount + isReorderOnProduct.ordered)
         ) {
-          const otherReorders = await inventory.getAllReordersByID(locationID)
+          const otherReorders = await inventory.getAllReordersByID(locationID, trx)
             .then(rs => rs.filter(r => r.productID != productID))
 
           if (otherReorders.every(r => !r.isRequested && r.minimum <= (r.quantity + r.ordered))) {
