@@ -84,7 +84,7 @@ export function DailyActiveUsersChart({
 							tickMargin={10}
 							tickFormatter={tickFormatter}
 						/>
-						<YAxis domain={['dataMin', 'dataMax']} hide />
+						<YAxis domain={[0, 'dataMax']} hide />
 						<ChartTooltip content={<ChartTooltipContent />} />
 						<ChartLegend content={<ChartLegendContent />} />
 						<Bar
