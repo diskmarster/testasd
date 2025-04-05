@@ -44,11 +44,12 @@ func TestEndpoints(t *testing.T) {
 	teardownSuite := setupSuite(t)
 	defer teardownSuite(t)
 
-	tests := []struct{
+	tests := []struct {
 		name string
-		f func(*testing.T)
-	} {
+		f    func(*testing.T)
+	}{
 		{"GET /api/v1/settings", testCustomerSettingEndpoint},
+		{"GET /api/v1/products", testProductEndpoint},
 	}
 
 	for _, test := range tests {
@@ -63,13 +64,13 @@ func TestEndpoints(t *testing.T) {
 
 func testCustomerSettingEndpoint(t *testing.T) {
 	var jsonBody SuccessResponse[struct {
-		Id int `json:"id"`
-		CustomerId int `json:"customerID"`
+		Id           int  `json:"id"`
+		CustomerId   int  `json:"customerID"`
 		UseReference bool `json:"useReference"`
 		UsePlacement bool `json:"usePlacement"`
-		UseBatch bool `json:"useBatch"`
+		UseBatch     bool `json:"useBatch"`
 	}]
-	err := get("/api/v1/settings", &jsonBody, func(r *http.Request) *http.Request {return r})
+	err := get("/api/v1/settings", &jsonBody, func(r *http.Request) *http.Request { return r })
 	if err == nil {
 		t.Fatalf("Expected error from unauthorized get, but got nil. Returned body: %v", jsonBody)
 	}
@@ -80,11 +81,11 @@ func testCustomerSettingEndpoint(t *testing.T) {
 	}
 
 	var succesBody SuccessResponse[struct {
-		Id int `json:"id"`
-		CustomerId int `json:"customerID"`
+		Id           int  `json:"id"`
+		CustomerId   int  `json:"customerID"`
 		UseReference bool `json:"useReference"`
 		UsePlacement bool `json:"usePlacement"`
-		UseBatch bool `json:"useBatch"`
+		UseBatch     bool `json:"useBatch"`
 	}]
 	err = get("/api/v1/settings", &succesBody, func(r *http.Request) *http.Request {
 		r.Header.Set("Authorization", fmt.Sprintf("bearer %s", authData.Jwt))
@@ -95,4 +96,43 @@ func testCustomerSettingEndpoint(t *testing.T) {
 	}
 
 	t.Logf("Returned customer settings %v\n", succesBody.Data)
+}
+
+func testProductEndpoint(t *testing.T) {
+	authData, err := authenticate(os.Getenv("email"), os.Getenv("password"))
+	if err != nil {
+		t.Fatalf("Error authenticating: %v", err)
+	}
+
+	var successBody SuccessResponse[[]struct {
+		ProductID int `json:"id"`
+	}]
+	err = get("/api/v1/products", &successBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Authorization", fmt.Sprintf("bearer %s", authData.Jwt))
+		return r
+	})
+	if err != nil {
+		t.Fatalf("Error getting products: %v", err)
+	}
+
+	productCountMap := make(map[int]int)
+
+	for _, product := range successBody.Data {
+		count := productCountMap[product.ProductID]
+		productCountMap[product.ProductID] = count + 1
+	}
+
+	duplicateProductsCount := 0
+	for key, value := range productCountMap {
+		if value > 1 {
+			duplicateProductsCount += 1
+			t.Logf("Product with id %d, had %d duplicate entries in data\n", key, value)
+			if !t.Failed() {
+				t.Fail()
+			}
+		}
+	}
+
+	t.Logf("%d products had more than had duplicate data\n", duplicateProductsCount)
+	t.Logf("%d unique productIDs were in response.\n", len(productCountMap))
 }
