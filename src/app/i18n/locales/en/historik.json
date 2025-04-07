@@ -7,7 +7,7 @@
     "no-history": "No history"
   },
   "history-columns": {
-    "created": "Created",
+    "created": "Date",
     "productNo": "Product No.",
     "barcode": "Barcode",
     "product-group": "Product group",
