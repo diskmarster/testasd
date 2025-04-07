@@ -47,14 +47,16 @@ export const analyticsService = {
       to: Date
     }
     const now = Date.now()
+    const todayStart = dateFns.startOfDay(now)
+    const todayEnd = dateFns.endOfDay(now)
 
     dateFilter = {
-      from: dateFns.sub(now, start),
-      to: new Date(now),
+      from: dateFns.sub(todayStart, start),
+      to: todayEnd,
     }
 
     if (end) {
-      dateFilter.to = dateFns.add(now, end)
+      dateFilter.to = dateFns.add(todayEnd, end)
     }
 
     const desktopUsers = await analytics.getActiveUsers(
@@ -118,13 +120,15 @@ export const analyticsService = {
       },
   ): Promise<ActionAnalytic[]> {
     const now = Date.now()
+    const todayStart = dateFns.startOfDay(now)
+    const todayEnd = dateFns.endOfDay(now)
     const analyticsFilter: AnalyticsFilter = {
       date:
         end == undefined
-          ? dateFns.sub(now, start)
+          ? dateFns.sub(todayStart, start)
           : {
-            from: dateFns.sub(now, start),
-            to: dateFns.add(now, end),
+            from: dateFns.sub(todayStart, start),
+            to: dateFns.add(todayEnd, end),
           },
       platform,
       customerID,
