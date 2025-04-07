@@ -7,7 +7,7 @@
     "no-history": "Ingen historik"
   },
   "history-columns": {
-    "created": "Oprettet",
+    "created": "Dato",
     "productNo": "Varenr.",
     "barcode": "Stregkode",
     "product-group": "Varegruppe",
