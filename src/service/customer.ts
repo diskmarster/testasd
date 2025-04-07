@@ -12,6 +12,7 @@ import {
   CustomerMailSettingID,
   CustomerSettings,
   CustomerSettingsID,
+  LocationID,
   NewCustomer,
   NewCustomerLink,
   NewCustomerMailSetting,
@@ -176,4 +177,11 @@ export const customerService = {
 
     return customer.updateMailSetting(id, data)
   },
+  getMailSettingsForIDs: async function(
+    customerID: CustomerID,
+    locationID: LocationID,
+		mailType: keyof Pick<CustomerMailSetting, 'sendStockMail' | 'sendReorderMail'>,
+	): Promise<CustomerMailSettingWithEmail[]> {
+		return await customer.getMailSettingsForIDs(customerID, locationID, mailType)
+	},
 }

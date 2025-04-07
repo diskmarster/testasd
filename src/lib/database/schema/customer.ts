@@ -161,6 +161,9 @@ export const customerMailSettingsTable = sqliteTable(
     sendStockMail: integer('send_stock_mail', { mode: 'boolean' }).default(
       false,
     ),
+    sendReorderMail: integer('send_reorder_mail', { mode: 'boolean' }).default(
+      false,
+    ),
     inserted: integer('inserted', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
