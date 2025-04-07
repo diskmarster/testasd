@@ -74,7 +74,7 @@ export function getTableOverviewColumns(
       rightAlign: true, 
       viewLabel: t('attachments')
     },
-    enableHiding: false,
+    enableHiding: true,
     enableSorting: false,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue<number>(id)>0)
