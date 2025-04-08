@@ -246,6 +246,7 @@ export const historyTable = sqliteTable('nl_history', {
   type: text('type').notNull().$type<HistoryType>(),
   platform: text('platform').notNull().$type<HistoryPlatform>(),
   amount: real('amount').notNull(),
+  currentQuantity: real('current_quantity'),
   reference: text('reference').notNull().default(''),
   inserted: integer('inserted', { mode: 'timestamp' })
     .notNull()
