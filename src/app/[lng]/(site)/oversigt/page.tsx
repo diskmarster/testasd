@@ -40,7 +40,12 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
   const customerSettings = (await customerService.getSettings(customer.id)) ?? {
     usePlacement: true,
     useBatch: true,
-    useReference: true,
+    useReference: {
+      tilgang: true,
+      afgang: true,
+      regulering: true,
+      flyt: true,
+    },
   }
 
   const isGrouped = (
