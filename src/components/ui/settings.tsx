@@ -22,7 +22,7 @@ export function SettingLabel({
 }: HTMLProps<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex flex-col flex-1 justify-start py-4', className)}
+      className={cn('flex flex-col flex-1 justify-start', className)}
       {...props}>
       {children}
     </div>
@@ -61,7 +61,7 @@ export function SettingContent({
   ...props
 }: HTMLProps<HTMLDivElement>) {
   return (
-    <div className={cn('flex justify-end p-4 ps-0', className)} {...props}>
+    <div className={cn('flex justify-end', className)} {...props}>
       {children}
     </div>
   )
@@ -74,7 +74,7 @@ export function SettingBody({
 }: HTMLProps<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex items-center justify-between', className)}
+      className={cn('flex items-center justify-between py-4', className)}
       {...props}>
       {children}
     </div>
@@ -87,7 +87,7 @@ export function SettingFooter({
   ...props
 }: HTMLProps<HTMLDivElement>) {
   return (
-    <div className={cn('flex p-4 pt-0', className)} {...props}>
+    <div className={cn('flex pb-4', className)} {...props}>
       {children}
     </div>
   )

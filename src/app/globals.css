@@ -20,6 +20,10 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  .anim-reverse {
+    animation-direction: reverse;
+  }
 }
 
 @layer base {
