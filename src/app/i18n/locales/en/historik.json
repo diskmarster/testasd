@@ -30,6 +30,7 @@
     "user": "User",
     "total-sales":"Sales (Total)",
     "total-costs": "Costs (Total)",
+		"current-quantity": "Current qty.",
     "placeholders": {
       "productNo": "Search by product no.",
       "barcode": "Search by barcode",
