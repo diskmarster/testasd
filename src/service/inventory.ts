@@ -330,6 +330,7 @@ export const inventoryService = {
           t('inventory-service-action.couldnt-move-inventory'),
         )
       }
+			const newAmountFrom = await inventory.getProductInventory(locationID, productID, trx)
 
       const didUpsertTo = await inventory.upsertInventory(
         {
@@ -342,6 +343,7 @@ export const inventoryService = {
         },
         trx,
       )
+			const newAmountTo = await inventory.getProductInventory(locationID, productID, trx)
 
       if (!didUpsertTo) {
         throw new ActionError(
@@ -361,6 +363,7 @@ export const inventoryService = {
           platform,
           amount: -amount,
           reference: reference,
+					currentQuantity: newAmountFrom,
         },
         trx,
       )
@@ -377,6 +380,7 @@ export const inventoryService = {
           platform,
           amount,
           reference: reference,
+					currentQuantity: newAmountTo,
         },
         trx,
       )
