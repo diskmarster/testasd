@@ -32,7 +32,12 @@ async function Page({
   const settings: CustomerSettings = await customerService.getSettings(customer.id) ?? {
     id: -1,
     customerID: customer.id,
-    useReference: false,
+    useReference: {
+      tilgang: false,
+      afgang: false,
+      regulering: false,
+      flyt: false,
+    },
     usePlacement: false,
     useBatch: false,
     inserted: new Date(),

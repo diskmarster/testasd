@@ -398,7 +398,11 @@ export function getTableHistoryColumns(
     )
   }
 
-  if (!settings.useReference) {
+  if (!(settings.useReference.tilgang
+      || settings.useReference.afgang
+      || settings.useReference.regulering
+      || settings.useReference.flyt)
+  ) {
     planCols = planCols.filter(col => col != refCol)
   }
 
@@ -639,7 +643,11 @@ export function getTableHistoryFilters(
     )
   }
 
-  if (!settings.useReference) {
+  if (!(settings.useReference.tilgang
+      || settings.useReference.afgang
+      || settings.useReference.regulering
+      || settings.useReference.flyt)
+  ) {
     planFilters = planFilters.filter(filter => filter != refFilter)
   }
 
