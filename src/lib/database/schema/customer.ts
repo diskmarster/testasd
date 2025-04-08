@@ -11,6 +11,7 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/sqlite-core'
 import { userTable } from './auth'
+import { RegulationType } from '@/data/inventory.types'
 
 export const customerTable = sqliteTable('nl_customer', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),
@@ -75,9 +76,9 @@ export const locationTable = sqliteTable(
       .$onUpdateFn(() => new Date())
       .$type<Date>(),
   },
-  t => ({
-    unq: unique().on(t.name, t.customerID),
-  }),
+  t => [
+    unique().on(t.name, t.customerID),
+  ],
 )
 
 export type NewLocation = typeof locationTable.$inferInsert
@@ -102,11 +103,9 @@ export const linkLocationToUserTable = sqliteTable(
       .notNull()
       .default(false),
   },
-  table => {
-    return {
-      pk: primaryKey({ columns: [table.userID, table.locationID] }),
-    }
-  },
+  table => [
+    primaryKey({ columns: [table.userID, table.locationID] }),
+  ],
 )
 
 export type NewLinkLocationToUser = typeof linkLocationToUserTable.$inferInsert
@@ -122,9 +121,15 @@ export const customerSettingsTable = sqliteTable('nl_customer_settings', {
   customerID: integer('customer_id')
     .notNull()
     .references(() => customerTable.id, { onDelete: 'cascade' }),
-  useReference: integer('use_reference', { mode: 'boolean' })
+  useReference: text('use_reference', { mode: 'json' })
     .notNull()
-    .default(true),
+		.default({
+			tilgang: true,
+			afgang: true,
+			regulering: true,
+			flyt: true,
+		})
+		.$type<UseReferenceSetting>(),
   usePlacement: integer('use_placement', { mode: 'boolean' })
     .notNull()
     .default(true),
@@ -143,6 +148,9 @@ export type NewCustomerSettings = typeof customerSettingsTable.$inferInsert
 export type CustomerSettings = typeof customerSettingsTable.$inferSelect
 export type CustomerSettingsID = CustomerSettings['id']
 export type PartialCustomerSettings = Partial<CustomerSettings>
+export type UseReferenceSetting = {
+	[Property in RegulationType]: boolean
+}
 
 export const customerMailSettingsTable = sqliteTable(
   'nl_customer_mail_settings',
