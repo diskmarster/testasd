@@ -48,8 +48,9 @@ func TestEndpoints(t *testing.T) {
 		name string
 		f    func(*testing.T)
 	}{
-		{"GET /api/v1/settings", testCustomerSettingEndpoint},
-		{"GET /api/v1/products", testProductEndpoint},
+		{"GET /api/v1/settings", testV1CustomerSettingEndpoint},
+		{"GET /api/v2/settings", testV2CustomerSettingEndpoint},
+		{"GET /api/v1/products", testV1ProductEndpoint},
 	}
 
 	for _, test := range tests {
@@ -62,7 +63,7 @@ func TestEndpoints(t *testing.T) {
 	}
 }
 
-func testCustomerSettingEndpoint(t *testing.T) {
+func testV1CustomerSettingEndpoint(t *testing.T) {
 	var jsonBody SuccessResponse[struct {
 		Id           int  `json:"id"`
 		CustomerId   int  `json:"customerID"`
@@ -98,7 +99,44 @@ func testCustomerSettingEndpoint(t *testing.T) {
 	t.Logf("Returned customer settings %v\n", succesBody.Data)
 }
 
-func testProductEndpoint(t *testing.T) {
+type V2CustomerSetting struct {
+	Id           int `json:"id"`
+	CustomerId   int `json:"customerID"`
+	UseReference struct {
+		Tilgang    bool `json:"tilgang"`
+		Afgang     bool `json:"afgang"`
+		Regulering bool `json:"regulering"`
+		Flyt       bool `json:"flyt"`
+	} `json:"useReference"`
+	UsePlacement bool `json:"usePlacement"`
+	UseBatch     bool `json:"useBatch"`
+}
+
+func testV2CustomerSettingEndpoint(t *testing.T) {
+	var jsonBody SuccessResponse[V2CustomerSetting]
+	err := get("/api/v2/settings", &jsonBody, func(r *http.Request) *http.Request { return r })
+	if err == nil {
+		t.Fatalf("Expected error from unauthorized get, but got nil. Returned body: %v", jsonBody)
+	}
+
+	authData, err := authenticate(os.Getenv("email"), os.Getenv("password"))
+	if err != nil {
+		t.Fatalf("Error authenticating: %v", err)
+	}
+
+	var succesBody SuccessResponse[V2CustomerSetting]
+	err = get("/api/v2/settings", &succesBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Authorization", fmt.Sprintf("bearer %s", authData.Jwt))
+		return r
+	})
+	if err != nil {
+		t.Fatalf("Error getting customer settings: %v", err)
+	}
+
+	t.Logf("Returned customer settings %v\n", succesBody.Data)
+}
+
+func testV1ProductEndpoint(t *testing.T) {
 	authData, err := authenticate(os.Getenv("email"), os.Getenv("password"))
 	if err != nil {
 		t.Fatalf("Error authenticating: %v", err)
@@ -133,6 +171,6 @@ func testProductEndpoint(t *testing.T) {
 		}
 	}
 
-	t.Logf("%d products had more than had duplicate data\n", duplicateProductsCount)
+	t.Logf("%d products had duplicate data\n", duplicateProductsCount)
 	t.Logf("%d unique productIDs were in response.\n", len(productCountMap))
 }
