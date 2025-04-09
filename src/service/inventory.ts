@@ -39,9 +39,19 @@ import { productService } from './products'
 import { userService } from './user'
 import { locationService } from './location'
 import { NewReorder, PartialReorder, Reorder } from '@/lib/database/schema/reorders'
+import { customerService } from './customer'
+import { emailService } from './email'
+import { EmailSendReorder } from '@/components/email/email-reorder'
+
+const EMAIL_LINK_BASEURL =
+  process.env.VERCEL_ENV === 'production'
+    ? 'https://lager.nemunivers.app'
+    : process.env.VERCEL_ENV === 'preview'
+      ? 'stage.lager.nemunivers.app'
+      : 'http://localhost:3000'
 
 export const inventoryService = {
-  getInventory: async function (
+  getInventory: async function(
     locationID: LocationID,
   ): Promise<FormattedInventory[]> {
     const rows: FormattedInventory[] = []
@@ -64,43 +74,43 @@ export const inventoryService = {
 
     return rows
   },
-  getActiveUnits: async function (): Promise<Unit[]> {
+  getActiveUnits: async function(): Promise<Unit[]> {
     return inventory.getActiveUnits()
   },
-  getActiveGroupsByID: async function (
+  getActiveGroupsByID: async function(
     customerID: CustomerID,
   ): Promise<Group[]> {
     return await inventory.getActiveGroupsByID(customerID)
   },
-  getAllGroupsByID: async function (customerID: CustomerID): Promise<Group[]> {
+  getAllGroupsByID: async function(customerID: CustomerID): Promise<Group[]> {
     return await inventory.getAllGroupsByID(customerID)
   },
-  getActivePlacementsByID: async function (
+  getActivePlacementsByID: async function(
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getActivePlacementsByID(locationID)
   },
-  getAllPlacementsByID: async function (
+  getAllPlacementsByID: async function(
     locationID: LocationID,
   ): Promise<Placement[]> {
     return await inventory.getAllPlacementsByID(locationID)
   },
-  getActiveBatchesByID: async function (
+  getActiveBatchesByID: async function(
     locationID: LocationID,
   ): Promise<Batch[]> {
     return await inventory.getActiveBatchesByID(locationID)
   },
-  getAllBatchesByID: async function (locationID: LocationID): Promise<Batch[]> {
+  getAllBatchesByID: async function(locationID: LocationID): Promise<Batch[]> {
     return await inventory.getAllBatchesByID(locationID)
   },
-  getInventoryByIDs: async function (
+  getInventoryByIDs: async function(
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
   ): Promise<Inventory | undefined> {
     return await inventory.getInventoryByIDs(productID, placementID, batchID)
   },
-  createHistoryLog: async function (
+  createHistoryLog: async function(
     historyData: {
       customerID: CustomerID
       locationID: LocationID
@@ -112,6 +122,7 @@ export const inventoryService = {
       platform: 'web' | 'app'
       amount: number
       reference: string | undefined
+			currentQuantity: number
     },
     trx?: TRX,
   ): Promise<History | undefined> {
@@ -158,7 +169,7 @@ export const inventoryService = {
 
     return await inventory.createHistoryLog(historyLogData, trx)
   },
-  upsertInventory: async function (
+  upsertInventory: async function(
     platform: 'web' | 'app',
     customerID: CustomerID,
     userID: UserID,
@@ -224,6 +235,7 @@ export const inventoryService = {
         )
       }
 
+			const newAmount = await inventory.getProductInventory(locationID, productID, trx)
       const historyLog = await this.createHistoryLog(
         {
           customerID,
@@ -236,6 +248,7 @@ export const inventoryService = {
           platform,
           amount,
           reference,
+					currentQuantity: newAmount,
         },
         trx,
       )
@@ -245,12 +258,46 @@ export const inventoryService = {
         )
       }
 
+      if (type == 'afgang') {
+        const newAmount = await inventory.getProductInventory(locationID, productID, trx)
+
+        if (isReorderOnProduct &&
+          isReorderOnProduct.minimum > (newAmount + isReorderOnProduct.ordered)
+        ) {
+          const otherReorders = await inventory.getAllReordersByID(locationID, trx)
+            .then(rs => rs.filter(r => r.productID != productID))
+
+          if (otherReorders.every(r => !r.isRequested && r.minimum <= (r.quantity + r.ordered))) {
+            const mailSettings = await customerService.getMailSettingsForIDs(
+              customerID,
+              locationID,
+              'sendReorderMail',
+            )
+
+            const mailPromises = mailSettings.map(setting => {
+              const email = setting.userID ? setting.userEmail! : setting.email!
+
+              return emailService.sendRecursively(
+                [email],
+                'Der er nye varer til genbestil i NemLager',
+                EmailSendReorder({
+                  mailInfo: setting,
+                  link: `${EMAIL_LINK_BASEURL}/${lang}/genbestil`,
+                })
+              )
+            })
+
+            await Promise.all(mailPromises)
+          }
+        }
+      }
+
       return didUpsert && !!historyLog
     })
 
     return result
   },
-  moveInventory: async function (
+  moveInventory: async function(
     platform: 'web' | 'app',
     customerID: CustomerID,
     userID: UserID,
@@ -283,6 +330,7 @@ export const inventoryService = {
           t('inventory-service-action.couldnt-move-inventory'),
         )
       }
+			const newAmountFrom = await inventory.getProductInventory(locationID, productID, trx)
 
       const didUpsertTo = await inventory.upsertInventory(
         {
@@ -295,6 +343,7 @@ export const inventoryService = {
         },
         trx,
       )
+			const newAmountTo = await inventory.getProductInventory(locationID, productID, trx)
 
       if (!didUpsertTo) {
         throw new ActionError(
@@ -314,6 +363,7 @@ export const inventoryService = {
           platform,
           amount: -amount,
           reference: reference,
+					currentQuantity: newAmountFrom,
         },
         trx,
       )
@@ -330,6 +380,7 @@ export const inventoryService = {
           platform,
           amount,
           reference: reference,
+					currentQuantity: newAmountTo,
         },
         trx,
       )
@@ -345,17 +396,17 @@ export const inventoryService = {
 
     return result
   },
-  getActiveProductsByID: async function (
+  getActiveProductsByID: async function(
     customerID: CustomerID,
   ): Promise<Product[]> {
     return await inventory.getActiveProductsByID(customerID)
   },
-  getAllProductsByID: async function (
+  getAllProductsByID: async function(
     customerID: CustomerID,
   ): Promise<Product[]> {
     return await inventory.getAllProductsByID(customerID)
   },
-  createPlacement: async function (
+  createPlacement: async function(
     placementData: NewPlacement,
     lang: string = fallbackLng,
   ): Promise<Placement | undefined> {
@@ -372,7 +423,7 @@ export const inventoryService = {
       }
     }
   },
-  createProductGroup: async function (
+  createProductGroup: async function(
     groupData: {
       name: string
       customerID: number
@@ -393,7 +444,7 @@ export const inventoryService = {
     }
   },
 
-  createBatch: async function (
+  createBatch: async function(
     batchData: NewBatch,
     lang: string = fallbackLng,
   ): Promise<Batch | undefined> {
@@ -410,7 +461,7 @@ export const inventoryService = {
       }
     }
   },
-  getHistoryByLocationID: async function (
+  getHistoryByLocationID: async function(
     locationID: LocationID,
   ): Promise<HistoryWithSums[]> {
 
@@ -424,7 +475,7 @@ export const inventoryService = {
 
     return newHistory
   },
-  createReorder: async function (
+  createReorder: async function(
     reorderData: NewReorder,
     lang: string = fallbackLng,
   ): Promise<Reorder | undefined> {
@@ -437,14 +488,14 @@ export const inventoryService = {
 
     return await inventory.createReorder(reorderData)
   },
-  deleteReorderByIDs: async function (
+  deleteReorderByIDs: async function(
     productID: ProductID,
     locationID: LocationID,
     customerID: CustomerID,
   ): Promise<boolean> {
     return await inventory.deleteReorderByID(productID, locationID, customerID)
   },
-  updateReorderByIDs: async function (
+  updateReorderByIDs: async function(
     productID: ProductID,
     locationID: LocationID,
     customerID: CustomerID,
@@ -457,31 +508,31 @@ export const inventoryService = {
       reorderData,
     )
   },
-  getReordersByID: async function (
+  getReordersByID: async function(
     locationID: LocationID,
   ): Promise<FormattedReorder[]> {
     const reorders = await inventory.getAllReordersByID(locationID)
 
     const newReorders = reorders.map(reorder => {
       const disposible = reorder.quantity + reorder.ordered
-			const shouldReorder = disposible < (reorder.minimum ?? 0)
+      const shouldReorder = disposible < (reorder.minimum ?? 0)
 
       return {
         ...reorder,
         disposible,
-				shouldReorder,
+        shouldReorder,
       }
     })
 
     return newReorders
   },
-  getInventoryByProductID: async function (
+  getInventoryByProductID: async function(
     productID: ProductID,
   ): Promise<Inventory[]> {
     return await inventory.getInventoryByProductID(productID)
   },
 
-  createUnit: async function (
+  createUnit: async function(
     unitData: NewUnit,
     lang: string = fallbackLng,
   ): Promise<Unit | undefined> {
@@ -498,7 +549,7 @@ export const inventoryService = {
       }
     }
   },
-  updateUnitByID: async function (
+  updateUnitByID: async function(
     unitID: UnitID,
     updatedUnitData: PartialUnit,
   ): Promise<Unit | undefined> {
@@ -507,7 +558,7 @@ export const inventoryService = {
     return updatedUnit
   },
 
-  updateUnitBarredStatus: async function (
+  updateUnitBarredStatus: async function(
     unitID: UnitID,
     isBarred: boolean,
   ): Promise<Unit | undefined> {
@@ -519,11 +570,11 @@ export const inventoryService = {
       console.error('Der skete en fejl med spærringen:', err)
     }
   },
-  getAllUnits: async function (): Promise<Unit[]> {
+  getAllUnits: async function(): Promise<Unit[]> {
     return await inventory.getAllUnits()
   },
 
-  updateGroupByID: async function (
+  updateGroupByID: async function(
     groupID: GroupID,
     updatedGroupData: PartialGroup,
   ): Promise<Group | undefined> {
@@ -536,7 +587,7 @@ export const inventoryService = {
     return updatedGroup
   },
 
-  updatePlacementByID: async function (
+  updatePlacementByID: async function(
     placementID: PlacementID,
     updatedPlacementData: PartialPlacement,
   ): Promise<Placement | undefined> {
@@ -547,7 +598,7 @@ export const inventoryService = {
     if (!updatedPlacement) return undefined
     return updatedPlacement
   },
-  updateBatchByID: async function (
+  updateBatchByID: async function(
     batchID: BatchID,
     updatedBatchData: PartialBatch,
   ): Promise<Batch | undefined> {
@@ -559,7 +610,7 @@ export const inventoryService = {
     return updatedBatch
   },
 
-  updateGroupBarredStatus: async function (
+  updateGroupBarredStatus: async function(
     groupID: GroupID,
     isBarred: boolean,
   ): Promise<Group | undefined> {
@@ -573,7 +624,7 @@ export const inventoryService = {
       console.error('Der skete en fejl med spærringen:', err)
     }
   },
-  updatePlacementBarredStatus: async function (
+  updatePlacementBarredStatus: async function(
     placementID: PlacementID,
     isBarred: boolean,
   ): Promise<Placement | undefined> {
@@ -588,7 +639,7 @@ export const inventoryService = {
       console.error('Der skete en fejl med spærringen:', err)
     }
   },
-  updateBatchBarredStatus: async function (
+  updateBatchBarredStatus: async function(
     batchID: BatchID,
     isBarred: boolean,
   ): Promise<Batch | undefined> {
@@ -603,7 +654,7 @@ export const inventoryService = {
     }
   },
 
-  createInventory: async function (
+  createInventory: async function(
     customerID: number,
     productID: number,
     locationID: string,
@@ -619,23 +670,23 @@ export const inventoryService = {
       quantity: 0,
     })
   },
-  getPlacementByID: async function (
+  getPlacementByID: async function(
     placementID: PlacementID,
   ): Promise<Placement | undefined> {
     return await inventory.getPlacementByID(placementID)
   },
-  getBatchByID: async function (batchID: BatchID): Promise<Batch | undefined> {
+  getBatchByID: async function(batchID: BatchID): Promise<Batch | undefined> {
     return await inventory.getBatchByID(batchID)
   },
-	getReorderByIDs: async function(
-		productID: ProductID,
-		customerID: CustomerID,
-		userID: UserID
-	): Promise<Reorder | undefined> {
-		const locationID = await locationService.getLastVisited(userID)
-		if (!locationID) return undefined
-		return await inventory.getReorderByProductID(productID,locationID,customerID)
-	},
+  getReorderByIDs: async function(
+    productID: ProductID,
+    customerID: CustomerID,
+    userID: UserID
+  ): Promise<Reorder | undefined> {
+    const locationID = await locationService.getLastVisited(userID)
+    if (!locationID) return undefined
+    return await inventory.getReorderByProductID(productID, locationID, customerID)
+  },
   upsertReorder: async function(
     reorderData: NewReorder,
   ): Promise<Reorder | undefined> {

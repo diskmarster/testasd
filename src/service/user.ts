@@ -126,6 +126,10 @@ export const userService = {
     const users = await user.getAllByCustomerID(customerID)
     return users.map(u => userDTO(u))
   },
+  getAllByCustomerIDFromAccess: async function(customerID: CustomerID, userID: UserID): Promise<UserNoHash[]> {
+    const users = await user.getAllByCustomerIDFromAccess(customerID, userID)
+    return users.map(u => userDTO(u))
+  },
   createInvitedUser: async function(userLinkData: UserLink, newUserData: NewUser): Promise<UserNoHash | undefined> {
     const transaction = await db.transaction(async trx => {
       const hashed = await hashPassword(newUserData.hash)

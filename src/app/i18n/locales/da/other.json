@@ -102,7 +102,13 @@
     "maximum": "Maximum bestillings antal",
     "maximum-criteria": "kan udelades. Hvis det tages med skal det skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
     "order-amount": "Bestillings antal",
-    "order-amount-criteria": "kan udelades. Hvis det tages med skal det skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt."
+    "order-amount-criteria": "kan udelades. Hvis det tages med skal det skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
+		"cron-mails": {
+			"question": "Hvilke planlagt email kan jeg få tilsendt?",
+			"sub": "Nem Lager tilbyder på nuværende tidspunkt følgende liste af mails som kan sendes til enten interne brugere eller externe e-mails.",
+			"answer-title": "Månedlig lagerværdi",
+			"answer": "Få tilsendt et Excelark og PDF med dit lager opdelt på både vare og varegrupper, summeret og klar til arbejde videre med. Denne mail sendes sidst dag hver måned."
+		}
   },
   "modal-show-user-label": {
     "title": "Bruger Label",

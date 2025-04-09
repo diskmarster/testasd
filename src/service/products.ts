@@ -148,41 +148,47 @@ export const productService = {
       const productsWithInventory =
         await product.getWithInventoryByCustomerID(customerID)
 
-      const invMap: Map<ProductID, Inventory[]> = productsWithInventory.reduce<
-        Map<ProductID, Inventory[]>
+      const invMap: Map<ProductID, [FormattedProduct, Inventory[]]> = productsWithInventory.reduce<
+        Map<ProductID, [FormattedProduct, Inventory[]]>
       >((acc, cur) => {
         if (acc.has(cur.id)) {
-          const inventories = acc.get(cur.id)!
+          const [product, inventories] = acc.get(cur.id)!
           inventories.push(cur.inventory)
-          acc.set(cur.id, inventories)
+          acc.set(cur.id, [product, inventories])
         } else {
-          acc.set(cur.id, [cur.inventory])
+          acc.set(cur.id, [{
+            id: cur.id,
+            inserted: cur.inserted,
+            updated: cur.updated,
+            customerID: cur.customerID,
+            isBarred: cur.isBarred,
+            groupID: cur.groupID,
+            unitID: cur.unitID,
+            text1: cur.text1,
+            text2: cur.text2,
+            text3: cur.text3,
+            sku: cur.sku,
+            barcode: cur.barcode,
+            costPrice: cur.costPrice,
+            salesPrice: cur.salesPrice,
+            note: cur.note,
+            supplierID: cur.supplierID,
+            group: cur.group,
+            unit: cur.unit,
+            supplierName: cur.supplierName,
+          }, [cur.inventory]])
         }
 
         return acc
       }, new Map())
 
-      return productsWithInventory.map(p => ({
-        id: p.id,
-        customerID: p.customerID,
-        inserted: p.inserted,
-        updated: p.updated,
-        isBarred: p.isBarred,
-        groupID: p.groupID,
-        unitID: p.unitID,
-        group: p.group,
-        unit: p.unit,
-        text1: p.text1,
-        text2: p.text2,
-        text3: p.text3,
-        sku: p.sku,
-        barcode: p.barcode,
-        costPrice: p.costPrice,
-        salesPrice: p.salesPrice,
-		supplierID: p.supplierID,
-        note: p.note,
-        inventories: invMap.get(p.id) || [],
+      const uniqueProducts = Array.from(invMap.values())
+      .map(([product, inventories]) => ({
+        ...product,
+        inventories,
       }))
+
+      return uniqueProducts
     } catch (e) {
       console.error(e)
       Promise.reject(

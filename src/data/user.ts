@@ -21,8 +21,8 @@ import {
   userLinkTable,
   userTable,
 } from '@/lib/database/schema/auth'
-import { CustomerID, customerTable } from '@/lib/database/schema/customer'
-import { and, eq, getTableColumns, not, sql } from 'drizzle-orm'
+import { CustomerID, customerTable, linkLocationToUserTable } from '@/lib/database/schema/customer'
+import { and, or, eq, getTableColumns, inArray, not, sql } from 'drizzle-orm'
 
 export const user = {
   create: async function (
@@ -84,6 +84,46 @@ export const user = {
       .from(userTable)
       .where(eq(userTable.customerID, customerID))
   },
+	getAllByCustomerIDFromAccess: async function (
+		customerID: CustomerID,
+		userID: UserID,
+		trx: TRX = db,
+	): Promise<User[]> {
+		const { locationID } = getTableColumns(linkLocationToUserTable)
+
+		const targetUserAccesses = await trx
+			.select({ locationID })
+			.from(linkLocationToUserTable)
+			.where(and(
+				eq(linkLocationToUserTable.customerID, customerID),
+				eq(linkLocationToUserTable.userID, userID),
+			))
+
+		if (targetUserAccesses.length === 0) {
+			return []
+		}
+
+		const targetLocationIDs = targetUserAccesses.map(a => a.locationID)
+
+		return await trx
+			.selectDistinct(getTableColumns(userTable)) 
+			.from(userTable)
+			.innerJoin(
+				linkLocationToUserTable,
+				or(
+					and(
+						eq(userTable.role, 'administrator'),
+						eq(linkLocationToUserTable.customerID, customerID),
+					),
+					and(
+						eq(userTable.id, linkLocationToUserTable.userID),
+						eq(linkLocationToUserTable.customerID, customerID),
+						inArray(linkLocationToUserTable.locationID, targetLocationIDs),
+					),
+				)
+			)
+			//.where(not(eq(userTable.id, userID)))
+	},
   createUserLink: async function (
     linkData: NewUserLink,
     trx: TRX = db,

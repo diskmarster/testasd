@@ -7,7 +7,7 @@
     "no-history": "No history"
   },
   "history-columns": {
-    "created": "Created",
+    "created": "Date",
     "productNo": "Product No.",
     "barcode": "Barcode",
     "product-group": "Product group",
@@ -30,6 +30,7 @@
     "user": "User",
     "total-sales":"Sales (Total)",
     "total-costs": "Costs (Total)",
+		"current-quantity": "Current qty.",
     "placeholders": {
       "productNo": "Search by product no.",
       "barcode": "Search by barcode",

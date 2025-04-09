@@ -15,12 +15,15 @@ type ErrorResponse struct {
 
 type SuccessResponse[T any] struct {
 	Message string `json:"msg"`
-	Data T `json:"data"`
+	Data    T      `json:"data"`
 }
 
 func get[T any](path string, jsonBody *SuccessResponse[T], reqSetup func(*http.Request) *http.Request) error {
 	url := fmt.Sprintf("%s%s", os.Getenv("baseUrl"), path)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return fmt.Errorf("Error creating request for %s: %v", url, err)
+	}
 
 	req = reqSetup(req)
 

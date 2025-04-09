@@ -169,6 +169,27 @@
       "when": 1742370136343,
       "tag": "0023_wild_captain_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1743581091103,
+      "tag": "0024_puzzling_whirlwind",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1743668432771,
+      "tag": "0025_flippant_slyde",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "6",
+      "when": 1744095568537,
+      "tag": "0026_goofy_black_cat",
+      "breakpoints": true
     }
   ]
 }

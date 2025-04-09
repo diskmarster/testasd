@@ -222,6 +222,29 @@ export function getTableHistoryColumns(
       numberRangeFilterFn(row, id, value),
   }
 
+  const currentQuantityCol: ColumnDef<HistoryWithSums> = {
+    accessorKey: 'currentQuantity',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('history-columns.current-quantity')} />
+    ),
+    cell: ({ getValue }) => {
+      const amount = getValue<number>() ?? "-"
+
+      return (
+        <span className={cn('tabular-nums', amount < 0 && 'text-destructive')}>
+          {typeof amount == "number" ? formatNumber(amount, lng) : amount}
+        </span>
+      )
+    },
+    meta: {
+      viewLabel: t('history-columns.current-quantity'),
+      rightAlign: true,
+			className: "justify-end"
+    },
+    filterFn: (row, id, value: NumberRange) =>
+      numberRangeFilterFn(row, id, value),
+  }
+
   const placementCol: ColumnDef<HistoryWithSums> = {
     accessorKey: 'placementName',
     id: 'placement',
@@ -303,9 +326,18 @@ export function getTableHistoryColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.total-sales')} />
     ),
-    cell: ({ row }) => numberToCurrency(row.original.salesTotal, lng),
+    cell: ({ row }) => {
+			const amount = row.original.salesTotal
+
+			return (
+        <span className={cn('tabular-nums', amount < 0 && 'text-destructive')}>
+          {numberToCurrency(amount, lng)}
+        </span>
+			)
+		},
     meta: {
       viewLabel: t('history-columns.total-sales'),
+			rightAlign: true,
     },
     filterFn: (row, id, value: NumberRange) =>
       numberRangeFilterFn(row, id, value),
@@ -316,9 +348,18 @@ export function getTableHistoryColumns(
     header: ({ column }) => (
       <TableHeader column={column} title={t('history-columns.total-costs')} />
     ),
-    cell: ({ row }) => numberToCurrency(row.original.costTotal, lng),
+    cell: ({ row }) => {
+			const amount = row.original.costTotal
+
+			return (
+        <span className={cn('tabular-nums', amount < 0 && 'text-destructive')}>
+          {numberToCurrency(amount, lng)}
+        </span>
+			)
+		},
     meta: {
       viewLabel: t('history-columns.total-costs'),
+			rightAlign: true,
     },
     filterFn: (row, id, value: NumberRange) =>
       numberRangeFilterFn(row, id, value),
@@ -337,6 +378,7 @@ export function getTableHistoryColumns(
         unitCol,
         typeCol,
         amountCol,
+				currentQuantityCol,
         placementCol,
         batchCol,
         platformCol,
@@ -492,6 +534,13 @@ export function getTableHistoryFilters(
     value: '',
   }
 
+  const currentQuantityFilter: FilterField<HistoryWithSums> = {
+    column: table.getColumn('currentQuantity'),
+    type: 'number-range',
+    label: t('history-columns.current-quantity'),
+    value: '',
+  }
+
   const placementFilter: FilterField<HistoryWithSums> = {
     column: table.getColumn('placement'),
     type: 'select',
@@ -570,6 +619,7 @@ export function getTableHistoryFilters(
         unitFilter,
         typeFilter,
         amountFilter,
+				currentQuantityFilter,
         placementFilter,
         batchFilter,
         platformFilter,

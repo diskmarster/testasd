@@ -7,7 +7,7 @@
     "no-history": "Ingen historik"
   },
   "history-columns": {
-    "created": "Oprettet",
+    "created": "Dato",
     "productNo": "Varenr.",
     "barcode": "Stregkode",
     "product-group": "Varegruppe",
@@ -30,6 +30,7 @@
     "user": "Bruger",
     "total-sales": "Salg (Total)",
     "total-costs": "Kost (Total)",
+		"current-quantity": "Aktuel beh.",
     "placeholders": {
       "productNo": "Søg i varenr.",
       "barcode": "Søg i stregkode",

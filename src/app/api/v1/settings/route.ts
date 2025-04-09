@@ -7,6 +7,9 @@ import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
+// temporary auth timeout, to use until the setting is implemented in web part
+const DEFAULT_AUTH_TIMEOUT_MINUTES = 5
+
 export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 	const start = performance.now()
 
@@ -81,7 +84,10 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 		return NextResponse.json(
 			{
 				msg: 'Success',
-				data: settings,
+				data: {
+					...settings,
+					authTimeoutMin: DEFAULT_AUTH_TIMEOUT_MINUTES,
+				},
 			},
 			{ status: 200 },
 		)
