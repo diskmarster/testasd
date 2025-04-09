@@ -270,6 +270,7 @@ export function ModalEditUser({ }: Props) {
                             }
                             setValue('data.role', role, {
                               shouldValidate: true,
+															shouldDirty: true,
                             })
                           }}>
                           <SelectTrigger className='capitalize'>
