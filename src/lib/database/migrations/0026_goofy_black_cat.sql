@@ -1,0 +1,1 @@
+ALTER TABLE `nl_history` ADD `current_quantity` real;

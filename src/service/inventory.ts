@@ -122,6 +122,7 @@ export const inventoryService = {
       platform: 'web' | 'app'
       amount: number
       reference: string | undefined
+			currentQuantity: number
     },
     trx?: TRX,
   ): Promise<History | undefined> {
@@ -234,6 +235,7 @@ export const inventoryService = {
         )
       }
 
+			const newAmount = await inventory.getProductInventory(locationID, productID, trx)
       const historyLog = await this.createHistoryLog(
         {
           customerID,
@@ -246,6 +248,7 @@ export const inventoryService = {
           platform,
           amount,
           reference,
+					currentQuantity: newAmount,
         },
         trx,
       )
@@ -327,6 +330,7 @@ export const inventoryService = {
           t('inventory-service-action.couldnt-move-inventory'),
         )
       }
+			const newAmountFrom = await inventory.getProductInventory(locationID, productID, trx)
 
       const didUpsertTo = await inventory.upsertInventory(
         {
@@ -339,6 +343,7 @@ export const inventoryService = {
         },
         trx,
       )
+			const newAmountTo = await inventory.getProductInventory(locationID, productID, trx)
 
       if (!didUpsertTo) {
         throw new ActionError(
@@ -358,6 +363,7 @@ export const inventoryService = {
           platform,
           amount: -amount,
           reference: reference,
+					currentQuantity: newAmountFrom,
         },
         trx,
       )
@@ -374,6 +380,7 @@ export const inventoryService = {
           platform,
           amount,
           reference: reference,
+					currentQuantity: newAmountTo,
         },
         trx,
       )
