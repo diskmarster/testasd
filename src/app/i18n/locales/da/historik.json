@@ -30,7 +30,7 @@
     "user": "Bruger",
     "total-sales": "Salg (Total)",
     "total-costs": "Kost (Total)",
-		"current-quantity": "Aktual beh.",
+		"current-quantity": "Aktuel beh.",
     "placeholders": {
       "productNo": "Søg i varenr.",
       "barcode": "Søg i stregkode",
