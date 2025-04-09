@@ -57,7 +57,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 				type: 'endpoint',
 				input: null,
 				error: t('route-translations-users.couldnt-get-settings'),
-				origin: `GET api/v1/settings`,
+				origin: `GET api/v2/settings`,
 			}
 
 			errorsService.create(errorLog)
@@ -73,7 +73,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 		const end = performance.now()
 
 		await analyticsService.createAnalytic('action', {
-			actionName: 'getCustomerSettings',
+			actionName: 'getCustomerSettingsV2',
 			userID: user.id,
 			customerID: user.customerID,
 			sessionID: session.id,
@@ -104,7 +104,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 			error:
 				(e as Error).message ??
 				t('route-translations-users.couldnt-get-settings'),
-			origin: `GET api/v1/settings`,
+			origin: `GET api/v2/settings`,
 		}
 
 		errorsService.create(errorLog)
