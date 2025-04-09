@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -51,6 +52,7 @@ func TestEndpoints(t *testing.T) {
 		{"GET /api/v1/settings", testV1CustomerSettingEndpoint},
 		{"GET /api/v2/settings", testV2CustomerSettingEndpoint},
 		{"GET /api/v1/products", testV1ProductEndpoint},
+		{"POST /api/v1/auth/sign-in", testV1SignInEndpoint},
 	}
 
 	for _, test := range tests {
@@ -63,14 +65,16 @@ func TestEndpoints(t *testing.T) {
 	}
 }
 
+type V1CustomerSetting struct {
+	Id           int  `json:"id"`
+	CustomerId   int  `json:"customerID"`
+	UseReference bool `json:"useReference"`
+	UsePlacement bool `json:"usePlacement"`
+	UseBatch     bool `json:"useBatch"`
+}
+
 func testV1CustomerSettingEndpoint(t *testing.T) {
-	var jsonBody SuccessResponse[struct {
-		Id           int  `json:"id"`
-		CustomerId   int  `json:"customerID"`
-		UseReference bool `json:"useReference"`
-		UsePlacement bool `json:"usePlacement"`
-		UseBatch     bool `json:"useBatch"`
-	}]
+	var jsonBody SuccessResponse[V1CustomerSetting]
 	err := get("/api/v1/settings", &jsonBody, func(r *http.Request) *http.Request { return r })
 	if err == nil {
 		t.Fatalf("Expected error from unauthorized get, but got nil. Returned body: %v", jsonBody)
@@ -81,13 +85,7 @@ func testV1CustomerSettingEndpoint(t *testing.T) {
 		t.Fatalf("Error authenticating: %v", err)
 	}
 
-	var succesBody SuccessResponse[struct {
-		Id           int  `json:"id"`
-		CustomerId   int  `json:"customerID"`
-		UseReference bool `json:"useReference"`
-		UsePlacement bool `json:"usePlacement"`
-		UseBatch     bool `json:"useBatch"`
-	}]
+	var succesBody SuccessResponse[V1CustomerSetting]
 	err = get("/api/v1/settings", &succesBody, func(r *http.Request) *http.Request {
 		r.Header.Set("Authorization", fmt.Sprintf("bearer %s", authData.Jwt))
 		return r
@@ -173,4 +171,37 @@ func testV1ProductEndpoint(t *testing.T) {
 
 	t.Logf("%d products had duplicate data\n", duplicateProductsCount)
 	t.Logf("%d unique productIDs were in response.\n", len(productCountMap))
+}
+
+type SignInData struct {
+	Jwt  string `json:"jwt"`
+	User struct {
+		Id int `json:"id"`
+	} `json:"user"`
+	Customer struct {
+		Settings V1CustomerSetting `json:"settings"`
+	} `json:"customer"`
+}
+
+func testV1SignInEndpoint(t *testing.T) {
+	body := make(map[string]string, 2)
+	body["email"] = os.Getenv("email")
+	body["password"] = os.Getenv("password")
+
+	jsonBytes, err := json.Marshal(body)
+	if err != nil {
+		t.Fatalf("Error marshaling body: %v", err)
+	}
+
+	var jsonBody SuccessResponse[SignInData]
+
+	if err := post("/api/v1/auth/sign-in?method=pw", jsonBytes, &jsonBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Content-Type", "application/json")
+
+		return r
+	}); err != nil {
+		t.Fatalf("Error posting to sign-in endpoint: %v", err)
+	}
+
+	t.Logf("Returned SignInData: %v\n", jsonBody.Data)
 }
