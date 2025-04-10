@@ -9,6 +9,7 @@ import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
+import { InventoryTableRow } from './columns'
 
 interface PageProps extends WithAuthProps {
   params: {
@@ -73,6 +74,12 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
     inventory = Array.from(inventoryMap.values())
   }
 
+  const reorders = await inventoryService.getReordersByID(location, { withRequested: false })
+  const rows: InventoryTableRow[] = inventory.map(i => ({
+    ...i,
+    disposible: reorders.find(r => r.productID === i.product.id)?.disposible ?? null,
+  }))
+
   return (
     <SiteWrapper
       title={t('overview')}
@@ -103,7 +110,7 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
         </>
       }>
       <TableOverview
-        data={inventory}
+        data={rows}
         user={user}
         plan={customer.plan}
         units={units}

@@ -4,6 +4,7 @@ import {fuzzyFilter} from '@/lib/tanstack/filter-fns'
 import {
   getTableOverviewColumns,
   getTableOverviewFilters,
+  InventoryTableRow,
 } from '@/app/[lng]/(site)/oversigt/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
@@ -57,7 +58,7 @@ const defaultVisibility = {
 }
 
 interface Props {
-  data: FormattedInventory[]
+  data: InventoryTableRow[]
   user: User
   plan: Plan
   units: Unit[]
