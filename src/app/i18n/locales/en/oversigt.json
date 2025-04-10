@@ -50,6 +50,7 @@
   "cost-price": "Cost price",
   "sales-price": "Sales price",
   "quantity": "Qty.",
+  "disposible": "Disp. qty.",
   "unit": "Unit",
   "isBarred": "Status",
   "isBarred-yes": "Barred",

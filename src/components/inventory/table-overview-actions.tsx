@@ -4,16 +4,16 @@ import { useTranslation } from '@/app/i18n/client'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { useLanguage } from '@/context/language'
 import { Plan } from '@/data/customer.types'
-import { FormattedInventory } from '@/data/inventory.types'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
 import { CustomerSettings } from '@/lib/database/schema/customer'
 import { hasPermissionByPlan } from '@/data/user.types'
+import { InventoryTableRow } from '@/app/[lng]/(site)/oversigt/columns'
 
 interface Props {
-  table: Table<FormattedInventory>
-  row: Row<FormattedInventory>
+  table: Table<InventoryTableRow>
+  row: Row<InventoryTableRow>
   plan: Plan,
   settings: Pick<CustomerSettings, 'usePlacement'>,
 }
