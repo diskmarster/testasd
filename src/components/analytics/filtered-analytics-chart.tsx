@@ -4,7 +4,7 @@ import { ActionAnalytic } from "@/lib/database/schema/analytics"
 import * as dateFns from "date-fns"
 import { Dispatch, SetStateAction, useEffect, useState, useTransition } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../ui/chart"
+import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../ui/chart"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { Calendar } from "../ui/calendar"
 import { DateRange, SelectRangeEventHandler } from "react-day-picker"
@@ -28,7 +28,23 @@ interface Props {
 
 type XAxisKey = 'date' | 'action'
 
-function filterToXAxisElements(filter: AnalyticsFilterDTO, analytics: ActionAnalytic[], key: XAxisKey): string[] {
+const chartConfigMap: {
+	[Property in TransformerKey]: {
+		label: string,
+		color: string,
+	}
+} = {
+		antal: {
+			label: 'Udførte actions',
+			color: 'hsl(var(--chart-1))'
+		},
+		time: {
+			label: 'Kørsel tid',
+			color: 'hsl(var(--chart-1))'
+		},
+	}
+
+function createXAxisElements(filter: AnalyticsFilterDTO, analytics: ActionAnalytic[], key: XAxisKey): string[] {
 	switch (key) {
 		case 'date': {
 			const today = Date.now()
@@ -66,9 +82,20 @@ export function FilteredAnalyticsChart({
 	const [analytics, setAnalytics] = useState(defaultAnalytics)
 	const [filter, setFilter] = useState(defaultFilter)
 	const [xAxisKey, setXAxisKey] = useState<XAxisKey>('date')
-	const [xAxisElements, setXAxisElements] = useState<string[]>(filterToXAxisElements(filter, analytics, xAxisKey))
+	const [xAxisElements, setXAxisElements] = useState<string[]>(createXAxisElements(filter, analytics, xAxisKey))
+	const [chartConfig, setChartConfig] = useState<ChartConfig>({antal: chartConfigMap['antal']})
 	const actions = new Set(analytics.map(a => a.actionName))
-	const transformerKey: TransformerKey = 'actions'
+	const [transformerKey, setTransformerKey] = useState<TransformerKey>('antal')
+
+	const onTransformerKeyChange = (val: TransformerKey) => {
+		setTransformerKey(val)
+		setChartConfig({[val]: chartConfigMap[val]})
+	}
+
+	const onXAxisKeyChange = (val: XAxisKey) => {
+		setXAxisKey(val)
+		setXAxisElements(createXAxisElements(filter, analytics, val))
+	}
 
 	const onFilterChange: Dispatch<SetStateAction<AnalyticsFilterDTO>> = (valOrUpdater) => {
 		let updatedFilter: AnalyticsFilterDTO
@@ -78,7 +105,7 @@ export function FilteredAnalyticsChart({
 			updatedFilter = valOrUpdater
 		}
 
-		setXAxisElements(filterToXAxisElements(updatedFilter, analytics, xAxisKey))
+		setXAxisElements(createXAxisElements(updatedFilter, analytics, xAxisKey))
 		setFilter(updatedFilter)
 		startTransition(async () => {
 			const res = await getFilteredAnalyticsAction(updatedFilter)
@@ -96,27 +123,37 @@ export function FilteredAnalyticsChart({
 			<CardHeader>
 				<CardTitle>Actions</CardTitle>
 			</CardHeader>
-			<CardContent className="flex h-[80vh]">
+			<CardContent className="flex max-h-[80vh]">
 				<AnalyticsFilterPanel filter={filter} setFilter={onFilterChange} customers={customers} actions={actions} />
-				<div className="flex flex-col gap-1 w-full">
-					<div className="flex gap-2 justify-content align-items w-full">
-						<p className="text-lg font-semibold tracking-tight text-center">X akse</p>
-						<Select value={xAxisKey} onValueChange={(val) => setXAxisKey(val as XAxisKey)}>
-							<SelectTrigger className="w-[130px]">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="date">Dato</SelectItem>
-								<SelectItem value="action">Action</SelectItem>
-							</SelectContent>
-						</Select>
+				<div className="flex flex-col gap-4 w-full">
+					<div className="flex gap-2 justify-end items-center w-full">
+						<div>
+							<p className="text-lg font-semibold tracking-tight">X akse</p>
+							<Select value={xAxisKey} onValueChange={(val) => onXAxisKeyChange(val as XAxisKey)}>
+								<SelectTrigger className="w-[130px]">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="date">Dato</SelectItem>
+									<SelectItem value="action">Action</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
+						<div>
+							<p className="text-lg font-semibold tracking-tight">Y akse</p>
+							<Select 
+								value={transformerKey} 
+								onValueChange={(val) => onTransformerKeyChange(val as TransformerKey)}>
+								<SelectTrigger className="w-[130px]">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="antal">Antal</SelectItem>
+								</SelectContent>
+							</Select>
+						</div>
 					</div>
-					<ChartContainer config={{
-						actions: {
-							label: 'Udførte actions',
-							color: 'hsl(var(--chart-1))'
-						},
-						}}
+					<ChartContainer config={chartConfig}
 						loading={pending}
 						>
 						<BarChart
@@ -151,7 +188,7 @@ export function FilteredAnalyticsChart({
 	)
 }
 
-type TransformerKey = 'actions'
+type TransformerKey = 'antal' | 'time'
 
 function transformAnalytics(transformerKey: TransformerKey, xAxisKey: XAxisKey, analytics: ActionAnalytic[], expectedKeys: string[]): {
 	[Property in (TransformerKey | 'label')]?: number | string
@@ -186,12 +223,14 @@ function transformAnalytics(transformerKey: TransformerKey, xAxisKey: XAxisKey, 
 	let entries = Array.from(actionMap.entries()) 
 	switch (xAxisKey) {
 		case "date":
-		entries = [...entries].sort((a, b) => dateFns.compareDesc(a[0], b[0]))
+		entries = [...entries].sort((a, b) => dateFns.compareAsc(a[0], b[0]))
 		break
 		case "action":
 		entries = [...entries].sort((a, b) => a[1] - b[1])
 		break
 	}
+
+	console.log({entries, expectedKeys})
 
 	return entries.map(([key, val]) => {
 		const res: { [Property in (TransformerKey | 'label')]?: number | string } = {
@@ -305,6 +344,15 @@ function AnalyticsFilterPanel({
 	return (
 		<div className="h-full flex flex-col gap-4">
 			<div className='flex gap-2 items-center'>
+				<div className="flex flex-col w-full">
+					<p className="text-lg font-semibold tracking-tight">Tidsperiode</p>
+					<p className='text-sm '>
+						{dateRange
+							? `${dateFns.format(dateRange.from!, 'yyyy/MM/dd')} - ${dateFns.format(dateRange.to!, 'yyyy/MM/dd')}`
+							: 'Vælg en tidsperiode'
+						}
+					</p>
+				</div>
 				<CalendarPopover
 					open={calendarPopoverOpen}
 					onOpenChange={setCalenderPopoverOpen}
@@ -325,17 +373,8 @@ function AnalyticsFilterPanel({
 						}
 					}}
 				/>
-				<div className="flex flex-col">
-					<p className="text-lg font-semibold tracking-tight">Tidsperiode</p>
-					<p className='text-sm '>
-						{dateRange
-							? `${dateFns.format(dateRange.from!, 'yyyy/MM/dd')} - ${dateFns.format(dateRange.to!, 'yyyy/MM/dd')}`
-							: 'Vælg en tidsperiode'
-						}
-					</p>
-				</div>
 			</div>
-			<div>
+			<div className="w-full">
 				<p className="text-lg font-semibold tracking-tight">Kunde</p>
 				<div className="flex gap-2">
 					<AutoComplete
@@ -347,6 +386,7 @@ function AnalyticsFilterPanel({
 						selectedValue={selectedValue}
 						onSearchValueChange={onCustomerSearch}
 						onSelectedValueChange={onCustomerSelected}
+						className="w-[300px]"
 					/>
 					<Button
 						size={'icon'}
@@ -357,7 +397,7 @@ function AnalyticsFilterPanel({
 					</Button>
 				</div>
 			</div>
-			<div>
+			<div className="w-full">
 				<p className="text-lg font-semibold tracking-tight">Platform</p>
 				<div className="flex gap-2">
 					<AutoComplete
@@ -374,6 +414,7 @@ function AnalyticsFilterPanel({
 						selectedValue={selectedPlatform ?? ''}
 						onSearchValueChange={setSearchPlatform}
 						onSelectedValueChange={onPlatformSelect}
+						className="w-[300px]"
 					/>
 					<Button
 						size={'icon'}
@@ -384,7 +425,7 @@ function AnalyticsFilterPanel({
 					</Button>
 				</div>
 			</div>
-			<div>
+			<div className="w-full">
 				<p className="text-lg font-semibold tracking-tight">Action</p>
 				<div className="flex gap-2">
 					<AutoComplete
@@ -396,6 +437,7 @@ function AnalyticsFilterPanel({
 						selectedValue={selectedAction ?? ''}
 						onSearchValueChange={setSearchAction}
 						onSelectedValueChange={onActionSelect}
+						className="w-[300px]"
 					/>
 					<Button
 						size={'icon'}
