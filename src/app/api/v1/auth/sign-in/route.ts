@@ -92,6 +92,10 @@ export async function POST(
       platform: 'app',
     })
 
+		const useReference =
+      customerSettings != undefined 
+        ? Object.values(customerSettings.useReference).some(b => b) 
+        : true
     return NextResponse.json(
       {
         msg: 'Log ind fuldendt',
@@ -102,6 +106,7 @@ export async function POST(
             ...customer,
             settings: {
               ...customerSettings,
+              useReference: useReference,
               authTimeoutMin: DEFAULT_AUTH_TIMEOUT_MINUTES,
             },
           },

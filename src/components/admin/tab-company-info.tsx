@@ -7,7 +7,7 @@ import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useTransition } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -38,6 +38,7 @@ import { CompanyEditSkeleton, FormCompanyEdit } from './form-company-edit'
 import { Plan } from '@/data/customer.types'
 import { hasPermissionByPlan } from '@/data/user.types'
 import { Skeleton } from '../ui/skeleton'
+import { Label } from '../ui/label'
 
 export function CompanyInfoTab({
   customer,
@@ -124,7 +125,12 @@ function CompanySettings({
       id: settings?.id,
       customerID: settings?.customerID,
       settings: {
-        useReference: settings?.useReference ?? true,
+        useReference: settings?.useReference ?? {
+          tilgang: true,
+          afgang: true,
+          regulering: true,
+          flyt: true,
+        },
         usePlacement: settings?.usePlacement ?? true,
         useBatch: settings?.useBatch ?? true,
       },
@@ -185,6 +191,15 @@ function CompanySettings({
     setValidationError(flatten(error))
   }
 
+  const {
+    settings: { useReference, usePlacement, useBatch },
+  } = watch()
+
+  const [useReferencePartial, useReferenceFull] = useMemo(() => [
+    (useReference.tilgang || useReference.afgang || useReference.regulering || useReference.flyt),
+    (useReference.tilgang && useReference.afgang && useReference.regulering && useReference.flyt)
+  ], [useReference.tilgang, useReference.afgang, useReference.regulering, useReference.flyt])
+
   if (error) {
     return (
       <Alert variant='destructive'>
@@ -194,10 +209,6 @@ function CompanySettings({
       </Alert>
     )
   }
-
-  const {
-    settings: { useReference, usePlacement, useBatch },
-  } = watch()
 
   return (
     <Card>
@@ -236,8 +247,8 @@ function CompanySettings({
           )}
           <div className='flex flex-col w-full'>
             <Setting>
-              <SettingBody>
-                <SettingLabel className='pt-0'>
+              <SettingBody className='pt-0'>
+                <SettingLabel>
                   <SettingTitle>
                     {t('company-page.settings.reference')}
                   </SettingTitle>
@@ -245,28 +256,94 @@ function CompanySettings({
                     {t('company-page.settings.reference-description')}
                   </SettingDescription>
                 </SettingLabel>
-                <SettingContent className='pt-0'>
+                <SettingContent>
                   <Switch
-                    checked={useReference}
-                    onCheckedChange={(val: boolean) => {
-                      setValue('settings.useReference', val, {
+                    checked={useReferencePartial}
+                    onCheckedChange={(input: boolean) => {
+                      const val = (useReferencePartial && !useReferenceFull) || input
+                      setValue('settings.useReference', {
+                        tilgang: val,
+                        afgang: val,
+                        regulering: val,
+                        flyt: val,
+                      }, {
                         shouldValidate: true,
                         shouldDirty: true,
                       })
                     }}
                     id='useReference'
+                    partial={useReferencePartial && !useReferenceFull}
                     {...register('settings.useReference')}
                   />
                 </SettingContent>
               </SettingBody>
-              {formState.errors.settings &&
-                formState.errors.settings.useReference && (
-                  <SettingFooter>
+              <SettingFooter>
+                <div className='flex gap-4 justify-between w-full'>
+                  <div className='flex gap-2 justify-center items-center text-center'>
+                    <Label>Tilgang</Label>
+                    <Switch
+                      checked={useReference.tilgang}
+                      onCheckedChange={(val: boolean) => {
+                        setValue('settings.useReference.tilgang', val, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          })
+                      }}
+                      id='useReference.tilgang'
+                      {...register('settings.useReference.tilgang')}
+                    />
+                  </div>
+                  <div className='flex gap-2 justify-center items-center text-center'>
+                    <Label>Afgang</Label>
+                    <Switch
+                      checked={useReference.afgang}
+                      onCheckedChange={(val: boolean) => {
+                        setValue('settings.useReference.afgang', val, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          })
+                      }}
+                      id='useReference.afgang'
+                      {...register('settings.useReference.afgang')}
+                    />
+                  </div>
+                  <div className='flex gap-2 justify-center items-center text-center'>
+                    <Label>Regulering</Label>
+                    <Switch
+                      checked={useReference.regulering}
+                      onCheckedChange={(val: boolean) => {
+                        setValue('settings.useReference.regulering', val, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          })
+                      }}
+                      id='useReference.regulering'
+                      {...register('settings.useReference.regulering')}
+                    />
+                  </div>
+                  <div className='flex gap-2 justify-center items-center text-center'>
+                    <Label>Flyt</Label>
+                    <Switch
+                      disabled={!usePlacement}
+                      checked={useReference.flyt}
+                      onCheckedChange={(val: boolean) => {
+                        setValue('settings.useReference.flyt', val, {
+                            shouldValidate: true,
+                            shouldDirty: true,
+                          })
+                      }}
+                      id='useReference.flyt'
+                      {...register('settings.useReference.flyt')}
+                    />
+                  </div>
+                </div>
+                {formState.errors.settings &&
+                  formState.errors.settings.useReference && (
                     <p className='text-sm text-destructive '>
                       {formState.errors.settings.useReference.message}
                     </p>
-                  </SettingFooter>
-                )}
+                  )}
+              </SettingFooter>
             </Setting>
             {hasPermissionByPlan(companyPlan, 'basis') && (
               <>

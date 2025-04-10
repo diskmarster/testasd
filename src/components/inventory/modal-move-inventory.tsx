@@ -55,7 +55,6 @@ export function ModalMoveInventory({
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string>()
   const [pending, startTransition] = useTransition()
-  const [useReference, setUseReference] = useState(false)
   const [searchProduct, setSearchProduct] = useState<string>('')
   const [searchFromPlacement, setSearchFromPlacement] = useState<string>('')
   const [searchFromBatch, setSearchFromBatch] = useState<string>('')
@@ -137,7 +136,6 @@ export function ModalMoveInventory({
     formState,
     register,
     resetField,
-    setFocus,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -176,13 +174,6 @@ export function ModalMoveInventory({
     })
   }
 
-  function onUseReferenceChange(val: boolean) {
-    setUseReference(val)
-    if (val == true) {
-      setFocus('reference')
-    }
-  }
-
   function increment() {
     // @ts-ignore
     const nextValue = parseFloat(formValues.amount) + 1
@@ -204,7 +195,6 @@ export function ModalMoveInventory({
   function onOpenChange(open: boolean) {
     reset()
     setError(undefined)
-    setUseReference(false)
     setSearchProduct('')
     setSearchFromPlacement('')
     setSearchFromBatch('')
@@ -422,29 +412,16 @@ export function ModalMoveInventory({
                 </p>
               )}
             </div>
-            {settings.useReference && (
-              <div
+            <div className={cn('relative flex flex-col transition-all')}>
+              <Input
+                {...register('reference')}
+                placeholder={t('use-account-case-placeholder')}
                 className={cn(
-                  'relative flex flex-col transition-all',
-                  useReference && 'gap-2',
-                )}>
-                <div className={cn('w-full flex z-10 transition-all')}>
-                  <Label
-                    className='md:text-xs cursor-pointer hover:underline select-none transition-all'
-                    onClick={() => onUseReferenceChange(!useReference)}>
-                    {t('use-account-case')}
-                  </Label>
-                </div>
-                <Input
-                  {...register('reference')}
-                  placeholder={t('use-account-case-placeholder')}
-                  className={cn(
-                    'transition-all',
-                    !useReference ? 'h-0 p-0 border-none' : 'h-[40px]',
-                  )}
-                />
-              </div>
-            )}
+                  'transition-all',
+                  !settings.useReference.flyt ? 'h-0 p-0 border-none' : 'h-[40px]',
+                )}
+              />
+            </div>
             <Button
               disabled={!formState.isValid || pending || formState.isSubmitting}
               size='lg'

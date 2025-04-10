@@ -10,6 +10,10 @@ import { NextRequest, NextResponse } from 'next/server'
 // temporary auth timeout, to use until the setting is implemented in web part
 const DEFAULT_AUTH_TIMEOUT_MINUTES = 5
 
+/**
+ * @deprecated After splitting useReference setting
+ * @see the route at api/v2/settings
+ */
 export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 	const start = performance.now()
 
@@ -81,11 +85,14 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 			platform: 'app',
 		})
 
+		const useReference = Object.values(settings.useReference).some(b => b)
+
 		return NextResponse.json(
 			{
 				msg: 'Success',
 				data: {
 					...settings,
+					useReference: useReference,
 					authTimeoutMin: DEFAULT_AUTH_TIMEOUT_MINUTES,
 				},
 			},

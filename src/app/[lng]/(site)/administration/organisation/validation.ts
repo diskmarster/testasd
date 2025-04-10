@@ -99,7 +99,12 @@ export const updateCustomerSettingsValidation = (
     id: z.coerce.number({message: t('organisation.required', {fieldName: 'customerSettingsID'})}),
     customerID: z.coerce.number({message: t('organisation.required', {fieldName: 'customerID'})}),
     settings: z.object({
-      useReference: z.coerce.boolean({message: t('organisation.required', {fieldName: 'useReference'})}),
+      useReference: z.object({
+        tilgang: z.coerce.boolean(),
+        afgang: z.coerce.boolean(),
+        regulering: z.coerce.boolean(),
+        flyt: z.coerce.boolean(),
+      }, {message: t('organisation.required', {fieldName: 'useReference'})}),
       usePlacement: z.coerce.boolean({message: t('organisation.required', {fieldName: 'usePlacement'})}),
       useBatch: z.coerce.boolean({message: t('organisation.required', {fieldName: 'useBatch'})}),
     }),
