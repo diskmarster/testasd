@@ -1,5 +1,6 @@
 import { serverTranslation } from '@/app/i18n'
 import { NewApplicationError } from '@/lib/database/schema/errors'
+import { tryCatch } from '@/lib/utils.server'
 import { analyticsService } from '@/service/analytics'
 import { customerService } from '@/service/customer'
 import { errorsService } from '@/service/errors'
@@ -31,69 +32,48 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 		)
 	}
 
-	let customer
-	try {
-		customer = await customerService.getByID(user.customerID)
-		if (customer == undefined) {
-			return NextResponse.json(
-				{ msg: t('route-translations-users.no-access-to-resource') },
-				{ status: 401 },
-			)
+	const customerRes = await tryCatch(customerService.getByID(user.customerID))
+	if (!customerRes.success) {
+		console.error(`Error getting customer from user: '${customerRes.error.message}'`)
+		const errorLog: NewApplicationError = {
+			userID: user.id,
+			customerID: user.customerID,
+			type: 'endpoint',
+			input: null,
+			error: customerRes.error.message,
+			origin: `GET api/v2/settings`,
 		}
-	} catch (e) {
-		console.error(`Error getting customer from user: '${(e as Error).message}'`)
+
+		await errorsService.create(errorLog)
+
 		return NextResponse.json(
 			{ msg: t('route-translations-users.no-access-to-resource') },
 			{ status: 401 },
 		)
 	}
 
-	try {
-		const settings = await customerService.getSettings(customer.id)
-		if (settings == undefined) {
-			const errorLog: NewApplicationError = {
-				userID: user.id,
-				customerID: user.customerID,
-				type: 'endpoint',
-				input: null,
-				error: t('route-translations-users.couldnt-get-settings'),
-				origin: `GET api/v2/settings`,
-			}
-
-			errorsService.create(errorLog)
-
-			return NextResponse.json(
-				{
-					msg: t('route-translations-users.couldnt-get-settings'),
-				},
-				{ status: 500 },
-			)
-		}
-
-		const end = performance.now()
-
-		await analyticsService.createAnalytic('action', {
-			actionName: 'getCustomerSettingsV2',
+	const customer = customerRes.data
+	if (customer == undefined) {
+		const errorLog: NewApplicationError = {
 			userID: user.id,
 			customerID: user.customerID,
-			sessionID: session.id,
-			executionTimeMS: end - start,
-			platform: 'app',
-		})
+			type: 'endpoint',
+			input: null,
+			error: `No customer found for customerID: ${user.customerID}`,
+			origin: `GET api/v2/settings`,
+		}
 
+		await errorsService.create(errorLog)
 		return NextResponse.json(
-			{
-				msg: 'Success',
-				data: {
-					...settings,
-					authTimeoutMin: DEFAULT_AUTH_TIMEOUT_MINUTES,
-				},
-			},
-			{ status: 200 },
+			{ msg: t('route-translations-users.no-access-to-resource') },
+			{ status: 401 },
 		)
-	} catch (e) {
+	}
+
+	const settingsRes = await tryCatch(customerService.getSettings(customer.id))
+	if (!settingsRes.success) {
 		console.error(
-			`${t('route-translations-users.error-getting-settings')} '${(e as Error).message}'`,
+			`${t('route-translations-users.error-getting-settings')} '${settingsRes.error.message}'`,
 		)
 
 		const errorLog: NewApplicationError = {
@@ -102,18 +82,65 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 			type: 'endpoint',
 			input: null,
 			error:
-				(e as Error).message ??
+			settingsRes.error.message ??
 				t('route-translations-users.couldnt-get-settings'),
 			origin: `GET api/v2/settings`,
 		}
 
-		errorsService.create(errorLog)
+		await errorsService.create(errorLog)
 
 		return NextResponse.json(
 			{
-				msg: `${t('route-translations-users.error-occured-getting-settings')} '${(e as Error).message}'`,
+				msg: `${t('route-translations-users.error-occured-getting-settings')} '${settingsRes.error.message}'`,
 			},
 			{ status: 500 },
 		)
 	}
+
+	const settings = settingsRes.data
+	if (settings == undefined) {
+		const errorLog: NewApplicationError = {
+			userID: user.id,
+			customerID: user.customerID,
+			type: 'endpoint',
+			input: null,
+			error: t('route-translations-users.couldnt-get-settings'),
+			origin: `GET api/v2/settings`,
+		}
+
+		await errorsService.create(errorLog)
+
+		return NextResponse.json(
+			{
+				msg: t('route-translations-users.couldnt-get-settings'),
+			},
+			{ status: 500 },
+		)
+	}
+
+	const end = performance.now()
+
+	const analyticsRes = await tryCatch(analyticsService.createAnalytic('action', {
+		actionName: 'getCustomerSettingsV2',
+		userID: user.id,
+		customerID: user.customerID,
+		sessionID: session.id,
+		executionTimeMS: end - start,
+		platform: 'app',
+	}))
+
+	if (!analyticsRes.success) {
+		console.error("Could not create analytic for v2 settings endpoint")
+	}
+
+	return NextResponse.json(
+		{
+			msg: 'Success',
+			data: {
+				...settings,
+				authTimeoutMin: DEFAULT_AUTH_TIMEOUT_MINUTES,
+			},
+		},
+		{ status: 200 },
+	)
 }
