@@ -202,11 +202,11 @@ function FilterPopover<T>({
 	const getNumberRangeDisplayValue = (value: NumberRange): string => {
 		const { from, to } = value
 
-		if (!from && !to) {
+		if (from == undefined && to == undefined) {
 			return t('table-filters.number-range-empty', { label: field.label })
-		} else if (!from && to) {
+		} else if (from == undefined && to != undefined) {
 			return t('table-filters.number-range-to', { to })
-		} else if (from && !to) {
+		} else if (from != undefined && to == undefined) {
 			return t('table-filters.number-range-from', { from })
 		} else {
 			return t('table-filters.number-range-both', { from, to })
