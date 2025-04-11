@@ -15,14 +15,18 @@ import { ColumnDef, Table } from '@tanstack/react-table'
 import { User } from 'lucia'
 import Link from 'next/link'
 
+export type InventoryTableRow = FormattedInventory & {
+	disposable: number | null
+}
+
 export function getTableOverviewColumns(
   plan: Plan,
   user: User,
   settings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
   lng: I18NLanguage,
   t: (key: string, opts?: any) => string,
-): ColumnDef<FormattedInventory>[] {
-  const skuCol: ColumnDef<FormattedInventory> = {
+): ColumnDef<InventoryTableRow>[] {
+  const skuCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.sku',
     id: 'sku',
     header: ({ column }) => (
@@ -49,7 +53,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const attachmentsCol: ColumnDef<FormattedInventory> = {
+  const attachmentsCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.fileCount',
     id: 'attachments',
     header: ({ column }) => (
@@ -81,7 +85,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const barcodeCol: ColumnDef<FormattedInventory> = {
+  const barcodeCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.barcode',
     id: 'barcode',
     header: ({ column }) => (
@@ -101,7 +105,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const groupCol: ColumnDef<FormattedInventory> = {
+  const groupCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.group',
     id: 'group',
     header: ({ column }) => (
@@ -124,7 +128,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const supplierCol: ColumnDef<FormattedInventory> = {
+  const supplierCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.supplierName',
     id: 'supplierName',
     header: ({ column }) => (
@@ -147,7 +151,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const text1Col: ColumnDef<FormattedInventory> = {
+  const text1Col: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.text1',
     id: 'text1',
     header: ({ column }) => (
@@ -168,7 +172,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const text2Col: ColumnDef<FormattedInventory> = {
+  const text2Col: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.text2',
     id: 'text2',
     header: ({ column }) => (
@@ -188,7 +192,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const text3Col: ColumnDef<FormattedInventory> = {
+  const text3Col: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.text3',
     id: 'text3',
     header: ({ column }) => (
@@ -209,7 +213,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const placementCol: ColumnDef<FormattedInventory> = {
+  const placementCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'placement.name',
     id: 'placement',
     header: ({ column }) => (
@@ -235,7 +239,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const batchCol: ColumnDef<FormattedInventory> = {
+  const batchCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'batch.batch',
     id: 'batch',
     header: ({ column }) => <TableHeader column={column} title={t('batch')} />,
@@ -251,7 +255,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const quantityCol: ColumnDef<FormattedInventory> = {
+  const quantityCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'quantity',
     header: ({ column }) => (
       <TableHeader column={column} title={t('quantity')} />
@@ -273,7 +277,32 @@ export function getTableOverviewColumns(
     },
   }
 
-  const unitCol: ColumnDef<FormattedInventory> = {
+	const dispQuantityCol: ColumnDef<InventoryTableRow> = {
+    accessorKey: 'disposible',
+    header: ({ column }) => (
+      <TableHeader column={column} title={t('disposible')} />
+    ),
+    aggregatedCell: ({row}) => {
+			const value = row.original.disposable
+			console.log(value)
+			return value != null ? (
+				<span className={cn(value < 0 && 'text-destructive')}>
+					{formatNumber(value, lng)}
+				</span>
+			) : (
+				<span>-</span>
+			)
+		},
+		aggregationFn: 'unique',
+    cell: () => null,
+    filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
+    meta: {
+      rightAlign: true,
+      viewLabel: t('disposible'),
+    },
+	}
+
+  const unitCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.unit',
     id: 'unit',
     header: ({ column }) => <TableHeader column={column} title={t('unit')} />,
@@ -296,7 +325,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const costPriceCol: ColumnDef<FormattedInventory> = {
+  const costPriceCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.costPrice',
     id: 'costPrice',
     header: ({ column }) => (
@@ -317,7 +346,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const salesPriceCol: ColumnDef<FormattedInventory> = {
+  const salesPriceCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.salesPrice',
     id: 'salesPrice',
     aggregationFn: 'unique',
@@ -338,7 +367,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const isBarredCol: ColumnDef<FormattedInventory> = {
+  const isBarredCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'product.isBarred',
     id: 'isBarred',
     header: () => null,
@@ -351,7 +380,7 @@ export function getTableOverviewColumns(
     },
   }
 
-  const actionsCol: ColumnDef<FormattedInventory> = {
+  const actionsCol: ColumnDef<InventoryTableRow> = {
     accessorKey: 'actions',
     header: () => null,
     aggregatedCell: ({ row }) => (
@@ -380,7 +409,7 @@ export function getTableOverviewColumns(
     },
   }
 
-	let planCols: ColumnDef<FormattedInventory>[] = [
+	let planCols: ColumnDef<InventoryTableRow>[] = [
 		skuCol,
 		attachmentsCol,
 		barcodeCol,
@@ -392,6 +421,7 @@ export function getTableOverviewColumns(
 		costPriceCol,
 		salesPriceCol,
 		quantityCol,
+		dispQuantityCol,
 		unitCol,
 		placementCol,
 		batchCol,
@@ -419,7 +449,7 @@ export function getTableOverviewColumns(
 
 export function getTableOverviewFilters(
   plan: Plan,
-  table: Table<FormattedInventory>,
+  table: Table<InventoryTableRow>,
   units: Unit[],
   groups: Group[],
   placements: Placement[],
@@ -427,15 +457,15 @@ export function getTableOverviewFilters(
   user: User,
   settings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
   t: (key: string) => string,
-): FilterField<FormattedInventory>[] {
-  const skuFilter: FilterField<FormattedInventory> = {
+): FilterField<InventoryTableRow>[] {
+  const skuFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('sku'),
     type: 'text',
     label: t('product-No.'),
     value: '',
     placeholder: t('product-No.-placeholder'),
   }
-  const attachmentsFilter: FilterField<FormattedInventory> = {
+  const attachmentsFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('attachments'),
     type: 'select',
     label: t('attachments'),
@@ -449,14 +479,14 @@ export function getTableOverviewFilters(
     label: t('has-attach-no'),
   }],
   }
-  const barcodeFilter: FilterField<FormattedInventory> = {
+  const barcodeFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('barcode'),
     type: 'text',
     label: t('barcode'),
     value: '',
     placeholder: t('barcode-placeholder'),
   }
-  const unitFilter: FilterField<FormattedInventory> = {
+  const unitFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('unit'),
     type: 'select',
     label: t('unit'),
@@ -468,7 +498,7 @@ export function getTableOverviewFilters(
       })),
     ],
   }
-  const groupFilter: FilterField<FormattedInventory> = {
+  const groupFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('group'),
     type: 'select',
     label: t('product-group'),
@@ -480,7 +510,7 @@ export function getTableOverviewFilters(
       })),
     ],
   }
-  const supplierNameFilter: FilterField<FormattedInventory> = {
+  const supplierNameFilter: FilterField<InventoryTableRow> = {
 	  column: table.getColumn('supplierName'),
 	  type: 'select',
 	  label: t('supplierName'),
@@ -500,28 +530,28 @@ export function getTableOverviewFilters(
 		  }))
 	  ]
   }
-  const text1Filter: FilterField<FormattedInventory> = {
+  const text1Filter: FilterField<InventoryTableRow> = {
     column: table.getColumn('text1'),
     type: 'text',
     label: t('product-text1'),
     value: '',
     placeholder: t('product-text1-placeholder'),
   }
-  const text2Filter: FilterField<FormattedInventory> = {
+  const text2Filter: FilterField<InventoryTableRow> = {
     column: table.getColumn('text2'),
     type: 'text',
     label: t('product-text2'),
     value: '',
     placeholder: t('product-text2-placeholder'),
   }
-  const text3Filter: FilterField<FormattedInventory> = {
+  const text3Filter: FilterField<InventoryTableRow> = {
     column: table.getColumn('text3'),
     type: 'text',
     label: t('product-text3'),
     value: '',
     placeholder: t('product-text3-placeholder'),
   }
-	const placementFilter: FilterField<FormattedInventory> = {
+	const placementFilter: FilterField<InventoryTableRow> = {
 		column: table.getColumn('placement'),
 		type: 'select',
 		label: t('placement'),
@@ -534,7 +564,7 @@ export function getTableOverviewFilters(
 		],
 	}
 
-	const batchFilter: FilterField<FormattedInventory> = {
+	const batchFilter: FilterField<InventoryTableRow> = {
 		column: table.getColumn('batch'),
 		type: 'select',
 		label: t('batch'),
@@ -547,28 +577,35 @@ export function getTableOverviewFilters(
 		],
 	}
 
-	const costPriceFilter: FilterField<FormattedInventory> = {
+	const costPriceFilter: FilterField<InventoryTableRow> = {
 		column: table.getColumn('costPrice'),
 		type: 'number-range',
 		label: t('cost-price'),
 		value: '',
 	}
 
-	const salesPriceFilter: FilterField<FormattedInventory> = {
+	const salesPriceFilter: FilterField<InventoryTableRow> = {
 		column: table.getColumn('salesPrice'),
 		type: 'number-range',
 		label: t('sales-price'),
 		value: '',
 	}
 
-  const quantityFilter: FilterField<FormattedInventory> = {
+  const quantityFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('quantity'),
     type: 'number-range',
     label: t('quantity'),
     value: '',
   }
 
-  const isBarredFilter: FilterField<FormattedInventory> = {
+  const dispQuantityFilter: FilterField<InventoryTableRow> = {
+    column: table.getColumn('disposible'),
+    type: 'number-range',
+    label: t('disposible'),
+    value: '',
+  }
+
+  const isBarredFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('isBarred'),
     type: 'select',
     label: t('isBarred'),
@@ -585,7 +622,7 @@ export function getTableOverviewFilters(
     ],
   }
 
-	let planFilters: FilterField<FormattedInventory>[] = [
+	let planFilters: FilterField<InventoryTableRow>[] = [
 		skuFilter,
 		attachmentsFilter,
 		barcodeFilter,
@@ -598,6 +635,7 @@ export function getTableOverviewFilters(
 		costPriceFilter,
 		salesPriceFilter,
 		quantityFilter,
+		dispQuantityFilter,
 		placementFilter,
 		batchFilter,
 		isBarredFilter,

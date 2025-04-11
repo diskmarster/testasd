@@ -510,10 +510,11 @@ export const inventoryService = {
   },
   getReordersByID: async function(
     locationID: LocationID,
+    {withRequested = true}: {withRequested?: boolean} = {},
   ): Promise<FormattedReorder[]> {
     const reorders = await inventory.getAllReordersByID(locationID)
 
-    const newReorders = reorders.map(reorder => {
+    const newReorders = reorders.filter(reorder => withRequested || !reorder.isRequested).map(reorder => {
       const disposible = reorder.quantity + reorder.ordered
       const shouldReorder = disposible < (reorder.minimum ?? 0)
 

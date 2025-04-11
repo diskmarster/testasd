@@ -10,15 +10,17 @@ export function numberRangeFilterFn<T>(
   value: NumberRange,
 ): boolean {
   const { to, from } = value
-  const val = row.getValue<number | null>(id) ?? -Infinity
+  const val = row.getValue<number | null>(id)
 
-  if (!from && !to) {
+  if (val == null) return from == undefined && to == undefined
+
+  if (from == undefined && to == undefined) {
     return true
-  } else if (!from && to) {
+  } else if (from == undefined && to != undefined) {
     return val <= to
-  } else if (from && !to) {
+  } else if (from != undefined && to == undefined) {
     return val >= from
-  } else if (from && to) {
+  } else if (from != undefined && to != undefined) {
     return val >= from && val <= to
   } else {
     return true
