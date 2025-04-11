@@ -1,56 +1,74 @@
 'use client'
 
-import { ActionAnalytic } from "@/lib/database/schema/analytics"
-import * as dateFns from "date-fns"
-import { Dispatch, SetStateAction, useEffect, useState, useTransition } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../ui/chart"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
-import { Calendar } from "../ui/calendar"
-import { DateRange, SelectRangeEventHandler } from "react-day-picker"
-import { AnalyticsFilterDTO } from "@/app/[lng]/(site)/sys/analytics/validation"
-import { getFilteredAnalyticsAction } from "@/app/[lng]/(site)/sys/analytics/actions"
-import { getDateFnsLocale, tryParseInt } from "@/lib/utils"
-import { useLanguage } from "@/context/language"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { Button } from "../ui/button"
-import { Icons } from "../ui/icons"
-import { AutoComplete } from "../ui/autocomplete"
-import { Customer } from "@/lib/database/schema/customer"
-import { Select, SelectContent, SelectTrigger, SelectValue, SelectItem } from "../ui/select"
-import { AnalyticsPlatform } from "@/data/analytics.types"
+import { getFilteredAnalyticsAction } from '@/app/[lng]/(site)/sys/analytics/actions'
+import { AnalyticsFilterDTO } from '@/app/[lng]/(site)/sys/analytics/validation'
+import { useLanguage } from '@/context/language'
+import { AnalyticsPlatform } from '@/data/analytics.types'
+import { ActionAnalytic } from '@/lib/database/schema/analytics'
+import { Customer } from '@/lib/database/schema/customer'
+import { getDateFnsLocale, tryParseInt } from '@/lib/utils'
+import * as dateFns from 'date-fns'
+import { Dispatch, SetStateAction, useState, useTransition } from 'react'
+import { DateRange, SelectRangeEventHandler } from 'react-day-picker'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { AutoComplete } from '../ui/autocomplete'
+import { Button } from '../ui/button'
+import { Calendar } from '../ui/calendar'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import {
+	ChartConfig,
+	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
+	ChartTooltip,
+	ChartTooltipContent,
+} from '../ui/chart'
+import { Icons } from '../ui/icons'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '../ui/select'
 
 interface Props {
-	defaultAnalytics: ActionAnalytic[],
-	defaultFilter: AnalyticsFilterDTO,
-	customers: Customer[],
+	defaultAnalytics: ActionAnalytic[]
+	defaultFilter: AnalyticsFilterDTO
+	customers: Customer[]
 }
 
-type XAxisKey = 'date' | 'action'
+type XAxisKey = 'date' | 'action' | 'customer'
 
 const chartConfigMap: {
 	[Property in TransformerKey]: {
-		label: string,
-		color: string,
+		label: string
+		color: string
 	}
 } = {
-		antal: {
-			label: 'Udførte actions',
-			color: 'hsl(var(--chart-1))'
-		},
-		time: {
-			label: 'Kørsel tid',
-			color: 'hsl(var(--chart-1))'
-		},
-	}
+	count: {
+		label: 'Udførte actions',
+		color: 'hsl(var(--chart-1))',
+	},
+	time: {
+		label: 'Kørsel tid',
+		color: 'hsl(var(--chart-1))',
+	},
+}
 
-function createXAxisElements(filter: AnalyticsFilterDTO, analytics: ActionAnalytic[], key: XAxisKey): string[] {
+function createXAxisElements(
+	filter: AnalyticsFilterDTO,
+	analytics: ActionAnalytic[],
+	customers: Customer[],
+	key: XAxisKey,
+): string[] {
 	switch (key) {
 		case 'date': {
 			const today = Date.now()
 			const start = dateFns.startOfDay(today)
 			const end = dateFns.endOfDay(today)
-			const dateRange: { from: Date, to: Date } = {
+			const dateRange: { from: Date; to: Date } = {
 				from: dateFns.sub(start, filter.start),
 				to: start,
 			}
@@ -60,8 +78,12 @@ function createXAxisElements(filter: AnalyticsFilterDTO, analytics: ActionAnalyt
 			}
 
 			let res: string[] = []
-			for (let current = dateRange.from; !dateFns.isAfter(current, dateRange.to); current = dateFns.addDays(current, 1)) {
-				res.push(dateFns.format(current, "yyyy/MM/dd"))
+			for (
+				let current = dateRange.from;
+				!dateFns.isAfter(current, dateRange.to);
+				current = dateFns.addDays(current, 1)
+			) {
+				res.push(dateFns.format(current, 'yyyy/MM/dd'))
 			}
 
 			return res
@@ -69,7 +91,17 @@ function createXAxisElements(filter: AnalyticsFilterDTO, analytics: ActionAnalyt
 		case 'action': {
 			return Array.from(new Set(analytics.map(a => a.actionName)).values())
 		}
-		default: return []
+		case 'customer': {
+			return Array.from(
+				new Set(
+					analytics
+						.filter(a => customers.some(c => c.id == a.customerID))
+						.map(a => customers.find(c => c.id == a.customerID)!.company),
+				).values(),
+			)
+		}
+		default:
+			return []
 	}
 }
 
@@ -82,22 +114,28 @@ export function FilteredAnalyticsChart({
 	const [analytics, setAnalytics] = useState(defaultAnalytics)
 	const [filter, setFilter] = useState(defaultFilter)
 	const [xAxisKey, setXAxisKey] = useState<XAxisKey>('date')
-	const [xAxisElements, setXAxisElements] = useState<string[]>(createXAxisElements(filter, analytics, xAxisKey))
-	const [chartConfig, setChartConfig] = useState<ChartConfig>({antal: chartConfigMap['antal']})
+	const [xAxisElements, setXAxisElements] = useState<string[]>(
+		createXAxisElements(filter, analytics, customers, xAxisKey),
+	)
+	const [chartConfig, setChartConfig] = useState<ChartConfig>({
+		antal: chartConfigMap['count'],
+	})
 	const actions = new Set(analytics.map(a => a.actionName))
-	const [transformerKey, setTransformerKey] = useState<TransformerKey>('antal')
+	const [transformerKey, setTransformerKey] = useState<TransformerKey>('count')
 
 	const onTransformerKeyChange = (val: TransformerKey) => {
 		setTransformerKey(val)
-		setChartConfig({[val]: chartConfigMap[val]})
+		setChartConfig({ [val]: chartConfigMap[val] })
 	}
 
 	const onXAxisKeyChange = (val: XAxisKey) => {
 		setXAxisKey(val)
-		setXAxisElements(createXAxisElements(filter, analytics, val))
+		setXAxisElements(createXAxisElements(filter, analytics, customers, val))
 	}
 
-	const onFilterChange: Dispatch<SetStateAction<AnalyticsFilterDTO>> = (valOrUpdater) => {
+	const onFilterChange: Dispatch<
+		SetStateAction<AnalyticsFilterDTO>
+	> = valOrUpdater => {
 		let updatedFilter: AnalyticsFilterDTO
 		if (typeof valOrUpdater == 'function') {
 			updatedFilter = valOrUpdater(filter)
@@ -105,7 +143,9 @@ export function FilteredAnalyticsChart({
 			updatedFilter = valOrUpdater
 		}
 
-		setXAxisElements(createXAxisElements(updatedFilter, analytics, xAxisKey))
+		setXAxisElements(
+			createXAxisElements(updatedFilter, analytics, customers, xAxisKey),
+		)
 		setFilter(updatedFilter)
 		startTransition(async () => {
 			const res = await getFilteredAnalyticsAction(updatedFilter)
@@ -113,7 +153,7 @@ export function FilteredAnalyticsChart({
 			if (res && res.data) {
 				setAnalytics(res.data)
 			} else if (res && res.serverError) {
-				console.error("FUCK! " + res.serverError)
+				console.error('FUCK! ' + res.serverError)
 			}
 		})
 	}
@@ -123,42 +163,59 @@ export function FilteredAnalyticsChart({
 			<CardHeader>
 				<CardTitle>Actions</CardTitle>
 			</CardHeader>
-			<CardContent className="flex max-h-[80vh]">
-				<AnalyticsFilterPanel filter={filter} setFilter={onFilterChange} customers={customers} actions={actions} />
-				<div className="flex flex-col gap-4 w-full">
-					<div className="flex gap-2 justify-end items-center w-full">
+			<CardContent className='flex max-h-[80vh]'>
+				<AnalyticsFilterPanel
+					filter={filter}
+					setFilter={onFilterChange}
+					customers={customers}
+					actions={actions}
+				/>
+				<div className='flex flex-col gap-4 w-full'>
+					<div className='flex gap-2 justify-end items-center w-full'>
 						<div>
-							<p className="text-lg font-semibold tracking-tight">X akse</p>
-							<Select value={xAxisKey} onValueChange={(val) => onXAxisKeyChange(val as XAxisKey)}>
-								<SelectTrigger className="w-[130px]">
+							<p className='text-lg font-semibold tracking-tight'>X akse</p>
+							<Select
+								value={xAxisKey}
+								onValueChange={val => onXAxisKeyChange(val as XAxisKey)}>
+								<SelectTrigger className='w-[130px]'>
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="date">Dato</SelectItem>
-									<SelectItem value="action">Action</SelectItem>
+									<SelectItem value='date'>Dato</SelectItem>
+									<SelectItem value='action'>Action</SelectItem>
+									<SelectItem value='customer'>Kunde</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>
 						<div>
-							<p className="text-lg font-semibold tracking-tight">Y akse</p>
-							<Select 
-								value={transformerKey} 
-								onValueChange={(val) => onTransformerKeyChange(val as TransformerKey)}>
-								<SelectTrigger className="w-[130px]">
+							<p className='text-lg font-semibold tracking-tight'>Y akse</p>
+							<Select
+								value={transformerKey}
+								onValueChange={val =>
+									onTransformerKeyChange(val as TransformerKey)
+								}>
+								<SelectTrigger className='w-[130px]'>
 									<SelectValue />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="antal">Antal</SelectItem>
+									<SelectItem value='count'>Antal</SelectItem>
+									<SelectItem className='normal-case' value='time'>
+										Tid (ms)
+									</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>
 					</div>
-					<ChartContainer config={chartConfig}
-						loading={pending}
-						>
+					<ChartContainer config={chartConfig} loading={pending}>
 						<BarChart
 							accessibilityLayer
-							data={transformAnalytics(transformerKey, xAxisKey, analytics, xAxisElements)}
+							data={transformAnalytics(
+								transformerKey,
+								xAxisKey,
+								analytics,
+								xAxisElements,
+								customers,
+							)}
 							margin={{
 								left: 12,
 								right: 12,
@@ -188,10 +245,16 @@ export function FilteredAnalyticsChart({
 	)
 }
 
-type TransformerKey = 'antal' | 'time'
+type TransformerKey = 'count' | 'time'
 
-function transformAnalytics(transformerKey: TransformerKey, xAxisKey: XAxisKey, analytics: ActionAnalytic[], expectedKeys: string[]): {
-	[Property in (TransformerKey | 'label')]?: number | string
+function transformAnalytics(
+	transformerKey: TransformerKey,
+	xAxisKey: XAxisKey,
+	analytics: ActionAnalytic[],
+	expectedKeys: string[],
+	customers: Customer[],
+): {
+	[Property in TransformerKey | 'label']?: number | number[] | string
 }[] {
 	let indexKey: keyof ActionAnalytic
 	switch (xAxisKey) {
@@ -201,45 +264,114 @@ function transformAnalytics(transformerKey: TransformerKey, xAxisKey: XAxisKey, 
 		case 'action':
 			indexKey = 'actionName'
 			break
+		case 'customer':
+			indexKey = 'customerID'
+			break
 
 		default:
 			return []
 	}
 
-	const actionMap = new Map<string, number>(expectedKeys.map(k => [k, 0]))
-	analytics.forEach(analytic => {
-		const val = analytic[indexKey]
+	const actionMap = new Map<string, [number, number]>(
+		expectedKeys.map(k => [k, [Infinity, -Infinity]]),
+	)
 
-		if (val instanceof Date) {
-			const formattedDate = dateFns.format(analytic.inserted, "yyyy/MM/dd")
-			const current = actionMap.get(formattedDate) ?? 0
-			actionMap.set(formattedDate, current + 1)
-		} else {
-			const current = actionMap.get(val) ?? 0
-			actionMap.set(val, current + 1)
+	analytics.forEach(analytic => {
+		const val = formatAnalyticValue(indexKey, analytic, customers)
+		if (val == null) {
+			return
 		}
+
+		const current = actionMap.get(val)
+		actionMap.set(val, calculateDataPoint(transformerKey, current, analytic))
 	})
 
-	let entries = Array.from(actionMap.entries()) 
+	let entries: [string, [number, number]][] = Array.from(
+		actionMap.entries(),
+	).map(([k, e]) => [
+		k,
+		[e[0] == Infinity ? 0 : e[0], e[1] == -Infinity ? 0 : e[1]],
+	])
 	switch (xAxisKey) {
-		case "date":
-		entries = [...entries].sort((a, b) => dateFns.compareAsc(a[0], b[0]))
-		break
-		case "action":
-		entries = [...entries].sort((a, b) => a[1] - b[1])
-		break
+		case 'date':
+			entries = [...entries].sort((a, b) => dateFns.compareAsc(a[0], b[0]))
+			break
+		case 'action':
+			entries = [...entries].sort(sortChartData)
+			break
 	}
 
-	console.log({entries, expectedKeys})
-
 	return entries.map(([key, val]) => {
-		const res: { [Property in (TransformerKey | 'label')]?: number | string } = {
-			label: key
+		const res: {
+			[Property in TransformerKey | 'label']?: number | number[] | string
+		} = {
+			label: key,
 		}
-		res[transformerKey] = val
+		res[transformerKey] = transformerKey == 'count' ? val[1] : val
 
 		return res
 	})
+}
+
+function formatAnalyticValue<T extends keyof ActionAnalytic>(
+	indexKey: T,
+	analytic: ActionAnalytic,
+	customers: Customer[],
+): string | null {
+	const key = analytic[indexKey]
+
+	if (key instanceof Date) {
+		return dateFns.format(key, 'yyyy/MM/dd')
+	} else if (typeof key == 'number') {
+		switch (indexKey) {
+			case 'customerID': {
+				return customers.find(c => c.id == key)?.company ?? null
+			}
+			case 'id':
+			case 'userID':
+			default:
+				return null
+		}
+	} else {
+		return key
+	}
+}
+
+function sortChartData<
+	T extends [string, [number, number]] = [string, [number, number]],
+>(a: T, b: T): number {
+	const aVal = a[1]
+	const aDiff = aVal[1] - aVal[0]
+
+	const bVal = b[1]
+	const bDiff = bVal[1] - bVal[0]
+
+	return aDiff - bDiff
+}
+
+function calculateDataPoint(
+	transformerKey: TransformerKey,
+	current: [number, number] | undefined,
+	analytic: ActionAnalytic,
+): [number, number] {
+	switch (transformerKey) {
+		case 'count': {
+			const cur = current ?? [0, 0]
+			return [Math.min(0, cur[0]), Math.max(0, cur[1]) + 1]
+		}
+
+		case 'time': {
+			const cur = current
+			const next = Math.round(analytic.executionTimeMS)
+
+			return cur == undefined
+				? [next, next]
+				: [Math.min(next, cur[0]), Math.max(next, cur[1])]
+		}
+
+		default:
+			return [0, 0]
+	}
 }
 
 function AnalyticsFilterPanel({
@@ -248,16 +380,16 @@ function AnalyticsFilterPanel({
 	customers: defaultCustomers,
 	actions,
 }: {
-	filter: AnalyticsFilterDTO,
-	setFilter: Dispatch<SetStateAction<AnalyticsFilterDTO>>,
-	customers: Customer[],
-	actions: Set<string>,
+	filter: AnalyticsFilterDTO
+	setFilter: Dispatch<SetStateAction<AnalyticsFilterDTO>>
+	customers: Customer[]
+	actions: Set<string>
 }) {
 	const [calendarPopoverOpen, setCalenderPopoverOpen] = useState(false)
 	const today = Date.now()
 	const start = dateFns.startOfDay(today)
 	const end = dateFns.endOfDay(today)
-	const dateRange: { from: Date, to: Date } = {
+	const dateRange: { from: Date; to: Date } = {
 		from: dateFns.sub(start, filter.start),
 		to: end,
 	}
@@ -272,7 +404,11 @@ function AnalyticsFilterPanel({
 
 	const onCustomerSearch = (value: string) => {
 		setSearchValue(value)
-		setCustomers(defaultCustomers.filter(c => c.company.toLowerCase().includes(value.toLowerCase())))
+		setCustomers(
+			defaultCustomers.filter(c =>
+				c.company.toLowerCase().includes(value.toLowerCase()),
+			),
+		)
 	}
 
 	const onCustomerSelected = (value: string) => {
@@ -287,8 +423,8 @@ function AnalyticsFilterPanel({
 	}
 
 	const clearCustomerFilter = () => {
-		onCustomerSearch("")
-		setSelectedValue("")
+		onCustomerSearch('')
+		setSelectedValue('')
 		setFilter(prev => ({
 			...prev,
 			customerID: undefined,
@@ -298,8 +434,10 @@ function AnalyticsFilterPanel({
 	const [selectedPlatform, setSelectedPlatform] = useState(filter.platform)
 	const [searchPlatform, setSearchPlatform] = useState('')
 
-	const strIsPlatform = (val: string | undefined): val is AnalyticsPlatform | undefined => {
-		return val === undefined || ["web", "app"].includes(val)
+	const strIsPlatform = (
+		val: string | undefined,
+	): val is AnalyticsPlatform | undefined => {
+		return val === undefined || ['web', 'app'].includes(val)
 	}
 
 	const onPlatformSelect = (val: string) => {
@@ -342,15 +480,14 @@ function AnalyticsFilterPanel({
 	}
 
 	return (
-		<div className="h-full flex flex-col gap-4">
+		<div className='h-full flex flex-col gap-4'>
 			<div className='flex gap-2 items-center'>
-				<div className="flex flex-col w-full">
-					<p className="text-lg font-semibold tracking-tight">Tidsperiode</p>
+				<div className='flex flex-col w-full'>
+					<p className='text-lg font-semibold tracking-tight'>Tidsperiode</p>
 					<p className='text-sm '>
 						{dateRange
 							? `${dateFns.format(dateRange.from!, 'yyyy/MM/dd')} - ${dateFns.format(dateRange.to!, 'yyyy/MM/dd')}`
-							: 'Vælg en tidsperiode'
-						}
+							: 'Vælg en tidsperiode'}
 					</p>
 				</div>
 				<CalendarPopover
@@ -367,16 +504,30 @@ function AnalyticsFilterPanel({
 						} else {
 							setFilter(prev => ({
 								...prev,
-								start: dateRange.from ? { days: dateFns.differenceInDays(start, dateFns.startOfDay(dateRange.from)) } : prev.start,
-								end: dateRange.to ? { days: dateFns.differenceInDays(dateFns.endOfDay(dateRange.to), end) } : prev.end,
+								start: dateRange.from
+									? {
+										days: dateFns.differenceInDays(
+											start,
+											dateFns.startOfDay(dateRange.from),
+										),
+									}
+									: prev.start,
+								end: dateRange.to
+									? {
+										days: dateFns.differenceInDays(
+											dateFns.endOfDay(dateRange.to),
+											end,
+										),
+									}
+									: prev.end,
 							}))
 						}
 					}}
 				/>
 			</div>
-			<div className="w-full">
-				<p className="text-lg font-semibold tracking-tight">Kunde</p>
-				<div className="flex gap-2">
+			<div className='w-full'>
+				<p className='text-lg font-semibold tracking-tight'>Kunde</p>
+				<div className='flex gap-2'>
 					<AutoComplete
 						items={customers.map(c => ({
 							label: c.company,
@@ -386,65 +537,72 @@ function AnalyticsFilterPanel({
 						selectedValue={selectedValue}
 						onSearchValueChange={onCustomerSearch}
 						onSelectedValueChange={onCustomerSelected}
-						className="w-[300px]"
+						className='w-[300px]'
 					/>
 					<Button
 						size={'icon'}
 						variant={'outline'}
 						disabled={filter.customerID == undefined}
 						onClick={clearCustomerFilter}>
-						<Icons.cross className="size-4" />
+						<Icons.cross className='size-4' />
 					</Button>
 				</div>
 			</div>
-			<div className="w-full">
-				<p className="text-lg font-semibold tracking-tight">Platform</p>
-				<div className="flex gap-2">
+			<div className='w-full'>
+				<p className='text-lg font-semibold tracking-tight'>Platform</p>
+				<div className='flex gap-2'>
 					<AutoComplete
 						items={[
 							{
-								label: "Web",
-								value: "web",
-							}, {
-								label: "App",
-								value: "app",
-							}
-						].filter(p => p.label.toLowerCase().includes(searchPlatform.toLowerCase()))}
+								label: 'Web',
+								value: 'web',
+							},
+							{
+								label: 'App',
+								value: 'app',
+							},
+						].filter(p =>
+							p.label.toLowerCase().includes(searchPlatform.toLowerCase()),
+						)}
 						searchValue={searchPlatform}
 						selectedValue={selectedPlatform ?? ''}
 						onSearchValueChange={setSearchPlatform}
 						onSelectedValueChange={onPlatformSelect}
-						className="w-[300px]"
+						className='w-[300px]'
 					/>
 					<Button
 						size={'icon'}
 						variant={'outline'}
 						disabled={filter.platform == undefined}
 						onClick={clearPlatformSelect}>
-						<Icons.cross className="size-4" />
+						<Icons.cross className='size-4' />
 					</Button>
 				</div>
 			</div>
-			<div className="w-full">
-				<p className="text-lg font-semibold tracking-tight">Action</p>
-				<div className="flex gap-2">
+			<div className='w-full'>
+				<p className='text-lg font-semibold tracking-tight'>Action</p>
+				<div className='flex gap-2'>
 					<AutoComplete
-						items={ Array.from(actions.values()).map(a => ({
+						items={Array.from(actions.values())
+							.map(a => ({
 								label: a,
 								value: a,
-							})).filter(p => p.label.toLowerCase().includes(searchAction.toLowerCase()))}
+							}))
+							.filter(p =>
+								p.label.toLowerCase().includes(searchAction.toLowerCase()),
+							)}
 						searchValue={searchAction}
 						selectedValue={selectedAction ?? ''}
 						onSearchValueChange={setSearchAction}
 						onSelectedValueChange={onActionSelect}
-						className="w-[300px]"
+						className='w-[300px]'
 					/>
 					<Button
 						size={'icon'}
 						variant={'outline'}
 						disabled={filter.actionName == undefined}
 						onClick={clearActionSelect}>
-						<Icons.cross className="size-4" />
+						<Icons.cross className='size-4' />
 					</Button>
 				</div>
 			</div>
@@ -458,19 +616,17 @@ function CalendarPopover({
 	dateRange,
 	onSelect,
 }: {
-	open: boolean,
-	onOpenChange: (val: boolean) => void,
-	dateRange: DateRange | undefined,
-	onSelect: SelectRangeEventHandler,
+	open: boolean
+	onOpenChange: (val: boolean) => void
+	dateRange: DateRange | undefined
+	onSelect: SelectRangeEventHandler
 }) {
 	const lng = useLanguage()
 
 	return (
 		<Popover open={open} onOpenChange={onOpenChange}>
 			<PopoverTrigger asChild>
-				<Button
-					size={'icon'}
-					variant={'outline'}>
+				<Button size={'icon'} variant={'outline'}>
 					<Icons.calendar className='size-4' />
 				</Button>
 			</PopoverTrigger>
