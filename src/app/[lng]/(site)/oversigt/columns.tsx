@@ -16,7 +16,7 @@ import { User } from 'lucia'
 import Link from 'next/link'
 
 export type InventoryTableRow = FormattedInventory & {
-	disposible: number | null
+	disposable: number | null
 }
 
 export function getTableOverviewColumns(
@@ -283,7 +283,7 @@ export function getTableOverviewColumns(
       <TableHeader column={column} title={t('disposible')} />
     ),
     aggregatedCell: ({row}) => {
-			const value = row.original.disposible
+			const value = row.original.disposable
 			console.log(value)
 			return value != null ? (
 				<span className={cn(value < 0 && 'text-destructive')}>

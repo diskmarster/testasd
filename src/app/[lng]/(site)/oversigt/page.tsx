@@ -77,7 +77,7 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
   const reorders = await inventoryService.getReordersByID(location, { withRequested: false })
   const rows: InventoryTableRow[] = inventory.map(i => ({
     ...i,
-    disposible: reorders.find(r => r.productID === i.product.id)?.disposible ?? null,
+    disposable: reorders.find(r => r.productID === i.product.id)?.disposible ?? null,
   }))
 
   return (
