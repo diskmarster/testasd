@@ -81,7 +81,9 @@ const config: Config = {
   		animation: {
   			'spin-refresh': 'spin-refresh 600ms cubic-bezier(0.77, 0, 0.175, 1) 1',
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+				'switch-partial': 'switch-partial 1s ease-out',
+				'switch-partial-reverse': 'switch-partial 1s ease-out reverse',
   		},
   		keyframes: {
   			'spin-refresh': {
@@ -104,7 +106,15 @@ const config: Config = {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+				'switch-partial': {
+					'0%': {
+						'border-radius': '100px',
+					},
+					'100%': {
+						'border-radius': '4px',
+					},
+				}
   		}
   	}
   },

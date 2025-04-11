@@ -125,7 +125,22 @@ export const customerService = {
     return customer.deleteByID(customerID)
   },
   getSettings: async function(customerID: CustomerID): Promise<CustomerSettings | undefined> {
-    return await customer.getSettings(customerID)
+		const settings = await customer.getSettings(customerID)
+
+		// after migration the useReference settings of existing customers are stored as numbers
+		// therefore we cast them to booleans to ensure that data types are correct
+		// this is especially important for the api, since the app will fail on incorrect types
+		return settings != undefined
+			? {
+				...settings,
+				useReference: {
+					tilgang: Boolean(settings.useReference.tilgang),
+					afgang: Boolean(settings.useReference.afgang),
+					regulering: Boolean(settings.useReference.regulering),
+					flyt: Boolean(settings.useReference.flyt),
+				},
+			}
+			: undefined
   },
   createSettings: async function(data: NewCustomerSettings): Promise<CustomerSettings | undefined> {
     return await customer.createSettings(data)

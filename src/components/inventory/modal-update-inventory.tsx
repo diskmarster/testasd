@@ -52,7 +52,6 @@ export function ModalUpdateInventory({
   const [pending, startTransition] = useTransition()
   const [newPlacement, setNewPlacement] = useState(false)
   const [newBatch, setNewBatch] = useState(false)
-  const [useReference, setUseReference] = useState(false)
   const [searchProduct, setSearchProduct] = useState<string>('')
   const [searchBatch, setSearchBatch] = useState<string>('')
   const [searchPlacement, setSearchPlacement] = useState<string>('')
@@ -109,7 +108,6 @@ export function ModalUpdateInventory({
     watch,
     handleSubmit,
     resetField,
-    setFocus,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -156,13 +154,6 @@ export function ModalUpdateInventory({
     setOpen(open)
   }
 
-  function onUseReferenceChange(val: boolean) {
-    setUseReference(val)
-    if (val == true) {
-      setFocus('reference')
-    }
-  }
-
   function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
       const res = await updateInventoryAction(values)
@@ -177,7 +168,6 @@ export function ModalUpdateInventory({
       setOpen(false)
       setNewBatch(false)
       setNewPlacement(false)
-      setUseReference(false)
       toast.success(t(`common:${siteConfig.successTitle}`), {
         description: `${isIncoming ? t('incoming') : t('outgoing')} ${t('toasts.was-created')}`,
       })
@@ -387,29 +377,17 @@ export function ModalUpdateInventory({
                 </p>
               )}
             </div>
-            {settings.useReference && (
-              <div
+            <div
+              className={cn('relative flex flex-col transition-all')}>
+              <Input
+                {...register('reference')}
+                placeholder={t('use-account-case-placeholder')}
                 className={cn(
-                  'relative flex flex-col transition-all',
-                  useReference && 'gap-2',
-                )}>
-                <div className={cn('w-full flex z-10 transition-all')}>
-                  <Label
-                    className='md:text-xs cursor-pointer hover:underline select-none transition-all'
-                    onClick={() => onUseReferenceChange(!useReference)}>
-                    {t('use-account-case')}
-                  </Label>
-                </div>
-                <Input
-                  {...register('reference')}
-                  placeholder={t('use-account-case-placeholder')}
-                  className={cn(
-                    'transition-all',
-                    !useReference ? 'h-0 p-0 border-none' : 'h-[40px]',
-                  )}
-                />
-              </div>
-            )}
+                  'transition-all',
+                  !settings.useReference[type] ? 'h-0 p-0 border-none' : 'h-[40px]',
+                )}
+              />
+            </div>
             <Button
               disabled={!formState.isValid || pending || formState.isSubmitting}
               size='lg'
