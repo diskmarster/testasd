@@ -283,7 +283,6 @@ export function getTableOverviewColumns(
     ),
     aggregatedCell: ({row}) => {
 			const value = row.original.disposable
-			console.log(value)
 			return value != null ? (
 				<span className={cn(value < 0 && 'text-destructive')}>
 					{formatNumber(value, lng)}
@@ -293,7 +292,21 @@ export function getTableOverviewColumns(
 			)
 		},
 		aggregationFn: 'unique',
-    cell: () => null,
+		cell: ({ table, row }) => {
+			/*@ts-ignore*/
+			if (table.options.meta?.isGrouped) {
+				return null
+			}
+
+			const value = row.original.disposable
+			return value != null ? (
+				<span className={cn(value < 0 && 'text-destructive')}>
+					{formatNumber(value, lng)}
+				</span>
+			) : (
+				<span>-</span>
+			)
+		},
     filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
     meta: {
       rightAlign: true,
