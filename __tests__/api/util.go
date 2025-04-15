@@ -18,24 +18,24 @@ type SuccessResponse[T any] struct {
 	Data    T      `json:"data"`
 }
 
-func get[T any](path string, jsonBody *SuccessResponse[T], reqSetup func(*http.Request) *http.Request) error {
+func get[T any](path string, jsonBody *T, reqSetup func(*http.Request) *http.Request) (int, error) {
 	url := fmt.Sprintf("%s%s", os.Getenv("baseUrl"), path)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return fmt.Errorf("Error creating request for %s: %v", url, err)
+		return -1, fmt.Errorf("Error creating request for %s: %v", url, err)
 	}
 
 	req = reqSetup(req)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("Error while getting '%s': %v", url, err)
+		return -1, fmt.Errorf("Error while getting '%s': %v", url, err)
 	}
 
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("Error while reading body: %v", err)
+		return -1, fmt.Errorf("Error while reading body: %v", err)
 	}
 
 	if resp.StatusCode != 200 {
@@ -43,15 +43,15 @@ func get[T any](path string, jsonBody *SuccessResponse[T], reqSetup func(*http.R
 
 		err = json.Unmarshal(body, &errorBody)
 		if err != nil {
-			return err
+			return resp.StatusCode, err
 		}
-		return fmt.Errorf("%s", errorBody.Message)
+		return resp.StatusCode, fmt.Errorf("%s", errorBody.Message)
 	}
 
-	return json.Unmarshal(body, jsonBody)
+	return resp.StatusCode, json.Unmarshal(body, jsonBody)
 }
 
-func post[T any](path string, body []byte, response *SuccessResponse[T], reqSetup func(*http.Request) *http.Request) error {
+func post[T any](path string, body []byte, response *T, reqSetup func(*http.Request) *http.Request) (int, error) {
 	url := fmt.Sprintf("%s%s", os.Getenv("baseUrl"), path)
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
 
@@ -59,13 +59,13 @@ func post[T any](path string, body []byte, response *SuccessResponse[T], reqSetu
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("Error posting to '%s': %v", url, err)
+		return -1, fmt.Errorf("Error posting to '%s': %v", url, err)
 	}
 
 	defer resp.Body.Close()
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("Error while reading body: %v", err)
+		return -1, fmt.Errorf("Error while reading body: %v", err)
 	}
 
 	if resp.StatusCode != 201 {
@@ -73,12 +73,12 @@ func post[T any](path string, body []byte, response *SuccessResponse[T], reqSetu
 
 		err = json.Unmarshal(respBody, &errorBody)
 		if err != nil {
-			return err
+			return resp.StatusCode, err
 		}
-		return fmt.Errorf("%s", errorBody.Message)
+		return resp.StatusCode, fmt.Errorf("%s", errorBody.Message)
 	}
 
-	return json.Unmarshal(respBody, response)
+	return resp.StatusCode, json.Unmarshal(respBody, response)
 }
 
 type AuthData struct {
@@ -97,7 +97,7 @@ func authenticate(email, pw string) (AuthData, error) {
 
 	var jsonBody SuccessResponse[AuthData]
 
-	if err := post("/api/v1/auth/sign-in?method=pw", jsonBytes, &jsonBody, func(r *http.Request) *http.Request {
+	if _, err := post("/api/v1/auth/sign-in?method=pw", jsonBytes, &jsonBody, func(r *http.Request) *http.Request {
 		r.Header.Set("Content-Type", "application/json")
 
 		return r

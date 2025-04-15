@@ -204,7 +204,7 @@ export const customer = {
     return res.rowsAffected == 1
   },
   getMailSettingsForCron: async function (
-		mailType?: keyof Pick<CustomerMailSetting, 'sendStockMail'>,
+		mailType?: keyof Pick<CustomerMailSetting, 'sendStockMail' | 'sendMovementsMail'>,
     tx: TRX = db,
   ): Promise<CustomerMailSettingWithEmail[]> {
 			const cols = getTableColumns(customerMailSettingsTable)
