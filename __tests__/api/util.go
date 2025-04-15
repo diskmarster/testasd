@@ -18,7 +18,7 @@ type SuccessResponse[T any] struct {
 	Data    T      `json:"data"`
 }
 
-func get[T any](path string, jsonBody *T, reqSetup func(*http.Request) *http.Request) (int, error) {
+func get(path string, jsonBody interface{}, reqSetup func(*http.Request) *http.Request) (int, error) {
 	url := fmt.Sprintf("%s%s", os.Getenv("baseUrl"), path)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -38,7 +38,7 @@ func get[T any](path string, jsonBody *T, reqSetup func(*http.Request) *http.Req
 		return -1, fmt.Errorf("Error while reading body: %v", err)
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode >= 400 {
 		var errorBody ErrorResponse
 
 		err = json.Unmarshal(body, &errorBody)
@@ -48,10 +48,14 @@ func get[T any](path string, jsonBody *T, reqSetup func(*http.Request) *http.Req
 		return resp.StatusCode, fmt.Errorf("%s", errorBody.Message)
 	}
 
+	if jsonBody == nil {
+		return resp.StatusCode, nil
+	}
+
 	return resp.StatusCode, json.Unmarshal(body, jsonBody)
 }
 
-func post[T any](path string, body []byte, response *T, reqSetup func(*http.Request) *http.Request) (int, error) {
+func post(path string, body []byte, response interface{}, reqSetup func(*http.Request) *http.Request) (int, error) {
 	url := fmt.Sprintf("%s%s", os.Getenv("baseUrl"), path)
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
 
@@ -68,7 +72,7 @@ func post[T any](path string, body []byte, response *T, reqSetup func(*http.Requ
 		return -1, fmt.Errorf("Error while reading body: %v", err)
 	}
 
-	if resp.StatusCode != 201 {
+	if resp.StatusCode >= 400 {
 		var errorBody ErrorResponse
 
 		err = json.Unmarshal(respBody, &errorBody)
@@ -76,6 +80,10 @@ func post[T any](path string, body []byte, response *T, reqSetup func(*http.Requ
 			return resp.StatusCode, err
 		}
 		return resp.StatusCode, fmt.Errorf("%s", errorBody.Message)
+	}
+
+	if response == nil {
+		return resp.StatusCode, nil
 	}
 
 	return resp.StatusCode, json.Unmarshal(respBody, response)

@@ -23,6 +23,7 @@ const mailRequestValidation = z.object({
   updated: z.coerce.date(),
   sendStockMail: z.coerce.boolean(),
   sendReorderMail: z.coerce.boolean().nullable(),
+  sendMovementsMail: z.coerce.boolean().nullable(),
 })
 
 export async function POST(request: NextRequest) {
