@@ -254,6 +254,7 @@
 		"col-email": "Email",
 		"col-stock-value": "Stock value",
 		"col-reorder": "Reorder",
+		"col-movements": "Stock movements",
 		"actions-delete": "Delete",
 		"errors": {
 			"update-settings-success": "Email was updated",

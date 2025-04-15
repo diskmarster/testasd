@@ -189,7 +189,7 @@ function EmailList({
 	const { t } = useTranslation(lang, 'organisation')
 	const [limit, setLimit] = useState(10)
 	// TODO: remember small screens
-	const layoutClasses = "px-3 grid gap-2 grid-cols-[150px_100px_1fr_100px_100px_50px] items-center"
+	const layoutClasses = "px-3 grid gap-2 grid-cols-[150px_100px_1fr_100px_100px_100px_50px] items-center"
 	return (
 		<div className="flex flex-col gap-2">
 			<SettingsHeader layoutClasses={layoutClasses} />
@@ -228,6 +228,7 @@ function SettingsHeader({ layoutClasses }: { layoutClasses: string }) {
 			<p>{t('mail-settings.col-email')}</p>
 			<p className="text-center">{t('mail-settings.col-stock-value')}</p>
 			<p className="text-center">{t('mail-settings.col-reorder')}</p>
+			<p className="text-center">{t('mail-settings.col-movements')}</p>
 			<div />
 		</div>
 	)
@@ -267,34 +268,52 @@ function SingleSetting({
 			<p>{formatDate(setting.updated)}</p>
 			<p>{setting.locationName}</p>
 			<p>{setting.userID ? setting.userEmail : setting.email}</p>
-			<div
-				className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
-				onClick={() => update(setting.id, ['sendStockMail', !setting.sendStockMail])}>
-				{hasChange && hasChange.some(([key]) => key == 'sendStockMail')
-					? hasChange.find(([key]) => key == 'sendStockMail')?.at(1)
-						? <Icons.dashedCheck />
-						: <Icons.circleDashed className="size-5 text-amber-500" />
-					: setting.sendStockMail
-						? <Icons.circleCheck className="size-5 text-success" />
-						: <Icons.circle className="size-5" />
-				}
-			</div>
-			<div
-				className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
-				onClick={() => update(setting.id, ['sendReorderMail', !setting.sendReorderMail])}>
-				{hasChange && hasChange.some(([key]) => key == 'sendReorderMail')
-					? hasChange.find(([key]) => key == 'sendReorderMail')?.at(1)
-						? <Icons.dashedCheck />
-						: <Icons.circleDashed className="size-5 text-amber-500" />
-					: setting.sendReorderMail
-						? <Icons.circleCheck className="size-5 text-success" />
-						: <Icons.circle className="size-5" />
-				}
-			</div>
+			<SingleSettingCheckbox 
+				update={update}
+				hasChange={hasChange}
+				setting={setting}
+				settingKey="sendStockMail" />
+			<SingleSettingCheckbox 
+				update={update}
+				hasChange={hasChange}
+				setting={setting}
+				settingKey="sendReorderMail" />
+			<SingleSettingCheckbox 
+				update={update}
+				hasChange={hasChange}
+				setting={setting}
+				settingKey="sendMovementsMail" />
 			<div className="ml-auto">
 				<SingleSettingActions setting={setting} />
 			</div>
 		</article>
+	)
+}
+
+function SingleSettingCheckbox({
+	update,
+	setting,
+	settingKey,
+	hasChange,
+}: {
+		update: (key: number, change: SettingChange) => void,
+		setting: CustomerMailSettingWithEmail,
+		settingKey: keyof Pick<CustomerMailSettingWithEmail, 'sendStockMail' | 'sendReorderMail' | 'sendMovementsMail'>,
+		hasChange: SettingChange[] | undefined
+	}) {
+	return (
+		<div
+			className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
+			onClick={() => update(setting.id, [settingKey, !setting[settingKey]])}>
+			{hasChange && hasChange.some(([key]) => key == settingKey)
+				? hasChange.find(([key]) => key == settingKey)?.at(1)
+					? <Icons.dashedCheck />
+					: <Icons.circleDashed className="size-5 text-amber-500" />
+				: setting[settingKey]
+					? <Icons.circleCheck className="size-5 text-success" />
+					: <Icons.circle className="size-5" />
+			}
+		</div>
 	)
 }
 

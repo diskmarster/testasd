@@ -39,5 +39,6 @@ export const updateMailSettingsValidation = z.array(
     id: z.coerce.number(),
     sendStockMail: z.coerce.boolean().nullish().optional(),
     sendReorderMail: z.coerce.boolean().nullish().optional(),
+    sendMovementsMail: z.coerce.boolean().nullish().optional(),
   }),
 )
