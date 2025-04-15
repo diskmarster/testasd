@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const mailTypes = z.object({
   sendStockMail: z.coerce.boolean(),
   sendReorderMail: z.coerce.boolean(),
+  sendMovementsMail: z.coerce.boolean(),
 })
 
 export const createMailSetting = z
@@ -22,6 +23,13 @@ export const createMailSetting = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'bruger ikke denne. har den bare for at formen ikke er valid',
+      })
+    }
+    
+    if (val.mails.sendMovementsMail == true && val.userID == null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'bruges ikke, er her bare for at formen ikke er valid',
       })
     }
   })

@@ -51,7 +51,10 @@ export const createMailSettingAction = adminAction
     if (!mailSetting) {
       throw new ActionError(t('mail-settings.errors.create-settings-success'))
     }
+
+    const settingWithExtra = await customerService.getExtraMailInfo(mailSetting)
 		revalidatePath(`/${ctx.lang}/administration/firma`)
+    return settingWithExtra
   })
 
 export const deleteMailSettingAction = adminAction

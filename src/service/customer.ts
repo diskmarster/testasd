@@ -199,4 +199,16 @@ export const customerService = {
 	): Promise<CustomerMailSettingWithEmail[]> {
 		return await customer.getMailSettingsForIDs(customerID, locationID, mailType)
 	},
+	getExtraMailInfo: async function(
+		setting: CustomerMailSetting
+	): Promise<CustomerMailSettingWithEmail | undefined> {
+		const extra = await customer.getExtraMailInfo(setting.id)
+
+		if (extra == undefined) return undefined
+
+		return {
+			...setting,
+			...extra,
+		}
+	}
 }

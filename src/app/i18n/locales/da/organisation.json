@@ -271,6 +271,7 @@
 			"locations-placeholder": "Vælg lokation",
 			"email": "Til hvilken e-mail?",
 			"email-external-mail": "Sender til mail uden for Nem Lager",
+			"email-error-message": "Mail skal tilhører en bruger når 'Lagerbevægelser' typen er valgt",
 			"button-close": "Luk",
 			"button-confirm": "Tilføj planlagt e-mail",
 			"button-show-all": "Vis alle",
@@ -278,7 +279,9 @@
 				"stock-value-title": "Lagerværdi",
 				"stock-value-description": "Sendes i slutningen af måneden",
 				"reorder-title": "Genbestilling",
-				"reorder-description": "Sendes når vare skal genbestilles"
+				"reorder-description": "Sendes når vare skal genbestilles",
+				"movements-title": "Lagerbevægelser",
+				"movements-description": "Send dagligt brugerens bevægelser"
 			}
 		},
 		"delete-modal": {

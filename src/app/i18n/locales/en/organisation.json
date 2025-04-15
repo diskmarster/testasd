@@ -271,6 +271,7 @@
 			"locations-placeholder": "Choose location",
 			"email": "To what email?",
 			"email-external-mail": "Sending to email not in your company or access level",
+			"email-error-message": "Email must belong to a user when 'Stock movements' type is selected",
 			"button-close": "Close",
 			"button-confirm": "Add scheduled email",
 			"button-show-all": "Show all",
@@ -278,7 +279,9 @@
 				"stock-value-title": "Stock value",
 				"stock-value-description": "Sent at the end of the month",
 				"reorder-title": "Reorder",
-				"reorder-description": "Sent when items are ready for reorder"
+				"reorder-description": "Sent when items are ready for reorder",
+				"movements-title": "Stock movements",
+				"movements-description": "Send the user's stock movements daily"
 			}
 		},
 		"delete-modal": {
