@@ -172,6 +172,9 @@ export const customerMailSettingsTable = sqliteTable(
     sendReorderMail: integer('send_reorder_mail', { mode: 'boolean' }).default(
       false,
     ),
+    sendMovementsMail: integer('send_movements_mail', { mode: 'boolean' }).default(
+      false,
+    ),
     inserted: integer('inserted', { mode: 'timestamp' })
       .notNull()
       .default(sql`(unixepoch())`),
