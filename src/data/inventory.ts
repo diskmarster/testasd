@@ -1,6 +1,7 @@
 import { FormattedInventory, FormattedReorder } from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
+import { UserID } from '@/lib/database/schema/auth'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
@@ -35,7 +36,7 @@ import {
 } from '@/lib/database/schema/inventory'
 import { NewReorder, PartialReorder, Reorder, reorderTable } from '@/lib/database/schema/reorders'
 import { supplierTable } from '@/lib/database/schema/suppliers'
-import { and, count, desc, eq, getTableColumns, sql, sum } from 'drizzle-orm'
+import { and, count, desc, eq, getTableColumns, gte, lte, sql, sum } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
 const PLACEMENT_COLS = getTableColumns(placementTable)
@@ -599,5 +600,31 @@ export const inventory = {
       )
 
     return res?.quantity ?? 0
+  },
+  getHistoryForUserID: async function(
+    userID: UserID,
+    timePeriod?: {
+      from: Date,
+      to: Date,
+    },
+    tx: TRX = db,
+  ): Promise<History[]> {
+    const timeWhere = 
+      timePeriod == undefined 
+        ? undefined 
+        : and(
+          gte(historyTable.inserted, timePeriod.from),
+          lte(historyTable.inserted, timePeriod.to),
+        )
+
+    return await tx
+      .select()
+      .from(historyTable)
+      .where(
+        and(
+          eq(historyTable.userID, userID),
+          timeWhere,
+        )
+      )
   }
 }

@@ -73,3 +73,5 @@ export interface FormattedReorder extends Reorder {
   }
 	shouldReorder?: boolean
 }
+
+export type InventoryAction = Pick<History, 'productSku' | 'productText1' | 'amount' | 'type'>

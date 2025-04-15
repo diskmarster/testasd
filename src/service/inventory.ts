@@ -6,6 +6,7 @@ import {
   FormattedReorder,
   HistoryType,
   HistoryWithSums,
+  InventoryAction,
 } from '@/data/inventory.types'
 import { product } from '@/data/products'
 import { db, TRX } from '@/lib/database'
@@ -692,5 +693,29 @@ export const inventoryService = {
     reorderData: NewReorder,
   ): Promise<Reorder | undefined> {
     return await inventory.upsertReorder(reorderData)
+  },
+  getActionsForUser: async function(
+    userID: UserID,
+    timePeriod?: {
+      from: Date,
+      to?: Date,
+    }
+  ): Promise<InventoryAction[]> {
+    const period = 
+      timePeriod == undefined 
+        ? undefined
+        : {
+          from: timePeriod.from,
+          to: timePeriod.to ?? new Date()
+        }
+
+    const actions = await inventory.getHistoryForUserID(userID, period)
+
+    return actions.map(a => ({
+      productSku: a.productSku,
+      productText1: a.productText1,
+      amount: a.amount,
+      type: a.type,
+    }))
   }
 }
