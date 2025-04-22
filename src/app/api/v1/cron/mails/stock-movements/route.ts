@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     [parsed.data.userEmail],
     `Rapport: Din daglige lagerbevægelses rapport for ${parsed.data.locationName}`,
     EmailDailyStockMovements({
-      actions: actions.data,
+      actions: actions.data.slice(0, 10),
       mailInfo: parsed.data,
       user: user.data,
     }),
