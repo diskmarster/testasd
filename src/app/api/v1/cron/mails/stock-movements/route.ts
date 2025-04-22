@@ -6,6 +6,8 @@ import { z } from 'zod'
 import * as dateFns from 'date-fns'
 import { emailService } from '@/service/email'
 import { EmailDailyStockMovements } from '@/components/email/email-daily-movement'
+import { genStockMovementPDF } from '@/lib/pdf/stock-movement-rapport'
+import { formatDate } from '@/lib/utils'
 
 const CRON_SECRET = process.env.NL_CRON_SECRET
 
@@ -60,6 +62,19 @@ export async function POST(request: NextRequest) {
     return sendResponse(500, { error: actions.error.message })
   }
 
+  const now = new Date()
+  const nowStr = formatDate(now)
+  const pdf = genStockMovementPDF({
+    docTitle: `Lagerbevægelser for ${user.data.name}, ${parsed.data.locationName} (${nowStr})`,
+    dateOfReport: now,
+    userName: user.data.name,
+    locationName: parsed.data.locationName,
+  },
+    actions.data,
+  )
+  const pdfbufarr = pdf.output('arraybuffer')
+  const pdfb64 = Buffer.from(pdfbufarr).toString('base64')
+
   await emailService.sendRecursively(
     [parsed.data.userEmail],
     `Rapport: Din daglige lagerbevægelses rapport for ${parsed.data.locationName}`,
@@ -68,6 +83,10 @@ export async function POST(request: NextRequest) {
       mailInfo: parsed.data,
       user: user.data,
     }),
+    [{
+      content: pdfb64,
+      filename: `nem_lager_${parsed.data.locationName}_lagerbevægelser_${nowStr}.pdf`,
+    }]
   )
 
   return sendResponse(204)
