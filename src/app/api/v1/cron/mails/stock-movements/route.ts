@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
   }
 
   const actions = await tryCatch(
-    inventoryService.getActionsForUser(parsed.data.userID, {from: dateFns.subDays(Date.now(), 1), to: new Date()})
+    inventoryService.getActionsForUser(parsed.data.userID, {from: dateFns.startOfDay(Date.now()), to: new Date()})
   )
   if (!actions.success) {
     return sendResponse(500, { error: actions.error.message })
