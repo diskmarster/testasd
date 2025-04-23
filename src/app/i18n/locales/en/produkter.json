@@ -22,6 +22,7 @@
 	"view-product": "Show",
 	"bar-this": "Bar the product",
 	"unbar-this": "Unbar the product",
+	"delete-this": "Delete the product",
 	"barred-status-yes": "Barred",
 	"barred-status-no": "Active",
 	"attachments": "Files",
@@ -135,5 +136,16 @@
 	},
 	"tooltips": {
 		"create-product": "Create product"
+	},
+	"delete-product-modal": {
+		"title": "Delete product",
+		"description-delete": "Are you sure you want to delete the product",
+		"description-no-redo": "This CANNOT be undone.",
+		"description-history": "The product's history will not be deleted",
+		"label-start": "Enter ",
+		"label-end": " to confirm deletion",
+		"delete-btn": "Delete product",
+		"cancel-btn": "Cancel",
+		"product-deleted": "Product deleted"
 	}
 }

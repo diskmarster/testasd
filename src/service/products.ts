@@ -797,12 +797,19 @@ export const productService = {
   ): Promise<boolean> {
     return await db.transaction(async (tx) => {
       const p = await tryCatch(product.getByID(productID, tx))
-      if (!p.success || p.data == undefined || p.data.customerID != customerID) {
+      if (!p.success || p.data === undefined) {
+				console.error(p.error ?? `No product found for product id: ${productID}`)
         return false
       }
+			if (p.data.customerID != customerID) {
+				console.error('Provided customer id did not match customer id of product')
+				return false
+			}
 
       const deletedProductRes = await tryCatch(product.deleteProduct(productID, tx))
       if (!deletedProductRes.success) {
+				console.error(deletedProductRes.error)
+
         tx.rollback()
         return false
       }
@@ -811,6 +818,8 @@ export const productService = {
         product.insertDeletedProduct(p.data, tx)
       )
       if (!insertDeletedRes.success) {
+				console.error(insertDeletedRes.error)
+				
         tx.rollback()
         return false
       }

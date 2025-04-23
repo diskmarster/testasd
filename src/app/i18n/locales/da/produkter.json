@@ -22,6 +22,7 @@
 	"view-product": "Vis",
 	"bar-this": "Spær varen",
 	"unbar-this": "Fjern spærring",
+	"delete-this": "Slet varen",
 	"barred-status-yes": "Spærret",
 	"barred-status-no": "Aktiv",
 	"attachments": "Filer",
@@ -136,5 +137,16 @@
 	},
 	"tooltips": {
 		"create-product": "Opret vare"
+	},
+	"delete-product-modal": {
+		"title": "Slet vare",
+		"description-delete": "Er du sikker på at du vil slette varen",
+		"description-no-redo": "Dette kan IKKE ændres senere.",
+		"description-history": "Varens historik slettes ikke",
+		"label-start": "Indtast ",
+		"label-end": " for at bekræfte sletningen",
+		"delete-btn": "Slet varen",
+		"cancel-btn": "Annuller",
+		"product-deleted": "Vare slettet"
 	}
 }
