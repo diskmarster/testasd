@@ -1,0 +1,22 @@
+CREATE TABLE `nl_deleted_product` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`customer_id` integer NOT NULL,
+	`group_id` integer NOT NULL,
+	`unit_id` integer NOT NULL,
+	`text_1` text NOT NULL,
+	`text_2` text DEFAULT '' NOT NULL,
+	`text_3` text DEFAULT '' NOT NULL,
+	`sku` text NOT NULL,
+	`barcode` text NOT NULL,
+	`cost_price` real NOT NULL,
+	`sales_price` real DEFAULT 0 NOT NULL,
+	`inserted` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated` integer DEFAULT (unixepoch()) NOT NULL,
+	`is_barred` integer DEFAULT false NOT NULL,
+	`note` text DEFAULT '' NOT NULL,
+	`supplier_id` integer,
+	FOREIGN KEY (`customer_id`) REFERENCES `nl_customer`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`group_id`) REFERENCES `nl_group`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`unit_id`) REFERENCES `nl_unit`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`supplier_id`) REFERENCES `nl_suppliers`(`id`) ON UPDATE no action ON DELETE set null
+);
