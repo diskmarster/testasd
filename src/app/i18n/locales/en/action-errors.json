@@ -76,7 +76,8 @@
   "product-action": {
     "product-not-created": "Something went wrong while creating the product",
     "product-not-updated": "Something went wrong while updating the product",
-    "product-not-updated-barred": "Something went wrong while barring the product"
+    "product-not-updated-barred": "Something went wrong while barring the product",
+    "product-not-deleted": "Something went wrong while barring the product"
   },
   "product-group-action": {
     "user-not-logged-in": "User not logged in",

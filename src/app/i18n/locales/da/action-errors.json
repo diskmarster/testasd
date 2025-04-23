@@ -76,7 +76,8 @@
   "product-action": {
     "product-not-created": "Noget gik galt under oprettelsen af produktet",
     "product-not-updated": "Noget gik galt under opdateringen af produktet",
-    "product-not-updated-barred": "Noget gik galt under spærringen af produktet"
+    "product-not-updated-barred": "Noget gik galt under spærringen af produktet",
+    "product-not-deleted": "Noget gik galt under sletningen af produktet"
   },
   "product-group-action": {
     "user-not-logged-in": "Bruger ikke logget ind",
