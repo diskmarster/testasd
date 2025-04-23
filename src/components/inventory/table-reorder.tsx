@@ -70,6 +70,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
   const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams,'')
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams,[
     { id: 'shouldReorder', desc: true },
+    { id: 'isRequested', desc: true },
     { id: 'supplierName', desc: true },
   ])
   const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)

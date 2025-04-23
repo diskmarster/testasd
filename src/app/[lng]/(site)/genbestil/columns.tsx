@@ -269,6 +269,17 @@ export function getTableReorderColumns(
 		},
 	}
 
+	const isRequestedCol: ColumnDef<FormattedReorder> = {
+		accessorKey: 'isRequested',
+		header: () => undefined,
+		cell: () => undefined,
+		enableHiding: false,
+		enableSorting: true,
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+	}
+
 	return [
 		selectCol,
 		skuCol,
@@ -284,6 +295,7 @@ export function getTableReorderColumns(
 		updatedCol,
 		actionsCol,
 		shouldReorderCol,
+		isRequestedCol,
 	]
 }
 
@@ -411,6 +423,17 @@ export function getTableReorderFilters(
 		],
 	}
 
+	const isRequestedFilter: FilterField<FormattedReorder> = {
+		column: table.getColumn('isRequested'),
+		type: 'select',
+		label: t("reorder-columns.isrequested"),
+		value: '',
+		options: [
+			{ label: t("reorder-columns.isrequested", {context: "true"}), value: true},
+			{ label: t("reorder-columns.isrequested", {context: "false"}), value: false},
+		],
+	}
+
 	return [
 		skuFilter,
 		barcodeFilter,
@@ -423,6 +446,7 @@ export function getTableReorderFilters(
 		orderedFilter,
 		disposibleFilter,
 		shouldReorderFilter,
+		isRequestedFilter,
 		updatedFilter,
 	]
 }

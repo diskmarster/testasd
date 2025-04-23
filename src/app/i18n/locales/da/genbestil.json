@@ -27,7 +27,10 @@
 		"supplier": "Leverandør",
 		"shouldReorder": "Lav beholdning",
 		"shouldReorder_true": "Ja",
-		"shouldReorder_false": "Nej"
+		"shouldReorder_false": "Nej",
+		"isrequested": "I kurv",
+		"isrequested_true": "Ja",
+		"isrequested_false": "Nej"
 	},
 	"filter-placeholders": {
 		"productNo": "Søg i varenr.",
