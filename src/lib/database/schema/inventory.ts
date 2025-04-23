@@ -54,9 +54,9 @@ export const placementTable = sqliteTable(
       .notNull()
       .default(false),
   },
-  t => ({
-    unq: unique().on(t.locationID, t.name),
-  }),
+  t => [
+    unique().on(t.locationID, t.name),
+  ],
 )
 
 export type Placement = typeof placementTable.$inferSelect
@@ -85,9 +85,9 @@ export const batchTable = sqliteTable(
       .notNull()
       .default(false),
   },
-  t => ({
-    unq: unique().on(t.locationID, t.batch),
-  }),
+  t => [
+    unique().on(t.locationID, t.batch),
+  ],
 )
 
 export type Batch = typeof batchTable.$inferSelect
@@ -115,9 +115,9 @@ export const groupTable = sqliteTable(
       .notNull()
       .default(false),
   },
-  t => ({
-    unq: unique().on(t.customerID, t.name),
-  }),
+  t => [
+    unique().on(t.customerID, t.name),
+  ],
 )
 
 export type Group = typeof groupTable.$inferSelect
@@ -161,11 +161,11 @@ export const productTable = sqliteTable(
       onDelete: 'set null',
     }),
   },
-  t => ({
-    unqBarcodeSku: unique().on(t.customerID, t.barcode, t.sku),
-    unqBarcode: unique().on(t.customerID, t.barcode),
-    unqSku: unique().on(t.customerID, t.sku),
-  }),
+  t => [
+    unique().on(t.customerID, t.barcode, t.sku),
+    unique().on(t.customerID, t.barcode),
+    unique().on(t.customerID, t.sku),
+  ],
 )
 
 export type Product = typeof productTable.$inferSelect
@@ -201,8 +201,8 @@ export const inventoryTable = sqliteTable(
       .$onUpdateFn(() => new Date())
       .$type<Date>(),
   },
-  t => ({
-    pk: primaryKey({
+  t => [
+    primaryKey({
       columns: [
         t.productID,
         t.placementID,
@@ -211,7 +211,7 @@ export const inventoryTable = sqliteTable(
         t.customerID,
       ],
     }),
-  }),
+  ],
 )
 
 export type Inventory = typeof inventoryTable.$inferSelect
