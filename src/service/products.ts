@@ -793,16 +793,22 @@ export const productService = {
   },
   softDeleteProduct: async function(
     productID: ProductID,
+    customerID: CustomerID,
   ): Promise<boolean> {
     return await db.transaction(async (tx) => {
+      const p = await tryCatch(product.getByID(productID, tx))
+      if (!p.success || p.data == undefined || p.data.customerID != customerID) {
+        return false
+      }
+
       const deletedProductRes = await tryCatch(product.deleteProduct(productID, tx))
-      if (!deletedProductRes.success || deletedProductRes.data === undefined) {
+      if (!deletedProductRes.success) {
         tx.rollback()
         return false
       }
 
       const insertDeletedRes = await tryCatch(
-        product.insertDeletedProduct(deletedProductRes.data, tx)
+        product.insertDeletedProduct(p.data, tx)
       )
       if (!insertDeletedRes.success) {
         tx.rollback()
