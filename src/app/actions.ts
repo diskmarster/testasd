@@ -1,5 +1,6 @@
 'use server'
 
+import { HistoryFilter } from '@/data/inventory.types'
 import { adminAction, authedAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
@@ -49,3 +50,43 @@ export const genInventoryReportAction = adminAction
       inventory,
     }
   })
+
+export const genInventoryMovementsReportAction = adminAction
+  .schema(
+    z.object({
+      locationID: z.string(),
+      itemGroup: z.string(),
+      dateRange: z.object({
+        from: z.coerce.date(),
+        to: z.coerce.date(),
+      }),
+    }),
+  )
+  .action(
+    async ({
+      parsedInput: { locationID, dateRange, itemGroup },
+      ctx: { user },
+    }) => {
+      let historyFilter: HistoryFilter = {
+        date: dateRange,
+      }
+      if (itemGroup != 'all') {
+        historyFilter.group = itemGroup
+      }
+
+      const [customer, history, location] = await Promise.all([
+        customerService.getByID(user.customerID),
+        inventoryService.getHistoryByLocationID(locationID, historyFilter),
+        locationService.getByID(locationID),
+      ])
+
+      if (!customer) throw new ActionError('firma blev ikke fundet')
+      if (!location) throw new ActionError('lokation blev ikke fundet')
+
+      return {
+        customer,
+        location,
+        history,
+      }
+    },
+  )
