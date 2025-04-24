@@ -1,14 +1,30 @@
 {
-  "title": "Rapporter",
-  "description": "Her kan du trække rapporter på data om dit lager",
-  "inventory-report-modal": {
-    "card-label": "Lagerværdi",
-    "card-desc": "Træk en rapport over lagerværdi for en lokation",
-    "title": "Lagerværdi rapport",
-    "desc": "Download en rapport med lagerværdi for en lokation.",
-    "location-label": "Lokation",
-    "choose-location": "Vælg lokation",
-    "loading-location": "Henter lokationer...",
-    "download-button": "Download rapport"
-  }
+	"title": "Rapporter",
+	"description": "Her kan du trække rapporter på data om dit lager",
+	"inventory-report-modal": {
+		"card-label": "Lagerværdi",
+		"card-desc": "Træk en rapport over lagerværdi for en lokation",
+		"title": "Lagerværdi rapport",
+		"desc": "Download en rapport med lagerværdi for en lokation.",
+		"location-label": "Lokation",
+		"choose-location": "Vælg lokation",
+		"loading-location": "Henter lokationer...",
+		"download-button": "Download rapport"
+	},
+	"inventory-sum-report": {
+		"card-label": "Lagerbevægelser",
+		"card-desc": "Download en rapport over lagerbevægelser for en periode, varegruppe og bevægelsestype.",
+		"title": "Lagerbevægelser rapport",
+		"desc": "Download en rapport over lagerbevægelser for en periode, varegruppe og bevægelsestype.",
+		"location-label": "Lokation",
+		"choose-location": "Vælg lokation",
+		"loading-location": "Henter lokationer...",
+		"download-button": "Download rapport",
+		"file-format-label": "Filtype",
+		"item-group-label": "Varegruppe",
+		"choose-item-group": "Vælg varegruppe",
+		"loading-item-group": "Henter varegruppe...",
+		"timeperiod-label": "Periode",
+		"summed-label": "Skal rapporten summeres?"
+	}
 }
