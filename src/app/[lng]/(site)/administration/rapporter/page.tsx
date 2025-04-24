@@ -9,7 +9,7 @@ import { customerService } from '@/service/customer'
 import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
-import { ReactNode } from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 
 interface PageProps {
 	params: { lng: string }
@@ -45,14 +45,14 @@ export default async function Page({ params: { lng } }: PageProps) {
 			description={t('description')}>
 			<ReportCardWrapper
 				title={t("inventory-report-modal.card-label")}
-				description={t("inventory-report-modal.card-desc")}
-				action={<ModalInventoryReport />}
-			/>
+				description={t("inventory-report-modal.card-desc")}>
+				<ModalInventoryReport />
+			</ReportCardWrapper>
 			<ReportCardWrapper
 				title={t("inventory-sum-report.card-label")}
-				description={t("inventory-sum-report.card-desc")}
-				action={<ModalSumReport />}
-			/>
+				description={t("inventory-sum-report.card-desc")}>
+				<ModalSumReport />
+			</ReportCardWrapper>
 		</SiteWrapper>
 	)
 }
@@ -60,12 +60,11 @@ export default async function Page({ params: { lng } }: PageProps) {
 function ReportCardWrapper({
 	title,
 	description,
-	action,
-}: {
+	children,
+}: PropsWithChildren<{
 	title: string,
 	description: string,
-	action: ReactNode,
-}) {
+}>) {
 	return (
 		<div className='md:max-w-lg'>
 			<div className='flex items-center justify-between rounded-md border p-4 shadow-sm bg-background'>
@@ -73,7 +72,7 @@ function ReportCardWrapper({
 					<Label>{title}</Label>
 					<p className='text-sm text-muted-foreground'>{description}</p>
 				</div>
-				{action}
+				{children}
 			</div>
 		</div>
 	)
