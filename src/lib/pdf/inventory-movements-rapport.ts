@@ -1,4 +1,3 @@
-import { fallbackLng, I18NLanguage } from '@/app/i18n/settings'
 import { HistoryWithSums } from '@/data/inventory.types'
 import * as DateFNs from 'date-fns'
 import { jsPDF } from 'jspdf'
@@ -41,7 +40,7 @@ type row = {
 export function genInventoryMovementsExcel(
   historyLines: HistoryWithSums[],
   isSummarized: boolean,
-  lng: I18NLanguage = fallbackLng,
+  t: (key: string, opts?: any) => string,
 ): XLSX.WorkBook {
   let rows: row[] = []
 
@@ -90,12 +89,12 @@ export function genInventoryMovementsExcel(
   ])
 
   const lineHeaders = [
-    'Varenr.',
-    'Varetekst 1',
-    'Varegruppe',
-    'Enhed',
-    'Antal',
-    'Dato',
+    t('inventory-sum-report.header-sku'),
+    t('inventory-sum-report.header-text1'),
+    t('inventory-sum-report.header-group'),
+    t('inventory-sum-report.header-unit'),
+    t('inventory-sum-report.header-amount'),
+    t('inventory-sum-report.header-date'),
   ]
 
   const workbook = XLSX.utils.book_new()
@@ -115,7 +114,7 @@ export function genSummarizedReportPDF(
   isSummarized: boolean,
   itemGroup: string,
   dateRange: { from: Date; to: Date },
-  lng: I18NLanguage = fallbackLng,
+  t: (key: string, opts?: any) => string,
 ): jsPDF {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -128,33 +127,37 @@ export function genSummarizedReportPDF(
   })
 
   doc.setFontSize(10)
-  doc.text(`Lagerbevægelser for ${metaData.locationName}`, 10, 14)
+  doc.text(
+    t('inventory-sum-report.pdf-title', { location: metaData.locationName }),
+    10,
+    14,
+  )
   doc.text('Nem Lager Rapport', 200, 14, { align: 'right' })
 
   doc.setLineWidth(0.1)
   doc.setDrawColor(200, 200, 200, 0.5)
   doc.line(10, 18, 200, 18)
 
-  doc.text('Firma:', 10, 30)
+  doc.text(t('inventory-sum-report.pdf-company'), 10, 30)
   doc.text(metaData.companyName, 35, 30)
-  doc.text('Lokation:', 10, 35)
+  doc.text(t('inventory-sum-report.pdf-location'), 10, 35)
   doc.text(metaData.locationName, 35, 35)
-  doc.text('Genereret den:', 140, 30)
+  doc.text(t('inventory-sum-report.pdf-generated-at'), 140, 30)
   doc.text(formatDate(metaData.dateOfReport), 200, 30, { align: 'right' })
-  doc.text('Genereret af:', 140, 35)
+  doc.text(t('inventory-sum-report.pdf-generated-by'), 140, 35)
   doc.text(metaData.userName, 200, 35, { align: 'right' })
 
-  doc.text('Filtreringer:', 10, 50)
-  doc.text('Periode', 10, 55)
+  doc.text(t('inventory-sum-report.pdf-filters'), 10, 50)
+  doc.text(t('inventory-sum-report.pdf-period'), 10, 55)
   doc.text(
     `${formatDate(dateRange.from, false)} - ${formatDate(dateRange.to, false)}`,
     35,
     55,
   )
-  doc.text(`Varegrupper:`, 10, 60)
+  doc.text(t('inventory-sum-report.pdf-group'), 10, 60)
   doc.text(itemGroup, 35, 60)
-  doc.text(`Summeret:`, 10, 65)
-  doc.text(isSummarized ? 'Ja' : 'Nej', 35, 65)
+  doc.text(t('inventory-sum-report.pdf-summarized'), 10, 65)
+  doc.text(isSummarized.toString(), 35, 65)
 
   let rows: row[] = []
 
@@ -203,12 +206,12 @@ export function genSummarizedReportPDF(
   ])
 
   const lineHeaders = [
-    'Varenr.',
-    'Varetekst 1',
-    'Varegruppe',
-    'Enhed',
-    'Antal',
-    'Dato',
+    t('inventory-sum-report.header-sku'),
+    t('inventory-sum-report.header-text1'),
+    t('inventory-sum-report.header-group'),
+    t('inventory-sum-report.header-unit'),
+    t('inventory-sum-report.header-amount'),
+    t('inventory-sum-report.header-date'),
   ]
 
   const columnWidths = [24, 74, 28, 17, 22, 26]

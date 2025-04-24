@@ -1,26 +1,15 @@
 'use client'
 
+import * as DFNs from 'date-fns'
 import { fetchItemGroupsForCustomerActions, fetchLocationsForCustomerActions } from '@/app/[lng]/(site)/sys/kunder/actions'
 import { genInventoryMovementsReportAction, genInventoryReportAction } from '@/app/actions'
 import { useTranslation } from '@/app/i18n/client'
-import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
 import { CustomerID } from '@/lib/database/schema/customer'
-import { genInventoryExcel, genInventoryPDF } from '@/lib/pdf/inventory-rapport'
 import { cn, formatDate } from '@/lib/utils'
 import { useEffect, useState, useTransition } from 'react'
-import { toast } from 'sonner'
 import { Button, buttonVariants } from '../ui/button'
-import {
-	Credenza,
-	CredenzaBody,
-	CredenzaContent,
-	CredenzaDescription,
-	CredenzaHeader,
-	CredenzaTitle,
-	CredenzaTrigger,
-} from '../ui/credenza'
 import { Icons } from '../ui/icons'
 import { Label } from '../ui/label'
 import {
@@ -36,8 +25,8 @@ import { Calendar } from '../ui/calendar'
 import { DateRange } from 'react-day-picker'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { Checkbox } from '../ui/checkbox'
-import { UnfoldVertical } from 'lucide-react'
-import { genInventoryMovementsExcel, genSummarizedReportPDF } from '@/lib/pdf/summarized-rapport'
+import { genInventoryMovementsExcel, genSummarizedReportPDF } from '@/lib/pdf/inventory-movements-rapport'
+import { da } from 'date-fns/locale'
 
 export function ModalSumReport() {
 	const [pending, startTransition] = useTransition()
@@ -114,11 +103,14 @@ export function ModalSumReport() {
 							isSummarized,
 							selectedItemGroup,
 							{ from: date.from!, to: date.to! },
-							lng)
+							t
+						)
 						pdf.save(`lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.pdf`)
+						return
 					case 'excel':
-						const workbook = genInventoryMovementsExcel(history, isSummarized, lng)
+						const workbook = genInventoryMovementsExcel(history, isSummarized, t)
 						XLSX.writeFile(workbook, `lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.xlsx`)
+						return
 				}
 			}
 		})
@@ -197,7 +189,7 @@ export function ModalSumReport() {
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value="all">
-									Alle
+									{t('inventory-sum-report.item-group-all-label')}
 								</SelectItem>
 								{itemGroups.map((l, i) => (
 									<SelectItem key={i} value={l.name}>
@@ -209,7 +201,11 @@ export function ModalSumReport() {
 					</div>
 					<div className='grid gap-2'>
 						<Label>{t('inventory-sum-report.timeperiod-label')}</Label>
-						<p className='text-muted-foreground text-sm'>{new Date(date?.from).toDateString() ?? "Ikke fra valgt"} - {new Date(date?.to).toDateString() ?? "Ikke til valgt"}</p>
+						{date && (
+							<p className='text-muted-foreground text-sm'>
+								{date.from ? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da }) : t("inventory-sum-report.choose-date", { context: "from" })} - {date.to ? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da }) : t("inventory-sum-report.choose-date", { context: "to" })}
+							</p>
+						)}
 						<Calendar
 							mode='range'
 							selected={date}
@@ -226,8 +222,8 @@ export function ModalSumReport() {
 						/>
 					</div>
 					<div className='flex gap-2 items-center'>
-						<Checkbox className='size-5' checked={isSummarized} onCheckedChange={checked => setIsSummarized(Boolean(checked))} />
-						<Label>{t('inventory-sum-report.summed-label')}</Label>
+						<Checkbox id='summarize' className='size-5' checked={isSummarized} onCheckedChange={checked => setIsSummarized(Boolean(checked))} />
+						<Label htmlFor='summarize'>{t('inventory-sum-report.summed-label')}</Label>
 					</div>
 					<div className='grid gap-2'>
 						<Label>{t('inventory-sum-report.file-format-label')}</Label>

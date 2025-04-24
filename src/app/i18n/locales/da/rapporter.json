@@ -25,6 +25,25 @@
 		"choose-item-group": "Vælg varegruppe",
 		"loading-item-group": "Henter varegruppe...",
 		"timeperiod-label": "Periode",
-		"summed-label": "Skal rapporten summeres?"
+		"summed-label": "Skal rapporten summeres?",
+		"item-group-all-label": "Alle",
+		"choose-date": "Vælg dato",
+		"choose-date_to": "Vælg til dato",
+		"choose-date_from": "Vælg fra dato",
+		"header-sku": "Varenr.",
+		"header-text1": "Varetekst 1",
+		"header-group": "Varegruppe",
+		"header-unit": "Enhed",
+		"header-amount": "Antal",
+		"header-date": "Dato",
+		"pdf-title": "Lagerbevægelser for {{location}}",
+		"pdf-company": "Firma:",
+		"pdf-location": "Lokation:",
+		"pdf-generated-at": "Genereret den:",
+		"pdf-generated-by": "Genereret af:",
+		"pdf-filters": "Filtreringer:",
+		"pdf-period": "Periode:",
+		"pdf-group": "Varegruppe:",
+		"pdf-summarized": "Summeret:"
 	}
 }
