@@ -44,6 +44,7 @@ import { TableFloatingBar } from '../table/table-floating-bar'
 import { ExportSelectedButton } from './button-export-selected'
 import { useSearchParams } from 'next/navigation'
 import { ReorderSelectedButton } from './button-reorder-selected'
+import { TableHeaderGroup } from '../table/table-header-group'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -169,18 +170,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
+							<TableHeaderGroup headerGroup={headerGroup} />
             ))}
           </TableHeader>
           <TableBody>

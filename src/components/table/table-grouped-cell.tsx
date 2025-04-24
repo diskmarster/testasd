@@ -16,6 +16,8 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
   return (
     <>
       {row.getVisibleCells().map(cell => (
+				// @ts-ignore
+				!cell.getContext().column.columnDef.meta?.isShadow &&
         <TableCell
           key={cell.id}
           className={
