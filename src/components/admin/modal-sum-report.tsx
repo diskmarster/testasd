@@ -263,7 +263,7 @@ export function ModalSumReport() {
 										{date.from ? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da }) : t("inventory-sum-report.choose-date", { context: "from" })} - {date.to ? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da }) : t("inventory-sum-report.choose-date", { context: "to" })}
 									</p>
 								) : (
-									<p className='text-muted-foreground text-sm'>Vælg en til og fra dato</p>
+									<p className='text-muted-foreground text-sm'>{t("inventory-sum-report.choose-both-dates")}</p>
 								)}
 								<Calendar
 									mode='range'
