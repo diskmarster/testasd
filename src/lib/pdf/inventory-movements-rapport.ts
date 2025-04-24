@@ -156,9 +156,19 @@ export function genSummarizedReportPDF(
     55,
   )
   doc.text(t('inventory-sum-report.pdf-group'), 10, 60)
-  doc.text(itemGroup, 35, 60)
+  doc.text(
+    itemGroup == 'all'
+      ? t('inventory-sum-report.item-group-all-label')
+      : itemGroup,
+    35,
+    60,
+  )
   doc.text(t('inventory-sum-report.pdf-type'), 10, 65)
-  doc.text(type, 35, 65)
+  doc.text(
+    type == 'all' ? t('inventory-sum-report.type-all-label') : type,
+    35,
+    65,
+  )
   doc.text(t('inventory-sum-report.pdf-summarized'), 10, 70)
   doc.text(
     t('inventory-sum-report.pdf-summarized', {
@@ -231,13 +241,13 @@ export function genSummarizedReportPDF(
     startY: 80,
     theme: 'grid',
     headStyles: {
-      fillColor: [90,120,181],
+      fillColor: [90, 120, 181],
       textColor: 255,
       fontStyle: 'bold',
       fontSize: 9,
       halign: 'left',
-			lineWidth: 0.5,
-			lineColor: [90,120,181]
+      lineWidth: 0.5,
+      lineColor: [90, 120, 181],
     },
     columnStyles: {
       0: { cellWidth: columnWidths[0] },
@@ -253,7 +263,7 @@ export function genSummarizedReportPDF(
       fontSize: 9,
       cellPadding: { top: 1, right: 1, bottom: 1, left: 1 },
       textColor: [0, 0, 0],
-			lineColor: [90,120,181]
+      lineColor: [90, 120, 181],
     },
     rowPageBreak: 'avoid',
     margin: { top: 10, left: 10, right: 0, bottom: 20 },
