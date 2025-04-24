@@ -9,7 +9,7 @@ interface Props<T> {
 
 export function TableHeaderGroup<T>({headerGroup}: Props<T>) {
 	return (
-		<TableRow key={headerGroup.id}>
+		<TableRow>
 			{headerGroup.headers.map(header => (
 				// @ts-ignore
 				!header.getContext().column.columnDef.meta?.isShadow &&

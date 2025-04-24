@@ -246,7 +246,7 @@ export function getProductOverviewColumns(
     attachmentsCol,
     barcodeCol,
     groupCol,
-	supplierCol,
+		supplierCol,
     text1Col,
     text2Col,
     text3Col,

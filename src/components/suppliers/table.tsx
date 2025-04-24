@@ -38,6 +38,7 @@ import { getSupplierColumns, getSupplierFilters } from '@/app/[lng]/(site)/admin
 import { SupplierWithItemCount } from '@/data/suppliers.types'
 import { useSearchParams } from 'next/navigation'
 import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
+import { TableHeaderGroup } from '../table/table-header-group'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -145,18 +146,7 @@ export function SuppliersTable({ suppliers }: Props) {
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map(headerGroup => (
-							<TableRow key={headerGroup.id}>
-								{headerGroup.headers.map(header => (
-									<TableHead key={header.id}>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-												header.column.columnDef.header,
-												header.getContext(),
-											)}
-									</TableHead>
-								))}
-							</TableRow>
+							<TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup} />
 						))}
 					</TableHeader>
 					<TableBody>

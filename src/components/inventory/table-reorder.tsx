@@ -170,7 +170,7 @@ export function TableReorder({ data, user, units, groups }: Props) {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-							<TableHeaderGroup headerGroup={headerGroup} />
+							<TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup} />
             ))}
           </TableHeader>
           <TableBody>
