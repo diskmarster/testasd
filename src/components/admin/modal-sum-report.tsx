@@ -260,7 +260,11 @@ export function ModalSumReport() {
 								<Label>{t('inventory-sum-report.timeperiod-label')}</Label>
 								{date ? (
 									<p className='text-muted-foreground text-sm'>
-										{date.from ? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da }) : t("inventory-sum-report.choose-date", { context: "from" })} - {date.to ? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da }) : t("inventory-sum-report.choose-date", { context: "to" })}
+										{date.from 
+											? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da }) 
+											: t("inventory-sum-report.choose-date", { context: "from" })} - {date.to 
+												? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da }) 
+												: t("inventory-sum-report.choose-date", { context: "to" })}
 									</p>
 								) : (
 									<p className='text-muted-foreground text-sm'>{t("inventory-sum-report.choose-both-dates")}</p>
