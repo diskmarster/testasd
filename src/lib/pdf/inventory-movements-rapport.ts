@@ -231,11 +231,13 @@ export function genSummarizedReportPDF(
     startY: 80,
     theme: 'grid',
     headStyles: {
-      fillColor: [240, 240, 240],
-      textColor: 0,
+      fillColor: [90,120,181],
+      textColor: 255,
       fontStyle: 'bold',
       fontSize: 9,
       halign: 'left',
+			lineWidth: 0.5,
+			lineColor: [90,120,181]
     },
     columnStyles: {
       0: { cellWidth: columnWidths[0] },
@@ -251,6 +253,7 @@ export function genSummarizedReportPDF(
       fontSize: 9,
       cellPadding: { top: 1, right: 1, bottom: 1, left: 1 },
       textColor: [0, 0, 0],
+			lineColor: [90,120,181]
     },
     rowPageBreak: 'avoid',
     margin: { top: 10, left: 10, right: 0, bottom: 20 },
