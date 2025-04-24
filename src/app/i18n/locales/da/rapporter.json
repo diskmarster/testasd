@@ -30,6 +30,9 @@
 		"choose-date": "Vælg dato",
 		"choose-date_to": "Vælg til dato",
 		"choose-date_from": "Vælg fra dato",
+		"type-label": "Bevægelsestype",
+		"choose-type": "Vælg bevægelsestype",
+		"type-all-label": "Alle",
 		"header-sku": "Varenr.",
 		"header-text1": "Varetekst 1",
 		"header-group": "Varegruppe",
@@ -44,6 +47,9 @@
 		"pdf-filters": "Filtreringer:",
 		"pdf-period": "Periode:",
 		"pdf-group": "Varegruppe:",
-		"pdf-summarized": "Summeret:"
+		"pdf-type": "type:",
+		"pdf-summarized": "Summeret:",
+		"pdf-summarized_true": "Ja",
+		"pdf-summarized_false": "Nej"
 	}
 }

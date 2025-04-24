@@ -2,7 +2,7 @@
 
 import * as DFNs from 'date-fns'
 import { fetchItemGroupsForCustomerActions, fetchLocationsForCustomerActions } from '@/app/[lng]/(site)/sys/kunder/actions'
-import { genInventoryMovementsReportAction, genInventoryReportAction } from '@/app/actions'
+import { genInventoryMovementsReportAction } from '@/app/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
@@ -27,6 +27,9 @@ import { endOfMonth, startOfMonth } from 'date-fns'
 import { Checkbox } from '../ui/checkbox'
 import { genInventoryMovementsExcel, genSummarizedReportPDF } from '@/lib/pdf/inventory-movements-rapport'
 import { da } from 'date-fns/locale'
+import { HistoryType, historyTypes } from '@/data/inventory.types'
+
+type HistoryTypeWithAll = HistoryType | 'all'
 
 export function ModalSumReport() {
 	const [pending, startTransition] = useTransition()
@@ -37,6 +40,7 @@ export function ModalSumReport() {
 	const [selectedLocation, setSelectedLocation] = useState<string>()
 	const [itemGroups, setItemGroups] = useState<{ id: number; name: string }[]>([])
 	const [selectedItemGroup, setSelectedItemGroup] = useState<string>('all')
+	const [selectedMovementType, setSelectedMovementType] = useState<HistoryTypeWithAll>('all')
 	const [open, setOpen] = useState(false)
 	const [fileType, setFileType] = useState<'pdf' | 'excel'>('pdf')
 	const [date, setDate] = useState<DateRange | undefined>({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) })
@@ -70,6 +74,7 @@ export function ModalSumReport() {
 			!selectedLocation ||
 			!user ||
 			!selectedItemGroup ||
+			!selectedMovementType ||
 			!date?.from ||
 			!date?.to
 		) {
@@ -82,6 +87,7 @@ export function ModalSumReport() {
 				locationID: selectedLocation,
 				itemGroup: selectedItemGroup,
 				dateRange: cleanedDate,
+				type: selectedMovementType
 			})
 
 			if (res && res.data) {
@@ -103,6 +109,7 @@ export function ModalSumReport() {
 							isSummarized,
 							selectedItemGroup,
 							{ from: date.from!, to: date.to! },
+							selectedMovementType,
 							t
 						)
 						pdf.save(`lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.pdf`)
@@ -134,7 +141,7 @@ export function ModalSumReport() {
 			<DialogTriggerV2 asChild>
 				<Button variant='outline'>Download</Button>
 			</DialogTriggerV2>
-			<DialogContentV2 className='max-w-sm'>
+			<DialogContentV2 className='max-w-3xl'>
 				<DialogHeaderV2>
 					<DialogTitleV2>{t('inventory-sum-report.title')}</DialogTitleV2>
 				</DialogHeaderV2>
@@ -142,106 +149,137 @@ export function ModalSumReport() {
 					<DialogDescriptionV2>
 						{t('inventory-sum-report.desc')}
 					</DialogDescriptionV2>
-					<div className='grid gap-2'>
-						<Label>{t('inventory-sum-report.location-label')}</Label>
-						<Select
-							value={selectedLocation}
-							onValueChange={val => setSelectedLocation(val)}>
-							<SelectTrigger>
-								{locations.length > 0 ? (
-									<SelectValue
-										placeholder={t('inventory-sum-report.choose-location')}
-										defaultValue={selectedLocation}
-									/>
+					<div className='flex gap-8'>
+						<div className='flex flex-col gap-4 w-1/2'>
+							<div className='grid gap-2'>
+								<Label>{t('inventory-sum-report.location-label')}</Label>
+								<Select
+									value={selectedLocation}
+									onValueChange={val => setSelectedLocation(val)}>
+									<SelectTrigger>
+										{locations.length > 0 ? (
+											<SelectValue
+												placeholder={t('inventory-sum-report.choose-location')}
+												defaultValue={selectedLocation}
+											/>
+										) : (
+											<SelectValue
+												placeholder={t('inventory-sum-report.loading-location')}
+												defaultValue={selectedLocation}
+											/>
+										)}
+									</SelectTrigger>
+									<SelectContent>
+										{locations.map((l, i) => (
+											<SelectItem key={i} value={l.id}>
+												{l.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+							<div className='grid gap-2'>
+								<Label>{t('inventory-sum-report.item-group-label')}</Label>
+								<Select
+									value={selectedItemGroup}
+									onValueChange={val => setSelectedItemGroup(val)}>
+									<SelectTrigger>
+										{itemGroups.length > 0 ? (
+											<SelectValue
+												placeholder={t('inventory-sum-report.choose-item-group')}
+												defaultValue={selectedItemGroup}
+											/>
+										) : (
+											<SelectValue
+												placeholder={t('inventory-sum-report.loading-item-group')}
+												defaultValue={selectedItemGroup}
+											/>
+										)}
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="all">
+											{t('inventory-sum-report.item-group-all-label')}
+										</SelectItem>
+										{itemGroups.map((l, i) => (
+											<SelectItem key={i} value={l.name}>
+												{l.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+							<div className='grid gap-2'>
+								<Label>{t('inventory-sum-report.type-label')}</Label>
+								<Select
+									value={selectedMovementType}
+									onValueChange={val => setSelectedMovementType(val)}>
+									<SelectTrigger>
+										<SelectValue
+											placeholder={t('inventory-sum-report.loading-item-group')}
+											defaultValue={selectedMovementType}
+										/>
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value="all">
+											{t('inventory-sum-report.type-all-label')}
+										</SelectItem>
+										{historyTypes.map((t, i) => (
+											<SelectItem key={i} value={t} className='capitalize'>
+												{t}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+							<div className='flex gap-2 items-center'>
+								<Checkbox id='summarize' className='size-5' checked={isSummarized} onCheckedChange={checked => setIsSummarized(Boolean(checked))} />
+								<Label htmlFor='summarize'>{t('inventory-sum-report.summed-label')}</Label>
+							</div>
+							<div className='grid gap-2'>
+								<Label>{t('inventory-sum-report.file-format-label')}</Label>
+								<div className='w-full flex'>
+									<Button
+										onClick={() => setFileType('pdf')}
+										className='gap-2 rounded-r-none w-1/2'
+										variant={fileType == 'pdf' ? 'default' : 'outline'}
+										size='sm'>
+										PDF
+									</Button>
+									<Button
+										onClick={() => setFileType('excel')}
+										className='gap-2 rounded-l-none w-1/2'
+										variant={fileType != 'pdf' ? 'default' : 'outline'}
+										size='sm'>
+										Excel
+									</Button>
+								</div>
+							</div>
+						</div>
+						<div className='flex flex-col gap-4 w-1/2'>
+							<div className='grid gap-2'>
+								<Label>{t('inventory-sum-report.timeperiod-label')}</Label>
+								{date ? (
+									<p className='text-muted-foreground text-sm'>
+										{date.from ? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da }) : t("inventory-sum-report.choose-date", { context: "from" })} - {date.to ? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da }) : t("inventory-sum-report.choose-date", { context: "to" })}
+									</p>
 								) : (
-									<SelectValue
-										placeholder={t('inventory-sum-report.loading-location')}
-										defaultValue={selectedLocation}
-									/>
+									<p className='text-muted-foreground text-sm'>Vælg en til og fra dato</p>
 								)}
-							</SelectTrigger>
-							<SelectContent>
-								{locations.map((l, i) => (
-									<SelectItem key={i} value={l.id}>
-										{l.name}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-					<div className='grid gap-2'>
-						<Label>{t('inventory-sum-report.item-group-label')}</Label>
-						<Select
-							value={selectedItemGroup}
-							onValueChange={val => setSelectedItemGroup(val)}>
-							<SelectTrigger>
-								{itemGroups.length > 0 ? (
-									<SelectValue
-										placeholder={t('inventory-sum-report.choose-item-group')}
-										defaultValue={selectedItemGroup}
-									/>
-								) : (
-									<SelectValue
-										placeholder={t('inventory-sum-report.loading-item-group')}
-										defaultValue={selectedItemGroup}
-									/>
-								)}
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="all">
-									{t('inventory-sum-report.item-group-all-label')}
-								</SelectItem>
-								{itemGroups.map((l, i) => (
-									<SelectItem key={i} value={l.name}>
-										{l.name}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-					<div className='grid gap-2'>
-						<Label>{t('inventory-sum-report.timeperiod-label')}</Label>
-						{date && (
-							<p className='text-muted-foreground text-sm'>
-								{date.from ? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da }) : t("inventory-sum-report.choose-date", { context: "from" })} - {date.to ? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da }) : t("inventory-sum-report.choose-date", { context: "to" })}
-							</p>
-						)}
-						<Calendar
-							mode='range'
-							selected={date}
-							onSelect={setDate}
-							className='rounded border'
-							classNames={{
-								month: "w-full space-y-4",
-								head_row: "justify-around flex",
-								day: cn(
-									buttonVariants({ variant: "ghost" }),
-									"h-8 w-full p-0 font-normal aria-selected:opacity-100"
-								),
-							}}
-						/>
-					</div>
-					<div className='flex gap-2 items-center'>
-						<Checkbox id='summarize' className='size-5' checked={isSummarized} onCheckedChange={checked => setIsSummarized(Boolean(checked))} />
-						<Label htmlFor='summarize'>{t('inventory-sum-report.summed-label')}</Label>
-					</div>
-					<div className='grid gap-2'>
-						<Label>{t('inventory-sum-report.file-format-label')}</Label>
-						<div className='w-full flex'>
-							<Button
-								onClick={() => setFileType('pdf')}
-								className='gap-2 rounded-r-none w-1/2'
-								variant={fileType == 'pdf' ? 'default' : 'outline'}
-								size='sm'>
-								PDF
-							</Button>
-							<Button
-								onClick={() => setFileType('excel')}
-								className='gap-2 rounded-l-none w-1/2'
-								variant={fileType != 'pdf' ? 'default' : 'outline'}
-								size='sm'>
-								Excel
-							</Button>
+								<Calendar
+									mode='range'
+									selected={date}
+									onSelect={setDate}
+									className='rounded border'
+									classNames={{
+										month: "w-full space-y-4",
+										head_row: "justify-around flex",
+										day: cn(
+											buttonVariants({ variant: "ghost" }),
+											"h-8 w-full p-0 font-normal aria-selected:opacity-100"
+										),
+									}}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>

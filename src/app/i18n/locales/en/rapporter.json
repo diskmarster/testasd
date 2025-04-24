@@ -30,6 +30,9 @@
 		"choose-date": "Choose date",
 		"choose-date_to": "Choose to date",
 		"choose-date_from": "Choose from date",
+		"type-label": "Movement types",
+		"choose-type": "Choose movement type",
+		"type-all-label": "All",
 		"header-sku": "Sku",
 		"header-text1": "Text 1",
 		"header-group": "Item group",
@@ -44,6 +47,9 @@
 		"pdf-filters": "Filters:",
 		"pdf-period": "Time period:",
 		"pdf-group": "Item group:",
-		"pdf-summarized": "Summarized:"
+		"pdf-type": "type:",
+		"pdf-summarized": "Summarized:",
+		"pdf-summarized_true": "Yes",
+		"pdf-summarized_false": "No"
 	}
 }

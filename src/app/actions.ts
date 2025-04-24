@@ -1,6 +1,6 @@
 'use server'
 
-import { HistoryFilter } from '@/data/inventory.types'
+import { HistoryFilter, historyTypeZodSchema } from '@/data/inventory.types'
 import { adminAction, authedAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
@@ -60,11 +60,12 @@ export const genInventoryMovementsReportAction = adminAction
         from: z.coerce.date(),
         to: z.coerce.date(),
       }),
+			type: z.literal('all').or(historyTypeZodSchema)
     }),
   )
   .action(
     async ({
-      parsedInput: { locationID, dateRange, itemGroup },
+      parsedInput: { locationID, dateRange, itemGroup, type },
       ctx: { user },
     }) => {
       let historyFilter: HistoryFilter = {
@@ -73,6 +74,9 @@ export const genInventoryMovementsReportAction = adminAction
       if (itemGroup != 'all') {
         historyFilter.group = itemGroup
       }
+			if (type != 'all') {
+				historyFilter.type = type
+			}
 
       const [customer, history, location] = await Promise.all([
         customerService.getByID(user.customerID),

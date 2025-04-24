@@ -1,4 +1,4 @@
-import { HistoryWithSums } from '@/data/inventory.types'
+import { HistoryType, HistoryWithSums } from '@/data/inventory.types'
 import * as DateFNs from 'date-fns'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -114,6 +114,7 @@ export function genSummarizedReportPDF(
   isSummarized: boolean,
   itemGroup: string,
   dateRange: { from: Date; to: Date },
+  type: HistoryType | 'all',
   t: (key: string, opts?: any) => string,
 ): jsPDF {
   const doc = new jsPDF({
@@ -156,8 +157,16 @@ export function genSummarizedReportPDF(
   )
   doc.text(t('inventory-sum-report.pdf-group'), 10, 60)
   doc.text(itemGroup, 35, 60)
-  doc.text(t('inventory-sum-report.pdf-summarized'), 10, 65)
-  doc.text(isSummarized.toString(), 35, 65)
+  doc.text(t('inventory-sum-report.pdf-type'), 10, 65)
+  doc.text(type, 35, 65)
+  doc.text(t('inventory-sum-report.pdf-summarized'), 10, 70)
+  doc.text(
+    t('inventory-sum-report.pdf-summarized', {
+      context: isSummarized.toString(),
+    }),
+    35,
+    70,
+  )
 
   let rows: row[] = []
 
@@ -219,7 +228,7 @@ export function genSummarizedReportPDF(
   autoTable(doc, {
     head: [lineHeaders],
     body: lineData,
-    startY: 75,
+    startY: 80,
     theme: 'grid',
     headStyles: {
       fillColor: [240, 240, 240],
