@@ -40,7 +40,7 @@ import {
 } from '@/lib/database/schema/inventory'
 import { NewReorder, PartialReorder, Reorder, reorderTable } from '@/lib/database/schema/reorders'
 import { supplierTable } from '@/lib/database/schema/suppliers'
-import { and, count, desc, eq, getTableColumns, gte, lte, sql, sum } from 'drizzle-orm'
+import { and, count, desc, eq, getTableColumns, gte, lte, sql, SQLWrapper } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
 const PLACEMENT_COLS = getTableColumns(placementTable)
