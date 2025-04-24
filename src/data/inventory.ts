@@ -1,4 +1,8 @@
-import { FormattedInventory, FormattedReorder } from '@/data/inventory.types'
+import {
+  FormattedInventory,
+  FormattedReorder,
+  HistoryFilter,
+} from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
 import { UserID } from '@/lib/database/schema/auth'
@@ -308,14 +312,34 @@ export const inventory = {
   },
   getHistoryByLocationID: async function (
     locationID: LocationID,
+    filter?: HistoryFilter,
     trx: TRX = db,
   ): Promise<History[]> {
+    const whereStmt: SQLWrapper[] = []
+
+    if (filter) {
+      if (filter.date instanceof Date) {
+        whereStmt.push(lte(historyTable.inserted, filter.date))
+      } else if (filter.date) {
+        whereStmt.push(gte(historyTable.inserted, filter.date.from))
+        whereStmt.push(lte(historyTable.inserted, filter.date.to))
+      }
+
+      if (filter.type) {
+        whereStmt.push(eq(historyTable.type, filter.type))
+      }
+
+      if (filter.group) {
+        whereStmt.push(eq(historyTable.productGroupName, filter.group))
+      }
+    }
+
     const history = await trx
       .select({
         ...HISTORY_COLS,
       })
       .from(historyTable)
-      .where(eq(historyTable.locationID, locationID))
+      .where(and(eq(historyTable.locationID, locationID), ...whereStmt))
       .orderBy(desc(historyTable.inserted))
 
     return history
