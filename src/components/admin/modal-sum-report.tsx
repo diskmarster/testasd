@@ -212,7 +212,7 @@ export function ModalSumReport() {
 								<Label>{t('inventory-sum-report.type-label')}</Label>
 								<Select
 									value={selectedMovementType}
-									onValueChange={val => setSelectedMovementType(val)}>
+									onValueChange={val => setSelectedMovementType(val as HistoryTypeWithAll)}>
 									<SelectTrigger>
 										<SelectValue
 											placeholder={t('inventory-sum-report.loading-item-group')}
