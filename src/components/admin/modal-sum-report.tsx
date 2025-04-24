@@ -141,7 +141,7 @@ export function ModalSumReport() {
 			<DialogTriggerV2 asChild>
 				<Button variant='outline'>Download</Button>
 			</DialogTriggerV2>
-			<DialogContentV2 className='max-w-3xl'>
+			<DialogContentV2 className='md:max-w-3xl'>
 				<DialogHeaderV2>
 					<DialogTitleV2>{t('inventory-sum-report.title')}</DialogTitleV2>
 				</DialogHeaderV2>
@@ -149,8 +149,8 @@ export function ModalSumReport() {
 					<DialogDescriptionV2>
 						{t('inventory-sum-report.desc')}
 					</DialogDescriptionV2>
-					<div className='flex gap-8'>
-						<div className='flex flex-col gap-4 w-1/2'>
+					<div className='flex flex-col md:flex-row gap-8'>
+						<div className='flex flex-col gap-4 md:w-1/2'>
 							<div className='grid gap-2'>
 								<Label>{t('inventory-sum-report.location-label')}</Label>
 								<Select
@@ -255,7 +255,7 @@ export function ModalSumReport() {
 								</div>
 							</div>
 						</div>
-						<div className='flex flex-col gap-4 w-1/2'>
+						<div className='flex flex-col gap-4 md:w-1/2'>
 							<div className='grid gap-2'>
 								<Label>{t('inventory-sum-report.timeperiod-label')}</Label>
 								{date ? (
