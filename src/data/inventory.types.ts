@@ -81,6 +81,6 @@ export type HistoryFilter = {
     from: Date,
     to: Date,
   },
-  type?: HistoryType,
-	group?: string
+  type?: HistoryType[],
+	group?: string[]
 }

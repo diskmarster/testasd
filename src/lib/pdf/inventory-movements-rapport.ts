@@ -114,7 +114,7 @@ export function genSummarizedReportPDF(
   isSummarized: boolean,
   itemGroup: string,
   dateRange: { from: Date; to: Date },
-  type: HistoryType | 'all',
+  type: string,
   t: (key: string, opts?: any) => string,
 ): jsPDF {
   const doc = new jsPDF({
@@ -149,34 +149,39 @@ export function genSummarizedReportPDF(
   doc.text(metaData.userName, 200, 35, { align: 'right' })
 
   doc.text(t('inventory-sum-report.pdf-filters'), 10, 50)
+
   doc.text(t('inventory-sum-report.pdf-period'), 10, 55)
   doc.text(
     `${formatDate(dateRange.from, false)} - ${formatDate(dateRange.to, false)}`,
     35,
     55,
   )
-  doc.text(t('inventory-sum-report.pdf-group'), 10, 60)
-  doc.text(
-    itemGroup == 'all'
-      ? t('inventory-sum-report.item-group-all-label')
-      : itemGroup,
-    35,
-    60,
-  )
-  doc.text(t('inventory-sum-report.pdf-type'), 10, 65)
-  doc.text(
-    type == 'all' ? t('inventory-sum-report.type-all-label') : type,
-    35,
-    65,
-  )
-  doc.text(t('inventory-sum-report.pdf-summarized'), 10, 70)
+
+  doc.text(t('inventory-sum-report.pdf-summarized'), 10, 60)
   doc.text(
     t('inventory-sum-report.pdf-summarized', {
       context: isSummarized.toString(),
     }),
     35,
-    70,
+    60,
   )
+
+  doc.text(t('inventory-sum-report.pdf-type'), 10, 65)
+  doc.text(
+    type == 'all' ? t('inventory-sum-report.type-all-label') : type,
+    35,
+		65,
+  )
+
+	doc.text(t('inventory-sum-report.pdf-group'), 10, 70)
+ const groups = doc.splitTextToSize(
+    itemGroup == 'all'
+      ? t('inventory-sum-report.item-group-all-label')
+      : itemGroup,
+    165,
+  )
+	const height = (groups.length - 1) * 5
+	doc.text(groups, 35, 70)
 
   let rows: row[] = []
 
@@ -238,7 +243,7 @@ export function genSummarizedReportPDF(
   autoTable(doc, {
     head: [lineHeaders],
     body: lineData,
-    startY: 80,
+    startY: 75 + height,
     theme: 'grid',
     headStyles: {
       fillColor: [90, 120, 181],

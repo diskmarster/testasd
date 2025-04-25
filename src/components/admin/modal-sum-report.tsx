@@ -28,6 +28,8 @@ import { Checkbox } from '../ui/checkbox'
 import { genInventoryMovementsExcel, genSummarizedReportPDF } from '@/lib/pdf/inventory-movements-rapport'
 import { da } from 'date-fns/locale'
 import { HistoryType, historyTypes } from '@/data/inventory.types'
+import { MultiSelect, Option } from '../ui/multi-select'
+import { toast } from 'sonner'
 
 type HistoryTypeWithAll = HistoryType | 'all'
 
@@ -38,17 +40,26 @@ export function ModalSumReport() {
 	const { user } = useSession()
 	const [locations, setLocations] = useState<{ id: string; name: string }[]>([])
 	const [selectedLocation, setSelectedLocation] = useState<string>()
-	const [itemGroups, setItemGroups] = useState<{ id: number; name: string }[]>([])
-	const [selectedItemGroup, setSelectedItemGroup] = useState<string>('all')
-	const [selectedMovementType, setSelectedMovementType] = useState<HistoryTypeWithAll>('all')
+	const [itemGroups, setItemGroups] = useState<Option[]>([])
 	const [open, setOpen] = useState(false)
 	const [fileType, setFileType] = useState<'pdf' | 'excel'>('pdf')
 	const [date, setDate] = useState<DateRange | undefined>({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) })
 	const [isSummarized, setIsSummarized] = useState(false)
+	const [selectedTypes, setSelectedTypes] = useState<HistoryTypeWithAll[]>(['all'])
+	const [selectedGroups, setSelectedGroups] = useState<string[]>(['all'])
+
+	function reset() {
+		setSelectedLocation("")
+		setSelectedGroups(['all'])
+		setSelectedTypes(['all'])
+		setIsSummarized(false)
+		const today = new Date()
+		setDate({ from: startOfMonth(today), to: endOfMonth(today) })
+	}
 
 	function onOpenChange(open: boolean) {
 		setOpen(open)
-		setSelectedLocation(undefined)
+		reset()
 	}
 
 	function fetchLocations(customerID: CustomerID) {
@@ -65,7 +76,11 @@ export function ModalSumReport() {
 			const res = await fetchItemGroupsForCustomerActions({
 				customerID: customerID,
 			})
-			setItemGroups(res?.data ?? [])
+			const allOption: Option = { value: 'all', label: t('inventory-sum-report.item-group-all-label'), disabled: false }
+
+			if (res && res.data) {
+				setItemGroups([allOption, ...res.data])
+			}
 		})
 	}
 
@@ -73,10 +88,10 @@ export function ModalSumReport() {
 		if (
 			!selectedLocation ||
 			!user ||
-			!selectedItemGroup ||
-			!selectedMovementType ||
 			!date?.from ||
-			!date?.to
+			!date?.to ||
+			selectedGroups.length == 0 ||
+			selectedTypes.length == 0
 		) {
 			return
 		}
@@ -85,13 +100,21 @@ export function ModalSumReport() {
 			const cleanedDate = { from: date.from!, to: date.to! }
 			const res = await genInventoryMovementsReportAction({
 				locationID: selectedLocation,
-				itemGroup: selectedItemGroup,
+				itemGroup: selectedGroups,
 				dateRange: cleanedDate,
-				type: selectedMovementType
+				type: selectedTypes
 			})
 
 			if (res && res.data) {
 				const { customer, location, history } = res.data
+
+				if (history.length == 0) {
+					toast.error(t("inventory-sum-report.error-toast"), {
+						description: t("inventory-sum-report.error-toast-desc")
+					})
+					return
+				}
+
 				const today = new Date()
 
 				switch (fileType) {
@@ -107,9 +130,9 @@ export function ModalSumReport() {
 							meta,
 							history,
 							isSummarized,
-							selectedItemGroup,
+							selectedGroups.join(", "),
 							{ from: date.from!, to: date.to! },
-							selectedMovementType,
+							selectedTypes.map(v => v.slice(0,1).toUpperCase() + v.slice(1)).join(", "),
 							t
 						)
 						pdf.save(`lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.pdf`)
@@ -133,8 +156,15 @@ export function ModalSumReport() {
 		}
 	}, [])
 
-	const submitDisabled = pending || locations.length == 0 || !selectedLocation || itemGroups.length == 0 || !selectedItemGroup
-	const submitPending = pending && locations.length > 0 && selectedLocation && itemGroups.length > 0 && selectedItemGroup
+	const submitDisabled = pending || locations.length == 0 || !selectedLocation || itemGroups.length == 0 || selectedGroups.length == 0 || selectedTypes.length == 0
+	const submitPending = pending && locations.length > 0 && selectedLocation && itemGroups.length > 0
+
+	const historyOptions = [{ value: 'all', label: t('inventory-sum-report.item-group-all-label'), disabled: false }]
+	historyTypes.map(t => historyOptions.push({
+		label: t,
+		value: t,
+		disabled: false,
+	}))
 
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
@@ -180,56 +210,43 @@ export function ModalSumReport() {
 							</div>
 							<div className='grid gap-2'>
 								<Label>{t('inventory-sum-report.item-group-label')}</Label>
-								<Select
-									value={selectedItemGroup}
-									onValueChange={val => setSelectedItemGroup(val)}>
-									<SelectTrigger>
-										{itemGroups.length > 0 ? (
-											<SelectValue
-												placeholder={t('inventory-sum-report.choose-item-group')}
-												defaultValue={selectedItemGroup}
-											/>
-										) : (
-											<SelectValue
-												placeholder={t('inventory-sum-report.loading-item-group')}
-												defaultValue={selectedItemGroup}
-											/>
-										)}
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="all">
-											{t('inventory-sum-report.item-group-all-label')}
-										</SelectItem>
-										{itemGroups.map((l, i) => (
-											<SelectItem key={i} value={l.name}>
-												{l.name}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
+								<MultiSelect
+									disabled={pending}
+									options={itemGroups}
+									selected={selectedGroups}
+									onChange={(val) => {
+										const allIndex = val.findIndex(v => v == 'all')
+										if (val.length > 1 && allIndex == 0) {
+											setSelectedGroups(val.filter(v => v != 'all'))
+										} else if (allIndex != -1) {
+											setSelectedGroups(['all'])
+										} else {
+											setSelectedGroups(val)
+										}
+									}}
+									placeholder={t('inventory-sum-report.loading-item-group')}
+									searchPlaceholder={t('inventory-sum-report.loading-item-group')}
+								/>
 							</div>
 							<div className='grid gap-2'>
 								<Label>{t('inventory-sum-report.type-label')}</Label>
-								<Select
-									value={selectedMovementType}
-									onValueChange={val => setSelectedMovementType(val as HistoryTypeWithAll)}>
-									<SelectTrigger>
-										<SelectValue
-											placeholder={t('inventory-sum-report.loading-item-group')}
-											defaultValue={selectedMovementType}
-										/>
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="all">
-											{t('inventory-sum-report.type-all-label')}
-										</SelectItem>
-										{historyTypes.map((t, i) => (
-											<SelectItem key={i} value={t} className='capitalize'>
-												{t}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
+								<MultiSelect
+									disabled={pending}
+									options={historyOptions}
+									selected={selectedTypes}
+									onChange={val => {
+										const allIndex = val.findIndex(v => v == 'all')
+										if (val.length > 1 && allIndex == 0) {
+											setSelectedTypes(val.filter(v => v != 'all') as HistoryTypeWithAll[])
+										} else if (allIndex != -1) {
+											setSelectedTypes(['all'])
+										} else {
+											setSelectedTypes(val as HistoryTypeWithAll[])
+										}
+									}}
+									placeholder={t('inventory-sum-report.loading-item-group')}
+									searchPlaceholder={t('inventory-sum-report.loading-item-group')}
+								/>
 							</div>
 							<div className='flex gap-2 items-center'>
 								<Checkbox id='summarize' className='size-5' checked={isSummarized} onCheckedChange={checked => setIsSummarized(Boolean(checked))} />
@@ -260,10 +277,10 @@ export function ModalSumReport() {
 								<Label>{t('inventory-sum-report.timeperiod-label')}</Label>
 								{date ? (
 									<p className='text-muted-foreground text-sm'>
-										{date.from 
-											? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da }) 
-											: t("inventory-sum-report.choose-date", { context: "from" })} - {date.to 
-												? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da }) 
+										{date.from
+											? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da })
+											: t("inventory-sum-report.choose-date", { context: "from" })} - {date.to
+												? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da })
 												: t("inventory-sum-report.choose-date", { context: "to" })}
 									</p>
 								) : (
@@ -288,6 +305,12 @@ export function ModalSumReport() {
 					</div>
 				</div>
 				<DialogFooterV2>
+					<Button
+						onClick={() => reset()}
+						size='sm'
+						className='flex items-center gap-2 w-fit self-end'>
+						{t('inventory-sum-report.reset-button')}
+					</Button>
 					<Button
 						onClick={() => onSubmit()}
 						size='sm'

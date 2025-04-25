@@ -148,5 +148,5 @@ export const fetchItemGroupsForCustomerActions = adminAction
   .schema(z.object({ customerID: z.coerce.number() }))
   .action(async ({ parsedInput, ctx: { user } }) => {
 		const itemGroups = await inventoryService.getActiveGroupsByID(parsedInput.customerID)
-		return itemGroups.map(g => ({id: g.id, name: g.name}))
+		return itemGroups.map(g => ({value: g.name, label: g.name, disabled: false}))
   })

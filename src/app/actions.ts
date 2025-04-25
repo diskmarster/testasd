@@ -55,12 +55,12 @@ export const genInventoryMovementsReportAction = adminAction
   .schema(
     z.object({
       locationID: z.string(),
-      itemGroup: z.string(),
+      itemGroup: z.array(z.string()),
       dateRange: z.object({
         from: z.coerce.date(),
         to: z.coerce.date(),
       }),
-			type: z.literal('all').or(historyTypeZodSchema)
+			type: z.array(z.literal('all').or(historyTypeZodSchema))
     }),
   )
   .action(
@@ -71,10 +71,10 @@ export const genInventoryMovementsReportAction = adminAction
       let historyFilter: HistoryFilter = {
         date: dateRange,
       }
-      if (itemGroup != 'all') {
+      if (!itemGroup.includes('all')) {
         historyFilter.group = itemGroup
       }
-			if (type != 'all') {
+			if (!type.includes('all')) {
 				historyFilter.type = type
 			}
 
