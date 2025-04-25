@@ -21,7 +21,7 @@
 		"loading-location": "Henter lokationer...",
 		"download-button": "Download rapport",
 		"reset-button": "Nulstil",
-		"error-toast": "Igen historik",
+		"error-toast": "Ingen historik",
 		"error-toast-desc": "Der er ingen historik med de filtrer",
 		"file-format-label": "Filtype",
 		"item-group-label": "Varegruppe",
