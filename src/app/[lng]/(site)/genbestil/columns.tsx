@@ -268,10 +268,6 @@ export function getTableReorderColumns(
 			return value.includes(row.getValue(id))
 		},
 		meta: {
-			// if anyone is copying this to another table in the future
-			// remember that this needs to be implemented in the
-			// table component also for TableHeader.
-			// See: /inventory/table-reorder.tsx:175
 			isShadow: true
 		}
 	}
