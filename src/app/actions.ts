@@ -1,6 +1,6 @@
 'use server'
 
-import { HistoryFilter, historyTypeZodSchema } from '@/data/inventory.types'
+import { HistoryFilter, HistoryType, historyTypeZodSchema } from '@/data/inventory.types'
 import { adminAction, authedAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
@@ -75,7 +75,7 @@ export const genInventoryMovementsReportAction = adminAction
         historyFilter.group = itemGroup
       }
 			if (!type.includes('all')) {
-				historyFilter.type = type
+				historyFilter.type = type as HistoryType[]
 			}
 
       const [customer, history, location] = await Promise.all([
