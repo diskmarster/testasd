@@ -40,6 +40,7 @@ import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { useSearchParams } from 'next/navigation'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
+import { TableHeaderGroup } from '../table/table-header-group'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -158,18 +159,7 @@ export function TableAdminLocations({ data, user }: Props) {
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                  </TableHead>
-                ))}
-              </TableRow>
+							<TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup} />
             ))}
           </TableHeader>
           <TableBody>

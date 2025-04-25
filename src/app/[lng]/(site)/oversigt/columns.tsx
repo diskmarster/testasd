@@ -390,6 +390,9 @@ export function getTableOverviewColumns(
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+		meta: {
+			isShadow: true
+		}
   }
 
   const actionsCol: ColumnDef<InventoryTableRow> = {
