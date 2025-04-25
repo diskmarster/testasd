@@ -147,6 +147,8 @@
 		"label-end": " for at bekræfte sletningen",
 		"delete-btn": "Slet varen",
 		"cancel-btn": "Annuller",
-		"product-deleted": "Vare slettet"
+		"product-deleted": "Vare slettet",
+		"sku-copied": "Varenummer kopieret",
+		"copy-failed": "Kunne ikke kopiere varenummer"
 	}
 }

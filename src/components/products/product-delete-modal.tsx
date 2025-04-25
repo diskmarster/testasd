@@ -101,7 +101,15 @@ export function DeleteProductModal() {
 					<div className='grid gap-1'>
 						<Label className='font-medium'>
 							{t('delete-product-modal.label-start')}
-							<span className='font-semibold italic'>
+							<span className='font-semibold italic cursor-pointer hover:underline' onClick={async () => {
+								try {
+									await navigator.clipboard.writeText(productSku ?? '')
+									toast.success(t('delete-product-modal.sku-copied'))
+								} catch(e) {
+									console.error((e as Error).message)
+									toast.error(t('delete-product-modal.copy-failed'))
+								}
+							}}>
 								{productSku}
 							</span>
 							{t('delete-product-modal.label-end')}

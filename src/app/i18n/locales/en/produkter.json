@@ -146,6 +146,8 @@
 		"label-end": " to confirm deletion",
 		"delete-btn": "Delete product",
 		"cancel-btn": "Cancel",
-		"product-deleted": "Product deleted"
+		"product-deleted": "Product deleted",
+		"sku-copied": "Sku saved to clipboard",
+		"copy-failed": "Could not save sku to clipboard"
 	}
 }
