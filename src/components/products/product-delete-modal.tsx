@@ -51,12 +51,6 @@ export function DeleteProductModal() {
 	const onSubmit = <T = Element,>(e: FormEvent<T>) => {
 		e.preventDefault()
 
-		console.log({
-			productID,
-			productSku,
-			skuInput,
-		})
-
 		if (skuInput !== productSku || productID == undefined) {
 			console.error('invalid input')
 			return
