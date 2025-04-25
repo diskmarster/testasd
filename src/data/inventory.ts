@@ -1,4 +1,8 @@
-import { FormattedInventory, FormattedReorder } from '@/data/inventory.types'
+import {
+  FormattedInventory,
+  FormattedReorder,
+  HistoryFilter,
+} from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
 import { UserID } from '@/lib/database/schema/auth'
@@ -34,9 +38,25 @@ import {
   UnitID,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { NewReorder, PartialReorder, Reorder, reorderTable } from '@/lib/database/schema/reorders'
+import {
+  NewReorder,
+  PartialReorder,
+  Reorder,
+  reorderTable,
+} from '@/lib/database/schema/reorders'
 import { supplierTable } from '@/lib/database/schema/suppliers'
-import { and, count, desc, eq, getTableColumns, gte, lte, sql, sum } from 'drizzle-orm'
+import {
+  and,
+  count,
+  desc,
+  eq,
+  getTableColumns,
+  gte,
+  inArray,
+  lte,
+  sql,
+  SQLWrapper,
+} from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
 const PLACEMENT_COLS = getTableColumns(placementTable)
@@ -64,8 +84,8 @@ export const inventory = {
           ...PRODUCT_COLS,
           unit: UNIT_COLS.name,
           group: GROUP_COLS.name,
-		  fileCount: count(attachmentsTable.id),
-		  supplierName: supplierTable.name,
+          fileCount: count(attachmentsTable.id),
+          supplierName: supplierTable.name,
         },
         placement: { ...PLACEMENT_COLS },
         batch: { ...BATCH_COLS },
@@ -73,12 +93,13 @@ export const inventory = {
       .from(inventoryTable)
       .where(eq(inventoryTable.locationID, locationID))
       .innerJoin(productTable, eq(productTable.id, inventoryTable.productID))
-	  .leftJoin(attachmentsTable,
-		 and(
-			eq(attachmentsTable.refDomain, 'product'),
-			eq(attachmentsTable.refID, inventoryTable.productID)
-		 )
-		)
+      .leftJoin(
+        attachmentsTable,
+        and(
+          eq(attachmentsTable.refDomain, 'product'),
+          eq(attachmentsTable.refID, inventoryTable.productID),
+        ),
+      )
       .innerJoin(
         placementTable,
         eq(placementTable.id, inventoryTable.placementID),
@@ -86,19 +107,19 @@ export const inventory = {
       .innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
-	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
-	  .groupBy(
-		inventoryTable.inserted,
-		inventoryTable.updated,
-		inventoryTable.quantity,
-		inventoryTable.customerID,
-		inventoryTable.locationID,
-		productTable.id,
-		UNIT_COLS.name,
-		GROUP_COLS.name,
-		placementTable.id,
-		batchTable.id
-	  )
+      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .groupBy(
+        inventoryTable.inserted,
+        inventoryTable.updated,
+        inventoryTable.quantity,
+        inventoryTable.customerID,
+        inventoryTable.locationID,
+        productTable.id,
+        UNIT_COLS.name,
+        GROUP_COLS.name,
+        placementTable.id,
+        batchTable.id,
+      )
       .limit(pageSize)
       .offset((page - 1) * pageSize)
 
@@ -308,14 +329,34 @@ export const inventory = {
   },
   getHistoryByLocationID: async function (
     locationID: LocationID,
+    filter?: HistoryFilter,
     trx: TRX = db,
   ): Promise<History[]> {
+    const whereStmt: SQLWrapper[] = []
+
+    if (filter) {
+      if (filter.date instanceof Date) {
+        whereStmt.push(lte(historyTable.inserted, filter.date))
+      } else if (filter.date) {
+        whereStmt.push(gte(historyTable.inserted, filter.date.from))
+        whereStmt.push(lte(historyTable.inserted, filter.date.to))
+      }
+
+      if (filter.type) {
+        whereStmt.push(inArray(historyTable.type, filter.type))
+      }
+
+      if (filter.group) {
+        whereStmt.push(inArray(historyTable.productGroupName, filter.group))
+      }
+    }
+
     const history = await trx
       .select({
         ...HISTORY_COLS,
       })
       .from(historyTable)
-      .where(eq(historyTable.locationID, locationID))
+      .where(and(eq(historyTable.locationID, locationID), ...whereStmt))
       .orderBy(desc(historyTable.inserted))
 
     return history
@@ -357,10 +398,16 @@ export const inventory = {
       .insert(reorderTable)
       .values(reorderData)
       .onConflictDoUpdate({
-        target: [reorderTable.customerID, reorderTable.locationID, reorderTable.productID],
+        target: [
+          reorderTable.customerID,
+          reorderTable.locationID,
+          reorderTable.productID,
+        ],
         set: {
           minimum: sql.raw(`excluded.${reorderTable.minimum.name}`),
-          maxOrderAmount: sql.raw(`excluded.${reorderTable.maxOrderAmount.name}`),
+          maxOrderAmount: sql.raw(
+            `excluded.${reorderTable.maxOrderAmount.name}`,
+          ),
           orderAmount: sql.raw(`excluded.${reorderTable.orderAmount.name}`),
         },
       })
@@ -415,7 +462,7 @@ export const inventory = {
           ...PRODUCT_COLS,
           unit: UNIT_COLS.name,
           group: GROUP_COLS.name,
-		  supplierName: supplierTable.name,
+          supplierName: supplierTable.name,
         },
       })
       .from(reorderTable)
@@ -432,7 +479,7 @@ export const inventory = {
         inventoryTable,
         eq(inventoryTable.productID, reorderTable.productID),
       )
-	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
       .groupBy(reorderTable.productID)
 
     return reorders
@@ -582,7 +629,7 @@ export const inventory = {
       .where(eq(groupTable.id, groupID))
     return res
   },
-  getProductInventory: async function(
+  getProductInventory: async function (
     locationID: LocationID,
     productID: ProductID,
     trx: TRX = db,
@@ -596,35 +643,30 @@ export const inventory = {
         and(
           eq(inventoryTable.locationID, locationID),
           eq(inventoryTable.productID, productID),
-        )
+        ),
       )
 
     return res?.quantity ?? 0
   },
-  getHistoryForUserID: async function(
+  getHistoryForUserID: async function (
     userID: UserID,
     timePeriod?: {
-      from: Date,
-      to: Date,
+      from: Date
+      to: Date
     },
     tx: TRX = db,
   ): Promise<History[]> {
-    const timeWhere = 
-      timePeriod == undefined 
-        ? undefined 
+    const timeWhere =
+      timePeriod == undefined
+        ? undefined
         : and(
-          gte(historyTable.inserted, timePeriod.from),
-          lte(historyTable.inserted, timePeriod.to),
-        )
+            gte(historyTable.inserted, timePeriod.from),
+            lte(historyTable.inserted, timePeriod.to),
+          )
 
     return await tx
       .select()
       .from(historyTable)
-      .where(
-        and(
-          eq(historyTable.userID, userID),
-          timeWhere,
-        )
-      )
-  }
+      .where(and(eq(historyTable.userID, userID), timeWhere))
+  },
 }

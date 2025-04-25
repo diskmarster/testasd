@@ -4,6 +4,7 @@ import { inventory } from '@/data/inventory'
 import {
   FormattedInventory,
   FormattedReorder,
+  HistoryFilter,
   HistoryType,
   HistoryWithSums,
   InventoryAction,
@@ -464,9 +465,10 @@ export const inventoryService = {
   },
   getHistoryByLocationID: async function(
     locationID: LocationID,
+		filter?: HistoryFilter,
   ): Promise<HistoryWithSums[]> {
 
-    const history = await inventory.getHistoryByLocationID(locationID)
+    const history = await inventory.getHistoryByLocationID(locationID, filter)
 
     const newHistory = history.map(h => ({
       ...h,
