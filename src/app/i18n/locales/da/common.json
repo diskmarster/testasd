@@ -262,5 +262,6 @@
 		"couldnt-get-settings": "Kunne ikke hente app indstillinger",
 		"error-occured-getting-settings": "Der opstod en fejl under hentning af app indstillinger: "
 	},
-	"form-validation-error": "Der er en fejl i følgende felter:"
+	"form-validation-error": "Der er en fejl i følgende felter:",
+	"unknown-error": "Der skete en ukendt fejl"
 }

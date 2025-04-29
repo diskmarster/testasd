@@ -224,3 +224,7 @@ export const importProductsValidation = z.array(
     orderAmount: z.coerce.number().optional(),
   }),
 )
+
+export const deleteProductValidation = z.object({
+  productID: z.coerce.number(),
+})

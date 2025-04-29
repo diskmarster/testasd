@@ -1,5 +1,5 @@
 import { useTranslation } from '@/app/i18n/client'
-import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { FormattedProduct } from '@/data/products.types'
@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
 import { toggleBarredProductAction } from '@/app/[lng]/(site)/varer/produkter/actions'
 import Link from 'next/link'
+import { emitCustomEvent } from 'react-custom-events'
 
 interface Props {
   table: Table<FormattedProduct>
@@ -42,17 +43,31 @@ export function TableOverviewActions({ table, row }: Props) {
     })
   }
 
+  const openDeleteProductModal = () => {
+    emitCustomEvent('deleteProductByID', { id: row.original.id, sku: row.original.sku })
+  }
+
   return (
     <>
       <TableActionsWrapper>
-        <DropdownMenuItem asChild>
-		<Link href={`/${lng}/varer/produkter/${row.original.id}`}>
-          {t('view-product')}
-		</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleToggleBar}>
-          {row.original.isBarred ? t('unbar-this') : t('bar-this')}
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <Link href={`/${lng}/varer/produkter/${row.original.id}`}>
+              {t('view-product')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleToggleBar}>
+            {row.original.isBarred ? t('unbar-this') : t('bar-this')}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            className='!text-destructive'
+            onClick={openDeleteProductModal}>
+            {t('delete-this')}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </TableActionsWrapper>
     </>
   )
