@@ -47,6 +47,7 @@ export function ModalSumReport() {
 	const [isSummarized, setIsSummarized] = useState(false)
 	const [selectedTypes, setSelectedTypes] = useState<HistoryTypeWithAll[]>(['all'])
 	const [selectedGroups, setSelectedGroups] = useState<string[]>(['all'])
+	const [isWithPrices, setIsWithPrices] = useState(false)
 
 	function reset() {
 		setSelectedLocation("")
@@ -130,6 +131,7 @@ export function ModalSumReport() {
 							meta,
 							history,
 							isSummarized,
+							isWithPrices,
 							selectedGroups.join(", "),
 							{ from: date.from!, to: date.to! },
 							selectedTypes.map(v => v.slice(0,1).toUpperCase() + v.slice(1)).join(", "),
@@ -138,7 +140,7 @@ export function ModalSumReport() {
 						pdf.save(`lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.pdf`)
 						return
 					case 'excel':
-						const workbook = genInventoryMovementsExcel(history, isSummarized, t)
+						const workbook = genInventoryMovementsExcel(history, isSummarized, isWithPrices, t)
 						XLSX.writeFile(workbook, `lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.xlsx`)
 						return
 				}
@@ -251,6 +253,10 @@ export function ModalSumReport() {
 							<div className='flex gap-2 items-center'>
 								<Checkbox id='summarize' className='size-5' checked={isSummarized} onCheckedChange={checked => setIsSummarized(Boolean(checked))} />
 								<Label htmlFor='summarize'>{t('inventory-sum-report.summed-label')}</Label>
+							</div>
+							<div className='flex gap-2 items-center'>
+								<Checkbox id='with-prices' className='size-5' checked={isWithPrices} onCheckedChange={checked => setIsWithPrices(Boolean(checked))} />
+								<Label htmlFor='with-prices'>{t('inventory-sum-report.with-prices-label')}</Label>
 							</div>
 							<div className='grid gap-2'>
 								<Label>{t('inventory-sum-report.file-format-label')}</Label>
