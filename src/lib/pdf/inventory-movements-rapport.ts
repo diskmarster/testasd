@@ -129,7 +129,8 @@ export function genSummarizedReportPDF(
   const doc = new jsPDF({
     orientation: 'landscape',
     unit: 'mm',
-  })
+    format: 'a4',
+  }) as jsPDF & { lastAutoTable: { finalY: number } }
 
   doc.setCreationDate(metaData.dateOfReport)
   doc.setProperties({
@@ -247,7 +248,9 @@ export function genSummarizedReportPDF(
       line.push(numberToCurrency(r.costPriceTotal))
     }
 
-    line.push(DateFNs.formatDate(r.date, 'dd/MM/yy HH:mm'))
+    if (!isSummarized) {
+      line.push(DateFNs.formatDate(r.date, 'dd/MM/yy HH:mm'))
+    }
 
     return line
   })
@@ -272,14 +275,29 @@ export function genSummarizedReportPDF(
         t('inventory-sum-report.header-date'),
       ]
 
-  const columnWidths = isWithPrices
+  if (isSummarized) {
+    lineHeaders.pop()
+  }
+
+  let columnWidths = isWithPrices
     ? [33, 72, 33, 22, 28, 28, 33, 28]
-    : [42, 83, 42, 28, 42, 40]
+    : [44, 85, 44, 30, 46, 28]
+
+  if (isSummarized) {
+    columnWidths = columnWidths.slice(0, -1)
+    const fr = 28 / columnWidths.length
+    columnWidths = columnWidths.map(c => c + fr)
+  }
 
   const columnStyles: Record<number, { cellWidth: number }> = {}
   columnWidths.forEach((w, i) => {
     columnStyles[i] = { cellWidth: w }
   })
+
+  const totalCost = rows.reduce((acc, cur) => (acc += cur.costPriceTotal), 0)
+  const footer: string[] = new Array<string>(columnWidths.length).fill('', 1)
+  footer[0] = 'Total'
+  footer[columnWidths.length - 1] = numberToCurrency(totalCost)
 
   autoTable(doc, {
     head: [lineHeaders],
@@ -292,19 +310,31 @@ export function genSummarizedReportPDF(
       fontStyle: 'bold',
       fontSize: 9,
       halign: 'left',
-      lineWidth: 0.5,
-      lineColor: [90, 120, 181],
+      lineWidth: 0.2,
+      lineColor: [141, 155, 183],
+      cellPadding: { top: 1, right: 1, bottom: 1, left: 1 },
     },
     columnStyles: columnStyles,
-    alternateRowStyles: { fillColor: [255, 255, 255] },
+    alternateRowStyles: { fillColor: [252, 252, 252] },
     bodyStyles: {
       fontSize: 9,
       cellPadding: { top: 1, right: 1, bottom: 1, left: 1 },
       textColor: [0, 0, 0],
-      lineColor: [90, 120, 181],
+      lineColor: [141, 155, 183],
     },
     rowPageBreak: 'avoid',
     margin: { top: 10, left: 10, right: 0, bottom: 20 },
+    foot: isWithPrices ? [footer] : [],
+    footStyles: {
+      fillColor: [230, 230, 230],
+      textColor: 0,
+      fontStyle: 'bold',
+      fontSize: 9,
+      halign: 'left',
+      lineWidth: 0.2,
+      lineColor: [141, 155, 183],
+      cellPadding: { top: 1, right: 1, bottom: 1, left: 1 },
+    },
   })
 
   const pageCount = doc.internal.pages.length

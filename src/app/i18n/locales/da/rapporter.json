@@ -57,6 +57,7 @@
 		"pdf-type": "Type:",
 		"pdf-summarized": "Summeret:",
 		"pdf-summarized_true": "Ja",
-		"pdf-summarized_false": "Nej"
+		"pdf-summarized_false": "Nej",
+		"pdf-total-cost": "Total værdi ændring: {{value}}"
 	}
 }

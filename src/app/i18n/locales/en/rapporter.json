@@ -57,6 +57,7 @@
 		"pdf-type": "Type:",
 		"pdf-summarized": "Summarized:",
 		"pdf-summarized_true": "Yes",
-		"pdf-summarized_false": "No"
+		"pdf-summarized_false": "No",
+		"pdf-total-cost": "Total value change: {{value}}"
 	}
 }
