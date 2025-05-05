@@ -29,10 +29,11 @@ const lngToLocaleMap: Map<I18NLanguage, string> = new Map([
 ])
 
 export function numberToCurrency(val: number, lng: I18NLanguage = fallbackLng): string {
+	const normalized = Object.is(val, -0) ? 0 : val
   return new Intl.NumberFormat(lngToLocaleMap.get(lng) ?? 'da-dk', {
     style: 'currency',
     currency: 'DKK',
-  }).format(val)
+  }).format(normalized)
 }
 
 export function numberFormatter(lng: I18NLanguage = fallbackLng) {
@@ -43,7 +44,8 @@ export function numberFormatter(lng: I18NLanguage = fallbackLng) {
 }
 
 export function formatNumber(num: number, lng: I18NLanguage = fallbackLng): string {
-  return numberFormatter(lng).format(num)
+	const normalized = Object.is(num, -0) ? 0 : num
+  return numberFormatter(lng).format(normalized)
 }
 
 export function convertENotationToNumber(num: string): string {

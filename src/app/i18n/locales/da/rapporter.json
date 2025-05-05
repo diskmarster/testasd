@@ -29,6 +29,7 @@
 		"loading-item-group": "Henter varegruppe...",
 		"timeperiod-label": "Periode",
 		"summed-label": "Skal rapporten summeres?",
+		"with-prices-label": "Skal rapporten inkludere priser?",
 		"item-group-all-label": "Alle",
 		"choose-date": "Vælg dato",
 		"choose-date_to": "Vælg til dato",
@@ -43,6 +44,8 @@
 		"header-unit": "Enhed",
 		"header-amount": "Antal",
 		"header-date": "Dato",
+		"header-cost-price": "Kostpris",
+		"header-cost-price-total": "Kostpris (total)",
 		"pdf-title": "Lagerbevægelser for {{location}}",
 		"pdf-company": "Firma:",
 		"pdf-location": "Lokation:",
@@ -54,6 +57,7 @@
 		"pdf-type": "Type:",
 		"pdf-summarized": "Summeret:",
 		"pdf-summarized_true": "Ja",
-		"pdf-summarized_false": "Nej"
+		"pdf-summarized_false": "Nej",
+		"pdf-total-cost": "Total værdi ændring: {{value}}"
 	}
 }
