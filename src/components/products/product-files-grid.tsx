@@ -21,6 +21,7 @@ import Link from "next/link"
 import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
 import { Skeleton } from "../ui/skeleton"
+import { hasPermissionByRank } from "@/data/user.types"
 
 interface Props {
 	productID: number
@@ -68,7 +69,7 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 							<p className="text-muted-foreground">{t("details-page.files.no-documents")}</p>
 						)}
 						{pdf && pdf.map((p, i) => (
-							<PDFFile key={`${p.id}-${i}`} file={p} />
+							<PDFFile key={`${p.id}-${i}`} file={p} user={user} />
 						))}
 					</div>
 				</div>
@@ -89,7 +90,7 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 						))}
 					</div>
 				</div>
-				{files.length < 5 && (
+				{files.length < 5 || hasPermissionByRank(user.role,'bruger') && (
 					<FileDropZone user={user} productID={productID} fileCount={files.length} />
 				)}
 			</div>
@@ -106,8 +107,10 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 
 function PDFFile({
 	file,
+	user,
 }: {
 	file: Attachment,
+	user: User,
 }) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'produkter')
@@ -118,20 +121,22 @@ function PDFFile({
 					<div className="text-[10px] px-1 py-0.5 rounded-sm bg-red-500 font-semibold text-white">PDF</div>
 					<Link href={file.url} target="_target" className="group-hover/pdf:underline text-sm">{file.name}</Link>
 				</div>
-				<DropdownMenu>
-					<DropdownMenuTrigger>
-						<Button size='iconSm' variant='ghost'>
-							<Icons.ellipsis className="size-4" />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuItem>{t("details-page.files.document-show")}</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem className="text-destructive" onClick={() => {
-							emitCustomEvent("DeleteFileByID", { id: file.id, refID: file.refID })
-						}}>{t("details-page.files.document-delete")}</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				{hasPermissionByRank(user.role, 'bruger') && (
+					<DropdownMenu>
+						<DropdownMenuTrigger>
+							<Button size='iconSm' variant='ghost'>
+								<Icons.ellipsis className="size-4" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem>{t("details-page.files.document-show")}</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem className="text-destructive" onClick={() => {
+								emitCustomEvent("DeleteFileByID", { id: file.id, refID: file.refID })
+							}}>{t("details-page.files.document-delete")}</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				)}
 			</div>
 		</div>
 	)

@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import { siteConfig } from "@/config/site"
 import { Icons } from "../ui/icons"
 import { Reorder } from "@/lib/database/schema/reorders"
+import { hasPermissionByRank } from "@/data/user.types"
 
 interface Props {
 	productID: number
@@ -25,7 +26,7 @@ interface Props {
 	user: User
 }
 
-export function ProductReorder({ productID, reorder }: Props) {
+export function ProductReorder({ productID, reorder, user }: Props) {
 	const [pending, startTransition] = useTransition()
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'produkter')
@@ -90,13 +91,15 @@ export function ProductReorder({ productID, reorder }: Props) {
 					</div>
 					<div className="px-2 flex flex-col gap-2 pb-2 max-w-96">
 						<p className="text-sm">{t("details-page.reorder.no-reorder-description")}</p>
-						<Button
-							type="button"
-							className="w-fit ml-auto"
-							size='sm'
-							onClick={() => setIsEditing(true)}>
-							{t("details-page.reorder.btn-no-reorder")}
-						</Button>
+						{hasPermissionByRank(user.role, 'bruger') && (
+							<Button
+								type="button"
+								className="w-fit ml-auto"
+								size='sm'
+								onClick={() => setIsEditing(true)}>
+								{t("details-page.reorder.btn-no-reorder")}
+							</Button>
+						)}
 					</div>
 				</div>
 			</div>
@@ -106,8 +109,8 @@ export function ProductReorder({ productID, reorder }: Props) {
 						<p className="font-medium">{t('details-page.reorder.title')}</p>
 						<p className="text-muted-foreground text-sm text-pretty">{t('details-page.reorder.description')}</p>
 					</div>
-
 					<div className="flex">
+					{hasPermissionByRank(user.role, 'bruger') && (
 						<IfElse
 							condition={isEditing}
 							falseComp={
@@ -138,6 +141,7 @@ export function ProductReorder({ productID, reorder }: Props) {
 								</div>
 							}
 						/>
+					)}
 					</div>
 				</div>
 				<div className="space-y-0.5 w-full">

@@ -152,31 +152,33 @@ export function ProductDetails({ product, user }: Props) {
 					</div>
 					<p className="text-muted-foreground">{t('details-page.details.last-updated')}{formatDate(product.updated)}</p>
 				</div>
-				<IfElse
-					condition={isEditing}
-					trueComp={
-						<div className="flex gap-2">
-							<Button onClick={() => {
-								reset()
-								setIsEditing(false)
-							}}
-								variant='outline'>{t("details-page.details.button-cancel")}</Button>
-							<Button
-								disabled={pending || !formState.isDirty}
-								onClick={() => onSubmit(formValues)}
-								variant='default'
-								className="flex items-center gap-2">
-								{isSubmitting && (
-									<Icons.spinner className="size-4 animate-spin" />
-								)}
-								{t("details-page.details.button-update")}
-							</Button>
-						</div>
-					}
-					falseComp={
-						<Button onClick={() => setIsEditing(true)} variant='outline'>{t("details-page.details.button-edit")}</Button>
-					}
-				/>
+				{hasPermissionByRank(user.role, 'bruger') && (
+					<IfElse
+						condition={isEditing}
+						trueComp={
+							<div className="flex gap-2">
+								<Button onClick={() => {
+									reset()
+									setIsEditing(false)
+								}}
+									variant='outline'>{t("details-page.details.button-cancel")}</Button>
+								<Button
+									disabled={pending || !formState.isDirty}
+									onClick={() => onSubmit(formValues)}
+									variant='default'
+									className="flex items-center gap-2">
+									{isSubmitting && (
+										<Icons.spinner className="size-4 animate-spin" />
+									)}
+									{t("details-page.details.button-update")}
+								</Button>
+							</div>
+						}
+						falseComp={
+							<Button onClick={() => setIsEditing(true)} variant='outline'>{t("details-page.details.button-edit")}</Button>
+						}
+					/>
+				)}
 			</div>
 			<div className="w-full border rounded-md p-4 space-y-4">
 				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
