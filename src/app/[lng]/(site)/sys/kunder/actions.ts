@@ -21,6 +21,7 @@ import {
   toggleClientStatusValidation,
   updateClientValidation,
 } from './validation'
+import { inventoryService } from '@/service/inventory'
 
 export const createClientAction = sysAdminAction
   .schema(async () => await getSchema(createClientValidation, 'kunder'))
@@ -141,4 +142,11 @@ export const importHistoryAction = sysAdminAction
   .schema(importHistoryValidation)
   .action(async ({ parsedInput }) => {
     await productService.importInventoryHistory(parsedInput, '(v1)')
+  })
+
+export const fetchItemGroupsForCustomerActions = adminAction
+  .schema(z.object({ customerID: z.coerce.number() }))
+  .action(async ({ parsedInput, ctx: { user } }) => {
+		const itemGroups = await inventoryService.getActiveGroupsByID(parsedInput.customerID)
+		return itemGroups.map(g => ({value: g.name, label: g.name, disabled: false}))
   })

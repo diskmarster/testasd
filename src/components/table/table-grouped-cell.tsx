@@ -16,6 +16,8 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
   return (
     <>
       {row.getVisibleCells().map(cell => (
+				// @ts-ignore
+				!cell.getContext().column.columnDef.meta?.isShadow &&
         <TableCell
           key={cell.id}
           className={
@@ -41,6 +43,8 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
             <div
               className={cn(
                 'flex max-w-52',
+                // @ts-ignore
+                cell.column.columnDef.meta?.rightAlign && 'justify-end',
                 typeof cell.getValue() == 'number' && 'justify-end',
                 Array.isArray(cell.getValue<number | number[]>()) &&
                 cell
@@ -66,6 +70,8 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
             <div
               className={cn(
                 'flex max-w-52',
+                // @ts-ignore
+                cell.column.columnDef.meta?.rightAlign && 'justify-end',
                 typeof cell.getValue() == 'number' && 'justify-end',
                 Array.isArray(cell.getValue<number | number[]>()) &&
                 cell

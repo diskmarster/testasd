@@ -1,0 +1,1 @@
+ALTER TABLE `nl_customer_mail_settings` ADD `send_movements_mail` integer DEFAULT false;

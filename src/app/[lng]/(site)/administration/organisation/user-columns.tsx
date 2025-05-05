@@ -237,6 +237,9 @@ export function getTableUsersColumns(
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+		meta: {
+			isShadow: true
+		}
   }
 
   const appAccessCol: ColumnDef<UserNoHash> = {
@@ -246,6 +249,9 @@ export function getTableUsersColumns(
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+		meta: {
+			isShadow: true
+		}
   }
 
   const priceAccessCol: ColumnDef<UserNoHash> = {
@@ -255,6 +261,9 @@ export function getTableUsersColumns(
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id))
     },
+		meta: {
+			isShadow: true
+		}
   }
 
   const updatedCol: ColumnDef<UserNoHash> = {

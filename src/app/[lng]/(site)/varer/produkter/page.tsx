@@ -3,6 +3,7 @@ import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { ModalImportProducts } from '@/components/inventory/modal-import-products'
 import { CreateProductsForm } from '@/components/products/create-product-form'
+import { DeleteProductModal } from '@/components/products/product-delete-modal'
 import { ProductOverview } from '@/components/products/table-overview'
 import { hasPermissionByRank } from '@/data/user.types'
 import { customerService } from '@/service/customer'
@@ -60,6 +61,7 @@ export default async function Page({ params: { lng } }: PageProps) {
         units={units}
         groups={groups}
       />
+      <DeleteProductModal />
     </SiteWrapper>
   )
 }

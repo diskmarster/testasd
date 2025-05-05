@@ -1,9 +1,9 @@
 import { FormattedInventory } from '@/data/inventory.types'
 import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
 import * as XLSX from 'xlsx'
 import { formatDate, formatNumber, numberToCurrency } from '../utils'
 import { fallbackLng, I18NLanguage } from '@/app/i18n/settings'
+import autoTable from 'jspdf-autotable'
 
 type MetaData = {
   docTitle: string
@@ -233,22 +233,16 @@ export function genInventoryPDF(
   const groupHeaders = ['Varegruppe', 'Antal varer', 'Lagerværdi']
 
   const groupColumnWidths = [110, 40, 40]
-  const groupHeaderStyles = {
-    fillColor: [240, 240, 240],
-    textColor: [0],
-    fontStyle: 'bold',
-  }
 
-  // @ts-ignore
-  doc.autoTable({
+  autoTable(doc, {
     head: [groupHeaders],
     body: groupData,
     startY: 60,
     theme: 'grid',
     headStyles: {
-      fillColor: groupHeaderStyles.fillColor,
-      textColor: groupHeaderStyles.textColor,
-      fontStyle: groupHeaderStyles.fontStyle,
+			fillColor: [240, 240, 240],
+			textColor: 0,
+			fontStyle: 'bold',
       fontSize: 9,
       halign: 'left',
     },
@@ -262,8 +256,8 @@ export function genInventoryPDF(
       fontSize: 9,
       cellPadding: { top: 1, right: 4, bottom: 1, left: 1 },
       textColor: [0, 0, 0],
-      rowPageBreak: 'avoid',
     },
+		rowPageBreak: 'avoid',
     margin: { top: 10, left: 10, right: 0, bottom: 20 },
   })
 
@@ -295,23 +289,17 @@ export function genInventoryPDF(
   ]
 
   const columnWidths = [30, 65, 25, 25, 20, 25]
-  const headerStyles = {
-    fillColor: [240, 240, 240],
-    textColor: [0],
-    fontStyle: 'bold',
-  }
 
-  // @ts-ignore
-  doc.autoTable({
+  autoTable(doc,{
     head: [lineHeaders],
     body: lineData,
     // @ts-ignore
     startY: Math.floor(doc.lastAutoTable.finalY + 10),
     theme: 'grid',
     headStyles: {
-      fillColor: headerStyles.fillColor,
-      textColor: headerStyles.textColor,
-      fontStyle: headerStyles.fontStyle,
+    fillColor: [240, 240, 240],
+    textColor: 0,
+    fontStyle: 'bold',
       fontSize: 9,
       halign: 'left',
     },
@@ -328,8 +316,8 @@ export function genInventoryPDF(
       fontSize: 9,
       cellPadding: { top: 1, right: 4, bottom: 1, left: 1 },
       textColor: [0, 0, 0],
-      rowPageBreak: 'avoid',
     },
+		rowPageBreak: 'avoid',
     margin: { top: 10, left: 10, right: 0, bottom: 20 },
   })
 

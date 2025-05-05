@@ -32,6 +32,7 @@ import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
 import { ImportProducts } from '@/app/[lng]/(site)/varer/produkter/validation'
 import { suppliers } from '@/data/suppliers'
+import { tryCatch } from '@/lib/utils.server'
 
 export const productService = {
   create: async function(
@@ -790,4 +791,40 @@ export const productService = {
       await Promise.all(historyPromises)
     })
   },
+  softDeleteProduct: async function(
+    productID: ProductID,
+    customerID: CustomerID,
+  ): Promise<boolean> {
+    return await db.transaction(async (tx) => {
+      const p = await tryCatch(product.getByID(productID, tx))
+      if (!p.success || p.data === undefined) {
+				console.error(p.error ?? `No product found for product id: ${productID}`)
+        return false
+      }
+			if (p.data.customerID != customerID) {
+				console.error('Provided customer id did not match customer id of product')
+				return false
+			}
+
+      const deletedProductRes = await tryCatch(product.deleteProduct(productID, tx))
+      if (!deletedProductRes.success) {
+				console.error(deletedProductRes.error)
+
+        tx.rollback()
+        return false
+      }
+
+      const insertDeletedRes = await tryCatch(
+        product.insertDeletedProduct(p.data, tx)
+      )
+      if (!insertDeletedRes.success) {
+				console.error(insertDeletedRes.error)
+				
+        tx.rollback()
+        return false
+      }
+
+      return true
+    })
+  }
 }

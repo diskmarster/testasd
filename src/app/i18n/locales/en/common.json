@@ -262,5 +262,6 @@
 		"couldnt-get-settings": "Could not retrieve app settings",
 		"error-occured-getting-settings": "An error occurred while retrieving app settings: "
 	},
-	"form-validation-error": "There is an error in the following fields:"
+	"form-validation-error": "There is an error in the following fields:",
+	"unknown-error": "An unknown error occurred"
 }

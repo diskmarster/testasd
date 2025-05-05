@@ -53,6 +53,8 @@ func TestEndpoints(t *testing.T) {
 		{"GET /api/v2/settings", testV2CustomerSettingEndpoint},
 		{"GET /api/v1/products", testV1ProductEndpoint},
 		{"POST /api/v1/auth/sign-in", testV1SignInEndpoint},
+		{"GET /api/v1/cron/mails", testV1CronMailsEndpoint},
+		{"POST /api/v1/cron/mails/stock-movements", testV1CronMailsMovementsEndpoint},
 	}
 
 	for _, test := range tests {
@@ -75,9 +77,12 @@ type V1CustomerSetting struct {
 
 func testV1CustomerSettingEndpoint(t *testing.T) {
 	var jsonBody SuccessResponse[V1CustomerSetting]
-	err := get("/api/v1/settings", &jsonBody, func(r *http.Request) *http.Request { return r })
+	code, err := get("/api/v1/settings", &jsonBody, func(r *http.Request) *http.Request { return r })
 	if err == nil {
 		t.Fatalf("Expected error from unauthorized get, but got nil. Returned body: %v", jsonBody)
+	}
+	if code != http.StatusUnauthorized {
+		t.Fatalf("Expected status code %d, but got %d", http.StatusUnauthorized, code)
 	}
 
 	authData, err := authenticate(os.Getenv("email"), os.Getenv("password"))
@@ -86,10 +91,13 @@ func testV1CustomerSettingEndpoint(t *testing.T) {
 	}
 
 	var succesBody SuccessResponse[V1CustomerSetting]
-	err = get("/api/v1/settings", &succesBody, func(r *http.Request) *http.Request {
+	code, err = get("/api/v1/settings", &succesBody, func(r *http.Request) *http.Request {
 		r.Header.Set("Authorization", fmt.Sprintf("bearer %s", authData.Jwt))
 		return r
 	})
+	if code != http.StatusOK {
+		t.Errorf("Expected status code %d, but got %d", http.StatusOK, code)
+	}
 	if err != nil {
 		t.Fatalf("Error getting customer settings: %v", err)
 	}
@@ -112,7 +120,10 @@ type V2CustomerSetting struct {
 
 func testV2CustomerSettingEndpoint(t *testing.T) {
 	var jsonBody SuccessResponse[V2CustomerSetting]
-	err := get("/api/v2/settings", &jsonBody, func(r *http.Request) *http.Request { return r })
+	code, err := get("/api/v2/settings", &jsonBody, func(r *http.Request) *http.Request { return r })
+	if code != http.StatusUnauthorized {
+		t.Errorf("Expected status code %d, but got %d", http.StatusUnauthorized, code)
+	}
 	if err == nil {
 		t.Fatalf("Expected error from unauthorized get, but got nil. Returned body: %v", jsonBody)
 	}
@@ -123,10 +134,13 @@ func testV2CustomerSettingEndpoint(t *testing.T) {
 	}
 
 	var succesBody SuccessResponse[V2CustomerSetting]
-	err = get("/api/v2/settings", &succesBody, func(r *http.Request) *http.Request {
+	code, err = get("/api/v2/settings", &succesBody, func(r *http.Request) *http.Request {
 		r.Header.Set("Authorization", fmt.Sprintf("bearer %s", authData.Jwt))
 		return r
 	})
+	if code != http.StatusOK {
+		t.Errorf("Expected status code %d, but got %d", http.StatusOK, code)
+	}
 	if err != nil {
 		t.Fatalf("Error getting customer settings: %v", err)
 	}
@@ -143,10 +157,13 @@ func testV1ProductEndpoint(t *testing.T) {
 	var successBody SuccessResponse[[]struct {
 		ProductID int `json:"id"`
 	}]
-	err = get("/api/v1/products", &successBody, func(r *http.Request) *http.Request {
+	code, err := get("/api/v1/products", &successBody, func(r *http.Request) *http.Request {
 		r.Header.Set("Authorization", fmt.Sprintf("bearer %s", authData.Jwt))
 		return r
 	})
+	if code != http.StatusOK {
+		t.Errorf("Expected status code %d, but got %d", http.StatusOK, code)
+	}
 	if err != nil {
 		t.Fatalf("Error getting products: %v", err)
 	}
@@ -195,13 +212,185 @@ func testV1SignInEndpoint(t *testing.T) {
 
 	var jsonBody SuccessResponse[SignInData]
 
-	if err := post("/api/v1/auth/sign-in?method=pw", jsonBytes, &jsonBody, func(r *http.Request) *http.Request {
+	code, err := post("/api/v1/auth/sign-in?method=pw", jsonBytes, &jsonBody, func(r *http.Request) *http.Request {
 		r.Header.Set("Content-Type", "application/json")
 
 		return r
-	}); err != nil {
+	})
+	if code != http.StatusCreated {
+		t.Errorf("Expected status code %d, but got %d", http.StatusCreated, code)
+	}
+	if err != nil {
 		t.Fatalf("Error posting to sign-in endpoint: %v", err)
 	}
 
 	t.Logf("Returned SignInData: %v\n", jsonBody.Data)
+}
+
+type CronMail struct {
+	Id int `json:"id"`
+	Email *string `json:"email"`
+	UserID *int `json:"userID"`
+	UserEmail *string `json:"userEmail"`
+	CustomerID int `json:"customerID"`
+	LocationID string `json:"locationID"`
+	LocationName string `json:"locationName"`
+	Inserted string `json:"inserted"`
+	Updated string `json:"updated"`
+	SendStockMail bool `json:"sendStockMail"`
+	SendReorderMail bool `json:"sendReorderMail"`
+	SendMovementsMail bool `json:"sendMovementsMail"`
+}
+
+type CronMailData struct {
+	Mails []CronMail `json:"mails"`
+}
+
+func testV1CronMailsEndpoint(t *testing.T) {
+	secret := os.Getenv("cronSecret")
+	var reqBody CronMailData
+	code, err := get("/api/v1/cron/mails", &reqBody, func(r *http.Request) *http.Request { return r })
+	if code != http.StatusUnauthorized {
+		t.Errorf("Expected status code %d, but got %d", http.StatusUnauthorized, code)
+	}
+	if err == nil {
+		t.Fatalf("Expected request without auth header to fail, but it didnt!\n")
+	}
+
+	code, err = get("/api/v1/cron/mails", &reqBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Authorization", "Bearer")
+
+		return r 
+	})
+	if code != http.StatusUnauthorized {
+		t.Errorf("Expected status code %d, but got %d", http.StatusUnauthorized, code)
+	}
+	if err == nil {
+		t.Fatalf("Expected request without auth header to fail, but it didnt!\n")
+	}
+
+	code, err = get("/api/v1/cron/mails", &reqBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", secret))
+
+		return r 
+	})
+	if code != http.StatusOK {
+		t.Errorf("Expected status code %d, but got %d", http.StatusOK, code)
+	}
+	if err != nil {
+		t.Fatalf("Getting cron mails failed unexpectedly: %v", err)
+	}
+
+	stockMailCount := 0
+	movementsMailCount := 0
+	for _, mail := range reqBody.Mails {
+		if mail.SendStockMail {
+			stockMailCount += 1
+		}
+		if mail.SendMovementsMail {
+			movementsMailCount += 1
+		}
+	}
+
+	t.Logf("Stock mails: %d, Movement mails: %d\n", stockMailCount, movementsMailCount)
+
+	code, err = get("/api/v1/cron/mails?mailtype=sendMovementsMail", &reqBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", secret))
+
+		return r 
+	})
+	if code != http.StatusOK {
+		t.Errorf("Expected status code %d, but got %d", http.StatusOK, code)
+	}
+	if err != nil {
+		t.Fatalf("Getting cron mails failed unexpectedly: %v", err)
+	}
+
+	if len(reqBody.Mails) != movementsMailCount {
+		t.Errorf("Expected %d movement mails, but got %d\n", movementsMailCount, len(reqBody.Mails))
+	}
+
+	code, err = get("/api/v1/cron/mails?mailtype=sendStockMail", &reqBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", secret))
+
+		return r 
+	})
+	if code != http.StatusOK {
+		t.Errorf("Expected status code %d, but got %d", http.StatusOK, code)
+	}
+	if err != nil {
+		t.Fatalf("Getting cron mails failed unexpectedly: %v", err)
+	}
+
+	if len(reqBody.Mails) != stockMailCount {
+		t.Errorf("Expected %d stock mails, but got %d\n", stockMailCount, len(reqBody.Mails))
+	}
+}
+
+func testV1CronMailsMovementsEndpoint(t *testing.T) {
+	secret := os.Getenv("cronSecret")
+	var resBody CronMailData
+	// ######## UNAUTHORIZED REQUEST ASSERTIONS ########
+	code, err := post("/api/v1/cron/mails/stock-movements", nil, &resBody, func(r *http.Request) *http.Request { return r })
+	if code != http.StatusUnauthorized {
+		t.Errorf("Expected status code %d, but got %d", http.StatusUnauthorized, code)
+	}
+	if err == nil {
+		t.Fatalf("Expected request without auth header to fail, but it didnt!\n")
+	}
+
+	code, err = post("/api/v1/cron/mails/stock-movements", nil, &resBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Authorization", "Bearer")
+
+		return r 
+	})
+	if code != http.StatusUnauthorized {
+		t.Errorf("Expected status code %d, but got %d", http.StatusUnauthorized, code)
+	}
+	if err == nil {
+		t.Fatalf("Expected request without auth header to fail, but it didnt!\n")
+	}
+
+	// ######## AUTHORIZED REQUEST ASSERTIONS ########
+	code, err = get("/api/v1/cron/mails", &resBody, func(r *http.Request) *http.Request {
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", secret))
+
+		return r 
+	})
+	if code != http.StatusOK {
+		t.Errorf("Expected status code %d, but got %d", http.StatusOK, code)
+	}
+	if err != nil {
+		t.Fatalf("Getting cron mails failed unexpectedly: %v", err)
+	}
+
+	movementMails := make([]CronMail, 0)
+	for _, mail := range resBody.Mails {
+		if mail.SendMovementsMail {
+			movementMails = append(movementMails, mail)
+		}
+	}
+
+	if len(movementMails) == 0 {
+		t.Fatal("No movement mails were returned from cron mail endpoint\n")
+	} else {
+		mail := movementMails[0]
+		reqBody, err := json.Marshal(mail)
+		if err != nil {
+			t.Fatalf("Could not marshal mail %v: %v", mail, err)
+		}
+		t.Logf("%d movement mails. Attempting first mail in slice: %s\n", len(movementMails), string(reqBody))
+
+		code, err = post("/api/v1/cron/mails/stock-movements", reqBody, nil, func(r *http.Request) *http.Request {
+			r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", secret))
+
+			return r 
+		})
+		if code != http.StatusNoContent {
+			t.Errorf("Expected status code %d, but got %d", http.StatusNoContent, code)
+		}
+		if err != nil {
+			t.Fatalf("Sending mail failed unexpectedly: %v", err)
+		}
+	}
 }

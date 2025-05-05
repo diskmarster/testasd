@@ -27,7 +27,10 @@
 		"supplier": "Supplier",
 		"shouldReorder": "Low stock",
 		"shouldReorder_true": "Yes",
-		"shouldReorder_false": "No"
+		"shouldReorder_false": "No",
+		"isrequested": "In cart",
+		"isrequested_true": "Yes",
+		"isrequested_false": "No"
 	},
 	"filter-placeholders": {
 		"productNo": "Search product no",

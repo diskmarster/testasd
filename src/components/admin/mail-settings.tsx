@@ -140,29 +140,32 @@ export function MailSettings({ settings, user }: Props) {
 					<Link
 						className="hover:underline text-sm text-muted-foreground"
 						href={`/${lang}/faq/?spørgsmål=Hvilke mails jeg få tilsendt?`}
-					>
+						>
 						{t('mail-settings.link-to-faq')}
 					</Link>
 					{hasChanges ? (
 						<div className="flex items-center gap-2">
 							<Button variant='outline' onClick={() => {
 								setSettingsChanges(new Map(settings.map(s => [s.id, []])))
-							}}>
+								}}>
 								{t('mail-settings.button-cancel')}
 							</Button>
 							<Button
 								onClick={() => updateMailSettings()}
 								className="flex items-center gap-2">
 								{pending && <Icons.spinner className="size-4 animate-spin" />}
-								{t('mail-settings.button-apply', {
+							{t('mail-settings.button-apply', {
 									count: Array.from(settingsChanges.values())
 									.filter((val) => val.length > 0)
 									.length 
 								})}
 							</Button>
 						</div>
-					) : (
-						<CreateMailSetting user={user} />
+						) : (
+							<CreateMailSetting 
+								user={user} 
+								addSetting={(val) => setLocalSettings(prev => [...prev, val])}
+							/>
 					)}
 				</div>
 			</CardHeader>
@@ -186,7 +189,7 @@ function EmailList({
 	const { t } = useTranslation(lang, 'organisation')
 	const [limit, setLimit] = useState(10)
 	// TODO: remember small screens
-	const layoutClasses = "px-3 grid gap-2 grid-cols-[150px_100px_1fr_100px_100px_50px] items-center"
+	const layoutClasses = "px-3 grid gap-2 grid-cols-[150px_100px_1fr_100px_100px_100px_50px] items-center"
 	return (
 		<div className="flex flex-col gap-2">
 			<SettingsHeader layoutClasses={layoutClasses} />
@@ -225,6 +228,7 @@ function SettingsHeader({ layoutClasses }: { layoutClasses: string }) {
 			<p>{t('mail-settings.col-email')}</p>
 			<p className="text-center">{t('mail-settings.col-stock-value')}</p>
 			<p className="text-center">{t('mail-settings.col-reorder')}</p>
+			<p className="text-center">{t('mail-settings.col-movements')}</p>
 			<div />
 		</div>
 	)
@@ -264,34 +268,52 @@ function SingleSetting({
 			<p>{formatDate(setting.updated)}</p>
 			<p>{setting.locationName}</p>
 			<p>{setting.userID ? setting.userEmail : setting.email}</p>
-			<div
-				className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
-				onClick={() => update(setting.id, ['sendStockMail', !setting.sendStockMail])}>
-				{hasChange && hasChange.some(([key]) => key == 'sendStockMail')
-					? hasChange.find(([key]) => key == 'sendStockMail')?.at(1)
-						? <Icons.dashedCheck />
-						: <Icons.circleDashed className="size-5 text-amber-500" />
-					: setting.sendStockMail
-						? <Icons.circleCheck className="size-5 text-success" />
-						: <Icons.circle className="size-5" />
-				}
-			</div>
-			<div
-				className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
-				onClick={() => update(setting.id, ['sendReorderMail', !setting.sendReorderMail])}>
-				{hasChange && hasChange.some(([key]) => key == 'sendReorderMail')
-					? hasChange.find(([key]) => key == 'sendReorderMail')?.at(1)
-						? <Icons.dashedCheck />
-						: <Icons.circleDashed className="size-5 text-amber-500" />
-					: setting.sendReorderMail
-						? <Icons.circleCheck className="size-5 text-success" />
-						: <Icons.circle className="size-5" />
-				}
-			</div>
+			<SingleSettingCheckbox 
+				update={update}
+				hasChange={hasChange}
+				setting={setting}
+				settingKey="sendStockMail" />
+			<SingleSettingCheckbox 
+				update={update}
+				hasChange={hasChange}
+				setting={setting}
+				settingKey="sendReorderMail" />
+			<SingleSettingCheckbox 
+				update={update}
+				hasChange={hasChange}
+				setting={setting}
+				settingKey="sendMovementsMail" />
 			<div className="ml-auto">
 				<SingleSettingActions setting={setting} />
 			</div>
 		</article>
+	)
+}
+
+function SingleSettingCheckbox({
+	update,
+	setting,
+	settingKey,
+	hasChange,
+}: {
+		update: (key: number, change: SettingChange) => void,
+		setting: CustomerMailSettingWithEmail,
+		settingKey: keyof Pick<CustomerMailSettingWithEmail, 'sendStockMail' | 'sendReorderMail' | 'sendMovementsMail'>,
+		hasChange: SettingChange[] | undefined
+	}) {
+	return (
+		<div
+			className="mx-auto hover:[&>*]:text-amber-900 hover:[&>*]:border-amber-900 cursor-pointer"
+			onClick={() => update(setting.id, [settingKey, !setting[settingKey]])}>
+			{hasChange && hasChange.some(([key]) => key == settingKey)
+				? hasChange.find(([key]) => key == settingKey)?.at(1)
+					? <Icons.dashedCheck />
+					: <Icons.circleDashed className="size-5 text-amber-500" />
+				: setting[settingKey]
+					? <Icons.circleCheck className="size-5 text-success" />
+					: <Icons.circle className="size-5" />
+			}
+		</div>
 	)
 }
 
@@ -389,7 +411,7 @@ export function DeleteSettingModal() {
 	)
 }
 
-function CreateMailSetting({ user }: { user: User }) {
+function CreateMailSetting({ user, addSetting }: { user: User, addSetting: (val: CustomerMailSettingWithEmail) => void }) {
 	const lang = useLanguage()
 	const { t } = useTranslation(lang, 'organisation')
 	const [open, setOpen] = useState(false)
@@ -401,7 +423,7 @@ function CreateMailSetting({ user }: { user: User }) {
 	const filteredUsers = users.filter(u => u.email.toLowerCase().includes(search.toLowerCase()))
 	const userMap = new Map(users.map(u => [u.email, u.id]))
 
-	const { setValue, watch, reset, handleSubmit, formState: { isValid, isDirty } } = useForm<z.infer<typeof createMailSetting>>({
+	const { setValue, watch, reset, handleSubmit, formState, getFieldState } = useForm<z.infer<typeof createMailSetting>>({
 		resolver: zodResolver(createMailSetting),
 		defaultValues: {
 			mails: {
@@ -414,7 +436,9 @@ function CreateMailSetting({ user }: { user: User }) {
 		},
 		mode: 'onChange'
 	})
-
+	
+	const emailState = getFieldState('email', formState)
+	const { isValid, isDirty } = formState
 	const fv = watch()
 
 	useEffect(() => {
@@ -453,6 +477,10 @@ function CreateMailSetting({ user }: { user: User }) {
 		return hasSelected
 	}
 
+	function movementMailInvalid(): boolean {
+		return fv.mails.sendMovementsMail && fv.userID == null && emailState.isDirty && !emailState.invalid
+	}
+
 	useEffect(() => {
 		const user = userMap.get(search)
 		if (user) {
@@ -472,6 +500,8 @@ function CreateMailSetting({ user }: { user: User }) {
 					description: res.serverError
 				})
 				return
+			} else if (res && res.data) {
+				addSetting(res.data)
 			}
 			toast.success(t(siteConfig.successTitle), {
 				description: t('mail-settings.errors.create-settings-success')
@@ -518,6 +548,14 @@ function CreateMailSetting({ user }: { user: User }) {
 									selected={fv.mails.sendReorderMail}
 									onClick={() => setValue('mails.sendReorderMail', !fv.mails.sendReorderMail, { shouldValidate: true, shouldDirty: true })}
 								/>
+
+								<MailTypeCard
+									icon={<Icons.fileDigit className="size-4 text-muted-foreground" />}
+									title={t('mail-settings.add-modal.mail-types.movements-title')}
+									description={t('mail-settings.add-modal.mail-types.movements-description')}
+									selected={fv.mails.sendMovementsMail}
+									onClick={() => setValue('mails.sendMovementsMail', !fv.mails.sendMovementsMail, { shouldValidate: true, shouldDirty: true })}
+								/>
 							</div>
 						</div>
 						<div className="grid gap-2">
@@ -538,6 +576,9 @@ function CreateMailSetting({ user }: { user: User }) {
 						<div className="grid gap-2">
 							<Label>{t('mail-settings.add-modal.email')}</Label>
 							<div>
+								{movementMailInvalid() && (
+									<p className="text-sm text-destructive">{t('mail-settings.add-modal.email-error-message')}</p>
+								)}
 								<Input
 									list="users"
 									value={search}

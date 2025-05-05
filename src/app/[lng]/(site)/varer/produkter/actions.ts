@@ -7,6 +7,7 @@ import { productService } from '@/service/products'
 import { revalidatePath } from 'next/cache'
 import {
   createProductValidation,
+  deleteProductValidation,
   importProductsValidation,
   productToggleBarredValidation,
   updateProductValidation,
@@ -58,6 +59,7 @@ export const toggleBarredProductAction = editableAction
   .schema(productToggleBarredValidation)
   .action(
     async ({ parsedInput: { productID, isBarred }, ctx: { user, lang } }) => {
+      const { t } = await serverTranslation(lang, 'action-errors')
       const updatedProduct = await productService.updateBarredStatus(
         productID,
         isBarred,
@@ -66,7 +68,7 @@ export const toggleBarredProductAction = editableAction
 
       if (!updatedProduct) {
         throw new ActionError(
-          'Der gik noget galt med at opdatere spærring statusen.',
+          t('product-action.product-not-updated-barred'),
         )
       }
 
@@ -94,4 +96,17 @@ export const finishProductsAction = adminAction
     console.log(
       `imported products finished for ${ctx.user.customerID} by ${ctx.user.name}`,
     )
+  })
+
+export const deleteProductAction = adminAction
+  .metadata({ actionName: 'deleteProductAction' })
+  .schema(deleteProductValidation)
+  .action(async ({ parsedInput: { productID }, ctx }) => {
+    const {t} = await serverTranslation(ctx.lang, 'action-errors')
+
+    const res = await productService.softDeleteProduct(productID, ctx.user.customerID)
+    
+    if (!res) {
+      throw new ActionError(t('product-action.product-not-deleted'))
+    }
   })

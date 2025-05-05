@@ -48,9 +48,9 @@ export function getTableReorderColumns(
 			<TableHeader column={column} title={t('reorder-columns.productNo')} multiSort />
 		),
 		cell: ({ row }) => (
-			<Link 
-			href={`/${lng}/varer/produkter/${row.original.productID}`}
-			className='hover:underline'>
+			<Link
+				href={`/${lng}/varer/produkter/${row.original.productID}`}
+				className='hover:underline'>
 				{row.original.product.sku}
 			</Link>
 		),
@@ -86,33 +86,33 @@ export function getTableReorderColumns(
 		},
 	}
 
-  const supplierCol: ColumnDef<FormattedReorder> = {
-    accessorKey: 'product.supplierName',
-    id: 'supplierName',
-    header: ({ column }) => (
-      <TableHeader column={column} title={t('reorder-columns.supplier')} multiSort />
-    ),
-    aggregationFn: 'unique',
-    cell: ({ row }) => (
-		<div className={cn(!row.original.product.supplierName && 'italic text-muted-foreground flex')}>
-			{row.original.product.supplierName ? row.original.product.supplierName : t("reorder-columns.no-value")} <div className='w-0.5'></div>
-		</div>
-	),
-    sortingFn: (ra, rb) => {
+	const supplierCol: ColumnDef<FormattedReorder> = {
+		accessorKey: 'product.supplierName',
+		id: 'supplierName',
+		header: ({ column }) => (
+			<TableHeader column={column} title={t('reorder-columns.supplier')} multiSort />
+		),
+		aggregationFn: 'unique',
+		cell: ({ row }) => (
+			<div className={cn(!row.original.product.supplierName && 'italic text-muted-foreground flex')}>
+				{row.original.product.supplierName ? row.original.product.supplierName : t("reorder-columns.no-value")} <div className='w-0.5'></div>
+			</div>
+		),
+		sortingFn: (ra, rb) => {
 			let aVal = ra.original.product.supplierName
 			let bVal = rb.original.product.supplierName
 			if (aVal == null) aVal = ""
 			if (bVal == null) bVal = ""
 			return stringSortingFn(aVal, bVal)
-    },
+		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},
-    meta: {
-      viewLabel: t('reorder-columns.supplier'),
-      className: '[&>*]:block',
-    },
-  }
+		meta: {
+			viewLabel: t('reorder-columns.supplier'),
+			className: '[&>*]:block',
+		},
+	}
 
 	const quantityCol: ColumnDef<FormattedReorder> = {
 		accessorKey: 'quantity',
@@ -267,6 +267,23 @@ export function getTableReorderColumns(
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},
+		meta: {
+			isShadow: true
+		}
+	}
+
+	const isRequestedCol: ColumnDef<FormattedReorder> = {
+		accessorKey: 'isRequested',
+		header: () => undefined,
+		cell: () => undefined,
+		enableHiding: false,
+		enableSorting: true,
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+		meta: {
+			isShadow: true
+		}
 	}
 
 	return [
@@ -284,6 +301,7 @@ export function getTableReorderColumns(
 		updatedCol,
 		actionsCol,
 		shouldReorderCol,
+		isRequestedCol,
 	]
 }
 
@@ -333,26 +351,26 @@ export function getTableReorderFilters(
 		],
 	}
 
-  const supplierNameFilter: FilterField<FormattedReorder> = {
-	  column: table.getColumn('supplierName'),
-	  type: 'select',
-	  label: t('reorder-columns.supplier'),
-	  value: '',
-	  placeholder: t('reorder-columns.supplier'),
-	  options: [
-		  ...Array.from(
-			  table
-			  .getColumn('supplierName')!
-			  .getFacetedUniqueValues()
-			  .keys()
-		  )
-		  .filter(Boolean)
-		  .map(opt => ({
-			  label: opt,
-			  value: opt,
-		  }))
-	  ]
-  }
+	const supplierNameFilter: FilterField<FormattedReorder> = {
+		column: table.getColumn('supplierName'),
+		type: 'select',
+		label: t('reorder-columns.supplier'),
+		value: '',
+		placeholder: t('reorder-columns.supplier'),
+		options: [
+			...Array.from(
+				table
+					.getColumn('supplierName')!
+					.getFacetedUniqueValues()
+					.keys()
+			)
+				.filter(Boolean)
+				.map(opt => ({
+					label: opt,
+					value: opt,
+				}))
+		]
+	}
 
 	const quantityFilter: FilterField<FormattedReorder> = {
 		column: table.getColumn('quantity'),
@@ -406,8 +424,19 @@ export function getTableReorderFilters(
 		label: t("reorder-columns.shouldReorder"),
 		value: '',
 		options: [
-			{ label: t("reorder-columns.shouldReorder", {context: "true"}), value: true},
-			{ label: t("reorder-columns.shouldReorder", {context: "false"}), value: false},
+			{ label: t("reorder-columns.shouldReorder", { context: "true" }), value: true },
+			{ label: t("reorder-columns.shouldReorder", { context: "false" }), value: false },
+		],
+	}
+
+	const isRequestedFilter: FilterField<FormattedReorder> = {
+		column: table.getColumn('isRequested'),
+		type: 'select',
+		label: t("reorder-columns.isrequested"),
+		value: '',
+		options: [
+			{ label: t("reorder-columns.isrequested", { context: "true" }), value: true },
+			{ label: t("reorder-columns.isrequested", { context: "false" }), value: false },
 		],
 	}
 
@@ -423,6 +452,7 @@ export function getTableReorderFilters(
 		orderedFilter,
 		disposibleFilter,
 		shouldReorderFilter,
+		isRequestedFilter,
 		updatedFilter,
 	]
 }

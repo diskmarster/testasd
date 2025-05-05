@@ -1,5 +1,5 @@
 import { db, TRX } from '@/lib/database'
-import { UserID, userTable } from '@/lib/database/schema/auth'
+import { userTable } from '@/lib/database/schema/auth'
 import {
   Customer,
   CustomerID,
@@ -204,7 +204,7 @@ export const customer = {
     return res.rowsAffected == 1
   },
   getMailSettingsForCron: async function (
-		mailType?: keyof Pick<CustomerMailSetting, 'sendStockMail'>,
+		mailType?: keyof Pick<CustomerMailSetting, 'sendStockMail' | 'sendMovementsMail'>,
     tx: TRX = db,
   ): Promise<CustomerMailSettingWithEmail[]> {
 			const cols = getTableColumns(customerMailSettingsTable)
@@ -258,5 +258,24 @@ export const customer = {
 			.orderBy(customerMailSettingsTable.locationID, desc(customerMailSettingsTable.id))
 			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
       .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
+  },
+  getExtraMailInfo: async function(
+    settingID: CustomerMailSettingID,
+    tx: TRX = db,
+  ): Promise<{
+    userEmail: string | null
+    locationName: string
+  } | undefined> {
+    const [res] = await tx
+      .select({
+        userEmail: userTable.email,
+        locationName: locationTable.name,
+      })
+      .from(customerMailSettingsTable)
+      .where(eq(customerMailSettingsTable.id, settingID))
+			.innerJoin(locationTable, eq(locationTable.id, customerMailSettingsTable.locationID))
+      .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
+
+    return res
   }
 }

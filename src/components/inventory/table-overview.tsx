@@ -4,6 +4,7 @@ import {fuzzyFilter} from '@/lib/tanstack/filter-fns'
 import {
   getTableOverviewColumns,
   getTableOverviewFilters,
+  InventoryTableRow,
 } from '@/app/[lng]/(site)/oversigt/columns'
 import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
@@ -45,6 +46,7 @@ import { User } from 'lucia'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { CustomerSettings } from '@/lib/database/schema/customer'
+import { TableHeaderGroup } from '../table/table-header-group'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -57,7 +59,7 @@ const defaultVisibility = {
 }
 
 interface Props {
-  data: FormattedInventory[]
+  data: InventoryTableRow[]
   user: User
   plan: Plan
   units: Unit[]
@@ -220,18 +222,7 @@ export function TableOverview({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
+							<TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup} />
             ))}
           </TableHeader>
           <TableBody>

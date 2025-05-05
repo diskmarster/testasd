@@ -1,6 +1,8 @@
 import { db, TRX } from '@/lib/database'
 import { CustomerID } from '@/lib/database/schema/customer'
 import {
+    DeletedProduct,
+  deletedProductTable,
   groupTable,
   Inventory,
   inventoryTable,
@@ -14,7 +16,7 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, asc, count, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
+import { and, count, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
 import { FormattedProduct } from './products.types'
 import { supplierTable } from '@/lib/database/schema/suppliers'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
@@ -209,5 +211,22 @@ export const product = {
       .innerJoin(inventoryTable, eq(inventoryTable.productID, productTable.id))
       .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
     return product
+  },
+  deleteProduct: async function (
+    productID: ProductID,
+    tx: TRX = db,
+  ): Promise<Product | undefined> {
+    const [product] = await tx
+      .delete(productTable)
+      .where(eq(productTable.id, productID))
+      .returning()
+
+    return product
+  },
+  insertDeletedProduct: async function(
+    deletedProduct: DeletedProduct,
+    tx: TRX = db,
+  ): Promise<void> {
+    await tx.insert(deletedProductTable).values(deletedProduct)
   },
 }

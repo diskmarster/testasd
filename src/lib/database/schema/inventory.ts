@@ -9,6 +9,7 @@ import {
   integer,
   primaryKey,
   real,
+  SQLiteColumnBuilderBase,
   sqliteTable,
   text,
   unique,
@@ -54,9 +55,9 @@ export const placementTable = sqliteTable(
       .notNull()
       .default(false),
   },
-  t => ({
-    unq: unique().on(t.locationID, t.name),
-  }),
+  t => [
+    unique().on(t.locationID, t.name),
+  ],
 )
 
 export type Placement = typeof placementTable.$inferSelect
@@ -85,9 +86,9 @@ export const batchTable = sqliteTable(
       .notNull()
       .default(false),
   },
-  t => ({
-    unq: unique().on(t.locationID, t.batch),
-  }),
+  t => [
+    unique().on(t.locationID, t.batch),
+  ],
 )
 
 export type Batch = typeof batchTable.$inferSelect
@@ -115,9 +116,9 @@ export const groupTable = sqliteTable(
       .notNull()
       .default(false),
   },
-  t => ({
-    unq: unique().on(t.customerID, t.name),
-  }),
+  t => [
+    unique().on(t.customerID, t.name),
+  ],
 )
 
 export type Group = typeof groupTable.$inferSelect
@@ -125,53 +126,61 @@ export type NewGroup = typeof groupTable.$inferInsert
 export type PartialGroup = Partial<Group>
 export type GroupID = Group['id']
 
+const productColumnMap = {
+  id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+  customerID: integer('customer_id')
+    .notNull()
+    .references(() => customerTable.id, { onDelete: 'cascade' }),
+  groupID: integer('group_id')
+    .notNull()
+    .references(() => groupTable.id),
+  unitID: integer('unit_id')
+    .notNull()
+    .references(() => unitTable.id),
+  text1: text('text_1').notNull(),
+  text2: text('text_2').notNull().default(''),
+  text3: text('text_3').notNull().default(''),
+  sku: text('sku').notNull(),
+  barcode: text('barcode').notNull(),
+  costPrice: real('cost_price').notNull(),
+  salesPrice: real('sales_price').notNull().default(0),
+  inserted: integer('inserted', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`),
+  updated: integer('updated', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`)
+    .$onUpdateFn(() => new Date())
+    .$type<Date>(),
+  isBarred: integer('is_barred', { mode: 'boolean' }).notNull().default(false),
+  note: text('note').notNull().default(''),
+  supplierID: integer('supplier_id').references(() => supplierTable.id, {
+    onDelete: 'set null',
+  }),
+}
+
 export const productTable = sqliteTable(
   'nl_product',
-  {
-    id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-    customerID: integer('customer_id')
-      .notNull()
-      .references(() => customerTable.id, { onDelete: 'cascade' }),
-    groupID: integer('group_id')
-      .notNull()
-      .references(() => groupTable.id),
-    unitID: integer('unit_id')
-      .notNull()
-      .references(() => unitTable.id),
-    text1: text('text_1').notNull(),
-    text2: text('text_2').notNull().default(''),
-    text3: text('text_3').notNull().default(''),
-    sku: text('sku').notNull(),
-    barcode: text('barcode').notNull(),
-    costPrice: real('cost_price').notNull(),
-    salesPrice: real('sales_price').notNull().default(0),
-    inserted: integer('inserted', { mode: 'timestamp' })
-      .notNull()
-      .default(sql`(unixepoch())`),
-    updated: integer('updated', { mode: 'timestamp' })
-      .notNull()
-      .default(sql`(unixepoch())`)
-      .$onUpdateFn(() => new Date())
-      .$type<Date>(),
-    isBarred: integer('is_barred', { mode: 'boolean' })
-      .notNull()
-      .default(false),
-    note: text('note').notNull().default(''),
-    supplierID: integer('supplier_id').references(() => supplierTable.id, {
-      onDelete: 'set null',
-    }),
-  },
-  t => ({
-    unqBarcodeSku: unique().on(t.customerID, t.barcode, t.sku),
-    unqBarcode: unique().on(t.customerID, t.barcode),
-    unqSku: unique().on(t.customerID, t.sku),
-  }),
+  productColumnMap,
+  t => [
+    unique().on(t.customerID, t.barcode, t.sku),
+    unique().on(t.customerID, t.barcode),
+    unique().on(t.customerID, t.sku),
+  ],
 )
 
 export type Product = typeof productTable.$inferSelect
 export type NewProduct = typeof productTable.$inferInsert
 export type PartialProduct = Partial<Product>
 export type ProductID = Product['id']
+
+export const deletedProductTable = sqliteTable(
+  'nl_deleted_product',
+  productColumnMap,
+)
+
+export type DeletedProduct = Product
+export type NewDeletedProduct = NewProduct
 
 export const inventoryTable = sqliteTable(
   'nl_inventory',
@@ -201,8 +210,8 @@ export const inventoryTable = sqliteTable(
       .$onUpdateFn(() => new Date())
       .$type<Date>(),
   },
-  t => ({
-    pk: primaryKey({
+  t => [
+    primaryKey({
       columns: [
         t.productID,
         t.placementID,
@@ -211,7 +220,7 @@ export const inventoryTable = sqliteTable(
         t.customerID,
       ],
     }),
-  }),
+  ],
 )
 
 export type Inventory = typeof inventoryTable.$inferSelect
