@@ -90,7 +90,7 @@ export function ProductFilesGrid({ productID, files, user }: Props) {
 						))}
 					</div>
 				</div>
-				{files.length < 5 || hasPermissionByRank(user.role,'bruger') && (
+				{files.length < 5 && hasPermissionByRank(user.role,'bruger') && (
 					<FileDropZone user={user} productID={productID} fileCount={files.length} />
 				)}
 			</div>
