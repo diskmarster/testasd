@@ -478,7 +478,7 @@ function CompanySettings({
                         shouldDirty: true,
                       })
                     }>
-                    <SelectTrigger className='w-max'>
+                    <SelectTrigger className='w-[192px]'>
                       <SelectValue className='normal-case'>
                         {t('company-page.settings.app-signout-value', {
                           context: authTimeoutMinutes,
