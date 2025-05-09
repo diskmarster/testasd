@@ -49,35 +49,49 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
     },
   }
 
-  const isGrouped = (
+  const isGrouped =
     (hasPermissionByPlan(customer.plan, 'basis') &&
       customerSettings.usePlacement) ||
     (hasPermissionByPlan(customer.plan, 'pro') && customerSettings.useBatch)
+
+  const inventoryMap: Map<string, FormattedInventory> = inventory.reduce(
+    (acc, cur) => {
+      const keyParts = [String(cur.product.id)]
+      if (
+        hasPermissionByPlan(customer.plan, 'basis') &&
+        customerSettings.usePlacement
+      )
+        keyParts.push(String(cur.placement.id))
+      if (
+        hasPermissionByPlan(customer.plan, 'pro') &&
+        customerSettings.useBatch
+      )
+        keyParts.push(String(cur.batch.id))
+
+      const key = keyParts.join('|')
+
+      if (acc.has(key)) {
+        const current = acc.get(key)!
+        current.quantity += cur.quantity
+        acc.set(key, current)
+      } else {
+        acc.set(key, cur)
+      }
+
+      return acc
+    },
+    new Map<string, FormattedInventory>(),
   )
 
-  if (!isGrouped) {
-    const inventoryMap: Map<number, FormattedInventory> = inventory.reduce(
-      (acc, cur) => {
-        if (acc.has(cur.product.id)) {
-          const current = acc.get(cur.product.id)!
-          current.quantity += cur.quantity
-          acc.set(cur.product.id, current)
-        } else {
-          acc.set(cur.product.id, cur)
-        }
+  inventory = Array.from(inventoryMap.values())
 
-        return acc
-      },
-      new Map<number, FormattedInventory>(),
-    )
-
-    inventory = Array.from(inventoryMap.values())
-  }
-
-  const reorders = await inventoryService.getReordersByID(location, { withRequested: false })
+  const reorders = await inventoryService.getReordersByID(location, {
+    withRequested: false,
+  })
   const rows: InventoryTableRow[] = inventory.map(i => ({
     ...i,
-    disposable: reorders.find(r => r.productID === i.product.id)?.disposible ?? null,
+    disposable:
+      reorders.find(r => r.productID === i.product.id)?.disposible ?? null,
   }))
 
   return (
