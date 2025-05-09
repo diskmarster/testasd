@@ -60,7 +60,7 @@
     "items-created_other": "{{count}} varer blev oprettet"
   },
   "faq-page": {
-    "question-user-roles": "Hvad kan bruggerrollerne?",
+    "question-user-roles": "Hvad kan brugerrollerne?",
     "user-roles-description": "Brugerrollerne er fordelt på fem niveauer, med hver deres forskellige rettigheder. De fordeles således:",
     "role-admin": "Administrator ",
     "role-admin-description": "er den øverste brugerrolle på en kundekonto, og har adgang til alle funktioner, data relateret til beholdning og brugerstyring.",
@@ -110,7 +110,7 @@
       "answer": "Få tilsendt et Excelark og PDF med dit lager opdelt på både vare og varegrupper, summeret og klar til arbejde videre med. Denne mail sendes sidst dag hver måned."
     },
     "app-signout": {
-      "question": "Hvornår bliver mine brugere logget ud af appen",
+      "question": "Hvornår bliver mine brugere logget ud af appen?",
       "sub": "På Nem Lagers app kan dine brugere blive logget ud, hvis en af følgende scenarier forekommer:",
       "li-name": "Ukendt navn",
       "li-name_screen": "Skærmdvale",

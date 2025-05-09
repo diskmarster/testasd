@@ -110,7 +110,7 @@
       "answer": "Get an email containing an Excel- and PDF-file with your entire inventory value summed up and ready for further processing if needed."
     },
     "app-signout": {
-      "question": "When are my users signed out of the app",
+      "question": "When are my users signed out of the app?",
       "sub": "In the Nem Lager app, your users can be signed out if one of the following scenarios occurs:",
       "li-name": "Unknown name",
       "li-name_screen": "Screen sleep",

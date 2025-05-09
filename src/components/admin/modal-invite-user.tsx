@@ -219,7 +219,7 @@ export function ModalInviteUser({
                         {t('modal-invite-user.role-question')}{' '}
                         <Link
                           className='underline'
-                          href={`/faq?"${t('modal-invite-user.role-url')}"`}
+                          href={`/faq?spørgsmål=${t('modal-invite-user.role-url')}`}
                           target='_blank'>
                           {t('modal-invite-user.role-link')}
                         </Link>
@@ -300,7 +300,7 @@ export function ModalInviteUser({
                         className={cn(
                           'border rounded-sm py-2 px-3 flex items-center justify-between transition-colors h-9',
                           formValues.locationIDs.includes(loc.id) &&
-                            'bg-primary/5',
+                          'bg-primary/5',
                         )}>
                         <span className='text-muted-foreground text-sm'>
                           {loc.name}

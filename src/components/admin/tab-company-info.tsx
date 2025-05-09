@@ -460,7 +460,9 @@ function CompanySettings({
                     <Hint className='size-3 cursor-pointer'>
                       <p className='max-w-[60ch] text-pretty'>
                         {t('company-page.settings.app-signout-hint')}{' '}
-                        <Link href={`/${lng}/faq`} className='underline'>
+                        <Link
+                          href={`/${lng}/faq?spørgsmål=${t('company-page.settings.app-signout-faq-question')}`}
+                          className='underline'>
                           {t('company-page.settings.app-signout-hint-link')}
                         </Link>
                       </p>
