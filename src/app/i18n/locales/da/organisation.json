@@ -138,6 +138,8 @@
       "batch-description": "Batch nr. registreres ved tilgang, afgang, regulering og flyt",
       "app-signout": "App logud",
       "app-signout-description": "Indstil hvor længe appen må være i baggrunden før brugeren logges",
+      "app-signout-hint": "Brugeren logges automatisk ud på to måder. Når skærmen går i dvale, eller når appen har været i baggrunden et givent stykke tid.",
+      "app-signout-hint-link": "Klik her for læse mere.",
       "app-signout-value": "Ugyldig værdi",
       "app-signout-value_0": "Med det samme",
       "app-signout-value_5": "5 minutter",

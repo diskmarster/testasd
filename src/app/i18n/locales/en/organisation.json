@@ -138,6 +138,8 @@
       "batch-description": "Batch No. is recorded during incoming, outgoing, adjustment, and move",
       "app-signout": "App sign out",
       "app-signout-description": "Set how long the app can stay in the background before the user is signed out",
+      "app-signout-hint": "The user is automatically signed out in two ways: when the screen goes to sleep, or when the app has been in the background for a certain period of time.",
+      "app-signout-hint-link": "Click here to read more.",
       "app-signout-value": "Invalid value",
       "app-signout-value_0": "Immediately",
       "app-signout-value_5": "5 minutes",

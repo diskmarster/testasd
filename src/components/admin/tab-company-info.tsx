@@ -9,6 +9,7 @@ import { Plan } from '@/data/customer.types'
 import { hasPermissionByPlan } from '@/data/user.types'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
 import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
 import { useMemo, useState, useTransition } from 'react'
 import { FieldErrors, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -23,6 +24,7 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card'
+import { Hint } from '../ui/Hint'
 import { Icons } from '../ui/icons'
 import { Label } from '../ui/label'
 import {
@@ -453,8 +455,16 @@ function CompanySettings({
             <Setting>
               <SettingBody>
                 <SettingLabel className='flex-none w-2/3'>
-                  <SettingTitle>
+                  <SettingTitle className='flex gap-1'>
                     {t('company-page.settings.app-signout')}
+                    <Hint className='size-3 cursor-pointer'>
+                      <p className='max-w-[60ch] text-pretty'>
+                        {t('company-page.settings.app-signout-hint')}{' '}
+                        <Link href={`/${lng}/faq`} className='underline'>
+                          {t('company-page.settings.app-signout-hint-link')}
+                        </Link>
+                      </p>
+                    </Hint>
                   </SettingTitle>
                   <SettingDescription>
                     {t('company-page.settings.app-signout-description')}
