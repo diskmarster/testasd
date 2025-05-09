@@ -96,17 +96,33 @@ export const updateCustomerSettingsValidation = (
   t: (key: string, options?: any) => string,
 ) =>
   z.object({
-    id: z.coerce.number({message: t('organisation.required', {fieldName: 'customerSettingsID'})}),
-    customerID: z.coerce.number({message: t('organisation.required', {fieldName: 'customerID'})}),
+    id: z.coerce.number({
+      message: t('organisation.required', { fieldName: 'customerSettingsID' }),
+    }),
+    customerID: z.coerce.number({
+      message: t('organisation.required', { fieldName: 'customerID' }),
+    }),
     settings: z.object({
-      useReference: z.object({
-        tilgang: z.coerce.boolean(),
-        afgang: z.coerce.boolean(),
-        regulering: z.coerce.boolean(),
-        flyt: z.coerce.boolean(),
-      }, {message: t('organisation.required', {fieldName: 'useReference'})}),
-      usePlacement: z.coerce.boolean({message: t('organisation.required', {fieldName: 'usePlacement'})}),
-      useBatch: z.coerce.boolean({message: t('organisation.required', {fieldName: 'useBatch'})}),
+      useReference: z.object(
+        {
+          tilgang: z.coerce.boolean(),
+          afgang: z.coerce.boolean(),
+          regulering: z.coerce.boolean(),
+          flyt: z.coerce.boolean(),
+        },
+        { message: t('organisation.required', { fieldName: 'useReference' }) },
+      ),
+      usePlacement: z.coerce.boolean({
+        message: t('organisation.required', { fieldName: 'usePlacement' }),
+      }),
+      useBatch: z.coerce.boolean({
+        message: t('organisation.required', { fieldName: 'useBatch' }),
+      }),
+      authTimeoutMinutes: z.coerce.number({
+        message: t('organisation.required', {
+          fieldName: 'authTimeoutMinutes',
+        }),
+      }),
     }),
   })
 
@@ -115,22 +131,29 @@ export const resetUserPasswordValidation = z.object({
   email: z.string().email(),
 })
 
-export const editUserValidation = (t: (key: string, options?: any) => string) => (
+export const editUserValidation = (t: (key: string, options?: any) => string) =>
   z.object({
     userID: z.coerce.number(),
     data: z.object({
-      name: z.string().min(2, { message: t('modal-edit-user.validation.name', { count: 2 }) }),
-      email: z.string().email({ message: t('modal-edit-user.validation.email') }),
+      name: z
+        .string()
+        .min(2, {
+          message: t('modal-edit-user.validation.name', { count: 2 }),
+        }),
+      email: z
+        .string()
+        .email({ message: t('modal-edit-user.validation.email') }),
       role: userRoleZodSchema,
       locationIDs: z
-      .array(z.string())
-      .min(1, { message: t('modal-edit-user.validation.locationIDs', { count: 1 }) }),
+        .array(z.string())
+        .min(1, {
+          message: t('modal-edit-user.validation.locationIDs', { count: 1 }),
+        }),
       webAccess: z.coerce.boolean(),
       appAccess: z.coerce.boolean(),
       priceAccess: z.coerce.boolean(),
-    })
+    }),
   })
-)
 
 export const getLocationsByUserIDValidation = z.object({
   userID: z.coerce.number(),

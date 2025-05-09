@@ -1,295 +1,305 @@
 {
-	"organisation-page": {
-		"title": "Organisation",
-		"description": "Her kan du administrere dine brugere, lokationer og firma."
-	},
-	"modal-toggle-user": {
-		"title": "Skift brugerstatus",
-		"description1": "Denne handling er ikke permanent. Hvis du aktiverer en bruger, vil de kunne logge ind på ",
-		"description2": " igen. Hvis du deaktiverer en bruger, vil de blive logget af og vil ikke kunne logge ind igen, før de er genaktiveret.",
-		"status": "Status",
-		"choose-status": "Vælg status",
-		"cancel-button": "Luk",
-		"update-button": "Opdater",
-		"active": "Aktiv",
-		"inactive": "Inaktiv"
-	},
-	"modal-reset-userpw": {
-		"title": "Nulstil brugerens adgangskode",
-		"description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres adgangskode.",
-		"cancel-button": "Luk",
-		"reset-button": "Send e-mail"
-	},
-	"modal-edit-location": {
-		"title": "Rediger lokation",
-		"description": "Her kan du redigere en lokations navn og adgangsniveau for dine brugere.",
-		"location-name": "Lokationsnavn",
-		"location-name-placeholder": "Indtast lokationsnavn",
-		"access-level": "Adgangsniveau",
-		"users-chosen": "brugere valgt",
-		"create-button": "Opdater",
-		"create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du redigerer lokationer.",
-		"own-user": "Du kan ikke redigere din egen brugers rettigheder, så derfor er den ikke vist her."
-	},
-	"modal-toggle-location": {
-		"title": "Skift lokationsstatus",
-		"description": "Denne handling er ikke permanent. Hvis du aktiverer en lokation, kan den tilgås igen. Hvis du deaktiverer en lokation, kan den kun tilgås af administratorer, indtil den er genaktiveret.",
-		"status": "Status",
-		"choose-status": "Vælg status",
-		"cancel-button": "Luk",
-		"update-button": "Opdater",
-		"active": "Aktiv",
-		"inactive": "Inaktiv"
-	},
-	"table-admin-locations": {
-		"no-locations-found": "Ingen lokationer fundet"
-	},
-	"location-page": {
-		"title": "Lokationer",
-		"description": "Administrer din organisations lokationer",
-		"location-limit-reached": "Du har nået det maksimale antal lokationer for din plan.",
-		"location-upgrade-plan": "Opgrader din plan for at tilføje flere lokationer."
-	},
-	"location-columns": {
-		"location-name": "Lokationsnavn",
-		"location-name-placeholder": "Søg efter lokationsnavn",
-		"status": "Status",
-		"active": "Aktiv",
-		"inactive": "Inaktiv",
-		"updated": "Opdateret",
-		"created": "Oprettet",
-		"mod-count": "Moderatorer",
-		"users-count": "Brugere",
-		"outgoing-count": "Afgang",
-		"read-count": "Læseadgang",
-		"users": "Brugere",
-		"users-mod-short": "M",
-		"users-mod-long": "Moderator",
-		"users-user-short": "B",
-		"users-user-long": "Bruger",
-		"users-out-short": "A",
-		"users-out-long": "Afgang",
-		"users-read-short": "L",
-		"users-read-long": "Læseadgang"
-	},
-	"user-page": {
-		"title": "Brugere",
-		"description": "Administrer din organisations brugere",
-		"user-limit-reached": "Du har nået det maksimale antal brugere for din plan.",
-		"user-upgrade-plan": "Opgrader din plan for at tilføje flere brugere."
-	},
-	"user-columns": {
-		"user-name": "Navn",
-		"user-name-placeholder": "Søg efter brugernavn",
-		"email": "E-mail",
-		"email-placeholder": "Søg efter e-mail",
-		"user-role": "Rolle",
-		"status": "Status",
-		"access": "Adgange",
-		"access-web": "Web adgang",
-		"access-app": "App adgang",
-		"access-price": "Pris adgang",
-		"access-none": "Ingen",
-		"access_true": "Ja",
-		"access_false": "Nej",
-		"active": "Aktiv",
-		"inactive": "Inaktiv",
-		"updated": "Opdateret",
-		"created": "Oprettet"
-	},
-	"table-locations-actions": {
-		"update": "Opdater",
-		"toggle-status": "Skift status"
-	},
-	"table-users-actions": {
-		"edit-user": "Rediger",
-		"toggle-status": "Skift status",
-		"reset-password": "Nulstil adgangskode",
-		"reset-pin": "Nulstil PIN",
-		"same-user-tooltip": "Du må ikke ændre din egen bruger her, gå til din profil istedet",
-		"no-permission-tooltip": "Du har ikke tilladelse til at ændre denne bruger",
-		"delete-user": "Slet bruger"
-	},
-	"company-page": {
-		"title": "Firma",
-		"title_details": "Firmadetaljer",
-		"title_settings": "Firmaindstillinger",
-		"description": "Administrer firmadetaljer og indstillinger.",
-		"description_details": "Se og opdater dine firmadetaljer.",
-		"description_settings": "Se og opdater dine firmaindstillinger.",
-		"update-button": "Opdater",
-		"update-button_details": "Opdater detaljer",
-		"update-button_settings": "Opdater indstillinger",
-		"update-success": "Data blev opdateret",
-		"update-success_details": "Din firmaprofil blev opdateret",
-		"update-success_settings": "Dine firmaindstillinger blev opdateret",
-		"form-company-edit": {
-			"company-name": "Firma navn",
-			"company-description": "Firma navn bruges i email kommunikation",
-			"email": "E-mail",
-			"email-description": "E-mail bruges til kommunikation mellem jer og Skancode, eksempelvis service meddelelser"
-		},
-		"settings": {
-			"reference": "Konto/sag",
-			"reference-description": "Konto/sag registreres ved tilgang, afgang, regulering og flyt",
-			"placement": "Placeringer",
-			"placement-description": "Placeringer registreres ved tilgang, afgang, regulering og flyt",
-			"batch": "Batch nr.",
-			"batch-description": "Batch nr. registreres ved tilgang, afgang, regulering og flyt"
-		},
-		"error": {
-			"name": "Ukendt navn",
-			"name_id": "Firmaindstilling ID",
-			"name_customerID": "Firma ID",
-			"name_settings.useReference": "Konto/Sag",
-			"name_settings.usePlacement": "Placeringer",
-			"name_settings.useBatch": "Batch nr.",
-			"name_test.nestedTest": "Test.NestedTest"
-		}
-	},
-	"modal-invite-user": {
-		"title": "Inviter ny bruger",
-		"description": "Send en aktiveringsmail til en af dine medarbejdere for hurtigt at få dem i gang med at bruge ",
-		"email": "E-mail",
-		"email-placeholder": "Skriv e-mail til den nye bruger",
-		"role": "Rolle",
-		"role-placeholder": "Vælg en rolle",
-		"user": "Bruger",
-		"local-admin": "Lokal Admin",
-		"company-admin": "Firma Admin",
-		"location-access": "Lokationer",
-		"of": "af",
-		"locations-chosen": "lokationer valgt",
-		"send-invite": "Send invitation",
-		"role-question": "Hvad kan rollerne? Læs mere på vores",
-		"role-link": "F.A.Q. side",
-		"role-url": "hvad kan brugerrollerne?",
-		"user-rights": "Rettigheder",
-		"user-rights-web": "Bruger skal have adgang til web",
-		"user-rights-app": "Bruger skal have adgang til app",
-		"user-rights-prices": "Bruger skal have adgang til at se priser",
-		"tooltip": "Inviter ny bruger"
-	},
-	"modal-create-location": {
-		"title": "Opret ny lokation",
-		"description": "Nye lokationer kan tilgås med det samme i dropdown-menuen i øverste højre hjørne.",
-		"location-name": "Lokationsnavn",
-		"location-name-placeholder": "Indtast lokationsnavn",
-		"access-level": "Adgangsniveau",
-		"of": " af ",
-		"users-chosen": "brugere valgt",
-		"create-button": "Opret",
-		"create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du opretter lokationer.",
-		"own-user": "Din egen bruger vil automatisk blive tildelt rettighed til den nye lokation, og er derfor ikke vist her.",
-		"tooltip": "Opret ny lokation"
-	},
-	"toasts": {
-		"location-created": "blev oprettet succesfuldt",
-		"location-updated": "blev opdateret succesfuldt",
-		"invitation-sent": "Invitation sendt til ",
-		"reset-pw-email": "Email sendt til ",
-		"location": "lokation",
-		"locations": "lokationer",
-		"locations-toggle": " opdateret",
-		"user": "bruger",
-		"users": "brugere",
-		"users-toggle": " opdateret"
-	},
-	"modal-edit-user": {
-		"title": "Rediger bruger",
-		"description": "Her kan du redigere en brugers navn og adgangsniveauer.",
-		"user-not-found-title": "Der gik noget galt",
-		"user-not-found-description": "Brugeren kunne ikke findes, prøv venligst igen",
-		"user-name": "Navn",
-		"user-name-placeholder": "Indtast navn",
-		"access-level": "Lokationsadgang",
-		"locations-chosen": "valgte lokationer",
-		"update-button": "Opdater",
-		"create-more-locations": "Opret flere lokationer for at tildele adgangsrettigheder, når du redigerer brugere.",
-		"success": "Brugeren blev opdateret successfuldt",
-		"validation": {
-			"email": "Email skal være gyldig",
-			"name_one": "Navn skal være minimum {{count}} karakter",
-			"name_other": "Navn skal være minimum {{count}} karakterer",
-			"locationIDs_one": "Minimum {{count}} lokation skal vælges",
-			"locationIDs_other": "Minimum {{count}} lokationer skal vælges"
-		}
-	},
-	"modal-reset-userpin": {
-		"title": "Nulstil brugerens pinkode",
-		"description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres pinkode.",
-		"cancel-button": "Luk",
-		"reset-button": "Nulstil PIN"
-	},
-	"inventory-report-modal": {
-		"report-title": "Rapporter",
-		"card-label": "Lagerværdi",
-		"card-desc": "Træk en rapport over lagerværdi for en lokation",
-		"title": "Lagerværdi rapport",
-		"desc": "Download en rapport med lagerværdi for en lokation.",
-		"location-label": "Lokation",
-		"choose-location": "Vælg lokation",
-		"loading-location": "Henter lokationer...",
-		"download-button": "Download rapport som ",
-		"file-format-label": "Filtype",
-		"file-type-not-supported": "Den valgte filtype understøttes ikke"
-	},
-	"modal-delete-user": {
-		"title": "Slet bruger",
-		"description": "Denne handling er permanent og kan ikke gøres om",
-		"confirm-toast": "Brugeren er blevet slettet",
-		"cancel-button": "Luk",
-		"confirm-button": "Slet bruger"
-	},
-	"mail-settings": {
-		"title": "Planlagte e-mails",
-		"description": "Se og planlæg dine e-mails",
-		"link-to-faq": "Hvilke e-mails kan jeg få tilsendt?",
-		"button-add": "Tilføj ny",
-		"button-cancel": "Fortryd",
-		"button-apply_one": "Opdater {{count}} email",
-		"button-apply_other": "Opdater {{count}} emails",
-		"col-updated": "Opdateret",
-		"col-location": "Lokation",
-		"col-email": "E-mail",
-		"col-stock-value": "Lagerværdi",
-		"col-reorder": "Genbestilling",
-		"col-movements": "Lagerbevægelser",
-		"actions-delete": "Slet",
-		"errors": {
-			"update-settings-success": "E-mail er blevet opdateret",
-			"update-settings-failed": "{{count}} af {{max}} e-mails blev ikke opdateret",
-			"create-settings-success": "E-mail er blevet oprettet",
-			"create-settings-failed": "E-mail blevet ikke oprettet",
-			"delete-setting-success": "E-mail blev slettet",
-			"delete-setting-failed": "E-mail blev ikke slettet. Prøv igen"
-		},
-		"add-modal": {
-			"title": "Tilføj ny planlagt e-mail",
-			"type": "Hvilke e-mails skal sendes?",
-			"type-error-message": "Mindst én mail type skal vælges",
-			"locations": "For hvilke lokationer?",
-			"locations-placeholder": "Vælg lokation",
-			"email": "Til hvilken e-mail?",
-			"email-external-mail": "Sender til mail uden for Nem Lager",
-			"email-error-message": "Mail skal tilhøre en bruger når 'Lagerbevægelser' typen er valgt",
-			"button-close": "Luk",
-			"button-confirm": "Tilføj planlagt e-mail",
-			"button-show-all": "Vis alle",
-			"mail-types": {
-				"stock-value-title": "Lagerværdi",
-				"stock-value-description": "Sendes i slutningen af måneden",
-				"reorder-title": "Genbestilling",
-				"reorder-description": "Sendes når vare skal genbestilles",
-				"movements-title": "Lagerbevægelser",
-				"movements-description": "Send dagligt brugerens bevægelser"
-			}
-		},
-		"delete-modal": {
-			"title": "Slet planlagt e-mail?",
-			"description": "Denne handling er permanent og kan ikke gøres om. Vil du slette denne planlagte e-mail?",
-			"button-no": "Nej",
-			"button-yes": "Ja, slet planlagt e-mail"
-		}
-	}
+  "organisation-page": {
+    "title": "Organisation",
+    "description": "Her kan du administrere dine brugere, lokationer og firma."
+  },
+  "modal-toggle-user": {
+    "title": "Skift brugerstatus",
+    "description1": "Denne handling er ikke permanent. Hvis du aktiverer en bruger, vil de kunne logge ind på ",
+    "description2": " igen. Hvis du deaktiverer en bruger, vil de blive logget af og vil ikke kunne logge ind igen, før de er genaktiveret.",
+    "status": "Status",
+    "choose-status": "Vælg status",
+    "cancel-button": "Luk",
+    "update-button": "Opdater",
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "modal-reset-userpw": {
+    "title": "Nulstil brugerens adgangskode",
+    "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres adgangskode.",
+    "cancel-button": "Luk",
+    "reset-button": "Send e-mail"
+  },
+  "modal-edit-location": {
+    "title": "Rediger lokation",
+    "description": "Her kan du redigere en lokations navn og adgangsniveau for dine brugere.",
+    "location-name": "Lokationsnavn",
+    "location-name-placeholder": "Indtast lokationsnavn",
+    "access-level": "Adgangsniveau",
+    "users-chosen": "brugere valgt",
+    "create-button": "Opdater",
+    "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du redigerer lokationer.",
+    "own-user": "Du kan ikke redigere din egen brugers rettigheder, så derfor er den ikke vist her."
+  },
+  "modal-toggle-location": {
+    "title": "Skift lokationsstatus",
+    "description": "Denne handling er ikke permanent. Hvis du aktiverer en lokation, kan den tilgås igen. Hvis du deaktiverer en lokation, kan den kun tilgås af administratorer, indtil den er genaktiveret.",
+    "status": "Status",
+    "choose-status": "Vælg status",
+    "cancel-button": "Luk",
+    "update-button": "Opdater",
+    "active": "Aktiv",
+    "inactive": "Inaktiv"
+  },
+  "table-admin-locations": {
+    "no-locations-found": "Ingen lokationer fundet"
+  },
+  "location-page": {
+    "title": "Lokationer",
+    "description": "Administrer din organisations lokationer",
+    "location-limit-reached": "Du har nået det maksimale antal lokationer for din plan.",
+    "location-upgrade-plan": "Opgrader din plan for at tilføje flere lokationer."
+  },
+  "location-columns": {
+    "location-name": "Lokationsnavn",
+    "location-name-placeholder": "Søg efter lokationsnavn",
+    "status": "Status",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "updated": "Opdateret",
+    "created": "Oprettet",
+    "mod-count": "Moderatorer",
+    "users-count": "Brugere",
+    "outgoing-count": "Afgang",
+    "read-count": "Læseadgang",
+    "users": "Brugere",
+    "users-mod-short": "M",
+    "users-mod-long": "Moderator",
+    "users-user-short": "B",
+    "users-user-long": "Bruger",
+    "users-out-short": "A",
+    "users-out-long": "Afgang",
+    "users-read-short": "L",
+    "users-read-long": "Læseadgang"
+  },
+  "user-page": {
+    "title": "Brugere",
+    "description": "Administrer din organisations brugere",
+    "user-limit-reached": "Du har nået det maksimale antal brugere for din plan.",
+    "user-upgrade-plan": "Opgrader din plan for at tilføje flere brugere."
+  },
+  "user-columns": {
+    "user-name": "Navn",
+    "user-name-placeholder": "Søg efter brugernavn",
+    "email": "E-mail",
+    "email-placeholder": "Søg efter e-mail",
+    "user-role": "Rolle",
+    "status": "Status",
+    "access": "Adgange",
+    "access-web": "Web adgang",
+    "access-app": "App adgang",
+    "access-price": "Pris adgang",
+    "access-none": "Ingen",
+    "access_true": "Ja",
+    "access_false": "Nej",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "updated": "Opdateret",
+    "created": "Oprettet"
+  },
+  "table-locations-actions": {
+    "update": "Opdater",
+    "toggle-status": "Skift status"
+  },
+  "table-users-actions": {
+    "edit-user": "Rediger",
+    "toggle-status": "Skift status",
+    "reset-password": "Nulstil adgangskode",
+    "reset-pin": "Nulstil PIN",
+    "same-user-tooltip": "Du må ikke ændre din egen bruger her, gå til din profil istedet",
+    "no-permission-tooltip": "Du har ikke tilladelse til at ændre denne bruger",
+    "delete-user": "Slet bruger"
+  },
+  "company-page": {
+    "title": "Firma",
+    "title_details": "Firmadetaljer",
+    "title_settings": "Firmaindstillinger",
+    "description": "Administrer firmadetaljer og indstillinger.",
+    "description_details": "Se og opdater dine firmadetaljer.",
+    "description_settings": "Se og opdater dine firmaindstillinger.",
+    "update-button": "Opdater",
+    "update-button_details": "Opdater detaljer",
+    "update-button_settings": "Opdater indstillinger",
+    "update-success": "Data blev opdateret",
+    "update-success_details": "Din firmaprofil blev opdateret",
+    "update-success_settings": "Dine firmaindstillinger blev opdateret",
+    "form-company-edit": {
+      "company-name": "Firma navn",
+      "company-description": "Firma navn bruges i email kommunikation",
+      "email": "E-mail",
+      "email-description": "E-mail bruges til kommunikation mellem jer og Skancode, eksempelvis service meddelelser"
+    },
+    "settings": {
+      "reference": "Konto/sag",
+      "reference-description": "Konto/sag registreres ved tilgang, afgang, regulering og flyt",
+      "placement": "Placeringer",
+      "placement-description": "Placeringer registreres ved tilgang, afgang, regulering og flyt",
+      "batch": "Batch nr.",
+      "batch-description": "Batch nr. registreres ved tilgang, afgang, regulering og flyt",
+      "app-signout": "App logud",
+      "app-signout-description": "Indstil hvor længe appen må være i baggrunden før brugeren logges",
+      "app-signout-value": "Ugyldig værdi",
+      "app-signout-value_0": "Med det samme",
+      "app-signout-value_5": "5 minutter",
+      "app-signout-value_10": "10 minutter",
+      "app-signout-value_15": "15 minutter",
+      "app-signout-value_30": "30 minutter",
+      "app-signout-value_60": "1 time",
+      "app-signout-value_99999999": "Aldrig"
+    },
+    "error": {
+      "name": "Ukendt navn",
+      "name_id": "Firmaindstilling ID",
+      "name_customerID": "Firma ID",
+      "name_settings.useReference": "Konto/Sag",
+      "name_settings.usePlacement": "Placeringer",
+      "name_settings.useBatch": "Batch nr.",
+      "name_test.nestedTest": "Test.NestedTest"
+    }
+  },
+  "modal-invite-user": {
+    "title": "Inviter ny bruger",
+    "description": "Send en aktiveringsmail til en af dine medarbejdere for hurtigt at få dem i gang med at bruge ",
+    "email": "E-mail",
+    "email-placeholder": "Skriv e-mail til den nye bruger",
+    "role": "Rolle",
+    "role-placeholder": "Vælg en rolle",
+    "user": "Bruger",
+    "local-admin": "Lokal Admin",
+    "company-admin": "Firma Admin",
+    "location-access": "Lokationer",
+    "of": "af",
+    "locations-chosen": "lokationer valgt",
+    "send-invite": "Send invitation",
+    "role-question": "Hvad kan rollerne? Læs mere på vores",
+    "role-link": "F.A.Q. side",
+    "role-url": "hvad kan brugerrollerne?",
+    "user-rights": "Rettigheder",
+    "user-rights-web": "Bruger skal have adgang til web",
+    "user-rights-app": "Bruger skal have adgang til app",
+    "user-rights-prices": "Bruger skal have adgang til at se priser",
+    "tooltip": "Inviter ny bruger"
+  },
+  "modal-create-location": {
+    "title": "Opret ny lokation",
+    "description": "Nye lokationer kan tilgås med det samme i dropdown-menuen i øverste højre hjørne.",
+    "location-name": "Lokationsnavn",
+    "location-name-placeholder": "Indtast lokationsnavn",
+    "access-level": "Adgangsniveau",
+    "of": " af ",
+    "users-chosen": "brugere valgt",
+    "create-button": "Opret",
+    "create-more-users": "Opret flere brugere for at tildele adgangsrettigheder når du opretter lokationer.",
+    "own-user": "Din egen bruger vil automatisk blive tildelt rettighed til den nye lokation, og er derfor ikke vist her.",
+    "tooltip": "Opret ny lokation"
+  },
+  "toasts": {
+    "location-created": "blev oprettet succesfuldt",
+    "location-updated": "blev opdateret succesfuldt",
+    "invitation-sent": "Invitation sendt til ",
+    "reset-pw-email": "Email sendt til ",
+    "location": "lokation",
+    "locations": "lokationer",
+    "locations-toggle": " opdateret",
+    "user": "bruger",
+    "users": "brugere",
+    "users-toggle": " opdateret"
+  },
+  "modal-edit-user": {
+    "title": "Rediger bruger",
+    "description": "Her kan du redigere en brugers navn og adgangsniveauer.",
+    "user-not-found-title": "Der gik noget galt",
+    "user-not-found-description": "Brugeren kunne ikke findes, prøv venligst igen",
+    "user-name": "Navn",
+    "user-name-placeholder": "Indtast navn",
+    "access-level": "Lokationsadgang",
+    "locations-chosen": "valgte lokationer",
+    "update-button": "Opdater",
+    "create-more-locations": "Opret flere lokationer for at tildele adgangsrettigheder, når du redigerer brugere.",
+    "success": "Brugeren blev opdateret successfuldt",
+    "validation": {
+      "email": "Email skal være gyldig",
+      "name_one": "Navn skal være minimum {{count}} karakter",
+      "name_other": "Navn skal være minimum {{count}} karakterer",
+      "locationIDs_one": "Minimum {{count}} lokation skal vælges",
+      "locationIDs_other": "Minimum {{count}} lokationer skal vælges"
+    }
+  },
+  "modal-reset-userpin": {
+    "title": "Nulstil brugerens pinkode",
+    "description": "Denne handling sender en e-mail til brugeren med et link til at nulstille deres pinkode.",
+    "cancel-button": "Luk",
+    "reset-button": "Nulstil PIN"
+  },
+  "inventory-report-modal": {
+    "report-title": "Rapporter",
+    "card-label": "Lagerværdi",
+    "card-desc": "Træk en rapport over lagerværdi for en lokation",
+    "title": "Lagerværdi rapport",
+    "desc": "Download en rapport med lagerværdi for en lokation.",
+    "location-label": "Lokation",
+    "choose-location": "Vælg lokation",
+    "loading-location": "Henter lokationer...",
+    "download-button": "Download rapport som ",
+    "file-format-label": "Filtype",
+    "file-type-not-supported": "Den valgte filtype understøttes ikke"
+  },
+  "modal-delete-user": {
+    "title": "Slet bruger",
+    "description": "Denne handling er permanent og kan ikke gøres om",
+    "confirm-toast": "Brugeren er blevet slettet",
+    "cancel-button": "Luk",
+    "confirm-button": "Slet bruger"
+  },
+  "mail-settings": {
+    "title": "Planlagte e-mails",
+    "description": "Se og planlæg dine e-mails",
+    "link-to-faq": "Hvilke e-mails kan jeg få tilsendt?",
+    "button-add": "Tilføj ny",
+    "button-cancel": "Fortryd",
+    "button-apply_one": "Opdater {{count}} email",
+    "button-apply_other": "Opdater {{count}} emails",
+    "col-updated": "Opdateret",
+    "col-location": "Lokation",
+    "col-email": "E-mail",
+    "col-stock-value": "Lagerværdi",
+    "col-reorder": "Genbestilling",
+    "col-movements": "Lagerbevægelser",
+    "actions-delete": "Slet",
+    "errors": {
+      "update-settings-success": "E-mail er blevet opdateret",
+      "update-settings-failed": "{{count}} af {{max}} e-mails blev ikke opdateret",
+      "create-settings-success": "E-mail er blevet oprettet",
+      "create-settings-failed": "E-mail blevet ikke oprettet",
+      "delete-setting-success": "E-mail blev slettet",
+      "delete-setting-failed": "E-mail blev ikke slettet. Prøv igen"
+    },
+    "add-modal": {
+      "title": "Tilføj ny planlagt e-mail",
+      "type": "Hvilke e-mails skal sendes?",
+      "type-error-message": "Mindst én mail type skal vælges",
+      "locations": "For hvilke lokationer?",
+      "locations-placeholder": "Vælg lokation",
+      "email": "Til hvilken e-mail?",
+      "email-external-mail": "Sender til mail uden for Nem Lager",
+      "email-error-message": "Mail skal tilhøre en bruger når 'Lagerbevægelser' typen er valgt",
+      "button-close": "Luk",
+      "button-confirm": "Tilføj planlagt e-mail",
+      "button-show-all": "Vis alle",
+      "mail-types": {
+        "stock-value-title": "Lagerværdi",
+        "stock-value-description": "Sendes i slutningen af måneden",
+        "reorder-title": "Genbestilling",
+        "reorder-description": "Sendes når vare skal genbestilles",
+        "movements-title": "Lagerbevægelser",
+        "movements-description": "Send dagligt brugerens bevægelser"
+      }
+    },
+    "delete-modal": {
+      "title": "Slet planlagt e-mail?",
+      "description": "Denne handling er permanent og kan ikke gøres om. Vil du slette denne planlagte e-mail?",
+      "button-no": "Nej",
+      "button-yes": "Ja, slet planlagt e-mail"
+    }
+  }
 }

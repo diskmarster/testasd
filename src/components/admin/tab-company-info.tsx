@@ -5,6 +5,8 @@ import { updateCustomerSettingsValidation } from '@/app/[lng]/(site)/administrat
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
+import { Plan } from '@/data/customer.types'
+import { hasPermissionByPlan } from '@/data/user.types'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo, useState, useTransition } from 'react'
@@ -22,23 +24,28 @@ import {
   CardTitle,
 } from '../ui/card'
 import { Icons } from '../ui/icons'
+import { Label } from '../ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select'
 import { Separator } from '../ui/separator'
 import {
+  Setting,
   SettingBody,
   SettingContent,
   SettingDescription,
   SettingFooter,
   SettingLabel,
-  SettingTitle,
-  Setting,
   SettingSkeleton,
+  SettingTitle,
 } from '../ui/settings'
+import { Skeleton } from '../ui/skeleton'
 import { Switch } from '../ui/switch'
 import { CompanyEditSkeleton, FormCompanyEdit } from './form-company-edit'
-import { Plan } from '@/data/customer.types'
-import { hasPermissionByPlan } from '@/data/user.types'
-import { Skeleton } from '../ui/skeleton'
-import { Label } from '../ui/label'
 
 export function CompanyInfoTab({
   customer,
@@ -68,8 +75,8 @@ function CompanySettingsSkeleton({ plan }: { plan: Plan }) {
   return (
     <Card className='flex flex-col'>
       <CardHeader>
-        <Skeleton className="w-1/3 h-6" />
-        <Skeleton className="w-2/3 h-4" />
+        <Skeleton className='w-1/3 h-6' />
+        <Skeleton className='w-2/3 h-4' />
       </CardHeader>
       <CardContent className='flex-1'>
         <div className='grid w-full items-start gap-2'>
@@ -133,6 +140,7 @@ function CompanySettings({
         },
         usePlacement: settings?.usePlacement ?? true,
         useBatch: settings?.useBatch ?? true,
+        authTimeoutMinutes: settings?.authTimeoutMinutes ?? 5,
       },
     },
   })
@@ -151,6 +159,7 @@ function CompanySettings({
             useReference: res.data.useReference,
             useBatch: res.data.useBatch,
             usePlacement: res.data.usePlacement,
+            authTimeoutMinutes: res.data.authTimeoutMinutes,
           },
         })
 
@@ -192,13 +201,27 @@ function CompanySettings({
   }
 
   const {
-    settings: { useReference, usePlacement, useBatch },
+    settings: { useReference, usePlacement, useBatch, authTimeoutMinutes },
   } = watch()
 
-  const [useReferencePartial, useReferenceFull] = useMemo(() => [
-    (useReference.tilgang || useReference.afgang || useReference.regulering || useReference.flyt),
-    (useReference.tilgang && useReference.afgang && useReference.regulering && useReference.flyt)
-  ], [useReference.tilgang, useReference.afgang, useReference.regulering, useReference.flyt])
+  const [useReferencePartial, useReferenceFull] = useMemo(
+    () => [
+      useReference.tilgang ||
+      useReference.afgang ||
+      useReference.regulering ||
+      useReference.flyt,
+      useReference.tilgang &&
+      useReference.afgang &&
+      useReference.regulering &&
+      useReference.flyt,
+    ],
+    [
+      useReference.tilgang,
+      useReference.afgang,
+      useReference.regulering,
+      useReference.flyt,
+    ],
+  )
 
   if (error) {
     return (
@@ -260,16 +283,21 @@ function CompanySettings({
                   <Switch
                     checked={useReferencePartial}
                     onCheckedChange={(input: boolean) => {
-                      const val = (useReferencePartial && !useReferenceFull) || input
-                      setValue('settings.useReference', {
-                        tilgang: val,
-                        afgang: val,
-                        regulering: val,
-                        flyt: val,
-                      }, {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      })
+                      const val =
+                        (useReferencePartial && !useReferenceFull) || input
+                      setValue(
+                        'settings.useReference',
+                        {
+                          tilgang: val,
+                          afgang: val,
+                          regulering: val,
+                          flyt: val,
+                        },
+                        {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        },
+                      )
                     }}
                     id='useReference'
                     partial={useReferencePartial && !useReferenceFull}
@@ -285,9 +313,9 @@ function CompanySettings({
                       checked={useReference.tilgang}
                       onCheckedChange={(val: boolean) => {
                         setValue('settings.useReference.tilgang', val, {
-                            shouldValidate: true,
-                            shouldDirty: true,
-                          })
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
                       }}
                       id='useReference.tilgang'
                       {...register('settings.useReference.tilgang')}
@@ -299,9 +327,9 @@ function CompanySettings({
                       checked={useReference.afgang}
                       onCheckedChange={(val: boolean) => {
                         setValue('settings.useReference.afgang', val, {
-                            shouldValidate: true,
-                            shouldDirty: true,
-                          })
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
                       }}
                       id='useReference.afgang'
                       {...register('settings.useReference.afgang')}
@@ -313,9 +341,9 @@ function CompanySettings({
                       checked={useReference.regulering}
                       onCheckedChange={(val: boolean) => {
                         setValue('settings.useReference.regulering', val, {
-                            shouldValidate: true,
-                            shouldDirty: true,
-                          })
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
                       }}
                       id='useReference.regulering'
                       {...register('settings.useReference.regulering')}
@@ -328,9 +356,9 @@ function CompanySettings({
                       checked={useReference.flyt}
                       onCheckedChange={(val: boolean) => {
                         setValue('settings.useReference.flyt', val, {
-                            shouldValidate: true,
-                            shouldDirty: true,
-                          })
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        })
                       }}
                       id='useReference.flyt'
                       {...register('settings.useReference.flyt')}
@@ -421,6 +449,81 @@ function CompanySettings({
                 </Setting>
               </>
             )}
+            <Separator />
+            <Setting>
+              <SettingBody>
+                <SettingLabel className='flex-none w-2/3'>
+                  <SettingTitle>
+                    {t('company-page.settings.app-signout')}
+                  </SettingTitle>
+                  <SettingDescription>
+                    {t('company-page.settings.app-signout-description')}
+                  </SettingDescription>
+                </SettingLabel>
+                <SettingContent className='w-1/3'>
+                  <Select
+                    value={String(authTimeoutMinutes)}
+                    onValueChange={value =>
+                      setValue('settings.authTimeoutMinutes', parseInt(value), {
+                        shouldDirty: true,
+                      })
+                    }>
+                    <SelectTrigger className='w-max'>
+                      <SelectValue className='normal-case'>
+                        {t('company-page.settings.app-signout-value', {
+                          context: authTimeoutMinutes,
+                        })}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='0'>
+                        {t('company-page.settings.app-signout-value', {
+                          context: 0,
+                        })}
+                      </SelectItem>
+                      <SelectItem value='5'>
+                        {t('company-page.settings.app-signout-value', {
+                          context: 5,
+                        })}
+                      </SelectItem>
+                      <SelectItem value='10'>
+                        {t('company-page.settings.app-signout-value', {
+                          context: 10,
+                        })}
+                      </SelectItem>
+                      <SelectItem value='15'>
+                        {t('company-page.settings.app-signout-value', {
+                          context: 15,
+                        })}
+                      </SelectItem>
+                      <SelectItem value='30'>
+                        {t('company-page.settings.app-signout-value', {
+                          context: 30,
+                        })}
+                      </SelectItem>
+                      <SelectItem value='60'>
+                        {t('company-page.settings.app-signout-value', {
+                          context: 60,
+                        })}
+                      </SelectItem>
+                      <SelectItem value='99999999'>
+                        {t('company-page.settings.app-signout-value', {
+                          context: 99999999,
+                        })}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </SettingContent>
+              </SettingBody>
+              {formState.errors.settings &&
+                formState.errors.settings.authTimeoutMinutes && (
+                  <SettingFooter>
+                    <p className='text-sm text-destructive '>
+                      {formState.errors.settings.authTimeoutMinutes.message}
+                    </p>
+                  </SettingFooter>
+                )}
+            </Setting>
           </div>
         </form>
       </CardContent>
