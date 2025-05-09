@@ -14,11 +14,7 @@ interface Props extends WithAuthProps {
   }
 }
 
-async function Page({
-  params: { lng },
-  user,
-  customer,
-}: Props) {
+async function Page({ params: { lng }, user, customer }: Props) {
   const location = await locationService.getLastVisited(user.id!)
   if (!location) redirect(`/${lng}/log-ind`)
 
@@ -29,7 +25,9 @@ async function Page({
   const placements = await inventoryService.getActivePlacementsByID(location)
   const batches = await inventoryService.getActiveBatchesByID(location)
   const { t } = await serverTranslation(lng, 'historik')
-  const settings: CustomerSettings = await customerService.getSettings(customer.id) ?? {
+  const settings: CustomerSettings = (await customerService.getSettings(
+    customer.id,
+  )) ?? {
     id: -1,
     customerID: customer.id,
     useReference: {
@@ -40,6 +38,7 @@ async function Page({
     },
     usePlacement: false,
     useBatch: false,
+    authTimeoutMinutes: 5,
     inserted: new Date(),
     updated: new Date(),
   }
