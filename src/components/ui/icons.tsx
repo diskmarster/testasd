@@ -1,72 +1,73 @@
 import { cn } from '@/lib/utils'
 import {
 	ArrowDown,
-	CircleDashed,
-	TrafficCone,
-	Zap,
-	ChevronRight,
 	ArrowDownUp,
 	ArrowLeft,
 	ArrowLeftRight,
 	ArrowRight,
 	ArrowUp,
+	Ban,
 	Boxes,
 	Calendar,
+	CalendarClock,
 	Check,
 	ChevronDown,
+	ChevronRight,
 	ChevronsUpDown,
 	ChevronsUpDownIcon,
+	Circle,
 	CircleAlert,
+	CircleCheck,
+	CircleDashed,
+	CircleDollarSign,
+	CircleHelp,
+	CloudUpload,
 	Columns2,
+	Copy,
 	Diff,
 	Download,
 	Ellipsis,
+	EllipsisIcon,
 	ExternalLink,
+	FileDigit,
+	FileText,
+	Hash,
 	HousePlus,
 	Infinity,
+	Info,
 	List,
+	ListPlus,
+	ListTodo,
 	Loader2,
 	Mail,
 	Menu,
 	Minus,
+	Monitor,
 	Moon,
+	PackageCheck,
+	PackageIcon,
+	PackagePlusIcon,
+	PackageXIcon,
+	Pencil,
 	Plus,
 	Printer,
 	RefreshCcw,
+	Search,
 	Settings,
+	Sheet,
+	Smartphone,
+	SquarePlus,
+	SquareSlash,
 	Star,
 	Sun,
+	TrafficCone,
 	Trash,
+	TriangleAlert,
 	Type,
 	UserRoundPlus,
 	Warehouse,
 	X,
-	ListTodo,
-	Sheet,
-	CloudUpload,
-	TriangleAlert,
-	Copy,
-	Monitor,
-	Smartphone,
-	CircleDollarSign,
-	Ban,
-	Hash,
-	CircleHelp,
-	FileText,
-	EllipsisIcon,
-	CalendarClock,
-	PackageCheck,
-	PackagePlusIcon,
-	PackageXIcon,
-	PackageIcon,
-	SquarePlus,
-	SquareSlash,
-	ListPlus,
-	Pencil,
-	Search,
-	CircleCheck,
-	Circle,
-	FileDigit,
+	Zap,
 } from 'lucide-react'
 
 export const Icons = {
@@ -133,24 +134,51 @@ export const Icons = {
 	infinity: Infinity,
 	refresh: RefreshCcw,
 	settings: Settings,
+	info: Info,
 	monitor: Monitor,
 	bannedMonitor: ({ sizeClass: className }: { sizeClass?: string }) => (
 		<div className={cn('relative overflow-none size-4')}>
-			<Monitor className={cn('absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2', className)} />
-			<Ban className={cn('size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2')} />
+			<Monitor
+				className={cn(
+					'absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2',
+					className,
+				)}
+			/>
+			<Ban
+				className={cn(
+					'size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2',
+				)}
+			/>
 		</div>
 	),
 	dashedCheck: ({ className }: { className?: string }) => (
 		<div className={cn('relative overflow-none size-5 group', className)}>
-			<CircleDashed className={cn('size-5 absolute text-amber-500 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 group-hover:text-amber-900')} />
-			<Check className={cn('absolute size-2 text-amber-500 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 stroke-[5px] group-hover:text-amber-900')} />
+			<CircleDashed
+				className={cn(
+					'size-5 absolute text-amber-500 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 group-hover:text-amber-900',
+				)}
+			/>
+			<Check
+				className={cn(
+					'absolute size-2 text-amber-500 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 stroke-[5px] group-hover:text-amber-900',
+				)}
+			/>
 		</div>
 	),
 	smartphone: Smartphone,
 	bannedSmartphone: ({ sizeClass: className }: { sizeClass?: string }) => (
 		<div className={cn('relative overflow-none size-4')}>
-			<Smartphone className={cn('absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2', className)} />
-			<Ban className={cn('size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2')} />
+			<Smartphone
+				className={cn(
+					'absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2',
+					className,
+				)}
+			/>
+			<Ban
+				className={cn(
+					'size-4 absolute text-destructive top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2',
+				)}
+			/>
 		</div>
 	),
 	dollarSign: CircleDollarSign,
