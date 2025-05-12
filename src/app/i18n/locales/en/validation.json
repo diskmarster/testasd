@@ -96,7 +96,8 @@
     "field_usePlacement": "Placement",
     "field_useBatch": "Batch No.",
     "field_customerSettingsID": "Company Settings ID",
-    "field_customerID": "Company ID"
+    "field_customerID": "Company ID",
+    "field_authTimeoutMinutes": "App sign out"
   },
   "register": {
     "name-minLength": "Name must be at least {{minLength}} characters long",

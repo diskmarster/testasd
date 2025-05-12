@@ -1,0 +1,1 @@
+ALTER TABLE `nl_customer_settings` ADD `auth_timeout_minutes` integer DEFAULT 5 NOT NULL;

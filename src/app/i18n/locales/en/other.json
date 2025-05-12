@@ -103,12 +103,22 @@
     "maximum-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required.",
     "order-amount": "Order quantity",
     "order-amount-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required.",
-		"cron-mails": {
-			"question": "Which scheduled mails can I receive?",
-			"sub": "Nem Lager offers the following list of scheduled mails to be sent to its users or outside emails.",
-			"answer-title": "Monthly stock value",
-			"answer": "Get an email containing an Excel- and PDF-file with your entire inventory value summed up and ready for further processing if needed."
-		}
+    "cron-mails": {
+      "question": "Which scheduled mails can I receive?",
+      "sub": "Nem Lager offers the following list of scheduled mails to be sent to its users or outside emails.",
+      "answer-title": "Monthly stock value",
+      "answer": "Get an email containing an Excel- and PDF-file with your entire inventory value summed up and ready for further processing if needed."
+    },
+    "app-signout": {
+      "question": "When are my users signed out of the app?",
+      "sub": "In the Nem Lager app, your users can be signed out if one of the following scenarios occurs:",
+      "li-name": "Unknown name",
+      "li-name_screen": "Screen sleep",
+      "li-name_background": "App in background",
+      "li-desc": "Unknown description",
+      "li-desc_screen": "If the screen on the scanner goes to sleep while the app is open, the user will be signed out. The time before the screen goes to sleep can be configured on the scanner via the \"Settings\" app.",
+      "li-desc_background": "If the Nem Lager app is in the background for an extended period, the user will be signed out. This could happen, for example, when using other apps. The duration before the user is signed out can be configured from the Nem Lager website via the [Administration] -> [Company] menu."
+    }
   },
   "modal-show-user-label": {
     "title": "User Label",
@@ -124,8 +134,8 @@
   },
   "tooltips": {
     "refresh": "Reload data",
-    "download-inventory":"Download filtered data",
-    "show-hide-show":"Show/Hide Columns",
+    "download-inventory": "Download filtered data",
+    "show-hide-show": "Show/Hide Columns",
     "import-products": "Import product catalog"
   }
 }

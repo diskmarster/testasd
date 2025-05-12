@@ -60,7 +60,7 @@
     "items-created_other": "{{count}} varer blev oprettet"
   },
   "faq-page": {
-    "question-user-roles": "Hvad kan bruggerrollerne?",
+    "question-user-roles": "Hvad kan brugerrollerne?",
     "user-roles-description": "Brugerrollerne er fordelt på fem niveauer, med hver deres forskellige rettigheder. De fordeles således:",
     "role-admin": "Administrator ",
     "role-admin-description": "er den øverste brugerrolle på en kundekonto, og har adgang til alle funktioner, data relateret til beholdning og brugerstyring.",
@@ -103,12 +103,22 @@
     "maximum-criteria": "kan udelades. Hvis det tages med skal det skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
     "order-amount": "Bestillings antal",
     "order-amount-criteria": "kan udelades. Hvis det tages med skal det skilles med et komma (,) ved decimaler. Tusinde separator kan benyttes med et punktum (.) men dette er ikke nødvendigt.",
-		"cron-mails": {
-			"question": "Hvilke planlagt email kan jeg få tilsendt?",
-			"sub": "Nem Lager tilbyder på nuværende tidspunkt følgende liste af mails som kan sendes til enten interne brugere eller externe e-mails.",
-			"answer-title": "Månedlig lagerværdi",
-			"answer": "Få tilsendt et Excelark og PDF med dit lager opdelt på både vare og varegrupper, summeret og klar til arbejde videre med. Denne mail sendes sidst dag hver måned."
-		}
+    "cron-mails": {
+      "question": "Hvilke planlagte emails kan jeg få tilsendt?",
+      "sub": "Nem Lager tilbyder på nuværende tidspunkt følgende liste af mails som kan sendes til enten interne brugere eller externe e-mails.",
+      "answer-title": "Månedlig lagerværdi",
+      "answer": "Få tilsendt et Excelark og PDF med dit lager opdelt på både vare og varegrupper, summeret og klar til arbejde videre med. Denne mail sendes sidst dag hver måned."
+    },
+    "app-signout": {
+      "question": "Hvornår bliver mine brugere logget ud af appen?",
+      "sub": "På Nem Lagers app kan dine brugere blive logget ud, hvis en af følgende scenarier forekommer:",
+      "li-name": "Ukendt navn",
+      "li-name_screen": "Skærmdvale",
+      "li-name_background": "App i baggrunden",
+      "li-desc": "Ukendt beskrivelse",
+      "li-desc_screen": "Hvis skærmen på scanneren går i dvale mens appen er tændt, bliver brugeren af appen logget ud. Hvor længe der skal gå før skærmen går i dvale kan indstilles på scanneren, via appen \"Indstillinger\".",
+      "li-desc_background": "Hvis Nem Lagers app er i baggrunden i længere tid, bliver brugeren af appen logget ud, det kunne eksempelvis være i forbindelse med brugen af andres apps. Hvor længe appen skal være i baggrunden før brugeren logges ud, kan indstilles fra Nem Lagers hjemmeside, under [Administration] -> [Firma] menupunktet."
+    }
   },
   "modal-show-user-label": {
     "title": "Bruger Label",
@@ -124,8 +134,8 @@
   },
   "tooltips": {
     "refresh": "Genindlæs data",
-    "download-inventory":"Download filtreret data",
-    "show-hide-show":"Gem/Vis kolonner",
+    "download-inventory": "Download filtreret data",
+    "show-hide-show": "Gem/Vis kolonner",
     "import-products": "Importer varekartotek"
   }
 }
