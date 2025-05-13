@@ -197,3 +197,9 @@ export const importHistoryValidation = z.object({
     }),
   ),
 })
+
+export const createApiKeyValidation = z.object({
+	customerID: z.coerce.number(),
+	name: z.string().min(3),
+	expiry: z.coerce.date().optional()
+})

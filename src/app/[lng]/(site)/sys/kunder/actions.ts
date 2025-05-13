@@ -14,6 +14,7 @@ import { generateIdFromEntropySize } from 'lucia'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import {
+    createApiKeyValidation,
   createClientValidation,
   deleteClientStatusValidation,
   importHistoryValidation,
@@ -22,6 +23,7 @@ import {
   updateClientValidation,
 } from './validation'
 import { inventoryService } from '@/service/inventory'
+import { apikeys } from '@/lib/api-key/api-key'
 
 export const createClientAction = sysAdminAction
   .schema(async () => await getSchema(createClientValidation, 'kunder'))
@@ -149,4 +151,18 @@ export const fetchItemGroupsForCustomerActions = adminAction
   .action(async ({ parsedInput, ctx: { user } }) => {
 		const itemGroups = await inventoryService.getActiveGroupsByID(parsedInput.customerID)
 		return itemGroups.map(g => ({value: g.name, label: g.name, disabled: false}))
+  })
+
+export const createApiKeyAction = sysAdminAction
+  .schema(createApiKeyValidation)
+  .action(async ({ parsedInput }) => {
+		const key = await customerService.createApiKey(
+			parsedInput.customerID,
+			parsedInput.name,
+			parsedInput.expiry,
+		)
+
+		const plainkey = apikeys.decrypt(key.key)
+
+    return plainkey
   })

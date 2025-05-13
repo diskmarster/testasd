@@ -10,34 +10,36 @@ import { ModalUpdateClient } from "@/components/clients/modal-update-client"
 import { ModalImportClientInventory } from "@/components/clients/modal-import-inventory"
 import { ModalImportClientHistory } from "@/components/clients/modal-import-history"
 import { withAuth, WithAuthProps } from "@/components/common/with-auth"
+import { CreateApiKeyModal } from "@/components/clients/modal-create-apikey"
 
 interface Props extends WithAuthProps {
-  params: { lng: string }
+	params: { lng: string }
 }
 
 async function Page({ params: { lng } }: Props) {
-  const { t } = await serverTranslation(lng, 'kunder')
+	const { t } = await serverTranslation(lng, 'kunder')
 
-  return (
-    <SiteWrapper
-      title={t('page.title')}
-      description={t('page.description')}
-      actions={
-        <>
-          <ModalCreateClient />
-        </>
-      }>
-      <Suspense fallback={<SkeletonTable />}>
-        <ClientTable />
-      </Suspense>
+	return (
+		<SiteWrapper
+			title={t('page.title')}
+			description={t('page.description')}
+			actions={
+				<>
+					<ModalCreateClient />
+				</>
+			}>
+			<Suspense fallback={<SkeletonTable />}>
+				<ClientTable />
+			</Suspense>
 
-      <ModalToggleClient />
-      <ModalDeleteClient />
-      <ModalUpdateClient />
-      <ModalImportClientInventory />
-      <ModalImportClientHistory />
-    </SiteWrapper>
-  )
+			<ModalToggleClient />
+			<ModalDeleteClient />
+			<ModalUpdateClient />
+			<ModalImportClientInventory />
+			<ModalImportClientHistory />
+			<CreateApiKeyModal />
+		</SiteWrapper>
+	)
 }
 
 export default withAuth(Page, undefined, 'system_administrator')
