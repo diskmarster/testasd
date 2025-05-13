@@ -8,17 +8,12 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(
   r: NextRequest,
 ): Promise<NextResponse<ApiResponse<string>>> {
-  const headerList = headers()
-  const lng = getLanguageFromRequest(headerList)
-  for (const [key, value] of headerList.entries()) {
-    console.log(`${key}: ${value}`)
-  }
+  const lng = getLanguageFromRequest(headers())
   const { t: commonT } = await serverTranslation(lng, 'common')
 
   if (isMaintenanceMode()) {
     return apiResponse.locked(
       commonT('route-translations-regulations.maintenance'),
-      'abc',
     )
   }
 
