@@ -28,7 +28,6 @@ import { hasPermissionByRank } from '@/data/user.types'
 import { ApiKey, NewApiKey } from '@/lib/database/schema/apikeys'
 import { apikeys } from '@/lib/api-key/api-key'
 import { tryCatch } from '@/lib/utils.server'
-import { LibsqlError } from '@libsql/client'
 import { ActionError } from '@/lib/safe-action/error'
 
 const ACTIVATION_LINK_BASEURL =

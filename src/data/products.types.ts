@@ -28,3 +28,7 @@ export const units = [
   'm2',
   'palle',
 ] as const
+
+export type ProductFilters = {
+	group?: string[]
+}

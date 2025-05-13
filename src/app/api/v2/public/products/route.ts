@@ -1,9 +1,8 @@
 import { serverTranslation } from '@/app/i18n'
-import { ProductWithInventories } from '@/data/products.types'
+import { ProductFilters, ProductWithInventories } from '@/data/products.types'
 import { apikeys } from '@/lib/api-key/api-key'
 import { apiResponse, ApiResponse } from '@/lib/api/response'
 import { Customer } from '@/lib/database/schema/customer'
-import { Inventory, Product } from '@/lib/database/schema/inventory'
 import { isMaintenanceMode, tryCatch } from '@/lib/utils.server'
 import { customerService } from '@/service/customer'
 import { productService } from '@/service/products'
@@ -33,8 +32,15 @@ export async function GET(
     )
   }
 
+	const searchparams = r.nextUrl.searchParams
+	let filters: ProductFilters = {}
+
+	if (searchparams.has('group')) {
+		filters.group = searchparams.get('group')?.split(",")
+	}
+
   const productRes = await tryCatch(
-    productService.getAllProductsWithInventories(customer.id),
+    productService.getAllProductsWithInventories(customer.id, filters),
   )
   if (!productRes.success) {
     return apiResponse.internal(

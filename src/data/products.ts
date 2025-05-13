@@ -16,8 +16,8 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, count, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
-import { FormattedProduct } from './products.types'
+import { and, count, desc, eq, getTableColumns, inArray, SQL, sql, SQLWrapper } from 'drizzle-orm'
+import { FormattedProduct, ProductFilters } from './products.types'
 import { supplierTable } from '@/lib/database/schema/suppliers'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
 
@@ -192,8 +192,17 @@ export const product = {
   },
   getWithInventoryByCustomerID: async function(
     customerID: CustomerID,
+		filters?: ProductFilters,
     trx: TRX = db,
   ): Promise<(FormattedProduct & {inventory: Inventory})[]> {
+		const whereStmt: SQLWrapper[] = []
+
+		if (filters) {
+			if (filters.group) {
+				whereStmt.push(inArray(groupTable.name, filters.group))
+			}
+		}
+
     const product = await trx
       .select({
         ...PRODUCT_COLS,
@@ -205,11 +214,14 @@ export const product = {
         }
       })
       .from(productTable)
-      .where(eq(productTable.customerID, customerID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .innerJoin(inventoryTable, eq(inventoryTable.productID, productTable.id))
       .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+			.where(and(
+				eq(productTable.customerID, customerID),
+				...whereStmt,
+			))
     return product
   },
   deleteProduct: async function (
