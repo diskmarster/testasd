@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "05cf0100-0ffa-45ea-a851-806b42415b47",
+  "id": "bda78feb-14ea-4dc3-b7bd-8ef164a6c18c",
   "prevId": "01c2d2f5-e5f3-4a1b-b2ea-e9415ddd7007",
   "tables": {
     "nl_action_analytics": {
@@ -105,6 +105,13 @@
           "name": "key",
           "type": "text",
           "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hash": {
+          "name": "hash",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },

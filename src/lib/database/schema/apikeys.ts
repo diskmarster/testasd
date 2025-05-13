@@ -5,6 +5,7 @@ export const apikeysTable = sqliteTable(
   'nl_apikeys',
   {
     key: text('key').primaryKey(),
+		hash: text('hash').notNull(),
     name: text('name').notNull(),
     customerID: integer('customer_id')
       .notNull()

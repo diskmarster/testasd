@@ -1,5 +1,6 @@
 CREATE TABLE `nl_apikeys` (
 	`key` text PRIMARY KEY NOT NULL,
+	`hash` text NOT NULL,
 	`name` text NOT NULL,
 	`customer_id` integer NOT NULL,
 	`expiry` integer DEFAULT 'null',
