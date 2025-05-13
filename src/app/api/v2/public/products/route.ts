@@ -8,9 +8,11 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(
   r: NextRequest,
 ): Promise<NextResponse<ApiResponse<string>>> {
-	const headerList = headers()
+  const headerList = headers()
   const lng = getLanguageFromRequest(headerList)
-	console.log(headerList)
+  for (const [key, value] of headerList.entries()) {
+    console.log(`${key}: ${value}`)
+  }
   const { t: commonT } = await serverTranslation(lng, 'common')
 
   if (isMaintenanceMode()) {
