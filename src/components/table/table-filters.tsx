@@ -507,14 +507,14 @@ function FilterSelect<T>({
 		?.filter(f =>
 			f.value.toString().toLowerCase().includes(search.toLowerCase()),
 		)
-		.slice(0, 20)
+		.slice(0, 50)
 
 	return (
 		<Command>
 			<CommandInput value={search} onValueChange={setSearch} />
 			<CommandList>
 				<CommandEmpty>{t('table-filters.no-filter-choice')}</CommandEmpty>
-				<ScrollArea maxHeight='max-h-52'>
+				<ScrollArea maxHeight='max-h-72'>
 					<CommandGroup>
 						{filtered &&
 							filtered.map(option => {
