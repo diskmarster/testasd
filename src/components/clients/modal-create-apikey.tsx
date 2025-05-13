@@ -58,12 +58,13 @@ export function CreateApiKeyModal({ }: Props) {
 				description: t("create-api-key.toast-success")
 			})
 			setApiKey(res?.data)
-			reset()
+			reset({ customerID: values.customerID })
 		})
 	}
 
 	function onOpenChange(open: boolean) {
 		reset()
+		setApiKey(undefined)
 		setOpen(open)
 	}
 
