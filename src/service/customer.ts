@@ -25,6 +25,11 @@ import { isLinkExpired } from './customer.utils'
 import { db } from '@/lib/database'
 import { location } from '@/data/location'
 import { hasPermissionByRank } from '@/data/user.types'
+import { ApiKey, NewApiKey } from '@/lib/database/schema/apikeys'
+import { apikeys } from '@/lib/api-key/api-key'
+import { tryCatch } from '@/lib/utils.server'
+import { LibsqlError } from '@libsql/client'
+import { ActionError } from '@/lib/safe-action/error'
 
 const ACTIVATION_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -210,5 +215,28 @@ export const customerService = {
 			...setting,
 			...extra,
 		}
+	},
+	createApiKey: async function(
+		customerID: CustomerID,
+		name: string,
+		expiry: Date | undefined,
+	): Promise<ApiKey> {
+		const base = crypto.randomUUID()
+		const encrypted = apikeys.encrypt(base)
+		const key: NewApiKey = {
+			key: encrypted,
+			name,
+			customerID,
+			expiry,
+		}
+		const apikey = await tryCatch(customer.createApiKey(key))
+		if (!apikey.success) {
+			if (apikey.error.message.includes("UNIQUE")) {
+				throw new ActionError("API nøgle findes allerede")		
+			} else {
+				throw new Error(apikey.error.message)
+			}
+		}
+		return apikey.data
 	}
 }
