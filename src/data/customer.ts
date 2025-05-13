@@ -298,5 +298,15 @@ export const customer = {
 				eq(apikeysTable.customerID, customerID)
 			))
 			return res.rowsAffected == 1
+	},
+	getApiKey: async function(
+		encryptedKey: string,
+		tx: TRX = db
+	): Promise<ApiKey | undefined> {
+		const [apikey] = await tx
+			.select()
+			.from(apikeysTable)
+			.where(eq(apikeysTable.key, encryptedKey))
+		return apikey
 	}
 }

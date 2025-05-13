@@ -238,5 +238,10 @@ export const customerService = {
 			}
 		}
 		return apikey.data
+	},
+	getApiKey: async function(
+		encryptedKey: string
+	): Promise<ApiKey | undefined> {
+		return customer.getApiKey(encryptedKey)
 	}
 }
