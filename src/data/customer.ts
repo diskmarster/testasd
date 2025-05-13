@@ -300,13 +300,13 @@ export const customer = {
 			return res.rowsAffected == 1
 	},
 	getApiKey: async function(
-		encryptedKey: string,
+		hash: string,
 		tx: TRX = db
 	): Promise<ApiKey | undefined> {
 		const [apikey] = await tx
 			.select()
 			.from(apikeysTable)
-			.where(eq(apikeysTable.key, encryptedKey))
+			.where(eq(apikeysTable.hash, hash))
 		return apikey
 	}
 }

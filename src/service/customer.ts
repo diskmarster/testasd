@@ -223,8 +223,10 @@ export const customerService = {
 	): Promise<ApiKey> {
 		const base = crypto.randomUUID()
 		const encrypted = apikeys.encrypt(base)
+		const hash = apikeys.hash(base)
 		const key: NewApiKey = {
 			key: encrypted,
+			hash,
 			name,
 			customerID,
 			expiry,
@@ -240,8 +242,8 @@ export const customerService = {
 		return apikey.data
 	},
 	getApiKey: async function(
-		encryptedKey: string
+		hash: string
 	): Promise<ApiKey | undefined> {
-		return customer.getApiKey(encryptedKey)
+		return customer.getApiKey(hash)
 	}
 }

@@ -40,4 +40,7 @@ export const apikeys = {
     ])
     return decrypted.toString('utf8')
   },
+  hash: function (base: string): string {
+    return crypto.createHash('sha256').update(base).digest('hex')
+  },
 }
