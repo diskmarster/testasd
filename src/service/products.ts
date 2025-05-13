@@ -1,7 +1,7 @@
 import { inventory } from '@/data/inventory'
 import { location } from '@/data/location'
 import { product } from '@/data/products'
-import { FormattedProduct } from '@/data/products.types'
+import { FormattedProduct, ProductWithInventories } from '@/data/products.types'
 import { db, TRX } from '@/lib/database'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
@@ -142,9 +142,7 @@ export const productService = {
   },
   getAllProductsWithInventories: async function(
     customerID: CustomerID,
-  ): Promise<
-    (Product & { unit: string; group: string; inventories: Inventory[] })[]
-  > {
+  ): Promise<ProductWithInventories[]> {
     try {
       const productsWithInventory =
         await product.getWithInventoryByCustomerID(customerID)
