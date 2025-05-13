@@ -17,5 +17,9 @@ export async function GET(
     )
   }
 
+  console.log(r.headers)
+
   return apiResponse.ok('test')
 }
+
+async function validatePublicRequest() {}
