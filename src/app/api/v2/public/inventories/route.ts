@@ -1,17 +1,16 @@
 import { serverTranslation } from '@/app/i18n'
-import { ProductFilters, ProductWithInventories } from '@/data/products.types'
-import { validatePublicRequest } from '@/lib/api/request'
-import { getVercelRequestID } from '@/lib/api/request-id'
+import { getVercelRequestID, validatePublicRequest } from '@/lib/api/request'
 import { apiResponse, ApiResponse } from '@/lib/api/response'
 import { isMaintenanceMode, tryCatch } from '@/lib/utils.server'
-import { productService } from '@/service/products'
+import { apiService } from '@/service/api'
+import { CreateRegulation, createRegulationSchema } from '@/service/api.utils'
 import { getLanguageFromRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(
+export async function POST(
   r: NextRequest,
-): Promise<NextResponse<ApiResponse<ProductWithInventories[]>>> {
+): Promise<NextResponse<ApiResponse<CreateRegulation>>> {
   const lng = getLanguageFromRequest(headers())
   const { t } = await serverTranslation(lng, 'common')
 
@@ -30,22 +29,23 @@ export async function GET(
     )
   }
 
-  const searchparams = r.nextUrl.searchParams
-  let filters: ProductFilters = {}
-
-  if (searchparams.has('group')) {
-    filters.group = searchparams.get('group')?.split(',')
-  }
-
-  const productRes = await tryCatch(
-    productService.getAllProductsWithInventories(customer.id, filters),
-  )
-  if (!productRes.success) {
-    return apiResponse.internal(
-      productRes.error.message,
+  const payload = createRegulationSchema.safeParse(await r.json())
+  if (!payload.success) {
+    return apiResponse.badRequest(
+      payload.error.toString(),
       getVercelRequestID(headers()),
     )
   }
 
-  return apiResponse.ok(productRes.data)
+  const regulate = await tryCatch(
+    apiService.regulateInventory(customer.id, payload.data),
+  )
+  if (!regulate.success) {
+    return apiResponse.internal(
+      regulate.error.message,
+      getVercelRequestID(headers()),
+    )
+  }
+
+  return apiResponse.created(payload.data)
 }
