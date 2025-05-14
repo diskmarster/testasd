@@ -38,3 +38,10 @@ test('encrypt/decrypt empty string', () => {
   const decrypted = apikeys.decrypt(encrypted)
   expect(decrypted).toEqual('')
 })
+
+test('hashes are the same', () => {
+  const base = 'my-secret-data'
+  const hash1 = apikeys.hash(base)
+  const hash2 = apikeys.hash(base)
+  expect(hash1).toEqual(hash2)
+})
