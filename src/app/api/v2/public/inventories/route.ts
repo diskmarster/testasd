@@ -21,7 +21,7 @@ export async function POST(
     )
   }
 
-  const customer = await validatePublicRequest(headers())
+  const { customer, apikey } = await validatePublicRequest(headers())
   if (customer == null) {
     return apiResponse.unauthorized(
       t('route-translations-product.no-access-to-resource'),
@@ -38,7 +38,7 @@ export async function POST(
   }
 
   const regulate = await tryCatch(
-    apiService.regulateInventory(customer.id, payload.data),
+    apiService.regulateInventory(customer.id, null, apikey.name, 'ext', payload.data),
   )
   if (!regulate.success) {
     return apiResponse.internal(

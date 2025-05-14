@@ -1,6 +1,7 @@
 import { customerService } from '@/service/customer'
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers'
 import { apikeys } from '../api-key/api-key'
+import { ApiKey } from '../database/schema/apikeys'
 import { Customer } from '../database/schema/customer'
 
 export function getVercelRequestID(headers: ReadonlyHeaders): string {
@@ -14,27 +15,41 @@ export function getVercelRequestID(headers: ReadonlyHeaders): string {
 
 export async function validatePublicRequest(
   headers: ReadonlyHeaders,
-): Promise<Customer | null> {
+): Promise<
+  { customer: Customer; apikey: ApiKey } | { customer: null; apikey: null }
+> {
   const authheader = headers.get('authorization')
   if (authheader == null) {
-    return null
+    return {
+      customer: null,
+      apikey: null,
+    }
   }
 
   const authparts = authheader.split(' ')
   if (authparts.length != 2 || authparts[0].toLowerCase() != 'bearer') {
-    return null
+    return {
+      customer: null,
+      apikey: null,
+    }
   }
 
   const tokenhash = apikeys.hash(authparts[1])
   const apikey = await customerService.getApiKey(tokenhash)
   if (!apikey) {
-    return null
+    return {
+      customer: null,
+      apikey: null,
+    }
   }
 
   const customer = await customerService.getByID(apikey.customerID)
   if (!customer) {
-    return null
+    return {
+      customer: null,
+      apikey: null,
+    }
   }
 
-  return customer
+  return { customer, apikey }
 }

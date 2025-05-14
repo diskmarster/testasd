@@ -1,10 +1,15 @@
 import { CustomerID } from '@/lib/database/schema/customer'
 import { CreateRegulation } from './api.utils'
 import { inventoryService } from './inventory'
+import { UserID } from '@/lib/database/schema/auth'
+import { HistoryPlatform } from '@/data/inventory.types'
 
 export const apiService = {
   regulateInventory: async function (
     customerID: CustomerID,
+		userID: UserID | null,
+		apikeyName: string | null,
+		platform: HistoryPlatform,
     data: CreateRegulation,
   ): Promise<boolean> {
     let placementId: number
@@ -137,9 +142,9 @@ export const apiService = {
 
     if (
       !(await inventoryService.upsertInventory(
-        'app',
+        platform,
         customerID,
-        -1,
+        userID,
         data.locationId,
         data.productId,
         placementId,
@@ -147,6 +152,7 @@ export const apiService = {
         data.type,
         data.quantity,
         data.reference ?? '',
+				apikeyName,
       ))
     ) {
       // const msg = `${t('route-translations-regulations.error-creating-new')} ${data.type}, ${t('route-translations-regulations.try-again')}`

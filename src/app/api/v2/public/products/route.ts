@@ -21,7 +21,7 @@ export async function GET(
     )
   }
 
-  const customer = await validatePublicRequest(headers())
+  const { customer } = await validatePublicRequest(headers())
   if (customer == null) {
     return apiResponse.unauthorized(
       t('route-translations-product.no-access-to-resource'),

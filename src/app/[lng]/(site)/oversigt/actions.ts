@@ -116,6 +116,7 @@ export const moveInventoryAction = editableAction
       parsedInput.amount,
       parsedInput.reference,
       ctx.lang,
+			null,
     )
 
     revalidatePath(`/${ctx.lang}/oversigt`)

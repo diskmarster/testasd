@@ -5,6 +5,7 @@ import {
   FormattedInventory,
   FormattedReorder,
   HistoryFilter,
+  HistoryPlatform,
   HistoryType,
   HistoryWithSums,
   InventoryAction,
@@ -119,12 +120,13 @@ export const inventoryService = {
       productID: ProductID
       placementID: PlacementID
       batchID: BatchID
-      userID: UserID
+      userID: UserID | null
       type: 'tilgang' | 'afgang' | 'regulering' | 'flyt'
-      platform: 'web' | 'app'
+      platform: HistoryPlatform
       amount: number
       reference: string | undefined
 			currentQuantity: number
+			apikeyName: string | null
     },
     trx?: TRX,
   ): Promise<History | undefined> {
@@ -132,8 +134,10 @@ export const inventoryService = {
       ...historyData,
     }
 
+		const promises = []
+
     // fetch product info
-    const productPromise = productService
+    promises.push(productService
       .getByID(historyData.productID)
       .then(product => {
         historyLogData.productSku = product?.sku
@@ -145,36 +149,35 @@ export const inventoryService = {
         historyLogData.productGroupName = product?.group
         historyLogData.productCostPrice = product?.costPrice
         historyLogData.productSalesPrice = product?.salesPrice
-      })
+      }))
     // fetch user info
-    const userPromise = userService.getByID(historyData.userID).then(user => {
-      historyLogData.userName = user?.name
-      historyLogData.userRole = user?.role
-    })
+		if (historyData.userID) {
+			promises.push(userService.getByID(historyData.userID).then(user => {
+				historyLogData.userName = user?.name
+				historyLogData.userRole = user?.role
+			}))
+		} else {
+			historyLogData.userName = `API (${historyData.apikeyName})`
+		}
     // fetch placement info
-    const placementPromise = this.getPlacementByID(
+    promises.push(this.getPlacementByID(
       historyData.placementID,
     ).then(placement => {
       historyLogData.placementName = placement?.name
-    })
+    }))
     // fetch batch info
-    const batchPromise = this.getBatchByID(historyData.batchID).then(batch => {
+    promises.push(this.getBatchByID(historyData.batchID).then(batch => {
       historyLogData.batchName = batch?.batch
-    })
+    }))
 
-    await Promise.all([
-      productPromise,
-      userPromise,
-      placementPromise,
-      batchPromise,
-    ])
+    await Promise.all(promises)
 
     return await inventory.createHistoryLog(historyLogData, trx)
   },
   upsertInventory: async function(
-    platform: 'web' | 'app',
+    platform: HistoryPlatform,
     customerID: CustomerID,
-    userID: UserID,
+    userID: UserID | null,
     locationID: LocationID,
     productID: ProductID,
     placementID: PlacementID,
@@ -182,6 +185,7 @@ export const inventoryService = {
     type: HistoryType,
     amount: number,
     reference: string = '',
+		apikeyName: string | null = null,
     lang: string = fallbackLng,
   ): Promise<boolean> {
     const { t } = await serverTranslation(lang, 'action-errors')
@@ -251,6 +255,7 @@ export const inventoryService = {
           amount,
           reference,
 					currentQuantity: newAmount,
+					apikeyName,
         },
         trx,
       )
@@ -300,9 +305,9 @@ export const inventoryService = {
     return result
   },
   moveInventory: async function(
-    platform: 'web' | 'app',
+    platform: HistoryPlatform,
     customerID: CustomerID,
-    userID: UserID,
+    userID: UserID | null,
     locationID: LocationID,
     productID: ProductID,
     fromPlacementID: PlacementID,
@@ -312,6 +317,7 @@ export const inventoryService = {
     amount: number,
     reference: string = '',
     lang: string = fallbackLng,
+		apikeyName: string | null
   ): Promise<boolean> {
     const { t } = await serverTranslation(lang, 'action-errors')
     const result = await db.transaction(async trx => {
@@ -366,6 +372,7 @@ export const inventoryService = {
           amount: -amount,
           reference: reference,
 					currentQuantity: newAmountFrom,
+					apikeyName,
         },
         trx,
       )
@@ -383,6 +390,7 @@ export const inventoryService = {
           amount,
           reference: reference,
 					currentQuantity: newAmountTo,
+					apikeyName,
         },
         trx,
       )

@@ -21,7 +21,7 @@ export const historyTypes =
 export type RegulationType = HistoryType
 export const regulationTypes = historyTypes
 
-export const historyPlatformZodSchema = z.enum(['web', 'app'])
+export const historyPlatformZodSchema = z.enum(['web', 'app', 'ext'])
 export type HistoryPlatform = z.infer<typeof historyPlatformZodSchema>
 export const platformTypes =
   historyPlatformZodSchema.options as readonly HistoryPlatform[]
