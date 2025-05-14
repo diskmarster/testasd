@@ -145,6 +145,9 @@ export function getTableOverviewColumns(
 		let bVal = rb.original.product.supplierName
 		return stringSortingFn(aVal ?? "", bVal ?? "")
     },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
     meta: {
       viewLabel: t('supplierName'),
       className: '[&>*]:block',
