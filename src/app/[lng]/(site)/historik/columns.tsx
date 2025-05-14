@@ -288,7 +288,7 @@ export function getTableHistoryColumns(
 					case 'app':
 						return 'lessGray'
 					case 'ext':
-						return "secondary"
+						return "moreGray"
 					default:
 						return "outline"
 				}
