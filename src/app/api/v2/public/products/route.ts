@@ -1,7 +1,6 @@
 import { serverTranslation } from '@/app/i18n'
 import { ProductFilters, ProductWithInventories } from '@/data/products.types'
-import { validatePublicRequest } from '@/lib/api/request'
-import { getVercelRequestID } from '@/lib/api/request-id'
+import { getVercelRequestID, validatePublicRequest } from '@/lib/api/request'
 import { apiResponse, ApiResponse } from '@/lib/api/response'
 import { isMaintenanceMode, tryCatch } from '@/lib/utils.server'
 import { productService } from '@/service/products'

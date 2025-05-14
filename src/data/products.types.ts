@@ -7,10 +7,12 @@ export interface FormattedProduct extends Product {
   supplierName: string | null
 }
 
-export interface ProductWithInventories extends Product {
-  unit: string
-  group: string
-  inventories: Inventory[]
+export interface ProductWithInventories extends FormattedProduct {
+  inventories: (Inventory & {
+    locationName: string
+    placementName: string
+    batchName: string
+  })[]
 }
 
 export const units = [
@@ -30,5 +32,5 @@ export const units = [
 ] as const
 
 export type ProductFilters = {
-	group?: string[]
+  group?: string[]
 }

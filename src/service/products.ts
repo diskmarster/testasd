@@ -148,8 +148,8 @@ export const productService = {
       const productsWithInventory =
         await product.getWithInventoryByCustomerID(customerID, filters)
 
-      const invMap: Map<ProductID, [FormattedProduct, Inventory[]]> = productsWithInventory.reduce<
-        Map<ProductID, [FormattedProduct, Inventory[]]>
+      const invMap: Map<ProductID, [FormattedProduct, (Inventory & {locationName: string, placementName: string, batchName: string})[]]> = productsWithInventory.reduce<
+        Map<ProductID, [FormattedProduct, (Inventory & {locationName: string, placementName: string, batchName: string })[]]>
       >((acc, cur) => {
         if (acc.has(cur.id)) {
           const [product, inventories] = acc.get(cur.id)!
