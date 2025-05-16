@@ -1,4 +1,5 @@
 import { customerService } from '@/service/customer'
+import { isAfter } from 'date-fns'
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers'
 import { apikeys } from '../api-key/api-key'
 import { ApiKey } from '../database/schema/apikeys'
@@ -45,6 +46,13 @@ export async function validatePublicRequest(
 
   const customer = await customerService.getByID(apikey.customerID)
   if (!customer) {
+    return {
+      customer: null,
+      apikey: null,
+    }
+  }
+
+  if (apikey.expiry != null && isAfter(new Date(), apikey.expiry)) {
     return {
       customer: null,
       apikey: null,
