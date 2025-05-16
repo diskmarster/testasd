@@ -1,7 +1,7 @@
 import { serverTranslation } from '@/app/i18n'
-import { LocationWithCounts } from '@/data/location.types'
 import { getVercelRequestID, validatePublicRequest } from '@/lib/api/request'
 import { apiResponse, ApiResponse } from '@/lib/api/response'
+import { Location } from '@/lib/database/schema/customer'
 import { isMaintenanceMode, tryCatch } from '@/lib/utils.server'
 import { locationService } from '@/service/location'
 import { getLanguageFromRequest } from '@/service/user.utils'
@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
   r: NextRequest,
-): Promise<NextResponse<ApiResponse<LocationWithCounts[]>>> {
+): Promise<NextResponse<ApiResponse<Location[]>>> {
   const lng = getLanguageFromRequest(headers())
   const { t } = await serverTranslation(lng, 'common')
 
@@ -39,5 +39,14 @@ export async function GET(
     )
   }
 
-  return apiResponse.ok(locationResponse.data)
+  const trimmedLocations: Location[] = locationResponse.data.map(l => ({
+    id: l.id,
+    customerID: l.customerID,
+    name: l.name,
+    inserted: l.inserted,
+    updated: l.updated,
+    isBarred: l.isBarred,
+  }))
+
+  return apiResponse.ok(trimmedLocations)
 }
