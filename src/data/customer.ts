@@ -27,6 +27,7 @@ import {
   CustomerMailSettingWithEmail,
   CustomerWithUserCount,
 } from './customer.types'
+import { ApiKey, apikeysTable, NewApiKey } from '@/lib/database/schema/apikeys'
 
 export const customer = {
   create: async function (
@@ -277,5 +278,35 @@ export const customer = {
       .leftJoin(userTable, eq(userTable.id, customerMailSettingsTable.userID))
 
     return res
-  }
+  },
+	createApiKey: async function(
+		data: NewApiKey,
+		tx: TRX = db
+	): Promise<ApiKey> {
+		const [key] = await tx.insert(apikeysTable).values(data).returning()
+		return key
+	},
+	deleteApiKey: async function(
+		key: string,
+		customerID: CustomerID,
+		tx: TRX = db
+	): Promise<boolean> {
+		const res = await tx
+			.delete(apikeysTable)
+			.where(and(
+				eq(apikeysTable.key, key),
+				eq(apikeysTable.customerID, customerID)
+			))
+			return res.rowsAffected == 1
+	},
+	getApiKey: async function(
+		hash: string,
+		tx: TRX = db
+	): Promise<ApiKey | undefined> {
+		const [apikey] = await tx
+			.select()
+			.from(apikeysTable)
+			.where(eq(apikeysTable.hash, hash))
+		return apikey
+	}
 }

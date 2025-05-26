@@ -135,7 +135,20 @@
       "placement": "Placements",
       "placement-description": "Placements are recorded during incoming, outgoing, adjustment, and move",
       "batch": "Batch No.",
-      "batch-description": "Batch No. is recorded during incoming, outgoing, adjustment, and move"
+      "batch-description": "Batch No. is recorded during incoming, outgoing, adjustment, and move",
+      "app-signout": "App sign out",
+      "app-signout-description": "Set how long the app can stay in the background before the user is signed out",
+      "app-signout-hint": "The user is automatically signed out in two ways: when the screen goes to sleep, or when the app has been in the background for a certain period of time.",
+      "app-signout-hint-link": "Click here to read more.",
+      "app-signout-faq-question": "When are my users signed out of the app?",
+      "app-signout-value": "Invalid value",
+      "app-signout-value_0": "Immediately",
+      "app-signout-value_5": "5 minutes",
+      "app-signout-value_10": "10 minutes",
+      "app-signout-value_15": "15 minutes",
+      "app-signout-value_30": "30 minutes",
+      "app-signout-value_60": "1 hour",
+      "app-signout-value_99999999": "Never"
     },
     "error": {
       "name": "Unknown name",
@@ -163,7 +176,7 @@
     "send-invite": "Send invite",
     "role-question": "What can the roles do? Read more on our",
     "role-link": "FAQ page",
-    "role-url": "what can the user roles do?",
+    "role-url": "What can the users roles do?",
     "user-rights": "Rights",
     "user-rights-web": "User must have access to web",
     "user-rights-app": "User must have access to app",
@@ -234,62 +247,62 @@
     "file-format-label": "Filetype",
     "file-type-not-supported": "The chosen file format is not supported"
   },
-  "modal-delete-user":{
+  "modal-delete-user": {
     "title": "Delete user",
     "description": "This action is permanent and cannot be reversed",
     "confirm-toast": "User has been deleted",
     "cancel-button": "Close",
     "confirm-button": "Delete user"
   },
-	"mail-settings": {
-		"title": "Scheduled emails",
-		"description": "View and schedule your emails",
-		"link-to-faq": "Which emails can I receive?",
-		"button-add": "Add new",
-		"button-cancel": "Cancel",
-		"button-apply_one": "Update {{count}} email",
-		"button-apply_other": "Update {{count}} emails",
-		"col-updated": "Updated",
-		"col-location": "Location",
-		"col-email": "Email",
-		"col-stock-value": "Stock value",
-		"col-reorder": "Reorder",
-		"col-movements": "Stock movements",
-		"actions-delete": "Delete",
-		"errors": {
-			"update-settings-success": "Email was updated",
-			"update-settings-failed": "{{count}} of {{max}} email was updated",
-			"create-settings-success": "Email is now scheduled",
-			"create-settings-failed": "Email was not created",
-			"delete-setting-success": "Email was deleted",
-			"delete-setting-failed": "Email was not deleted. Try again"
-		},
-		"add-modal": {
-			"title": "Add new scheduled email",
-			"type": "Email to send?",
-			"type-error-message": "At least one mail type is required",
-			"locations": "For which locations?",
-			"locations-placeholder": "Choose location",
-			"email": "To what email?",
-			"email-external-mail": "Sending to email not in your company or access level",
-			"email-error-message": "Email must belong to a user when 'Stock movements' type is selected",
-			"button-close": "Close",
-			"button-confirm": "Add scheduled email",
-			"button-show-all": "Show all",
-			"mail-types": {
-				"stock-value-title": "Stock value",
-				"stock-value-description": "Sent at the end of the month",
-				"reorder-title": "Reorder",
-				"reorder-description": "Sent when items are ready for reorder",
-				"movements-title": "Stock movements",
-				"movements-description": "Send the user's stock movements daily"
-			}
-		},
-		"delete-modal": {
-			"title": "Delete scheduled email?",
-			"description": "This action is permanent and cannot be reversed. Do you want to delete this scheduled email?",
-			"button-no": "No",
-			"button-yes": "Yes, delete scheduled email"
-		}
-	}
+  "mail-settings": {
+    "title": "Scheduled emails",
+    "description": "View and schedule your emails",
+    "link-to-faq": "Which emails can I receive?",
+    "button-add": "Add new",
+    "button-cancel": "Cancel",
+    "button-apply_one": "Update {{count}} email",
+    "button-apply_other": "Update {{count}} emails",
+    "col-updated": "Updated",
+    "col-location": "Location",
+    "col-email": "Email",
+    "col-stock-value": "Stock value",
+    "col-reorder": "Reorder",
+    "col-movements": "Stock movements",
+    "actions-delete": "Delete",
+    "errors": {
+      "update-settings-success": "Email was updated",
+      "update-settings-failed": "{{count}} of {{max}} email was updated",
+      "create-settings-success": "Email is now scheduled",
+      "create-settings-failed": "Email was not created",
+      "delete-setting-success": "Email was deleted",
+      "delete-setting-failed": "Email was not deleted. Try again"
+    },
+    "add-modal": {
+      "title": "Add new scheduled email",
+      "type": "Email to send?",
+      "type-error-message": "At least one mail type is required",
+      "locations": "For which locations?",
+      "locations-placeholder": "Choose location",
+      "email": "To what email?",
+      "email-external-mail": "Sending to email not in your company or access level",
+      "email-error-message": "Email must belong to a user when 'Stock movements' type is selected",
+      "button-close": "Close",
+      "button-confirm": "Add scheduled email",
+      "button-show-all": "Show all",
+      "mail-types": {
+        "stock-value-title": "Stock value",
+        "stock-value-description": "Sent at the end of the month",
+        "reorder-title": "Reorder",
+        "reorder-description": "Sent when items are ready for reorder",
+        "movements-title": "Stock movements",
+        "movements-description": "Send the user's stock movements daily"
+      }
+    },
+    "delete-modal": {
+      "title": "Delete scheduled email?",
+      "description": "This action is permanent and cannot be reversed. Do you want to delete this scheduled email?",
+      "button-no": "No",
+      "button-yes": "Yes, delete scheduled email"
+    }
+  }
 }

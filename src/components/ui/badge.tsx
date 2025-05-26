@@ -23,6 +23,7 @@ const badgeVariants = cva(
         green: 'bg-green-500/25 border-green-500/50 dark:text-green-500 text-green-600',
         gray: 'bg-slate-500/25 border-slate-500/50 dark:text-slate-500 text-slate-600',
         lessGray: 'bg-slate-500/10 border-slate-500/50 dark:text-slate-500 text-slate-600',
+        moreGray: 'bg-slate-500/50 border-slate-500/50 dark:text-slate-400 text-slate-600',
         blue: 'bg-blue-500/25 border-blue-500/50 dark:text-blue-500 text-blue-600',
         teal: 'bg-teal-500/25 border-teal-500/50 dark:text-teal-500 text-teal-600',
         orange: 'bg-orange-500/25 border-orange-500/50 dark:text-orange-500 text-orange-600',

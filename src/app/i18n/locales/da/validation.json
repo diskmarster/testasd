@@ -96,7 +96,8 @@
     "field_usePlacement": "Placering",
     "field_useBatch": "Batch nr.",
     "field_customerSettingsID": "Firmaindstilling ID",
-    "field_customerID": "Firma ID"
+    "field_customerID": "Firma ID",
+    "field_authTimeoutMinutes": "App logud"
   },
   "register": {
     "name-minLength": "Navn skal være mindst {{minLength}} tegn langt",

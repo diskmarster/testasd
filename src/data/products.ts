@@ -1,6 +1,7 @@
 import { db, TRX } from '@/lib/database'
-import { CustomerID } from '@/lib/database/schema/customer'
+import { CustomerID, locationTable } from '@/lib/database/schema/customer'
 import {
+    batchTable,
     DeletedProduct,
   deletedProductTable,
   groupTable,
@@ -9,6 +10,7 @@ import {
   NewProduct,
   NewProductHistory,
   PartialProduct,
+  placementTable,
   Product,
   ProductHistory,
   productHistoryTable,
@@ -16,8 +18,8 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, count, desc, eq, getTableColumns, SQL, sql } from 'drizzle-orm'
-import { FormattedProduct } from './products.types'
+import { and, count, desc, eq, getTableColumns, inArray, SQL, sql, SQLWrapper } from 'drizzle-orm'
+import { FormattedProduct, ProductFilters, ProductWithInventories } from './products.types'
 import { supplierTable } from '@/lib/database/schema/suppliers'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
 
@@ -192,8 +194,19 @@ export const product = {
   },
   getWithInventoryByCustomerID: async function(
     customerID: CustomerID,
+		filters?: ProductFilters,
     trx: TRX = db,
-  ): Promise<(FormattedProduct & {inventory: Inventory})[]> {
+  ): Promise<(FormattedProduct 
+		& {inventory: Inventory 
+			& { locationName: string, placementName: string, batchName: string} })[]> {
+		const whereStmt: SQLWrapper[] = []
+
+		if (filters) {
+			if (filters.group) {
+				whereStmt.push(inArray(groupTable.name, filters.group))
+			}
+		}
+
     const product = await trx
       .select({
         ...PRODUCT_COLS,
@@ -202,14 +215,23 @@ export const product = {
         supplierName: supplierTable.name,
         inventory: {
           ...INVENTORY_COLS,
+					locationName: locationTable.name,
+					placementName: placementTable.name,
+					batchName: batchTable.batch,
         }
       })
       .from(productTable)
-      .where(eq(productTable.customerID, customerID))
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .innerJoin(inventoryTable, eq(inventoryTable.productID, productTable.id))
+			.innerJoin(locationTable, eq(locationTable.id, inventoryTable.locationID))
+			.innerJoin(placementTable, eq(placementTable.id, inventoryTable.placementID))
+			.innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
       .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+			.where(and(
+				eq(productTable.customerID, customerID),
+				...whereStmt,
+			))
     return product
   },
   deleteProduct: async function (

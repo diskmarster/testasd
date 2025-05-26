@@ -35,6 +35,10 @@ export default function Page() {
 			question: t('faq-page.cron-mails.question'),
 			answer: <AnswerCronMails />,
 		},
+		{
+			question: t('faq-page.app-signout.question'),
+			answer: <AnswerAppSignout />,
+		},
 	]
 
 	const questionIndex = questions.findIndex(q => q.question == questionParam)
@@ -58,7 +62,7 @@ export default function Page() {
 		<SiteWrapper
 			title={t('faq-page.title')}
 			description={t('faq-page.description')}>
-			<div className='lg:w-1/2'>
+			<div className='lg:w-1/2 max-w-[70ch]'>
 				<Accordion
 					type='single'
 					value={accordionValue}
@@ -104,6 +108,35 @@ function AnswerCronMails() {
 				<p className='font-medium'>{t('faq-page.cron-mails.answer-title')}</p>
 				<p>{t('faq-page.cron-mails.answer')}</p>
 			</div>
+		</div>
+	)
+}
+
+function AnswerAppSignout() {
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'other')
+
+	return (
+		<div className='flex flex-col gap-4'>
+			<p>{t('faq-page.app-signout.sub')}</p>
+			<ul className='flex flex-col gap-2 list-outside pl-4'>
+				<li className='space-y-px'>
+					<li className='font-medium list-disc'>
+						{t('faq-page.app-signout.li-name', { context: 'screen' })}
+					</li>
+					<li className='ml-4'>
+						{t('faq-page.app-signout.li-desc', { context: 'screen' })}
+					</li>
+				</li>
+				<li className='space-y-px'>
+					<li className='font-medium list-disc'>
+						{t('faq-page.app-signout.li-name', { context: 'background' })}
+					</li>
+					<li className='ml-4'>
+						{t('faq-page.app-signout.li-desc', { context: 'background' })}
+					</li>
+				</li>
+			</ul>
 		</div>
 	)
 }

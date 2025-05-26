@@ -1,123 +1,134 @@
 {
-  "page": {
-    "title": "Clients",
-    "description": "View and edit clients"
-  },
-  "columns": {
-    "inserted": "Inserted",
-    "updated": "Updated",
-    "company": "Company",
-    "plan": "Plan",
-    "active": "Status",
-    "active_true": "Active",
-    "active_false": "Inactive",
-    "email": "Company email",
-    "extra": "Extra users",
-    "users": "Registered users"
-  },
-  "row-actions": {
-    "update": "Update client",
-    "toggle": "Toggle status",
-    "toggle_true": "Deactivate client",
-    "toggle_false": "Activate client",
-    "delete": "Delete client",
-    "import-inventory": "Import inventory",
-    "import-history": "Import history"
-  },
-  "import-inventory-modal": {
-    "title": "Import a customers inventory",
-    "description": "This function uploads the quantities of a customers inventory with placements for a location.",
-    "before-upload": "Before you upload",
-    "location-label": "Customers location",
-    "import-criteria": "Your import file must meet certain criteria before it can be uploaded. Please refer to the example file to see the structure.",
-    "drag-and-drop": "Drag and drop your file here, or click to select one",
-    "drag-and-drop2": "Drag and drop your file here",
-    "file-example": "File example",
-    "file-import-example": "See how to format your file",
-    "download": "Download",
-    "loading-the-file": "Reading file",
-    "loaded-and-ready": "Read and prepared {{amount}} rows for upload",
-    "upload-button": "Upload inventory",
-    "error-message": "Error on row {{rowNum}} in {{rowKey}}: {{rowMsg}}",
-    "more-errors": "More errors...",
-    "completed-title": "Upload done",
-    "completed-description": "Import of inventory is now finished.",
-    "upload-progress": "{{uploaded}} uploaded of {{max}}",
-    "error-from": "Something went wrong in row {{from}} to {{to}}",
-    "skipped-skus": "The following sku numbers was not imported due to them not being in the system"
-  },
-  "import-validation": {
-    "sku-required": "Sku is required",
-    "sku-min-length": "Sku must be at least {{amount}} characters",
-    "sku-max-length": "Sku can at max be {{amount}} characters",
-    "placement-max-length": "Placement must be at least {{amount}} characters",
-    "quantity-required": "Quantity is required",
-    "quantity-positive": "Quantity must be a positive number",
-    "unknown-column": "Unknown column"
-  },
-  "create-modal": {
-    "title": "Create client",
-    "description": "The client will receive an activationlink in the company email inbox.",
-    "toast-success": "{{client}} has been created as a client",
-    "company-label": "Company name",
-    "company-placeholder": "Type company name",
-    "email-label": "Company email",
-    "email-placeholder": "Type company email",
-    "email-description": "An activation link will be sent to the company emails inbox",
-    "plan-label": "Plan",
-    "extra-users-label": "Extra users",
-    "extra-users-price": "49,- DKK per. user/mth",
-    "extra-users-count": "Total user count: {{count}}",
-    "submit-button": "Create client",
-    "tooltip": "Create new client"
-  },
-  "validation": {
-    "company-min": "Company name must be at least {{minLength}} characters",
-    "company-max": "Company name connat exceed {{maxLength}} characters",
-    "company-required": "Company name is required",
-    "email-required": "Company email is required",
-    "email-invalid": "Company email must be valid"
-  },
-  "create-action-errors": {
-    "client-exists": "A company with that email already exists",
-    "user-exists": "A user with that email already exists",
-    "client-not-created": "An error occurred when creating client",
-    "location-not-created": "An error occurred when creating a location for client",
-    "mail-not-sent": "An error occurred when sending activation link"
-  },
-  "toggle-modal": {
-    "title": "Update client status",
-    "title_activate": "Activate client",
-    "title_deactivate": "Deactivate client",
-    "description": "Updates a clients status. Deactivated clients cannot log in to the system",
-    "cancel-button": "Cancel",
-    "submit-button": "Update status",
-    "submit-button_activate": "Activate",
-    "submit-button_deactivate": "Deactivate",
-    "toast-success": "The clients status has been updated",
-    "toast-success_activate": "The client has been activated",
-    "toast-success_deactivate": "The client has been deactivated"
-  },
-  "toggle-action-errors": {
-    "client-not-updated": "An error occurred when updating the clients status"
-  },
-  "delete-modal": {
-    "title": "Delete client",
-    "description": "This action is permanent. All data associated with the client will be deleted and cannot be reversed",
-    "cancel-button": "Cancel",
-    "submit-button": "Delete client",
-    "toast-success": "The client has been deleted"
-  },
-  "delete-action-errors": {
-    "client-not-deleted": "An error occurred when deleting the client"
-  },
-  "update-modal": {
-    "title": "Update client",
-    "description": "Update client information",
-    "toast-success": "{{client}} has been updated",
-    "submit-button": "Update client"
-  },
-  "update-action-errors": {
-    "client-not-updated": "An error occurred when updating the client information"
-  }
+	"page": {
+		"title": "Clients",
+		"description": "View and edit clients"
+	},
+	"columns": {
+		"inserted": "Inserted",
+		"updated": "Updated",
+		"company": "Company",
+		"plan": "Plan",
+		"active": "Status",
+		"active_true": "Active",
+		"active_false": "Inactive",
+		"email": "Company email",
+		"extra": "Extra users",
+		"users": "Registered users"
+	},
+	"row-actions": {
+		"update": "Update client",
+		"toggle": "Toggle status",
+		"toggle_true": "Deactivate client",
+		"toggle_false": "Activate client",
+		"delete": "Delete client",
+		"import-inventory": "Import inventory",
+		"import-history": "Import history"
+	},
+	"import-inventory-modal": {
+		"title": "Import a customers inventory",
+		"description": "This function uploads the quantities of a customers inventory with placements for a location.",
+		"before-upload": "Before you upload",
+		"location-label": "Customers location",
+		"import-criteria": "Your import file must meet certain criteria before it can be uploaded. Please refer to the example file to see the structure.",
+		"drag-and-drop": "Drag and drop your file here, or click to select one",
+		"drag-and-drop2": "Drag and drop your file here",
+		"file-example": "File example",
+		"file-import-example": "See how to format your file",
+		"download": "Download",
+		"loading-the-file": "Reading file",
+		"loaded-and-ready": "Read and prepared {{amount}} rows for upload",
+		"upload-button": "Upload inventory",
+		"error-message": "Error on row {{rowNum}} in {{rowKey}}: {{rowMsg}}",
+		"more-errors": "More errors...",
+		"completed-title": "Upload done",
+		"completed-description": "Import of inventory is now finished.",
+		"upload-progress": "{{uploaded}} uploaded of {{max}}",
+		"error-from": "Something went wrong in row {{from}} to {{to}}",
+		"skipped-skus": "The following sku numbers was not imported due to them not being in the system"
+	},
+	"import-validation": {
+		"sku-required": "Sku is required",
+		"sku-min-length": "Sku must be at least {{amount}} characters",
+		"sku-max-length": "Sku can at max be {{amount}} characters",
+		"placement-max-length": "Placement must be at least {{amount}} characters",
+		"quantity-required": "Quantity is required",
+		"quantity-positive": "Quantity must be a positive number",
+		"unknown-column": "Unknown column"
+	},
+	"create-modal": {
+		"title": "Create client",
+		"description": "The client will receive an activationlink in the company email inbox.",
+		"toast-success": "{{client}} has been created as a client",
+		"company-label": "Company name",
+		"company-placeholder": "Type company name",
+		"email-label": "Company email",
+		"email-placeholder": "Type company email",
+		"email-description": "An activation link will be sent to the company emails inbox",
+		"plan-label": "Plan",
+		"extra-users-label": "Extra users",
+		"extra-users-price": "49,- DKK per. user/mth",
+		"extra-users-count": "Total user count: {{count}}",
+		"submit-button": "Create client",
+		"tooltip": "Create new client"
+	},
+	"validation": {
+		"company-min": "Company name must be at least {{minLength}} characters",
+		"company-max": "Company name connat exceed {{maxLength}} characters",
+		"company-required": "Company name is required",
+		"email-required": "Company email is required",
+		"email-invalid": "Company email must be valid"
+	},
+	"create-action-errors": {
+		"client-exists": "A company with that email already exists",
+		"user-exists": "A user with that email already exists",
+		"client-not-created": "An error occurred when creating client",
+		"location-not-created": "An error occurred when creating a location for client",
+		"mail-not-sent": "An error occurred when sending activation link"
+	},
+	"toggle-modal": {
+		"title": "Update client status",
+		"title_activate": "Activate client",
+		"title_deactivate": "Deactivate client",
+		"description": "Updates a clients status. Deactivated clients cannot log in to the system",
+		"cancel-button": "Cancel",
+		"submit-button": "Update status",
+		"submit-button_activate": "Activate",
+		"submit-button_deactivate": "Deactivate",
+		"toast-success": "The clients status has been updated",
+		"toast-success_activate": "The client has been activated",
+		"toast-success_deactivate": "The client has been deactivated"
+	},
+	"toggle-action-errors": {
+		"client-not-updated": "An error occurred when updating the clients status"
+	},
+	"delete-modal": {
+		"title": "Delete client",
+		"description": "This action is permanent. All data associated with the client will be deleted and cannot be reversed",
+		"cancel-button": "Cancel",
+		"submit-button": "Delete client",
+		"toast-success": "The client has been deleted"
+	},
+	"delete-action-errors": {
+		"client-not-deleted": "An error occurred when deleting the client"
+	},
+	"update-modal": {
+		"title": "Update client",
+		"description": "Update client information",
+		"toast-success": "{{client}} has been updated",
+		"submit-button": "Update client"
+	},
+	"update-action-errors": {
+		"client-not-updated": "An error occurred when updating the client information"
+	},
+	"create-api-key": {
+		"title": "Create API key",
+		"desc": "Generate an API key the customer can use to integrate Nem Lager with their own systems.",
+		"name": "Name",
+		"expiry": "Expiry",
+		"expiry-placeholder": "Choose date",
+		"reset": "Close",
+		"confirm": "Create API key",
+		"apikey": "API key",
+		"toast-success": "API key was created"
+	}
 }
