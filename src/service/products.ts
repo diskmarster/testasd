@@ -1,7 +1,7 @@
 import { inventory } from '@/data/inventory'
 import { location } from '@/data/location'
 import { product } from '@/data/products'
-import { FormattedProduct } from '@/data/products.types'
+import { FormattedProduct, ProductFilters, ProductWithInventories } from '@/data/products.types'
 import { db, TRX } from '@/lib/database'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
@@ -142,15 +142,14 @@ export const productService = {
   },
   getAllProductsWithInventories: async function(
     customerID: CustomerID,
-  ): Promise<
-    (Product & { unit: string; group: string; inventories: Inventory[] })[]
-  > {
+		filters?: ProductFilters,
+  ): Promise<ProductWithInventories[]> {
     try {
       const productsWithInventory =
-        await product.getWithInventoryByCustomerID(customerID)
+        await product.getWithInventoryByCustomerID(customerID, filters)
 
-      const invMap: Map<ProductID, [FormattedProduct, Inventory[]]> = productsWithInventory.reduce<
-        Map<ProductID, [FormattedProduct, Inventory[]]>
+      const invMap: Map<ProductID, [FormattedProduct, (Inventory & {locationName: string, placementName: string, batchName: string})[]]> = productsWithInventory.reduce<
+        Map<ProductID, [FormattedProduct, (Inventory & {locationName: string, placementName: string, batchName: string })[]]>
       >((acc, cur) => {
         if (acc.has(cur.id)) {
           const [product, inventories] = acc.get(cur.id)!
