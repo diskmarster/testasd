@@ -84,7 +84,7 @@ export async function POST(
   const { data } = zodRes
 
   const regulate = await tryCatch(
-    apiService.regulateInventory(user.customerID, null, null, 'ext', data),
+    apiService.regulateInventory(user.customerID, user.id, null, 'app', data),
   )
   if (!regulate.success) {
     console.error(
