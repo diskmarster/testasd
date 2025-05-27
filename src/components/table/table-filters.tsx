@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useRef, useState } from 'react'
+import React, { SetStateAction, useEffect, useState } from 'react'
 
 import { useTranslation } from '@/app/i18n/client'
 import { FilterField, NumberRange } from '@/components/table/table-toolbar'
@@ -27,12 +27,6 @@ import { format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 import { useDebouncedCallback } from 'use-debounce'
 import { ScrollArea } from '../ui/scroll-area'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 type TableToolbarFiltersProps<T> = {
 	table: Table<T>
@@ -485,6 +479,44 @@ function FilterDateRange<T>({
 	)
 }
 
+function getFilterFieldFacetedUniqueValues<T>(field: FilterField<T>): Map<any, number> | undefined {
+	if (field.column == undefined) {
+		console.error(`Column for filter with label: '${field.label}' was undefined`)
+		return undefined
+	}
+
+	if (field.facetedUniqueColumnId == undefined) {
+		return field.column?.getFacetedUniqueValues()
+	}
+
+	const uniqueColumnId = field.facetedUniqueColumnId
+	const columnId = field.column?.id
+	const facetedRowModel = field.column?.getFacetedRowModel()
+
+	const map = new Map<string, any>()
+	for (let row of (facetedRowModel?.flatRows ?? [])) {
+		const unique = row.getValue(uniqueColumnId)
+		const col = row.getValue(columnId)
+		const key = `${unique}_${col}`
+
+		if (!map.has(key)) {
+			map.set(key, col)
+		}
+	}
+
+	const customFacets = new Map<any, number>()
+	for (let facet of Array.from(map.values())) {
+		if (!customFacets.has(facet)) {
+			customFacets.set(facet, 0)
+		}
+
+		const cur = customFacets.get(facet)!
+		customFacets.set(facet, cur+1)
+	}
+
+	return customFacets
+}
+
 function FilterSelect<T>({
 	field,
 	selectedValues,
@@ -497,7 +529,7 @@ function FilterSelect<T>({
 	t: (key: string) => string
 }) {
 	const [search, setSearch] = useState<string>('')
-	const facets = field.column?.getFacetedUniqueValues()
+	const facets = getFilterFieldFacetedUniqueValues(field)
 	const debouncedSetFilter = useDebouncedCallback(
 		(val: string[] | undefined) => field.column?.setFilterValue(val),
 		500,
@@ -553,11 +585,9 @@ function FilterSelect<T>({
 											<option.icon className='mr-2 h-4 w-4 text-muted-foreground' />
 										)}
 										<span>{option.label}</span>
-										{facets?.get(option.value) && (
-											<span className='ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs'>
-												{facets.get(option.value)}
-											</span>
-										)}
+										<span className='ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs'>
+											{facets?.get(option.value) ?? 0}
+										</span>
 									</CommandItem>
 								)
 							})}

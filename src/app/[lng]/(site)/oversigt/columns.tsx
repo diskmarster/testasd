@@ -488,14 +488,17 @@ export function getTableOverviewFilters(
     type: 'select',
     label: t('attachments'),
     value: '',
-    options: [{
-      value: true,
-      label: t('has-attach-yes'),
-    },
-  {
-    value: false,
-    label: t('has-attach-no'),
-  }],
+		options: [
+			{
+				value: true,
+				label: t('has-attach-yes'),
+			},
+			{
+				value: false,
+				label: t('has-attach-no'),
+			}
+		],
+		facetedUniqueColumnId: 'sku',
   }
   const barcodeFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('barcode'),
@@ -515,6 +518,7 @@ export function getTableOverviewFilters(
         label: unit.name,
       })),
     ],
+		facetedUniqueColumnId: 'sku',
   }
   const groupFilter: FilterField<InventoryTableRow> = {
     column: table.getColumn('group'),
@@ -527,6 +531,7 @@ export function getTableOverviewFilters(
         label: group.name,
       })),
     ],
+		facetedUniqueColumnId: 'sku',
   }
   const supplierNameFilter: FilterField<InventoryTableRow> = {
 	  column: table.getColumn('supplierName'),
@@ -546,7 +551,8 @@ export function getTableOverviewFilters(
 			  label: opt,
 			  value: opt,
 		  }))
-	  ]
+	  ],
+		facetedUniqueColumnId: 'sku',
   }
   const text1Filter: FilterField<InventoryTableRow> = {
     column: table.getColumn('text1'),
@@ -570,7 +576,9 @@ export function getTableOverviewFilters(
     placeholder: t('product-text3-placeholder'),
   }
 	const placementFilter: FilterField<InventoryTableRow> = {
-		column: table.getColumn('placement'),
+		column: (hasPermissionByPlan(plan, 'basis') && settings.usePlacement)
+			? table.getColumn('placement')
+			: undefined,
 		type: 'select',
 		label: t('placement'),
 		value: '',
@@ -583,7 +591,9 @@ export function getTableOverviewFilters(
 	}
 
 	const batchFilter: FilterField<InventoryTableRow> = {
-		column: table.getColumn('batch'),
+		column: (hasPermissionByPlan(plan, 'pro') && settings.useBatch) 
+			? table.getColumn('batch') 
+			: undefined,
 		type: 'select',
 		label: t('batch'),
 		value: '',
@@ -638,6 +648,7 @@ export function getTableOverviewFilters(
         label: t('isBarred-no'),
       },
     ],
+		facetedUniqueColumnId: 'sku',
   }
 
 	let planFilters: FilterField<InventoryTableRow>[] = [
