@@ -3,6 +3,7 @@ import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
   History,
+  Inventory,
   Placement,
   Product,
 } from '@/lib/database/schema/inventory'
@@ -48,6 +49,11 @@ export type FormattedInventory = {
 	  supplierName: string | null
   }
   placement: Placement
+  batch: Batch
+}
+
+export interface ProductInventory extends Inventory {
+	placement: Placement
   batch: Batch
 }
 

@@ -9,11 +9,12 @@ import {
   HistoryType,
   HistoryWithSums,
   InventoryAction,
+  ProductInventory,
 } from '@/data/inventory.types'
 import { product } from '@/data/products'
 import { db, TRX } from '@/lib/database'
 import { UserID } from '@/lib/database/schema/auth'
-import { CustomerID, LocationID } from '@/lib/database/schema/customer'
+import { CustomerID, Location, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
   BatchID,
@@ -45,6 +46,9 @@ import { NewReorder, PartialReorder, Reorder } from '@/lib/database/schema/reord
 import { customerService } from './customer'
 import { emailService } from './email'
 import { EmailSendReorder } from '@/components/email/email-reorder'
+
+/** Creates a new type where the provided keys are required, and the rest are optional */
+type PartialRequired<Type, Keys extends keyof Type> = Required<Pick<Type, Keys>> & Partial<Omit<Type, Keys>>
 
 const EMAIL_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -543,7 +547,32 @@ export const inventoryService = {
   ): Promise<Inventory[]> {
     return await inventory.getInventoryByProductID(productID)
   },
+  getProductInventoryForLocationIDs: async function(
+    productID: ProductID,
+		locationIDs: LocationID[],
+  ): Promise<ProductInventory[]> {
+    return await inventory.getProductInventoryForLocations(productID, locationIDs)
+  },
+  getProductInventoryForLocations: async function<TLocation extends PartialRequired<Location, 'id'>>(
+    productID: ProductID,
+		locations: TLocation[],
+  ): Promise<Map<TLocation, ProductInventory[]>> {
+    const inventories = await inventory.getProductInventoryForLocations(productID, locations.map(l => l.id))
 
+		const map = new Map<TLocation, ProductInventory[]>
+		for (const inventory of inventories) {
+			const loc = locations.find(l => l.id == inventory.locationID)
+			if (loc == undefined) {
+				continue
+			}
+
+			const cur = map.get(loc) ?? []
+			cur.push(inventory)
+			map.set(loc, cur)
+		}
+
+		return map
+  },
   createUnit: async function(
     unitData: NewUnit,
     lang: string = fallbackLng,
