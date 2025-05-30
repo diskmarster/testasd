@@ -9,6 +9,7 @@ import { FilesSkeleton } from '@/components/products/product-files-grid'
 import { HistorySkeleton } from '@/components/products/product-history'
 import { ReorderWrapper } from './reorder-wrapper'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
+import { ProductInventoryWrapper } from './placement-wrapper'
 
 interface PageProps extends WithAuthProps {
 	params: {
@@ -34,6 +35,11 @@ async function Page({ params: { lng, id }, user, customer }: PageProps) {
 						<ReorderWrapper lng={lng} id={id} user={user} />
 					</Suspense>
 				)}
+			</div>
+			<div>
+				<Suspense fallback={<HistorySkeleton />}>
+					<ProductInventoryWrapper lng={lng} id={id} user={user} />
+				</Suspense>
 			</div>
 			<div>
 				<Suspense fallback={<HistorySkeleton />}>
