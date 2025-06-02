@@ -23,7 +23,13 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
           className={cn(
 						"w-fit",
             cell.getIsGrouped() || cell.getIsAggregated() ? 'bg-muted/30' : '',
-					)}>
+					)}
+					align={
+							/* @ts-ignore*/
+							cell.column.columnDef.meta?.rightAlign 
+								? 'right' 
+								: 'left'
+						}>
           {cell.getIsGrouped() ? (
             <div className='flex items-center gap-2'>
               <Button

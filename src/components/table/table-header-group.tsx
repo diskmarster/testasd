@@ -13,7 +13,13 @@ export function TableHeaderGroup<T>({headerGroup}: Props<T>) {
 			{headerGroup.headers.map(header => (
 				// @ts-ignore
 				!header.getContext().column.columnDef.meta?.isShadow &&
-				<TableHead key={header.id}>
+				<TableHead key={header.id}
+					align={
+							/* @ts-ignore*/
+							header.column.columnDef.meta?.rightAlign 
+								? 'right' 
+								: 'left'
+						}>
 					{header.isPlaceholder
 						? null
 						: flexRender(
