@@ -116,7 +116,7 @@ export async function POST(
   const end = performance.now()
 
   await analyticsService.createAnalytic('action', {
-    actionName: 'moveInventory',
+    actionName: 'moveInventoryBetweenLocations',
     userID: user.id,
     customerID: user.customerID,
     sessionID: session.id,
