@@ -151,5 +151,13 @@
     "account-doesnt-exist": "Company account does not exist in the system",
     "batch-not-created": "Batch was not created",
     "batch-not-updated": "Batch was not updated"
+  },
+  "locations-move": {
+	  "missing-user-id": "Missing a user id to perform this action",
+	  "missing-apikey": "Missing an api key to perform this action",
+	  "to-location": " (To location: {{location}})",
+	  "from-location": " (From location: {{location}})",
+	  "from-upsert-failed": "Failed to move product {{sku}} from location",
+	  "to-upsert-failed": "Failed to move product {{sku}} to location"
   }
 }
