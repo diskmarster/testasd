@@ -28,16 +28,20 @@ import { stringSortingFn } from '@/lib/tanstack/filter-fns'
 interface Props {
 	data: ProductInventory[]
 	t: TFunction
+	aggregationOptions: {
+		aggregatePlacements: boolean
+		aggregateBatches: boolean
+	}
 }
 
 const ROW_PER_PAGE = [25, 50, 75, 100]
 
-export function ProductInventoryTable({ data, t }: Props) {
+export function ProductInventoryTable({ data, t, aggregationOptions }: Props) {
 	const lng = useLanguage()
-	const columns = useMemo(() => getTableColumnDefs(lng, t), [lng, t])
+	const columns = useMemo(() => getTableColumnDefs(lng, t, aggregationOptions), [lng, t, aggregationOptions])
 
 	const [sorting, onSortingChange] = useState(
-		[{ id: 'placement', desc: true }, { id: 'batch', desc: true }, { id: 'quantity', desc: true }]
+		[{ id: 'placement', desc: true }, { id: 'quantity', desc: true }]
 	)
 
 	const table = useReactTable({
@@ -110,65 +114,83 @@ export function ProductInventoryTable({ data, t }: Props) {
 function getTableColumnDefs(
 	lng: I18NLanguage,
 	t: TFunction,
+	aggregationOptions: {
+		aggregatePlacements: boolean,
+		aggregateBatches: boolean,
+	},
 ): ColumnDef<ProductInventory>[] {
-	return [
-		{
-			accessorKey: 'quantity',
-			header: ({ column }) => (
-				<TableHeaderCell
-					column={column}
-					title={t('details-page.inventory.table.quantity')}
-				/>
-			),
-			cell: ({ getValue }) => (
-				<span className={cn(getValue<number>() < 0 && 'text-destructive')}>
-					{formatNumber(getValue<number>(), lng)}
-				</span>
-			),
-			meta: {
-				rightAlign: true,
-			},
+	const quantityCol: ColumnDef<ProductInventory> = {
+		accessorKey: 'quantity',
+		header: ({ column }) => (
+			<TableHeaderCell
+				column={column}
+				title={t('details-page.inventory.table.quantity')}
+			/>
+		),
+		cell: ({ getValue }) => (
+			<span className={cn(getValue<number>() < 0 && 'text-destructive')}>
+				{formatNumber(getValue<number>(), lng)}
+			</span>
+		),
+		meta: {
+			rightAlign: true,
 		},
-		{
-			accessorKey: 'placement.name',
-			id: 'placement',
-			header: ({ column }) => (
-				<TableHeaderCell
-					column={column}
-					title={t('details-page.inventory.table.placement')}
-				/>
-			),
-			cell: ({ getValue }) => getValue<string>(),
-			sortingFn: (ra, rb) => {
-				return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
-			},
+	}
+	const placementCol: ColumnDef<ProductInventory> = {
+		accessorKey: 'placement.name',
+		id: 'placement',
+		header: ({ column }) => (
+			<TableHeaderCell
+				column={column}
+				title={t('details-page.inventory.table.placement')}
+			/>
+		),
+		cell: ({ getValue }) => getValue<string>(),
+		sortingFn: (ra, rb) => {
+			return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
 		},
-		{
-			accessorKey: 'batch.batch',
-			id: 'batch',
-			header: ({ column }) => (
-				<TableHeaderCell
-					column={column}
-					title={t('details-page.inventory.table.batch')}
-				/>
-			),
-			cell: ({ getValue }) => getValue<string>(),
-			sortingFn: (ra, rb) => {
-				return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
-			},
+	}
+	const batchCol: ColumnDef<ProductInventory> = {
+		accessorKey: 'batch.batch',
+		id: 'batch',
+		header: ({ column }) => (
+			<TableHeaderCell
+				column={column}
+				title={t('details-page.inventory.table.batch')}
+			/>
+		),
+		cell: ({ getValue }) => getValue<string>(),
+		sortingFn: (ra, rb) => {
+			return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
 		},
-		{
-			accessorKey: 'updated',
-			header: ({ column }) => (
-				<TableHeaderCell
-					column={column}
-					title={t('details-page.inventory.table.updated')}
-				/>
-			),
-			cell: ({ getValue }) => formatDate(getValue<Date>()),
-			meta: {
-				rightAlign: true,
-			},
+	}
+	const updatedCol: ColumnDef<ProductInventory> = {
+		accessorKey: 'updated',
+		header: ({ column }) => (
+			<TableHeaderCell
+				column={column}
+				title={t('details-page.inventory.table.updated')}
+			/>
+		),
+		cell: ({ getValue }) => formatDate(getValue<Date>()),
+		meta: {
+			rightAlign: true,
 		},
+	}
+
+	let allCols = [
+		quantityCol,
+		placementCol,
+		batchCol,
+		updatedCol,
 	]
+
+	if (aggregationOptions.aggregatePlacements) {
+		allCols = allCols.filter(c => c != placementCol)
+	}
+	if (aggregationOptions.aggregateBatches) {
+		allCols = allCols.filter(c => c != batchCol)
+	}
+
+	return allCols
 }

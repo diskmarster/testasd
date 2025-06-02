@@ -38,7 +38,7 @@ async function Page({ params: { lng, id }, user, customer }: PageProps) {
 			</div>
 			<div>
 				<Suspense fallback={<HistorySkeleton />}>
-					<ProductInventoryWrapper lng={lng} id={id} user={user} />
+					<ProductInventoryWrapper lng={lng} id={id} user={user} customer={customer} />
 				</Suspense>
 			</div>
 			<div>

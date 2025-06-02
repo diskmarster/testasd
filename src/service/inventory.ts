@@ -46,9 +46,7 @@ import { NewReorder, PartialReorder, Reorder } from '@/lib/database/schema/reord
 import { customerService } from './customer'
 import { emailService } from './email'
 import { EmailSendReorder } from '@/components/email/email-reorder'
-
-/** Creates a new type where the provided keys are required, and the rest are optional */
-type PartialRequired<Type, Keys extends keyof Type> = Required<Pick<Type, Keys>> & Partial<Omit<Type, Keys>>
+import { PartialRequired } from '@/lib/types'
 
 const EMAIL_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
