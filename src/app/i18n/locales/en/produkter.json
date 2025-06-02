@@ -135,8 +135,8 @@
 			"maxAmount-description": "Can be left at 0 to ignore."
 		},
 		"inventory": {
-			"inventory-count_one": "({{count}} inventory)",
-			"inventory-count_other": "({{count}} inventories)",
+			"inventory-count_one": "({{totalQty}} across {{count}} inventory)",
+			"inventory-count_other": "({{totalQty}} across {{count}} inventories)",
 			"table": {
 				"quantity": "Quantity",
 				"placement": "Placement",

@@ -84,6 +84,9 @@ function InventoryGroup({
 
 		return Object.values(grouped)
 	}, [location.inventories, aggregatePlacements, aggregateBatches])
+	const totalQty = useMemo(() => (
+		inventories.map(i => i.quantity).reduce((acc, cur) => acc + cur, 0)
+	), [inventories])
 
 	const toggleExpanded = useCallback(() => {
 		if (expandable) {
@@ -109,6 +112,7 @@ function InventoryGroup({
 				<p>{location.name}</p>
 				<span className='text-muted-foreground tabular-nums text-xs'>
 					{t('details-page.inventory.inventory-count', {
+						totalQty,
 						count: inventories.length,
 					})}
 				</span>

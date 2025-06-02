@@ -136,8 +136,8 @@
 			"maxAmount-description": "Kan efterlades på 0 for at ignorere."
 		},
 		"inventory": {
-			"inventory-count_one": "({{count}} beholdning)",
-			"inventory-count_other": "({{count}} beholdninger)",
+			"inventory-count_one": "({{totalQty}} på {{count}} beholdning)",
+			"inventory-count_other": "({{totalQty}} fordelt på {{count}} beholdninger)",
 			"table": {
 				"quantity": "Beholdning",
 				"placement": "Placering",
