@@ -61,7 +61,9 @@ export function getTableOverviewColumns(
 					<HoverCardContent side='top' className='w-fit p-1'>
 						{row.original.images.length > 0 ? (
 							<img src={row.original.images[0].url} alt={row.original.images[0].name} className='rounded-sm max-h-40' />
-						) : ("Ingen billeder")}
+						) : (
+							<p className='text-sm text-muted-foreground px-2 py-1'>Ingen billeder</p>
+						)}
 					</HoverCardContent>
 				</HoverCard>
 			) : (
