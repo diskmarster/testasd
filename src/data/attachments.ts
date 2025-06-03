@@ -5,7 +5,9 @@ import {
   attachmentsTable,
   NewAttachment,
 } from '@/lib/database/schema/attachments'
-import { and, asc, eq } from 'drizzle-orm'
+import { CustomerID } from '@/lib/database/schema/customer'
+import { AttachmentType } from '@/service/file'
+import { and, asc, eq, SQLWrapper } from 'drizzle-orm'
 import { z } from 'zod'
 
 export const attachmentRefTypeValidation = z.enum(['product', 'genbestil'])
@@ -33,7 +35,7 @@ export const attachments = {
     id: number | string,
     tx: TRX = db,
   ): Promise<Attachment[]> {
-		const stringID = String(id)
+    const stringID = String(id)
     return await tx
       .select()
       .from(attachmentsTable)
@@ -54,5 +56,28 @@ export const attachments = {
       .from(attachmentsTable)
       .where(eq(attachmentsTable.id, id))
     return res[0]
+  },
+  getByCustomerID: async function (
+    customerID: CustomerID,
+    domain?: RefType,
+    type?: AttachmentType,
+    tx: TRX = db,
+  ): Promise<Attachment[]> {
+    const whereClauses: SQLWrapper[] = []
+
+    if (domain) {
+      whereClauses.push(eq(attachmentsTable.refDomain, domain))
+    }
+
+    if (type) {
+      whereClauses.push(eq(attachmentsTable.type, type))
+    }
+
+    const attachments = await tx
+      .select()
+      .from(attachmentsTable)
+      .where(and(eq(attachmentsTable.customerID, customerID), ...whereClauses))
+
+    return attachments
   },
 }

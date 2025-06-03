@@ -4,6 +4,8 @@ import {
   AttachmentID,
   NewAttachment,
 } from '@/lib/database/schema/attachments'
+import { CustomerID } from '@/lib/database/schema/customer'
+import { AttachmentType } from './file'
 
 export const attachmentService = {
   create: async function (a: NewAttachment): Promise<Attachment | undefined> {
@@ -21,4 +23,11 @@ export const attachmentService = {
   getByID: async function (id: number): Promise<Attachment | undefined> {
     return await attachments.getByID(id)
   },
+  getByCustomerID: async function(
+	  customerID: CustomerID,
+	  domain?: RefType,
+	  type?: AttachmentType,
+  ): Promise<Attachment[]> {
+	  return attachments.getByCustomerID(customerID, domain, type)
+  }
 }
