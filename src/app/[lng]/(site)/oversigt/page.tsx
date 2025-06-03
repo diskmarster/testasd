@@ -92,18 +92,16 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
   })
 
   const images = await attachmentService.getByCustomerID(customer.id, 'product', 'image')
-const imageMap: Map<string, Attachment[]> = images.reduce((acc: Map<string, Attachment[]>, cur) => {
-	if (!acc.has(cur.refID))	 {
-		acc.set(cur.refID, [cur])
-	}
+  const imageMap: Map<string, Attachment[]> = images.reduce((acc: Map<string, Attachment[]>, cur) => {
+	  if (!acc.has(cur.refID))	 {
+		  acc.set(cur.refID, [cur])
+	  }
 
-	const atts = acc.get(cur.refID)
-	acc.set(cur.refID, [...atts!, cur])
+	  const atts = acc.get(cur.refID)
+	  acc.set(cur.refID, [...atts!, cur])
 
-	return acc
-}, new Map())
-
-console.log(imageMap)
+	  return acc
+  }, new Map())
 
   const rows: InventoryTableRow[] = inventory.map(i => ({
     ...i,
