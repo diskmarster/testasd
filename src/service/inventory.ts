@@ -770,9 +770,9 @@ export const inventoryService = {
 	  const { t } = await serverTranslation(lang, 'action-errors')
 
 	  if (platform == "ext" && apiKeyName == null) {
-			throw new ApiError(400, t("locations-move.missing-user-id"))
-	  } else if (platform != "ext" && userID == null) {
 			throw new ApiError(400, t("locations-move.missing-apikey"))
+	  } else if (platform != "ext" && userID == null) {
+			throw new ApiError(400, t("locations-move.missing-user-id"))
 	  }
 
 	  const {fromLocation, toLocation, reference = "", items} = data
