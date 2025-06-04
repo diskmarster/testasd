@@ -9,17 +9,11 @@ on:
 jobs:
   prettier:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: NPM Install
-        run: npm install prettier prettier-plugin-tailwindcss
-
-      - name: Format
-        uses: creyD/prettier_action@v4.4
+      - uses: actions/checkout@v4
+      
+      - name: Run Prettier and commit changes
+        uses: creyD/prettier_action@v4.3
         with:
           prettier_options: --write **/*.{js,ts,jsx,tsx}
-          prettier_plugins: "prettier-plugin-tailwindcss"
-          commit_message: "ci: formatted code with github actions"
+          commit_message: "ci: format code with prettier"
