@@ -90,3 +90,26 @@ export type HistoryFilter = {
   type?: HistoryType[],
 	group?: string[]
 }
+
+export type MoveBetweenLocation = {
+	fromLocation: string
+	toLocation: string
+	reference?: string
+	items: {
+		productID: number
+		sku: string
+		fromPlacementID: number
+		toPlacementID?: number
+		fromBatchID: number
+		toBatchID?: number
+		quantity: number
+	}[]
+}
+
+export type MoveBetweenLocationResponse = {
+	success: boolean
+	errors: {
+		productID: number
+		message: string
+	}[]
+}

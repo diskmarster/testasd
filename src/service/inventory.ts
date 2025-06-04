@@ -10,6 +10,8 @@ import {
   HistoryWithSums,
   InventoryAction,
   ProductInventory,
+  MoveBetweenLocation,
+  MoveBetweenLocationResponse,
 } from '@/data/inventory.types'
 import { product } from '@/data/products'
 import { db, TRX } from '@/lib/database'
@@ -47,6 +49,8 @@ import { customerService } from './customer'
 import { emailService } from './email'
 import { EmailSendReorder } from '@/components/email/email-reorder'
 import { PartialRequired } from '@/lib/types'
+import { location } from '@/data/location'
+import { ApiError } from 'next/dist/server/api-utils'
 
 const EMAIL_LINK_BASEURL =
   process.env.VERCEL_ENV === 'production'
@@ -754,5 +758,128 @@ export const inventoryService = {
       amount: a.amount,
       type: a.type,
     }))
+  },
+  moveBetweenLocations: async function(
+	  customerID: CustomerID,
+	  userID: UserID | null,
+	  apiKeyName: string | null,
+	  platform: HistoryPlatform,
+	  data: MoveBetweenLocation,
+	  lang: string = fallbackLng,
+  ): Promise<MoveBetweenLocationResponse> {
+	  const { t } = await serverTranslation(lang, 'action-errors')
+
+	  if (platform == "ext" && apiKeyName == null) {
+			throw new ApiError(400, t("locations-move.missing-apikey"))
+	  } else if (platform != "ext" && userID == null) {
+			throw new ApiError(400, t("locations-move.missing-user-id"))
+	  }
+
+	  const {fromLocation, toLocation, reference = "", items} = data
+
+	  const allPlacements = await inventory.getAllPlacementsByID(toLocation)
+	  const allBatches = await inventory.getAllBatchesByID(toLocation)
+	  const allLocations = await location.getAllByCustomerID(customerID)
+
+	  let defaultPlacement = allPlacements.find(p => p.name == "-")
+	  let defaultBatch = allBatches.find(b => b.batch == "-")
+
+	  let fromLocationInfo = allLocations.find(l => l.id == fromLocation)
+	  let toLocationInfo = allLocations.find(l => l.id == toLocation)
+
+	  if (!defaultPlacement) {
+		  defaultPlacement = await inventory.createPlacement({
+			  name: "-",
+			  locationID: toLocation,
+		  })
+	  }
+
+	  if (!defaultBatch) {
+		  defaultBatch = await inventory.createBatch({
+			  batch: "-",
+			  locationID: toLocation,
+		  })
+	  }
+
+	  let response: MoveBetweenLocationResponse = { success: true, errors: [] }
+
+	  await db.transaction(async tx => {
+		  for (const i of items) {
+			  // from actions
+			  const didUpsertFrom = await inventory.upsertInventory({
+				  customerID: customerID,	
+				  locationID: fromLocation,
+				  productID: i.productID,
+				  placementID: i.fromPlacementID,
+				  batchID: i.fromBatchID,
+				  quantity: -i.quantity,
+			  }, tx)
+
+			  if (!didUpsertFrom) {
+				  response.success = false
+				  response.errors.push({
+					  productID: i.productID,
+					  message: t("locations-move.from-upsert-failed", { sku: i.sku })
+				  })
+				  continue
+			  }
+
+			  const newQuantityFrom = await inventory.getProductInventory(fromLocation, i.productID, tx)
+
+			  await this.createHistoryLog({
+				  customerID: customerID,
+				  locationID: fromLocation,
+				  type: 'flyt',
+				  productID: i.productID,
+				  placementID: i.fromPlacementID,
+				  batchID: i.fromBatchID,
+				  amount: -i.quantity,
+				  currentQuantity: newQuantityFrom,
+				  platform: platform,
+				  reference: reference.concat(t("locations-move.to-location", {location: toLocationInfo?.name})).trim(),
+				  userID: userID,
+				  apikeyName: apiKeyName,
+			  }, tx)
+
+			  // to actions
+			   const didUpsertTo = await inventory.upsertInventory({
+			    customerID: customerID,	
+			    locationID: toLocation,
+			    productID: i.productID,
+			    placementID: i.toPlacementID ? i.toPlacementID : defaultPlacement.id,
+			    batchID: i.toBatchID ? i.toBatchID : defaultBatch.id,
+			    quantity: i.quantity,
+			   }, tx)
+
+			  if (!didUpsertTo) {
+				  response.success = false
+				  response.errors.push({
+					  productID: i.productID,
+					  message: t("locations-move.to-upsert-failed", { sku: i.sku })
+				  })
+				  continue
+			  }
+
+			   const newQuantityTo = await inventory.getProductInventory(toLocation, i.productID, tx)
+
+			   await this.createHistoryLog({
+			  	customerID: customerID,
+			  	locationID: toLocation,
+			  	type: 'flyt',
+			  	productID: i.productID,
+			  	placementID: i.toPlacementID ? i.toPlacementID : defaultPlacement.id,
+			  	batchID: i.toBatchID ? i.toBatchID : defaultBatch.id,
+			  	amount: i.quantity,
+			  	currentQuantity: newQuantityTo,
+			  	platform: platform,
+			  	reference: reference.concat(t("locations-move.from-location", { location: fromLocationInfo?.name })).trim(),
+				userID: userID,
+				apikeyName: apiKeyName,
+			  }, tx)
+		  }
+	  })
+
+	  return response
   }
 }
+

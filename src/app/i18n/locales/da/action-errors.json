@@ -158,5 +158,13 @@
     "client-user-limit": "Kunden har nået sin brugergrænse",
     "link-not-created": "Der gik noget galt med at oprette inviteringslink",
     "email-subject": "Du er blevet inviteret til {{app}} af Skancode A/S på vegne af {{customer}}"
+  },
+  "locations-move": {
+	  "missing-user-id": "Mangler et bruger id for at kunne udføre denne handling",
+	  "missing-apikey": "Mangler en api key for at kunne udføre denne handling",
+	  "to-location": " (Til lokation: {{location}})",
+	  "from-location": " (Fra lokation: {{location}})",
+	  "from-upsert-failed": "Kunne ikke flytte varenr. {{sku}} fra lokation",
+	  "to-upsert-failed": "Kunne ikke flytte varenr. {{sku}} til lokation"
   }
 }

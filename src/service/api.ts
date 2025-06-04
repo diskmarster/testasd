@@ -2,7 +2,8 @@ import { CustomerID } from '@/lib/database/schema/customer'
 import { CreateRegulation } from './api.utils'
 import { inventoryService } from './inventory'
 import { UserID } from '@/lib/database/schema/auth'
-import { HistoryPlatform } from '@/data/inventory.types'
+import { HistoryPlatform, MoveBetweenLocation, MoveBetweenLocationResponse } from '@/data/inventory.types'
+import { fallbackLng } from '@/app/i18n/settings'
 
 export const apiService = {
   regulateInventory: async function (
@@ -162,4 +163,21 @@ export const apiService = {
 
     return true
   },
+  moveInventoryBetweenLocations: async function(
+	  customerID: CustomerID,
+	  userID: UserID | null,
+	  apiKeyName: string | null,
+	  platform: HistoryPlatform,
+	  data: MoveBetweenLocation,
+	  lang: string = fallbackLng,
+  ): Promise<MoveBetweenLocationResponse> {
+	  return inventoryService.moveBetweenLocations(
+		  customerID,
+		  userID,
+		  apiKeyName,
+		  platform,
+		  data,
+		  lang
+	  )
+  }
 }
