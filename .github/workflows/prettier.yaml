@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Prettier
+        run: npm install prettier prettier-plugin-tailwindcss
       
       - name: Run Prettier and commit changes
         uses: creyD/prettier_action@v4.3
