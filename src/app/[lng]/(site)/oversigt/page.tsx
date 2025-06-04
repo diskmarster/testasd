@@ -10,6 +10,8 @@ import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { InventoryTableRow } from './columns'
+import { attachmentService } from '@/service/attachments'
+import { Attachment } from '@/lib/database/schema/attachments'
 
 interface PageProps extends WithAuthProps {
   params: {
@@ -88,10 +90,24 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
   const reorders = await inventoryService.getReordersByID(location, {
     withRequested: false,
   })
+
+  const images = await attachmentService.getByCustomerID(customer.id, 'product', 'image')
+  const imageMap: Map<string, Attachment[]> = images.reduce((acc: Map<string, Attachment[]>, cur) => {
+	  if (!acc.has(cur.refID))	 {
+		  acc.set(cur.refID, [cur])
+	  }
+
+	  const atts = acc.get(cur.refID)
+	  acc.set(cur.refID, [...atts!, cur])
+
+	  return acc
+  }, new Map())
+
   const rows: InventoryTableRow[] = inventory.map(i => ({
     ...i,
     disposable:
       reorders.find(r => r.productID === i.product.id)?.disposible ?? null,
+	images: imageMap.get(i.product.id.toString(10)) ?? []
   }))
 
   return (
