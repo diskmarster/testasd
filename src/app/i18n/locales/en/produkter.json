@@ -41,7 +41,8 @@
 	"details-page": {
 		"history": {
 			"title": "History",
-			"log-count": "({{count}} actions)",
+			"log-count_one": "({{count}} action)",
+			"log-count_other": "({{count}} actions)",
 			"changes": "Changes",
 			"no-changes": "No changes",
 			"see-all": "See all {{count}} actions",
@@ -132,6 +133,16 @@
 			"btn-cancel": "Cancel",
 			"orderAmount-description": "This is used to prefill the ordered quantity when recording reorders.",
 			"maxAmount-description": "Can be left at 0 to ignore."
+		},
+		"inventory": {
+			"inventory-count_one": "({{totalQty}} across {{count}} inventory)",
+			"inventory-count_other": "({{totalQty}} across {{count}} inventories)",
+			"table": {
+				"quantity": "Quantity",
+				"placement": "Placement",
+				"batch": "Batch",
+				"updated": "Updated"
+			}
 		}
 	},
 	"tooltips": {

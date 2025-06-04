@@ -31,7 +31,7 @@ export function TableHeader<TData, TValue>({
   return (
     <div
       className={cn(
-        'flex',
+        'flex max-w-52',
         // @ts-ignore
         column.columnDef.meta?.rightAlign && 'justify-end',
       )}>

@@ -2,6 +2,7 @@ import {
   FormattedInventory,
   FormattedReorder,
   HistoryFilter,
+  ProductInventory,
 } from '@/data/inventory.types'
 import { db, TRX } from '@/lib/database'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
@@ -492,6 +493,27 @@ export const inventory = {
       .from(inventoryTable)
       .where(eq(inventoryTable.productID, productID))
   },
+	getProductInventoryForLocations: async (
+		productID: ProductID,
+		locationIDs: LocationID[],
+	): Promise<ProductInventory[]> => {
+		return await db
+			.select({
+				...getTableColumns(inventoryTable),
+        placement: { ...PLACEMENT_COLS },
+        batch: { ...BATCH_COLS },
+			})
+			.from(inventoryTable)
+			.where(and(
+				eq(inventoryTable.productID, productID),
+				inArray(inventoryTable.locationID, locationIDs),
+			))
+			.innerJoin(
+				placementTable,
+				eq(placementTable.id, inventoryTable.placementID),
+			)
+			.innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
+	},
   getDefaultPlacementByID: async function (
     locationID: LocationID,
     trx: TRX = db,
