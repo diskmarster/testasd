@@ -179,9 +179,9 @@ function getTableColumnDefs(
 	}
 
 	let allCols = [
-		quantityCol,
 		placementCol,
 		batchCol,
+		quantityCol,
 		updatedCol,
 	]
 
