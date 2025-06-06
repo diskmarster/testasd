@@ -26,15 +26,7 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
   if (!location) return null
 
   let inventory = await inventoryService.getInventory(location)
-  inventory.sort((a, b) => {
-    const skuCompare = a.product.sku.localeCompare(b.product.sku)
 
-    if (skuCompare == 0) {
-      return b.placement.name.localeCompare(a.placement.name)
-    } else {
-      return skuCompare
-    }
-  })
   const units = await inventoryService.getActiveUnits()
   const groups = await inventoryService.getActiveGroupsByID(customer.id)
   const placements = await inventoryService.getActivePlacementsByID(location)
@@ -55,6 +47,25 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
     (hasPermissionByPlan(customer.plan, 'basis') &&
       customerSettings.usePlacement) ||
     (hasPermissionByPlan(customer.plan, 'pro') && customerSettings.useBatch)
+
+	inventory = Object.values(
+		inventory.reduce(
+			(acc, cur) => {
+				if (acc[cur.product.id] == undefined) {
+					acc[cur.product.id] = []
+				}
+
+				acc[cur.product.id].push(cur)
+
+				return acc
+			},
+			{} as Record<number, FormattedInventory[]>,
+		),
+	).flatMap(invs =>
+		invs.every(inv => inv.quantity == 0)
+			? invs
+			: invs.filter(inv => inv.quantity != 0),
+	)
 
   const inventoryMap: Map<string, FormattedInventory> = inventory.reduce(
     (acc, cur) => {
@@ -85,7 +96,15 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
     new Map<string, FormattedInventory>(),
   )
 
-  inventory = Array.from(inventoryMap.values())
+  inventory = Array.from(inventoryMap.values()).sort((a, b) => {
+    const skuCompare = a.product.sku.localeCompare(b.product.sku)
+
+    if (skuCompare == 0) {
+      return b.placement.name.localeCompare(a.placement.name)
+    } else {
+      return skuCompare
+    }
+  })
 
   const reorders = await inventoryService.getReordersByID(location, {
     withRequested: false,
