@@ -1,17 +1,16 @@
 import { serverTranslation } from '@/app/i18n/index'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
-import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
-import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
-import { TableOverview } from '@/components/inventory/table-overview'
 import { FormattedInventory } from '@/data/inventory.types'
-import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
+import { hasPermissionByPlan } from '@/data/user.types'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
-import { InventoryTableRow } from './columns'
 import { attachmentService } from '@/service/attachments'
-import { Attachment } from '@/lib/database/schema/attachments'
+import { Suspense } from 'react'
+import { PageActionsSkeleton, PageActionsWrapper } from './PageActionsWrapper'
+import { OverviewTableWrapper } from './TableWrapper'
+import { SkeletonTable } from '@/components/common/skeleton-table'
 
 interface PageProps extends WithAuthProps {
   params: {
@@ -25,21 +24,11 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
   const location = await locationService.getLastVisited(user.id!)
   if (!location) return null
 
-  let inventory = await inventoryService.getInventory(location)
-  inventory.sort((a, b) => {
-    const skuCompare = a.product.sku.localeCompare(b.product.sku)
-
-    if (skuCompare == 0) {
-      return b.placement.name.localeCompare(a.placement.name)
-    } else {
-      return skuCompare
-    }
-  })
-  const units = await inventoryService.getActiveUnits()
-  const groups = await inventoryService.getActiveGroupsByID(customer.id)
-  const placements = await inventoryService.getActivePlacementsByID(location)
-  const batches = await inventoryService.getActiveBatchesByID(location)
-  const products = await inventoryService.getActiveProductsByID(customer.id)
+  const units = inventoryService.getActiveUnits()
+  const groups = inventoryService.getActiveGroupsByID(customer.id)
+  const placements = inventoryService.getActivePlacementsByID(location)
+  const batches = inventoryService.getActiveBatchesByID(location)
+  const products = inventoryService.getActiveProductsByID(customer.id)
   const customerSettings = (await customerService.getSettings(customer.id)) ?? {
     usePlacement: true,
     useBatch: true,
@@ -56,100 +45,115 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
       customerSettings.usePlacement) ||
     (hasPermissionByPlan(customer.plan, 'pro') && customerSettings.useBatch)
 
-  const inventoryMap: Map<string, FormattedInventory> = inventory.reduce(
-    (acc, cur) => {
-      const keyParts = [String(cur.product.id)]
-      if (
-        hasPermissionByPlan(customer.plan, 'basis') &&
-        customerSettings.usePlacement
-      )
-        keyParts.push(String(cur.placement.id))
-      if (
-        hasPermissionByPlan(customer.plan, 'pro') &&
-        customerSettings.useBatch
-      )
-        keyParts.push(String(cur.batch.id))
+	let inventory = inventoryService
+		.getInventory(location)
+		.then(inventory => {
+			// Group inventories by product
+			let groupedInventories = inventory.reduce(
+					(acc, cur) => {
+						if (acc[cur.product.id] == undefined) {
+							acc[cur.product.id] = []
+						}
 
-      const key = keyParts.join('|')
+						acc[cur.product.id].push(cur)
 
-      if (acc.has(key)) {
-        const current = acc.get(key)!
-        current.quantity += cur.quantity
-        acc.set(key, current)
-      } else {
-        acc.set(key, cur)
-      }
+						return acc
+					},
+					{} as Record<number, FormattedInventory[]>,
+				)
 
-      return acc
-    },
-    new Map<string, FormattedInventory>(),
-  )
+			// take inventories where quantity != 0 if any inventory != 0
+			let inventories = Object.values(groupedInventories).flatMap(invs =>
+				invs.some(inv => inv.quantity != 0)
+					? invs.filter(inv => inv.quantity != 0)
+					: invs,
+			)
 
-  inventory = Array.from(inventoryMap.values())
+			// build map of inventories
+			// grouped by product id and placement/batch if they are in use
+			let inventoryMap = inventories.reduce(
+					(acc, cur) => {
+						const keyParts = [String(cur.product.id)]
+						if (
+							hasPermissionByPlan(customer.plan, 'basis') &&
+								customerSettings.usePlacement
+						)
+							keyParts.push(String(cur.placement.id))
+						if (
+							hasPermissionByPlan(customer.plan, 'pro') &&
+								customerSettings.useBatch
+						)
+							keyParts.push(String(cur.batch.id))
 
-  const reorders = await inventoryService.getReordersByID(location, {
+						const key = keyParts.join('|')
+
+						if (acc.has(key)) {
+							const current = acc.get(key)!
+							current.quantity += cur.quantity
+							acc.set(key, current)
+						} else {
+							acc.set(key, cur)
+						}
+
+						return acc
+					},
+					new Map<string, FormattedInventory>(),
+				)
+
+			// sort grouped inventories and return
+			return Array.from(
+				inventoryMap.values()
+			).sort((a, b) => {
+					const skuCompare = a.product.sku.localeCompare(b.product.sku)
+
+					if (skuCompare == 0) {
+						return b.placement.name.localeCompare(a.placement.name)
+					} else {
+						return skuCompare
+					}
+				}
+			)
+		})
+
+  const reorders = inventoryService.getReordersByID(location, {
     withRequested: false,
   })
 
-  const images = await attachmentService.getByCustomerID(customer.id, 'product', 'image')
-  const imageMap: Map<string, Attachment[]> = images.reduce((acc: Map<string, Attachment[]>, cur) => {
-	  if (!acc.has(cur.refID))	 {
-		  acc.set(cur.refID, [cur])
-	  }
-
-	  const atts = acc.get(cur.refID)
-	  acc.set(cur.refID, [...atts!, cur])
-
-	  return acc
-  }, new Map())
-
-  const rows: InventoryTableRow[] = inventory.map(i => ({
-    ...i,
-    disposable:
-      reorders.find(r => r.productID === i.product.id)?.disposible ?? null,
-	images: imageMap.get(i.product.id.toString(10)) ?? []
-  }))
+  const images = attachmentService.getByCustomerID(customer.id, 'product', 'image')
 
   return (
     <SiteWrapper
       title={t('overview')}
       description={t('overview-description')}
       actions={
-        <>
-          {hasPermissionByRank(user.role, 'bruger') && (
-            <ModalUpdateInventory
-              customer={customer}
-              products={products}
-              placements={placements}
-              batches={batches}
-              lng={lng}
-              settings={customerSettings}
-            />
-          )}
-          {hasPermissionByPlan(customer.plan, 'basis') &&
-            customerSettings.usePlacement &&
-            hasPermissionByRank(user.role, 'bruger') && (
-              <ModalMoveInventory
-                placements={placements}
-                customer={customer}
-                inventory={inventory}
-                batches={batches}
-                settings={customerSettings}
-              />
-            )}
-        </>
+				<Suspense fallback={<PageActionsSkeleton role={user.role} plan={customer.plan} usePlacement={customerSettings.usePlacement} />}>
+					<PageActionsWrapper 
+						user={user}
+						customer={customer}
+						lng={lng}
+						productsPromise={products}
+						placementsPromise={placements}
+						batchesPromise={batches}
+						customerSettings={customerSettings}
+						inventoryPromise={inventory}
+					/>
+				</Suspense>
       }>
-      <TableOverview
-        data={rows}
-        user={user}
-        plan={customer.plan}
-        units={units}
-        groups={groups}
-        placements={placements}
-        batches={batches}
-        customerSettings={customerSettings}
-        isGrouped={isGrouped}
-      />
+			<Suspense fallback={<SkeletonTable />}>
+				<OverviewTableWrapper
+					user={user}
+					customer={customer}
+					units={units}
+					groups={groups}
+					placements={placements}
+					batches={batches}
+					customerSettings={customerSettings}
+					reordersPromise={reorders}
+					imagesPromise={images}
+					inventoryPromise={inventory}
+					isGrouped={isGrouped}
+				/>
+			</Suspense>
     </SiteWrapper>
   )
 }
