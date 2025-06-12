@@ -203,56 +203,55 @@ export const inventoryService = {
         trx,
       )
 
-      if (
-        isReorderOnProduct &&
-        isReorderOnProduct.ordered > 0 &&
-        type == 'tilgang'
-      ) {
-		const placement = await inventory.getPlacementByID(placementID, trx)
-		if (!placement) {
-          throw new ActionError(
-            t('inventory-service-action.placement-not-exists'),
-          )
-		}
-		if (placement.isBarred) {
-          throw new ActionError(
-            t('inventory-service-action.placement-is-barred'),
-          )
-		}
-
-		const batch = await inventory.getBatchByID(batchID, trx)
-		if (!batch) {
-          throw new ActionError(
-            t('inventory-service-action.batch-not-exists'),
-          )
-		}
-		if (batch.isBarred) {
-          throw new ActionError(
-            t('inventory-service-action.batch-is-barred'),
-          )
-		}
-
-        const updatedOrdered = Math.max(isReorderOnProduct.ordered - amount, 0)
-        const isReorderUpdated = await inventory.updateReorderByID(
-          productID,
-          locationID,
-          customerID,
-          {
-            ordered: updatedOrdered,
-          },
-          trx,
-        )
-        if (!isReorderUpdated) {
-          throw new ActionError(
-            t('inventory-service-action.restock-not-updated'),
-          )
-        }
-      }
-
       const productCheck = await product.getByID(productID, trx)
       if (productCheck && productCheck.isBarred) {
         throw new ActionError(t('inventory-service-action.restock-barred'))
       }
+
+	  if (type == 'tilgang') {
+		  const placement = await inventory.getPlacementByID(placementID, trx)
+		  if (!placement) {
+			  throw new ActionError(
+				  t('inventory-service-action.placement-not-exists'),
+			  )
+		  }
+		  if (placement.isBarred) {
+			  throw new ActionError(
+				  t('inventory-service-action.placement-is-barred'),
+			  )
+		  }
+
+		  const batch = await inventory.getBatchByID(batchID, trx)
+		  if (!batch) {
+			  throw new ActionError(
+				  t('inventory-service-action.batch-not-exists'),
+			  )
+		  }
+		  if (batch.isBarred) {
+			  throw new ActionError(
+				  t('inventory-service-action.batch-is-barred'),
+			  )
+		  }
+
+		  if (isReorderOnProduct && isReorderOnProduct.ordered > 0) {
+
+			  const updatedOrdered = Math.max(isReorderOnProduct.ordered - amount, 0)
+			  const isReorderUpdated = await inventory.updateReorderByID(
+				  productID,
+				  locationID,
+				  customerID,
+				  {
+					  ordered: updatedOrdered,
+				  },
+				  trx,
+			  )
+			  if (!isReorderUpdated) {
+				  throw new ActionError(
+					  t('inventory-service-action.restock-not-updated'),
+				  )
+			  }
+		  }
+	  }
 
       const didUpsert = await inventory.upsertInventory(
         {
