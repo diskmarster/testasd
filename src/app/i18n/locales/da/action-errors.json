@@ -131,7 +131,11 @@
     "placement-barring-failed": "Noget gik galt under spærringen af placeringen",
     "restock-barred": "Kunne ikke gennemføre tilgang. Varen er spærret",
     "move-barred": "Kunne ikke gennemføre flytning. Varen er spærret",
-    "reorder-barred": "Kunne ikke genbestille. Varen er spærret"
+    "reorder-barred": "Kunne ikke genbestille. Varen er spærret",
+	"placement-not-exists": "Placering findes ikke",
+	"placement-is-barred": "Tilgang på spærret placering er ikke tilladt",
+	"batch-not-exists": "Batchnr. findes ikke",
+	"batch-is-barred": "Tilgang på spærret batchnr. er ikke tilladt"
   },
   "product-service-action": {
     "barcode-already-exists": "Stregkoden eksisterer allerede",
