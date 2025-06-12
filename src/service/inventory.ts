@@ -208,6 +208,30 @@ export const inventoryService = {
         isReorderOnProduct.ordered > 0 &&
         type == 'tilgang'
       ) {
+		const placement = await inventory.getPlacementByID(placementID, trx)
+		if (!placement) {
+          throw new ActionError(
+            t('inventory-service-action.placement-not-exists'),
+          )
+		}
+		if (placement.isBarred) {
+          throw new ActionError(
+            t('inventory-service-action.placement-is-barred'),
+          )
+		}
+
+		const batch = await inventory.getBatchByID(batchID, trx)
+		if (!batch) {
+          throw new ActionError(
+            t('inventory-service-action.batch-not-exists'),
+          )
+		}
+		if (batch.isBarred) {
+          throw new ActionError(
+            t('inventory-service-action.batch-is-barred'),
+          )
+		}
+
         const updatedOrdered = Math.max(isReorderOnProduct.ordered - amount, 0)
         const isReorderUpdated = await inventory.updateReorderByID(
           productID,

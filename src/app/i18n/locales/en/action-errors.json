@@ -131,7 +131,11 @@
     "placement-barring-failed": "Something went wrong trying to bar the placement",
     "restock-barred": "Could not update restock. Product is barred",
     "move-barred": "Could not complete move. Product is barred",
-    "reorder-barred": "Could not reorder. Product is barred"
+    "reorder-barred": "Could not reorder. Product is barred",
+	"placement-not-exists": "Placement does not exist",
+	"placement-is-barred": "Incoming products on barred placement is not allowed",
+	"batch-not-exists": "Batch does not exist",
+	"batch-is-barred": "Incoming products on barred batch is not allowed"
   },
   "product-service-action": {
     "barcode-already-exists": "The barcode already exists",
