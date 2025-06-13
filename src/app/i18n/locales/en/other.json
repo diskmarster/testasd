@@ -27,6 +27,7 @@
     "cost-price": "Cost price",
     "sales-price": "Sales price",
     "barred-tooltip": "This item is barred",
+    "placement-barred-tooltip": "This placement is barred",
     "product-has-documents_one": "There is {{count}} file",
     "product-has-documents": "There are {{count}} files"
   },
