@@ -42,45 +42,48 @@ export function getTableOverviewColumns(
 		),
 		cell: ({ row }) => (
 			row.original.product.fileCount > 0 ? (
-				<HoverCard>
-					<HoverCardTrigger asChild>
-						<Link className='flex items-center gap-1 cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
-							<p>{row.original.product.sku}</p>
-							<TooltipProvider>
-								<Tooltip>
-									<TooltipTrigger asChild>
-										<span className={cn('hidden size-1.5 rounded-full bg-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
-									</TooltipTrigger>
-									<TooltipContent className='bg-foreground text-background'>
-										{t('modal-show-product-card.barred-tooltip')}
-									</TooltipContent>
-								</Tooltip>
-							</TooltipProvider>
-						</Link>
-					</HoverCardTrigger>
-					<HoverCardContent side='top' className='w-fit p-1'>
-						{row.original.images.length > 0 ? (
-							<img src={row.original.images[0].url} alt={row.original.images[0].name} className='rounded-sm max-h-40' />
-						) : (
-							<p className='text-sm text-muted-foreground px-2 py-1'>Ingen billeder</p>
-						)}
-					</HoverCardContent>
-				</HoverCard>
-			) : (
-
-				<Link className='flex items-center gap-1 cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
-					<p>{row.original.product.sku}</p>
+				<div className='flex items-center gap-1.5'>
+					<HoverCard>
+						<HoverCardTrigger asChild>
+							<Link className='cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
+								<p>{row.original.product.sku}</p>
+							</Link>
+						</HoverCardTrigger>
+						<HoverCardContent side='top' className='w-fit p-1'>
+							{row.original.images.length > 0 ? (
+								<img src={row.original.images[0].url} alt={row.original.images[0].name} className='rounded-sm max-h-40' />
+							) : (
+								<p className='text-sm text-muted-foreground px-2 py-1'>Ingen billeder</p>
+							)}
+						</HoverCardContent>
+					</HoverCard>
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
-								<span className={cn('hidden size-1.5 rounded-full bg-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
+								<span className={cn('hidden size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
 							</TooltipTrigger>
 							<TooltipContent className='bg-foreground text-background'>
 								{t('modal-show-product-card.barred-tooltip')}
 							</TooltipContent>
 						</Tooltip>
 					</TooltipProvider>
-				</Link>
+				</div>
+			) : (
+				<div className='flex items-center gap-1.5'>
+					<Link className='cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
+						<p>{row.original.product.sku}</p>
+					</Link>
+					<TooltipProvider>
+						<Tooltip>
+							<TooltipTrigger asChild>
+								<span className={cn('hidden size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
+							</TooltipTrigger>
+							<TooltipContent className='bg-foreground text-background'>
+								{t('modal-show-product-card.barred-tooltip')}
+							</TooltipContent>
+						</Tooltip>
+					</TooltipProvider>
+				</div>
 			)
 		),
 		enableHiding: false,
@@ -263,9 +266,48 @@ export function getTableOverviewColumns(
 
 			const isSinglePlacement = leafsWithQuantity.length == 1
 			if (!isSinglePlacement) return null
-			return leafsWithQuantity[0].getValue<string>('placement')
+
+			const firstRow = leafsWithQuantity[0]
+			const name = firstRow.original.placement.name
+			const isBarred = firstRow.original.placement.isBarred
+			return (
+				<div className='flex items-center gap-1.5'>
+					<p>{name}</p>
+					{isBarred && (
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className='block size-2 rounded-full bg-destructive/50 border-destructive border cursor-pointer' />
+								</TooltipTrigger>
+								<TooltipContent className='bg-foreground text-background'>
+									{t('modal-show-product-card.placement-barred-tooltip')}
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					)}
+				</div>
+			)},
+		cell: ({ row }) => {
+			const isBarred = row.original.placement.isBarred
+			const name = row.original.placement.name
+			return (
+				<div className='flex items-center gap-1.5'>
+					<p>{name}</p>
+					{isBarred && (
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className='block size-2 rounded-full bg-destructive/50 border-destructive border cursor-pointer' />
+								</TooltipTrigger>
+								<TooltipContent className='bg-foreground text-background'>
+									{t('modal-show-product-card.placement-barred-tooltip')}
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					)}
+				</div>
+			)
 		},
-		cell: ({ getValue }) => getValue<string>(),
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},
