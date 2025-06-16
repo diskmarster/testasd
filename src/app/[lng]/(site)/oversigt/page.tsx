@@ -141,7 +141,7 @@ async function filterGroupedInventories(
 			(acc, cur) => acc + cur.quantity,
 			0,
 		)
-		if (totalQty != 0 && filtered.some(inv => inv.isDefaultPlacement)) {
+		if (totalQty != 0) {
 			filtered = filtered.filter(i => i.quantity != 0)
 		}
 
