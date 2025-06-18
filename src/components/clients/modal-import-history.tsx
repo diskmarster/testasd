@@ -23,11 +23,11 @@ import { CustomerID } from "@/lib/database/schema/customer"
 import { LocationWithCounts } from "@/data/location.types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
-export function ModalImportClientHistory() {
+export function ModalImportClientHistory({units}: {units: string[]}) {
   const [pending, startTransition] = useTransition()
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'kunder')
-  const validationSchema = importHistoryDataValidation(t)
+  const validationSchema = importHistoryDataValidation(t, units)
   const { t: validationT } = useTranslation(lng, 'validation')
 
   const [customerID, setCustomerID] = useState<number>()

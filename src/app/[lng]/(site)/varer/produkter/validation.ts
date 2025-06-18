@@ -1,6 +1,5 @@
-import { units } from '@/data/products.types'
 import { convertENotationToNumber, isNullOrUndefined } from '@/lib/utils'
-import { number, z } from 'zod'
+import { z } from 'zod'
 
 export const createProductValidation = (
   t: (key: string, options?: any) => string,
@@ -63,6 +62,7 @@ export const productToggleBarredValidation = z.object({
 
 export const productsDataValidation = (
   t: (key: string, options?: any) => string,
+  allUnits: string[],
 ) =>
   z.array(
     z
@@ -92,10 +92,11 @@ export const productsDataValidation = (
         unit: z.preprocess(
           //@ts-ignore - string is not the same as the value in units bla bla shut up typescript
           (val: string) => val.trim().toLowerCase(),
-          z.enum(units, {
-            invalid_type_error: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
-            message: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
-          }),
+			z.string()
+          .refine(value => allUnits.includes(value.toLowerCase()), {
+            message: `${t('products.unit-preprocess-unknown-type')} ${allUnits.join(', ')}`,
+            },
+          ),
         ),
         text1: z.preprocess(
           val => !isNullOrUndefined(val) ? String(val) : '',
@@ -211,7 +212,7 @@ export const importProductsValidation = z.array(
     sku: z.string(),
     barcode: z.string(),
     group: z.string(),
-    unit: z.enum(units),
+    unit: z.string(), // units have already been validated here
     text1: z.string(),
     text2: z.string(),
     text3: z.string(),

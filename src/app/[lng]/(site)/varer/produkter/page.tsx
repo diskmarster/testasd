@@ -47,7 +47,7 @@ export default async function Page({ params: { lng } }: PageProps) {
       description={t('product-description')}
       actions={
         <>
-          {hasPermissionByRank(user.role, 'bruger') && <ModalImportProducts />}
+          {hasPermissionByRank(user.role, 'bruger') && <ModalImportProducts units={units.map(u => u.name.toLowerCase())} />}
 
           {hasPermissionByRank(user.role, 'bruger') && (
             <CreateProductsForm units={units} groups={groups} />

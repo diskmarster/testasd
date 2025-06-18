@@ -72,6 +72,8 @@ export function ModalImportProducts() {
   const { t } = useTranslation(lng, 'other')
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = productsDataValidation(validationT)
+export function ModalImportProducts({ units }: { units: string[] }) {
+	const schema = productsDataValidation(validationT, units)
 
   const [rows, setRows] = useState<z.infer<typeof schema>>([])
   const [errors, setErrors] = useState<

@@ -11,6 +11,7 @@ import { ModalImportClientInventory } from "@/components/clients/modal-import-in
 import { ModalImportClientHistory } from "@/components/clients/modal-import-history"
 import { withAuth, WithAuthProps } from "@/components/common/with-auth"
 import { CreateApiKeyModal } from "@/components/clients/modal-create-apikey"
+import { inventoryService } from "@/service/inventory"
 
 interface Props extends WithAuthProps {
 	params: { lng: string }
@@ -18,6 +19,7 @@ interface Props extends WithAuthProps {
 
 async function Page({ params: { lng } }: Props) {
 	const { t } = await serverTranslation(lng, 'kunder')
+	const units = await inventoryService.getActiveUnits()
 
 	return (
 		<SiteWrapper
@@ -36,7 +38,7 @@ async function Page({ params: { lng } }: Props) {
 			<ModalDeleteClient />
 			<ModalUpdateClient />
 			<ModalImportClientInventory />
-			<ModalImportClientHistory />
+			<ModalImportClientHistory units={units.map(u => u.name.toLowerCase())} />
 			<CreateApiKeyModal />
 		</SiteWrapper>
 	)
