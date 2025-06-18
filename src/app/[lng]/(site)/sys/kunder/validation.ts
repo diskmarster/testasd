@@ -1,5 +1,4 @@
 import { planZodSchema } from '@/data/customer.types'
-import { units } from '@/data/products.types'
 import { convertENotationToNumber, excelDateToJSDate } from '@/lib/utils'
 import { z } from 'zod'
 
@@ -114,6 +113,7 @@ export const importInventoryValidation = z.object({
 
 export const importHistoryDataValidation = (
   t: (key: string, opt?: any) => string,
+  allUnits: string[]
 ) =>
   z.array(
     z
@@ -139,14 +139,14 @@ export const importHistoryDataValidation = (
         unit: z
           .preprocess(
             val => (val as string).trim().toLowerCase(),
-            z.enum(units, {
-              invalid_type_error: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
-              message: `${t('products.unit-preprocess-unknown-type')} ${units.join(', ')}`,
-            }),
+			z.string()
+          .refine(value => allUnits.includes(value.toLowerCase()), {
+            message: `${t('products.unit-preprocess-unknown-type')} ${allUnits.join(', ')}`,
+            },
           )
           .transform(
             val => val.substring(0, 1).toUpperCase() + val.substring(1),
-          ),
+          )),
         type: z.enum(['tilgang', 'afgang', 'regulering']),
         quantity: z.coerce.number(),
         placement: z.preprocess(

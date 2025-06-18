@@ -15,22 +15,6 @@ export interface ProductWithInventories extends FormattedProduct {
   })[]
 }
 
-export const units = [
-  'stk',
-  'kg',
-  'kasse',
-  'gram',
-  'pose',
-  'plade',
-  'meter',
-  'liter',
-  'ark',
-  'rulle',
-  'pakke',
-  'm2',
-  'palle',
-] as const
-
 export type ProductFilters = {
   group?: string[]
 }

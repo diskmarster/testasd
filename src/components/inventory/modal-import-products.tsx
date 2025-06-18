@@ -61,7 +61,7 @@ function sanitizeHeader(header: string): string {
   return header.replaceAll(/æ/ig, 'ae').toLowerCase().replaceAll(' ', '_').replaceAll(/[^a-zA-Z0-9_]/g, '')
 }
 
-export function ModalImportProducts() {
+export function ModalImportProducts({allUnits}: {allUnits: string[]}) {
   const [pending, startTransition] = useTransition()
   const [open, setOpen] = useState(false)
   const [isReading, setIsReading] = useState(false)
@@ -71,7 +71,7 @@ export function ModalImportProducts() {
   const lng = useLanguage()
   const { t } = useTranslation(lng, 'other')
   const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = productsDataValidation(validationT)
+  const schema = productsDataValidation(validationT, allUnits)
 
   const [rows, setRows] = useState<z.infer<typeof schema>>([])
   const [errors, setErrors] = useState<
