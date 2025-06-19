@@ -191,6 +191,7 @@
 		"maintenance": "Vedligeholdelse i gang",
 		"error-product-barred": "Produktet er spærret",
 		"error-product-notfound": "Produktet findes ikke",
+		"error-product-invalid-id": "Produktet id er ugyldigt",
 		"error-request-notcreated": "Din forspørgsel blev ikke oprettet",
 		"error-request-created": "Din forspørgsel blev oprettet",
 		"error-request-loading-failed": "Indlæsning af data fejlede",
