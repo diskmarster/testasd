@@ -847,7 +847,7 @@ export const productService = {
     } catch (e) {
       console.error(`ERROR: Trying to get product by id failed: ${e}`)
       throw new ActionError(
-        `${t('product-service-action.product-id-not-found')} ${skuOrBarcode}`,
+        `${t('product-service-action.product-sku-barcode-not-found')} ${skuOrBarcode}`,
       )
     }
   },

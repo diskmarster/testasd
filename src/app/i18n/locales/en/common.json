@@ -191,7 +191,6 @@
 		"maintenance": "Maintenance in progress",
 		"error-product-barred": "The selected product is barred",
 		"error-product-notfound": "Product not found",
-		"error-product-invalid-id": "Product id is invalid",
 		"error-request-notcreated": "Request was not created",
 		"error-request-created": "Request was created",
 		"error-request-loading-failed": "Loading of data failed",
