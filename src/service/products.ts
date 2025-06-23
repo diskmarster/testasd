@@ -825,5 +825,30 @@ export const productService = {
 
       return true
     })
-  }
+  },
+  getBySkuOrBarcode: async function(
+	customerID: CustomerID,
+	skuOrBarcode: string,
+    lang: string = fallbackLng,
+  ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> {
+    const { t } = await serverTranslation(lang, 'action-errors')
+    try {
+      const p = await product.getBySkuOrBarcode(customerID, skuOrBarcode)
+      if (p == undefined) {
+        return undefined
+      }
+
+      const inventories = await inventoryService.getInventoryByProductID(p.id)
+
+      return {
+        ...p,
+        inventories,
+      }
+    } catch (e) {
+      console.error(`ERROR: Trying to get product by id failed: ${e}`)
+      throw new ActionError(
+        `${t('product-service-action.product-id-not-found')} ${skuOrBarcode}`,
+      )
+    }
+  },
 }

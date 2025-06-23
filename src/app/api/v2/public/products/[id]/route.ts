@@ -41,15 +41,7 @@ export async function GET(
     )
   }
 
-  const id = tryParseInt(params.id)
-  if (!id) {
-    return apiResponse.badRequest(
-      t('route-translations-productid.error-product-invalid-id'),
-      getVercelRequestID(headers()),
-    )
-  }
-
-  const productRes = await tryCatch(productService.getByID(id))
+  const productRes = await tryCatch(productService.getBySkuOrBarcode(customer.id, params.id))
   if (!productRes.success) {
     return apiResponse.internal(
       productRes.error.message,
