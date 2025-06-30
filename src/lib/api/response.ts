@@ -24,6 +24,12 @@ export const apiResponse = {
   ): NextResponse<ApiResponseError> {
     return NextResponse.json({ error, requestId }, { status: 400 })
   },
+  notFound: function (
+    error: string,
+    requestId: string,
+  ): NextResponse<ApiResponseError> {
+    return NextResponse.json({ error, requestId }, { status: 404 })
+  },
   unauthorized: function (
     error: string,
     requestId: string,
