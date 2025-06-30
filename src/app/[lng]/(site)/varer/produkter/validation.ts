@@ -160,6 +160,9 @@ export const productsDataValidation = (
               .number({
                 invalid_type_error: t('products.minimum-type'),
               })
+			  .positive({
+				  message: t('products.minimum-positive')
+			  })
               .optional(),
           ),
         maximum: z
@@ -169,6 +172,9 @@ export const productsDataValidation = (
               .number({
                 invalid_type_error: t('products.maximum-type'),
               })
+			  .positive({
+				  message: t('products.maximum-positive')
+			  })
               .optional()
               .default(0),
           ),
@@ -179,6 +185,9 @@ export const productsDataValidation = (
               .number({
                 invalid_type_error: t('products.order-amount-type'),
               })
+			  .positive({
+				  message: t('products.order-amount-positive')
+			  })
               .optional(),
           ),
       })
@@ -220,9 +229,9 @@ export const importProductsValidation = z.array(
     salesPrice: z.coerce.number(),
     note: z.string(),
     isBarred: z.coerce.boolean(),
-    minimum: z.coerce.number().optional(),
-    maximum: z.coerce.number(),
-    orderAmount: z.coerce.number().optional(),
+    minimum: z.coerce.number().positive().optional(),
+    maximum: z.coerce.number().positive(),
+    orderAmount: z.coerce.number().positive().optional(),
   }),
 )
 
