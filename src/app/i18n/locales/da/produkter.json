@@ -42,7 +42,8 @@
 	"details-page": {
 		"history": {
 			"title": "Historik",
-			"log-count": "({{count}} handlinger)",
+			"log-count_one": "({{count}} handling)",
+			"log-count_other": "({{count}} handlinger)",
 			"changes": "Ændringer",
 			"no-changes": "Ingen ændringer",
 			"see-all": "Se alle {{count}} handlinger",
@@ -133,6 +134,16 @@
 			"btn-cancel": "Fortryd",
 			"orderAmount-description": "Dette bruges til at forudfylde antal bestilte vare når du registrerer genbestillinger.",
 			"maxAmount-description": "Kan efterlades på 0 for at ignorere."
+		},
+		"inventory": {
+			"inventory-count_one": "({{totalQty}} på {{count}} beholdning)",
+			"inventory-count_other": "({{totalQty}} fordelt på {{count}} beholdninger)",
+			"table": {
+				"quantity": "Beholdning",
+				"placement": "Placering",
+				"batch": "Batch",
+				"updated": "Opdateret d."
+			}
 		}
 	},
 	"tooltips": {

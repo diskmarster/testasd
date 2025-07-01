@@ -17,12 +17,19 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
     <>
       {row.getVisibleCells().map(cell => (
 				// @ts-ignore
-				!cell.getContext().column.columnDef.meta?.isShadow &&
+				!cell.getContext().column.columnDef.meta?.isShadow && (
         <TableCell
           key={cell.id}
-          className={
-            cell.getIsGrouped() || cell.getIsAggregated() ? 'bg-muted/30' : ''
-          }>
+          className={cn(
+						"w-fit",
+            cell.getIsGrouped() || cell.getIsAggregated() ? 'bg-muted/30' : '',
+					)}
+					align={
+							/* @ts-ignore*/
+							cell.column.columnDef.meta?.rightAlign 
+								? 'right' 
+								: 'left'
+						}>
           {cell.getIsGrouped() ? (
             <div className='flex items-center gap-2'>
               <Button
@@ -89,6 +96,7 @@ export function TableGroupedCell<T>({ row }: Props<T>) {
             </div>
           )}
         </TableCell>
+				)
       ))}
     </>
   )

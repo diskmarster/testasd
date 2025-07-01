@@ -48,6 +48,7 @@ export type FilterField<TRow> = {
 	placeholder?: string
 	options?: FilterOption[]
 	numRange?: NumberRange
+	facetedUniqueColumnId?: string
 }
 
 interface Props<T> {

@@ -14,20 +14,17 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
 import { useLanguage } from '@/context/language'
 import { Plan } from '@/data/customer.types'
-import { FormattedInventory } from '@/data/inventory.types'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import {
   ExpandedState,
-  flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getFacetedRowModel,
@@ -37,7 +34,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   GroupingState,
+  RowData,
   RowSelectionState,
+  Table as TableT,
   Updater,
   useReactTable,
   VisibilityState,

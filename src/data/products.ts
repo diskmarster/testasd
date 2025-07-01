@@ -18,7 +18,7 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, count, desc, eq, getTableColumns, inArray, SQL, sql, SQLWrapper } from 'drizzle-orm'
+import { and, count, desc, eq, getTableColumns, inArray, or, SQL, sql, SQLWrapper } from 'drizzle-orm'
 import { FormattedProduct, ProductFilters, ProductWithInventories } from './products.types'
 import { supplierTable } from '@/lib/database/schema/suppliers'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
@@ -250,5 +250,33 @@ export const product = {
     tx: TRX = db,
   ): Promise<void> {
     await tx.insert(deletedProductTable).values(deletedProduct)
+  },
+  getBySkuOrBarcode: async function(
+	customerID: CustomerID,
+    skuOrBarcode: string,
+    trx: TRX = db,
+  ): Promise<FormattedProduct | undefined> {
+    const res = await trx
+      .select({
+        ...PRODUCT_COLS,
+        unit: UNIT_COLS.name,
+        group: GROUP_COLS.name,
+		supplierName: supplierTable.name,
+      })
+      .from(productTable)
+      .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
+      .innerJoin(groupTable, eq(productTable.groupID, groupTable.id))
+	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+	  .where(
+		  and(
+			  eq(productTable.customerID, customerID),
+			  or(
+				  eq(productTable.sku, skuOrBarcode),
+				  eq(productTable.barcode, skuOrBarcode),
+			  ),
+		  )
+	  )
+
+    return res[0]
   },
 }

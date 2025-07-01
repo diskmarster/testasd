@@ -180,181 +180,173 @@ export function ProductDetails({ product, user }: Props) {
 					/>
 				)}
 			</div>
-			<div className="w-full border rounded-md p-4 space-y-4">
-				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="text1">{t('details-page.details.label-text1')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={<div className="h-[60px] px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm">{product.text1}</div>}
-							trueComp={
-								<Textarea
-									className="resize-none"
-									id="text1"
-									name="text1"
-									maxLength={255}
-									rows={2}
-									value={formValues.data.text1}
-									onChange={event => setValue("data.text1", event.target.value, { shouldValidate: true, shouldDirty: true })}
-								/>
-							}
-						/>
-					</div>
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="text2">{t('details-page.details.label-text2')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={<div className="h-[60px] px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm">{product.text2}</div>}
-							trueComp={
-								<Textarea
-									className="resize-none"
-									id="text2"
-									name="text2"
-									maxLength={255}
-									rows={2}
-									value={formValues.data.text2}
-									onChange={event => setValue("data.text2", event.target.value, { shouldValidate: true, shouldDirty: true })}
-								/>
-							}
-						/>
-					</div>
+			<div className="grid grid-cols-2 gap-4 w-full border rounded-md p-4">
+				<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
+					<Label htmlFor="text1">{t('details-page.details.label-text1')}</Label>
+					<IfElse
+						condition={isEditing}
+						falseComp={<div className="min-h-[60px] h-full px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm">{product.text1}</div>}
+						trueComp={
+							<Textarea
+								className="resize-none"
+								id="text1"
+								name="text1"
+								maxLength={255}
+								rows={3}
+								value={formValues.data.text1}
+								onChange={event => setValue("data.text1", event.target.value, { shouldValidate: true, shouldDirty: true })}
+							/>
+						}
+					/>
+				</div>
+				<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
+					<Label htmlFor="text2">{t('details-page.details.label-text2')}</Label>
+					<IfElse
+						condition={isEditing}
+						falseComp={<div className="min-h-[60px] px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm">{product.text2}</div>}
+						trueComp={
+							<Textarea
+								className="resize-none"
+								id="text2"
+								name="text2"
+								maxLength={255}
+								rows={3}
+								value={formValues.data.text2}
+								onChange={event => setValue("data.text2", event.target.value, { shouldValidate: true, shouldDirty: true })}
+							/>
+						}
+					/>
 				</div>
 
-				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="text3">{t('details-page.details.label-text3')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={
-								<div className="py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm">
-									{product.text3 != '' ? product.text3 : t('details-page.details.no-value')}
-								</div>
-							}
-							trueComp={
-								<Textarea
-									className="resize-none"
-									id="text3"
-									name="text3"
-									maxLength={1000}
-									rows={5}
-									value={formValues.data.text3}
-									onChange={event => setValue("data.text3", event.target.value, { shouldValidate: true, shouldDirty: true })}
-								/>
-							}
-						/>
-					</div>
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="note">{t('details-page.details.label-note')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={
-								<div className="py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm">
-									{product.note != '' ? product.note : t('details-page.details.no-value')}
-								</div>
-							}
-							trueComp={
-								<Textarea
-									className="resize-none"
-									id="note"
-									name="note"
-									maxLength={1000}
-									rows={5}
-									value={formValues.data.note}
-									onChange={event => setValue("data.note", event.target.value, { shouldValidate: true, shouldDirty: true })}
-								/>
-							}
-						/>
-					</div>
+				<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
+					<Label htmlFor="text3">{t('details-page.details.label-text3')}</Label>
+					<IfElse
+						condition={isEditing}
+						falseComp={
+							<div className="py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm">
+								{product.text3 != '' ? product.text3 : t('details-page.details.no-value')}
+							</div>
+						}
+						trueComp={
+							<Textarea
+								className="resize-none"
+								id="text3"
+								name="text3"
+								maxLength={1000}
+								rows={5}
+								value={formValues.data.text3}
+								onChange={event => setValue("data.text3", event.target.value, { shouldValidate: true, shouldDirty: true })}
+							/>
+						}
+					/>
+				</div>
+				<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
+					<Label htmlFor="note">{t('details-page.details.label-note')}</Label>
+					<IfElse
+						condition={isEditing}
+						falseComp={
+							<div className="py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm">
+								{product.note != '' ? product.note : t('details-page.details.no-value')}
+							</div>
+						}
+						trueComp={
+							<Textarea
+								className="resize-none"
+								id="note"
+								name="note"
+								maxLength={1000}
+								rows={5}
+								value={formValues.data.note}
+								onChange={event => setValue("data.note", event.target.value, { shouldValidate: true, shouldDirty: true })}
+							/>
+						}
+					/>
 				</div>
 
-				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="group">{t('details-page.details.label-group')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.group}</div>}
-							trueComp={
-								<Select
-									disabled={pending}
-									value={formValues.data.groupID.toString()}
-									onValueChange={(value: string) =>
-										setValue('data.groupID', parseInt(value), {
-											shouldValidate: true,
-											shouldDirty: true,
-										})
-									}>
-									<SelectTrigger>
-										<SelectValue placeholder={t('product-group-placeholder')} />
-									</SelectTrigger>
-									<SelectContent>
-										{groups.map(group => (
-											<SelectItem key={group.id} value={group.id.toString()}>
-												{group.name}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							}
-						/>
-					</div>
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="unit">{t('details-page.details.label-unit')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.unit}</div>}
-							trueComp={
-								<Select
-									disabled={pending}
-									value={formValues.data.unitID.toString()}
-									onValueChange={(value: string) =>
-										setValue('data.unitID', parseInt(value), {
-											shouldValidate: true,
-											shouldDirty: true,
-										})
-									}>
-									<SelectTrigger>
-										<SelectValue defaultValue={product.unitID} placeholder={t('unit-placeholder')} />
-									</SelectTrigger>
-									<SelectContent>
-										{units.map(unit => (
-											<SelectItem key={unit.id} value={unit.id.toString()}>
-												{unit.name}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							}
-						/>
-					</div>
+				<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
+					<Label htmlFor="group">{t('details-page.details.label-group')}</Label>
+					<IfElse
+						condition={isEditing}
+						falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.group}</div>}
+						trueComp={
+							<Select
+								disabled={pending}
+								value={formValues.data.groupID.toString()}
+								onValueChange={(value: string) =>
+									setValue('data.groupID', parseInt(value), {
+										shouldValidate: true,
+										shouldDirty: true,
+									})
+								}>
+								<SelectTrigger>
+									<SelectValue placeholder={t('product-group-placeholder')} />
+								</SelectTrigger>
+								<SelectContent>
+									{groups.map(group => (
+										<SelectItem key={group.id} value={group.id.toString()}>
+											{group.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						}
+					/>
+				</div>
+				<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
+					<Label htmlFor="unit">{t('details-page.details.label-unit')}</Label>
+					<IfElse
+						condition={isEditing}
+						falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.unit}</div>}
+						trueComp={
+							<Select
+								disabled={pending}
+								value={formValues.data.unitID.toString()}
+								onValueChange={(value: string) =>
+									setValue('data.unitID', parseInt(value), {
+										shouldValidate: true,
+										shouldDirty: true,
+									})
+								}>
+								<SelectTrigger>
+									<SelectValue defaultValue={product.unitID} placeholder={t('unit-placeholder')} />
+								</SelectTrigger>
+								<SelectContent>
+									{units.map(unit => (
+										<SelectItem key={unit.id} value={unit.id.toString()}>
+											{unit.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						}
+					/>
 				</div>
 
-				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="sku">{t('details-page.details.label-sku')}</Label>
-						<div className={cn("h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm", isEditing && 'cursor-not-allowed')}>{product.sku}</div>
-					</div>
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="barcode">{t('details-page.details.label-barcode')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.barcode}</div>}
-							trueComp={
-								<Input
-									id="barcode"
-									name="barcode"
-									className="h-9"
-									type="text"
-									value={formValues.data.barcode}
-									onChange={event => setValue("data.barcode", event.target.value, { shouldValidate: true, shouldDirty: true })}
-								/>
-							}
-						/>
-					</div>
+				<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
+					<Label htmlFor="sku">{t('details-page.details.label-sku')}</Label>
+					<div className={cn("h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm", isEditing && 'cursor-not-allowed')}>{product.sku}</div>
+				</div>
+				<div className="space-y-0.5 w-full">
+					<Label htmlFor="barcode">{t('details-page.details.label-barcode')}</Label>
+					<IfElse
+						condition={isEditing}
+						falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.barcode}</div>}
+						trueComp={
+							<Input
+								id="barcode"
+								name="barcode"
+								className="h-9"
+								type="text"
+								value={formValues.data.barcode}
+								onChange={event => setValue("data.barcode", event.target.value, { shouldValidate: true, shouldDirty: true })}
+							/>
+						}
+					/>
 				</div>
 
 				{hasPermissionByRank(user.role, 'bruger') && user.priceAccess && (
-					<div className="flex flex-col md:flex-row gap-4 justify-stretch">
-						<div className="space-y-0.5 w-full">
+					<>
+						<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
 							<Label htmlFor="costPrice">{t('details-page.details.label-costPrice')}</Label>
 							<IfElse
 								condition={isEditing}
@@ -371,7 +363,7 @@ export function ProductDetails({ product, user }: Props) {
 								}
 							/>
 						</div>
-						<div className="space-y-0.5 w-full">
+						<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
 							<Label htmlFor="barcode">{t('details-page.details.label-salesPrice')}</Label>
 							<IfElse
 								condition={isEditing}
@@ -388,41 +380,38 @@ export function ProductDetails({ product, user }: Props) {
 								}
 							/>
 						</div>
-					</div>
+					</>
 				)}
 
-				<div className="flex flex-col md:flex-row gap-4 justify-stretch">
-					<div className="space-y-0.5 w-full">
-						<Label htmlFor="sku">{t('details-page.details.label-supplier')}</Label>
-						<IfElse
-							condition={isEditing}
-							falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.supplierName ?? 'Ingen'}</div>}
-							trueComp={
-								<Select
-									disabled={pending}
-									value={formValues.data.supplierID ? formValues.data.supplierID.toString() : "-1"}
-									onValueChange={(value: string) => {
-										setValue('data.supplierID', parseInt(value), {
-											shouldValidate: true,
-											shouldDirty: true,
-										})
-									}}>
-									<SelectTrigger>
-										<SelectValue defaultValue={product.supplierID ?? undefined} placeholder={t('unit-placeholder')} />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="-1">Ingen</SelectItem>
-										{suppliers.map((unit) => (
-											<SelectItem key={unit.id} value={unit.id.toString()}>
-												{unit.name}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							}
-						/>
-					</div>
-					<div className="space-y-0.5 w-full"></div>
+				<div className="grid grid-rows-[20px_1fr] space-y-0.5 w-full">
+					<Label htmlFor="sku">{t('details-page.details.label-supplier')}</Label>
+					<IfElse
+						condition={isEditing}
+						falseComp={<div className="h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm">{product.supplierName ?? 'Ingen'}</div>}
+						trueComp={
+							<Select
+								disabled={pending}
+								value={formValues.data.supplierID ? formValues.data.supplierID.toString() : "-1"}
+								onValueChange={(value: string) => {
+									setValue('data.supplierID', parseInt(value), {
+										shouldValidate: true,
+										shouldDirty: true,
+									})
+								}}>
+								<SelectTrigger>
+									<SelectValue defaultValue={product.supplierID ?? undefined} placeholder={t('unit-placeholder')} />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="-1">Ingen</SelectItem>
+									{suppliers.map((unit) => (
+										<SelectItem key={unit.id} value={unit.id.toString()}>
+											{unit.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						}
+					/>
 				</div>
 			</div>
 		</div>

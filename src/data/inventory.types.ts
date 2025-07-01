@@ -3,6 +3,7 @@ import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
   History,
+  Inventory,
   Placement,
   Product,
 } from '@/lib/database/schema/inventory'
@@ -51,6 +52,11 @@ export type FormattedInventory = {
   batch: Batch
 }
 
+export interface ProductInventory extends Inventory {
+	placement: Placement
+  batch: Batch
+}
+
 export interface FormattedHistory extends History {
   product: Product & { unit: string; group: string }
   placement: Placement
@@ -83,4 +89,27 @@ export type HistoryFilter = {
   },
   type?: HistoryType[],
 	group?: string[]
+}
+
+export type MoveBetweenLocation = {
+	fromLocation: string
+	toLocation: string
+	reference?: string
+	items: {
+		productID: number
+		sku: string
+		fromPlacementID: number
+		toPlacementID?: number
+		fromBatchID: number
+		toBatchID?: number
+		quantity: number
+	}[]
+}
+
+export type MoveBetweenLocationResponse = {
+	success: boolean
+	errors: {
+		productID: number
+		message: string
+	}[]
 }

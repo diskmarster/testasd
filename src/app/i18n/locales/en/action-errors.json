@@ -131,13 +131,18 @@
     "placement-barring-failed": "Something went wrong trying to bar the placement",
     "restock-barred": "Could not update restock. Product is barred",
     "move-barred": "Could not complete move. Product is barred",
-    "reorder-barred": "Could not reorder. Product is barred"
+    "reorder-barred": "Could not reorder. Product is barred",
+	"placement-not-exists": "Placement does not exist",
+	"placement-is-barred": "Incoming products on barred placement is not allowed",
+	"batch-not-exists": "Batch does not exist",
+	"batch-is-barred": "Incoming products on barred batch is not allowed"
   },
   "product-service-action": {
     "barcode-already-exists": "The barcode already exists",
     "sku-already-exists": "The product number already exists",
     "product-barring-failed": "Something went wrong trying to bar the product",
-    "product-id-not-found": "Couldn't find the product by id"
+    "product-id-not-found": "Couldn't find the product by id",
+    "product-sku-barcode-not-found": "Could not find product with sku or barcode"
   },
   "location-service-action": {
     "location-didnt-update": "Something went wrong while updating the location name"
@@ -151,5 +156,13 @@
     "account-doesnt-exist": "Company account does not exist in the system",
     "batch-not-created": "Batch was not created",
     "batch-not-updated": "Batch was not updated"
+  },
+  "locations-move": {
+	  "missing-user-id": "Missing a user id to perform this action",
+	  "missing-apikey": "Missing an api key to perform this action",
+	  "to-location": " (To location: {{location}})",
+	  "from-location": " (From location: {{location}})",
+	  "from-upsert-failed": "Failed to move product {{sku}} from location",
+	  "to-upsert-failed": "Failed to move product {{sku}} to location"
   }
 }

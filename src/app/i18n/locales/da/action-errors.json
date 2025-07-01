@@ -131,7 +131,11 @@
     "placement-barring-failed": "Noget gik galt under spærringen af placeringen",
     "restock-barred": "Kunne ikke gennemføre tilgang. Varen er spærret",
     "move-barred": "Kunne ikke gennemføre flytning. Varen er spærret",
-    "reorder-barred": "Kunne ikke genbestille. Varen er spærret"
+    "reorder-barred": "Kunne ikke genbestille. Varen er spærret",
+	"placement-not-exists": "Placering findes ikke",
+	"placement-is-barred": "Tilgang på spærret placering er ikke tilladt",
+	"batch-not-exists": "Batchnr. findes ikke",
+	"batch-is-barred": "Tilgang på spærret batchnr. er ikke tilladt"
   },
   "product-service-action": {
     "barcode-already-exists": "Stregkoden eksisterer allerede",
@@ -158,5 +162,13 @@
     "client-user-limit": "Kunden har nået sin brugergrænse",
     "link-not-created": "Der gik noget galt med at oprette inviteringslink",
     "email-subject": "Du er blevet inviteret til {{app}} af Skancode A/S på vegne af {{customer}}"
+  },
+  "locations-move": {
+	  "missing-user-id": "Mangler et bruger id for at kunne udføre denne handling",
+	  "missing-apikey": "Mangler en api key for at kunne udføre denne handling",
+	  "to-location": " (Til lokation: {{location}})",
+	  "from-location": " (Fra lokation: {{location}})",
+	  "from-upsert-failed": "Kunne ikke flytte varenr. {{sku}} fra lokation",
+	  "to-upsert-failed": "Kunne ikke flytte varenr. {{sku}} til lokation"
   }
 }
