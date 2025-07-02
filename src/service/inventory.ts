@@ -61,6 +61,7 @@ const EMAIL_LINK_BASEURL =
 
 export const inventoryService = {
   getInventory: async function(
+	customerID: CustomerID,
     locationID: LocationID,
   ): Promise<FormattedInventory[]> {
     const rows: FormattedInventory[] = []
@@ -70,6 +71,7 @@ export const inventoryService = {
 
     do {
       const temp = await inventory.getInventoryByLocationID(
+		customerID,
         locationID,
         pageSize,
         page,

@@ -70,6 +70,7 @@ const REORDER_COLS = getTableColumns(reorderTable)
 
 export const inventory = {
   getInventoryByLocationID: async function (
+	customerID: CustomerID,
     locationID: LocationID,
     pageSize: number = 5000,
     page: number = 1,
