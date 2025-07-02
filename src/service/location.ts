@@ -20,6 +20,8 @@ import { generateIdFromEntropySize } from 'lucia'
 import { cookies } from 'next/headers'
 import { productService } from './products'
 import { LocationAccessesWithName, LocationWithCounts } from '@/data/location.types'
+import { user } from '@/data/user'
+import { hasPermissionByRank } from '@/data/user.types'
 
 const LAST_LOCATION_COOKIE_NAME = 'nl_last_location'
 const LAST_LOCATION_COOKIE_DURATION_D = 14
@@ -71,7 +73,24 @@ export const locationService = {
     userID: UserID,
   ): Promise<LocationID | undefined> {
     let defaultLocationID
-    const locations = await location.getAllByUserID(userID)
+	const u = await user.getByID(userID)
+	if (!u) return undefined
+
+	let locations = []
+	if (hasPermissionByRank(u?.role, 'administrator')) {
+		const primaryLocation = await location.getPrimary(userID)
+
+		const customerLocations = await location.getAllByCustomerID(u?.customerID)	
+
+		locations = customerLocations.map(loc => ({
+			...loc,
+			isPrimary: loc.id == primaryLocation?.id,
+		}))
+
+	} else {
+		locations = await location.getAllByUserID(userID)
+	}
+
     if (locations.length == 0) return undefined
 
     const locationCookie = cookies().get(LAST_LOCATION_COOKIE_NAME)
