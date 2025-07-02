@@ -370,7 +370,7 @@ export function getTableOverviewColumns(
 		filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
 		meta: {
 			rightAlign: true,
-			viewLabel: t('quantity'),
+			viewLabel: t('totalQuantity'),
 		},
 	}
 
