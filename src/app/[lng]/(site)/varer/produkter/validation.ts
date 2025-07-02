@@ -160,7 +160,7 @@ export const productsDataValidation = (
               .number({
                 invalid_type_error: t('products.minimum-type'),
               })
-			  .positive({
+			  .nonnegative({
 				  message: t('products.minimum-positive')
 			  })
               .optional(),
@@ -168,27 +168,27 @@ export const productsDataValidation = (
         maximum: z
           .preprocess(
             val => val != '' ? val : undefined,
-            z.coerce
+            z.optional(z.coerce
               .number({
                 invalid_type_error: t('products.maximum-type'),
               })
-			  .positive({
+			  .nonnegative({
 				  message: t('products.maximum-positive')
-			  })
-              .optional()
+			  }))
               .default(0),
           ),
         orderAmount: z
           .preprocess(
             val => val != '' ? val : undefined,
-            z.coerce
+            z.optional(
+			z.coerce
               .number({
                 invalid_type_error: t('products.order-amount-type'),
               })
-			  .positive({
+			  .nonnegative({
 				  message: t('products.order-amount-positive')
 			  })
-              .optional(),
+			),
           ),
       })
       .strict({ message: t('products.unknown-column') })
