@@ -229,9 +229,9 @@ export const importProductsValidation = z.array(
     salesPrice: z.coerce.number(),
     note: z.string(),
     isBarred: z.coerce.boolean(),
-    minimum: z.coerce.number().positive().optional(),
-    maximum: z.coerce.number().positive(),
-    orderAmount: z.coerce.number().positive().optional(),
+    minimum: z.coerce.number().optional(),
+    maximum: z.coerce.number(),
+    orderAmount: z.coerce.number().optional(),
   }),
 )
 
