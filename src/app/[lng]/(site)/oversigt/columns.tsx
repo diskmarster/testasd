@@ -364,10 +364,12 @@ export function getTableOverviewColumns(
 		aggregatedCell: ({ row }) => {
 			const total = row.getLeafRows().map(r => r.original.quantity).reduce((acc, cur) => acc+cur ,0)
 			return (
-			<span className={cn(row.original.totalQuantity < 0 && 'text-destructive')}>
-				{formatNumber(total, lng)} / {formatNumber(row.original.totalQuantity, lng)}
-			</span>
-		)
+				<p>
+					<span className={cn(total < 0 && 'text-destructive')}>{formatNumber(total, lng)}</span>
+					{" / "}
+					<span className={cn(row.original.totalQuantity < 0 && 'text-destructive')}>{formatNumber(row.original.totalQuantity, lng)}</span>
+				</p>
+			)
 		} ,
 		cell: () => null,
 		filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
