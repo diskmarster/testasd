@@ -359,7 +359,7 @@ export function getTableOverviewColumns(
 	const totalQuantityCol: ColumnDef<InventoryTableRow> = {
 		accessorKey: 'totalQuantity',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('totalQuantity')} />
+			<TableHeader tooltip={t('totalQuantity-tooltip')} column={column} title={t('totalQuantity')} />
 		),
 		aggregatedCell: ({ row }) => (
 			<span className={cn(row.original.totalQuantity < 0 && 'text-destructive')}>

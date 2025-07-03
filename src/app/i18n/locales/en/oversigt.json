@@ -51,6 +51,7 @@
   "sales-price": "Sales price",
   "quantity": "Qty.",
   "totalQuantity": "Total Qty.",
+  "totalQuantity-tooltip": "Total quantity across all locations",
   "disposible": "Disp. qty.",
   "unit": "Unit",
   "isBarred": "Status",

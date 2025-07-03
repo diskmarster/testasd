@@ -50,6 +50,7 @@
   "sales-price": "Salgspris",
   "quantity": "Beh.",
   "totalQuantity": "Total Beh.",
+  "totalQuantity-tooltip": "Total beholdning på tværs af lokationer",
   "disposible": "Disp. beh.",
   "unit": "Enhed",
   "updated": "Opdateret",
