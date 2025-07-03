@@ -38,7 +38,7 @@ const defaultConfig: Required<ReadAndValidateFileConfig> = {
 
 export function readAndValidateFileData<T extends z.ZodTypeAny, TKey extends string = string>(
   file: File,
-  schema: z.ZodArray<T>,
+  schema: z.ZodArray<T> | z.ZodEffects<z.ZodArray<T>>,
   t: TFunction,
   config: ReadAndValidateFileConfig<TKey | string> = defaultConfig,
 ): Promise<ReadAndValidateFileResponse<T>> {

@@ -212,7 +212,42 @@ export const productsDataValidation = (
           }
         }
       }),
-  )
+  ).superRefine((val, ctx) => {
+		const [skuMap, barcodeMap] = val.map(v => [v.sku, v.barcode]).reduce(([skuMap, barcodeMap], [sku, barcode]) => {
+			if (skuMap[sku] == undefined) {
+				skuMap[sku] = 0
+			}
+			if (barcodeMap[barcode] == undefined) {
+				barcodeMap[barcode] = 0
+			}
+
+			skuMap[sku] += 1
+			barcodeMap[barcode] += 1
+
+			return [skuMap, barcodeMap]
+		}, [{} as Record<string, number>, {} as Record<string, number>])
+
+		const duplicateSku = Array.from(Object.entries(skuMap)).filter(([_, count]) => count > 1).map(([sku, _]) => sku)
+		const duplicateBarcode = Array.from(Object.entries(barcodeMap)).filter(([_, count]) => count > 1).map(([barcode, _]) => barcode)
+
+		console.log({skuMap, barcodeMap, duplicateSku, duplicateBarcode})
+
+		if (duplicateSku.length > 0) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: t('products.sku-duplicate', { skus: duplicateSku.join(', ') }),
+				path: ['sku']
+			})
+		}
+
+		if (duplicateBarcode.length > 0) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: t('products.barcode-duplicate', { barcodes: duplicateBarcode.join(', ') }),
+				path: ['barcode']
+			})
+		}
+	})
 
 export type ImportProducts = z.infer<typeof importProductsValidation>
 

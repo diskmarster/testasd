@@ -88,10 +88,11 @@ export function ModalImportProducts({allUnits}: {allUnits: string[]}) {
     setRows([])
     setIsDone(false)
 
-    const headers = schema.element.innerType().keyof().options
+    const headers = schema.innerType().element.innerType().keyof().options
     const dataRes = await readAndValidateFileData(files[0], schema, validationT, {
       expectedHeaders: headers,
       transformHeaders: (h) => headerMap.get(sanitizeHeader(h)) ?? h,
+			debug: true,
     },
     ).catch(err => {
         console.log(err)
@@ -260,7 +261,10 @@ export function ModalImportProducts({allUnits}: {allUnits: string[]}) {
 
                 return (
                   <div key={i}>
-                    <p>{`${t('modal-import-products.error-on-row')} ${rowNumber} ${t('modal-import-products.in')} ${validationT('products.header-name', {context: rowKey})}: ${rowMsg}`}</p>
+                    <p>
+											{!isNaN(rowNumber) && `${t('modal-import-products.error-on-row')} ${isNaN(rowNumber) ? '' : rowNumber} ${t('modal-import-products.in')} ${validationT('products.header-name', {context: rowKey})}: `}
+											{rowMsg}
+										</p>
                   </div>
                 )
               })}
