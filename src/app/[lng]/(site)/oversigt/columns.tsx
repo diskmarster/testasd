@@ -339,7 +339,7 @@ export function getTableOverviewColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('quantity')} />
 		),
-		aggregatedCell: ({ getValue, row }) => (
+		aggregatedCell: ({ getValue }) => (
 			<span className={cn(getValue<number>() < 0 && 'text-destructive')}>
 				{formatNumber(getValue<number>(), lng)}
 			</span>
@@ -563,6 +563,11 @@ export function getTableOverviewColumns(
 			if (col === totalQuantityCol) return false
 			return true
 		})
+	} else {
+		planCols = planCols.filter(col => {
+			if (!hasPermissionByRank(user.role, 'administrator') && col === totalQuantityCol) return false
+			return true
+		})
 	}
 
 	return planCols
@@ -774,6 +779,7 @@ export function getTableOverviewFilters(
 		costPriceFilter,
 		salesPriceFilter,
 		quantityFilter,
+		totalQuantityFilter,
 		dispQuantityFilter,
 		placementFilter,
 		batchFilter,
@@ -797,7 +803,13 @@ export function getTableOverviewFilters(
 			if (filter === totalQuantityFilter) return false
 			return true
 		})
+	} else {
+		planFilters = planFilters.filter(filter => {
+			if (!hasPermissionByRank(user.role, 'administrator') && filter === totalQuantityFilter) return false
+			return true
+		})
 	}
+
 
 	return planFilters
 }
