@@ -37,7 +37,7 @@ export const genInventoryReportAction = adminAction
   .action(async ({ parsedInput: { locationID }, ctx: { user } }) => {
     const [customer, inventory, location] = await Promise.all([
       customerService.getByID(user.customerID),
-      inventoryService.getInventory(locationID),
+      inventoryService.getInventory(user.customerID, locationID),
       locationService.getByID(locationID),
     ])
 

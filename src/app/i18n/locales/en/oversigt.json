@@ -50,6 +50,8 @@
   "cost-price": "Cost price",
   "sales-price": "Sales price",
   "quantity": "Qty.",
+  "totalQuantity": "Total Qty.",
+  "totalQuantity-tooltip": "Quantity for current location / Quantity for all locations",
   "disposible": "Disp. qty.",
   "unit": "Unit",
   "isBarred": "Status",

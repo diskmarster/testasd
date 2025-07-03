@@ -54,9 +54,12 @@ export async function POST(request: NextRequest) {
   if (!customer.success) {
     return sendResponse(500, { error: customer.error.message })
   }
+  if (!customer.data) {
+    return sendResponse(404, { error: 'customer does not exist' })
+  }
 
   const inventory = await tryCatch(
-    inventoryService.getInventory(parsed.data.locationID),
+    inventoryService.getInventory(customer.data.id, parsed.data.locationID),
   )
   if (!inventory.success) {
     return sendResponse(500, { error: inventory.error.message })

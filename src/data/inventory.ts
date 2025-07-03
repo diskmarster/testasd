@@ -57,6 +57,7 @@ import {
   lte,
   sql,
   SQLWrapper,
+  sum,
 } from 'drizzle-orm'
 
 const PRODUCT_COLS = getTableColumns(productTable)
@@ -69,11 +70,21 @@ const REORDER_COLS = getTableColumns(reorderTable)
 
 export const inventory = {
   getInventoryByLocationID: async function (
+	customerID: CustomerID,
     locationID: LocationID,
     pageSize: number = 5000,
     page: number = 1,
     trx: TRX = db,
   ): Promise<FormattedInventory[]> {
+	const totalQuantityStmt = trx
+		.select({
+			productID: inventoryTable.productID,
+			totalQuantity: sum(inventoryTable.quantity).as('totalQuantity')
+		})
+		.from(inventoryTable)
+		.groupBy(inventoryTable.productID)
+		.as('totalQuantityStmt')
+
     const inventory: FormattedInventory[] = await trx
       .select({
         inserted: inventoryTable.inserted,
@@ -90,6 +101,7 @@ export const inventory = {
         },
         placement: { ...PLACEMENT_COLS },
         batch: { ...BATCH_COLS },
+		totalQuantity: sql<number>`cast(${totalQuantityStmt.totalQuantity} as real)` 
       })
       .from(inventoryTable)
       .where(eq(inventoryTable.locationID, locationID))
@@ -109,6 +121,7 @@ export const inventory = {
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+	  .leftJoin(totalQuantityStmt, eq(totalQuantityStmt.productID, inventoryTable.productID))
       .groupBy(
         inventoryTable.inserted,
         inventoryTable.updated,

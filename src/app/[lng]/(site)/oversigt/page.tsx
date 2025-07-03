@@ -46,7 +46,7 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
     (hasPermissionByPlan(customer.plan, 'pro') && customerSettings.useBatch)
 
 	let inventory = inventoryService
-		.getInventory(location)
+		.getInventory(customer.id, location)
 		.then(inventory => {
 			// Group inventories by product
 			let groupedInventories = inventory.reduce(
