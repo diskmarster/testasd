@@ -57,7 +57,8 @@ export function TableHeader<TData, TValue>({
 						column.columnDef.meta?.rightAlign && 'justify-end',
 					)}
 					onClick={handleSort}>
-				{title}
+					{title}
+					{tooltip && <Icons.help className='size-3.5' />}
 					{column.getIsSorted() === 'desc' ? (
 						<Icons.arrowDown className='size-3' />
 					) : column.getIsSorted() === 'asc' ? (

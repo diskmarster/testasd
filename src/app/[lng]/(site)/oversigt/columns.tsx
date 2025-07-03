@@ -339,7 +339,7 @@ export function getTableOverviewColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('quantity')} />
 		),
-		aggregatedCell: ({ getValue }) => (
+		aggregatedCell: ({ getValue, row }) => (
 			<span className={cn(getValue<number>() < 0 && 'text-destructive')}>
 				{formatNumber(getValue<number>(), lng)}
 			</span>
@@ -361,11 +361,14 @@ export function getTableOverviewColumns(
 		header: ({ column }) => (
 			<TableHeader tooltip={t('totalQuantity-tooltip')} column={column} title={t('totalQuantity')} />
 		),
-		aggregatedCell: ({ row }) => (
+		aggregatedCell: ({ row }) => {
+			const total = row.getLeafRows().map(r => r.original.quantity).reduce((acc, cur) => acc+cur ,0)
+			return (
 			<span className={cn(row.original.totalQuantity < 0 && 'text-destructive')}>
-				{formatNumber(row.original.totalQuantity, lng)}
+				{formatNumber(total, lng)} / {formatNumber(row.original.totalQuantity, lng)}
 			</span>
-		),
+		)
+		} ,
 		cell: () => null,
 		filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
 		meta: {
