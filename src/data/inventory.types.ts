@@ -50,6 +50,7 @@ export type FormattedInventory = {
   }
   placement: Placement
   batch: Batch
+  totalQuantity: number
 }
 
 export interface ProductInventory extends Inventory {

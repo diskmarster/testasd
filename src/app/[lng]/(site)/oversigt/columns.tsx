@@ -20,7 +20,6 @@ import {
 	HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { Attachment } from '@/lib/database/schema/attachments'
-import Image from 'next/image'
 
 export type InventoryTableRow = FormattedInventory & {
 	disposable: number | null
@@ -340,7 +339,7 @@ export function getTableOverviewColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('quantity')} />
 		),
-		aggregatedCell: ({ getValue }) => (
+		aggregatedCell: ({ getValue, row }) => (
 			<span className={cn(getValue<number>() < 0 && 'text-destructive')}>
 				{formatNumber(getValue<number>(), lng)}
 			</span>
@@ -354,6 +353,27 @@ export function getTableOverviewColumns(
 		meta: {
 			rightAlign: true,
 			viewLabel: t('quantity'),
+		},
+	}
+
+	const totalQuantityCol: ColumnDef<InventoryTableRow> = {
+		accessorKey: 'totalQuantity',
+		header: ({ column }) => (
+			<TableHeader tooltip={t('totalQuantity-tooltip')} column={column} title={t('totalQuantity')} />
+		),
+		aggregatedCell: ({ row }) => {
+			const total = row.getLeafRows().map(r => r.original.quantity).reduce((acc, cur) => acc+cur ,0)
+			return (
+			<span className={cn(row.original.totalQuantity < 0 && 'text-destructive')}>
+				{formatNumber(total, lng)} / {formatNumber(row.original.totalQuantity, lng)}
+			</span>
+		)
+		} ,
+		cell: () => null,
+		filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
+		meta: {
+			rightAlign: true,
+			viewLabel: t('totalQuantity'),
 		},
 	}
 
@@ -517,6 +537,7 @@ export function getTableOverviewColumns(
 		costPriceCol,
 		salesPriceCol,
 		quantityCol,
+		totalQuantityCol,
 		dispQuantityCol,
 		unitCol,
 		placementCol,
@@ -536,8 +557,12 @@ export function getTableOverviewColumns(
 		planCols = planCols.filter(col => col != placementCol)
 	}
 
-	if (!(hasPermissionByPlan(plan, 'pro') && settings.useBatch)) {
-		planCols = planCols.filter(col => col != batchCol)
+	if (!hasPermissionByPlan(plan, 'pro')) {
+		planCols = planCols.filter(col => {
+			if (settings.useBatch && col === batchCol) return false
+			if (col === totalQuantityCol) return false
+			return true
+		})
 	}
 
 	return planCols
@@ -704,6 +729,13 @@ export function getTableOverviewFilters(
 		value: '',
 	}
 
+	const totalQuantityFilter: FilterField<InventoryTableRow> = {
+		column: table.getColumn('totalQuantity'),
+		type: 'number-range',
+		label: t('totalQuantity'),
+		value: '',
+	}
+
 	const dispQuantityFilter: FilterField<InventoryTableRow> = {
 		column: table.getColumn('disposible'),
 		type: 'number-range',
@@ -759,8 +791,12 @@ export function getTableOverviewFilters(
 		planFilters = planFilters.filter(filter => filter != placementFilter)
 	}
 
-	if (!(hasPermissionByPlan(plan, 'pro') && settings.useBatch)) {
-		planFilters = planFilters.filter(filter => filter != batchFilter)
+	if (!hasPermissionByPlan(plan, 'pro')) {
+		planFilters = planFilters.filter(filter => {
+			if (settings.useBatch && filter === batchFilter) return false
+			if (filter === totalQuantityFilter) return false
+			return true
+		})
 	}
 
 	return planFilters
