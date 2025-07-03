@@ -39,7 +39,7 @@ export function NavDesktop({
   return (
     <div className='hidden gap-6 md:flex md:gap-10'>
       <Link href={`/${lng}/oversigt`} className='flex items-center space-x-2'>
-        <siteConfig.logo className='size-6' strokeWidth={1.5} />
+        <siteConfig.logo className='size-6 text-primary' strokeWidth={1.5} />
         <span className='inline-block font-semibold'>{siteConfig.name}</span>
       </Link>
 
