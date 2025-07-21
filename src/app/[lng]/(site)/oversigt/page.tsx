@@ -130,14 +130,18 @@ async function filterGroupedInventories(
 	let inventories: FormattedInventory[] = Object.values(
 		groupedInventories,
 	).flatMap(invs => {
-		let filtered = invs.filter(
-			inv => inv.isDefaultPlacement || inv.quantity != 0,
-		)
+		let filtered = invs
+		if (filtered.some(inv => inv.isDefaultPlacement)) {
+			filtered = filtered.filter(
+				inv => inv.isDefaultPlacement
+			)
+		}
+
 		const totalQty: number = filtered.reduce(
 			(acc, cur) => acc + cur.quantity,
 			0,
 		)
-		if (totalQty > 0 && filtered.some(inv => inv.isDefaultPlacement)) {
+		if (totalQty != 0 && filtered.some(inv => inv.isDefaultPlacement)) {
 			filtered = filtered.filter(i => i.quantity != 0)
 		}
 
