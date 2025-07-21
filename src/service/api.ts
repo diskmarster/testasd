@@ -4,6 +4,7 @@ import { inventoryService } from './inventory'
 import { UserID } from '@/lib/database/schema/auth'
 import { HistoryPlatform, MoveBetweenLocation, MoveBetweenLocationResponse } from '@/data/inventory.types'
 import { fallbackLng } from '@/app/i18n/settings'
+import { TFunction } from 'i18next'
 
 export const apiService = {
   regulateInventory: async function (
@@ -12,7 +13,10 @@ export const apiService = {
 		apikeyName: string | null,
 		platform: HistoryPlatform,
     data: CreateRegulation,
-  ): Promise<boolean> {
+		t: TFunction<'common', 'route-translations-regulations'>,
+  ): Promise<{ok:true, status?: undefined, error?: undefined} | {ok: false, status: 400 | 500, error: string}> {
+		let defaultPlacement = await inventoryService.getDefaultPlacementForProductAndLocation(data.productId, data.locationId).then(dp => dp?.placement)
+		
     let placementId: number
     if (typeof data.placementId == 'string') {
       // Create new placement or fetch default for location
@@ -21,23 +25,29 @@ export const apiService = {
         const placements = await inventoryService.getActivePlacementsByID(
           data.locationId,
         )
-        let defaultPlacement = placements.find(p => p.name == '-')
-        if (defaultPlacement == undefined) {
-          defaultPlacement = await inventoryService.createPlacement({
-            locationID: data.locationId,
-            name: '-',
-          })
+				if (defaultPlacement == undefined) {
+					defaultPlacement = placements.find(p => p.name == '-')
+					if (defaultPlacement == undefined) {
+						defaultPlacement = await inventoryService.createPlacement({
+							locationID: data.locationId,
+							name: '-',
+						})
 
-          if (defaultPlacement == undefined) {
-            // const msg = t(
-            //   'route-translations-regulations.error-while-moving-placement',
-            // )
+						if (defaultPlacement == undefined) {
+							// const msg = t(
+							//   'route-translations-regulations.error-while-moving-placement',
+							// )
 
-            return false
-          }
-        }
+							return {ok: false, status: 500, error: t('error-creating-placement-db')}
+						}
+					}
+				}
         placementId = defaultPlacement.id
       } else {
+				if (defaultPlacement) {
+					return {ok: false, status: 400, error: t('error-not-default-placement-selected')}
+				}
+
         const res = await inventoryService.createPlacement({
           locationID: data.locationId,
           name: data.placementId,
@@ -47,11 +57,15 @@ export const apiService = {
           //   'route-translations-regulations.error-creating-placement-db',
           // )
 
-          return false
+					return {ok: false, status: 500, error: t('error-creating-placement-db')}
         }
         placementId = res.id
       }
     } else if (typeof data.placementId == 'number') {
+			if (defaultPlacement && data.placementId != defaultPlacement.id) {
+				return {ok: false, status: 400, error: t('error-not-default-placement-selected')}
+			}
+
       placementId = data.placementId
     } else {
       // data.placementId should be undefined
@@ -59,21 +73,23 @@ export const apiService = {
       const placements = await inventoryService.getActivePlacementsByID(
         data.locationId,
       )
-      let defaultPlacement = placements.find(p => p.name == '-')
-      if (defaultPlacement == undefined) {
-        defaultPlacement = await inventoryService.createPlacement({
-          locationID: data.locationId,
-          name: '-',
-        })
+			if (defaultPlacement == undefined) {
+				defaultPlacement = placements.find(p => p.name == '-')
+				if (defaultPlacement == undefined) {
+					defaultPlacement = await inventoryService.createPlacement({
+						locationID: data.locationId,
+						name: '-',
+					})
 
-        if (defaultPlacement == undefined) {
-          // const msg = t(
-          //   'route-translations-regulations.error-while-moving-placement',
-          // )
+					if (defaultPlacement == undefined) {
+						// const msg = t(
+						//   'route-translations-regulations.error-while-moving-placement',
+						// )
 
-          return false
-        }
-      }
+						return {ok: false, status: 500, error: t('error-creating-placement-db')}
+					}
+				}
+			}
       placementId = defaultPlacement.id
     }
 
@@ -97,7 +113,7 @@ export const apiService = {
             //   'route-translations-regulations.error-while-moving-batch',
             // )
 
-            return false
+						return {ok: false, status: 500, error: t('error-creating-batch-db')}
           }
         }
         batchId = defaultBatch.id
@@ -111,7 +127,7 @@ export const apiService = {
           //   'route-translations-regulations.error-creating-batch-db',
           // )
 
-          return false
+					return {ok: false, status: 500, error: t('error-creating-batch-db')}
         }
         batchId = res.id
       }
@@ -135,7 +151,7 @@ export const apiService = {
           //   'route-translations-regulations.error-while-moving-batch',
           // )
 
-          return false
+					return {ok: false, status: 500, error: t('error-creating-batch-db')}
         }
       }
       batchId = defaultBatch.id
@@ -156,12 +172,12 @@ export const apiService = {
 				apikeyName,
       ))
     ) {
-      // const msg = `${t('route-translations-regulations.error-creating-new')} ${data.type}, ${t('route-translations-regulations.try-again')}`
+      const msg = `${t('error-creating-new')} ${data.type}, ${t('try-again')}`
 
-      return false
+			return {ok: false, status: 500, error: msg}
     }
 
-    return true
+    return {ok: true}
   },
   moveInventoryBetweenLocations: async function(
 	  customerID: CustomerID,

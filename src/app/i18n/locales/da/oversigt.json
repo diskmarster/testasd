@@ -1,7 +1,6 @@
 {
   "overview": "Oversigt",
   "overview-description": "Se en oversigt over din varebeholdning",
-
   "modal-update-inventory.translations": "",
   "update-inventory": "Opdater beholdning",
   "update-inventory-description": "Opdater din beholdning ved at lave en tilgang eller afgang",
@@ -19,7 +18,6 @@
   "use-account-case": "Brug konto/sag?",
   "use-account-case-placeholder": "Skriv konto/sag",
   "create-button": "Opret",
-
   "modal-move-inventory-translations": "",
   "inventory-moved": "Beholdning flyttet",
   "move-inventory": "Flyt beholdning",
@@ -30,10 +28,8 @@
   "moveable-quantity": "Flytbar beholdning:",
   "moveable-quantity-must-be-picked": "En beholdning skal vælges, før du kan flytte den.",
   "move-button": "Flyt",
-
   "overview-table-translations": "",
   "inventory": "Ingen lagerbeholdning",
-
   "columns": "",
   "barcode": "Stregkode",
   "barcode-placeholder": "Søg i stregkode",
@@ -62,17 +58,42 @@
   "attachments": "Filer",
   "has-attach-yes": "1 eller flere filer",
   "has-attach-no": "Ingen filer",
-
   "overview-table-actions": "",
   "update": "Opdater beholdning",
   "move": "Flyt beholdning",
-
   "toasts": {
     "was-created": " blev oprettet succesfuldt"
   },
-
   "new-product-placeholder": "Nyt produkt",
   "product-empty-message": "Ingen produkter fundet",
   "placement-empty-message": "Ingen placeringer fundet",
-  "batch-empty-message": "Ingen batches fundet"
+  "batch-empty-message": "Ingen batches fundet",
+  "batch-indicator-tooltip_expired": "Denne batch har overskredet sin udløbsdato",
+  "batch-indicator-tooltip_valid": "Denne batch er stadig anvendelig",
+	"bulk": {
+		"err-no-location": "Din lokation blev ikke fundet. Prøv at refresh din browser",
+		"err-negative-quantity": "Varenr. {{sku}} har en negativ beholdning",
+		"err-bulk-failed": "Varenr. {{sku}} blev ikke afgangsført",
+		"err-unknown": "Der skete en ukendt fejl",
+		"toast-success": "Bulk afgang fuldført",
+		"reference": "Bulk ({{ref}})",
+		"reference-empty": "Bulk",
+		"title": "Bulk afgang",
+		"desc": "Afgangsfør alle varebeholdninger i nul på en given placering",
+		"placement-label": "Placering",
+		"placement-placeholder": "Vælg en placering",
+		"reference-label": "Konto/sag",
+		"reference-placeholder": "Valgfri konto/sag",
+		"body-sub": "Følgende beholdninger vil blive afgangsført",
+		"sku-label": "Varenr.",
+		"text1-label": "Varetekst 1",
+		"batch-label": "Batch",
+		"qty-label": "Beh.",
+		"fetching-inventories": "Henter beholdninger...",
+		"no-inventories": "Ingen beholdninger fundet på placering",
+		"choose-to-see-inventories": "Vælg en placering for at se beholdninger",
+		"errors-title": "Fejlbeskeder",
+		"btn-close": "Luk",
+		"btn-confirm": "Afgangsfør"
+	}
 }

@@ -1,30 +1,23 @@
 import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { ModalCreateBatch } from '@/components/inventory/modal-create-batch'
 import { ModalUpdateBatch } from '@/components/inventory/modal-update-batch'
 import { TableBatch } from '@/components/inventory/table-batchnumber'
 import { hasPermissionByRank } from '@/data/user.types'
-import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
-import { sessionService } from '@/service/session'
 import { redirect } from 'next/navigation'
 
-interface PageProps {
+interface PageProps extends WithAuthProps {
   params: {
     lng: string
   }
 }
 
-export default async function Page({ params: { lng } }: PageProps) {
-  const { session, user } = await sessionService.validate()
-  if (!session) redirect(`/${lng}/log-ind`)
-
-  const location = await locationService.getLastVisited(user.id!)
-  if (!location) redirect(`/${lng}/log-ind`)
-
-  const customer = await customerService.getByID(user.customerID)
-  if (!customer) redirect(`/${lng}/log-ind`)
+async function Page({ params: { lng }, user, pathname }: PageProps) {
+  const location = await locationService.getLastVisited(user.id)
+  if (!location) redirect(`/${lng}/log-ind?redirect=${pathname}`)
 
   const allBatches = await inventoryService.getAllBatchesByID(location)
   const { t } = await serverTranslation(lng, 'batch')
@@ -40,3 +33,5 @@ export default async function Page({ params: { lng } }: PageProps) {
     </SiteWrapper>
   )
 }
+
+export default withAuth(Page)

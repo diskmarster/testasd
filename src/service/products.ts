@@ -1,11 +1,16 @@
 import { inventory } from '@/data/inventory'
 import { location } from '@/data/location'
 import { product } from '@/data/products'
-import { FormattedProduct, ProductFilters, ProductWithInventories } from '@/data/products.types'
+import {
+  FormattedProduct,
+  ProductFilters,
+  ProductWithInventories,
+} from '@/data/products.types'
 import { db, TRX } from '@/lib/database'
 import { CustomerID, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
+  DefaultPlacement,
   Group,
   Inventory,
   NewHistory,
@@ -14,13 +19,16 @@ import {
   NewProductHistory,
   PartialProduct,
   Placement,
+  PlacementID,
   Product,
   ProductHistory,
   ProductID,
 } from '@/lib/database/schema/inventory'
 
+import { ImportProducts } from '@/app/[lng]/(site)/varer/produkter/validation'
 import { serverTranslation } from '@/app/i18n'
 import { fallbackLng } from '@/app/i18n/settings'
+import { suppliers } from '@/data/suppliers'
 import { user as userData } from '@/data/user'
 import { UserID } from '@/lib/database/schema/auth'
 import {
@@ -28,11 +36,9 @@ import {
   ACTION_ERR_UNAUTHORIZED,
   ActionError,
 } from '@/lib/safe-action/error'
+import { tryCatch } from '@/lib/utils.server'
 import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
-import { ImportProducts } from '@/app/[lng]/(site)/varer/produkter/validation'
-import { suppliers } from '@/data/suppliers'
-import { tryCatch } from '@/lib/utils.server'
 
 export const productService = {
   create: async function(
@@ -40,6 +46,7 @@ export const productService = {
     customerID: CustomerID,
     userID: UserID,
     lang: string = fallbackLng,
+    defaultPlacementMap?: Map<LocationID, PlacementID>,
   ): Promise<Product | undefined> {
     const { t } = await serverTranslation(lang, 'action-errors')
     try {
@@ -52,8 +59,19 @@ export const productService = {
 
         const newProduct = await product.create(productData, trx)
         if (!newProduct) return undefined
+
         const locations = await location.getAllByCustomerID(customerID, trx)
         for (const location of locations) {
+          const placementIDs: PlacementID[] = []
+          const defaultPlacementID = defaultPlacementMap?.get(location.id)
+          if (defaultPlacementID) {
+            await inventory.upsertDefaultPlacement(
+              [newProduct.id, defaultPlacementID, location.id],
+              trx,
+            )
+            placementIDs.push(defaultPlacementID)
+          }
+
           const defaultPlacement = await inventory.getDefaultPlacementByID(
             location.id,
             trx,
@@ -75,6 +93,9 @@ export const productService = {
             )
             placementID = newDefaultPlacement.id
           }
+
+          placementIDs.push(placementID)
+
           if (!defaultBatch) {
             const newBatch = await inventory.createBatch(
               { batch: '-', locationID: location.id },
@@ -82,17 +103,19 @@ export const productService = {
             )
             batchID = newBatch.id
           }
-          const newInventoryData: NewInventory = {
-            productID: newProduct.id,
-            placementID: placementID,
-            batchID: batchID,
-            quantity: 0,
-            customerID: customerID,
-            locationID: location.id,
-          }
-          const newInventory = await inventory.upsertInventory(
-            newInventoryData,
-            trx,
+
+          await Promise.all(
+            placementIDs.map(async placementID => {
+              const newInventoryData: NewInventory = {
+                productID: newProduct.id,
+                placementID: placementID,
+                batchID: batchID,
+                quantity: 0,
+                customerID: customerID,
+                locationID: location.id,
+              }
+              await inventory.upsertInventory(newInventoryData, trx)
+            }),
           )
         }
 
@@ -142,51 +165,111 @@ export const productService = {
   },
   getAllProductsWithInventories: async function(
     customerID: CustomerID,
-		filters?: ProductFilters,
+    filters?: ProductFilters,
   ): Promise<ProductWithInventories[]> {
     try {
-      const productsWithInventory =
-        await product.getWithInventoryByCustomerID(customerID, filters)
+      const productsWithInventory = await product.getWithInventoryByCustomerID(
+        customerID,
+        filters,
+      )
 
-      const invMap: Map<ProductID, [FormattedProduct, (Inventory & {locationName: string, placementName: string, batchName: string})[]]> = productsWithInventory.reduce<
-        Map<ProductID, [FormattedProduct, (Inventory & {locationName: string, placementName: string, batchName: string })[]]>
+      const invMap: Map<
+        ProductID,
+        [
+          FormattedProduct,
+          (Inventory & {
+            locationName: string
+            placementName: string
+            batchName: string
+            isDefaultPlacement: boolean
+          })[],
+          Pick<DefaultPlacement, 'placementID' | 'productID' | 'locationID'>[],
+        ]
+      > = productsWithInventory.reduce<
+        Map<
+          ProductID,
+          [
+            FormattedProduct,
+            (Inventory & {
+              locationName: string
+              placementName: string
+              batchName: string
+              isDefaultPlacement: boolean
+            })[],
+            Pick<
+              DefaultPlacement,
+              'placementID' | 'productID' | 'locationID'
+            >[],
+          ]
+        >
       >((acc, cur) => {
         if (acc.has(cur.id)) {
-          const [product, inventories] = acc.get(cur.id)!
+          const [product, inventories, defaultPlacements] = acc.get(cur.id)!
           inventories.push(cur.inventory)
-          acc.set(cur.id, [product, inventories])
+          if (
+            cur.inventory.isDefaultPlacement &&
+            defaultPlacements.every(
+              dp =>
+                dp.placementID != cur.inventory.placementID ||
+                dp.locationID != cur.inventory.locationID,
+            )
+          ) {
+            const inv = cur.inventory
+            defaultPlacements.push({
+              placementID: inv.placementID,
+              locationID: inv.locationID,
+              productID: inv.productID,
+            })
+          }
+          acc.set(cur.id, [product, inventories, defaultPlacements])
         } else {
-          acc.set(cur.id, [{
-            id: cur.id,
-            inserted: cur.inserted,
-            updated: cur.updated,
-            customerID: cur.customerID,
-            isBarred: cur.isBarred,
-            groupID: cur.groupID,
-            unitID: cur.unitID,
-            text1: cur.text1,
-            text2: cur.text2,
-            text3: cur.text3,
-            sku: cur.sku,
-            barcode: cur.barcode,
-            costPrice: cur.costPrice,
-            salesPrice: cur.salesPrice,
-            note: cur.note,
-            supplierID: cur.supplierID,
-            group: cur.group,
-            unit: cur.unit,
-            supplierName: cur.supplierName,
-          }, [cur.inventory]])
+          const inv = cur.inventory
+          acc.set(cur.id, [
+            {
+              id: cur.id,
+              inserted: cur.inserted,
+              updated: cur.updated,
+              customerID: cur.customerID,
+              isBarred: cur.isBarred,
+              groupID: cur.groupID,
+              unitID: cur.unitID,
+              text1: cur.text1,
+              text2: cur.text2,
+              text3: cur.text3,
+              sku: cur.sku,
+              barcode: cur.barcode,
+              costPrice: cur.costPrice,
+              salesPrice: cur.salesPrice,
+              note: cur.note,
+              supplierID: cur.supplierID,
+              group: cur.group,
+              unit: cur.unit,
+              supplierName: cur.supplierName,
+              useBatch: cur.useBatch,
+            },
+            [inv],
+            inv.isDefaultPlacement
+              ? [
+                {
+                  placementID: inv.placementID,
+                  locationID: inv.locationID,
+                  productID: inv.productID,
+                },
+              ]
+              : [],
+          ])
         }
 
         return acc
       }, new Map())
 
-      const uniqueProducts = Array.from(invMap.values())
-      .map(([product, inventories]) => ({
-        ...product,
-        inventories,
-      }))
+      const uniqueProducts = Array.from(invMap.values()).map(
+        ([product, inventories, defaultPlacements]) => ({
+          ...product,
+          inventories,
+          defaultPlacements,
+        }),
+      )
 
       return uniqueProducts
     } catch (e) {
@@ -231,34 +314,37 @@ export const productService = {
           inventory.getGroupByID(updatedProduct.groupID, trx),
         ])
 
-		const historyLog: NewProductHistory = {
-            userID: user?.id!,
-            userName: user?.name!,
-            userRole: user?.role!,
-            customerID: user?.customerID!,
-            productID: updatedProduct.id,
-            productUnitName: unit?.name!,
-            productGroupName: group?.name!,
-            productText1: updatedProduct.text1,
-            productSku: updatedProduct.sku,
-            productBarcode: updatedProduct.barcode,
-            productCostPrice: updatedProduct.costPrice,
-            productIsBarred: updatedProduct.isBarred,
-            productText2: updatedProduct.text2,
-            productText3: updatedProduct.text3,
-            productSalesPrice: updatedProduct.salesPrice,
-            productNote: updatedProduct.note,
-            type: 'opdatering',
-            isImport: false,
-			supplierID: null,
-			supplierName: "",
-          }
+        const historyLog: NewProductHistory = {
+          userID: user?.id!,
+          userName: user?.name!,
+          userRole: user?.role!,
+          customerID: user?.customerID!,
+          productID: updatedProduct.id,
+          productUnitName: unit?.name!,
+          productGroupName: group?.name!,
+          productText1: updatedProduct.text1,
+          productSku: updatedProduct.sku,
+          productBarcode: updatedProduct.barcode,
+          productCostPrice: updatedProduct.costPrice,
+          productIsBarred: updatedProduct.isBarred,
+          productText2: updatedProduct.text2,
+          productText3: updatedProduct.text3,
+          productSalesPrice: updatedProduct.salesPrice,
+          productNote: updatedProduct.note,
+          type: 'opdatering',
+          isImport: false,
+          supplierID: null,
+          supplierName: '',
+        }
 
-		if(updatedProductData.supplierID) {
-			const supplier = await suppliers.getByID(updatedProductData.supplierID!, user?.customerID!)
-			historyLog.supplierID = supplier.id
-			historyLog.supplierName = supplier.name
-		}
+        if (updatedProductData.supplierID) {
+          const supplier = await suppliers.getByID(
+            updatedProductData.supplierID!,
+            user?.customerID!,
+          )
+          historyLog.supplierID = supplier.id
+          historyLog.supplierName = supplier.name
+        }
 
         await product.createHistoryLog(historyLog, trx)
 
@@ -333,7 +419,13 @@ export const productService = {
   getByID: async function(
     id: ProductID,
     lang: string = fallbackLng,
-  ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> {
+  ): Promise<
+    | (FormattedProduct & {
+      inventories: Inventory[]
+      defaultPlacements: DefaultPlacement[]
+    })
+    | undefined
+  > {
     const { t } = await serverTranslation(lang, 'action-errors')
     try {
       const p = await product.getByID(id)
@@ -342,10 +434,13 @@ export const productService = {
       }
 
       const inventories = await inventoryService.getInventoryByProductID(id)
+      const defaultPlacements =
+        await inventoryService.getDefaultPlacementForProduct(id)
 
       return {
         ...p,
         inventories,
+        defaultPlacements,
       }
     } catch (e) {
       console.error(`ERROR: Trying to get product by id failed: ${e}`)
@@ -358,7 +453,7 @@ export const productService = {
     customerID: CustomerID,
     userID: UserID,
     importedProducts: ImportProducts,
-  ): Promise<{updated: number, created: number}> {
+  ): Promise<{ updated: number; created: number }> {
     const start = performance.now()
     const transaction = await db.transaction(async trx => {
       const [units, groups, products, locations, importingUser] =
@@ -465,7 +560,7 @@ export const productService = {
                 text2: p.text2,
                 text3: p.text3,
                 salesPrice: p.salesPrice,
-                note: p.note
+                note: p.note,
               },
               trx,
             ),
@@ -477,7 +572,10 @@ export const productService = {
                 {
                   customerID: customerID,
                   groupID: groupsMap.get(p.group)?.id!,
-                  unitID: units.find(u => u.name.toLowerCase() == p.unit.toLowerCase())?.id ?? units[0].id,
+                  unitID:
+                    units.find(
+                      u => u.name.toLowerCase() == p.unit.toLowerCase(),
+                    )?.id ?? units[0].id,
                   text1: p.text1,
                   sku: p.sku,
                   barcode: p.barcode,
@@ -486,7 +584,7 @@ export const productService = {
                   text2: p.text2,
                   text3: p.text3,
                   salesPrice: p.salesPrice,
-                  note: p.note
+                  note: p.note,
                 },
                 trx,
               )
@@ -521,11 +619,14 @@ export const productService = {
         p => p != undefined,
       )
 
-      const productReorders: Map<String, {
-        minimum: number,
-        maximum: number,
-        orderAmount: number,
-      }>= importedProducts
+      const productReorders: Map<
+        String,
+        {
+          minimum: number
+          maximum: number
+          orderAmount: number
+        }
+      > = importedProducts
         .filter(p => p.minimum != undefined)
         .reduce((acc, cur) => {
           acc.set(cur.sku, {
@@ -543,17 +644,20 @@ export const productService = {
         if (reorder != undefined) {
           reorderPromises.push(
             Promise.all(
-              locations.map(loc => (
-                inventory.upsertReorder({
-                  locationID: loc.id,
-                  customerID: customerID,
-                  productID: p.id,
-                  minimum: reorder.minimum,
-                  maxOrderAmount: reorder.maximum,
-                  orderAmount: reorder.orderAmount,
-                }, trx)
-              ))
-            )
+              locations.map(loc =>
+                inventory.upsertReorder(
+                  {
+                    locationID: loc.id,
+                    customerID: customerID,
+                    productID: p.id,
+                    minimum: reorder.minimum,
+                    maxOrderAmount: reorder.maximum,
+                    orderAmount: reorder.orderAmount,
+                  },
+                  trx,
+                ),
+              ),
+            ),
           )
         }
       }
@@ -636,7 +740,7 @@ export const productService = {
 
       await Promise.all([zeroInventoryPromises, productHistoryPromises])
 
-      return {updated: updatedProducts.length, created: newProducts.length}
+      return { updated: updatedProducts.length, created: newProducts.length }
     })
     console.log(`${performance.now() - start} ms execution time`)
     return transaction
@@ -757,7 +861,7 @@ export const productService = {
     },
     refSuffix?: string,
   ): Promise<void> {
-    const transaction = await db.transaction(async trx => {
+    await db.transaction(async trx => {
       const historyPromises = []
       for (const item of data.items) {
         const entry: NewHistory = {
@@ -794,31 +898,37 @@ export const productService = {
     productID: ProductID,
     customerID: CustomerID,
   ): Promise<boolean> {
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async tx => {
       const p = await tryCatch(product.getByID(productID, tx))
       if (!p.success || p.data === undefined) {
-				console.error(p.error ?? `No product found for product id: ${productID}`)
+        console.error(
+          p.error ?? `No product found for product id: ${productID}`,
+        )
         return false
       }
-			if (p.data.customerID != customerID) {
-				console.error('Provided customer id did not match customer id of product')
-				return false
-			}
+      if (p.data.customerID != customerID) {
+        console.error(
+          'Provided customer id did not match customer id of product',
+        )
+        return false
+      }
 
-      const deletedProductRes = await tryCatch(product.deleteProduct(productID, tx))
+      const deletedProductRes = await tryCatch(
+        product.deleteProduct(productID, tx),
+      )
       if (!deletedProductRes.success) {
-				console.error(deletedProductRes.error)
+        console.error(deletedProductRes.error)
 
         tx.rollback()
         return false
       }
 
       const insertDeletedRes = await tryCatch(
-        product.insertDeletedProduct(p.data, tx)
+        product.insertDeletedProduct(p.data, tx),
       )
       if (!insertDeletedRes.success) {
-				console.error(insertDeletedRes.error)
-				
+        console.error(insertDeletedRes.error)
+
         tx.rollback()
         return false
       }
@@ -827,8 +937,8 @@ export const productService = {
     })
   },
   getBySkuOrBarcode: async function(
-	customerID: CustomerID,
-	skuOrBarcode: string,
+    customerID: CustomerID,
+    skuOrBarcode: string,
     lang: string = fallbackLng,
   ): Promise<(FormattedProduct & { inventories: Inventory[] }) | undefined> {
     const { t } = await serverTranslation(lang, 'action-errors')
@@ -850,5 +960,10 @@ export const productService = {
         `${t('product-service-action.product-sku-barcode-not-found')} ${skuOrBarcode}`,
       )
     }
+  },
+  getBatchProducts: async function(
+    customerID: CustomerID,
+  ): Promise<FormattedProduct[]> {
+    return product.getBatchProducts(customerID)
   },
 }

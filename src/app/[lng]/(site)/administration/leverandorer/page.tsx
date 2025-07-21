@@ -1,18 +1,17 @@
 import { SiteWrapper } from "@/components/common/site-wrapper"
 import { TableWrapper } from "./table-wrapper"
-import { sessionService } from "@/service/session"
 import { serverTranslation } from "@/app/i18n"
 import { CreateSupplierModal } from "@/components/suppliers/create-modal"
 import { DeleteSupplierModal } from "@/components/suppliers/delete-modal"
+import { withAuth, WithAuthProps } from "@/components/common/with-auth"
 
-interface Props {
+interface Props extends WithAuthProps {
 	params: {
 		lng: string
 	}
 }
 
-export default async function Page({ params: { lng } }: Props) {
-	const { user } = await sessionService.validate()
+async function Page({ params: { lng }, user }: Props) {
 	const { t } = await serverTranslation(lng, "leverandører")
 
 	return (
@@ -31,3 +30,5 @@ export default async function Page({ params: { lng } }: Props) {
 		</SiteWrapper>
 	)
 }
+
+export default withAuth(Page)

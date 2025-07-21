@@ -20,6 +20,7 @@ import { Label } from '@/components/ui/label'
 import { siteConfig } from '@/config/site'
 import { LanguageContext } from '@/context/language'
 import { FormattedInventory } from '@/data/inventory.types'
+import { hasPermissionByPlan } from '@/data/user.types'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
 import {
   Batch,
@@ -27,22 +28,22 @@ import {
   PlacementID,
   ProductID,
 } from '@/lib/database/schema/inventory'
-import { cn } from '@/lib/utils'
+import { cn, tryParseInt } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useContext, useState, useTransition } from 'react'
+import { useContext, useEffect, useMemo, useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { AutoComplete } from '../ui/autocomplete'
-import { hasPermissionByPlan } from '@/data/user.types'
+import { isBefore } from 'date-fns'
 
 interface Props {
   customer: Customer
   placements: Placement[]
   batches: Batch[]
   inventory: FormattedInventory[]
-  settings: Pick<CustomerSettings, "useReference" | "usePlacement" | "useBatch">
+  settings: Pick<CustomerSettings, 'useReference' | 'usePlacement'>
 }
 
 export function ModalMoveInventory({
@@ -64,14 +65,21 @@ export function ModalMoveInventory({
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = moveInventoryValidation(validationT)
 
-  const uniqueProducts = inventory.filter((item, index, self) => {
-    return (
-      index ===
-      self.findIndex(
-        i => i.product.id === item.product.id && !i.product.isBarred,
-      )
-    )
-  })
+	const uniqueProducts = useMemo(
+		() =>
+			inventory.filter((item, index, self) => {
+				return (
+					index ===
+					self.findIndex(
+						i =>
+							i.product.id === item.product.id &&
+							!i.product.isBarred &&
+							!i.isDefaultPlacement,
+					)
+				)
+			}),
+		[],
+	)
 
   const productOptions = uniqueProducts
     .filter(
@@ -122,11 +130,9 @@ export function ModalMoveInventory({
         value: p.batch.id.toString(),
       }))
 
-  const fallbackBatchID =
-    settings.useBatch 
-      && hasPermissionByPlan(customer.plan, 'pro')
-        ? undefined
-        : batches.find(batch => batch.batch == '-')?.id
+  const fallbackBatchID = hasPermissionByPlan(customer.plan, 'pro')
+    ? undefined
+    : batches.find(batch => batch.batch == '-')?.id
 
   const {
     reset,
@@ -146,8 +152,29 @@ export function ModalMoveInventory({
     },
   })
 
+  const productID = watch('productID')
+  const fromPlacementID = watch('fromPlacementID')
+  const fromBatchID = watch('fromBatchID')
   const formValues = watch()
-  const hasProduct = formValues.productID != undefined
+
+  const hasProduct = productID != undefined
+  const hasFromPlacementID = fromPlacementID != undefined
+
+  const useBatch = useMemo(
+    () =>
+      uniqueProducts.find(p => p.product.id == productID)?.product.useBatch ??
+      false,
+    [productID],
+  )
+
+  useEffect(() => {
+    if (!useBatch) {
+      setValue('fromBatchID', batches.find(b => b.batch == '-')?.id ?? -1, {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    }
+  }, [useBatch, productID])
 
   const fromInventoryItem = inventory.find(
     item =>
@@ -202,6 +229,39 @@ export function ModalMoveInventory({
     setOpen(open)
   }
 
+  function fromPlacementIcon(productID: ProductID) {
+    const comp = (option: {value: string, label: string}) => {
+      const inv = inventory.find(b => b.product.id == productID && b.placement.id == tryParseInt(option.value))
+      const isDefault = inv?.isDefaultPlacement ?? false
+      const isBarred = inv?.placement?.isBarred ?? false
+
+      return (
+        <span className={cn(
+          'hidden size-2 rounded-full border',
+          isDefault && 'block bg-primary/50 border-primary',
+          isBarred && 'block bg-destructive/50 border-destructive',
+        )}/>
+      )
+    }
+    comp.displayName = "fromPlacementIcon"
+    return comp
+  }
+
+  function fromBatchIcon(option: {value: string, label: string}) {
+    const batch = batches.find(b => b.id == tryParseInt(option.value))
+    const hasExpiry = batch != undefined && batch.expiry != null 
+    const isExpired = batch != undefined && batch.expiry != null && isBefore(batch.expiry, Date.now())
+    return (
+      <span className={cn(
+        'block size-2 rounded-full border-black/20 border',
+        hasExpiry && (isExpired 
+          ? 'bg-destructive/50 border-destructive' 
+          : 'bg-success/50 border-success'
+        )
+      )}/>
+    )
+  }
+
   useCustomEventListener('MoveInventoryByIDs', (data: any) => {
     setOpen(true)
     setSearchProduct(data.productName)
@@ -246,17 +306,13 @@ export function ModalMoveInventory({
                 emptyMessage={t('product-empty-message')}
                 items={productOptions}
                 onSelectedValueChange={value => {
-                  resetField('fromPlacementID')
-                  resetField('fromBatchID')
-                  resetField('amount')
-                  setValue('productID', parseInt(value), {
-                    shouldValidate: true,
-                  })
+                  setSearchFromPlacement('')
+                  setSearchFromBatch('')
+                  setSearchToPlacement('')
+                  reset({ productID: tryParseInt(value), amount: 0 })
                 }}
                 onSearchValueChange={setSearchProduct}
-                selectedValue={
-                  formValues.productID ? formValues.productID.toString() : ''
-                }
+                selectedValue={productID ? productID.toString() : ''}
                 searchValue={searchProduct}
               />
               {formState.errors.productID && (
@@ -267,7 +323,11 @@ export function ModalMoveInventory({
             </div>
             <div>
               <div className='flex flex-col gap-4 md:flex-row bg-muted border-dashed border p-4 rounded-md'>
-                <div className='grid gap-2 w-full'>
+                <div
+                  className={cn(
+                    'grid gap-2 w-full transition-all',
+                    useBatch && 'w-[222px]',
+                  )}>
                   <Label>{t('from-placement')}</Label>
                   <AutoComplete
                     className='bg-background'
@@ -278,25 +338,31 @@ export function ModalMoveInventory({
                     items={placementsForProduct(formValues.productID)}
                     onSelectedValueChange={value => {
                       resetField('fromBatchID')
+                      setSearchFromBatch('')
                       setValue('fromPlacementID', parseInt(value), {
                         shouldValidate: true,
                       })
                     }}
                     onSearchValueChange={setSearchFromPlacement}
                     selectedValue={
-                      formValues.fromPlacementID
-                        ? formValues.fromPlacementID.toString()
-                        : ''
+                      fromPlacementID ? fromPlacementID.toString() : ''
                     }
                     searchValue={searchFromPlacement}
+                    icon={fromPlacementIcon(productID)}
                   />
                 </div>
-                {settings.useBatch && hasPermissionByPlan(customer.plan, 'pro') && (
-                  <div className='grid gap-2 w-full'>
-                    <Label>{t('from-batch')}</Label>
+                {hasPermissionByPlan(customer.plan, 'pro') && (
+                  <div
+                    className={cn(
+                      'w-[0px] hidden transition-all',
+                      useBatch && 'w-[222px] gap-2 grid',
+                    )}>
+                    <Label className={cn(!useBatch && 'text-muted-foreground')}>
+                      {t('from-batch')}
+                    </Label>
                     <AutoComplete
                       className='bg-background'
-                      disabled={!hasProduct}
+                      disabled={!useBatch || !hasProduct || !hasFromPlacementID}
                       autoFocus={false}
                       placeholder={t('batch-placeholder')}
                       emptyMessage={t('batch-empty-message')}
@@ -305,18 +371,14 @@ export function ModalMoveInventory({
                         formValues.fromPlacementID,
                       )}
                       onSelectedValueChange={value => {
-                        //resetField('batchID')
                         setValue('fromBatchID', parseInt(value), {
                           shouldValidate: true,
                         })
                       }}
                       onSearchValueChange={setSearchFromBatch}
-                      selectedValue={
-                        formValues.fromBatchID
-                          ? formValues.fromBatchID.toString()
-                          : ''
-                      }
+                      selectedValue={fromBatchID ? fromBatchID.toString() : ''}
                       searchValue={searchFromBatch}
+                      icon={fromBatchIcon}
                     />
                   </div>
                 )}
@@ -418,7 +480,9 @@ export function ModalMoveInventory({
                 placeholder={t('use-account-case-placeholder')}
                 className={cn(
                   'transition-all',
-                  !settings.useReference.flyt ? 'h-0 p-0 border-none' : 'h-[40px]',
+                  !settings.useReference.flyt
+                    ? 'h-0 p-0 border-none'
+                    : 'h-[40px]',
                 )}
               />
             </div>

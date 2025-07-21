@@ -132,10 +132,16 @@
     "restock-barred": "Could not update restock. Product is barred",
     "move-barred": "Could not complete move. Product is barred",
     "reorder-barred": "Could not reorder. Product is barred",
-	"placement-not-exists": "Placement does not exist",
-	"placement-is-barred": "Incoming products on barred placement is not allowed",
-	"batch-not-exists": "Batch does not exist",
-	"batch-is-barred": "Incoming products on barred batch is not allowed"
+		"placement-not-exists": "Placement does not exist",
+		"placement-is-barred": "Incoming products on barred placement is not allowed",
+		"batch-not-exists": "Batch does not exist",
+		"batch-is-barred": "Incoming products on barred batch is not allowed",
+		"placement-not-default": "You cannot perform movements on placements other than the default placement ({{ name }})",
+		"cant-move-with-default": "You cannot move items that have a default placement",
+		"default-placement": {
+			"move-reference": "New default placement ({{ name }})"
+		},
+		"batch-disabled": "Batch disabled on product"
   },
   "product-service-action": {
     "barcode-already-exists": "The barcode already exists",

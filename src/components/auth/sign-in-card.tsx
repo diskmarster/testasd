@@ -28,12 +28,11 @@ import { z } from 'zod'
 
 interface SignInCardProps {
   lng: string
+	redirect: string | null
 }
 
-export function SignInCard({ lng }: SignInCardProps) {
+export function SignInCard({ lng, redirect }: SignInCardProps) {
   const { t } = useTranslation(lng, 'log-ind')
-  const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = signInValidation(validationT)
 
   return (
     <Card className='relative w-full max-w-sm mx-auto'>
@@ -42,7 +41,7 @@ export function SignInCard({ lng }: SignInCardProps) {
         <CardDescription>{t('sign-in-card.description')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form t={t} />
+        <Form t={t} redirectPath={redirect} />
       </CardContent>
       <CardFooter>
         <Link
@@ -60,9 +59,10 @@ export function SignInCard({ lng }: SignInCardProps) {
 
 interface FormProps {
   t: (key: string) => string
+	redirectPath: string | null
 }
 
-function Form({ t }: FormProps) {
+function Form({ t, redirectPath }: FormProps) {
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string>()
   const lng = useLanguage()
@@ -72,6 +72,9 @@ function Form({ t }: FormProps) {
   const { handleSubmit, formState, register } = useForm<z.infer<typeof schema>>(
     {
       resolver: zodResolver(schema),
+			defaultValues: {
+				redirectPath,
+			}
     },
   )
 

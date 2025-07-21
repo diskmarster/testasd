@@ -15,8 +15,10 @@ export function middleware(req: NextRequest) {
   if (
     req.nextUrl.pathname.indexOf('icon') > -1 ||
     req.nextUrl.pathname.indexOf('chrome') > -1
-  )
+  ) {
     return NextResponse.next()
+	}
+
   let lng: string | undefined | null
   if (req.cookies.has(cookieName))
     lng = acceptLanguage.get(req.cookies.get(cookieName)?.value)
@@ -33,12 +35,17 @@ export function middleware(req: NextRequest) {
     )
   }
 
+	// Add current path to headers, to allow redirects after failed authentication
+	// See [src/components/common/with-auth.tsx], for usage
+	const headers = new Headers(req.headers)
+	headers.set("x-current-path", req.nextUrl.pathname)
+
   if (req.headers.has('referer')) {
     const refererUrl = new URL(req.headers.get('referer') || '')
     const lngInReferer = languages.find(l =>
       refererUrl.pathname.startsWith(`/${l}`),
     )
-    const response = NextResponse.next()
+    const response = NextResponse.next({ headers })
     if (lngInReferer) response.cookies.set(cookieName, lngInReferer)
     return response
   }
@@ -49,5 +56,5 @@ export function middleware(req: NextRequest) {
 
   req.cookies.set('lang', lang)
 
-  return NextResponse.next()
+  return NextResponse.next({ headers })
 }

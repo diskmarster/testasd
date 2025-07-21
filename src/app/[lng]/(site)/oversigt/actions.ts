@@ -14,6 +14,26 @@ import {
   updateInventoryValidation,
 } from './validation'
 
+export type BulkError = {
+  message: string
+  productID: number
+}
+
+const bulkOutgoingValidation = z.object({
+  reference: z.string().optional(),
+  items: z
+    .array(
+      z.object({
+        sku: z.string(), // til fejlbeskeder
+        productID: z.coerce.number(),
+        placementID: z.coerce.number(),
+        batchID: z.coerce.number(),
+        quanity: z.coerce.number(),
+      }),
+    )
+    .min(1),
+})
+
 export const updateInventoryAction = editableAction
   .metadata({ actionName: 'updateInventory' })
   .schema(async () => await getSchema(updateInventoryValidation, 'validation'))
@@ -82,6 +102,7 @@ export const updateInventoryAction = editableAction
         type,
         type == 'tilgang' ? amount : -amount,
         reference,
+        null,
         ctx.lang,
       )
 
@@ -116,7 +137,7 @@ export const moveInventoryAction = editableAction
       parsedInput.amount,
       parsedInput.reference,
       ctx.lang,
-			null,
+      null,
     )
 
     revalidatePath(`/${ctx.lang}/oversigt`)
@@ -129,3 +150,84 @@ export const fetchProductFilesAction = authedAction
 
     return { files }
   })
+
+export const fetchPlacementInventories = authedAction
+  .schema(z.object({ placementID: z.coerce.number() }))
+  .action(async ({ parsedInput: { placementID }, ctx: { user, lang } }) => {
+      const { t } = await serverTranslation(lang, 'oversigt', {
+        keyPrefix: 'bulk',
+      })
+
+    const currentLocation = await locationService.getLastVisited(user.id)
+    if (!currentLocation) {
+        throw new ActionError(t('err-no-location'))
+    }
+
+    const inventories = await inventoryService.getInventoriesByPlacementID(
+      user.customerID,
+      currentLocation,
+      placementID,
+    )
+
+    return { inventories }
+  })
+
+export const bulkOutgoingAction = authedAction
+  .schema(bulkOutgoingValidation)
+  .action(
+    async ({ parsedInput: { reference, items }, ctx: { lang, user } }) => {
+      const { t } = await serverTranslation(lang, 'oversigt', {
+        keyPrefix: 'bulk',
+      })
+
+      const currentLocation = await locationService.getLastVisited(user.id)
+      if (!currentLocation) {
+        throw new ActionError(t('err-no-location'))
+      }
+
+      const errs: BulkError[] = []
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+
+        if (item.quanity <= 0) {
+          errs.push({
+            message: t('err-negative-quantity', { sku: item.sku }),
+            productID: item.productID,
+          })
+          continue
+        }
+
+        const didUpdate = await inventoryService.upsertInventory(
+          'web',
+          user.customerID,
+          user.id,
+          currentLocation,
+          item.productID,
+          item.placementID,
+          item.batchID,
+          'afgang',
+          -item.quanity,
+          reference ? t('reference', { ref: reference }) : t('reference-empty'),
+          null,
+          lang,
+        )
+
+        if (!didUpdate) {
+          errs.push({
+            message: t('err-bulk-failed', { sku: item.sku }),
+            productID: item.productID,
+          })
+        }
+      }
+
+      revalidatePath(`/${lang}/oversigt`)
+
+      if (errs.length > 0) {
+        return {
+          ok: false,
+          errors: errs,
+        }
+      }
+    },
+  )

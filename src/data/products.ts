@@ -1,8 +1,10 @@
 import { db, TRX } from '@/lib/database'
+import { attachmentsTable } from '@/lib/database/schema/attachments'
 import { CustomerID, locationTable } from '@/lib/database/schema/customer'
 import {
-    batchTable,
-    DeletedProduct,
+  batchTable,
+  defaultPlacementTable,
+  DeletedProduct,
   deletedProductTable,
   groupTable,
   Inventory,
@@ -18,10 +20,21 @@ import {
   productTable,
   unitTable,
 } from '@/lib/database/schema/inventory'
-import { and, count, desc, eq, getTableColumns, inArray, or, SQL, sql, SQLWrapper } from 'drizzle-orm'
-import { FormattedProduct, ProductFilters, ProductWithInventories } from './products.types'
 import { supplierTable } from '@/lib/database/schema/suppliers'
-import { attachmentsTable } from '@/lib/database/schema/attachments'
+import {
+  and,
+  count,
+  desc,
+  eq,
+  exists,
+  getTableColumns,
+  inArray,
+  or,
+  SQL,
+  sql,
+  SQLWrapper,
+} from 'drizzle-orm'
+import { FormattedProduct, ProductFilters } from './products.types'
 
 const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
@@ -31,7 +44,7 @@ const INVENTORY_COLS = getTableColumns(inventoryTable)
 export const product = {
   getAllByCustomerID: async function(
     customerID: CustomerID,
-		includeBarred: boolean = true,
+    includeBarred: boolean = true,
     trx: TRX = db,
   ): Promise<FormattedProduct[]> {
     const product: FormattedProduct[] = await trx
@@ -39,26 +52,28 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
-		    supplierName: supplierTable.name,
+        supplierName: supplierTable.name,
         fileCount: count(attachmentsTable.id),
       })
       .from(productTable)
       .where(
-				and(
-					eq(productTable.customerID, customerID),
-					includeBarred ? undefined : eq(productTable.isBarred, false),
-				))
+        and(
+          eq(productTable.customerID, customerID),
+          includeBarred ? undefined : eq(productTable.isBarred, false),
+        ),
+      )
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
-	    .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
-      .leftJoin(attachmentsTable,
+      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .leftJoin(
+        attachmentsTable,
         and(
-        eq(attachmentsTable.refDomain, 'product'),
-        eq(attachmentsTable.refID, productTable.id)
-        )
+          eq(attachmentsTable.refDomain, 'product'),
+          eq(attachmentsTable.refID, productTable.id),
+        ),
       )
       .groupBy(productTable.id)
-      
+
     return product
   },
   create: async function(
@@ -93,8 +108,9 @@ export const product = {
       costPrice: number | SQL<unknown>
       salesPrice: number | SQL<unknown>
       note: string | SQL<unknown>
+      useBatch: boolean | SQL<unknown>
     }> = {
-      ...updatedProductData
+      ...updatedProductData,
     }
 
     if (updatedProductData.sku != undefined) {
@@ -120,12 +136,12 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
-		supplierName: supplierTable.name,
+        supplierName: supplierTable.name,
       })
       .from(productTable)
       .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
       .innerJoin(groupTable, eq(productTable.groupID, groupTable.id))
-	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
       .where(eq(productTable.id, id))
 
     return res[0]
@@ -190,22 +206,29 @@ export const product = {
           eq(productHistoryTable.productID, productID),
         ),
       )
-	  .orderBy(desc(productHistoryTable.id))
+      .orderBy(desc(productHistoryTable.id))
   },
   getWithInventoryByCustomerID: async function(
     customerID: CustomerID,
-		filters?: ProductFilters,
+    filters?: ProductFilters,
     trx: TRX = db,
-  ): Promise<(FormattedProduct 
-		& {inventory: Inventory 
-			& { locationName: string, placementName: string, batchName: string} })[]> {
-		const whereStmt: SQLWrapper[] = []
+  ): Promise<
+    (FormattedProduct & {
+      inventory: Inventory & {
+        locationName: string
+        placementName: string
+        batchName: string
+        isDefaultPlacement: boolean
+      }
+    })[]
+  > {
+    const whereStmt: SQLWrapper[] = []
 
-		if (filters) {
-			if (filters.group) {
-				whereStmt.push(inArray(groupTable.name, filters.group))
-			}
-		}
+    if (filters) {
+      if (filters.group) {
+        whereStmt.push(inArray(groupTable.name, filters.group))
+      }
+    }
 
     const product = await trx
       .select({
@@ -215,26 +238,44 @@ export const product = {
         supplierName: supplierTable.name,
         inventory: {
           ...INVENTORY_COLS,
-					locationName: locationTable.name,
-					placementName: placementTable.name,
-					batchName: batchTable.batch,
-        }
+          locationName: locationTable.name,
+          placementName: placementTable.name,
+          batchName: batchTable.batch,
+          isDefaultPlacement: sql`${exists(
+            trx
+              .select()
+              .from(defaultPlacementTable)
+              .where(
+                and(
+                  eq(defaultPlacementTable.productID, inventoryTable.productID),
+                  eq(
+                    defaultPlacementTable.placementID,
+                    inventoryTable.placementID,
+                  ),
+                  eq(
+                    defaultPlacementTable.locationID,
+                    inventoryTable.locationID,
+                  ),
+                ),
+              ),
+          )}`.mapWith(Boolean),
+        },
       })
       .from(productTable)
       .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
       .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
       .innerJoin(inventoryTable, eq(inventoryTable.productID, productTable.id))
-			.innerJoin(locationTable, eq(locationTable.id, inventoryTable.locationID))
-			.innerJoin(placementTable, eq(placementTable.id, inventoryTable.placementID))
-			.innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
+      .innerJoin(locationTable, eq(locationTable.id, inventoryTable.locationID))
+      .innerJoin(
+        placementTable,
+        eq(placementTable.id, inventoryTable.placementID),
+      )
+      .innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
       .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
-			.where(and(
-				eq(productTable.customerID, customerID),
-				...whereStmt,
-			))
+      .where(and(eq(productTable.customerID, customerID), ...whereStmt))
     return product
   },
-  deleteProduct: async function (
+  deleteProduct: async function(
     productID: ProductID,
     tx: TRX = db,
   ): Promise<Product | undefined> {
@@ -252,7 +293,7 @@ export const product = {
     await tx.insert(deletedProductTable).values(deletedProduct)
   },
   getBySkuOrBarcode: async function(
-	customerID: CustomerID,
+    customerID: CustomerID,
     skuOrBarcode: string,
     trx: TRX = db,
   ): Promise<FormattedProduct | undefined> {
@@ -261,22 +302,44 @@ export const product = {
         ...PRODUCT_COLS,
         unit: UNIT_COLS.name,
         group: GROUP_COLS.name,
-		supplierName: supplierTable.name,
+        supplierName: supplierTable.name,
       })
       .from(productTable)
       .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
       .innerJoin(groupTable, eq(productTable.groupID, groupTable.id))
-	  .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
-	  .where(
-		  and(
-			  eq(productTable.customerID, customerID),
-			  or(
-				  eq(productTable.sku, skuOrBarcode),
-				  eq(productTable.barcode, skuOrBarcode),
-			  ),
-		  )
-	  )
+      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .where(
+        and(
+          eq(productTable.customerID, customerID),
+          or(
+            eq(productTable.sku, skuOrBarcode),
+            eq(productTable.barcode, skuOrBarcode),
+          ),
+        ),
+      )
 
     return res[0]
+  },
+  getBatchProducts: async function(
+    customerID: CustomerID,
+    trx: TRX = db,
+  ): Promise<FormattedProduct[]> {
+    return await trx
+      .select({
+        ...PRODUCT_COLS,
+        unit: UNIT_COLS.name,
+        group: GROUP_COLS.name,
+        supplierName: supplierTable.name,
+      })
+      .from(productTable)
+      .innerJoin(unitTable, eq(productTable.unitID, unitTable.id))
+      .innerJoin(groupTable, eq(productTable.groupID, groupTable.id))
+      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+      .where(
+        and(
+          eq(productTable.customerID, customerID),
+          eq(productTable.useBatch, true),
+        ),
+      )
   },
 }

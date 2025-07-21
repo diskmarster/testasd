@@ -129,10 +129,8 @@ export async function POST(
 
     const otherReorders = await inventoryService.getReordersByID(parsed.data.locationID)
       .then(rs => rs.filter(r => r.productID != productID))
-    console.log({otherReorders})
 
     if (otherReorders.every(r => !r.isRequested && r.minimum <= (r.quantity + r.ordered))) {
-      console.log("SENDING EMAILS!")
       const mailSettings = await customerService.getMailSettingsForIDs(
         user.customerID,
         parsed.data.locationID,

@@ -27,6 +27,8 @@ type Props<T extends string> = {
   autoFocus?: boolean
   disabled?: boolean
   className?: string
+  icon?: (option: { value: T; label: string }) => React.ReactNode
+  iconOnInput?: boolean
 }
 
 export function AutoComplete<T extends string>({
@@ -41,7 +43,9 @@ export function AutoComplete<T extends string>({
   onSelectSearchValue = 'label',
   autoFocus = false,
   disabled = false,
-  className = ''
+  className = '',
+  icon = undefined,
+  iconOnInput = true,
 }: Props<T>) {
   const [open, setOpen] = useState(false)
 
@@ -55,6 +59,11 @@ export function AutoComplete<T extends string>({
         {} as Record<string, string>,
       ),
     [items],
+  )
+
+  const selectedOption = useMemo(
+    () => items.find(i => i.value == selectedValue),
+    [items, selectedValue]
   )
 
   const reset = () => {
@@ -89,7 +98,12 @@ export function AutoComplete<T extends string>({
   return (
     <div className='flex items-center'>
       <Popover open={open} onOpenChange={setOpen}>
-        <Command className='bg-transparent' shouldFilter={false}>
+        <Command className='relative bg-transparent' shouldFilter={false}>
+          {icon && iconOnInput && selectedOption && (
+            <div className='absolute right-3 top-1/2 -translate-y-1/2'>
+              {icon(selectedOption)}
+            </div>
+          )}
           <PopoverAnchor asChild>
             <CommandPrimitive.Input
               asChild
@@ -133,19 +147,27 @@ export function AutoComplete<T extends string>({
                       option => (
                         <CommandItem
                           key={option.value}
-                          className='capitalize'
+                          className={cn(
+                            'capitalize grid gap-2',
+                            icon ? 'grid-cols-[auto_1fr_auto]' : 'grid-cols-[auto_1fr]'
+                          )}
                           value={option.value}
                           onMouseDown={e => e.preventDefault()}
                           onSelect={onSelectItem}>
                           <Check
                             className={cn(
-                              'mr-2 h-4 w-4',
+                              'size-4',
                               selectedValue === option.value
                                 ? 'opacity-100'
                                 : 'opacity-0',
                             )}
                           />
                           {option.label}
+                          {icon && (
+                            <div className='size-max ml-auto'>
+                              {icon(option)}
+                            </div>
+                          )}
                         </CommandItem>
                       ),
                     )}

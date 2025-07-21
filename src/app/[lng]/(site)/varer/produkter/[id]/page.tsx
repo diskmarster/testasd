@@ -23,19 +23,19 @@ async function Page({ params: { lng, id }, user, customer }: PageProps) {
 		<SiteWrapper>
 			<div className='flex flex-col lg:flex-row items-stretch gap-4'>
 				<Suspense fallback={<DetailsSkeleton />}>
-					<ProductDetailsWrapper lng={lng} id={id} user={user} />
+					<ProductDetailsWrapper lng={lng} id={id} user={user} customer={customer} />
 				</Suspense>
 			</div>
-			<div className='flex flex-col lg:flex-row items-stretch gap-4 lg:h-96'>
-				<Suspense fallback={<FilesSkeleton />}>
-					<ProductFilesWrapper lng={lng} id={id} user={user} />
-				</Suspense>
-				{hasPermissionByPlan(customer.plan, 'basis') && (
+			{hasPermissionByPlan(customer.plan, 'basis') && (
+				<div className='flex flex-col lg:flex-row items-stretch gap-4 lg:h-96'>
+					<Suspense fallback={<FilesSkeleton />}>
+						<ProductFilesWrapper lng={lng} id={id} user={user} />
+					</Suspense>
 					<Suspense fallback={<FilesSkeleton />}>
 						<ReorderWrapper lng={lng} id={id} user={user} />
 					</Suspense>
-				)}
-			</div>
+				</div>
+			)}
 			<div>
 				<Suspense fallback={<HistorySkeleton />}>
 					<ProductInventoryWrapper lng={lng} id={id} user={user} customer={customer} />

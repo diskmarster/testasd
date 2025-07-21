@@ -3,35 +3,43 @@ import { ModalShowProductLabel } from '@/components/inventory/modal-show-product
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger,
+} from '@/components/ui/hover-card'
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Plan } from '@/data/customer.types'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
+import { Attachment } from '@/lib/database/schema/attachments'
 import { CustomerSettings } from '@/lib/database/schema/customer'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatNumber, numberToCurrency } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
+import { isBefore } from 'date-fns'
+import { TFunction } from 'i18next'
 import { User } from 'lucia'
 import Link from 'next/link'
-import {
-	HoverCard,
-	HoverCardContent,
-	HoverCardTrigger,
-} from "@/components/ui/hover-card"
-import { Attachment } from '@/lib/database/schema/attachments'
 
 export type InventoryTableRow = FormattedInventory & {
 	disposable: number | null
 	images: Attachment[]
+	productHasDefaultPlacement: boolean
 }
 
 export function getTableOverviewColumns(
 	plan: Plan,
 	user: User,
-	settings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
+	settings: Pick<CustomerSettings, 'useReference' | 'usePlacement'>,
 	lng: I18NLanguage,
-	t: (key: string, opts?: any) => string,
+	t: TFunction<'oversigt'>,
 ): ColumnDef<InventoryTableRow>[] {
 	const skuCol: ColumnDef<InventoryTableRow> = {
 		accessorKey: 'product.sku',
@@ -39,27 +47,40 @@ export function getTableOverviewColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('product-No.')} />
 		),
-		cell: ({ row }) => (
+		cell: ({ row }) =>
 			row.original.product.fileCount > 0 ? (
 				<div className='flex items-center gap-1.5'>
 					<HoverCard>
 						<HoverCardTrigger asChild>
-							<Link className='cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
+							<Link
+								className='cursor-pointer hover:underline'
+								href={`/${lng}/varer/produkter/${row.original.product.id}`}>
 								<p>{row.original.product.sku}</p>
 							</Link>
 						</HoverCardTrigger>
 						<HoverCardContent side='top' className='w-fit p-1'>
 							{row.original.images.length > 0 ? (
-								<img src={row.original.images[0].url} alt={row.original.images[0].name} className='rounded-sm max-h-40' />
+								<img
+									src={row.original.images[0].url}
+									alt={row.original.images[0].name}
+									className='rounded-sm max-h-40'
+								/>
 							) : (
-								<p className='text-sm text-muted-foreground px-2 py-1'>Ingen billeder</p>
+								<p className='text-sm text-muted-foreground px-2 py-1'>
+									Ingen billeder
+								</p>
 							)}
 						</HoverCardContent>
 					</HoverCard>
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
-								<span className={cn('hidden size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
+								<span
+									className={cn(
+										'hidden size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer',
+										row.original.product.isBarred && 'block',
+									)}
+								/>
 							</TooltipTrigger>
 							<TooltipContent className='bg-foreground text-background'>
 								{t('modal-show-product-card.barred-tooltip')}
@@ -69,13 +90,20 @@ export function getTableOverviewColumns(
 				</div>
 			) : (
 				<div className='flex items-center gap-1.5'>
-					<Link className='cursor-pointer hover:underline' href={`/${lng}/varer/produkter/${row.original.product.id}`}>
+					<Link
+						className='cursor-pointer hover:underline'
+						href={`/${lng}/varer/produkter/${row.original.product.id}`}>
 						<p>{row.original.product.sku}</p>
 					</Link>
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
-								<span className={cn('hidden size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer', row.original.product.isBarred && 'block')} />
+								<span
+									className={cn(
+										'hidden size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer',
+										row.original.product.isBarred && 'block',
+									)}
+								/>
 							</TooltipTrigger>
 							<TooltipContent className='bg-foreground text-background'>
 								{t('modal-show-product-card.barred-tooltip')}
@@ -83,8 +111,7 @@ export function getTableOverviewColumns(
 						</Tooltip>
 					</TooltipProvider>
 				</div>
-			)
-		),
+			),
 		enableHiding: false,
 		meta: {
 			viewLabel: t('product-No.'),
@@ -98,23 +125,32 @@ export function getTableOverviewColumns(
 			<TableHeader column={column} title={t('attachments')} />
 		),
 		aggregatedCell: ({ row }) => (
-			<div className={cn('tabular-nums hidden rounded-full', (row.original.product.fileCount != undefined && row.original.product.fileCount > 0) && 'block',)}>
+			<div
+				className={cn(
+					'tabular-nums hidden rounded-full',
+					row.original.product.fileCount != undefined &&
+					row.original.product.fileCount > 0 &&
+					'block',
+				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
 		),
-		cell: ({ table, row }) => (
+		cell: ({ table, row }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped
-				? null
-				: (
-					<div className={cn('tabular-nums hidden rounded-full', (row.original.product.fileCount != undefined && row.original.product.fileCount > 0) && 'block',)}>
-						<p>{`${row.original.product.fileCount}/5`}</p>
-					</div>
-				)
-		),
+			table.options.meta?.isGrouped ? null : (
+				<div
+					className={cn(
+						'tabular-nums hidden rounded-full',
+						row.original.product.fileCount != undefined &&
+						row.original.product.fileCount > 0 &&
+						'block',
+					)}>
+					<p>{`${row.original.product.fileCount}/5`}</p>
+				</div>
+			),
 		meta: {
 			rightAlign: true,
-			viewLabel: t('attachments')
+			viewLabel: t('attachments'),
 		},
 		enableHiding: true,
 		enableSorting: false,
@@ -131,12 +167,14 @@ export function getTableOverviewColumns(
 		),
 		aggregationFn: 'unique',
 		aggregatedCell: ({ getValue }) => getValue<string>(),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped ? null : getValue<string>()
-		),
+			table.options.meta?.isGrouped ? null : getValue<string>(),
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('barcode')), String(rb.getValue('barcode')))
+			return stringSortingFn(
+				String(ra.getValue('barcode')),
+				String(rb.getValue('barcode')),
+			)
 		},
 		meta: {
 			viewLabel: t('barcode'),
@@ -151,12 +189,14 @@ export function getTableOverviewColumns(
 		),
 		aggregationFn: 'unique',
 		aggregatedCell: ({ getValue }) => getValue<string>(),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped ? null : getValue<string>()
-		),
+			table.options.meta?.isGrouped ? null : getValue<string>(),
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('group')), String(rb.getValue('group')))
+			return stringSortingFn(
+				String(ra.getValue('group')),
+				String(rb.getValue('group')),
+			)
 		},
 		meta: {
 			viewLabel: t('product-group'),
@@ -174,14 +214,13 @@ export function getTableOverviewColumns(
 		),
 		aggregationFn: 'unique',
 		aggregatedCell: ({ getValue }) => getValue<string | null>(),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped ? null : getValue<string | null>()
-		),
+			table.options.meta?.isGrouped ? null : getValue<string | null>(),
 		sortingFn: (ra, rb) => {
 			let aVal = ra.original.product.supplierName
 			let bVal = rb.original.product.supplierName
-			return stringSortingFn(aVal ?? "", bVal ?? "")
+			return stringSortingFn(aVal ?? '', bVal ?? '')
 		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
@@ -200,12 +239,14 @@ export function getTableOverviewColumns(
 		),
 		aggregationFn: 'unique',
 		aggregatedCell: ({ getValue }) => getValue<string>(),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped ? null : getValue<string>()
-		),
+			table.options.meta?.isGrouped ? null : getValue<string>(),
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('text1')), String(rb.getValue('text1')))
+			return stringSortingFn(
+				String(ra.getValue('text1')),
+				String(rb.getValue('text1')),
+			)
 		},
 		meta: {
 			viewLabel: t('product-text1'),
@@ -221,12 +262,14 @@ export function getTableOverviewColumns(
 		),
 		aggregationFn: 'unique',
 		aggregatedCell: ({ getValue }) => getValue<string>(),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped ? null : getValue<string>()
-		),
+			table.options.meta?.isGrouped ? null : getValue<string>(),
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('text2')), String(rb.getValue('text2')))
+			return stringSortingFn(
+				String(ra.getValue('text2')),
+				String(rb.getValue('text2')),
+			)
 		},
 		meta: {
 			viewLabel: t('product-text2'),
@@ -241,13 +284,14 @@ export function getTableOverviewColumns(
 		),
 		aggregationFn: 'unique',
 		aggregatedCell: ({ getValue }) => getValue<string>(),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped ? null : getValue<string>()
-		),
+			table.options.meta?.isGrouped ? null : getValue<string>(),
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('text3')), String(rb.getValue('text3')))
-
+			return stringSortingFn(
+				String(ra.getValue('text3')),
+				String(rb.getValue('text3')),
+			)
 		},
 		meta: {
 			viewLabel: t('product-text3'),
@@ -261,17 +305,26 @@ export function getTableOverviewColumns(
 			<TableHeader column={column} title={t('placement')} />
 		),
 		aggregatedCell: ({ row }) => {
-			const leafsWithQuantity = row.getLeafRows().filter(leaf => leaf.getValue<number>('quantity') != 0)
+			const leafsWithQuantity = row
+				.getLeafRows()
+				.filter(
+					leaf =>
+						leaf.original.isDefaultPlacement ||
+						leaf.getValue<number>('quantity') != 0,
+				)
 
-			const isSinglePlacement = leafsWithQuantity.length == 1
+			const isSinglePlacement =
+				new Set(
+					[...leafsWithQuantity].map(r => r.getValue<string>('placement')),
+				).size == 1
 			if (!isSinglePlacement) return null
 
 			const firstRow = leafsWithQuantity[0]
 			const name = firstRow.original.placement.name
 			const isBarred = firstRow.original.placement.isBarred
+			const isDefaultPlacement = firstRow.original.isDefaultPlacement
 			return (
 				<div className='flex items-center gap-1.5'>
-					<p>{name}</p>
 					{isBarred && (
 						<TooltipProvider>
 							<Tooltip>
@@ -284,14 +337,28 @@ export function getTableOverviewColumns(
 							</Tooltip>
 						</TooltipProvider>
 					)}
+					{isDefaultPlacement && (
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className='block size-2 rounded-full bg-primary/50 border-primary border cursor-pointer' />
+								</TooltipTrigger>
+								<TooltipContent className='bg-foreground text-background'>
+									{t('modal-show-product-card.default-placement-tooltip')}
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					)}
+					<p>{name}</p>
 				</div>
-			)},
+			)
+		},
 		cell: ({ row }) => {
 			const isBarred = row.original.placement.isBarred
 			const name = row.original.placement.name
+			const isDefaultPlacement = row.original.isDefaultPlacement
 			return (
 				<div className='flex items-center gap-1.5'>
-					<p>{name}</p>
 					{isBarred && (
 						<TooltipProvider>
 							<Tooltip>
@@ -304,6 +371,19 @@ export function getTableOverviewColumns(
 							</Tooltip>
 						</TooltipProvider>
 					)}
+					{isDefaultPlacement && (
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span className='block size-2 rounded-full border-primary border cursor-pointer' />
+								</TooltipTrigger>
+								<TooltipContent className='bg-foreground text-background'>
+									{t('modal-show-product-card.default-placement-tooltip')}
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					)}
+					<p>{name}</p>
 				</div>
 			)
 		},
@@ -311,7 +391,10 @@ export function getTableOverviewColumns(
 			return value.includes(row.getValue(id))
 		},
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
+			return stringSortingFn(
+				String(ra.getValue('placement')),
+				String(rb.getValue('placement')),
+			)
 		},
 		meta: {
 			viewLabel: t('placement'),
@@ -322,12 +405,44 @@ export function getTableOverviewColumns(
 		accessorKey: 'batch.batch',
 		id: 'batch',
 		header: ({ column }) => <TableHeader column={column} title={t('batch')} />,
-		cell: ({ getValue }) => getValue<string>(),
+		cell: ({ getValue, row }) => {
+			if (!row.original.product.useBatch) return null
+
+			const batch = row.original.batch
+			const hasExpiry = batch.expiry != null
+			const isExpired = hasExpiry && isBefore(batch.expiry!, Date.now())
+
+			return (
+				<div className='flex items-center gap-1.5'>
+					{hasExpiry && (
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<span
+										className={cn(
+											'block size-2 rounded-full bg-success/50 border-success border cursor-pointer',
+											isExpired && 'bg-destructive/50 border-destructive ',
+										)}
+									/>
+								</TooltipTrigger>
+								<TooltipContent className='bg-foreground text-background'>
+									{t('batch-indicator-tooltip', { context: isExpired ? 'expired' : 'valid' })}
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					)}
+					<p>{getValue<string>()}</p>
+				</div>
+			)
+		},
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('batch')), String(rb.getValue('batch')))
+			return stringSortingFn(
+				String(ra.getValue('batch')),
+				String(rb.getValue('batch')),
+			)
 		},
 		meta: {
 			viewLabel: t('batch'),
@@ -359,18 +474,32 @@ export function getTableOverviewColumns(
 	const totalQuantityCol: ColumnDef<InventoryTableRow> = {
 		accessorKey: 'totalQuantity',
 		header: ({ column }) => (
-			<TableHeader tooltip={t('totalQuantity-tooltip')} column={column} title={t('totalQuantity')} />
+			<TableHeader
+				tooltip={t('totalQuantity-tooltip')}
+				column={column}
+				title={t('totalQuantity')}
+			/>
 		),
 		aggregatedCell: ({ row }) => {
-			const total = row.getLeafRows().map(r => r.original.quantity).reduce((acc, cur) => acc+cur ,0)
+			const total = row
+				.getLeafRows()
+				.map(r => r.original.quantity)
+				.reduce((acc, cur) => acc + cur, 0)
 			return (
 				<p>
-					<span className={cn(total < 0 && 'text-destructive')}>{formatNumber(total, lng)}</span>
-					{" / "}
-					<span className={cn(row.original.totalQuantity < 0 && 'text-destructive')}>{formatNumber(row.original.totalQuantity, lng)}</span>
+					<span className={cn(total < 0 && 'text-destructive')}>
+						{formatNumber(total, lng)}
+					</span>
+					{' / '}
+					<span
+						className={cn(
+							row.original.totalQuantity < 0 && 'text-destructive',
+						)}>
+						{formatNumber(row.original.totalQuantity, lng)}
+					</span>
 				</p>
 			)
-		} ,
+		},
 		cell: () => null,
 		filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
 		meta: {
@@ -423,17 +552,21 @@ export function getTableOverviewColumns(
 		header: ({ column }) => <TableHeader column={column} title={t('unit')} />,
 		aggregationFn: 'unique',
 		aggregatedCell: ({ getValue }) => getValue<string>(),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped
-				? (<p className='text-muted-foreground'>{getValue<string>()}</p>)
-				: getValue<string>()
-		),
+			table.options.meta?.isGrouped ? (
+				<p className='text-muted-foreground'>{getValue<string>()}</p>
+			) : (
+				getValue<string>()
+			),
 		filterFn: (row, id, value) => {
 			return value.includes(row.getValue(id))
 		},
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('unit')), String(rb.getValue('unit')))
+			return stringSortingFn(
+				String(ra.getValue('unit')),
+				String(rb.getValue('unit')),
+			)
 		},
 		meta: {
 			viewLabel: t('unit'),
@@ -448,12 +581,11 @@ export function getTableOverviewColumns(
 		),
 		aggregationFn: 'unique',
 		aggregatedCell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
 			table.options.meta?.isGrouped
 				? null
-				: numberToCurrency(getValue<number>(), lng)
-		),
+				: numberToCurrency(getValue<number>(), lng),
 		filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
 		meta: {
 			rightAlign: true,
@@ -469,12 +601,11 @@ export function getTableOverviewColumns(
 			<TableHeader column={column} title={t('sales-price')} />
 		),
 		aggregatedCell: ({ getValue }) => numberToCurrency(getValue<number>(), lng),
-		cell: ({ table, getValue }) => (
+		cell: ({ table, getValue }) =>
 			/*@ts-ignore*/
 			table.options.meta?.isGrouped
 				? null
-				: numberToCurrency(getValue<number>(), lng)
-		),
+				: numberToCurrency(getValue<number>(), lng),
 		filterFn: (row, id, value) => numberRangeFilterFn(row, id, value),
 		meta: {
 			rightAlign: true,
@@ -494,8 +625,8 @@ export function getTableOverviewColumns(
 			return value.includes(row.getValue(id))
 		},
 		meta: {
-			isShadow: true
-		}
+			isShadow: true,
+		},
 	}
 
 	const actionsCol: ColumnDef<InventoryTableRow> = {
@@ -504,22 +635,30 @@ export function getTableOverviewColumns(
 		aggregatedCell: ({ row }) => (
 			<ModalShowProductLabel product={row.original.product} />
 		),
-		cell: ({ table, row }) => (
+		cell: ({ table, row }) =>
 			/*@ts-ignore*/
-			table.options.meta?.isGrouped
-				? (
-					hasPermissionByRank(user.role, 'bruger') ? (
-						<TableOverviewActions row={row} table={table} plan={plan} settings={settings} />
-					) : null
-				) : (
-					<div className='flex gap-2'>
-						<ModalShowProductLabel product={row.original.product} />
-						{hasPermissionByRank(user.role, 'bruger') && (
-							<TableOverviewActions row={row} table={table} plan={plan} settings={settings} />
-						)}
-					</div>
-				)
-		),
+			table.options.meta?.isGrouped ? (
+				hasPermissionByRank(user.role, 'bruger') ? (
+					<TableOverviewActions
+						row={row}
+						table={table}
+						plan={plan}
+						settings={settings}
+					/>
+				) : null
+			) : (
+				<div className='flex gap-2'>
+					<ModalShowProductLabel product={row.original.product} />
+					{hasPermissionByRank(user.role, 'bruger') && (
+						<TableOverviewActions
+							row={row}
+							table={table}
+							plan={plan}
+							settings={settings}
+						/>
+					)}
+				</div>
+			),
 		enableHiding: false,
 		enableSorting: false,
 		meta: {
@@ -550,8 +689,7 @@ export function getTableOverviewColumns(
 
 	if (!user.priceAccess) {
 		planCols = planCols.filter(
-			col =>
-				col != costPriceCol && col != salesPriceCol,
+			col => col != costPriceCol && col != salesPriceCol,
 		)
 	}
 
@@ -560,14 +698,16 @@ export function getTableOverviewColumns(
 	}
 
 	if (!hasPermissionByPlan(plan, 'pro')) {
-		planCols = planCols.filter(col => {
-			if (settings.useBatch && col === batchCol) return false
-			if (col === totalQuantityCol) return false
-			return true
-		})
+		planCols = planCols.filter(
+			col => !(col === totalQuantityCol || col === batchCol),
+		)
 	} else {
 		planCols = planCols.filter(col => {
-			if (!hasPermissionByRank(user.role, 'administrator') && col === totalQuantityCol) return false
+			if (
+				!hasPermissionByRank(user.role, 'administrator') &&
+				col === totalQuantityCol
+			)
+				return false
 			return true
 		})
 	}
@@ -583,7 +723,7 @@ export function getTableOverviewFilters(
 	placements: Placement[],
 	batches: Batch[],
 	user: User,
-	settings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
+	settings: Pick<CustomerSettings, 'useReference' | 'usePlacement'>,
 	t: (key: string) => string,
 ): FilterField<InventoryTableRow>[] {
 	const skuFilter: FilterField<InventoryTableRow> = {
@@ -606,7 +746,7 @@ export function getTableOverviewFilters(
 			{
 				value: false,
 				label: t('has-attach-no'),
-			}
+			},
 		],
 		facetedUniqueColumnId: 'sku',
 	}
@@ -651,16 +791,13 @@ export function getTableOverviewFilters(
 		placeholder: t('supplierName'),
 		options: [
 			...Array.from(
-				table
-					.getColumn('supplierName')!
-					.getFacetedUniqueValues()
-					.keys()
+				table.getColumn('supplierName')!.getFacetedUniqueValues().keys(),
 			)
 				.filter(Boolean)
 				.map(opt => ({
 					label: opt,
 					value: opt,
-				}))
+				})),
 		],
 		facetedUniqueColumnId: 'sku',
 	}
@@ -686,9 +823,10 @@ export function getTableOverviewFilters(
 		placeholder: t('product-text3-placeholder'),
 	}
 	const placementFilter: FilterField<InventoryTableRow> = {
-		column: (hasPermissionByPlan(plan, 'basis') && settings.usePlacement)
-			? table.getColumn('placement')
-			: undefined,
+		column:
+			hasPermissionByPlan(plan, 'basis') && settings.usePlacement
+				? table.getColumn('placement')
+				: undefined,
 		type: 'select',
 		label: t('placement'),
 		value: '',
@@ -701,7 +839,7 @@ export function getTableOverviewFilters(
 	}
 
 	const batchFilter: FilterField<InventoryTableRow> = {
-		column: (hasPermissionByPlan(plan, 'pro') && settings.useBatch)
+		column: hasPermissionByPlan(plan, 'pro')
 			? table.getColumn('batch')
 			: undefined,
 		type: 'select',
@@ -790,8 +928,7 @@ export function getTableOverviewFilters(
 
 	if (!user.priceAccess) {
 		planFilters = planFilters.filter(
-			filter =>
-				filter != costPriceFilter && filter != salesPriceFilter,
+			filter => filter != costPriceFilter && filter != salesPriceFilter,
 		)
 	}
 
@@ -800,18 +937,19 @@ export function getTableOverviewFilters(
 	}
 
 	if (!hasPermissionByPlan(plan, 'pro')) {
-		planFilters = planFilters.filter(filter => {
-			if (settings.useBatch && filter === batchFilter) return false
-			if (filter === totalQuantityFilter) return false
-			return true
-		})
+		planFilters = planFilters.filter(
+			filter => !(filter === totalQuantityFilter || filter === batchFilter),
+		)
 	} else {
 		planFilters = planFilters.filter(filter => {
-			if (!hasPermissionByRank(user.role, 'administrator') && filter === totalQuantityFilter) return false
+			if (
+				!hasPermissionByRank(user.role, 'administrator') &&
+				filter === totalQuantityFilter
+			)
+				return false
 			return true
 		})
 	}
-
 
 	return planFilters
 }

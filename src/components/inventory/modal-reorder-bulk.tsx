@@ -249,7 +249,7 @@ export function ModalBulkReorder({ reorders, productsWithNoReorders }: Props) {
 											<CommandList>
 												<CommandEmpty>{t("bulk.product-no-items")}</CommandEmpty>
 												<CommandGroup>
-													{selectableReorders.slice(0, 50).map((s, i) => (
+													{selectableReorders.map((s, i) => (
 														<CommandItem
 															keywords={[s.product.text1, s.product.sku, s.product.supplierName ?? ""]}
 															key={`${s.productID}-${i}`}

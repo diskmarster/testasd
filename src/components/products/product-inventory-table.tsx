@@ -2,7 +2,6 @@
 
 import { I18NLanguage } from '@/app/i18n/settings'
 import { useLanguage } from '@/context/language'
-import { ProductInventory } from '@/data/inventory.types'
 import { cn, formatDate, formatNumber } from '@/lib/utils'
 import {
 	ColumnDef,
@@ -24,9 +23,11 @@ import { TableHeaderGroup } from '../table/table-header-group'
 import { TablePagination } from '../table/table-pagination'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../ui/table'
 import { stringSortingFn } from '@/lib/tanstack/filter-fns'
+import { ProductInventoryWithDefault } from './product-inventories'
+import { Badge } from '../ui/badge'
 
 interface Props {
-	data: ProductInventory[]
+	data: ProductInventoryWithDefault[]
 	t: TFunction
 	aggregationOptions: {
 		aggregatePlacements: boolean
@@ -118,8 +119,8 @@ function getTableColumnDefs(
 		aggregatePlacements: boolean,
 		aggregateBatches: boolean,
 	},
-): ColumnDef<ProductInventory>[] {
-	const quantityCol: ColumnDef<ProductInventory> = {
+): ColumnDef<ProductInventoryWithDefault>[] {
+	const quantityCol: ColumnDef<ProductInventoryWithDefault> = {
 		accessorKey: 'quantity',
 		header: ({ column }) => (
 			<TableHeaderCell
@@ -136,7 +137,7 @@ function getTableColumnDefs(
 			rightAlign: true,
 		},
 	}
-	const placementCol: ColumnDef<ProductInventory> = {
+	const placementCol: ColumnDef<ProductInventoryWithDefault> = {
 		accessorKey: 'placement.name',
 		id: 'placement',
 		header: ({ column }) => (
@@ -145,12 +146,21 @@ function getTableColumnDefs(
 				title={t('details-page.inventory.table.placement')}
 			/>
 		),
-		cell: ({ getValue }) => getValue<string>(),
+		cell: ({ getValue, row }) => (
+			<div className='flex gap-2'>
+				<p>{getValue<string>()}</p>
+				{row.original.isDefaultPlacement && (
+					<Badge variant={'blue'}>
+						{t('details-page.inventory.table.is-default')}
+					</Badge>
+				)}
+			</div>
+		),
 		sortingFn: (ra, rb) => {
 			return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
 		},
 	}
-	const batchCol: ColumnDef<ProductInventory> = {
+	const batchCol: ColumnDef<ProductInventoryWithDefault> = {
 		accessorKey: 'batch.batch',
 		id: 'batch',
 		header: ({ column }) => (
@@ -164,7 +174,7 @@ function getTableColumnDefs(
 			return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
 		},
 	}
-	const updatedCol: ColumnDef<ProductInventory> = {
+	const updatedCol: ColumnDef<ProductInventoryWithDefault> = {
 		accessorKey: 'updated',
 		header: ({ column }) => (
 			<TableHeaderCell

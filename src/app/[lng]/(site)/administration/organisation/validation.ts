@@ -115,9 +115,6 @@ export const updateCustomerSettingsValidation = (
       usePlacement: z.coerce.boolean({
         message: t('organisation.required', { fieldName: 'usePlacement' }),
       }),
-      useBatch: z.coerce.boolean({
-        message: t('organisation.required', { fieldName: 'useBatch' }),
-      }),
       authTimeoutMinutes: z.coerce.number({
         message: t('organisation.required', {
           fieldName: 'authTimeoutMinutes',
@@ -135,20 +132,16 @@ export const editUserValidation = (t: (key: string, options?: any) => string) =>
   z.object({
     userID: z.coerce.number(),
     data: z.object({
-      name: z
-        .string()
-        .min(2, {
-          message: t('modal-edit-user.validation.name', { count: 2 }),
-        }),
+      name: z.string().min(2, {
+        message: t('modal-edit-user.validation.name', { count: 2 }),
+      }),
       email: z
         .string()
         .email({ message: t('modal-edit-user.validation.email') }),
       role: userRoleZodSchema,
-      locationIDs: z
-        .array(z.string())
-        .min(1, {
-          message: t('modal-edit-user.validation.locationIDs', { count: 1 }),
-        }),
+      locationIDs: z.array(z.string()).min(1, {
+        message: t('modal-edit-user.validation.locationIDs', { count: 1 }),
+      }),
       webAccess: z.coerce.boolean(),
       appAccess: z.coerce.boolean(),
       priceAccess: z.coerce.boolean(),

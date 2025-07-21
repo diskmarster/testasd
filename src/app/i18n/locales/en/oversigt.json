@@ -69,5 +69,34 @@
   "new-product-placeholder": "New product",
   "product-empty-message": "No products found",
   "placement-empty-message": "No placements found",
-  "batch-empty-message": "No batches found"
+  "batch-empty-message": "No batches found",
+
+  "batch-indicator-tooltip_expired": "This batch has passed its expiration date",
+  "batch-indicator-tooltip_valid": "This batch is still valid",
+	"bulk": {
+		"err-no-location": "Location was not found. Try refreshing your browser",
+		"err-negative-quantity": "Sku {{sku}} has a negative quantity",
+		"err-bulk-failed": "Sku {{sku}} was not processed successfully",
+		"err-unknown": "An unknown error occured",
+		"toast-success": "Bulk was processed successfully",
+		"reference": "Bulk ({{ref}})",
+		"reference-empty": "Bulk",
+		"title": "Bulk process",
+		"desc": "Zero out all inventory at a specified location",
+		"placement-label": "Placement",
+		"placement-placeholder": "Choose a placement",
+		"reference-label": "Account/case",
+		"reference-placeholder": "Optional account/case",
+		"body-sub": "The following stock will be processed",
+		"sku-label": "Sku",
+		"text1-label": "Text 1",
+		"batch-label": "Batch",
+		"qty-label": "Qty.",
+		"fetching-inventories": "Fetching stock...",
+		"no-inventories": "No stock found at placement",
+		"choose-to-see-inventories": "Choose a placement to see stock",
+		"errors-title": "Error messages",
+		"btn-close": "Close",
+		"btn-confirm": "Process"
+	}
 }

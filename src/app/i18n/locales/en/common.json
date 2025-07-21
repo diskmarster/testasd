@@ -123,7 +123,9 @@
 			"reports": "Reports",
 			"reports-description": "Here you can download reports based on your current stock.",
 			"suppliers": "Suppliers",
-			"suppliers-description": "Here you can administrate your suppliers"
+			"suppliers-description": "Here you can administrate your suppliers",
+			"location-move": "Location move",
+			"location-move-description": "Here you can move stock between locations"
 		},
 		"sys-admin-dropdown": {
 			"customers": "Customers",
@@ -231,6 +233,7 @@
 		"error-creating-move-placement": "Error creating move: Could not find or create default placement",
 		"error-while-moving-placement": "An error occurred while moving: Couldn't find or create a standard placement",
 		"error-creating-placement-db": "Error creating a new placement in database",
+		"error-not-default-placement-selected": "Adjustments cannot be made on placements other than the default placement",
 		"error-creating-move-batch": "Error creating move: Could not find or create default batch",
 		"error-while-moving-batch": "An error occurred while moving: Couldn't find or create a standard batch",
 		"error-creating-batch-db": "Error creating a new batch number in database",

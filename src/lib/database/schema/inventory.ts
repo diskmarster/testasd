@@ -3,13 +3,12 @@ import {
   HistoryType,
   ProductHistoryType,
 } from '@/data/inventory.types'
-import { customerTable, locationTable } from '@/lib/database/schema/customer'
+import { customerTable, LocationID, locationTable } from '@/lib/database/schema/customer'
 import { sql } from 'drizzle-orm'
 import {
   integer,
   primaryKey,
   real,
-  SQLiteColumnBuilderBase,
   sqliteTable,
   text,
   unique,
@@ -157,6 +156,7 @@ const productColumnMap = {
   supplierID: integer('supplier_id').references(() => supplierTable.id, {
     onDelete: 'set null',
   }),
+  useBatch: integer('use_batch', { mode: 'boolean' }).notNull().default(false),
 }
 
 export const productTable = sqliteTable(
@@ -226,6 +226,44 @@ export const inventoryTable = sqliteTable(
 export type Inventory = typeof inventoryTable.$inferSelect
 export type NewInventory = typeof inventoryTable.$inferInsert
 export type PartialInventory = Partial<Inventory>
+
+export const defaultPlacementTable = sqliteTable(
+  'nl_default_placement',
+  {
+    productID: integer('product_id')
+      .notNull()
+      .references(() => productTable.id, { onDelete: 'cascade' }),
+    placementID: integer('placement_id')
+      .notNull()
+      .references(() => placementTable.id, { onDelete: 'cascade' }),
+    locationID: text('location_id')
+      .notNull()
+      .references(() => locationTable.id, { onDelete: 'cascade' }),
+    inserted: integer('inserted', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+    updated: integer('updated', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`)
+      .$onUpdateFn(() => new Date())
+      .$type<Date>(),
+  },
+  t => [
+    primaryKey({
+      columns: [
+        t.productID,
+        t.placementID,
+        t.locationID,
+      ],
+    }),
+    unique().on(t.productID, t.locationID)
+  ],
+)
+
+export type DefaultPlacement = typeof defaultPlacementTable.$inferSelect
+export type NewDefaultPlacement = typeof defaultPlacementTable.$inferInsert
+/** Triple of ProductID, PlacementID and LocationID, in that order */
+export type DefaultPlacementID = [ProductID, PlacementID, LocationID]
 
 export const historyTable = sqliteTable('nl_history', {
   id: integer('id').notNull().primaryKey({ autoIncrement: true }),

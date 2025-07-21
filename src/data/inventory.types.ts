@@ -1,7 +1,8 @@
 import { UserNoHash } from '@/lib/database/schema/auth'
-import { CustomerID, LocationID } from '@/lib/database/schema/customer'
+import { CustomerID, Location, LocationID } from '@/lib/database/schema/customer'
 import {
   Batch,
+  DefaultPlacement,
   History,
   Inventory,
   Placement,
@@ -51,6 +52,13 @@ export type FormattedInventory = {
   placement: Placement
   batch: Batch
   totalQuantity: number
+	isDefaultPlacement: boolean
+}
+
+export interface FormattedDefaultPlacement extends DefaultPlacement {
+	product: Product,
+	placement: Placement,
+	location: Location,
 }
 
 export interface ProductInventory extends Inventory {

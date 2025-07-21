@@ -37,7 +37,6 @@ async function Page({ params: { lng }, user, customer }: Props) {
       flyt: false,
     },
     usePlacement: false,
-    useBatch: false,
     authTimeoutMinutes: 5,
     inserted: new Date(),
     updated: new Date(),

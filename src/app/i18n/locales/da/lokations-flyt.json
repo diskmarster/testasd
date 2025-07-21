@@ -1,0 +1,35 @@
+{
+	"page": {
+		"title": "Lokations flyt",
+		"description": "Her kan du flytte beholdninger mellem lokationer"
+	},
+	"form": {
+		"toast-error": "Kunne ikke flytte beholdninger",
+		"toast-success": "Beholdninger blev flyttet",
+		"location-select-label": "Fra lokation",
+		"location-select-inactive": "Inaktiv",
+		"reference-label": "Konto/sag",
+		"sku-label": "Varenr.",
+		"from-placement-label": "Fra placering",
+		"from-placement-placeholder": "Vælg placering",
+		"from-batch-label": "Fra batch",
+		"from-batch-placeholder": "Vælg batch",
+		"to-location-label": "Til lokation",
+		"to-location-placeholder": "Vælg lokation",
+		"quantity-label": "Antal",
+		"empty-form-message": "Tilføj en vare for at fortsætte",
+		"add-product-button": "Tilføj vare",
+		"search-placeholder": "Søg efter vare...",
+		"search-empty-message": "Ingen vare fundet",
+		"confirm-button": "Flyt beholdninger",
+		"search-info": "Viser kun vare med beholdning",
+		"errors-title": "Fejlbeskeder",
+		"errors-product": "Vare {{num}}: "
+	},
+	"server": {
+		"nonpositive-quantity-error": "Antal skal være over 0 på varenr. {{sku}}",
+		"invalid-placement-error": "Varenr. {{sku}} har en ugyldig placering",
+		"not-default-placement-error": "Varenr. {{sku}} kan kun flyttes fra sin standard placering \"{{placement}}\"",
+		"invalid-batch-error": "Varenr. {{sku}} på {{placement}} har en ugyldig batchnr."
+	}
+}

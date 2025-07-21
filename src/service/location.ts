@@ -57,7 +57,20 @@ export const locationService = {
   getAllByUserID: async function (
     userID: UserID,
   ): Promise<LocationWithPrimary[]> {
-    return await location.getAllByUserID(userID)
+	  const u = await user.getByID(userID)
+	  if (!u) return []
+		if (hasPermissionByRank(u.role, 'administrator')) {
+			const primaryLocation = await location.getPrimary(userID)
+
+			const customerLocations = await location.getAllByCustomerID(u?.customerID)	
+
+			return customerLocations.map(loc => ({
+				...loc,
+				isPrimary: loc.id == primaryLocation?.id,
+			}))
+		} else {
+			return await location.getAllByUserID(userID)
+		}
   },
   setCookie: function (locationID: LocationID): void {
     cookies().set(LAST_LOCATION_COOKIE_NAME, locationID.toString(), {
@@ -113,10 +126,12 @@ export const locationService = {
     return defaultLocationID
   },
   toggleLocationPrimary: async function (
+	customerID: CustomerID,
     userID: UserID,
     newLocationID: LocationID,
   ): Promise<boolean> {
     const didUpdate = await location.toggleLocationPrimary(
+	  customerID,
       userID,
       newLocationID,
     )
@@ -328,7 +343,7 @@ export const locationService = {
       }
 
       if (primaryRemoved) {
-        await location.toggleLocationPrimary(userID, locationIDs[0], trx)
+        await location.toggleLocationPrimary(customerID, userID, locationIDs[0], trx)
       }
 
       return true

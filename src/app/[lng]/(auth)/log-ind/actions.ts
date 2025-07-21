@@ -37,5 +37,7 @@ export const signInAction = publicAction
     }
     ctx.user = existingUser
 
-    redirect(`/${ctx.lang}/oversigt`)
+		const redirectPath = parsedInput.redirectPath ?? `/${ctx.lang}/oversigt`
+
+    redirect(redirectPath)
   })

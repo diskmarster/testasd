@@ -29,7 +29,8 @@
     "barred-tooltip": "This item is barred",
     "placement-barred-tooltip": "This placement is barred",
     "product-has-documents_one": "There is {{count}} file",
-    "product-has-documents": "There are {{count}} files"
+    "product-has-documents": "There are {{count}} files",
+    "default-placement-tooltip": "This is the default placement"
   },
   "modal-import-products": {
     "something-went-wrong": "Something went wrong with the rows from",

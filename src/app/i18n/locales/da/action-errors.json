@@ -132,10 +132,16 @@
     "restock-barred": "Kunne ikke gennemføre tilgang. Varen er spærret",
     "move-barred": "Kunne ikke gennemføre flytning. Varen er spærret",
     "reorder-barred": "Kunne ikke genbestille. Varen er spærret",
-	"placement-not-exists": "Placering findes ikke",
-	"placement-is-barred": "Tilgang på spærret placering er ikke tilladt",
-	"batch-not-exists": "Batchnr. findes ikke",
-	"batch-is-barred": "Tilgang på spærret batchnr. er ikke tilladt"
+		"placement-not-exists": "Placering findes ikke",
+		"placement-is-barred": "Tilgang på spærret placering er ikke tilladt",
+		"batch-not-exists": "Batchnr. findes ikke",
+		"batch-is-barred": "Tilgang på spærret batchnr. er ikke tilladt",
+		"placement-not-default": "Du kan ikke lave bevægelser på andre placeringer end standard placeringen ({{ name }})",
+		"cant-move-with-default": "Du kan ikke lave flytninger på varer med en standard placering",
+		"default-placement": {
+			"move-reference": "Ny standard placering ({{ name }})"
+		},
+		"batch-disabled": "Batch slået fra på produkt"
   },
   "product-service-action": {
     "barcode-already-exists": "Stregkoden eksisterer allerede",

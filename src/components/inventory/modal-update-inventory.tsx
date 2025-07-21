@@ -16,11 +16,17 @@ import {
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
+import { FormattedInventory } from '@/data/inventory.types'
+import { hasPermissionByPlan } from '@/data/user.types'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
-import { Batch, Placement, Product } from '@/lib/database/schema/inventory'
-import { cn, updateChipCount } from '@/lib/utils'
+import {
+  Batch,
+  Placement,
+  ProductID,
+} from '@/lib/database/schema/inventory'
+import { cn, tryParseInt, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -28,20 +34,21 @@ import { z } from 'zod'
 import { AutoComplete } from '../ui/autocomplete'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { hasPermissionByPlan } from '@/data/user.types'
+import { isBefore } from 'date-fns'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 
 interface Props {
   customer: Customer
-  products: Product[]
+  inventory: FormattedInventory[]
   placements: Placement[]
   batches: Batch[]
   lng: string
-  settings: Pick<CustomerSettings, "useReference" | "usePlacement" | "useBatch">
+  settings: Pick<CustomerSettings, 'useReference' | 'usePlacement'>
 }
 
 export function ModalUpdateInventory({
+  inventory,
   customer,
-  products,
   placements,
   batches,
   lng,
@@ -59,6 +66,21 @@ export function ModalUpdateInventory({
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = updateInventoryValidation(validationT)
 
+  const products = useMemo(
+    () =>
+      inventory
+        .filter((item, index, self) => {
+          return (
+            index ===
+            self.findIndex(
+              i => i.product.id === item.product.id && !i.product.isBarred,
+            )
+          )
+        })
+        .map(item => item.product),
+    [],
+  )
+
   const productOptions = products
     .filter(
       prod =>
@@ -70,34 +92,44 @@ export function ModalUpdateInventory({
       value: prod.id.toString(),
     }))
 
-  const placementOptions = placements
-    .filter(placement =>
-      placement.name.toLowerCase().includes(searchPlacement.toLowerCase()),
-    )
-    .map(placement => ({
-      label: placement.name,
-      value: placement.id.toString(),
-    }))
+  const batchOptions = useMemo(
+    () => batches
+      .filter(batch =>
+        batch.batch.toLowerCase().includes(searchBatch.toLowerCase()),
+      )
+      .map(batch => ({
+        label: batch.batch,
+        value: batch.id.toString(),
+      })),
+    []
+  )
 
-  const batchOptions = batches
-    .filter(batch =>
-      batch.batch.toLowerCase().includes(searchBatch.toLowerCase()),
-    )
-    .map(batch => ({
-      label: batch.batch,
-      value: batch.id.toString(),
-    }))
+  const placementsForProduct = (productID: ProductID, hasDefaultPlacement: boolean) =>
+    inventory
+      .filter((item, index, self) => (
+        index === self.findIndex(i => i.placement.id == item.placement.id) &&
+        !hasDefaultPlacement || item.isDefaultPlacement && index === self.findIndex(i => (
+          i.product.id == productID && i.isDefaultPlacement
+        ))
+      ))
+      .filter(p =>
+        p.placement.name.toLowerCase().includes(searchPlacement.toLowerCase()),
+      )
+      .sort((a, b) => {
+        return a.placement.name.localeCompare(b.placement.name)
+      })
+      .map(prod => ({
+        label: prod.placement.name,
+        value: prod.placement.id.toString(),
+      }))
 
   const fallbackPlacementID =
-    settings.usePlacement 
-      && hasPermissionByPlan(customer.plan, 'basis')
+    settings.usePlacement && hasPermissionByPlan(customer.plan, 'basis')
       ? undefined
       : placements.find(placement => placement.name == '-')?.id
-  const fallbackBatchID =
-    settings.useBatch 
-      && hasPermissionByPlan(customer.plan, 'pro')
-        ? undefined
-        : batches.find(batch => batch.batch == '-')?.id
+  const fallbackBatchID = hasPermissionByPlan(customer.plan, 'pro')
+    ? undefined
+    : batches.find(batch => batch.batch == '-')?.id
 
   const {
     register,
@@ -139,6 +171,40 @@ export function ModalUpdateInventory({
   const batchID = watch('batchID')
   const type = watch('type')
 
+  const useBatch = useMemo(
+    () => products.find(p => p.id == productID)?.useBatch ?? false,
+    [productID],
+  )
+  const hasDefaultPlacement = useMemo(
+    () =>
+      inventory
+        .filter(i => i.product.id == productID)
+        .some(i => i.isDefaultPlacement),
+    [productID],
+  )
+  const isExpired = useMemo(
+    () => {
+      if (!useBatch || typeof batchID != 'number') return false
+      
+      const batch = batches.find(b => b.id == batchID)
+      if (!batch) {
+        return false
+      }
+
+      return batch.expiry != null && isBefore(batch.expiry, Date.now())
+    },
+    [useBatch, batchID]
+  )
+
+  useEffect(() => {
+    if (!useBatch) {
+      setValue('batchID', batches.find(b => b.batch == '-')?.id ?? -1, {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    }
+  }, [useBatch, productID])
+
   const isIncoming = type === 'tilgang'
   const hasProduct = productID != undefined
   const hasPlacement = placementID != undefined
@@ -173,6 +239,24 @@ export function ModalUpdateInventory({
       })
       updateChipCount()
     })
+  }
+
+  function placementIcon(product: ProductID) {
+    const comp = (option: {value: string, label: string}) => {
+      const inv = inventory.find(b => (!hasDefaultPlacement || b.product.id == product) && b.placement.id == tryParseInt(option.value))
+      const isDefault = hasDefaultPlacement && (inv?.isDefaultPlacement ?? false)
+      const isBarred = inv?.placement?.isBarred ?? false
+
+      return (
+        <span className={cn(
+          'hidden size-2 rounded-full border',
+          isDefault && 'block bg-primary/50 border-primary',
+          isBarred && 'block bg-destructive/50 border-destructive',
+        )}/>
+      )
+    }
+    comp.displayName = 'placementIcon'
+    return comp
   }
 
   useCustomEventListener('UpdateInventoryByIDs', (data: any) => {
@@ -217,9 +301,11 @@ export function ModalUpdateInventory({
                 placeholder={t('product-placeholder')}
                 emptyMessage={t('product-empty-message')}
                 items={productOptions}
-                onSelectedValueChange={value =>
-                  setValue('productID', parseInt(value))
-                }
+                onSelectedValueChange={value => {
+                  setSearchPlacement('')
+                  setSearchBatch('')
+                  reset({ productID: tryParseInt(value), type, amount: 0 })
+                }}
                 onSearchValueChange={setSearchProduct}
                 selectedValue={productID ? productID.toString() : ''}
                 searchValue={searchProduct}
@@ -230,93 +316,140 @@ export function ModalUpdateInventory({
                 </p>
               )}
             </div>
-            {hasPermissionByPlan(customer.plan, 'lite') && (settings.usePlacement || settings.useBatch) && (
-              <div className='flex flex-col gap-4 md:flex-row'>
-                {settings.usePlacement && (
-                  <div className='grid gap-2 w-full'>
-                    <div className='flex items-center justify-between h-4'>
-                      <Label>{t('placement')}</Label>
-                      <span
-                        className={cn(
-                          'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
-                          !isIncoming && 'hidden',
-                        )}
-                        onClick={() => {
-                          resetField('placementID')
-                          setNewPlacement(prev => !prev)
-                        }}>
-                        {newPlacement ? t('use-existing') : t('create-new')}
-                      </span>
-                    </div>
-                    {newPlacement ? (
-                      <Input
-                        autoFocus
-                        placeholder={t('new-placement-placeholder')}
-                        {...register('placementID')}
-                      />
-                    ) : (
+            {hasPermissionByPlan(customer.plan, 'basis') &&
+              settings.usePlacement && (
+                <div className='flex flex-col gap-4 md:flex-row'>
+                  {settings.usePlacement && (
+                    <div
+                      className={cn(
+                        'grid gap-2 w-full transition-all',
+                        useBatch && 'w-[222px]',
+                      )}>
+                      <div className='flex items-center justify-between h-4'>
+                        <Label>{t('placement')}</Label>
+                        <span
+                          className={cn(
+                            'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
+                            (!isIncoming || hasDefaultPlacement) && 'hidden',
+                          )}
+                          onClick={() => {
+                            resetField('placementID')
+                            setNewPlacement(prev => !prev)
+                          }}>
+                          {newPlacement ? t('use-existing') : t('create-new')}
+                        </span>
+                      </div>
+                      {newPlacement ? (
+                        <Input
+                          autoFocus
+                          placeholder={t('new-placement-placeholder')}
+                          {...register('placementID')}
+                        />
+                      ) : (
                         <AutoComplete
                           disabled={!hasProduct}
                           autoFocus={false}
                           placeholder={t('placement-placeholder')}
                           emptyMessage={t('placement-empty-message')}
-                          items={placementOptions}
+                          items={placementsForProduct(productID, hasDefaultPlacement)}
                           onSelectedValueChange={value =>
                             setValue('placementID', parseInt(value), {
                               shouldValidate: true,
                             })
                           }
                           onSearchValueChange={setSearchPlacement}
-                          selectedValue={placementID ? placementID.toString() : ''}
+                          selectedValue={
+                            placementID ? placementID.toString() : ''
+                          }
                           searchValue={searchPlacement}
+                          icon={placementIcon(productID)}
                         />
                       )}
-                  </div>
-                )}
-                {settings.useBatch 
-                  && hasPermissionByPlan(customer.plan, 'pro') && (
-                  <div className='grid gap-2 w-full'>
-                    <div className='flex items-center justify-between h-4'>
-                      <Label>{t('batch')}</Label>
-                      <span
-                        className={cn(
-                          'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
-                          !isIncoming && 'hidden',
-                        )}
-                        onClick={() => {
-                          resetField('batchID')
-                          setNewBatch(prev => !prev)
-                        }}>
-                        {newBatch ? t('use-existing') : t('create-new')}
-                      </span>
                     </div>
-                    {newBatch ? (
-                      <Input
-                        autoFocus
-                        placeholder={t('new-batch-placeholder')}
-                        {...register('batchID')}
-                      />
-                    ) : (
-                      <AutoComplete
-                        disabled={!hasPlacement}
-                        autoFocus={false}
-                        placeholder={t('batch-placeholder')}
-                        emptyMessage={t('batch-empty-message')}
-                        items={batchOptions}
-                        onSelectedValueChange={value =>
-                          setValue('batchID', parseInt(value), {
-                            shouldValidate: true,
-                          })
-                        }
-                        onSearchValueChange={setSearchBatch}
-                        selectedValue={batchID ? batchID.toString() : ''}
-                        searchValue={searchBatch}
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                  {hasPermissionByPlan(customer.plan, 'pro') && (
+                    <div
+                      className={cn(
+                        'gap-2 w-[0px] hidden transition-all',
+                        useBatch && 'w-[222px] grid',
+                      )}>
+                      <div className='flex items-center justify-between h-4'>
+                        <div className='flex gap-1 items-center'>
+                          <Label
+                            className={cn(!useBatch && 'text-muted-foreground')}>
+                            {t('batch')}
+                          </Label>
+                          {isExpired && (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Icons.info className='size-3.5 text-yellow-600 dark:text-warning' />
+                                </TooltipTrigger>
+                                <TooltipContent className='bg-foreground text-background'>
+                                  {t('oversigt:batch-indicator-tooltip', { context: 'expired' })}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          )}
+                        </div>
+                        <span
+                          className={cn(
+                            'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
+                            !isIncoming && 'hidden',
+                            !useBatch &&
+                            'cursor-not-allowed hover:no-underline',
+                          )}
+                          onClick={() => {
+                            if (useBatch) {
+                              resetField('batchID')
+                              setNewBatch(prev => !prev)
+                            }
+                          }}>
+                          {newBatch ? t('use-existing') : t('create-new')}
+                        </span>
+                      </div>
+                      {newBatch ? (
+                        <Input
+                          autoFocus
+                          placeholder={t('new-batch-placeholder')}
+                          disabled={!useBatch}
+                          {...register('batchID')}
+                        />
+                      ) : (
+                        <AutoComplete
+                          disabled={!useBatch || !hasPlacement}
+                          autoFocus={false}
+                          placeholder={t('batch-placeholder')}
+                          emptyMessage={t('batch-empty-message')}
+                          items={batchOptions}
+                          onSelectedValueChange={value =>
+                            setValue('batchID', parseInt(value), {
+                              shouldValidate: true,
+                            })
+                          }
+                          onSearchValueChange={setSearchBatch}
+                          selectedValue={batchID ? batchID.toString() : ''}
+                          searchValue={searchBatch}
+                          icon={(option) => {
+                              const batch = batches.find(b => b.id == tryParseInt(option.value))
+                              const hasExpiry = batch != undefined && batch.expiry != null 
+                              const isExpired = batch != undefined && batch.expiry != null && isBefore(batch.expiry, Date.now())
+                              return (
+                                <span className={cn(
+                                  'block size-2 rounded-full border-black/20 border',
+                                  hasExpiry && (isExpired 
+                                    ? 'bg-destructive/50 border-destructive' 
+                                    : 'bg-success/50 border-success'
+                                  )
+                                )}/>
+                              )
+                            }}
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             <div className='flex items-center pt-2'>
               <Button
                 type='button'
@@ -377,14 +510,15 @@ export function ModalUpdateInventory({
                 </p>
               )}
             </div>
-            <div
-              className={cn('relative flex flex-col transition-all')}>
+            <div className={cn('relative flex flex-col transition-all')}>
               <Input
                 {...register('reference')}
                 placeholder={t('use-account-case-placeholder')}
                 className={cn(
                   'transition-all',
-                  !settings.useReference[type] ? 'h-0 p-0 border-none' : 'h-[40px]',
+                  !settings.useReference[type]
+                    ? 'h-0 p-0 border-none'
+                    : 'h-[40px]',
                 )}
               />
             </div>

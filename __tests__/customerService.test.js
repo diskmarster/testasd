@@ -1,12 +1,12 @@
-import { expect, test } from "@jest/globals"
-import { customerService } from "../src/service/customer"
+import { expect, test } from '@jest/globals'
+import { customerService } from '../src/service/customer'
 
 test('create new customer', async () => {
 	const testFunc = async () => {
 		const newCustomer = await customerService.create({
-			company: "Test customer",
-			email: "test@skancode.dk",
-			plan: "lite",
+			company: 'Test customer',
+			email: 'test@skancode.dk',
+			plan: 'lite',
 		})
 
 		expect(newCustomer).toBeDefined()
@@ -17,7 +17,6 @@ test('create new customer', async () => {
 		expect(settings).toBeDefined()
 		expect(settings.useReference).toBeTruthy()
 		expect(settings.usePlacement).toBeTruthy()
-		expect(settings.useBatch).toBeTruthy()
 
 		await customerService.deleteByID(newCustomer.id)
 	}

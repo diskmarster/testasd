@@ -12,11 +12,11 @@ export async function POST(
   r: NextRequest,
 ): Promise<NextResponse<ApiResponse<CreateRegulation>>> {
   const lng = getLanguageFromRequest(headers())
-  const { t } = await serverTranslation(lng, 'common')
+  const { t } = await serverTranslation(lng, 'common', {keyPrefix: 'route-translations-regulations'})
 
   if (isMaintenanceMode()) {
     return apiResponse.locked(
-      t('route-translations-regulations.maintenance'),
+      t('maintenance'),
       getVercelRequestID(headers()),
     )
   }
@@ -24,7 +24,7 @@ export async function POST(
   const { customer, apikey } = await validatePublicRequest(headers())
   if (customer == null) {
     return apiResponse.unauthorized(
-      t('route-translations-product.no-access-to-resource'),
+      t('no-access-to-resource'),
       getVercelRequestID(headers()),
     )
   }
@@ -38,14 +38,37 @@ export async function POST(
   }
 
   const regulate = await tryCatch(
-    apiService.regulateInventory(customer.id, null, apikey.name, 'ext', payload.data),
+    apiService.regulateInventory(customer.id, null, apikey.name, 'ext', payload.data, t),
   )
   if (!regulate.success) {
+		const msg = `${t('error-during-regulation')} '${regulate.error.message}'`
+    console.error(msg)
+
     return apiResponse.internal(
-      regulate.error.message,
+      msg,
       getVercelRequestID(headers()),
     )
   }
+
+	if (!regulate.data.ok) {
+		let { status, error: msg } = regulate.data
+    console.error(msg)
+
+		switch (status) {
+			case 400:
+				return apiResponse.badRequest(
+					msg,
+					getVercelRequestID(headers()),
+				)
+
+			default:
+				return apiResponse.internal(
+					msg,
+					getVercelRequestID(headers()),
+				)
+		}
+
+	}
 
   return apiResponse.created(payload.data)
 }

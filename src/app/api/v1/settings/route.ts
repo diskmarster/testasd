@@ -1,8 +1,10 @@
 import { serverTranslation } from '@/app/i18n'
+import { hasPermissionByPlan } from '@/data/user.types'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { analyticsService } from '@/service/analytics'
 import { customerService } from '@/service/customer'
 import { errorsService } from '@/service/errors'
+import { productService } from '@/service/products'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
@@ -74,6 +76,15 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 			)
 		}
 
+		let useBatch = hasPermissionByPlan(customer.plan, 'pro')
+		if (useBatch) {
+			const batchProducts = await productService.getBatchProducts(
+				user.customerID,
+			)
+
+			useBatch = useBatch && batchProducts.length > 0
+		}
+
 		const end = performance.now()
 
 		await analyticsService.createAnalytic('action', {
@@ -92,6 +103,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 				msg: 'Success',
 				data: {
 					...settings,
+					useBatch,
 					useReference: useReference,
 					authTimeoutMin: DEFAULT_AUTH_TIMEOUT_MINUTES,
 				},

@@ -39,6 +39,7 @@ export function TableOverviewActions({ table, row, plan, settings }: Props) {
       </DropdownMenuItem>
       {hasPermissionByPlan(plan, 'basis') && settings.usePlacement && (
         <DropdownMenuItem
+					disabled={row.original.productHasDefaultPlacement}
           onClick={() => {
             emitCustomEvent('MoveInventoryByIDs', {
               productName: row.original.product.text1,

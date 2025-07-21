@@ -12,17 +12,27 @@ import {
   productToggleBarredValidation,
   updateProductValidation,
 } from './validation'
+import {  PlacementID } from '@/lib/database/schema/inventory'
+import { LocationID } from '@/lib/database/schema/customer'
+import { inventoryService } from '@/service/inventory'
 
 export const createProductAction = editableAction
   .metadata({ actionName: 'createProduct' })
   .schema(async () => await getSchema(createProductValidation, 'validation'))
-  .action(async ({ parsedInput, ctx }) => {
+  .action(async ({ parsedInput: { defaults, ...parsed }, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
+
+		const defaultPlacementMap = defaults?.reduce<Map<LocationID, PlacementID>>((acc, cur) => {
+			acc.set(cur.locationID, cur.placementID)
+			return acc
+		}, new Map<LocationID, PlacementID>())
+
     const newProduct = await productService.create(
-      parsedInput,
+      parsed,
       ctx.user.customerID,
       ctx.user.id,
       ctx.lang,
+			defaultPlacementMap,
     )
     if (!newProduct) {
       throw new ActionError(t('product-action.product-not-created'))
@@ -36,12 +46,25 @@ export const updateProductAction = editableAction
   .action(
     async ({
       ctx: { user, lang },
-      parsedInput: { productID, data: updatedProductData },
+      parsedInput: { productID, data: updatedProductData, dirtyFields },
     }) => {
       const { t } = await serverTranslation(lang, 'action-errors')
-	  if (updatedProductData.supplierID == -1) {
-		  updatedProductData.supplierID = null
-	  }
+      if (updatedProductData.supplierID == -1) {
+        updatedProductData.supplierID = null
+      }
+
+      if (dirtyFields?.useBatch == true && !updatedProductData.useBatch) {
+        const moveSuccess = await inventoryService.moveInventoriesToDefaultBatch(
+          user.customerID,
+          user.id,
+          productID,
+          lang,
+        )
+        if (!moveSuccess) {
+          throw new ActionError(t('product-action.product-not-updated'))
+        }
+      }
+      
       const updatedProduct = await productService.updateByID(
         productID,
         updatedProductData,

@@ -22,6 +22,7 @@ import { useLanguage } from "@/context/language"
 import { useTranslation } from "@/app/i18n/client"
 import { Skeleton } from "../ui/skeleton"
 import { hasPermissionByRank } from "@/data/user.types"
+import {Base64} from 'js-base64'
 
 interface Props {
 	productID: number
@@ -182,8 +183,9 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 	const onDrop = useCallback(async (files: File[], rejectedFiles: FileRejection[]) => {
 		if (rejectedFiles.length > 0) {
 			for (const file of rejectedFiles) {
-				console.log(file.errors[0].code)
-				toast.error(t(siteConfig.errorTitle), { description: t('details-page.files.file-rejected', { context: file.errors[0].code, name: file.file.name }) })
+				toast.error(t(`common:${siteConfig.errorTitle}`), { 
+					description: t('details-page.files.file-rejected', { context: file.errors[0].code, name: file.file.name }) 
+				})
 			}
 		}
 		if (files.length === 0) return
@@ -191,19 +193,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 		for (const file of files) {
 			const arrayBuffer = await file.arrayBuffer()
 			const buffer = new Uint8Array(arrayBuffer)
-			let base64: string
-
-			// @ts-ignore
-			if (Uint8Array.prototype.toBase64) {
-				// @ts-ignore 
-				base64 = buffer.toBase64('base64url')
-			} else {
-				let binary = ""
-				for (let i = 0; i < buffer.length; i++) {
-					binary += String.fromCharCode(buffer[i])
-				}
-				base64 = btoa(binary)
-			}
+			let base64 = Base64.fromUint8Array(buffer, true)
 
 			const isValidated = fileService.validate({
 				customerID: user.customerID,
@@ -212,7 +202,7 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				refID: productID
 			})
 			if (!isValidated.success) {
-				toast.error(siteConfig.errorTitle, { description: isValidated.error })
+				toast.error(t(`common:${siteConfig.errorTitle}`), { description: isValidated.error })
 				continue
 			}
 
@@ -232,11 +222,12 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				&& !uploadResponse.data?.success
 				&& attachmentResponse
 				&& attachmentResponse.data?.success) {
-				toast.error(siteConfig.errorTitle, { description: t("details-page.files.upload-error") })
+				const description = uploadResponse.serverError ?? t("details-page.files.upload-error")
+				toast.error(t(`common:${siteConfig.errorTitle}`), { description })
 				const deleteAttach = await deleteAttachmentAction({ id: attachmentResponse.data.attachment.id })
 
 				if (deleteAttach && deleteAttach.serverError) {
-					toast.error(siteConfig.errorTitle, { description: deleteAttach.serverError! })
+					toast.error(t(`common:${siteConfig.errorTitle}`), { description: deleteAttach.serverError! })
 				}
 				continue
 			}
@@ -245,7 +236,8 @@ function FileDropZone({ user, productID, fileCount }: { user: User, productID: n
 				&& !uploadResponse.data?.success
 				&& attachmentResponse
 				&& !attachmentResponse.data?.success) {
-				toast.error(siteConfig.errorTitle, { description: t("details-page.files.upload-error") })
+				const description = uploadResponse.serverError ?? t("details-page.files.upload-error")
+				toast.error(t(`common:${siteConfig.errorTitle}`), { description })
 				continue
 			}
 

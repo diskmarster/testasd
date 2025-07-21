@@ -1,9 +1,11 @@
 import { serverTranslation } from '@/app/i18n'
+import { hasPermissionByPlan } from '@/data/user.types'
 import { NewApplicationError } from '@/lib/database/schema/errors'
 import { tryCatch } from '@/lib/utils.server'
 import { analyticsService } from '@/service/analytics'
 import { customerService } from '@/service/customer'
 import { errorsService } from '@/service/errors'
+import { productService } from '@/service/products'
 import { getLanguageFromRequest, validateRequest } from '@/service/user.utils'
 import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
@@ -34,7 +36,9 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 
 	const customerRes = await tryCatch(customerService.getByID(user.customerID))
 	if (!customerRes.success) {
-		console.error(`Error getting customer from user: '${customerRes.error.message}'`)
+		console.error(
+			`Error getting customer from user: '${customerRes.error.message}'`,
+		)
 		const errorLog: NewApplicationError = {
 			userID: user.id,
 			customerID: user.customerID,
@@ -82,7 +86,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 			type: 'endpoint',
 			input: null,
 			error:
-			settingsRes.error.message ??
+				settingsRes.error.message ??
 				t('route-translations-users.couldnt-get-settings'),
 			origin: `GET api/v2/settings`,
 		}
@@ -118,19 +122,28 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 		)
 	}
 
+	let useBatch = hasPermissionByPlan(customer.plan, 'pro')
+	if (useBatch) {
+		const batchProducts = await productService.getBatchProducts(user.customerID)
+
+		useBatch = useBatch && batchProducts.length > 0
+	}
+
 	const end = performance.now()
 
-	const analyticsRes = await tryCatch(analyticsService.createAnalytic('action', {
-		actionName: 'getCustomerSettingsV2',
-		userID: user.id,
-		customerID: user.customerID,
-		sessionID: session.id,
-		executionTimeMS: end - start,
-		platform: 'app',
-	}))
+	const analyticsRes = await tryCatch(
+		analyticsService.createAnalytic('action', {
+			actionName: 'getCustomerSettingsV2',
+			userID: user.id,
+			customerID: user.customerID,
+			sessionID: session.id,
+			executionTimeMS: end - start,
+			platform: 'app',
+		}),
+	)
 
 	if (!analyticsRes.success) {
-		console.error("Could not create analytic for v2 settings endpoint")
+		console.error('Could not create analytic for v2 settings endpoint')
 	}
 
 	return NextResponse.json(
@@ -138,6 +151,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 			msg: 'Success',
 			data: {
 				...settings,
+				useBatch,
 				authTimeoutMin: DEFAULT_AUTH_TIMEOUT_MINUTES,
 			},
 		},

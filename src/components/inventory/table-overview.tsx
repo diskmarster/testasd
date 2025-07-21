@@ -1,6 +1,5 @@
 'use client'
 
-import {fuzzyFilter} from '@/lib/tanstack/filter-fns'
 import {
   getTableOverviewColumns,
   getTableOverviewFilters,
@@ -22,7 +21,9 @@ import { Plan } from '@/data/customer.types'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
 import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { useUrlSorting } from '@/hooks/use-url-sorting'
+import { CustomerSettings } from '@/lib/database/schema/customer'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
+import { fuzzyFilter } from '@/lib/tanstack/filter-fns'
 import {
   ExpandedState,
   getCoreRowModel,
@@ -34,9 +35,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   GroupingState,
-  RowData,
   RowSelectionState,
-  Table as TableT,
   Updater,
   useReactTable,
   VisibilityState,
@@ -44,7 +43,6 @@ import {
 import { User } from 'lucia'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import { CustomerSettings } from '@/lib/database/schema/customer'
 import { TableHeaderGroup } from '../table/table-header-group'
 
 const ROW_SELECTION_ENABLED = true
@@ -65,7 +63,7 @@ interface Props {
   groups: Group[]
   placements: Placement[]
   batches: Batch[]
-  customerSettings: Pick<CustomerSettings, 'useReference' | 'usePlacement' | 'useBatch'>,
+  customerSettings: Pick<CustomerSettings, 'useReference' | 'usePlacement'>
   isGrouped: boolean
 }
 
@@ -91,16 +89,18 @@ export function TableOverview({
 
   const mutableSearchParams = new URLSearchParams(useSearchParams())
 
-  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams, '')
+  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(
+    mutableSearchParams,
+    '',
+  )
   const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
-  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams,[
-    { id: 'isBarred', value: [false] },
-  ])
+  const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(
+    mutableSearchParams,
+    [{ id: 'isBarred', value: [false] }],
+  )
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [grouping, setGrouping] = useState<GroupingState>(
-    (isGrouped)
-      ? ['sku']
-      : []
+    isGrouped ? ['sku'] : [],
   )
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [columnVisibility, setColumnVisibility] =
@@ -168,11 +168,11 @@ export function TableOverview({
     autoResetExpanded: false,
     filterFromLeafRows: false,
 
-		filterFns: {
-			fuzzy: fuzzyFilter,
-		},
-		// @ts-ignore
-		globalFilterFn: 'fuzzy',
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    // @ts-ignore
+    globalFilterFn: 'fuzzy',
 
     state: {
       globalFilter,
@@ -186,7 +186,7 @@ export function TableOverview({
 
     meta: {
       user,
-      isGrouped, 
+      isGrouped,
     },
   })
 
@@ -203,7 +203,17 @@ export function TableOverview({
         customerSettings,
         t,
       ),
-    [plan, table, units, groups, placements, batches, user, customerSettings, t],
+    [
+      plan,
+      table,
+      units,
+      groups,
+      placements,
+      batches,
+      user,
+      customerSettings,
+      t,
+    ],
   )
 
   if (!mounted) return null
@@ -221,7 +231,10 @@ export function TableOverview({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
-							<TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup} />
+              <TableHeaderGroup
+                key={headerGroup.id}
+                headerGroup={headerGroup}
+              />
             ))}
           </TableHeader>
           <TableBody>

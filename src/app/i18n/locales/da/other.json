@@ -29,7 +29,8 @@
     "barred-tooltip": "Denne vare er spærret",
     "placement-barred-tooltip": "Denne placering er spærret",
     "product-has-documents_one": "Der er {{count}} fil",
-    "product-has-documents": "Der er {{count}} filer"
+    "product-has-documents": "Der er {{count}} filer",
+    "default-placement-tooltip": "Dette er standard placeringen"
   },
   "modal-import-products": {
     "something-went-wrong": "Noget gik galt med rækkerne fra",

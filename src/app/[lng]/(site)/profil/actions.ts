@@ -104,7 +104,6 @@ export const updatePrimaryLocationAction = authedAction
   .schema(updatePrimaryLocationValidation)
   .action(async ({ parsedInput: { locationID }, ctx: { user, lang } }) => {
     const { t } = await serverTranslation(lang, 'action-errors')
-    console.log('locID', locationID)
     const locations = await locationService.getAllByUserID(user.id)
 
     if (!locations.some(loc => loc.id == locationID)) {
@@ -112,11 +111,12 @@ export const updatePrimaryLocationAction = authedAction
     }
 
     const didUpdate = await locationService.toggleLocationPrimary(
+	  user.customerID,
       user.id,
       locationID,
     )
     if (!didUpdate) {
-      throw new ActionError(t('profile-action.primary-location-not-updated'))
+		throw new ActionError(t('profile-action.primary-location-not-updated'))
     }
 
     revalidatePath(`${lang}/profil`)

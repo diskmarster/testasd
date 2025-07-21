@@ -129,7 +129,7 @@ export const customerSettingsTable = sqliteTable('nl_customer_settings', {
 	usePlacement: integer('use_placement', { mode: 'boolean' })
 		.notNull()
 		.default(true),
-	useBatch: integer('use_batch', { mode: 'boolean' }).notNull().default(true),
+	//useBatch: integer('use_batch', { mode: 'boolean' }).notNull().default(true),
 	authTimeoutMinutes: integer('auth_timeout_minutes').notNull().default(5),
 	inserted: integer('inserted', { mode: 'timestamp' })
 		.notNull()

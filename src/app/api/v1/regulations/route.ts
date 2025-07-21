@@ -15,25 +15,25 @@ export async function POST(
   const start = performance.now()
   const { session, user } = await validateRequest(headers())
   const lng = getLanguageFromRequest(headers())
-  const { t } = await serverTranslation(lng, 'common')
+  const { t } = await serverTranslation(lng, 'common', {keyPrefix: 'route-translations-regulations'})
 
   if (isMaintenanceMode()) {
     return NextResponse.json(
-      { msg: t('route-translations-regulations.maintenance') },
+      { msg: t('maintenance') },
       { status: 423 },
     )
   }
 
   if (session == null || user == null) {
     return NextResponse.json(
-      { msg: t('route-translations-regulations.no-access-to-resource') },
+      { msg: t('no-access-to-resource') },
       { status: 401 },
     )
   }
 
   if (!user.appAccess) {
     return NextResponse.json(
-      { msg: t('route-translations-regulations.no-app-access') },
+      { msg: t('no-app-access') },
       { status: 401 },
     )
   }
@@ -41,7 +41,7 @@ export async function POST(
   const json = await request.json()
 
   if (headers().get('content-type') != 'application/json') {
-    const msg = t('route-translations-regulations.request-body-json')
+    const msg = t('request-body-json')
 
     const errorLog: NewApplicationError = {
       userID: user.id,
@@ -59,7 +59,7 @@ export async function POST(
   const zodRes = createRegulationSchema.safeParse(json)
 
   if (!zodRes.success) {
-    const msg = t('route-translations-regulations.loading-failed')
+    const msg = t('loading-failed')
 
     const errorLog: NewApplicationError = {
       userID: user.id,
@@ -84,13 +84,11 @@ export async function POST(
   const { data } = zodRes
 
   const regulate = await tryCatch(
-    apiService.regulateInventory(user.customerID, user.id, null, 'app', data),
+    apiService.regulateInventory(user.customerID, user.id, null, 'app', data, t),
   )
   if (!regulate.success) {
-    console.error(
-      `${t('route-translations-regulations.error-getting-product')} '${regulate.error.message}'`,
-    )
-    const msg = `${t('route-translations-regulations.error-during-regulation')} '${regulate.error.message}'`
+		const msg = `${t('error-during-regulation')} '${regulate.error.message}'`
+    console.error(msg)
 
     const errorLog: NewApplicationError = {
       userID: user.id,
@@ -109,6 +107,23 @@ export async function POST(
       { status: 500 },
     )
   }
+
+	if (!regulate.data.ok) {
+		let { status, error: msg } = regulate.data
+    console.error(msg)
+
+    const errorLog: NewApplicationError = {
+      userID: user.id,
+      customerID: user.customerID,
+      type: 'endpoint',
+      input: json,
+      error: msg,
+      origin: 'POST /api/v1/regulations',
+    }
+    errorsService.create(errorLog)
+
+		return NextResponse.json({ msg }, { status })
+	}
 
   const end = performance.now()
 

@@ -1,9 +1,9 @@
 'use client'
 import { siteConfig } from '@/config/site'
-import { Group, Unit } from '@/lib/database/schema/inventory'
+import { Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState, useTransition } from 'react'
-import { useForm } from 'react-hook-form'
+import { useMemo, useState, useTransition } from 'react'
+import { FieldArrayWithId, useFieldArray, UseFieldArrayRemove, useForm, UseFormSetValue } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
@@ -33,13 +33,24 @@ import {
 } from '../ui/select'
 import { createProductValidation } from '@/app/[lng]/(site)/varer/produkter/validation'
 import { createProductAction } from '@/app/[lng]/(site)/varer/produkter/actions'
+import { Location, LocationID } from '@/lib/database/schema/customer'
+import { hasPermissionByPlan } from '@/data/user.types'
+import { Plan } from '@/data/customer.types'
+import { ScrollArea } from '../ui/scroll-area'
+import { TFunction } from 'i18next'
 
 export function CreateProductsForm({
+	customerPlan,
   units,
   groups,
+	locations,
+	locationPlacementMap,
 }: {
+	customerPlan: Plan
   units: Unit[]
   groups: Group[]
+	locations: Location[]
+	locationPlacementMap: Map<LocationID, Placement[]>
 }) {
   const lng = useLanguage()
   const { user } = useSession()
@@ -50,7 +61,7 @@ export function CreateProductsForm({
   const { t: validationT } = useTranslation(lng, 'validation')
   const schema = createProductValidation(validationT)
 
-  const { handleSubmit, register, formState, setValue, reset } = useForm<
+  const { handleSubmit, register, formState, setValue, reset, control } = useForm<
     z.infer<typeof schema>
   >({
     resolver: zodResolver(schema),
@@ -58,8 +69,14 @@ export function CreateProductsForm({
       customerID: user!.customerID,
       costPrice: 0,
       salesPrice: 0,
+			defaults: [],
     },
   })
+
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: 'defaults',
+	})
 
   async function onSubmit(values: z.infer<typeof schema>) {
     startTransition(async () => {
@@ -272,6 +289,54 @@ export function CreateProductsForm({
                 )}
               </div>
             </div>
+
+						{hasPermissionByPlan(customerPlan, 'basis') && (
+							<ScrollArea>
+								<div className='grid gap-2'>
+									<p className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>{t('default-placement', {count: locations.length})}</p>
+									<div className='grid gap-4 p-2 border rounded-sm'>
+										{fields.length > 0 && (
+											<>
+												{locations.length > 1 ? (
+													<div className='grid gap-2'>
+														<SelectDefaultPlacements
+															t={t}
+															locations={locations}
+															locationPlacementMap={locationPlacementMap}
+															fields={fields}
+															setValue={setValue}
+															remove={remove}
+														/>
+													</div>
+												) : (
+														<SelectDefaultPlacement
+															t={t}
+															location={locations[0]}
+															placements={locationPlacementMap.get(locations[0].id)}
+															field={fields[0]}
+															setValue={setValue}
+															remove={remove}
+														/>
+													)}
+											</>
+										)}
+										{(locations.length > fields.length) && (
+											<Button 
+												type='button' 
+												className='w-full' 
+												variant={'outline'} 
+												size={'icon'}
+												disabled={locations.length <= fields.length}
+												onClick={() => append({locationID: "", placementID: -1})}
+											>
+												<Icons.plus className='size-4' />
+											</Button>
+										)}
+									</div>
+								</div>
+							</ScrollArea>
+						)}
+
             <Button type='submit' disabled={pending || !formState.isValid}>
               {t('create-button')}
             </Button>
@@ -280,4 +345,220 @@ export function CreateProductsForm({
       </CredenzaContent>
     </Credenza>
   )
+}
+
+function SelectDefaultPlacement(
+	{
+		t,
+		location,
+		placements,
+		field,
+		setValue,
+		remove,
+	}: {
+		t: TFunction<'produkter'>
+		location: Location,
+		placements: Placement[] | undefined,
+		field: FieldArrayWithId<{
+			defaults?: {
+				locationID: string;
+				placementID: number;
+			}[] | undefined;
+		}, "defaults", "id">
+		setValue: UseFormSetValue<{
+			customerID: number;
+			groupID: number;
+			unitID: number;
+			text1: string;
+			text2: string;
+			text3: string;
+			sku: string;
+			barcode: string;
+			costPrice: number;
+			salesPrice: number;
+			defaults?: {
+				locationID: string;
+				placementID: number;
+			}[] | undefined;
+		}>
+		remove: UseFieldArrayRemove
+	}
+) {
+	const locationID = useMemo(
+		() => location.id,
+		[location]
+	)
+	const [selectedPlacementID, setSelectedPlacementID] = useState(field.placementID)
+
+	const updatePlacementID = (id: number) => {
+		setValue(
+			`defaults.0`, {
+				locationID, placementID: id 
+			}, { 
+				shouldValidate: true
+			},
+		)
+		setSelectedPlacementID(id)
+	}
+
+	return (
+		<div className='grid grid-cols-[398px_36px] gap-2'>
+			<Select 
+				value={(selectedPlacementID != -1) ? selectedPlacementID.toString() : ""}
+				onValueChange={id => updatePlacementID(parseInt(id))}
+			>
+				<SelectTrigger className='w-[398px]' disabled={placements == undefined}>
+					<SelectValue placeholder={t('select-placement')} />
+				</SelectTrigger>
+				<SelectContent>
+					{placements?.map(p => (
+						<SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>
+					))}
+				</SelectContent>
+			</Select>
+			<Button className='self-end hover:text-destructive-foreground hover:bg-destructive' variant={'outline'} size={'icon'} onClick={() => remove(0)}>
+				<Icons.cross className='size-4' />
+			</Button>
+		</div>
+	)
+}
+
+function SelectDefaultPlacements(
+	{
+		locations,
+		locationPlacementMap,
+		fields,
+		setValue,
+		remove,
+		t,
+	}: 
+	{
+		t: TFunction<'produkter'>
+		locations: Location[]
+		locationPlacementMap: Map<LocationID, Placement[]>
+		fields: FieldArrayWithId<{
+			defaults?: {
+				locationID: string;
+				placementID: number;
+			}[] | undefined;
+		}, "defaults", "id">[]
+		setValue: UseFormSetValue<{
+			customerID: number;
+			groupID: number;
+			unitID: number;
+			text1: string;
+			text2: string;
+			text3: string;
+			sku: string;
+			barcode: string;
+			costPrice: number;
+			salesPrice: number;
+			defaults?: {
+				locationID: string;
+				placementID: number;
+			}[] | undefined;
+		}>
+		remove: UseFieldArrayRemove
+	}
+) {
+	return (
+		<>
+			{fields.map((field, index) => (
+				<SelectDefaultPlacementsItem 
+					t={t}
+					key={field.id} 
+					locations={locations.filter(
+						loc => field.locationID == loc.id || !fields.some(f => f.locationID == loc.id)
+					)}
+					locationPlacementMap={locationPlacementMap}
+					field={field}
+					index={index}
+					setValue={(key: 'locationID' | 'placementID', val: string | number) => setValue(`defaults.${index}.${key}`, val, {shouldValidate:true, shouldDirty:true})}
+					removeItem={() => remove(index)}
+				/>
+			))}
+		</>
+	)
+}
+
+interface SelectDefaultPlacementsItemProps<TField extends FieldArrayWithId<{
+	defaults?: {locationID: string, placementID: number}[] | undefined;
+}, "defaults", "id"> = FieldArrayWithId<{
+		defaults?: {locationID: string, placementID: number}[] | undefined;
+	}, "defaults", "id">
+> {
+	t: TFunction<'produkter'>
+	locations: Location[]
+	locationPlacementMap: Map<LocationID, Placement[]>
+	field: TField
+	index: number
+	setValue: <TKey extends Exclude<keyof TField, 'id'>, TValue extends TField[TKey]> (key: TKey, value: TValue) => void
+	removeItem: () => void
+}
+
+function SelectDefaultPlacementsItem( {
+	t,
+	locations,
+	locationPlacementMap,
+	field,
+	index,
+	setValue,
+	removeItem,
+}: SelectDefaultPlacementsItemProps) {
+	const [selectedLocationID, setSelectedLocationID] = useState(field.locationID)
+	const [selectedPlacementID, setSelectedPlacementID] = useState(field.placementID)
+
+	const updateLocationID = (id: string) => {
+		setValue('locationID', id)
+		setSelectedLocationID(id)
+	}
+	const updatePlacementID = (id: number) => {
+		setValue('placementID', id)
+		setSelectedPlacementID(id)
+	}
+
+	const locationPlacements = useMemo(
+		() => locationPlacementMap.get(selectedLocationID),
+		[selectedLocationID, locationPlacementMap],
+	)
+
+	return (
+		<div className='grid grid-cols-[195px_195px_36px] gap-2'>
+			<div className='grid gap-2'>
+				{index == 0 && <p className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>{t('location')}</p>}
+				<Select 
+					value={selectedLocationID} 
+					onValueChange={id => updateLocationID(id)}
+				>
+					<SelectTrigger className='w-[195px]'>
+						<SelectValue placeholder={t('select-location')} />
+					</SelectTrigger>
+					<SelectContent>
+						{locations.map(loc => (
+							<SelectItem key={loc.id} value={loc.id}>{loc.name}</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</div>
+			<div className='grid gap-2'>
+				{index == 0 && <p className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>{t('placement')}</p>}
+				<Select 
+					value={(selectedPlacementID != -1) ? selectedPlacementID.toString() : ""}
+					onValueChange={id => updatePlacementID(parseInt(id))}
+				>
+					<SelectTrigger className='w-[195px]' disabled={locationPlacements == undefined}>
+						<SelectValue placeholder={t('select-placement')} />
+					</SelectTrigger>
+					<SelectContent>
+						{locationPlacements?.map(p => (
+							<SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</div>
+			<Button className='self-end hover:text-destructive-foreground hover:bg-destructive' variant={'outline'} size={'icon'} onClick={removeItem}>
+				<Icons.cross className='size-4' />
+			</Button>
+		</div>
+	)
 }

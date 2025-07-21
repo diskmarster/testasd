@@ -11,13 +11,16 @@ interface PageProps {
   params: {
     lng: string;
   };
+	searchParams: {
+		redirect?: string;
+	}
 }
 
-export default async function Page({ params: { lng } }: PageProps) {
+export default async function Page({ params: { lng }, searchParams: { redirect } }: PageProps) {
 
   return (
     <section className="w-full">
-      <SignInCard lng={lng}/>
+      <SignInCard lng={lng} redirect={redirect ?? null} />
     </section>
   )
 }

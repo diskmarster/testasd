@@ -19,6 +19,7 @@ import { siteConfig } from "@/config/site"
 import { Icons } from "../ui/icons"
 import { Reorder } from "@/lib/database/schema/reorders"
 import { hasPermissionByRank } from "@/data/user.types"
+import { DeleteRestockModal } from "./product-delete-reorder"
 
 interface Props {
 	productID: number
@@ -114,13 +115,16 @@ export function ProductReorder({ productID, reorder, user }: Props) {
 						<IfElse
 							condition={isEditing}
 							falseComp={
-								<Button
-									variant='outline'
-									size='sm'
-									className="flex items-center gap-2"
-									onClick={() => setIsEditing(true)}>
-									{t("details-page.reorder.btn-edit")}
-								</Button>
+								<div className="flex items-center gap-2">
+									<DeleteRestockModal productID={productID} />
+									<Button
+										variant='outline'
+										size='sm'
+										className="flex items-center gap-2"
+										onClick={() => setIsEditing(true)}>
+										{t("details-page.reorder.btn-edit")}
+									</Button>
+								</div>
 							}
 							trueComp={
 								<div className="flex items-center gap-2">

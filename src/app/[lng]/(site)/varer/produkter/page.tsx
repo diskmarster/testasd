@@ -1,67 +1,73 @@
-import { signOutAction } from '@/app/[lng]/(auth)/log-ud/actions'
 import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
-import { ModalImportProducts } from '@/components/inventory/modal-import-products'
-import { CreateProductsForm } from '@/components/products/create-product-form'
 import { DeleteProductModal } from '@/components/products/product-delete-modal'
-import { ProductOverview } from '@/components/products/table-overview'
-import { hasPermissionByRank } from '@/data/user.types'
-import { customerService } from '@/service/customer'
+import { LocationWithCounts } from '@/data/location.types'
+import { LocationID } from '@/lib/database/schema/customer'
+import { Placement } from '@/lib/database/schema/inventory'
 import { inventoryService } from '@/service/inventory'
+import { locationService } from '@/service/location'
 import { productService } from '@/service/products'
-import { sessionService } from '@/service/session'
-import { redirect } from 'next/navigation'
+import { PageActionsSkeleton, PageActionsWrapper } from './PageActionsWrapper'
+import { Suspense } from 'react'
+import { SkeletonTable } from '@/components/common/skeleton-table'
+import { TableWrapper } from './TableWrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 
-interface PageProps {
+interface PageProps extends WithAuthProps {
   params: {
     lng: string
   }
 }
 export const maxDuration = 60
 
-export default async function Page({ params: { lng } }: PageProps) {
-  const { session, user } = await sessionService.validate()
-  if (!session) {
-    signOutAction()
-    return
-  }
-
-  if (!hasPermissionByRank(user.role, 'læseadgang')) {
-    redirect('/oversigt')
-  }
-
+async function Page({ params: { lng }, user, customer }: PageProps) {
   const { t } = await serverTranslation(lng, 'produkter')
 
-  const customer = await customerService.getByID(user.customerID)
-  if (!customer) {
-    signOutAction()
-    return
-  }
-  const units = await inventoryService.getActiveUnits()
-  const groups = await inventoryService.getActiveGroupsByID(user.customerID)
-  const products = await productService.getAllByCustomerID(user.customerID)
+  const units = inventoryService.getActiveUnits()
+  const groups = inventoryService.getActiveGroupsByID(user.customerID)
+  const products = productService.getAllByCustomerID(user.customerID)
+
+	const locationPromise = locationService
+		.getByCustomerID(user.customerID)
+		.then(locations => {
+			return new Promise<[LocationWithCounts[], Map<LocationID, Placement[]>]>(async (res) => {
+				const map = new Map<LocationID, Placement[]>()
+
+				for (const location of locations) {
+					map.set(location.id, await inventoryService.getActivePlacementsByID(location.id))
+				}
+
+				res([locations, map])
+			})
+		})
 
   return (
     <SiteWrapper
       title={t('product-title')}
       description={t('product-description')}
       actions={
-        <>
-          {hasPermissionByRank(user.role, 'bruger') && <ModalImportProducts allUnits={units.map(u => u.name.toLowerCase())} />}
-
-          {hasPermissionByRank(user.role, 'bruger') && (
-            <CreateProductsForm units={units} groups={groups} />
-          )}
-        </>
+				<Suspense fallback={<PageActionsSkeleton userRole={user.role} />}>
+					<PageActionsWrapper 
+						customerPlan={customer.plan}
+						user={user} 
+						units={units} 
+						groups={groups} 
+						locationPromise={locationPromise} 
+					/>
+				</Suspense>
       }>
-      <ProductOverview
-        data={products}
-        user={user}
-        plan={customer.plan}
-        units={units}
-        groups={groups}
-      />
+			<Suspense fallback={<SkeletonTable />}>
+				<TableWrapper
+					user={user}
+					customer={customer}
+					units={units}
+					groups={groups}
+					products={products}
+				/>
+			</Suspense>
       <DeleteProductModal />
     </SiteWrapper>
   )
 }
+
+export default withAuth(Page, undefined, 'læseadgang')

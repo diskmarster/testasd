@@ -1,0 +1,1 @@
+ALTER TABLE `nl_customer_settings` DROP COLUMN `use_batch`;

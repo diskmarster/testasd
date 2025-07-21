@@ -124,7 +124,9 @@
 			"reports": "Rapporter",
 			"reports-description": "Her kan du trække rapporter på data om dit lager.",
 			"suppliers": "Leverandører",
-			"suppliers-description": "Her kan du oprette og opdatere leverandører"
+			"suppliers-description": "Her kan du oprette og opdatere leverandører",
+			"location-move": "Lokations flyt",
+			"location-move-description": "Her kan du flytte beholdninger mellem lokationer"
 		},
 		"sys-admin-dropdown": {
 			"customers": "Kunder",
@@ -232,6 +234,7 @@
 		"error-while-moving-placement": "Der opstod en fejl under flytning: Kunne ikke finde eller oprette en standardplacering",
 		"error-creating-placement-db": "Fejl ved oprettelse af en ny placering i databasen",
 		"error-creating-move-batch": "Fejl ved oprettelse af flytning: Kunne ikke finde eller oprette standardbatch",
+		"error-not-default-placement-selected": "Der kan ikke laves reguleringer på andre placeringer end standard placeringen",
 		"error-while-moving-batch": "Der opstod en fejl under flytning: Kunne ikke finde eller oprette en standardbatch",
 		"error-creating-batch-db": "Fejl ved oprettelse af et nyt batchnummer i databasen",
 		"error-creating-new": "Fejl ved oprettelse af ny: ",

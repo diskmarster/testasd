@@ -225,21 +225,24 @@ export function getTableHistoryColumns(
 	const currentQuantityCol: ColumnDef<HistoryWithSums> = {
 		accessorKey: 'currentQuantity',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('history-columns.current-quantity')} />
+			<TableHeader
+				column={column}
+				title={t('history-columns.current-quantity')}
+			/>
 		),
 		cell: ({ getValue }) => {
-			const amount = getValue<number>() ?? "-"
+			const amount = getValue<number>() ?? '-'
 
 			return (
 				<span className={cn('tabular-nums', amount < 0 && 'text-destructive')}>
-					{typeof amount == "number" ? formatNumber(amount, lng) : amount}
+					{typeof amount == 'number' ? formatNumber(amount, lng) : amount}
 				</span>
 			)
 		},
 		meta: {
 			viewLabel: t('history-columns.current-quantity'),
 			rightAlign: true,
-			className: "justify-end"
+			className: 'justify-end',
 		},
 		filterFn: (row, id, value: NumberRange) =>
 			numberRangeFilterFn(row, id, value),
@@ -288,9 +291,9 @@ export function getTableHistoryColumns(
 					case 'app':
 						return 'lessGray'
 					case 'ext':
-						return "moreGray"
+						return 'moreGray'
 					default:
-						return "outline"
+						return 'outline'
 				}
 			}
 
@@ -411,10 +414,13 @@ export function getTableHistoryColumns(
 		)
 	}
 
-	if (!(settings.useReference.tilgang
-		|| settings.useReference.afgang
-		|| settings.useReference.regulering
-		|| settings.useReference.flyt)
+	if (
+		!(
+			settings.useReference.tilgang ||
+			settings.useReference.afgang ||
+			settings.useReference.regulering ||
+			settings.useReference.flyt
+		)
 	) {
 		planCols = planCols.filter(col => col != refCol)
 	}
@@ -423,7 +429,7 @@ export function getTableHistoryColumns(
 		planCols = planCols.filter(col => col != placementCol)
 	}
 
-	if (!(hasPermissionByPlan(plan, 'pro') && settings.useBatch)) {
+	if (!hasPermissionByPlan(plan, 'pro')) {
 		planCols = planCols.filter(col => col != batchCol)
 	}
 
@@ -657,10 +663,13 @@ export function getTableHistoryFilters(
 		)
 	}
 
-	if (!(settings.useReference.tilgang
-		|| settings.useReference.afgang
-		|| settings.useReference.regulering
-		|| settings.useReference.flyt)
+	if (
+		!(
+			settings.useReference.tilgang ||
+			settings.useReference.afgang ||
+			settings.useReference.regulering ||
+			settings.useReference.flyt
+		)
 	) {
 		planFilters = planFilters.filter(filter => filter != refFilter)
 	}
@@ -669,7 +678,7 @@ export function getTableHistoryFilters(
 		planFilters = planFilters.filter(filter => filter != placementFilter)
 	}
 
-	if (!(hasPermissionByPlan(plan, 'pro') && settings.useBatch)) {
+	if (!hasPermissionByPlan(plan, 'pro')) {
 		planFilters = planFilters.filter(filter => filter != batchFilter)
 	}
 

@@ -20,9 +20,7 @@ export const updateProductValidation = (
       text3: z
         .string()
         .max(1000, t('products.product3-max-length', { num: 1000 })),
-      note:z
-        .string()
-        .max(1000, t('products.note-max-length', { num: 1000 })),
+      note: z.string().max(1000, t('products.note-max-length', { num: 1000 })),
       sku: z
         .string()
         .min(1, t('products.sku-required'))
@@ -30,5 +28,6 @@ export const updateProductValidation = (
       barcode: z.string().min(1, t('products.barcode-required')),
       costPrice: z.coerce.number(),
       salesPrice: z.coerce.number(),
+      useBatch: z.coerce.boolean(),
     }),
   })

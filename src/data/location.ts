@@ -54,23 +54,28 @@ export const location = {
       .limit(1)
     return location[0]
   },
-  toggleLocationPrimary: async function(userID: UserID, locationID: LocationID, trx: TRX = db): Promise<boolean> {
-    await trx
-      .update(linkLocationToUserTable)
-      .set({ isPrimary: false })
-      .where(and(
-        eq(linkLocationToUserTable.userID, userID),
-        eq(linkLocationToUserTable.isPrimary, true)
-      ))
+  toggleLocationPrimary: async function(customerID: CustomerID, userID: UserID, locationID: LocationID, trx: TRX = db): Promise<boolean> {
+	await trx
+		.update(linkLocationToUserTable)
+		.set({ isPrimary: false })
+		.where(and(
+			eq(linkLocationToUserTable.customerID, customerID),
+			eq(linkLocationToUserTable.userID, userID),
+		))
 
-    const resultSet = await trx
-      .update(linkLocationToUserTable)
-      .set({ isPrimary: true })
-      .where(and(
-        eq(linkLocationToUserTable.locationID, locationID),
-        eq(linkLocationToUserTable.userID, userID)
-      ))
-    return resultSet.rowsAffected == 1
+    const result = await trx
+      .insert(linkLocationToUserTable)
+	  .values({
+		  customerID,
+		  userID,
+		  locationID,
+		  isPrimary: true,
+	  }).onConflictDoUpdate({
+		  target: [linkLocationToUserTable.userID, linkLocationToUserTable.locationID],
+		  set: { isPrimary: true }
+	  })
+
+    return result.rowsAffected == 1
   },
   getByName: async function(name: string, customerID: CustomerID, trx: TRX = db): Promise<Location | undefined> {
     const location = await trx.select().from(locationTable).where(and(eq(locationTable.name, name), eq(locationTable.customerID, customerID)))

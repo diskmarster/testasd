@@ -141,7 +141,6 @@ function CompanySettings({
           flyt: true,
         },
         usePlacement: settings?.usePlacement ?? true,
-        useBatch: settings?.useBatch ?? true,
         authTimeoutMinutes: settings?.authTimeoutMinutes ?? 5,
       },
     },
@@ -159,7 +158,6 @@ function CompanySettings({
           customerID: res.data.customerID,
           settings: {
             useReference: res.data.useReference,
-            useBatch: res.data.useBatch,
             usePlacement: res.data.usePlacement,
             authTimeoutMinutes: res.data.authTimeoutMinutes,
           },
@@ -203,7 +201,7 @@ function CompanySettings({
   }
 
   const {
-    settings: { useReference, usePlacement, useBatch, authTimeoutMinutes },
+    settings: { useReference, usePlacement, authTimeoutMinutes },
   } = watch()
 
   const [useReferencePartial, useReferenceFull] = useMemo(
@@ -407,44 +405,6 @@ function CompanySettings({
                       <SettingFooter>
                         <p className='text-sm text-destructive '>
                           {formState.errors.settings.usePlacement.message}
-                        </p>
-                      </SettingFooter>
-                    )}
-                </Setting>
-              </>
-            )}
-            {hasPermissionByPlan(companyPlan, 'pro') && (
-              <>
-                <Separator />
-                <Setting>
-                  <SettingBody>
-                    <SettingLabel>
-                      <SettingTitle>
-                        {t('company-page.settings.batch')}
-                      </SettingTitle>
-                      <SettingDescription>
-                        {t('company-page.settings.batch-description')}
-                      </SettingDescription>
-                    </SettingLabel>
-                    <SettingContent>
-                      <Switch
-                        checked={useBatch}
-                        onCheckedChange={(val: boolean) => {
-                          setValue('settings.useBatch', val, {
-                            shouldValidate: true,
-                            shouldDirty: true,
-                          })
-                        }}
-                        id='useBatch'
-                        {...register('settings.useBatch')}
-                      />
-                    </SettingContent>
-                  </SettingBody>
-                  {formState.errors.settings &&
-                    formState.errors.settings.useBatch && (
-                      <SettingFooter>
-                        <p className='text-sm text-destructive '>
-                          {formState.errors.settings.useBatch.message}
                         </p>
                       </SettingFooter>
                     )}

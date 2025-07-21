@@ -1,4 +1,5 @@
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { ProfileDelete } from '@/components/profile/profile-delete'
 import { ProfileHeader } from '@/components/profile/profile-header'
 import { ProfileInformation } from '@/components/profile/profile-information'
@@ -7,7 +8,7 @@ import { ProfilePassword } from '@/components/profile/profile-password'
 import { ProfilePin } from '@/components/profile/profile-pin'
 import { Separator } from '@/components/ui/separator'
 
-interface PageProps {
+interface PageProps extends WithAuthProps {
   params: {
     lng: string
   }
@@ -17,7 +18,7 @@ export const metadata = {
   title: 'Min profil',
 }
 
-export default async function Page({ params: { lng } }: PageProps) {
+async function Page({ params: { lng } }: PageProps) {
   return (
     <SiteWrapper>
       <ProfileHeader />
@@ -30,3 +31,5 @@ export default async function Page({ params: { lng } }: PageProps) {
     </SiteWrapper>
   )
 }
+
+export default withAuth(Page)

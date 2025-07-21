@@ -32,7 +32,7 @@ export function NavDesktop({
   user: User
   lng: string
   customer: Customer
-  customerSettings: Pick<CustomerSettings, 'usePlacement' | 'useBatch'>
+  customerSettings: Pick<CustomerSettings, 'usePlacement'>
 }) {
   const pathname = usePathname()
   const { t } = useTranslation(lng, 'common')

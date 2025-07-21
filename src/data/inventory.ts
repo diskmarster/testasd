@@ -1,4 +1,5 @@
 import {
+    FormattedDefaultPlacement,
   FormattedInventory,
   FormattedReorder,
   HistoryFilter,
@@ -7,11 +8,14 @@ import {
 import { db, TRX } from '@/lib/database'
 import { attachmentsTable } from '@/lib/database/schema/attachments'
 import { UserID } from '@/lib/database/schema/auth'
-import { CustomerID, LocationID } from '@/lib/database/schema/customer'
+import { CustomerID, LocationID, locationTable } from '@/lib/database/schema/customer'
 import {
   Batch,
   BatchID,
   batchTable,
+  DefaultPlacement,
+  DefaultPlacementID,
+  defaultPlacementTable,
   Group,
   GroupID,
   groupTable,
@@ -51,6 +55,7 @@ import {
   count,
   desc,
   eq,
+  exists,
   getTableColumns,
   gte,
   inArray,
@@ -67,6 +72,8 @@ const UNIT_COLS = getTableColumns(unitTable)
 const GROUP_COLS = getTableColumns(groupTable)
 const HISTORY_COLS = getTableColumns(historyTable)
 const REORDER_COLS = getTableColumns(reorderTable)
+const LOCATION_COLS = getTableColumns(locationTable)
+const DEFAULT_PLACEMENT_COLS = getTableColumns(defaultPlacementTable)
 
 export const inventory = {
   getInventoryByLocationID: async function (
@@ -101,7 +108,18 @@ export const inventory = {
         },
         placement: { ...PLACEMENT_COLS },
         batch: { ...BATCH_COLS },
-		totalQuantity: sql<number>`cast(${totalQuantityStmt.totalQuantity} as real)` 
+				totalQuantity: sql<number>`cast(${totalQuantityStmt.totalQuantity} as real)`,
+				isDefaultPlacement: sql`${exists(
+					trx.select()
+						.from(defaultPlacementTable)
+						.where(
+							and(
+								eq(defaultPlacementTable.productID, inventoryTable.productID),
+								eq(defaultPlacementTable.placementID, inventoryTable.placementID),
+								eq(defaultPlacementTable.locationID, inventoryTable.locationID),
+							),
+						)
+				)}`.mapWith(Boolean),
       })
       .from(inventoryTable)
       .where(eq(inventoryTable.locationID, locationID))
@@ -500,8 +518,9 @@ export const inventory = {
   },
   getInventoryByProductID: async (
     productID: ProductID,
+    trx: TRX = db,
   ): Promise<Inventory[]> => {
-    return await db
+    return await trx
       .select()
       .from(inventoryTable)
       .where(eq(inventoryTable.productID, productID))
@@ -509,8 +528,9 @@ export const inventory = {
 	getProductInventoryForLocations: async (
 		productID: ProductID,
 		locationIDs: LocationID[],
+		trx: TRX = db,
 	): Promise<ProductInventory[]> => {
-		return await db
+		return await trx
 			.select({
 				...getTableColumns(inventoryTable),
         placement: { ...PLACEMENT_COLS },
@@ -704,4 +724,252 @@ export const inventory = {
       .from(historyTable)
       .where(and(eq(historyTable.userID, userID), timeWhere))
   },
+	getDefaultPlacement: async function (
+		[productID, placementID, locationID]: DefaultPlacementID,
+		tx: TRX = db,
+	): Promise<FormattedDefaultPlacement | undefined> {
+		const [res] = await tx
+			.select({
+				...DEFAULT_PLACEMENT_COLS,
+				product: {
+					...PRODUCT_COLS,
+				},
+				placement: {
+					...PLACEMENT_COLS,
+				},
+				location: {
+					...LOCATION_COLS,
+				},
+			})
+			.from(defaultPlacementTable)
+			.innerJoin(productTable, eq(defaultPlacementTable.productID, productTable.id))
+			.innerJoin(placementTable, eq(defaultPlacementTable.placementID, placementTable.id))
+			.innerJoin(locationTable, eq(defaultPlacementTable.locationID, locationTable.id))
+			.where(
+				and(
+					eq(defaultPlacementTable.productID, productID),
+					eq(defaultPlacementTable.placementID, placementID),
+					eq(defaultPlacementTable.locationID, locationID),
+				),
+			)
+
+		return res
+	},
+	getDefaultPlacementForProductAndLocation: async function(
+		productID: ProductID,
+		locationID: LocationID,
+		tx: TRX = db,
+	): Promise<FormattedDefaultPlacement | undefined>  {
+		const [res] = await tx
+			.select({
+				...DEFAULT_PLACEMENT_COLS,
+				product: {
+					...PRODUCT_COLS,
+				},
+				placement: {
+					...PLACEMENT_COLS,
+				},
+				location: {
+					...LOCATION_COLS,
+				},
+			})
+			.from(defaultPlacementTable)
+			.innerJoin(productTable, eq(defaultPlacementTable.productID, productTable.id))
+			.innerJoin(placementTable, eq(defaultPlacementTable.placementID, placementTable.id))
+			.innerJoin(locationTable, eq(defaultPlacementTable.locationID, locationTable.id))
+			.where(
+				and(
+					eq(defaultPlacementTable.productID, productID),
+					eq(defaultPlacementTable.locationID, locationID),
+				),
+			)
+
+		return res
+	},
+	getDefaultPlacementForProduct: async function (
+		productID: ProductID,
+		tx: TRX = db,
+	): Promise<FormattedDefaultPlacement[]> {
+		return await tx
+			.select({
+				...DEFAULT_PLACEMENT_COLS,
+				product: {
+					...PRODUCT_COLS,
+				},
+				placement: {
+					...PLACEMENT_COLS,
+				},
+				location: {
+					...LOCATION_COLS,
+				},
+			})
+			.from(defaultPlacementTable)
+			.innerJoin(productTable, eq(defaultPlacementTable.productID, productTable.id))
+			.innerJoin(placementTable, eq(defaultPlacementTable.placementID, placementTable.id))
+			.innerJoin(locationTable, eq(defaultPlacementTable.locationID, locationTable.id))
+			.where(
+				and(
+					eq(defaultPlacementTable.productID, productID),
+				),
+			)
+	},
+	getDefaultPlacementForLocation: async function (
+		locationID: LocationID,
+		tx: TRX = db,
+	): Promise<FormattedDefaultPlacement[]> {
+		return await tx
+			.select({
+				...DEFAULT_PLACEMENT_COLS,
+				product: {
+					...PRODUCT_COLS,
+				},
+				placement: {
+					...PLACEMENT_COLS,
+				},
+				location: {
+					...LOCATION_COLS,
+				},
+			})
+			.from(defaultPlacementTable)
+			.innerJoin(productTable, eq(defaultPlacementTable.productID, productTable.id))
+			.innerJoin(placementTable, eq(defaultPlacementTable.placementID, placementTable.id))
+			.innerJoin(locationTable, eq(defaultPlacementTable.locationID, locationTable.id))
+			.where(
+				and(
+					eq(defaultPlacementTable.locationID, locationID),
+				),
+			)
+	},
+	upsertDefaultPlacement: async function (
+		[productID, placementID, locationID]: DefaultPlacementID,
+		tx: TRX = db,
+	): Promise<DefaultPlacement> {
+		const [res] = await tx.insert(defaultPlacementTable)
+			.values({
+				productID,
+				placementID,
+				locationID,
+			})
+			.onConflictDoUpdate({
+				target: [
+					defaultPlacementTable.productID,
+					defaultPlacementTable.locationID,
+				],
+				set: {
+					placementID,
+				},
+			})
+			.returning()
+
+		return res
+	},
+	deleteDefaultPlacement: async function (
+		[productID, placementID, locationID]: DefaultPlacementID,
+		tx: TRX = db,
+	): Promise<number> {
+		const res =	await tx
+			.delete(defaultPlacementTable)
+			.where(
+				and(
+					eq(defaultPlacementTable.productID, productID),
+					eq(defaultPlacementTable.placementID, placementID),
+					eq(defaultPlacementTable.locationID, locationID),
+				),
+			)
+
+		return res.rowsAffected
+	},
+  getPlacementsForAllLocations: async function(customerID: CustomerID): Promise<Placement[]> {
+	  return await db
+	  	.select({
+			...PLACEMENT_COLS,
+		})
+		.from(locationTable)
+		.innerJoin(placementTable, eq(placementTable.locationID, locationTable.id))
+		.where(eq(locationTable.customerID, customerID))
+  },
+  getInventoryByPlacementID: async (
+	customerID: CustomerID,
+	locationID: LocationID,
+    placementID: PlacementID,
+	trx: TRX = db
+  ): Promise<FormattedInventory[]> => {
+	const totalQuantityStmt = trx
+		.select({
+			productID: inventoryTable.productID,
+			totalQuantity: sum(inventoryTable.quantity).as('totalQuantity')
+		})
+		.from(inventoryTable)
+		.groupBy(inventoryTable.productID)
+		.as('totalQuantityStmt')
+
+    const inventory: FormattedInventory[] = await trx
+      .select({
+        inserted: inventoryTable.inserted,
+        updated: inventoryTable.updated,
+        quantity: inventoryTable.quantity,
+        customerID: inventoryTable.customerID,
+        locationID: inventoryTable.locationID,
+        product: {
+          ...PRODUCT_COLS,
+          unit: UNIT_COLS.name,
+          group: GROUP_COLS.name,
+          fileCount: count(attachmentsTable.id),
+          supplierName: supplierTable.name,
+        },
+        placement: { ...PLACEMENT_COLS },
+        batch: { ...BATCH_COLS },
+				totalQuantity: sql<number>`cast(${totalQuantityStmt.totalQuantity} as real)`,
+				isDefaultPlacement: sql`${exists(
+					trx.select()
+						.from(defaultPlacementTable)
+						.where(
+							and(
+								eq(defaultPlacementTable.productID, inventoryTable.productID),
+								eq(defaultPlacementTable.placementID, inventoryTable.placementID),
+								eq(defaultPlacementTable.locationID, inventoryTable.locationID),
+							),
+						)
+				)}`.mapWith(Boolean),
+      })
+      .from(inventoryTable)
+      .where(
+		  and(
+			  eq(inventoryTable.customerID, customerID),
+			  eq(inventoryTable.locationID, locationID),
+			  eq(inventoryTable.placementID, placementID),
+		  )
+	  )
+      .innerJoin(productTable, eq(productTable.id, inventoryTable.productID))
+      .leftJoin(
+        attachmentsTable,
+        and(
+          eq(attachmentsTable.refDomain, 'product'),
+          eq(attachmentsTable.refID, inventoryTable.productID),
+        ),
+      )
+      .innerJoin(
+        placementTable,
+        eq(placementTable.id, inventoryTable.placementID),
+      )
+      .innerJoin(batchTable, eq(batchTable.id, inventoryTable.batchID))
+      .innerJoin(unitTable, eq(unitTable.id, productTable.unitID))
+      .innerJoin(groupTable, eq(groupTable.id, productTable.groupID))
+      .leftJoin(supplierTable, eq(supplierTable.id, productTable.supplierID))
+	  .leftJoin(totalQuantityStmt, eq(totalQuantityStmt.productID, inventoryTable.productID))
+      .groupBy(
+        inventoryTable.inserted,
+        inventoryTable.updated,
+        inventoryTable.quantity,
+        inventoryTable.customerID,
+        inventoryTable.locationID,
+        productTable.id,
+        UNIT_COLS.name,
+        GROUP_COLS.name,
+        placementTable.id,
+        batchTable.id,
+      )
+
+    return inventory
+  }
 }

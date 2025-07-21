@@ -1,0 +1,35 @@
+{
+	"page": {
+		"title": "Location Move",
+		"description": "Here you can move inventories between locations"
+	},
+	"form": {
+		"toast-error": "Could not move inventories",
+		"toast-success": "Inventories were moved",
+		"location-select-label": "From location",
+		"location-select-inactive": "Inactive",
+		"reference-label": "Account/Case",
+		"sku-label": "Item no.",
+		"from-placement-label": "From placement",
+		"from-placement-placeholder": "Select placement",
+		"from-batch-label": "From batch",
+		"from-batch-placeholder": "Select batch",
+		"to-location-label": "To location",
+		"to-location-placeholder": "Select location",
+		"quantity-label": "Quantity",
+		"empty-form-message": "Add an item to continue",
+		"add-product-button": "Add item",
+		"search-placeholder": "Search for item...",
+		"search-empty-message": "No item found",
+		"confirm-button": "Move inventories",
+		"search-info": "Shows only items with positive quantites",
+		"errors-title": "Errors",
+		"errors-product": "Item {{num}}: "
+	},
+	"server": {
+		"nonpositive-quantity-error": "Quantity must be greater than 0 for item no. {{sku}}",
+		"invalid-placement-error": "Item no. {{sku}} has an invalid placement",
+		"not-default-placement-error": "Item no. {{sku}} can only be moved from its default placement \"{{placement}}\"",
+		"invalid-batch-error": "Item no. {{sku}} at {{placement}} has an invalid batch number"
+	}
+}

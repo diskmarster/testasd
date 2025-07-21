@@ -1,26 +1,20 @@
-import { signOutAction } from "@/app/[lng]/(auth)/log-ud/actions";
 import { SiteWrapper } from "@/components/common/site-wrapper";
-import { sessionService } from "@/service/session";
 import { Suspense } from "react";
 import { DetailsWrapper } from "./details-wrapper";
 import { SupplierHistoryWrapper } from "./history-wrapper";
 import { Separator } from "@/components/ui/separator";
 import { SupplierDetailsSkeleton } from "@/components/suppliers/details";
 import { SupplierHistorySkeleton } from "@/components/suppliers/history";
+import { withAuth, WithAuthProps } from "@/components/common/with-auth";
 
-interface Props {
+interface Props extends WithAuthProps {
 	params: {
 		lng: string
 		id: string
 	}
 }
 
-export default async function Page({ params: { lng, id } }: Props) {
-	const { session, user } = await sessionService.validate()
-	if (!session) {
-		signOutAction()
-		return
-	}
+async function Page({ params: { id }, user }: Props) {
 	return (
 		<SiteWrapper>
 			<div className='flex flex-col lg:flex-row items-stretch gap-4'>
@@ -37,3 +31,5 @@ export default async function Page({ params: { lng, id } }: Props) {
 		</SiteWrapper>
 	)
 }
+
+export default withAuth(Page)
