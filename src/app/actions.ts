@@ -1,8 +1,13 @@
 'use server'
 
-import { HistoryFilter, HistoryType, historyTypeZodSchema } from '@/data/inventory.types'
+import {
+  HistoryFilter,
+  HistoryType,
+  historyTypeZodSchema,
+} from '@/data/inventory.types'
 import { adminAction, authedAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
+import { announcementService } from '@/service/announcements'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
@@ -60,7 +65,7 @@ export const genInventoryMovementsReportAction = adminAction
         from: z.coerce.date(),
         to: z.coerce.date(),
       }),
-			type: z.array(z.literal('all').or(historyTypeZodSchema))
+      type: z.array(z.literal('all').or(historyTypeZodSchema)),
     }),
   )
   .action(
@@ -74,9 +79,9 @@ export const genInventoryMovementsReportAction = adminAction
       if (!itemGroup.includes('all')) {
         historyFilter.group = itemGroup
       }
-			if (!type.includes('all')) {
-				historyFilter.type = type as HistoryType[]
-			}
+      if (!type.includes('all')) {
+        historyFilter.type = type as HistoryType[]
+      }
 
       const [customer, history, location] = await Promise.all([
         customerService.getByID(user.customerID),
@@ -94,3 +99,10 @@ export const genInventoryMovementsReportAction = adminAction
       }
     },
   )
+
+export const hideAnnouncementAction = authedAction
+  .schema(z.object({ announcementID: z.coerce.number(), pathname: z.string() }))
+  .action(async ({ parsedInput: { announcementID, pathname } }) => {
+    announcementService.setCookie(announcementID)
+    revalidatePath(pathname)
+  })

@@ -68,9 +68,11 @@ import {
 	Warehouse,
 	X,
 	Zap,
+	MoveRight,
 } from 'lucide-react'
 
 export const Icons = {
+	moveRight: MoveRight,
 	fileDigit: FileDigit,
 	circle: Circle,
 	circleCheck: CircleCheck,
