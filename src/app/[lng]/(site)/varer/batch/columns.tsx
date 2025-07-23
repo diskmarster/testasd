@@ -157,7 +157,7 @@ export function getTableBatchColumns(
     },
   }
 
-  if (hasPermissionByRank(user.role, 'bruger'))
+  if (!hasPermissionByRank(user.role, 'bruger'))
     return [batchCol, isBarredCol, expiryCol, instertedCol, updatedCol]
 
   return [
