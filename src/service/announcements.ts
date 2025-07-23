@@ -1,5 +1,5 @@
 import { announcements } from '@/data/announcement'
-import { Announcement } from '@/lib/database/schema/annountments'
+import { Announcement } from '@/lib/database/schema/announcements'
 import { tryParseInt } from '@/lib/utils'
 import { cookies } from 'next/headers'
 import { cache } from 'react'

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Icons } from '../ui/icons'
 import { hideAnnouncementAction } from '@/app/actions'
-import { Announcement } from '@/lib/database/schema/annountments'
+import { Announcement } from '@/lib/database/schema/announcements'
 import { useState, useTransition } from 'react'
 import { usePathname } from 'next/navigation'
 
