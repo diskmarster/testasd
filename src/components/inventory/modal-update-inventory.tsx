@@ -182,6 +182,19 @@ export function ModalUpdateInventory({
         .some(i => i.isDefaultPlacement),
     [productID],
   )
+	const defaultPlacementID = useMemo(
+		() => {
+			if (hasDefaultPlacement) {
+				const invWithDefault = inventory
+					.filter(i => i.product.id == productID) 
+					.find(i => i.isDefaultPlacement)
+
+				return placements.find(p => p.id == invWithDefault?.placement.id)?.id
+			}
+			return undefined
+		},
+		[hasDefaultPlacement, productID]
+	)
   const isExpired = useMemo(
     () => {
       if (!useBatch || typeof batchID != 'number') return false
@@ -308,7 +321,7 @@ export function ModalUpdateInventory({
 										productID: tryParseInt(value),
 										type,
 										amount: 0,
-										placementID: fallbackPlacementID,
+										placementID: hasDefaultPlacement ? defaultPlacementID : fallbackPlacementID,
 										batchID: fallbackBatchID,
 									})
                 }}
