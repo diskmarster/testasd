@@ -142,7 +142,7 @@ export function getTableGroupColumns(
     },
   }
 
-  if (hasPermissionByRank(user.role, 'bruger'))
+  if (!hasPermissionByRank(user.role, 'bruger'))
     return [groupCol, isBarredCol, insertedCol, updatedCol]
   return [groupCol, isBarredCol, insertedCol, updatedCol, actionsCol]
 }
