@@ -147,7 +147,8 @@
     "barcode-already-exists": "Stregkoden eksisterer allerede",
     "sku-already-exists": "Produktnummeret eksisterer allerede",
     "product-barring-failed": "Noget gik galt under spærringen af produktet",
-    "product-id-not-found": "Kunne ikke finde produktet efter id"
+    "product-id-not-found": "Kunne ikke finde produktet efter id",
+		"product-delete-history-ref": "Produkt slettet"
   },
   "location-service-action": {
     "location-didnt-update": "Noget gik galt under opdateringen af lokationsnavnet"

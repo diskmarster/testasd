@@ -127,9 +127,18 @@ export const deleteProductAction = adminAction
   .action(async ({ parsedInput: { productID }, ctx }) => {
     const {t} = await serverTranslation(ctx.lang, 'action-errors')
 
-    const res = await productService.softDeleteProduct(productID, ctx.user.customerID)
+    const res = await productService.softDeleteProduct(
+			productID,
+			ctx.user.customerID,
+			ctx.user,
+			null,
+			ctx.lang,
+			'web',
+		)
     
     if (!res) {
       throw new ActionError(t('product-action.product-not-deleted'))
     }
+
+		revalidatePath(`${ctx.lang}/varer/produkter`)
   })

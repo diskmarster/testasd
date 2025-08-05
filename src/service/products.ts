@@ -39,6 +39,9 @@ import {
 import { tryCatch } from '@/lib/utils.server'
 import { LibsqlError } from '@libsql/client'
 import { inventoryService } from './inventory'
+import { User } from 'lucia'
+import { locationService } from './location'
+import { HistoryPlatform } from '@/data/inventory.types'
 
 export const productService = {
   create: async function(
@@ -897,7 +900,20 @@ export const productService = {
   softDeleteProduct: async function(
     productID: ProductID,
     customerID: CustomerID,
+		user: User | null,
+		userName: string | null,
+		lng: string,
+		historyPlatform: HistoryPlatform,
   ): Promise<boolean> {
+		if (user == null && userName == null) {
+			console.error(`Both user and userName is missing`)
+			return false
+		}
+
+		const { t } = await serverTranslation(lng, 'action-errors')
+
+		const locations = await locationService.getByCustomerID(customerID)
+
     return await db.transaction(async tx => {
       const p = await tryCatch(product.getByID(productID, tx))
       if (!p.success || p.data === undefined) {
@@ -928,6 +944,64 @@ export const productService = {
       )
       if (!insertDeletedRes.success) {
         console.error(insertDeletedRes.error)
+
+        tx.rollback()
+        return false
+      }
+
+			const historyLogProductInfo = {
+				productID: p.data.id,
+				productSku: p.data.sku,
+				productText1: p.data.text1,
+				productText2: p.data.text2,
+				productText3: p.data.text3,
+				productBarcode: p.data.barcode,
+				productUnitName: p.data.unit,
+				productGroupName: p.data.group,
+				productCostPrice: p.data.costPrice,
+				productSalesPrice: p.data.salesPrice,
+			}
+
+			let userInfo: {
+				userName: string,
+				userID?: number,
+				userRole?: string,
+			};
+			if (user != null) {
+				userInfo = {
+					userID: user.id,
+					userName: user.name,
+					userRole: user.role,
+				}
+			} else if (userName != null) {
+				userInfo = {
+					userName,
+				}
+			}
+
+			const historyLogData: NewHistory[] = locations.map(loc => ({
+				...historyLogProductInfo,
+				customerID: customerID,
+				locationID: loc.id,
+				...userInfo,
+				type: 'slet',
+				platform: historyPlatform,
+				amount: 0,
+				reference: t('product-service-action.product-delete-history-ref'),
+			}))
+
+			const historyLogRes = await tryCatch(
+				Promise.all(
+					historyLogData.map(async (data) => (
+						inventory.createHistoryLog(
+							data,
+							tx
+						)
+					))
+				)
+			)
+      if (!historyLogRes.success) {
+        console.error(historyLogRes.error)
 
         tx.rollback()
         return false

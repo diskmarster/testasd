@@ -26,6 +26,7 @@
     "type_regulering": "Adjustment",
     "type_flyt": "Move",
     "type_import": "Import",
+    "type_slet": "Delete",
     "reference": "Account/case",
     "user": "User",
     "total-sales":"Sales (Total)",
@@ -43,7 +44,8 @@
       "type-incoming": "Incoming",
       "type-outgoing": "Outgoing",
       "type-adjustment": "Adjustment",
-      "type-move": "Move"
+      "type-move": "Move",
+      "type-delete": "Delete"
     }
   }
 }

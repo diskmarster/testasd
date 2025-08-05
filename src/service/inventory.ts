@@ -14,6 +14,7 @@ import {
   MoveBetweenLocation,
   MoveBetweenLocationResponse,
   ProductInventory,
+  RegulationType,
 } from '@/data/inventory.types'
 import { location } from '@/data/location'
 import { product } from '@/data/products'
@@ -154,7 +155,7 @@ export const inventoryService = {
       placementID: PlacementID
       batchID: BatchID
       userID: UserID | null
-      type: 'tilgang' | 'afgang' | 'regulering' | 'flyt'
+      type: HistoryType
       platform: HistoryPlatform
       amount: number
       reference: string | undefined
@@ -228,7 +229,7 @@ export const inventoryService = {
 			placementID: PlacementID,
 			batchID: BatchID,
 			amount: number,
-			type: HistoryType,
+			type: RegulationType,
 			reference: string,
 		) => {
       const didUpsert = await inventory.upsertInventory(
@@ -324,7 +325,7 @@ export const inventoryService = {
     productID: ProductID,
     placementID: PlacementID,
     batchID: BatchID,
-    type: HistoryType,
+    type: RegulationType,
     amount: number,
     reference: string = '',
     apikeyName: string | null = null,
@@ -504,7 +505,7 @@ export const inventoryService = {
     fromPlacementID: PlacementID,
     fromBatchID: BatchID,
     toPlacementID: PlacementID,
-    type: HistoryType,
+    type: RegulationType,
     amount: number,
     reference: string = '',
     lang: string = fallbackLng,

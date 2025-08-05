@@ -16,12 +16,13 @@ export const historyTypeZodSchema = z.enum([
   'afgang',
   'regulering',
   'flyt',
+	'slet',
 ])
 export type HistoryType = z.infer<typeof historyTypeZodSchema>
 export const historyTypes =
   historyTypeZodSchema.options as readonly HistoryType[]
-export type RegulationType = HistoryType
-export const regulationTypes = historyTypes
+export type RegulationType = Exclude<HistoryType, 'slet'>
+export const regulationTypes = historyTypes.filter(t => t != 'slet')
 
 export const historyPlatformZodSchema = z.enum(['web', 'app', 'ext'])
 export type HistoryPlatform = z.infer<typeof historyPlatformZodSchema>

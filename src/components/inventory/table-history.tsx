@@ -43,6 +43,7 @@ import { User } from 'lucia'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { TableHeaderGroup } from '../table/table-header-group'
+import { cn } from '@/lib/utils'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -193,6 +194,10 @@ export function TableHistory({
             {table.getRowModel().rows && table.getRowModel().rows.length > 0 ? (
               table.getRowModel().rows.map(row => (
                 <TableRow
+									className={cn(
+										row.original.type == 'slet' &&
+											'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20'
+									)}
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}>
                   <TableGroupedCell row={row} />

@@ -9,7 +9,7 @@ export const updateInventoryValidation = (
       productID: z.coerce.number(),
       placementID: z.string().or(z.coerce.number()),
       batchID: z.string().or(z.coerce.number()),
-      type: historyTypeZodSchema,
+      type: historyTypeZodSchema.exclude(['slet']),
       amount: z.coerce.number(),
       reference: z.string().optional(),
     })

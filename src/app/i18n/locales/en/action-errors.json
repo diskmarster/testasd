@@ -148,7 +148,8 @@
     "sku-already-exists": "The product number already exists",
     "product-barring-failed": "Something went wrong trying to bar the product",
     "product-id-not-found": "Couldn't find the product by id",
-    "product-sku-barcode-not-found": "Could not find product with sku or barcode"
+    "product-sku-barcode-not-found": "Could not find product with sku or barcode",
+		"product-delete-history-ref": "Product deleted"
   },
   "location-service-action": {
     "location-didnt-update": "Something went wrong while updating the location name"

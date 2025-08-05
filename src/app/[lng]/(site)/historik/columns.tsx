@@ -184,7 +184,7 @@ export function getTableHistoryColumns(
 		cell: ({ getValue }) => {
 			const type = getValue<HistoryType>()
 			const variant =
-				type == 'tilgang' ? 'green' : type == 'afgang' ? 'red' : 'yellow'
+				type == 'tilgang' ? 'green' : type == 'afgang' ? 'red' : type == 'slet' ? 'destructive' : 'yellow'
 
 			return (
 				<Badge className='capitalize' variant={variant}>
@@ -205,7 +205,11 @@ export function getTableHistoryColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('history-columns.quantity')} />
 		),
-		cell: ({ getValue }) => {
+		cell: ({ getValue, row }) => {
+			if (row.original.type == 'slet') {
+				return null
+			}
+
 			const amount = getValue<number>()
 
 			return (
@@ -230,7 +234,11 @@ export function getTableHistoryColumns(
 				title={t('history-columns.current-quantity')}
 			/>
 		),
-		cell: ({ getValue }) => {
+		cell: ({ getValue, row }) => {
+			if (row.original.type == 'slet') {
+				return null
+			}
+
 			const amount = getValue<number>() ?? '-'
 
 			return (
@@ -343,6 +351,10 @@ export function getTableHistoryColumns(
 			<TableHeader column={column} title={t('history-columns.total-sales')} />
 		),
 		cell: ({ row }) => {
+			if (row.original.type == 'slet') {
+				return null
+			}
+
 			const amount = row.original.salesTotal
 
 			return (
@@ -365,6 +377,10 @@ export function getTableHistoryColumns(
 			<TableHeader column={column} title={t('history-columns.total-costs')} />
 		),
 		cell: ({ row }) => {
+			if (row.original.type == 'slet') {
+				return null
+			}
+
 			const amount = row.original.costTotal
 
 			return (
@@ -547,6 +563,7 @@ export function getTableHistoryFilters(
 				label: t('history-columns.filters.type-adjustment'),
 			},
 			{ value: 'flyt', label: t('history-columns.filters.type-move') },
+			{ value: 'slet', label: t('history-columns.filters.type-delete') },
 		],
 	}
 

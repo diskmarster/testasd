@@ -6,7 +6,7 @@ export const createRegulationSchema = z.object({
   productId: z.coerce.number(),
   placementId: z.string().or(z.coerce.number()).nullable(),
   batchId: z.string().or(z.coerce.number()).nullable(),
-  type: historyTypeZodSchema,
+  type: historyTypeZodSchema.exclude(['slet']),
   quantity: z.coerce.number(),
   reference: z.string().nullable(),
 })

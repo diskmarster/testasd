@@ -26,6 +26,7 @@
     "type_regulering": "Regulering",
     "type_flyt": "Flyt",
     "type_import": "Import",
+    "type_slet": "Slet",
     "reference": "Konto/sag",
     "user": "Bruger",
     "total-sales": "Salg (Total)",
@@ -43,7 +44,8 @@
       "type-incoming": "Tilgang",
       "type-outgoing": "Afgang",
       "type-adjustment": "Regulering",
-      "type-move": "Flyt"
+      "type-move": "Flyt",
+      "type-delete": "Slet"
     }
   }
 }
