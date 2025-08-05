@@ -304,7 +304,13 @@ export function ModalUpdateInventory({
                 onSelectedValueChange={value => {
                   setSearchPlacement('')
                   setSearchBatch('')
-                  reset({ productID: tryParseInt(value), type, amount: 0 })
+                  reset({
+										productID: tryParseInt(value),
+										type,
+										amount: 0,
+										placementID: fallbackPlacementID,
+										batchID: fallbackBatchID,
+									})
                 }}
                 onSearchValueChange={setSearchProduct}
                 selectedValue={productID ? productID.toString() : ''}
@@ -316,8 +322,7 @@ export function ModalUpdateInventory({
                 </p>
               )}
             </div>
-            {hasPermissionByPlan(customer.plan, 'basis') &&
-              settings.usePlacement && (
+            {hasPermissionByPlan(customer.plan, 'basis') && (
                 <div className='flex flex-col gap-4 md:flex-row'>
                   {settings.usePlacement && (
                     <div
@@ -371,7 +376,8 @@ export function ModalUpdateInventory({
                     <div
                       className={cn(
                         'gap-2 w-[0px] hidden transition-all',
-                        useBatch && 'w-[222px] grid',
+                        settings.usePlacement && useBatch && 'w-[222px] grid',
+                        !settings.usePlacement && useBatch && 'w-full grid',
                       )}>
                       <div className='flex items-center justify-between h-4'>
                         <div className='flex gap-1 items-center'>
