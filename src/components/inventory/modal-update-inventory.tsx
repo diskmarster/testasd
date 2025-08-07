@@ -104,24 +104,24 @@ export function ModalUpdateInventory({
     []
   )
 
-  const placementsForProduct = (productID: ProductID, hasDefaultPlacement: boolean) =>
-    inventory
-      .filter((item, index, self) => (
-        index === self.findIndex(i => i.placement.id == item.placement.id) &&
-        !hasDefaultPlacement || item.isDefaultPlacement && index === self.findIndex(i => (
-          i.product.id == productID && i.isDefaultPlacement
-        ))
-      ))
-      .filter(p =>
-        p.placement.name.toLowerCase().includes(searchPlacement.toLowerCase()),
-      )
-      .sort((a, b) => {
-        return a.placement.name.localeCompare(b.placement.name)
-      })
-      .map(prod => ({
-        label: prod.placement.name,
-        value: prod.placement.id.toString(),
-      }))
+	const placementsForProduct = (productID: ProductID, hasDefaultPlacement: boolean) => (
+		placements
+			.filter(p => 
+				p.name.toLowerCase().includes(searchPlacement.toLowerCase()) &&
+				(!hasDefaultPlacement || inventory.some((item, index, self) => (
+					item.placement.id == p.id && item.isDefaultPlacement && index == self.findIndex(i => (
+						i.product.id == productID && i.isDefaultPlacement
+					))
+				)))
+			)
+			.sort((a, b) => {
+				return a.name.localeCompare(b.name)
+			})
+			.map(prod => ({
+				label: prod.name,
+				value: prod.id.toString(),
+			}))
+	)
 
   const fallbackPlacementID =
     settings.usePlacement && hasPermissionByPlan(customer.plan, 'basis')
@@ -335,140 +335,140 @@ export function ModalUpdateInventory({
                 </p>
               )}
             </div>
-            {hasPermissionByPlan(customer.plan, 'basis') && (
-                <div className='flex flex-col gap-4 md:flex-row'>
-                  {settings.usePlacement && (
-                    <div
-                      className={cn(
-                        'grid gap-2 w-full transition-all',
-                        useBatch && 'w-[222px]',
-                      )}>
-                      <div className='flex items-center justify-between h-4'>
-                        <Label>{t('placement')}</Label>
-                        <span
-                          className={cn(
-                            'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
-                            (!isIncoming || hasDefaultPlacement) && 'hidden',
-                          )}
-                          onClick={() => {
-                            resetField('placementID')
-                            setNewPlacement(prev => !prev)
-                          }}>
-                          {newPlacement ? t('use-existing') : t('create-new')}
-                        </span>
-                      </div>
-                      {newPlacement ? (
-                        <Input
-                          autoFocus
-                          placeholder={t('new-placement-placeholder')}
-                          {...register('placementID')}
-                        />
-                      ) : (
-                        <AutoComplete
-                          disabled={!hasProduct}
-                          autoFocus={false}
-                          placeholder={t('placement-placeholder')}
-                          emptyMessage={t('placement-empty-message')}
-                          items={placementsForProduct(productID, hasDefaultPlacement)}
-                          onSelectedValueChange={value =>
-                            setValue('placementID', parseInt(value), {
-                              shouldValidate: true,
-                            })
-                          }
-                          onSearchValueChange={setSearchPlacement}
-                          selectedValue={
-                            placementID ? placementID.toString() : ''
-                          }
-                          searchValue={searchPlacement}
-                          icon={placementIcon(productID)}
-                        />
-                      )}
-                    </div>
-                  )}
-                  {hasPermissionByPlan(customer.plan, 'pro') && (
-                    <div
-                      className={cn(
-                        'gap-2 w-[0px] hidden transition-all',
-                        settings.usePlacement && useBatch && 'w-[222px] grid',
-                        !settings.usePlacement && useBatch && 'w-full grid',
-                      )}>
-                      <div className='flex items-center justify-between h-4'>
-                        <div className='flex gap-1 items-center'>
-                          <Label
-                            className={cn(!useBatch && 'text-muted-foreground')}>
-                            {t('batch')}
-                          </Label>
-                          {isExpired && (
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Icons.info className='size-3.5 text-yellow-600 dark:text-warning' />
-                                </TooltipTrigger>
-                                <TooltipContent className='bg-foreground text-background'>
-                                  {t('oversigt:batch-indicator-tooltip', { context: 'expired' })}
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          )}
-                        </div>
-                        <span
-                          className={cn(
-                            'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
-                            !isIncoming && 'hidden',
-                            !useBatch &&
-                            'cursor-not-allowed hover:no-underline',
-                          )}
-                          onClick={() => {
-                            if (useBatch) {
-                              resetField('batchID')
-                              setNewBatch(prev => !prev)
-                            }
-                          }}>
-                          {newBatch ? t('use-existing') : t('create-new')}
-                        </span>
-                      </div>
-                      {newBatch ? (
-                        <Input
-                          autoFocus
-                          placeholder={t('new-batch-placeholder')}
-                          disabled={!useBatch}
-                          {...register('batchID')}
-                        />
-                      ) : (
-                        <AutoComplete
-                          disabled={!useBatch || !hasPlacement}
-                          autoFocus={false}
-                          placeholder={t('batch-placeholder')}
-                          emptyMessage={t('batch-empty-message')}
-                          items={batchOptions}
-                          onSelectedValueChange={value =>
-                            setValue('batchID', parseInt(value), {
-                              shouldValidate: true,
-                            })
-                          }
-                          onSearchValueChange={setSearchBatch}
-                          selectedValue={batchID ? batchID.toString() : ''}
-                          searchValue={searchBatch}
-                          icon={(option) => {
-                              const batch = batches.find(b => b.id == tryParseInt(option.value))
-                              const hasExpiry = batch != undefined && batch.expiry != null 
-                              const isExpired = batch != undefined && batch.expiry != null && isBefore(batch.expiry, Date.now())
-                              return (
-                                <span className={cn(
-                                  'block size-2 rounded-full border-black/20 border',
-                                  hasExpiry && (isExpired 
-                                    ? 'bg-destructive/50 border-destructive' 
-                                    : 'bg-success/50 border-success'
-                                  )
-                                )}/>
-                              )
-                            }}
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
+						{hasPermissionByPlan(customer.plan, 'basis') && (
+							<div className='flex flex-col gap-4 md:flex-row'>
+								{settings.usePlacement && (
+									<div
+										className={cn(
+											'grid gap-2 w-full transition-all',
+											useBatch && 'w-[222px]',
+										)}>
+										<div className='flex items-center justify-between h-4'>
+											<Label>{t('placement')}</Label>
+											<span
+												className={cn(
+													'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
+													(!isIncoming || hasDefaultPlacement) && 'hidden',
+												)}
+												onClick={() => {
+													resetField('placementID')
+													setNewPlacement(prev => !prev)
+												}}>
+												{newPlacement ? t('use-existing') : t('create-new')}
+											</span>
+										</div>
+										{newPlacement ? (
+											<Input
+												autoFocus
+												placeholder={t('new-placement-placeholder')}
+												{...register('placementID')}
+											/>
+										) : (
+												<AutoComplete
+													disabled={!hasProduct}
+													autoFocus={false}
+													placeholder={t('placement-placeholder')}
+													emptyMessage={t('placement-empty-message')}
+													items={placementsForProduct(productID, hasDefaultPlacement)}
+													onSelectedValueChange={value =>
+														setValue('placementID', parseInt(value), {
+															shouldValidate: true,
+														})
+													}
+													onSearchValueChange={setSearchPlacement}
+													selectedValue={
+														placementID ? placementID.toString() : ''
+													}
+													searchValue={searchPlacement}
+													icon={placementIcon(productID)}
+												/>
+											)}
+									</div>
+								)}
+								{hasPermissionByPlan(customer.plan, 'pro') && (
+									<div
+										className={cn(
+											'gap-2 w-[0px] hidden transition-all',
+											settings.usePlacement && useBatch && 'w-[222px] grid',
+											!settings.usePlacement && useBatch && 'w-full grid',
+										)}>
+										<div className='flex items-center justify-between h-4'>
+											<div className='flex gap-1 items-center'>
+												<Label
+													className={cn(!useBatch && 'text-muted-foreground')}>
+													{t('batch')}
+												</Label>
+												{isExpired && (
+													<TooltipProvider>
+														<Tooltip>
+															<TooltipTrigger asChild>
+																<Icons.info className='size-3.5 text-yellow-600 dark:text-warning' />
+															</TooltipTrigger>
+															<TooltipContent className='bg-foreground text-background'>
+																{t('oversigt:batch-indicator-tooltip', { context: 'expired' })}
+															</TooltipContent>
+														</Tooltip>
+													</TooltipProvider>
+												)}
+											</div>
+											<span
+												className={cn(
+													'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
+													!isIncoming && 'hidden',
+													!useBatch &&
+														'cursor-not-allowed hover:no-underline',
+												)}
+												onClick={() => {
+													if (useBatch) {
+														resetField('batchID')
+														setNewBatch(prev => !prev)
+													}
+												}}>
+												{newBatch ? t('use-existing') : t('create-new')}
+											</span>
+										</div>
+										{newBatch ? (
+											<Input
+												autoFocus
+												placeholder={t('new-batch-placeholder')}
+												disabled={!useBatch}
+												{...register('batchID')}
+											/>
+										) : (
+												<AutoComplete
+													disabled={!useBatch || !hasPlacement}
+													autoFocus={false}
+													placeholder={t('batch-placeholder')}
+													emptyMessage={t('batch-empty-message')}
+													items={batchOptions}
+													onSelectedValueChange={value =>
+														setValue('batchID', parseInt(value), {
+															shouldValidate: true,
+														})
+													}
+													onSearchValueChange={setSearchBatch}
+													selectedValue={batchID ? batchID.toString() : ''}
+													searchValue={searchBatch}
+													icon={(option) => {
+														const batch = batches.find(b => b.id == tryParseInt(option.value))
+														const hasExpiry = batch != undefined && batch.expiry != null 
+														const isExpired = batch != undefined && batch.expiry != null && isBefore(batch.expiry, Date.now())
+														return (
+															<span className={cn(
+																'block size-2 rounded-full border-black/20 border',
+																hasExpiry && (isExpired 
+																	? 'bg-destructive/50 border-destructive' 
+																	: 'bg-success/50 border-success'
+																)
+															)}/>
+														)
+													}}
+												/>
+											)}
+									</div>
+								)}
+							</div>
+						)}
             <div className='flex items-center pt-2'>
               <Button
                 type='button'
