@@ -13,116 +13,116 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 const schema = z.object({
-  fromLocation: z.string().min(1),
-  toLocation: z.string().min(1),
-  reference: z.string().optional(),
-  items: z
-    .object({
-      productID: z.coerce.number(),
-      sku: z.string(),
-      fromPlacementID: z.coerce.number(),
-      fromBatchID: z.coerce.number(),
-      toPlacementID: z.coerce.number().optional(),
-      toBatchID: z.coerce.number().optional(),
-      quantity: z.coerce.number(),
-    })
-    .array(),
+	fromLocation: z.string().min(1),
+	toLocation: z.string().min(1),
+	reference: z.string().optional(),
+	items: z
+		.object({
+			productID: z.coerce.number(),
+			sku: z.string(),
+			fromPlacementID: z.coerce.number(),
+			fromBatchID: z.coerce.number(),
+			toPlacementID: z.coerce.number().optional(),
+			toBatchID: z.coerce.number().optional(),
+			quantity: z.coerce.number(),
+		})
+		.array(),
 })
 
 export async function POST(
-  r: NextRequest,
+	r: NextRequest,
 ): Promise<NextResponse<ApiResponse<MoveBetweenLocationResponse>>> {
-  const start = performance.now()
-  const { session, user } = await validateRequest(headers())
-  const lng = getLanguageFromRequest(headers())
-  const { t } = await serverTranslation(lng, 'common')
+	const start = performance.now()
+	const { session, user } = await validateRequest(headers())
+	const lng = getLanguageFromRequest(headers())
+	const { t } = await serverTranslation(lng, 'common')
 
-  if (isMaintenanceMode()) {
-    return apiResponse.locked(
-      t('route-translations-regulations.maintenance'),
-      getVercelRequestID(headers()),
-    )
-  }
+	if (isMaintenanceMode()) {
+		return apiResponse.locked(
+			t('route-translations-regulations.maintenance'),
+			getVercelRequestID(headers()),
+		)
+	}
 
-  if (session == null || user == null) {
-    return apiResponse.unauthorized(
-      t('route-translations-product.no-access-to-resource'),
-      getVercelRequestID(headers()),
-    )
-  }
+	if (session == null || user == null) {
+		return apiResponse.unauthorized(
+			t('route-translations-product.no-access-to-resource'),
+			getVercelRequestID(headers()),
+		)
+	}
 
-  if (!user.appAccess) {
-    const errorLog: NewApplicationError = {
-      userID: user.id,
-      customerID: user.customerID,
-      type: 'endpoint',
-      input: null,
-      error: t('route-translations-product.no-access-to-resource'),
-      origin: 'POST /api/v1/regulations/move/locations',
-    }
-    errorsService.create(errorLog)
+	if (!user.appAccess) {
+		const errorLog: NewApplicationError = {
+			userID: user.id,
+			customerID: user.customerID,
+			type: 'endpoint',
+			input: null,
+			error: t('route-translations-product.no-access-to-resource'),
+			origin: 'POST /api/v1/regulations/move/locations',
+		}
+		errorsService.create(errorLog)
 
-    return apiResponse.unauthorized(
-      t('route-translations-product.no-access-to-resource'),
-      getVercelRequestID(headers()),
-    )
-  }
+		return apiResponse.unauthorized(
+			t('route-translations-product.no-access-to-resource'),
+			getVercelRequestID(headers()),
+		)
+	}
 
-  const payload = schema.safeParse(await r.json())
-  if (!payload.success) {
-    const errorLog: NewApplicationError = {
-      userID: user.id,
-      customerID: user.customerID,
-      type: 'endpoint',
-      input: payload.data,
-      error: payload.error.toString(),
-      origin: 'POST /api/v1/regulations/move/locations',
-    }
-    errorsService.create(errorLog)
+	const payload = schema.safeParse(await r.json())
+	if (!payload.success) {
+		const errorLog: NewApplicationError = {
+			userID: user.id,
+			customerID: user.customerID,
+			type: 'endpoint',
+			input: payload.data,
+			error: payload.error.toString(),
+			origin: 'POST /api/v1/regulations/move/locations',
+		}
+		errorsService.create(errorLog)
 
-    return apiResponse.badRequest(
-      payload.error.toString(),
-      getVercelRequestID(headers()),
-    )
-  }
+		return apiResponse.badRequest(
+			payload.error.toString(),
+			getVercelRequestID(headers()),
+		)
+	}
 
-  const move = await tryCatch(
-    apiService.moveInventoryBetweenLocations(
-      user.customerID,
-      user.id,
-      null,
-      'app',
-      payload.data,
-      lng,
-    ),
-  )
-  if (!move.success) {
-    const errorLog: NewApplicationError = {
-      userID: user.id,
-      customerID: user.customerID,
-      type: 'endpoint',
-      input: payload.data,
-      error: move.error.message,
-      origin: 'POST /api/v1/regulations/move/locations',
-    }
-    errorsService.create(errorLog)
+	const move = await tryCatch(
+		apiService.moveInventoryBetweenLocations(
+			user.customerID,
+			user.id,
+			null,
+			'app',
+			payload.data,
+			lng,
+		),
+	)
+	if (!move.success) {
+		const errorLog: NewApplicationError = {
+			userID: user.id,
+			customerID: user.customerID,
+			type: 'endpoint',
+			input: payload.data,
+			error: move.error.message,
+			origin: 'POST /api/v1/regulations/move/locations',
+		}
+		errorsService.create(errorLog)
 
-    return apiResponse.internal(
-      move.error.message,
-      getVercelRequestID(headers()),
-    )
-  }
+		return apiResponse.internal(
+			move.error.message,
+			getVercelRequestID(headers()),
+		)
+	}
 
-  const end = performance.now()
+	const end = performance.now()
 
-  await analyticsService.createAnalytic('action', {
-    actionName: 'moveInventoryBetweenLocations',
-    userID: user.id,
-    customerID: user.customerID,
-    sessionID: session.id,
-    executionTimeMS: end - start,
-    platform: 'app',
-  })
+	await analyticsService.createAnalytic('action', {
+		actionName: 'moveInventoryBetweenLocations',
+		userID: user.id,
+		customerID: user.customerID,
+		sessionID: session.id,
+		executionTimeMS: end - start,
+		platform: 'app',
+	})
 
-  return apiResponse.created(move.data)
+	return apiResponse.created(move.data)
 }

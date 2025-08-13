@@ -1,20 +1,29 @@
-import { SyncProviderEvent, SyncProviderType } from '@/lib/integrations/sync/interfaces'
-import { integer, primaryKey, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core'
-import { customerTable } from './customer'
-import { sql } from 'drizzle-orm'
 import { IntegrationLogStatus } from '@/data/integrations.types'
+import {
+	SyncProviderEvent,
+	SyncProviderType,
+} from '@/lib/integrations/sync/interfaces'
+import { sql } from 'drizzle-orm'
+import {
+	integer,
+	primaryKey,
+	sqliteTable,
+	text,
+	unique,
+} from 'drizzle-orm/sqlite-core'
+import { customerTable } from './customer'
 
 export const customerIntegrations = sqliteTable(
-  'nl_customer_integrations',
-  {
-    id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-    customerID: integer('customer_id')
-      .notNull()
-      .references(() => customerTable.id, { onDelete: 'cascade' }),
-    provider: text('provider').notNull().$type<SyncProviderType>(),
-    config: text('config', { mode: 'json' }).notNull(),
-  },
-  t => [unique('unq_provider_customer_id').on(t.provider, t.customerID)],
+	'nl_customer_integrations',
+	{
+		id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+		customerID: integer('customer_id')
+			.notNull()
+			.references(() => customerTable.id, { onDelete: 'cascade' }),
+		provider: text('provider').notNull().$type<SyncProviderType>(),
+		config: text('config', { mode: 'json' }).notNull(),
+	},
+	t => [unique('unq_provider_customer_id').on(t.provider, t.customerID)],
 )
 
 export type CustomerIntegration = typeof customerIntegrations.$inferSelect
@@ -22,25 +31,27 @@ export type NewCustomerIntegration = typeof customerIntegrations.$inferInsert
 export type CustomerIntegrationID = CustomerIntegration['id']
 
 export const customerIntegrationSettings = sqliteTable(
-  'nl_customer_integration_settings',
-  {
-    id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-    integrationID: integer('integration_id')
-      .notNull()
-      .unique()
-      .references(() => customerIntegrations.id, { onDelete: 'cascade' }),
-    customerID: integer('customer_id')
-      .notNull()
-      .references(() => customerTable.id)
-      .unique(),
-    useSyncProducts: integer('use_sync_products', { mode: 'boolean' }).notNull().default(false),
-  },
+	'nl_customer_integration_settings',
+	{
+		id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+		integrationID: integer('integration_id')
+			.notNull()
+			.unique()
+			.references(() => customerIntegrations.id, { onDelete: 'cascade' }),
+		customerID: integer('customer_id')
+			.notNull()
+			.references(() => customerTable.id)
+			.unique(),
+		useSyncProducts: integer('use_sync_products', { mode: 'boolean' })
+			.notNull()
+			.default(false),
+	},
 )
 
 export type CustomerIntegrationSettings =
-  typeof customerIntegrationSettings.$inferSelect
+	typeof customerIntegrationSettings.$inferSelect
 export type NewCustomerIntegrationSettings =
-  typeof customerIntegrationSettings.$inferInsert
+	typeof customerIntegrationSettings.$inferInsert
 
 export const fullSyncCronConfigs = sqliteTable(
 	'nl_full_sync_cron_configs',

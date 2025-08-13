@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write **/*.{js,ts,tsx}",
+    "format": "prettier --write \"**/*.{js,ts,tsx}\"",
     "db:local": "./setup-local-db.bash nem-lager-stage",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",

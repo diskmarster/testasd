@@ -1,32 +1,32 @@
 import { z } from 'zod'
 
 export const createPlacementValidation = (
-  t: (key: string, options?: any) => string,
+	t: (key: string, options?: any) => string,
 ) =>
-  z.object({
-    name: z
-      .string({ message: t('placement.name-required') })
-      .min(1, t('placement.name-minLength', { minLength: 1 }))
-      .max(25, t('placement.name-maxLength', { maxLength: 25 })),
-  })
+	z.object({
+		name: z
+			.string({ message: t('placement.name-required') })
+			.min(1, t('placement.name-minLength', { minLength: 1 }))
+			.max(25, t('placement.name-maxLength', { maxLength: 25 })),
+	})
 
 export const updatePlacementValidation = (
-  t: (key: string, options?: any) => string,
+	t: (key: string, options?: any) => string,
 ) =>
-  z.object({
-    placementID: z.coerce.number(),
-    data: z.object({
-      name: z
-        .string({ message: t('placement.name-required') })
-        .min(1, t('placement.name-minLength', { minLength: 1 }))
-        .max(25, t('placement.name-maxLength', { maxLength: 25 })),
-    }),
-  })
+	z.object({
+		placementID: z.coerce.number(),
+		data: z.object({
+			name: z
+				.string({ message: t('placement.name-required') })
+				.min(1, t('placement.name-minLength', { minLength: 1 }))
+				.max(25, t('placement.name-maxLength', { maxLength: 25 })),
+		}),
+	})
 
 export const toggleBarredPlacementValidation = (
-  t: (key: string, options?: any) => string,
+	t: (key: string, options?: any) => string,
 ) =>
-  z.object({
-    placementID: z.coerce.number(),
-    isBarred: z.coerce.boolean(),
-  })
+	z.object({
+		placementID: z.coerce.number(),
+		isBarred: z.coerce.boolean(),
+	})

@@ -20,7 +20,9 @@ export const customerTable = sqliteTable('nl_customer', {
 	company: text('company').notNull(),
 	email: text('email').notNull().unique(),
 	isActive: integer('is_active', { mode: 'boolean' }).notNull().default(false),
-	canUseIntegration: integer('can_use_integration', { mode: 'boolean' }).notNull().default(false),
+	canUseIntegration: integer('can_use_integration', { mode: 'boolean' })
+		.notNull()
+		.default(false),
 	inserted: integer('inserted', { mode: 'timestamp' })
 		.notNull()
 		.default(sql`(unixepoch())`),

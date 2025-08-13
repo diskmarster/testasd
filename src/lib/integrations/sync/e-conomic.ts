@@ -1,116 +1,120 @@
+import { fallbackLng } from '@/app/i18n/settings'
+import { db } from '@/lib/database'
+import { ApiKey } from '@/lib/database/schema/apikeys'
 import type { Customer } from '@/lib/database/schema/customer'
+import { tryCatch } from '@/lib/utils.server'
 import { productService } from '@/service/products'
 import { webhookService } from '@/service/webhook'
 import type { NextRequest } from 'next/server'
 import type {
-  SyncProvider,
-  SyncProviderConfig,
-  SyncProviderResponse,
+	SyncProvider,
+	SyncProviderConfig,
+	SyncProviderResponse,
 } from './interfaces'
-import { tryCatch } from '@/lib/utils.server'
-import { ApiKey } from '@/lib/database/schema/apikeys'
-import { fallbackLng } from '@/app/i18n/settings'
-import { db } from '@/lib/database'
 
 type EconomicProduct = {
-  productNumber: string
-  barCode: string
-  barred: boolean
-  costPrice: number
-  salesPrice: number
-  description: string
-  name: string
-  productGroup: {
-    name: string
-  }
-  unit: {
-    name: string
-  } | undefined
+	productNumber: string
+	barCode: string
+	barred: boolean
+	costPrice: number
+	salesPrice: number
+	description: string
+	name: string
+	productGroup: {
+		name: string
+	}
+	unit:
+		| {
+				name: string
+		  }
+		| undefined
 }
 
 export type EconomicProductEventData = {
-  oldParam: string | null
-  newParam: string | null
+	oldParam: string | null
+	newParam: string | null
 }
 
-export type EconomicProductEventAction = 
+export type EconomicProductEventAction =
 	| { action: 'create'; sku: string }
-  | { action: 'update'; sku: string }
-  | { action: 'delete'; sku: string }
-  | { action: 're-number'; oldSku: string; newSku: string }
-  | { action: 'invalid' }
+	| { action: 'update'; sku: string }
+	| { action: 'delete'; sku: string }
+	| { action: 're-number'; oldSku: string; newSku: string }
+	| { action: 'invalid' }
 
 export class EconomicSyncProvider implements SyncProvider {
-  private baseUrl = 'https://restapi.e-conomic.com'
-  private appSecretToken = process.env.ECONOMIC_APP_SECRET!
-  private agreementGrantToken: string
+	private baseUrl = 'https://restapi.e-conomic.com'
+	private appSecretToken = process.env.ECONOMIC_APP_SECRET!
+	private agreementGrantToken: string
 
-  constructor(config: SyncProviderConfig['e-conomic']) {
-    this.agreementGrantToken = config.agreementGrantToken
-  }
+	constructor(config: SyncProviderConfig['e-conomic']) {
+		this.agreementGrantToken = config.agreementGrantToken
+	}
 
-  private productEventAction(
-    oldParam: string | null,
-    newParam: string | null,
-  ): EconomicProductEventAction {
-    if (!oldParam && newParam) {
-      return { action: 'create', sku: newParam }
-    } else if (!newParam && oldParam) {
-      return { action: 'delete', sku: oldParam }
-    } else if (oldParam && newParam && oldParam === newParam) {
-      return { action: 'update', sku: newParam }
-    } else if (oldParam && newParam && oldParam !== newParam) {
-      return { action: 're-number', oldSku: oldParam, newSku: newParam }
-    } else {
-      return { action: 'invalid' }
-    }
-  }
+	private productEventAction(
+		oldParam: string | null,
+		newParam: string | null,
+	): EconomicProductEventAction {
+		if (!oldParam && newParam) {
+			return { action: 'create', sku: newParam }
+		} else if (!newParam && oldParam) {
+			return { action: 'delete', sku: oldParam }
+		} else if (oldParam && newParam && oldParam === newParam) {
+			return { action: 'update', sku: newParam }
+		} else if (oldParam && newParam && oldParam !== newParam) {
+			return { action: 're-number', oldSku: oldParam, newSku: newParam }
+		} else {
+			return { action: 'invalid' }
+		}
+	}
 
-  private async fetchProductBySku(sku: string): Promise<EconomicProduct> {
-    const response = await fetch(`${this.baseUrl}/products/${sku}`, {
-      headers: {
-        'X-AppSecretToken': this.appSecretToken,
-        'X-AgreementGrantToken': this.agreementGrantToken,
-        'Content-Type': 'application/json',
-      },
-    })
+	private async fetchProductBySku(sku: string): Promise<EconomicProduct> {
+		const response = await fetch(`${this.baseUrl}/products/${sku}`, {
+			headers: {
+				'X-AppSecretToken': this.appSecretToken,
+				'X-AgreementGrantToken': this.agreementGrantToken,
+				'Content-Type': 'application/json',
+			},
+		})
 
-    if (!response.ok) {
-      throw Error(`e-conomic response failed with status ${response.status}`)
-    }
+		if (!response.ok) {
+			throw Error(`e-conomic response failed with status ${response.status}`)
+		}
 
-    const contentType = response.headers.get('Content-Type')
+		const contentType = response.headers.get('Content-Type')
 
-    if (!contentType?.includes('application/json')) {
-      throw Error('e-conomic response is not application/json')
-    }
+		if (!contentType?.includes('application/json')) {
+			throw Error('e-conomic response is not application/json')
+		}
 
-    const json = await response.json()
+		const json = await response.json()
 
-    console.log('product from e-conomic', json)
+		console.log('product from e-conomic', json)
 
-    return json as EconomicProduct
-  }
+		return json as EconomicProduct
+	}
 
 	private async fetchProductsFromUrl(url: string): Promise<EconomicProduct[]> {
-    const response = await fetch(url, {
-      headers: {
-        'X-AppSecretToken': this.appSecretToken,
-        'X-AgreementGrantToken': this.agreementGrantToken,
-        'Accept': 'application/json',
-      },
-    })
-    if (!response.ok) {
-      throw Error(`fetchProducts(): e-conomic request failed with status ${response.status}`)
-    }
+		const response = await fetch(url, {
+			headers: {
+				'X-AppSecretToken': this.appSecretToken,
+				'X-AgreementGrantToken': this.agreementGrantToken,
+				Accept: 'application/json',
+			},
+		})
+		if (!response.ok) {
+			throw Error(
+				`fetchProducts(): e-conomic request failed with status ${response.status}`,
+			)
+		}
 
-    const contentType = response.headers.get('Content-Type')
+		const contentType = response.headers.get('Content-Type')
 
-    if (!contentType?.includes('application/json')) {
-      throw Error('e-conomic response is not application/json')
-    }
+		if (!contentType?.includes('application/json')) {
+			throw Error('e-conomic response is not application/json')
+		}
 
-    const json = await response.json()
+		const json = await response.json()
 		let collection: EconomicProduct[] = json.collection
 
 		const nextPage = json.pagination.nextPage
@@ -123,7 +127,9 @@ export class EconomicSyncProvider implements SyncProvider {
 	}
 
 	private async fetchProducts(): Promise<EconomicProduct[]> {
-    return await this.fetchProductsFromUrl(`${this.baseUrl}/products?skippages=0&pagesize=1000`)
+		return await this.fetchProductsFromUrl(
+			`${this.baseUrl}/products?skippages=0&pagesize=1000`,
+		)
 	}
 
 	async handleProductEvent(
@@ -195,7 +201,9 @@ export class EconomicSyncProvider implements SyncProvider {
 							tx,
 						)
 						if (!didCreateZeroes) {
-							console.error(`product with id ${newCreateProduct.id} has no zero inventories created`)
+							console.error(
+								`product with id ${newCreateProduct.id} has no zero inventories created`,
+							)
 
 							return {
 								success: false,
@@ -219,7 +227,9 @@ export class EconomicSyncProvider implements SyncProvider {
 								tx,
 							)
 						if (!didCreateHistoryLog) {
-							console.error(`product with id ${newCreateProduct.id} has no history log created`)
+							console.error(
+								`product with id ${newCreateProduct.id} has no history log created`,
+							)
 							return {
 								success: false,
 								message: 'product-no-history-log',
@@ -281,7 +291,9 @@ export class EconomicSyncProvider implements SyncProvider {
 								tx,
 							)
 						if (!didCreateHistoryLog) {
-							console.error(`product with id ${newUpdateProduct.id} has no history log created`)
+							console.error(
+								`product with id ${newUpdateProduct.id} has no history log created`,
+							)
 							return {
 								success: false,
 								message: 'product-no-history-log',
@@ -346,7 +358,7 @@ export class EconomicSyncProvider implements SyncProvider {
 		} catch (err) {
 			const errMsg =
 				(err as Error).message ??
-					'unknown error occured when handling products webhook'
+				'unknown error occured when handling products webhook'
 
 			console.error('Economic::handleProductEvent:', errMsg)
 			return {
@@ -368,7 +380,9 @@ export class EconomicSyncProvider implements SyncProvider {
 		}
 	}
 
-  async handleFullSync(customer: Customer): Promise<SyncProviderResponse<'fullSync'>> {
+	async handleFullSync(
+		customer: Customer,
+	): Promise<SyncProviderResponse<'fullSync'>> {
 		const productsRes = await tryCatch(this.fetchProducts())
 		if (!productsRes.success) {
 			console.error(`Economic::HandleFullSync failed: ${productsRes.error}`)
@@ -392,12 +406,18 @@ export class EconomicSyncProvider implements SyncProvider {
 			isBarred: economicProduct.barred ?? false,
 		}))
 
-		const res = await tryCatch(webhookService.upsertProducts(customer.id, upsertData))
+		const res = await tryCatch(
+			webhookService.upsertProducts(customer.id, upsertData),
+		)
 		if (!res.success) {
 			console.error(`Economic::HandleFullSync. Upsert failed: ${res.error}`)
-			return { success: false, message: 'full-upsert-failed-economic', eventData: null }
+			return {
+				success: false,
+				message: 'full-upsert-failed-economic',
+				eventData: null,
+			}
 		}
 
-    return { success: true, eventData: null }
-  }
+		return { success: true, eventData: null }
+	}
 }

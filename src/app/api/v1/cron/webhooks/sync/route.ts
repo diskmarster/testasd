@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 		true,
 	)
 	if (integrations.length == 0) {
-		console.log("No integrations found for customer id")
+		console.log('No integrations found for customer id')
 		return apiResponse.badRequest(
 			'No integrations found for customer id',
 			reqID,
@@ -72,13 +72,18 @@ export async function POST(request: NextRequest) {
 				customerID: customer.id,
 				integrationID: i.integrationID,
 				status: res.success && res.data.success ? 'success' : 'error',
-				message: res.success && res.data.success ? 'full-product-sync-successfull' : res.error?.message ?? res.data?.message ?? 'unknown error',
+				message:
+					res.success && res.data.success
+						? 'full-product-sync-successfull'
+						: (res.error?.message ?? res.data?.message ?? 'unknown error'),
 				provider: i.provider,
 				eventType: 'fullSync',
 				eventData: null,
 			})
 			if (log == undefined) {
-				console.error(`INTEGRATION LOG FOR FULL SYNC OF CUSTOMER ${customer.id} NOT CREATED!`)
+				console.error(
+					`INTEGRATION LOG FOR FULL SYNC OF CUSTOMER ${customer.id} NOT CREATED!`,
+				)
 			}
 
 			if (!res.success || !res.data.success) {

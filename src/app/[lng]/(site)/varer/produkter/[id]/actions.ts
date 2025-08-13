@@ -16,155 +16,161 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 const createAttachmentValidation = z.object({
-  name: z.string(),
-  refType: attachmentRefTypeValidation,
-  refID: z.coerce.number(),
-  type: z.enum(['image', 'pdf', 'excel']),
-  key: z.string(),
-  url: z.string(),
+	name: z.string(),
+	refType: attachmentRefTypeValidation,
+	refID: z.coerce.number(),
+	type: z.enum(['image', 'pdf', 'excel']),
+	key: z.string(),
+	url: z.string(),
 })
 
 const deleteAttachmentValidation = z.object({
-  id: z.coerce.number(),
+	id: z.coerce.number(),
 })
 
 const uploadFileValidation = z.object({
-  key: z.string(),
-  type: z.string(),
-  body: z.string(),
+	key: z.string(),
+	type: z.string(),
+	body: z.string(),
 })
 
 export const uploadFileAction = editableAction
-  .schema(uploadFileValidation)
-  .action(async ({ parsedInput: { key, type, body }, ctx: {customer, lang} }) => {
-	const { t } = await serverTranslation(lang, 'produkter')
+	.schema(uploadFileValidation)
+	.action(
+		async ({ parsedInput: { key, type, body }, ctx: { customer, lang } }) => {
+			const { t } = await serverTranslation(lang, 'produkter')
 
-	if (customer && !hasPermissionByPlan(customer.plan, 'basis')) {
-		throw new ActionError(t("details-page.server.attachment-not-allowed"))
-	}
+			if (customer && !hasPermissionByPlan(customer.plan, 'basis')) {
+				throw new ActionError(t('details-page.server.attachment-not-allowed'))
+			}
 
-    const b = Buffer.from(body, 'base64url')
-    const arraybuffer = new Uint8Array(b)
+			const b = Buffer.from(body, 'base64url')
+			const arraybuffer = new Uint8Array(b)
 
-    return await fileService.upload({ key, mimeType: type, body: arraybuffer })
-  })
+			return await fileService.upload({
+				key,
+				mimeType: type,
+				body: arraybuffer,
+			})
+		},
+	)
 
 export const createAttachmentAction = editableAction
-  .schema(createAttachmentValidation)
-  .action(async ({ parsedInput, ctx: {user, customer, lang} }) => {
-	const { t } = await serverTranslation(lang, 'produkter')
+	.schema(createAttachmentValidation)
+	.action(async ({ parsedInput, ctx: { user, customer, lang } }) => {
+		const { t } = await serverTranslation(lang, 'produkter')
 
-	if (customer && !hasPermissionByPlan(customer.plan, 'basis')) {
-		throw new ActionError(t("details-page.server.attachment-not-allowed"))
-	}
+		if (customer && !hasPermissionByPlan(customer.plan, 'basis')) {
+			throw new ActionError(t('details-page.server.attachment-not-allowed'))
+		}
 
-    const newAttachment = await attachmentService.create({
-      customerID: user.customerID,
-      refDomain: parsedInput.refType,
-      refID: String(parsedInput.refID),
-      name: parsedInput.name,
-      type: parsedInput.type,
-      key: parsedInput.key,
-      url: parsedInput.url,
-      userID: user.id,
-      userName: user.name,
-    })
+		const newAttachment = await attachmentService.create({
+			customerID: user.customerID,
+			refDomain: parsedInput.refType,
+			refID: String(parsedInput.refID),
+			name: parsedInput.name,
+			type: parsedInput.type,
+			key: parsedInput.key,
+			url: parsedInput.url,
+			userID: user.id,
+			userName: user.name,
+		})
 
-    if (!newAttachment) {
-      throw new ActionError(t('details-page.server.attachment-not-created'))
-    }
+		if (!newAttachment) {
+			throw new ActionError(t('details-page.server.attachment-not-created'))
+		}
 
-    return {
-      success: true,
-      attachment: newAttachment,
-    }
-  })
+		return {
+			success: true,
+			attachment: newAttachment,
+		}
+	})
 
 export const deleteAttachmentAction = editableAction
-  .schema(deleteAttachmentValidation)
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'produkter')
+	.schema(deleteAttachmentValidation)
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'produkter')
 
-	const attachment = await attachmentService.getByID(parsedInput.id)
-	if (!attachment) {
-      throw new ActionError(t('details-page.server.file-not-found'))
-	}
+		const attachment = await attachmentService.getByID(parsedInput.id)
+		if (!attachment) {
+			throw new ActionError(t('details-page.server.file-not-found'))
+		}
 
-	if (attachment.customerID != ctx.user.customerID) {
-      throw new ActionError(t('details-page.server.file-not-yours'))
-	}
+		if (attachment.customerID != ctx.user.customerID) {
+			throw new ActionError(t('details-page.server.file-not-yours'))
+		}
 
-    const didDelete = await attachmentService.deleteByID(parsedInput.id)
-    if (!didDelete) {
-      throw new ActionError(t('details-page.server.file-not-deleted'))
-    }
-  })
+		const didDelete = await attachmentService.deleteByID(parsedInput.id)
+		if (!didDelete) {
+			throw new ActionError(t('details-page.server.file-not-deleted'))
+		}
+	})
 
 export const deleteAttachmentAndFileAction = editableAction
-  .schema(z.object({ id: z.coerce.number() }))
-  .action(async ({ parsedInput: { id }, ctx: { user, lang } }) => {
-    const { t } = await serverTranslation(lang, 'produkter')
-    const attachment = await attachmentService.getByID(id)
-    if (!attachment) {
-      throw new ActionError(t('details-page.server.file-not-found'))
-    }
+	.schema(z.object({ id: z.coerce.number() }))
+	.action(async ({ parsedInput: { id }, ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'produkter')
+		const attachment = await attachmentService.getByID(id)
+		if (!attachment) {
+			throw new ActionError(t('details-page.server.file-not-found'))
+		}
 
-    if (attachment.customerID != user.customerID) {
-      throw new ActionError(t('details-page.server.file-not-yours'))
-    }
+		if (attachment.customerID != user.customerID) {
+			throw new ActionError(t('details-page.server.file-not-yours'))
+		}
 
-    const s3DeletePromise = fileService.delete({ key: attachment.key })
-    const attachmentDeletePromise = attachmentService.deleteByID(id)
+		const s3DeletePromise = fileService.delete({ key: attachment.key })
+		const attachmentDeletePromise = attachmentService.deleteByID(id)
 
-    const [s3Delete, attachDelete] = await Promise.all([
-      s3DeletePromise,
-      attachmentDeletePromise,
-    ])
+		const [s3Delete, attachDelete] = await Promise.all([
+			s3DeletePromise,
+			attachmentDeletePromise,
+		])
 
-    if (s3Delete.success && !attachDelete) {
-      throw new ActionError(t('details-page.server.file-not-deleted-database'))
-    }
+		if (s3Delete.success && !attachDelete) {
+			throw new ActionError(t('details-page.server.file-not-deleted-database'))
+		}
 
-    if (!s3Delete.success && attachDelete) {
-      throw new ActionError(t('details-page.server.file-not-deleted-bucket'))
-    }
+		if (!s3Delete.success && attachDelete) {
+			throw new ActionError(t('details-page.server.file-not-deleted-bucket'))
+		}
 
-    if (!s3Delete.success && !attachDelete) {
-      throw new ActionError(t('details-page.server.file-not-deleted-both'))
-    }
-  })
+		if (!s3Delete.success && !attachDelete) {
+			throw new ActionError(t('details-page.server.file-not-deleted-both'))
+		}
+	})
 
 export const fetchActiveUnitsAction = editableAction.action(async () => {
-  const units = await inventoryService.getActiveUnits()
-  return units
+	const units = await inventoryService.getActiveUnits()
+	return units
 })
 
 export const fetchActiveGroupsAction = editableAction.action(
-  async ({ ctx: { user } }) => {
-    const groups = await inventoryService.getActiveGroupsByID(user.customerID)
-    return groups
-  },
+	async ({ ctx: { user } }) => {
+		const groups = await inventoryService.getActiveGroupsByID(user.customerID)
+		return groups
+	},
 )
 
 export const fetchProductHistory = editableAction
-  .schema(z.object({ id: z.coerce.number() }))
-  .action(async ({ parsedInput: { id }, ctx: { user } }) => {
-    const history = await productService.getHistoryLogs(user.customerID, id)
-    return history
-  })
+	.schema(z.object({ id: z.coerce.number() }))
+	.action(async ({ parsedInput: { id }, ctx: { user } }) => {
+		const history = await productService.getHistoryLogs(user.customerID, id)
+		return history
+	})
 
 export const fetchProductFiles = editableAction
-  .schema(z.object({ id: z.coerce.number() }))
-  .action(async ({ parsedInput: { id } }) => {
-    const files = await attachmentService.getByRefID('product', id)
-    return files
-  })
+	.schema(z.object({ id: z.coerce.number() }))
+	.action(async ({ parsedInput: { id } }) => {
+		const files = await attachmentService.getByRefID('product', id)
+		return files
+	})
 
 export const fetchSuppliersAction = editableAction.action(
-  async ({ ctx: { user } }) => {
-    const suppliers = await suppliersService.getAllByCustomerID(user.customerID)
-    return suppliers
-  },
+	async ({ ctx: { user } }) => {
+		const suppliers = await suppliersService.getAllByCustomerID(user.customerID)
+		return suppliers
+	},
 )
 
 export const upsertDefaultPlacement = adminAction
@@ -203,12 +209,20 @@ export const deleteDefaultPlacement = adminAction
 	.action(
 		async ({
 			parsedInput: { productID, placementID, locationID },
-			ctx: { lang }
+			ctx: { lang },
 		}) => {
-			const { t } = await serverTranslation(lang, 'produkter', {keyPrefix: 'details-page.inventory.remove-default-placement-dialog'})
-			console.log(`Remove default placement: [${productID}, ${placementID}, ${locationID}]`)
+			const { t } = await serverTranslation(lang, 'produkter', {
+				keyPrefix: 'details-page.inventory.remove-default-placement-dialog',
+			})
+			console.log(
+				`Remove default placement: [${productID}, ${placementID}, ${locationID}]`,
+			)
 
-			const success = await inventoryService.deleteDefaultPlacement([productID, placementID, locationID])
+			const success = await inventoryService.deleteDefaultPlacement([
+				productID,
+				placementID,
+				locationID,
+			])
 
 			if (!success) {
 				throw new ActionError(t('toasts.default-placement-not-removed'))
@@ -219,33 +233,33 @@ export const deleteDefaultPlacement = adminAction
 	)
 
 export const deleteReorderAction = editableAction
-  .metadata({ actionName: 'deleteReorderFromProductPage' })
-  .schema(z.object({productID: z.coerce.number() }))
-  .action(async ({ parsedInput: { productID }, ctx: { user, lang} }) => {
-    const { t } = await serverTranslation(lang, 'action-errors')
-	const currentLocation = await locationService.getLastVisited(user.id)
-	if (!currentLocation) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-	}
+	.metadata({ actionName: 'deleteReorderFromProductPage' })
+	.schema(z.object({ productID: z.coerce.number() }))
+	.action(async ({ parsedInput: { productID }, ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'action-errors')
+		const currentLocation = await locationService.getLastVisited(user.id)
+		if (!currentLocation) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
 
-    const existsLocation = await locationService.getByID(currentLocation)
-    if (!existsLocation) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    if (existsLocation.customerID != user.customerID) {
-      throw new ActionError(
-        t('restock-action.company-location-belongs-to-your-company'),
-      )
-    }
+		const existsLocation = await locationService.getByID(currentLocation)
+		if (!existsLocation) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		if (existsLocation.customerID != user.customerID) {
+			throw new ActionError(
+				t('restock-action.company-location-belongs-to-your-company'),
+			)
+		}
 
-    const didDelete = await inventoryService.deleteReorderByIDs(
-      productID,
-	  currentLocation,
-      user.customerID,
-    )
-    if (!didDelete) {
-      throw new ActionError(t('minimum-stock-action.minimum-stock-not-deleted'))
-    }
+		const didDelete = await inventoryService.deleteReorderByIDs(
+			productID,
+			currentLocation,
+			user.customerID,
+		)
+		if (!didDelete) {
+			throw new ActionError(t('minimum-stock-action.minimum-stock-not-deleted'))
+		}
 
-    revalidatePath(`/${lang}/varer/produkter/${productID}`)
-  })
+		revalidatePath(`/${lang}/varer/produkter/${productID}`)
+	})

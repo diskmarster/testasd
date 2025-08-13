@@ -8,8 +8,8 @@ import { adminAction, getSchema } from '@/lib/safe-action'
 import { ACTION_ERR_INTERNAL, ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import {
-  isLocationLimitReached,
-  isUserLimitReached,
+	isLocationLimitReached,
+	isUserLimitReached,
 } from '@/service/customer.utils'
 import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
@@ -18,395 +18,400 @@ import { sessionService } from '@/service/session'
 import { userService } from '@/service/user'
 import { revalidatePath } from 'next/cache'
 import {
-  changeLocationStatusValidation,
-  changeUserStatusValidation,
-  createNewLocationValidation,
-  editLocationValidation,
-  editUserValidation,
-  getLocationsByUserIDValidation,
-  inviteNewUserValidation,
-  resetUserPasswordValidation,
-  updateCustomerSettingsValidation,
-  updateCustomerValidation,
-  deleteUserByIDValidation
+	changeLocationStatusValidation,
+	changeUserStatusValidation,
+	createNewLocationValidation,
+	deleteUserByIDValidation,
+	editLocationValidation,
+	editUserValidation,
+	getLocationsByUserIDValidation,
+	inviteNewUserValidation,
+	resetUserPasswordValidation,
+	updateCustomerSettingsValidation,
+	updateCustomerValidation,
 } from './validation'
 
 export const toggleUserStatusAction = adminAction
-  .metadata({ actionName: 'toggleUserStatus' })
-  .schema(async () => await getSchema(changeUserStatusValidation, 'validation'))
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
+	.metadata({ actionName: 'toggleUserStatus' })
+	.schema(async () => await getSchema(changeUserStatusValidation, 'validation'))
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
-    if (parsedInput.status == 'inactive') {
-      if (parsedInput.userIDs.some(id => ctx.user.id == id)) {
-        throw new ActionError(
-          t('organisation-action.deactivate-own-user-error'),
-        )
-      }
-      const users = await userService.getByIDs(parsedInput.userIDs)
+		if (parsedInput.status == 'inactive') {
+			if (parsedInput.userIDs.some(id => ctx.user.id == id)) {
+				throw new ActionError(
+					t('organisation-action.deactivate-own-user-error'),
+				)
+			}
+			const users = await userService.getByIDs(parsedInput.userIDs)
 
-      const hasPermission = users.some(u =>
-        hasPermissionByRank(ctx.user.role, u.role),
-      )
+			const hasPermission = users.some(u =>
+				hasPermissionByRank(ctx.user.role, u.role),
+			)
 
-      if (!hasPermission) {
-        throw new ActionError(
-          t('organisation-action.deactivate-higher-rank-user-error'),
-        )
-      }
-    }
+			if (!hasPermission) {
+				throw new ActionError(
+					t('organisation-action.deactivate-higher-rank-user-error'),
+				)
+			}
+		}
 
-    const status = parsedInput.status == 'active' ? true : false
-    const userTogglePromises = parsedInput.userIDs.map(uID => {
-      return userService.updateStatus(uID, status)
-    })
+		const status = parsedInput.status == 'active' ? true : false
+		const userTogglePromises = parsedInput.userIDs.map(uID => {
+			return userService.updateStatus(uID, status)
+		})
 
-    let userInvalidatePromises: Promise<void>[] = []
-    if (!status) {
-      userInvalidatePromises = parsedInput.userIDs.map(uID => {
-        return sessionService.invalidateByID(uID)
-      })
-    }
+		let userInvalidatePromises: Promise<void>[] = []
+		if (!status) {
+			userInvalidatePromises = parsedInput.userIDs.map(uID => {
+				return sessionService.invalidateByID(uID)
+			})
+		}
 
-    const toggleResponses = await Promise.allSettled([
-      ...userTogglePromises,
-      ...userInvalidatePromises,
-    ])
+		const toggleResponses = await Promise.allSettled([
+			...userTogglePromises,
+			...userInvalidatePromises,
+		])
 
-    for (const resp of toggleResponses) {
-      if (resp.status == 'rejected') {
-        throw new ActionError(t('organisation-action.couldnt-update-users'))
-      }
-    }
+		for (const resp of toggleResponses) {
+			if (resp.status == 'rejected') {
+				throw new ActionError(t('organisation-action.couldnt-update-users'))
+			}
+		}
 
-    revalidatePath(`/${ctx.lang}/administration/organisation`)
-  })
+		revalidatePath(`/${ctx.lang}/administration/organisation`)
+	})
 
 export const deleteUserAction = adminAction
-  .metadata({ actionName: 'deleteUser', excludeAnalytics: true })
-  .schema(deleteUserByIDValidation)
-  .action(async ({ parsedInput: { userID }, ctx: { user, lang } }) => {
-    const { t } = await serverTranslation(lang, 'action-errors')
+	.metadata({ actionName: 'deleteUser', excludeAnalytics: true })
+	.schema(deleteUserByIDValidation)
+	.action(async ({ parsedInput: { userID }, ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'action-errors')
 
-    if (user.id == userID) {
-      throw new ActionError(t('delete-own-user'))
-    }
+		if (user.id == userID) {
+			throw new ActionError(t('delete-own-user'))
+		}
 
-    const deleted = await userService.deleteByID(userID)
-    if(!deleted) {
-      throw new ActionError(t('delete-user-failed'))
-    }
-  })
+		const deleted = await userService.deleteByID(userID)
+		if (!deleted) {
+			throw new ActionError(t('delete-user-failed'))
+		}
+	})
 
 export const inviteNewUserAction = adminAction
-  .metadata({ actionName: 'inviteNewUser' })
-  .schema(async () => await getSchema(inviteNewUserValidation, 'validation'))
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const existingUser = await userService.getByEmail(parsedInput.email)
-    if (existingUser) {
-      throw new ActionError(t('organisation-action.existing-user-mail'))
-    }
+	.metadata({ actionName: 'inviteNewUser' })
+	.schema(async () => await getSchema(inviteNewUserValidation, 'validation'))
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const existingUser = await userService.getByEmail(parsedInput.email)
+		if (existingUser) {
+			throw new ActionError(t('organisation-action.existing-user-mail'))
+		}
 
-    const users = await userService.getAllByCustomerID(ctx.user.customerID)
-    const customer = await customerService.getByID(ctx.user.customerID)
-    if (!customer) {
-      throw new ActionError(
-        t('organisation-action.company-account-doesnt-exist'),
-      )
-    }
+		const users = await userService.getAllByCustomerID(ctx.user.customerID)
+		const customer = await customerService.getByID(ctx.user.customerID)
+		if (!customer) {
+			throw new ActionError(
+				t('organisation-action.company-account-doesnt-exist'),
+			)
+		}
 
-    if (isUserLimitReached(customer.plan, customer.extraUsers, users.length)) {
-      throw new ActionError(t('organisation-action.company-user-limit-reached'))
-    }
+		if (isUserLimitReached(customer.plan, customer.extraUsers, users.length)) {
+			throw new ActionError(t('organisation-action.company-user-limit-reached'))
+		}
 
-    const userInviteLink = await userService.createUserLink({
-      email: parsedInput.email,
-      role: parsedInput.role,
-      customerID: ctx.user.customerID,
-      locationIDs: parsedInput.locationIDs,
-      webAccess: parsedInput.webAccess,
-      appAccess: parsedInput.appAccess,
-      priceAccess: parsedInput.priceAccess,
-    })
-    if (!userInviteLink) {
-      throw new ActionError(
-        t('organisation-action.couldnt-send-activation-link'),
-      )
-    }
+		const userInviteLink = await userService.createUserLink({
+			email: parsedInput.email,
+			role: parsedInput.role,
+			customerID: ctx.user.customerID,
+			locationIDs: parsedInput.locationIDs,
+			webAccess: parsedInput.webAccess,
+			appAccess: parsedInput.appAccess,
+			priceAccess: parsedInput.priceAccess,
+		})
+		if (!userInviteLink) {
+			throw new ActionError(
+				t('organisation-action.couldnt-send-activation-link'),
+			)
+		}
 
-    const subject = customer
-      ? `${customer.company} ${t('organisation-action.has-invited-you')} ${siteConfig.name}`
-      : `${t('organisation-action.you-have-been-invited')} ${siteConfig.name}`
+		const subject = customer
+			? `${customer.company} ${t('organisation-action.has-invited-you')} ${siteConfig.name}`
+			: `${t('organisation-action.you-have-been-invited')} ${siteConfig.name}`
 
-    await emailService.sendRecursively(
-      [parsedInput.email],
-      subject,
-      EmailInviteUser({ company: customer.company, link: userInviteLink }),
-    )
-  })
+		await emailService.sendRecursively(
+			[parsedInput.email],
+			subject,
+			EmailInviteUser({ company: customer.company, link: userInviteLink }),
+		)
+	})
 
 export const createNewLocationAction = adminAction
-  .metadata({ actionName: 'createNewLocation' })
-  .schema(
-    async () => await getSchema(createNewLocationValidation, 'validation'),
-  )
+	.metadata({ actionName: 'createNewLocation' })
+	.schema(
+		async () => await getSchema(createNewLocationValidation, 'validation'),
+	)
 
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    // 1. is location limit reached?
-    // 2. does location exist?
-    // 3. create location
-    // 4. create defualt batch and placement for location
-    // 5. create zero-quantaties for every product for new location
-    // 6. add user accesses for userIDs
-    // 7. revalidates pathname
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		// 1. is location limit reached?
+		// 2. does location exist?
+		// 3. create location
+		// 4. create defualt batch and placement for location
+		// 5. create zero-quantaties for every product for new location
+		// 6. add user accesses for userIDs
+		// 7. revalidates pathname
 
-    const locations = await locationService.getByCustomerID(ctx.user.customerID)
-    const customer = await customerService.getByID(ctx.user.customerID)
-    if (!customer) {
-      throw new ActionError(
-        t('organisation-action.company-account-doesnt-exist'),
-      )
-    }
+		const locations = await locationService.getByCustomerID(ctx.user.customerID)
+		const customer = await customerService.getByID(ctx.user.customerID)
+		if (!customer) {
+			throw new ActionError(
+				t('organisation-action.company-account-doesnt-exist'),
+			)
+		}
 
-    if (isLocationLimitReached(customer.plan, locations.length)) {
-      throw new ActionError(
-        t('organisation-action.company-location-limit-reached'),
-      )
-    }
+		if (isLocationLimitReached(customer.plan, locations.length)) {
+			throw new ActionError(
+				t('organisation-action.company-location-limit-reached'),
+			)
+		}
 
-    const existingLocation = await locationService.getByName(
-      parsedInput.name.trim(),
-      customer.id,
-    )
-    if (existingLocation) {
-      throw new ActionError(t('organisation-action.location-already-exists'))
-    }
+		const existingLocation = await locationService.getByName(
+			parsedInput.name.trim(),
+			customer.id,
+		)
+		if (existingLocation) {
+			throw new ActionError(t('organisation-action.location-already-exists'))
+		}
 
-    const didCreateLocation = await locationService.createWithAccess(
-      parsedInput.name,
-      parsedInput.customerID,
-      parsedInput.userIDs,
-    )
-    if (!didCreateLocation) {
-      throw new ActionError(t('organisation-action.location-not-created'))
-    }
+		const didCreateLocation = await locationService.createWithAccess(
+			parsedInput.name,
+			parsedInput.customerID,
+			parsedInput.userIDs,
+		)
+		if (!didCreateLocation) {
+			throw new ActionError(t('organisation-action.location-not-created'))
+		}
 
-    revalidatePath(parsedInput.pathname)
-  })
+		revalidatePath(parsedInput.pathname)
+	})
 
 export const editLocationAction = adminAction
-  .metadata({ actionName: 'editLocation' })
-  .schema(async () => await getSchema(editLocationValidation, 'validation'))
+	.metadata({ actionName: 'editLocation' })
+	.schema(async () => await getSchema(editLocationValidation, 'validation'))
 
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    // 1. fetch old accesses for location
-    // 2. update location name
-    // 3. create/remove user accesses
-    // 4. revalidate path
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		// 1. fetch old accesses for location
+		// 2. update location name
+		// 3. create/remove user accesses
+		// 4. revalidate path
 
-    const oldLocationAccesses = await locationService.getAccessesByLocationID(
-      parsedInput.locationID,
-    )
-    const oldUsersAccess = oldLocationAccesses.map(old => old.userID)
+		const oldLocationAccesses = await locationService.getAccessesByLocationID(
+			parsedInput.locationID,
+		)
+		const oldUsersAccess = oldLocationAccesses.map(old => old.userID)
 
-    const didUpdateLocation = await locationService.updateLocation(
-      parsedInput.locationID,
-      ctx.user.customerID,
-      parsedInput.name,
-      oldUsersAccess,
-      parsedInput.userIDs,
-      ctx.lang,
-    )
-    if (!didUpdateLocation) {
-      throw new ActionError(t('organisation-action.location-not-updated'))
-    }
+		const didUpdateLocation = await locationService.updateLocation(
+			parsedInput.locationID,
+			ctx.user.customerID,
+			parsedInput.name,
+			oldUsersAccess,
+			parsedInput.userIDs,
+			ctx.lang,
+		)
+		if (!didUpdateLocation) {
+			throw new ActionError(t('organisation-action.location-not-updated'))
+		}
 
-    revalidatePath(`/${ctx.lang}/administration/organisation`)
-  })
+		revalidatePath(`/${ctx.lang}/administration/organisation`)
+	})
 
 export const changeLocationStatusAction = adminAction
-  .metadata({ actionName: 'changeLocation' })
-  .schema(
-    async () => await getSchema(changeLocationStatusValidation, 'validation'),
-  )
+	.metadata({ actionName: 'changeLocation' })
+	.schema(
+		async () => await getSchema(changeLocationStatusValidation, 'validation'),
+	)
 
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    // 1. toggle location by ID
-    // 2. revalidate path
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		// 1. toggle location by ID
+		// 2. revalidate path
 
-    const status = parsedInput.status == 'active' ? false : true
-    const locationTogglePromises = parsedInput.locationIDs.map(
-      (locID: string) => {
-        return locationService.updateStatus(locID, status)
-      },
-    )
+		const status = parsedInput.status == 'active' ? false : true
+		const locationTogglePromises = parsedInput.locationIDs.map(
+			(locID: string) => {
+				return locationService.updateStatus(locID, status)
+			},
+		)
 
-    const toggleResponses = await Promise.allSettled(locationTogglePromises)
+		const toggleResponses = await Promise.allSettled(locationTogglePromises)
 
-    for (const resp of toggleResponses) {
-      if (resp.status == 'rejected') {
-        throw new ActionError(t('organisation-action.couldnt-update-locations'))
-      }
-      if (resp.status == 'fulfilled' && resp.value == false) {
-        throw new ActionError(t('organisation-action.couldnt-update-locations'))
-      }
-    }
+		for (const resp of toggleResponses) {
+			if (resp.status == 'rejected') {
+				throw new ActionError(t('organisation-action.couldnt-update-locations'))
+			}
+			if (resp.status == 'fulfilled' && resp.value == false) {
+				throw new ActionError(t('organisation-action.couldnt-update-locations'))
+			}
+		}
 
-    revalidatePath(`/${ctx.lang}/administration/organisation`)
-  })
+		revalidatePath(`/${ctx.lang}/administration/organisation`)
+	})
 
 export const updateCustomerAction = adminAction
-  .metadata({ actionName: 'updateCustomer' })
-  .schema(async () => await getSchema(updateCustomerValidation, 'validation'))
+	.metadata({ actionName: 'updateCustomer' })
+	.schema(async () => await getSchema(updateCustomerValidation, 'validation'))
 
-  .action(async ({ parsedInput, ctx: { user, lang } }) => {
-    const { t } = await serverTranslation(lang, 'action-errors')
-    const updatedCustomer = await customerService.updateByID(user.customerID, {
-      ...parsedInput,
-    })
-    if (!updatedCustomer) {
-      throw new ActionError(t('organisation-action.customer-wasnt-updated'))
-    }
+	.action(async ({ parsedInput, ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'action-errors')
+		const updatedCustomer = await customerService.updateByID(user.customerID, {
+			...parsedInput,
+		})
+		if (!updatedCustomer) {
+			throw new ActionError(t('organisation-action.customer-wasnt-updated'))
+		}
 
-    return updatedCustomer
-  })
+		return updatedCustomer
+	})
 
 export const updateCustomerSettingsAction = adminAction
-  .metadata({ actionName: 'updateCustomerSettings' })
-  .schema(async () => await getSchema(updateCustomerSettingsValidation, 'validation'))
-  .action(async ({parsedInput, ctx: {user, lang}}) => {
-    const { t } = await serverTranslation(lang, 'action-errors')
+	.metadata({ actionName: 'updateCustomerSettings' })
+	.schema(
+		async () => await getSchema(updateCustomerSettingsValidation, 'validation'),
+	)
+	.action(async ({ parsedInput, ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'action-errors')
 
-    if (user.customerID != parsedInput.customerID) {
-      throw new ActionError(t('organisation-action.access-not-allowed'))
-    }
+		if (user.customerID != parsedInput.customerID) {
+			throw new ActionError(t('organisation-action.access-not-allowed'))
+		}
 
-    const updatedSettings = await customerService.updateSettings(parsedInput.id, {
-      ...parsedInput.settings,
-    })
+		const updatedSettings = await customerService.updateSettings(
+			parsedInput.id,
+			{
+				...parsedInput.settings,
+			},
+		)
 
-    if (updatedSettings == undefined) {
-      throw new ActionError(t('organisation-action.setting-not-updated'))
-    }
+		if (updatedSettings == undefined) {
+			throw new ActionError(t('organisation-action.setting-not-updated'))
+		}
 
-    return updatedSettings
-  })
+		return updatedSettings
+	})
 
 export const resetUserPasswordAction = adminAction
-  .metadata({ actionName: 'resetUserPassword' })
-  .schema(resetUserPasswordValidation)
-  .action(async ({ parsedInput, ctx: { user, lang } }) => {
-    const { t } = await serverTranslation(lang, 'action-errors')
-    if (parsedInput.userID == user.id) {
-      throw new ActionError(t('organisation-action.reset-own-pw-error'))
-    }
+	.metadata({ actionName: 'resetUserPassword' })
+	.schema(resetUserPasswordValidation)
+	.action(async ({ parsedInput, ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'action-errors')
+		if (parsedInput.userID == user.id) {
+			throw new ActionError(t('organisation-action.reset-own-pw-error'))
+		}
 
-    const userToUpdate = await userService.getByID(parsedInput.userID)
-    if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
-      throw new ActionError(t('organisation-action.reset-higher-rank-pw-error'))
-    }
+		const userToUpdate = await userService.getByID(parsedInput.userID)
+		if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
+			throw new ActionError(t('organisation-action.reset-higher-rank-pw-error'))
+		}
 
-    const linkCreated = await passwordResetService.createAndSendLink(
-      parsedInput.email,
-      'pw',
-      lang,
-    )
-    if (!linkCreated) {
-      throw new ActionError(
-        `${ACTION_ERR_INTERNAL}. ${t('organisation-action.couldnt-create-reset-link')}`,
-      )
-    }
-  })
+		const linkCreated = await passwordResetService.createAndSendLink(
+			parsedInput.email,
+			'pw',
+			lang,
+		)
+		if (!linkCreated) {
+			throw new ActionError(
+				`${ACTION_ERR_INTERNAL}. ${t('organisation-action.couldnt-create-reset-link')}`,
+			)
+		}
+	})
 
 export const editUserAction = adminAction
-  .metadata({ actionName: 'editUser' })
-  .schema(async () => await getSchema(editUserValidation, 'organisation'))
-  .action(async ({ parsedInput: { userID, data }, ctx: { user, lang } }) => {
-    const { t } = await serverTranslation(lang, 'action-errors')
+	.metadata({ actionName: 'editUser' })
+	.schema(async () => await getSchema(editUserValidation, 'organisation'))
+	.action(async ({ parsedInput: { userID, data }, ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'action-errors')
 
-    if (userID == user.id) {
-      throw new ActionError(t('organisation-action.edit-own-user-error'))
-    }
+		if (userID == user.id) {
+			throw new ActionError(t('organisation-action.edit-own-user-error'))
+		}
 
-    const userToUpdate = await userService.getByID(userID)
-    if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
-      throw new ActionError(
-        t('organisation-action.edit-higher-rank-user-error'),
-      )
-    }
+		const userToUpdate = await userService.getByID(userID)
+		if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
+			throw new ActionError(
+				t('organisation-action.edit-higher-rank-user-error'),
+			)
+		}
 
-    const { locationIDs, ...userData } = data
+		const { locationIDs, ...userData } = data
 
-    const updatedUser = await userService.updateByID(userID, {
-      ...userData,
-    })
+		const updatedUser = await userService.updateByID(userID, {
+			...userData,
+		})
 
-    if (!updatedUser) {
-      throw new ActionError(t('organisation-action.user-wasnt-updated'))
-    }
+		if (!updatedUser) {
+			throw new ActionError(t('organisation-action.user-wasnt-updated'))
+		}
 
-    const updated = await locationService.updateAccessByUserID(
-      userID,
-      user.customerID,
-      locationIDs,
-    )
-    if (!updated) {
-      throw new ActionError(
-        t('organisation-action.user-locations-wasnt-updated'),
-      )
-    }
-  })
+		const updated = await locationService.updateAccessByUserID(
+			userID,
+			user.customerID,
+			locationIDs,
+		)
+		if (!updated) {
+			throw new ActionError(
+				t('organisation-action.user-locations-wasnt-updated'),
+			)
+		}
+	})
 
 export const getLocationsByUserIDAction = adminAction
-  // No metadata, since we dont need to log when querying data
-  .schema(getLocationsByUserIDValidation)
-  .action(async ({ parsedInput: { userID, customerID }, ctx }) => {
-    let allLocations = await locationService.getByCustomerID(customerID)
-    const userLocations = await locationService.getAllByUserID(userID)
-    const sessionUserLocations = await locationService.getAllByUserID(
-      ctx.user.id,
-    )
+	// No metadata, since we dont need to log when querying data
+	.schema(getLocationsByUserIDValidation)
+	.action(async ({ parsedInput: { userID, customerID }, ctx }) => {
+		let allLocations = await locationService.getByCustomerID(customerID)
+		const userLocations = await locationService.getAllByUserID(userID)
+		const sessionUserLocations = await locationService.getAllByUserID(
+			ctx.user.id,
+		)
 
-    if (!hasPermissionByRank(ctx.user.role, 'administrator')) {
-      allLocations = allLocations.filter(loc =>
-        sessionUserLocations.some(l => l.id == loc.id),
-      )
-    }
+		if (!hasPermissionByRank(ctx.user.role, 'administrator')) {
+			allLocations = allLocations.filter(loc =>
+				sessionUserLocations.some(l => l.id == loc.id),
+			)
+		}
 
-    return {
-      allLocations,
-      userLocations,
-    }
-  })
+		return {
+			allLocations,
+			userLocations,
+		}
+	})
 
 export const resetUserPinAction = adminAction
-  .metadata({ actionName: 'resetUserPin' })
-  .schema(resetUserPasswordValidation)
-  .action(async ({ parsedInput, ctx: { user, lang } }) => {
-    const { t } = await serverTranslation(lang, 'action-errors')
-    if (parsedInput.userID == user.id) {
-      throw new ActionError(t('organisation-action.reset-own-pin-error'))
-    }
+	.metadata({ actionName: 'resetUserPin' })
+	.schema(resetUserPasswordValidation)
+	.action(async ({ parsedInput, ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'action-errors')
+		if (parsedInput.userID == user.id) {
+			throw new ActionError(t('organisation-action.reset-own-pin-error'))
+		}
 
-    const userToUpdate = await userService.getByID(parsedInput.userID)
-    if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
-      throw new ActionError(
-        t('organisation-action.reset-higher-rank-pin-error'),
-      )
-    }
+		const userToUpdate = await userService.getByID(parsedInput.userID)
+		if (userToUpdate && !hasPermissionByRank(user.role, userToUpdate.role)) {
+			throw new ActionError(
+				t('organisation-action.reset-higher-rank-pin-error'),
+			)
+		}
 
-    const linkCreated = await passwordResetService.createAndSendLink(
-      parsedInput.email,
-      'pin',
-      lang,
-    )
-    if (!linkCreated) {
-      throw new ActionError(
-        `${ACTION_ERR_INTERNAL}. ${t('organisation-action.couldnt-create-reset-link')}`,
-      )
-    }
-  })
+		const linkCreated = await passwordResetService.createAndSendLink(
+			parsedInput.email,
+			'pin',
+			lang,
+		)
+		if (!linkCreated) {
+			throw new ActionError(
+				`${ACTION_ERR_INTERNAL}. ${t('organisation-action.couldnt-create-reset-link')}`,
+			)
+		}
+	})

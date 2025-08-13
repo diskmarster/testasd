@@ -32,7 +32,7 @@ async function Page({ params: { lng, id }, user, customer }: PageProps) {
 				</Suspense>
 			</div>
 			{hasPermissionByPlan(customer.plan, 'basis') && (
-				<div className='flex flex-col lg:flex-row items-stretch gap-4 lg:h-96'>
+				<div className='flex flex-col lg:flex-row items-stretch gap-4 lg:h-auto'>
 					<Suspense fallback={<FilesSkeleton />}>
 						<ProductFilesWrapper lng={lng} id={id} user={user} />
 					</Suspense>
