@@ -1,9 +1,9 @@
 import { customerService } from '@/service/customer'
 import { isAfter } from 'date-fns'
 import { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapters/headers'
-import { apikeys } from '../api-key/api-key'
 import { ApiKey } from '../database/schema/apikeys'
 import { Customer } from '../database/schema/customer'
+import { hasher } from '../hash/hasher'
 
 export function getVercelRequestID(headers: ReadonlyHeaders): string {
   let id = headers.get('x-vercel-id')
@@ -35,7 +35,39 @@ export async function validatePublicRequest(
     }
   }
 
-  const tokenhash = apikeys.hash(authparts[1])
+  const tokenhash = hasher.hash(authparts[1])
+  const apikey = await customerService.getApiKey(tokenhash)
+  if (!apikey) {
+    return {
+      customer: null,
+      apikey: null,
+    }
+  }
+
+  const customer = await customerService.getByID(apikey.customerID)
+  if (!customer) {
+    return {
+      customer: null,
+      apikey: null,
+    }
+  }
+
+  if (apikey.expiry != null && isAfter(new Date(), apikey.expiry)) {
+    return {
+      customer: null,
+      apikey: null,
+    }
+  }
+
+  return { customer, apikey }
+}
+
+export async function validateWebhook(
+	token: string
+): Promise<
+  { customer: Customer; apikey: ApiKey } | { customer: null; apikey: null }
+> {
+  const tokenhash = hasher.hash(token)
   const apikey = await customerService.getApiKey(tokenhash)
   if (!apikey) {
     return {

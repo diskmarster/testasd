@@ -5,7 +5,7 @@ test('create new customer', async () => {
 	const testFunc = async () => {
 		const newCustomer = await customerService.create({
 			company: 'Test customer',
-			email: 'test@skancode.dk',
+			email: 'test+1@skancode.dk',
 			plan: 'lite',
 		})
 

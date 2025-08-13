@@ -15,6 +15,7 @@ import {
 import {  PlacementID } from '@/lib/database/schema/inventory'
 import { LocationID } from '@/lib/database/schema/customer'
 import { inventoryService } from '@/service/inventory'
+import { integrationsService } from '@/service/integrations'
 
 export const createProductAction = editableAction
   .metadata({ actionName: 'createProduct' })
@@ -22,10 +23,15 @@ export const createProductAction = editableAction
   .action(async ({ parsedInput: { defaults, ...parsed }, ctx }) => {
     const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
-		const defaultPlacementMap = defaults?.reduce<Map<LocationID, PlacementID>>((acc, cur) => {
-			acc.set(cur.locationID, cur.placementID)
-			return acc
-		}, new Map<LocationID, PlacementID>())
+	const integrationSettings = await integrationsService.getSettings(ctx.user.id)
+	if (integrationSettings?.useSyncProducts) {
+		throw new ActionError(t('product-action.sync-is-on'))
+	}
+
+	const defaultPlacementMap = defaults?.reduce<Map<LocationID, PlacementID>>((acc, cur) => {
+		acc.set(cur.locationID, cur.placementID)
+		return acc
+	}, new Map<LocationID, PlacementID>())
 
     const newProduct = await productService.create(
       parsed,
@@ -49,6 +55,11 @@ export const updateProductAction = editableAction
       parsedInput: { productID, data: updatedProductData, dirtyFields },
     }) => {
       const { t } = await serverTranslation(lang, 'action-errors')
+			const integrationSettings = await integrationsService.getSettings(user.id)
+			if (integrationSettings?.useSyncProducts) {
+				throw new ActionError(t('product-action.sync-is-on'))
+			}
+
       if (updatedProductData.supplierID == -1) {
         updatedProductData.supplierID = null
       }
@@ -83,6 +94,12 @@ export const toggleBarredProductAction = editableAction
   .action(
     async ({ parsedInput: { productID, isBarred }, ctx: { user, lang } }) => {
       const { t } = await serverTranslation(lang, 'action-errors')
+
+	  const integrationSettings = await integrationsService.getSettings(user.id)
+	  if (integrationSettings?.useSyncProducts) {
+		  throw new ActionError(t('product-action.sync-is-on'))
+ 	  }
+
       const updatedProduct = await productService.updateBarredStatus(
         productID,
         isBarred,
@@ -103,6 +120,13 @@ export const importProductsAction = adminAction
   .metadata({ actionName: 'importProducts', excludeAnalytics: true })
   .schema(importProductsValidation)
   .action(async ({ parsedInput: importedData, ctx }) => {
+    const { t } = await serverTranslation(ctx.lang, 'action-errors')
+
+	const integrationSettings = await integrationsService.getSettings(ctx.user.id)
+	if (integrationSettings?.useSyncProducts) {
+		throw new ActionError(t('product-action.sync-is-on'))
+ 	}
+
     const importRes = await productService.importProducts(
       ctx.user.customerID,
       ctx.user.id,
@@ -126,6 +150,11 @@ export const deleteProductAction = adminAction
   .schema(deleteProductValidation)
   .action(async ({ parsedInput: { productID }, ctx }) => {
     const {t} = await serverTranslation(ctx.lang, 'action-errors')
+
+		const integrationSettings = await integrationsService.getSettings(ctx.user.id)
+		if (integrationSettings?.useSyncProducts) {
+			throw new ActionError(t('product-action.sync-is-on'))
+		}
 
     const res = await productService.softDeleteProduct(
 			productID,

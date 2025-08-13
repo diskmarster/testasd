@@ -69,22 +69,22 @@ async function Page({ params: { lng }, user, customer }: Props) {
 						customer.extraUsers,
 						users.length,
 					) && (
-							<div className='flex items-center gap-2'>
-								<span className='text-xs font-semibold text-destructive'>
-									{t('user-page.user-limit-reached')}
-								</span>
-								<TooltipProvider delayDuration={250}>
-									<Tooltip>
-										<TooltipTrigger>
-											<Icons.alert className='size-[18px] text-destructive' />
-										</TooltipTrigger>
-										<TooltipContent className='bg-foreground text-background'>
-											<p>{t('user-page.user-upgrade-plan')}</p>
-										</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
-							</div>
-						)}
+						<div className='flex items-center gap-2'>
+							<span className='text-xs font-semibold text-destructive'>
+								{t('user-page.user-limit-reached')}
+							</span>
+							<TooltipProvider delayDuration={250}>
+								<Tooltip>
+									<TooltipTrigger>
+										<Icons.alert className='size-[18px] text-destructive' />
+									</TooltipTrigger>
+									<TooltipContent className='bg-foreground text-background'>
+										<p>{t('user-page.user-upgrade-plan')}</p>
+									</TooltipContent>
+								</Tooltip>
+							</TooltipProvider>
+						</div>
+					)}
 					<ModalInviteUser
 						locations={locations}
 						currentLocationID={currentLocationID}

@@ -12,144 +12,144 @@ const OUTPUT_LEN = 32
 const PARELLELISM = 1
 
 export async function hashPassword(pw: string): Promise<string> {
-  const hashed = await hash(pw, {
-    memoryCost: MEMORY_COST,
-    timeCost: TIME_COST,
-    outputLen: OUTPUT_LEN,
-    parallelism: PARELLELISM,
-  })
-  return hashed
+	const hashed = await hash(pw, {
+		memoryCost: MEMORY_COST,
+		timeCost: TIME_COST,
+		outputLen: OUTPUT_LEN,
+		parallelism: PARELLELISM,
+	})
+	return hashed
 }
 
 export async function verifyPassword(
-  hash: string,
-  unhashed: string,
+	hash: string,
+	unhashed: string,
 ): Promise<boolean> {
-  const valid = await verify(hash, unhashed, {
-    memoryCost: MEMORY_COST,
-    timeCost: TIME_COST,
-    outputLen: OUTPUT_LEN,
-    parallelism: PARELLELISM,
-  })
-  return valid
+	const valid = await verify(hash, unhashed, {
+		memoryCost: MEMORY_COST,
+		timeCost: TIME_COST,
+		outputLen: OUTPUT_LEN,
+		parallelism: PARELLELISM,
+	})
+	return valid
 }
 
 export function userDTO(u: User): UserNoHash {
-  return u
+	return u
 }
 
 export type JWTObject = {
-  sessionId: string
-  user: UserNoHash
+	sessionId: string
+	user: UserNoHash
 }
 
 export function signJwt(payload: JWTObject): string {
-  return jwt.sign(payload, process.env.JWT_SECRET as string)
+	return jwt.sign(payload, process.env.JWT_SECRET as string)
 }
 
 type JWTFailed = {
-  name: 'TokenExpiredError' | 'JsonWebTokenError' | 'NotBeforeError'
-  message: string
-  expiredAt?: number
-  date?: string
+	name: 'TokenExpiredError' | 'JsonWebTokenError' | 'NotBeforeError'
+	message: string
+	expiredAt?: number
+	date?: string
 }
 
 export type VerifyJWTResponse =
-  | {
-      ok: true
-      data: JWTObject
-      error?: undefined
-    }
-  | {
-      ok: false
-      data?: undefined
-      error: JWTFailed
-    }
+	| {
+			ok: true
+			data: JWTObject
+			error?: undefined
+	  }
+	| {
+			ok: false
+			data?: undefined
+			error: JWTFailed
+	  }
 export function verifyJWT(jwtString: string): VerifyJWTResponse {
-  try {
-    const payload = jwt.verify(jwtString, process.env.JWT_SECRET as string)
+	try {
+		const payload = jwt.verify(jwtString, process.env.JWT_SECRET as string)
 
-    let jwtObj: JWTObject
+		let jwtObj: JWTObject
 
-    if (typeof payload == 'string') {
-      jwtObj = JSON.parse(payload)
-    } else {
-      jwtObj = {
-        sessionId: payload.sessionId,
-        user: payload.user,
-      }
-    }
+		if (typeof payload == 'string') {
+			jwtObj = JSON.parse(payload)
+		} else {
+			jwtObj = {
+				sessionId: payload.sessionId,
+				user: payload.user,
+			}
+		}
 
-    return {
-      ok: true,
-      data: jwtObj,
-    }
-  } catch (e) {
-    return {
-      ok: false,
-      error: e as JWTFailed,
-    }
-  }
+		return {
+			ok: true,
+			data: jwtObj,
+		}
+	} catch (e) {
+		return {
+			ok: false,
+			error: e as JWTFailed,
+		}
+	}
 }
 
 export function getLanguageFromRequest(headers: ReadonlyHeaders): string {
-  const langHeader = headers.get('Accept-Language')
-  if (!langHeader) {
-    return fallbackLng
-  }
-  const acceptLang = langHeader.split(',')[0].split('-')[0]
-  // @ts-ignore
-  if (languages.includes(acceptLang)) {
-    return acceptLang
-  } else {
-    return fallbackLng
-  }
+	const langHeader = headers.get('Accept-Language')
+	if (!langHeader) {
+		return fallbackLng
+	}
+	const acceptLang = langHeader.split(',')[0].split('-')[0]
+	// @ts-ignore
+	if (languages.includes(acceptLang)) {
+		return acceptLang
+	} else {
+		return fallbackLng
+	}
 }
 
 export async function validateRequest(
-  headers: ReadonlyHeaders,
+	headers: ReadonlyHeaders,
 ): Promise<
-  { session: Session; user: AuthUser } | { session: null; user: null }
+	{ session: Session; user: AuthUser } | { session: null; user: null }
 > {
-  try {
-    const authHeader = headers.get('Authorization')
-    if (!authHeader) {
-      console.error('No authentication header found')
-      return {
-        session: null,
-        user: null,
-      }
-    }
+	try {
+		const authHeader = headers.get('Authorization')
+		if (!authHeader) {
+			console.error('No authentication header found')
+			return {
+				session: null,
+				user: null,
+			}
+		}
 
-    const authWords = authHeader.split(' ')
-    if (
-      authWords.length != 2 ||
-      !authWords[0].toLowerCase().includes('bearer')
-    ) {
-      console.error('Invalid authentication header')
-      return {
-        session: null,
-        user: null,
-      }
-    }
+		const authWords = authHeader.split(' ')
+		if (
+			authWords.length != 2 ||
+			!authWords[0].toLowerCase().includes('bearer')
+		) {
+			console.error('Invalid authentication header')
+			return {
+				session: null,
+				user: null,
+			}
+		}
 
-    const jwtString = authWords[1]
+		const jwtString = authWords[1]
 
-    const res = verifyJWT(jwtString)
-    if (!res.ok) {
-      console.error('Could not verify jwt')
-      return {
-        session: null,
-        user: null,
-      }
-    }
+		const res = verifyJWT(jwtString)
+		if (!res.ok) {
+			console.error('Could not verify jwt')
+			return {
+				session: null,
+				user: null,
+			}
+		}
 
-    return await sessionService.validateSessionId(res.data.sessionId)
-  } catch (e) {
-    console.error(`Error validating request: '${(e as Error).message}'`)
-    return {
-      session: null,
-      user: null,
-    }
-  }
+		return await sessionService.validateSessionId(res.data.sessionId)
+	} catch (e) {
+		console.error(`Error validating request: '${(e as Error).message}'`)
+		return {
+			session: null,
+			user: null,
+		}
+	}
 }

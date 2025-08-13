@@ -1,9 +1,12 @@
 'use client'
 
+import { deleteProductAction } from '@/app/[lng]/(site)/varer/produkter/actions'
 import { useTranslation } from '@/app/i18n/client'
+import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { FormEvent, useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
+import { toast } from 'sonner'
 import { Button } from '../ui/button'
 import {
 	DialogContentV2,
@@ -15,9 +18,6 @@ import {
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { deleteProductAction } from '@/app/[lng]/(site)/varer/produkter/actions'
-import { toast } from 'sonner'
-import { siteConfig } from '@/config/site'
 
 export function DeleteProductModal() {
 	const lng = useLanguage()
@@ -57,11 +57,11 @@ export function DeleteProductModal() {
 		}
 
 		startTransition(async () => {
-			const res = await deleteProductAction({productID})
+			const res = await deleteProductAction({ productID })
 			if (res && res.serverError) {
-				toast.error(t(siteConfig.errorTitle), {description: res.serverError})
+				toast.error(t(siteConfig.errorTitle), { description: res.serverError })
 			} else if (res && res.validationErrors) {
-				toast.error(t(siteConfig.errorTitle), {description: t('')})
+				toast.error(t(siteConfig.errorTitle), { description: t('') })
 			} else {
 				toast.success(t('delete-product-modal.product-deleted'))
 				onOpenChange(false)
@@ -95,15 +95,17 @@ export function DeleteProductModal() {
 					<div className='grid gap-1'>
 						<Label className='font-medium'>
 							{t('delete-product-modal.label-start')}
-							<span className='font-semibold italic cursor-pointer hover:underline' onClick={async () => {
-								try {
-									await navigator.clipboard.writeText(productSku ?? '')
-									toast.success(t('delete-product-modal.sku-copied'))
-								} catch(e) {
-									console.error((e as Error).message)
-									toast.error(t('delete-product-modal.copy-failed'))
-								}
-							}}>
+							<span
+								className='font-semibold italic cursor-pointer hover:underline'
+								onClick={async () => {
+									try {
+										await navigator.clipboard.writeText(productSku ?? '')
+										toast.success(t('delete-product-modal.sku-copied'))
+									} catch (e) {
+										console.error((e as Error).message)
+										toast.error(t('delete-product-modal.copy-failed'))
+									}
+								}}>
 								{productSku}
 							</span>
 							{t('delete-product-modal.label-end')}
@@ -112,7 +114,7 @@ export function DeleteProductModal() {
 							id='product-sku'
 							placeholder={productSku}
 							value={skuInput}
-							onChange={(e) => setSkuInput(e.target.value)}
+							onChange={e => setSkuInput(e.target.value)}
 						/>
 					</div>
 				</form>
@@ -129,7 +131,9 @@ export function DeleteProductModal() {
 							form='delete-product-form'
 							variant={'destructive'}
 							disabled={pending || skuInput != productSku}>
-							{pending && <Icons.spinner className='size-4 animate-spin mr-2'/>}
+							{pending && (
+								<Icons.spinner className='size-4 animate-spin mr-2' />
+							)}
 							{t('delete-product-modal.delete-btn')}
 						</Button>
 					</div>

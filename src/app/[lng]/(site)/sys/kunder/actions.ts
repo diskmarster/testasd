@@ -7,6 +7,7 @@ import { adminAction, getSchema, sysAdminAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { emailService } from '@/service/email'
+import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { productService } from '@/service/products'
 import { userService } from '@/service/user'
@@ -14,7 +15,7 @@ import { generateIdFromEntropySize } from 'lucia'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import {
-    createApiKeyValidation,
+  createApiKeyValidation,
   createClientValidation,
   deleteClientStatusValidation,
   importHistoryValidation,
@@ -22,8 +23,7 @@ import {
   toggleClientStatusValidation,
   updateClientValidation,
 } from './validation'
-import { inventoryService } from '@/service/inventory'
-import { apikeys } from '@/lib/api-key/api-key'
+import { hasher } from '@/lib/hash/hasher'
 
 export const createClientAction = sysAdminAction
   .schema(async () => await getSchema(createClientValidation, 'kunder'))
@@ -149,20 +149,42 @@ export const importHistoryAction = sysAdminAction
 export const fetchItemGroupsForCustomerActions = adminAction
   .schema(z.object({ customerID: z.coerce.number() }))
   .action(async ({ parsedInput, ctx: { user } }) => {
-		const itemGroups = await inventoryService.getActiveGroupsByID(parsedInput.customerID)
-		return itemGroups.map(g => ({value: g.name, label: g.name, disabled: false}))
+    const itemGroups = await inventoryService.getActiveGroupsByID(
+      parsedInput.customerID,
+    )
+    return itemGroups.map(g => ({
+      value: g.name,
+      label: g.name,
+      disabled: false,
+    }))
   })
 
 export const createApiKeyAction = sysAdminAction
   .schema(createApiKeyValidation)
   .action(async ({ parsedInput }) => {
-		const key = await customerService.createApiKey(
-			parsedInput.customerID,
-			parsedInput.name,
-			parsedInput.expiry,
-		)
+    const key = await customerService.createApiKey(
+      parsedInput.customerID,
+      parsedInput.name,
+      parsedInput.expiry,
+    )
 
-		const plainkey = apikeys.decrypt(key.key)
+    const plainkey = hasher.decrypt(key.key)
 
     return plainkey
   })
+
+export const toggleCanUseIntegrationsAction = sysAdminAction
+	.schema(z.object({ customerID: z.coerce.number() }))
+	.action(async ({ parsedInput: { customerID } }) => {
+		const customerToUpdate = await customerService.getByID(customerID)
+		if (customerToUpdate == undefined) {
+			throw new ActionError(`Kunne ikke finde kunde med id ${customerID}`)
+		}
+
+		const didUpdate = await customerService.updateByID(customerID, {
+			canUseIntegration: !customerToUpdate.canUseIntegration,
+		})
+		if (!didUpdate) {
+			throw new ActionError(`Kunne ikke opdatere '${customerToUpdate.company}'`)
+		}
+	})

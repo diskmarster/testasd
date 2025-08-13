@@ -6,12 +6,12 @@ import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 interface Props extends WithAuthProps {}
 
 async function Page(_: Props) {
-  return (
-    <SiteWrapper>
-      <ActiveUsersChartContainer />
-      <FilteredAnalyticsContainer />
-    </SiteWrapper>
-  )
+	return (
+		<SiteWrapper>
+			<ActiveUsersChartContainer />
+			<FilteredAnalyticsContainer />
+		</SiteWrapper>
+	)
 }
 
 export default withAuth(Page, undefined, 'system_administrator')

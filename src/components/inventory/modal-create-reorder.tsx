@@ -16,275 +16,278 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { AutoComplete } from '../ui/autocomplete'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
-import { 
+import {
 	DialogContentV2,
 	DialogFooterV2,
 	DialogHeaderV2,
 	DialogTitleV2,
 	DialogTriggerV2,
-	DialogV2
+	DialogV2,
 } from '../ui/dialog-v2'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
 
 interface Props {
-  products: Product[]
+	products: Product[]
 }
 
 export function ModalCreateReorder({ products }: Props) {
-  const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string>()
-  const [searchValue, setSearchValue] = useState<string>('')
-  const [pending, startTransition] = useTransition()
-  const lng = useLanguage()
-  const { t } = useTranslation(lng, 'genbestil')
-  const schema = createReorderValidation(t)
+	const [open, setOpen] = useState(false)
+	const [error, setError] = useState<string>()
+	const [searchValue, setSearchValue] = useState<string>('')
+	const [pending, startTransition] = useTransition()
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'genbestil')
+	const schema = createReorderValidation(t)
 
-  const productOptions = products
-    .map(prod => ({
-      label: prod.text1,
-      value: prod.id.toString(),
-    }))
-    .filter(prod =>
-      prod.label.toLowerCase().includes(searchValue.toLowerCase()),
-    )
+	const productOptions = products
+		.map(prod => ({
+			label: prod.text1,
+			value: prod.id.toString(),
+		}))
+		.filter(prod =>
+			prod.label.toLowerCase().includes(searchValue.toLowerCase()),
+		)
 
-  function onOpenChange(open: boolean) {
-    reset()
-    setSearchValue('')
-    setError(undefined)
-    setOpen(open)
-  }
+	function onOpenChange(open: boolean) {
+		reset()
+		setSearchValue('')
+		setError(undefined)
+		setOpen(open)
+	}
 
-  const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
-    z.infer<typeof schema>
-  >({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      minimum: 0,
+	const { register, setValue, reset, handleSubmit, formState, watch } = useForm<
+		z.infer<typeof schema>
+	>({
+		resolver: zodResolver(schema),
+		defaultValues: {
+			minimum: 0,
 			orderAmount: 0,
 			maxOrderAmount: 0,
-    },
-  })
+		},
+	})
 
-  const formValues = watch()
+	const formValues = watch()
 
-  function increment(key: 'minimum' | 'maxOrderAmount' | 'orderAmount') {
-    // @ts-ignore
-    const nextValue = parseFloat(formValues[key] + 1)
-    setValue(key, parseFloat(nextValue.toFixed(4)), {
-      shouldValidate: true,
-    })
-  }
+	function increment(key: 'minimum' | 'maxOrderAmount' | 'orderAmount') {
+		// @ts-ignore
+		const nextValue = parseFloat(formValues[key] + 1)
+		setValue(key, parseFloat(nextValue.toFixed(4)), {
+			shouldValidate: true,
+		})
+	}
 
-  function decrement(key: 'minimum' | 'maxOrderAmount' | 'orderAmount') {
-    const nextValue = Math.max(0, formValues[key] - 1)
-    setValue(key, parseFloat(nextValue.toFixed(4)), {
-      shouldValidate: true,
-    })
-  }
+	function decrement(key: 'minimum' | 'maxOrderAmount' | 'orderAmount') {
+		const nextValue = Math.max(0, formValues[key] - 1)
+		setValue(key, parseFloat(nextValue.toFixed(4)), {
+			shouldValidate: true,
+		})
+	}
 
-  function onSubmit(values: z.infer<typeof schema>) {
-    startTransition(async () => {
-      const res = await createReorderAction(values)
+	function onSubmit(values: z.infer<typeof schema>) {
+		startTransition(async () => {
+			const res = await createReorderAction(values)
 
-      if (res && res.serverError) {
-        setError(res.serverError)
-        return
-      }
+			if (res && res.serverError) {
+				setError(res.serverError)
+				return
+			}
 
-      if (res && res.validationErrors) {
-        setError(t('modal-create-reorder.error-occured'))
-        return
-      }
+			if (res && res.validationErrors) {
+				setError(t('modal-create-reorder.error-occured'))
+				return
+			}
 
 			onOpenChange(false)
-      toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${t('toasts.create-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
-      })
-      updateChipCount()
-    })
-  }
+			toast.success(t(`common:${siteConfig.successTitle}`), {
+				description: `${t('toasts.create-reorder')} ${products.find(prod => prod.id == formValues.productID)?.text1}`,
+			})
+			updateChipCount()
+		})
+	}
 
-  return (
-    <DialogV2 open={open} onOpenChange={onOpenChange}>
-      <DialogTriggerV2 asChild>
-        <Button size='icon' variant='outline' tooltip={t('modal-create-reorder.title')}>
-          <Icons.plus className='size-4' />
-        </Button>
-      </DialogTriggerV2>
-      <DialogContentV2 className='md:max-w-lg'>
-        <DialogHeaderV2>
-				<div className='flex items-center gap-2'>
-						<Icons.plus className="size-4 text-primary" />
-          <DialogTitleV2>{t('modal-create-reorder.title')}</DialogTitleV2>
-				</div>
-        </DialogHeaderV2>
-          <form
+	return (
+		<DialogV2 open={open} onOpenChange={onOpenChange}>
+			<DialogTriggerV2 asChild>
+				<Button
+					size='icon'
+					variant='outline'
+					tooltip={t('modal-create-reorder.title')}>
+					<Icons.plus className='size-4' />
+				</Button>
+			</DialogTriggerV2>
+			<DialogContentV2 className='md:max-w-lg'>
+				<DialogHeaderV2>
+					<div className='flex items-center gap-2'>
+						<Icons.plus className='size-4 text-primary' />
+						<DialogTitleV2>{t('modal-create-reorder.title')}</DialogTitleV2>
+					</div>
+				</DialogHeaderV2>
+				<form
 					id='create-reorder-form'
-            onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4 px-3'>
-            {error && (
-              <Alert variant='destructive'>
-                <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-					<p className="text-sm text-muted-foreground">
-            {t('modal-create-reorder.description')}
+					onSubmit={handleSubmit(onSubmit)}
+					className='space-y-4 px-3'>
+					{error && (
+						<Alert variant='destructive'>
+							<Icons.alert className='size-4 !top-3' />
+							<AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
+							<AlertDescription>{error}</AlertDescription>
+						</Alert>
+					)}
+					<p className='text-sm text-muted-foreground'>
+						{t('modal-create-reorder.description')}
 					</p>
-            <div className='grid gap-2'>
-              <Label>{t('modal-create-reorder.product')}</Label>
-              <AutoComplete
-                autoFocus={false}
-                placeholder={t('modal-create-reorder.product-placeholder')}
-                emptyMessage={t('modal-create-reorder.product-emptymessage')}
-                items={productOptions}
-                onSelectedValueChange={value =>
-                  setValue('productID', parseInt(value))
-                }
-                onSearchValueChange={setSearchValue}
-                selectedValue={
-                  formValues.productID ? formValues.productID.toString() : ''
-                }
-                searchValue={searchValue}
-              />
-              {formState.errors.productID && (
-                <p className='text-sm text-destructive'>
-                  {formState.errors.productID.message}
-                </p>
-              )}
-            </div>
-            <div className='pt-2 flex flex-col gap-2'>
-              <Label>{t('modal-create-reorder.minimum-stock')}</Label>
-              <div className='flex'>
-                <Button
-                  tabIndex={-1}
-                  size='icon'
-                  type='button'
-                  variant='outline'
-                  className='h-9 w-28 border-r-0 rounded-r-none'
-                  onClick={() => decrement('minimum')}>
-                  <Icons.minus className='size-6' />
-                </Button>
-                <Input
-                  type='number'
-                  step={0.01}
-                  {...register('minimum')}
-                  className={cn(
-                    'w-full h-9 rounded-none text-center text-xl z-10',
-                    '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-                  )}
-                />
-                <Button
-                  tabIndex={-1}
-                  size='icon'
-                  type='button'
-                  variant='outline'
-                  className='h-9 w-28 border-l-0 rounded-l-none'
-                  onClick={() => increment('minimum')}>
-                  <Icons.plus className='size-6' />
-                </Button>
-              </div>
-              {formState.errors.minimum && (
-                <p className='text-sm text-destructive'>
-                  {formState.errors.minimum.message}
-                </p>
-              )}
-            </div>
-            <div className='pt-2 flex flex-col gap-2'>
-              <Label>{t('modal-create-reorder.orderAmount')}</Label>
-              <p className='text-sm text-muted-foreground -mt-1.5'>
-                {t('modal-create-reorder.orderAmount-description')}
-              </p>
-              <div className='flex'>
-                <Button
-                  tabIndex={-1}
-                  size='icon'
-                  type='button'
-                  variant='outline'
-                  className='h-9 w-28 border-r-0 rounded-r-none'
-                  onClick={() => decrement('orderAmount')}>
-                  <Icons.minus className='size-6' />
-                </Button>
-                <Input
-                  type='number'
-                  step={0.01}
-                  {...register('orderAmount')}
-                  className={cn(
-                    'w-full h-9 rounded-none text-center text-xl z-10',
-                    '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-                  )}
-                />
-                <Button
-                  tabIndex={-1}
-                  size='icon'
-                  type='button'
-                  variant='outline'
-                  className='h-9 w-28 border-l-0 rounded-l-none'
-                  onClick={() => increment('orderAmount')}>
-                  <Icons.plus className='size-6' />
-                </Button>
-              </div>
-              {formState.errors.orderAmount && (
-                <p className='text-sm text-destructive'>
-                  {formState.errors.orderAmount.message}
-                </p>
-              )}
-            </div>
-            <div className='pt-2 flex flex-col gap-2'>
-              <Label>{t('modal-create-reorder.maxAmount')}</Label>
-              <p className='text-sm text-muted-foreground -mt-1.5'>
-                {t('modal-create-reorder.maxAmount-description')}
-              </p>
-              <div className='flex'>
-                <Button
-                  tabIndex={-1}
-                  size='icon'
-                  type='button'
-                  variant='outline'
-                  className='h-9 w-28 border-r-0 rounded-r-none'
-                  onClick={() => decrement('maxOrderAmount')}>
-                  <Icons.minus className='size-6' />
-                </Button>
-                <Input
-                  type='number'
-                  step={0.01}
-                  {...register('maxOrderAmount')}
-                  className={cn(
-                    'w-full h-9 rounded-none text-center text-xl z-10',
-                    '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-                  )}
-                />
-                <Button
-                  tabIndex={-1}
-                  size='icon'
-                  type='button'
-                  variant='outline'
-                  className='h-9 w-28 border-l-0 rounded-l-none'
-                  onClick={() => increment('maxOrderAmount')}>
-                  <Icons.plus className='size-6' />
-                </Button>
-              </div>
-              {formState.errors.maxOrderAmount && (
-                <p className='text-sm text-destructive'>
-                  {formState.errors.maxOrderAmount.message}
-                </p>
-              )}
-            </div>
-          </form>
-					<DialogFooterV2>
-            <Button
+					<div className='grid gap-2'>
+						<Label>{t('modal-create-reorder.product')}</Label>
+						<AutoComplete
+							autoFocus={false}
+							placeholder={t('modal-create-reorder.product-placeholder')}
+							emptyMessage={t('modal-create-reorder.product-emptymessage')}
+							items={productOptions}
+							onSelectedValueChange={value =>
+								setValue('productID', parseInt(value))
+							}
+							onSearchValueChange={setSearchValue}
+							selectedValue={
+								formValues.productID ? formValues.productID.toString() : ''
+							}
+							searchValue={searchValue}
+						/>
+						{formState.errors.productID && (
+							<p className='text-sm text-destructive'>
+								{formState.errors.productID.message}
+							</p>
+						)}
+					</div>
+					<div className='pt-2 flex flex-col gap-2'>
+						<Label>{t('modal-create-reorder.minimum-stock')}</Label>
+						<div className='flex'>
+							<Button
+								tabIndex={-1}
+								size='icon'
+								type='button'
+								variant='outline'
+								className='h-9 w-28 border-r-0 rounded-r-none'
+								onClick={() => decrement('minimum')}>
+								<Icons.minus className='size-6' />
+							</Button>
+							<Input
+								type='number'
+								step={0.01}
+								{...register('minimum')}
+								className={cn(
+									'w-full h-9 rounded-none text-center text-xl z-10',
+									'[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+								)}
+							/>
+							<Button
+								tabIndex={-1}
+								size='icon'
+								type='button'
+								variant='outline'
+								className='h-9 w-28 border-l-0 rounded-l-none'
+								onClick={() => increment('minimum')}>
+								<Icons.plus className='size-6' />
+							</Button>
+						</div>
+						{formState.errors.minimum && (
+							<p className='text-sm text-destructive'>
+								{formState.errors.minimum.message}
+							</p>
+						)}
+					</div>
+					<div className='pt-2 flex flex-col gap-2'>
+						<Label>{t('modal-create-reorder.orderAmount')}</Label>
+						<p className='text-sm text-muted-foreground -mt-1.5'>
+							{t('modal-create-reorder.orderAmount-description')}
+						</p>
+						<div className='flex'>
+							<Button
+								tabIndex={-1}
+								size='icon'
+								type='button'
+								variant='outline'
+								className='h-9 w-28 border-r-0 rounded-r-none'
+								onClick={() => decrement('orderAmount')}>
+								<Icons.minus className='size-6' />
+							</Button>
+							<Input
+								type='number'
+								step={0.01}
+								{...register('orderAmount')}
+								className={cn(
+									'w-full h-9 rounded-none text-center text-xl z-10',
+									'[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+								)}
+							/>
+							<Button
+								tabIndex={-1}
+								size='icon'
+								type='button'
+								variant='outline'
+								className='h-9 w-28 border-l-0 rounded-l-none'
+								onClick={() => increment('orderAmount')}>
+								<Icons.plus className='size-6' />
+							</Button>
+						</div>
+						{formState.errors.orderAmount && (
+							<p className='text-sm text-destructive'>
+								{formState.errors.orderAmount.message}
+							</p>
+						)}
+					</div>
+					<div className='pt-2 flex flex-col gap-2'>
+						<Label>{t('modal-create-reorder.maxAmount')}</Label>
+						<p className='text-sm text-muted-foreground -mt-1.5'>
+							{t('modal-create-reorder.maxAmount-description')}
+						</p>
+						<div className='flex'>
+							<Button
+								tabIndex={-1}
+								size='icon'
+								type='button'
+								variant='outline'
+								className='h-9 w-28 border-r-0 rounded-r-none'
+								onClick={() => decrement('maxOrderAmount')}>
+								<Icons.minus className='size-6' />
+							</Button>
+							<Input
+								type='number'
+								step={0.01}
+								{...register('maxOrderAmount')}
+								className={cn(
+									'w-full h-9 rounded-none text-center text-xl z-10',
+									'[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+								)}
+							/>
+							<Button
+								tabIndex={-1}
+								size='icon'
+								type='button'
+								variant='outline'
+								className='h-9 w-28 border-l-0 rounded-l-none'
+								onClick={() => increment('maxOrderAmount')}>
+								<Icons.plus className='size-6' />
+							</Button>
+						</div>
+						{formState.errors.maxOrderAmount && (
+							<p className='text-sm text-destructive'>
+								{formState.errors.maxOrderAmount.message}
+							</p>
+						)}
+					</div>
+				</form>
+				<DialogFooterV2>
+					<Button
 						form='create-reorder-form'
-              disabled={!formState.isValid || pending || formState.isSubmitting}
-              size='sm'
-              className='gap-2'>
-              {pending && <Icons.spinner className='size-4 animate-spin' />}
-              {t('modal-create-reorder.create-button')}
-            </Button>
-					</DialogFooterV2>
-      </DialogContentV2>
-    </DialogV2>
-  )
+						disabled={!formState.isValid || pending || formState.isSubmitting}
+						size='sm'
+						className='gap-2'>
+						{pending && <Icons.spinner className='size-4 animate-spin' />}
+						{t('modal-create-reorder.create-button')}
+					</Button>
+				</DialogFooterV2>
+			</DialogContentV2>
+		</DialogV2>
+	)
 }

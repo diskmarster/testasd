@@ -1,3 +1,3 @@
-import LayoutSite from "@/components/common/layout-site";
+import LayoutSite from '@/components/common/layout-site'
 
 export default LayoutSite

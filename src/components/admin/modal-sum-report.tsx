@@ -1,17 +1,42 @@
 'use client'
 
-import * as DFNs from 'date-fns'
-import { fetchItemGroupsForCustomerActions, fetchLocationsForCustomerActions } from '@/app/[lng]/(site)/sys/kunder/actions'
+import {
+	fetchItemGroupsForCustomerActions,
+	fetchLocationsForCustomerActions,
+} from '@/app/[lng]/(site)/sys/kunder/actions'
 import { genInventoryMovementsReportAction } from '@/app/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
 import { useSession } from '@/context/session'
+import { HistoryType, historyTypes } from '@/data/inventory.types'
 import { CustomerID } from '@/lib/database/schema/customer'
+import {
+	genInventoryMovementsExcel,
+	genSummarizedReportPDF,
+} from '@/lib/pdf/inventory-movements-rapport'
 import { cn, formatDate } from '@/lib/utils'
+import * as DFNs from 'date-fns'
+import { endOfMonth, startOfMonth } from 'date-fns'
+import { da } from 'date-fns/locale'
 import { useEffect, useState, useTransition } from 'react'
+import { DateRange } from 'react-day-picker'
+import { toast } from 'sonner'
+import * as XLSX from 'xlsx'
 import { Button, buttonVariants } from '../ui/button'
+import { Calendar } from '../ui/calendar'
+import { Checkbox } from '../ui/checkbox'
+import {
+	DialogContentV2,
+	DialogDescriptionV2,
+	DialogFooterV2,
+	DialogHeaderV2,
+	DialogTitleV2,
+	DialogTriggerV2,
+	DialogV2,
+} from '../ui/dialog-v2'
 import { Icons } from '../ui/icons'
 import { Label } from '../ui/label'
+import { MultiSelect, Option } from '../ui/multi-select'
 import {
 	Select,
 	SelectContent,
@@ -19,17 +44,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '../ui/select'
-import * as XLSX from 'xlsx'
-import { DialogContentV2, DialogDescriptionV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogTriggerV2, DialogV2 } from '../ui/dialog-v2'
-import { Calendar } from '../ui/calendar'
-import { DateRange } from 'react-day-picker'
-import { endOfMonth, startOfMonth } from 'date-fns'
-import { Checkbox } from '../ui/checkbox'
-import { genInventoryMovementsExcel, genSummarizedReportPDF } from '@/lib/pdf/inventory-movements-rapport'
-import { da } from 'date-fns/locale'
-import { HistoryType, historyTypes } from '@/data/inventory.types'
-import { MultiSelect, Option } from '../ui/multi-select'
-import { toast } from 'sonner'
 
 type HistoryTypeWithAll = HistoryType | 'all'
 
@@ -43,14 +57,19 @@ export function ModalSumReport() {
 	const [itemGroups, setItemGroups] = useState<Option[]>([])
 	const [open, setOpen] = useState(false)
 	const [fileType, setFileType] = useState<'pdf' | 'excel'>('pdf')
-	const [date, setDate] = useState<DateRange | undefined>({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) })
+	const [date, setDate] = useState<DateRange | undefined>({
+		from: startOfMonth(new Date()),
+		to: endOfMonth(new Date()),
+	})
 	const [isSummarized, setIsSummarized] = useState(false)
-	const [selectedTypes, setSelectedTypes] = useState<HistoryTypeWithAll[]>(['all'])
+	const [selectedTypes, setSelectedTypes] = useState<HistoryTypeWithAll[]>([
+		'all',
+	])
 	const [selectedGroups, setSelectedGroups] = useState<string[]>(['all'])
 	const [isWithPrices, setIsWithPrices] = useState(false)
 
 	function reset() {
-		setSelectedLocation("")
+		setSelectedLocation('')
 		setSelectedGroups(['all'])
 		setSelectedTypes(['all'])
 		setIsSummarized(false)
@@ -77,7 +96,11 @@ export function ModalSumReport() {
 			const res = await fetchItemGroupsForCustomerActions({
 				customerID: customerID,
 			})
-			const allOption: Option = { value: 'all', label: t('inventory-sum-report.item-group-all-label'), disabled: false }
+			const allOption: Option = {
+				value: 'all',
+				label: t('inventory-sum-report.item-group-all-label'),
+				disabled: false,
+			}
 
 			if (res && res.data) {
 				setItemGroups([allOption, ...res.data])
@@ -103,15 +126,15 @@ export function ModalSumReport() {
 				locationID: selectedLocation,
 				itemGroup: selectedGroups,
 				dateRange: cleanedDate,
-				type: selectedTypes
+				type: selectedTypes,
 			})
 
 			if (res && res.data) {
 				const { customer, location, history } = res.data
 
 				if (history.length == 0) {
-					toast.error(t("inventory-sum-report.error-toast"), {
-						description: t("inventory-sum-report.error-toast-desc")
+					toast.error(t('inventory-sum-report.error-toast'), {
+						description: t('inventory-sum-report.error-toast-desc'),
 					})
 					return
 				}
@@ -132,16 +155,28 @@ export function ModalSumReport() {
 							history,
 							isSummarized,
 							isWithPrices,
-							selectedGroups.join(", "),
+							selectedGroups.join(', '),
 							{ from: date.from!, to: date.to! },
-							selectedTypes.map(v => v.slice(0,1).toUpperCase() + v.slice(1)).join(", "),
-							t
+							selectedTypes
+								.map(v => v.slice(0, 1).toUpperCase() + v.slice(1))
+								.join(', '),
+							t,
 						)
-						pdf.save(`lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.pdf`)
+						pdf.save(
+							`lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.pdf`,
+						)
 						return
 					case 'excel':
-						const workbook = genInventoryMovementsExcel(history, isSummarized, isWithPrices, t)
-						XLSX.writeFile(workbook, `lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.xlsx`)
+						const workbook = genInventoryMovementsExcel(
+							history,
+							isSummarized,
+							isWithPrices,
+							t,
+						)
+						XLSX.writeFile(
+							workbook,
+							`lagerbevægelses-rapport-${location.name}-${formatDate(today, false)}.xlsx`,
+						)
 						return
 				}
 			}
@@ -158,15 +193,30 @@ export function ModalSumReport() {
 		}
 	}, [])
 
-	const submitDisabled = pending || locations.length == 0 || !selectedLocation || itemGroups.length == 0 || selectedGroups.length == 0 || selectedTypes.length == 0
-	const submitPending = pending && locations.length > 0 && selectedLocation && itemGroups.length > 0
+	const submitDisabled =
+		pending ||
+		locations.length == 0 ||
+		!selectedLocation ||
+		itemGroups.length == 0 ||
+		selectedGroups.length == 0 ||
+		selectedTypes.length == 0
+	const submitPending =
+		pending && locations.length > 0 && selectedLocation && itemGroups.length > 0
 
-	const historyOptions = [{ value: 'all', label: t('inventory-sum-report.item-group-all-label'), disabled: false }]
-	historyTypes.map(t => historyOptions.push({
-		label: t,
-		value: t,
-		disabled: false,
-	}))
+	const historyOptions = [
+		{
+			value: 'all',
+			label: t('inventory-sum-report.item-group-all-label'),
+			disabled: false,
+		},
+	]
+	historyTypes.map(t =>
+		historyOptions.push({
+			label: t,
+			value: t,
+			disabled: false,
+		}),
+	)
 
 	return (
 		<DialogV2 open={open} onOpenChange={onOpenChange}>
@@ -216,7 +266,7 @@ export function ModalSumReport() {
 									disabled={pending}
 									options={itemGroups}
 									selected={selectedGroups}
-									onChange={(val) => {
+									onChange={val => {
 										const allIndex = val.findIndex(v => v == 'all')
 										if (val.length > 1 && allIndex == 0) {
 											setSelectedGroups(val.filter(v => v != 'all'))
@@ -227,7 +277,9 @@ export function ModalSumReport() {
 										}
 									}}
 									placeholder={t('inventory-sum-report.loading-item-group')}
-									searchPlaceholder={t('inventory-sum-report.loading-item-group')}
+									searchPlaceholder={t(
+										'inventory-sum-report.loading-item-group',
+									)}
 								/>
 							</div>
 							<div className='grid gap-2'>
@@ -239,7 +291,9 @@ export function ModalSumReport() {
 									onChange={val => {
 										const allIndex = val.findIndex(v => v == 'all')
 										if (val.length > 1 && allIndex == 0) {
-											setSelectedTypes(val.filter(v => v != 'all') as HistoryTypeWithAll[])
+											setSelectedTypes(
+												val.filter(v => v != 'all') as HistoryTypeWithAll[],
+											)
 										} else if (allIndex != -1) {
 											setSelectedTypes(['all'])
 										} else {
@@ -247,16 +301,32 @@ export function ModalSumReport() {
 										}
 									}}
 									placeholder={t('inventory-sum-report.loading-item-group')}
-									searchPlaceholder={t('inventory-sum-report.loading-item-group')}
+									searchPlaceholder={t(
+										'inventory-sum-report.loading-item-group',
+									)}
 								/>
 							</div>
 							<div className='flex gap-2 items-center'>
-								<Checkbox id='summarize' className='size-5' checked={isSummarized} onCheckedChange={checked => setIsSummarized(Boolean(checked))} />
-								<Label htmlFor='summarize'>{t('inventory-sum-report.summed-label')}</Label>
+								<Checkbox
+									id='summarize'
+									className='size-5'
+									checked={isSummarized}
+									onCheckedChange={checked => setIsSummarized(Boolean(checked))}
+								/>
+								<Label htmlFor='summarize'>
+									{t('inventory-sum-report.summed-label')}
+								</Label>
 							</div>
 							<div className='flex gap-2 items-center'>
-								<Checkbox id='with-prices' className='size-5' checked={isWithPrices} onCheckedChange={checked => setIsWithPrices(Boolean(checked))} />
-								<Label htmlFor='with-prices'>{t('inventory-sum-report.with-prices-label')}</Label>
+								<Checkbox
+									id='with-prices'
+									className='size-5'
+									checked={isWithPrices}
+									onCheckedChange={checked => setIsWithPrices(Boolean(checked))}
+								/>
+								<Label htmlFor='with-prices'>
+									{t('inventory-sum-report.with-prices-label')}
+								</Label>
 							</div>
 							<div className='grid gap-2'>
 								<Label>{t('inventory-sum-report.file-format-label')}</Label>
@@ -284,13 +354,23 @@ export function ModalSumReport() {
 								{date ? (
 									<p className='text-muted-foreground text-sm'>
 										{date.from
-											? DFNs.formatDate(date.from, 'do MMM yyyy', { locale: da })
-											: t("inventory-sum-report.choose-date", { context: "from" })} - {date.to
-												? DFNs.formatDate(date.to, "do MMM yyyy", { locale: da })
-												: t("inventory-sum-report.choose-date", { context: "to" })}
+											? DFNs.formatDate(date.from, 'do MMM yyyy', {
+													locale: da,
+												})
+											: t('inventory-sum-report.choose-date', {
+													context: 'from',
+												})}{' '}
+										-{' '}
+										{date.to
+											? DFNs.formatDate(date.to, 'do MMM yyyy', { locale: da })
+											: t('inventory-sum-report.choose-date', {
+													context: 'to',
+												})}
 									</p>
 								) : (
-									<p className='text-muted-foreground text-sm'>{t("inventory-sum-report.choose-both-dates")}</p>
+									<p className='text-muted-foreground text-sm'>
+										{t('inventory-sum-report.choose-both-dates')}
+									</p>
 								)}
 								<Calendar
 									mode='range'
@@ -298,11 +378,11 @@ export function ModalSumReport() {
 									onSelect={setDate}
 									className='rounded border'
 									classNames={{
-										month: "w-full space-y-4",
-										head_row: "justify-around flex",
+										month: 'w-full space-y-4',
+										head_row: 'justify-around flex',
 										day: cn(
-											buttonVariants({ variant: "ghost" }),
-											"h-8 w-full p-0 font-normal aria-selected:opacity-100"
+											buttonVariants({ variant: 'ghost' }),
+											'h-8 w-full p-0 font-normal aria-selected:opacity-100',
 										),
 									}}
 								/>

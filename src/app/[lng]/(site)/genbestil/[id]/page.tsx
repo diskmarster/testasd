@@ -1,8 +1,8 @@
-import { SiteWrapper } from "@/components/common/site-wrapper";
-import { withAuth, WithAuthProps } from "@/components/common/with-auth";
-import { Suspense } from "react";
-import { DetailsWrapper } from "./details-wrapper";
-import { DetailsSkeleton } from "@/components/orders/details";
+import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
+import { DetailsSkeleton } from '@/components/orders/details'
+import { Suspense } from 'react'
+import { DetailsWrapper } from './details-wrapper'
 
 interface Props extends WithAuthProps {
 	params: { id: string }

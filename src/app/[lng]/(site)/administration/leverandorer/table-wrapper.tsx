@@ -1,6 +1,6 @@
-import { SuppliersTable } from "@/components/suppliers/table"
-import { suppliersService } from "@/service/suppliers"
-import { User } from "lucia"
+import { SuppliersTable } from '@/components/suppliers/table'
+import { suppliersService } from '@/service/suppliers'
+import { User } from 'lucia'
 
 interface Props {
 	user: User
@@ -8,7 +8,5 @@ interface Props {
 
 export async function TableWrapper({ user }: Props) {
 	const suppliers = await suppliersService.getAllByCustomerID(user.customerID)
-	return (
-		<SuppliersTable suppliers={suppliers} />
-	)
+	return <SuppliersTable suppliers={suppliers} />
 }

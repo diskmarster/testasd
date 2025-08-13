@@ -184,7 +184,13 @@ export function getTableHistoryColumns(
 		cell: ({ getValue }) => {
 			const type = getValue<HistoryType>()
 			const variant =
-				type == 'tilgang' ? 'green' : type == 'afgang' ? 'red' : type == 'slet' ? 'destructive' : 'yellow'
+				type == 'tilgang'
+					? 'green'
+					: type == 'afgang'
+						? 'red'
+						: type == 'slet'
+							? 'destructive'
+							: 'yellow'
 
 			return (
 				<Badge className='capitalize' variant={variant}>

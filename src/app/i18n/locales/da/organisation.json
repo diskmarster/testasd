@@ -304,5 +304,103 @@
       "button-no": "Nej",
       "button-yes": "Ja, slet planlagt e-mail"
     }
-  }
+  },
+	"integrations": {
+		"card-title": "Integrationer",
+		"card-desc": "Gør NemLager smartere med integrationer",
+		"before-install-sub-1": "Før du kan komme i gang med at bruge NemLagers integrationer, skal du først installere en data udbyder i NemLager.",
+		"before-install-sub-2": "NemLager understøtter lige nu e-conomic som data udbyder.",
+		"install-btn": "Installer",
+		"go-back-btn": "Gå tilbage",
+		"integration-installed": "{{provider}} integration blev installeret",
+		"nothing-in-clipboard": "Du har ikke kopieret noget",
+		"e-conomic": {
+			"description": "Synkroniser varekartotek med e-conomics webhooks",
+			"sub-1": "Får at NemLager kan hente data fra e-conomic skal de to systemer først forbindes. Dette gøres ved at installere en NemLager applikation i jeres e-conomic konto.",
+			"sub-2-part-1": "Applikationen installeres ved at klikke på vores",
+			"sub-2-link": "installationslink",
+			"sub-2-part-2": "og tilføje den til jeres konto. Kun superbrugere af e-conomic kan gøre dette trin.",
+			"sub-3": "Dernæst skal du gemme ID'et i NemLager ved at kopiere det ind i inputfeltet nedenunder. Skulle du have lukket siden ned kan dette ID også findes i e-conomic via Alle instillinger > Udvidelser > Apps i e-conomic.",
+			"id-label": "E-conomic ID",
+			"id-placeholder": "Indsæt ID her",
+			"paste-btn": "Indsæt",
+			"save-btn": "Gem"
+		},
+		"updating-settings-loading": "Opdaterer integrationer...",
+		"updating-settings-error": "Integrationer blev ikke opdateret",
+		"updating-settings-success": "Integrationer blev opdateret",
+		"syncing-catalogue-loading": "Synkroniserer varekartotek...",
+		"syncing-catalogue-error": "Varekartotek blev ikke synkroniseret",
+		"syncing-catalogue-success": "Varekartotek blev synkroniseret",
+		"providers-title": "Data udbydere",
+		"providers-desc": "Her kan du se hvilke data udbydere jeres konto har installeret",
+		"integrations-title": "Integrationer",
+		"integrations-desc": "Her kan du se hvilke integrationer jeres konto har aktiveret",
+		"integrations": {
+			"sync-products-title": "Varekartotek synkroniser",
+			"sync-products-desc": "Opdater NemLager varer når de opdateres i et andet system"
+		},
+		"delete-modal": {
+			"trigger": "Afinstaller",
+			"title": "Afinstaller {{provider}}",
+			"body": "Når du afinstallerer en data udbyder i NemLager, slettes data kun fra NemLager. Du skal derfor selv sørge for at frakoble NemLager i det eksterne system, hvis integrationen skal ophøre helt.",
+			"close-btn": "Luk",
+			"confirm-btn": "Afinstaller",
+			"toast-success": "Data udbyder afinstalleret"
+		},
+		"enable-sync-dialog": {
+			"title": "Aktiver synkronisering af varekartotek",
+			"description": "Når du aktiverer synkroniseringen af dit varekartotek, kan kun SkanCode slå dette fra igen. Vil du aktivere synkroniseringen?",
+			"dismiss-btn": "Annuller",
+			"accept-btn": "Aktiver"
+		},
+		"actions": {
+			"cannot-update-settings": "Kunne ikke opdatere integrationen",
+			"did-not-update-settings": "Integrationen blev ikke opdateret",
+			"did-not-delete-settings": "Integrationen blev ikke slettet",
+			"did-not-install-settings": "Integrationen blev ikke installeret",
+			"cannot-sync-catalogue": "Kunne ikke synkronisere varekartoteket",
+			"did-not-sync-catalogue": "Fejl ved synkronisering af varekartotek"
+		}
+	},
+	"integration-logs": {
+		"table": {
+			"columns": {
+				"inserted": "Dato",
+				"event-type": "Type",
+				"event-info": "Info",
+				"status": "Status",
+				"message": "Besked"
+			},
+			"status": "Ukendt",
+			"status_success": "OK",
+			"status_error": "Fejl",
+			"event-type": "Ukendt",
+			"event-type_productEvent_create": "Vare oprettelse",
+			"event-type_productEvent_update": "Vare opdatering",
+			"event-type_productEvent_delete": "Vare sletning",
+			"event-type_productEvent_re-number": "Varenummer ændring",
+			"event-type_productEvent_invalid": "Vare synkronisering",
+			"event-type_fullSync": "Varekartotek synkronisering",
+			"event-info": "Ingen",
+			"event-info_none": "Ingen info",
+			"event-info_create": "Varenr. {{ sku }}",
+			"event-info_update": "Varenr. {{ sku }}",
+			"event-info_delete": "Varenr. {{ sku }}",
+			"event-info_re-number": "Fra {{ from }} til {{ to }}",
+			"message": "Ingen besked",
+			"message_product-sync-successful": "Vare synkroniseret succesfuldt",
+			"message_product-invalid-economic-webhook": "Ugyldig webhook type fra e-conomic",
+			"message_product-not-created-economic": "Vare fra e-conomic kunne ikke oprettes",
+			"message_product-not-updated-economic": "Vare fra e-conomic kunne ikke opdateres",
+			"message_product-not-deleted-economic": "Vare fra e-conomic kunne ikke slettes",
+			"message_product-renumber-not-supported-economic": "Ændring af varenummer er ikke understøttet",
+			"message_product-zero-inv-not-created": "Nul beholdning kunne ikke oprettes for vare",
+			"message_product-no-history-log": "Vare historik log kunne ikke oprettes for vare",
+			"message_product-unknown-error-economic": "Der skete en fejl ved synkroniseringen af en vare fra economic",
+			"message_full-product-sync-successfull": "Fuld synkronisering af varekartotek succesfuld",
+			"message_full-fetch-products-failed-economic": "Hentning af varekartotek fra e-conomic fejlede",
+			"message_full-upsert-failed-economic": "Fuld opdatering af varekartotek fra e-conomic fejlede"
+		}
+	}
 }

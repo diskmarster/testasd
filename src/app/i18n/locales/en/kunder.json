@@ -11,6 +11,9 @@
 		"active": "Status",
 		"active_true": "Active",
 		"active_false": "Inactive",
+		"integration": "Integrations",
+		"integration_true": "On",
+		"integration_false": "Off",
 		"email": "Company email",
 		"extra": "Extra users",
 		"users": "Registered users"

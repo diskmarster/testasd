@@ -4,27 +4,27 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
-  title: 'Registrer',
+	title: 'Registrer',
 }
 
 interface PageProps {
-  params: {
-    lng: string
-  }
+	params: {
+		lng: string
+	}
 }
 
 export default async function Page({
-  params,
+	params,
 }: {
-  params: { linkID: string; lng: string }
+	params: { linkID: string; lng: string }
 }) {
-  const customer = await customerService.getByLinkID(params.linkID)
+	const customer = await customerService.getByLinkID(params.linkID)
 
-  if (!customer || !params.linkID) redirect(`/${params.lng}/log-ind`)
+	if (!customer || !params.linkID) redirect(`/${params.lng}/log-ind`)
 
-  return (
-    <section className='w-full'>
-      <SignUpCard customer={customer} linkID={params.linkID} lng={params.lng} />
-    </section>
-  )
+	return (
+		<section className='w-full'>
+			<SignUpCard customer={customer} linkID={params.linkID} lng={params.lng} />
+		</section>
+	)
 }

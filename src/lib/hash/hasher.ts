@@ -4,7 +4,7 @@ const secret = process.env.EXT_ENCRYPTION_SECRET!
 const algorithm = 'aes-256-gcm'
 const ivLength = 12
 
-export const apikeys = {
+export const hasher = {
   encrypt: function (base: string): string {
     const iv = crypto.randomBytes(ivLength)
     const cipher = crypto.createCipheriv(

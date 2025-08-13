@@ -5,23 +5,23 @@ export const defaultNS = ['common']
 export const cookieName = 'i18next'
 
 export function getOptions(
-  lng = fallbackLng,
-  ns: string | string[] = defaultNS,
+	lng = fallbackLng,
+	ns: string | string[] = defaultNS,
 ) {
-  return {
-    supportedLngs: languages,
-    interpolation: {
-      skipOnVariables: false,
-    },
-    fallbackLng,
-    lng,
-    fallbackNS: defaultNS,
-    defaultNS,
-    ns,
-  }
+	return {
+		supportedLngs: languages,
+		interpolation: {
+			skipOnVariables: false,
+		},
+		fallbackLng,
+		lng,
+		fallbackNS: defaultNS,
+		defaultNS,
+		ns,
+	}
 }
 
 export function strIsI18NLanguage(str: string): str is I18NLanguage {
-  //@ts-ignore
-  return languages.includes(str)
+	//@ts-ignore
+	return languages.includes(str)
 }

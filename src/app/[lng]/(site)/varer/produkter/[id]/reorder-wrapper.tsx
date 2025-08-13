@@ -1,11 +1,11 @@
-import { ProductReorder } from "@/components/products/product-reorder";
-import { tryParseInt } from "@/lib/utils";
-import { inventoryService } from "@/service/inventory";
-import { User } from "lucia";
-import { redirect } from "next/navigation";
+import { ProductReorder } from '@/components/products/product-reorder'
+import { tryParseInt } from '@/lib/utils'
+import { inventoryService } from '@/service/inventory'
+import { User } from 'lucia'
+import { redirect } from 'next/navigation'
 
 interface Props {
-	id: string,
+	id: string
 	lng: string
 	user: User
 }
@@ -16,9 +16,11 @@ export async function ReorderWrapper({ lng, id, user }: Props) {
 		redirect(`/${lng}/oversigt`)
 	}
 
-	const reorder = await inventoryService.getReorderByIDs(productID, user.customerID, user.id)
-
-	return (
-		<ProductReorder user={user} productID={productID} reorder={reorder} />
+	const reorder = await inventoryService.getReorderByIDs(
+		productID,
+		user.customerID,
+		user.id,
 	)
+
+	return <ProductReorder user={user} productID={productID} reorder={reorder} />
 }

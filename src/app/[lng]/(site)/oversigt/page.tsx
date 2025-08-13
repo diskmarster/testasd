@@ -132,9 +132,7 @@ async function filterGroupedInventories(
 	).flatMap(invs => {
 		let filtered = invs
 		if (filtered.some(inv => inv.isDefaultPlacement)) {
-			filtered = filtered.filter(
-				inv => inv.isDefaultPlacement
-			)
+			filtered = filtered.filter(inv => inv.isDefaultPlacement)
 		}
 
 		const totalQty: number = filtered.reduce(
@@ -155,7 +153,7 @@ function sumQuantities(
 	customerSettings: Pick<CustomerSettings, 'usePlacement'>,
 	customer: Customer,
 ) {
-	return async function(
+	return async function (
 		inventories: FormattedInventory[],
 	): Promise<Map<string, FormattedInventory>> {
 		// build map of inventories

@@ -1,12 +1,15 @@
 'use client'
 
 import { useTranslation } from '@/app/i18n/client'
-import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import {
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 import { useLanguage } from '@/context/language'
+import { CustomerWithUserCount } from '@/data/customer.types'
 import { Row, Table } from '@tanstack/react-table'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
-import { CustomerWithUserCount } from '@/data/customer.types'
 
 interface Props {
 	table: Table<CustomerWithUserCount>
@@ -26,7 +29,7 @@ export function TableClientsActions({ row }: Props) {
 						company: row.original.company,
 						email: row.original.email,
 						plan: row.original.plan,
-						extraUsers: row.original.extraUsers
+						extraUsers: row.original.extraUsers,
 					})
 				}}>
 				{t('row-actions.update')}
@@ -35,7 +38,7 @@ export function TableClientsActions({ row }: Props) {
 				onClick={() => {
 					emitCustomEvent('ToggleClientByID', {
 						customerID: row.original.id,
-						isActive: row.original.isActive
+						isActive: row.original.isActive,
 					})
 				}}>
 				{t('row-actions.toggle', { context: row.original.isActive.toString() })}
@@ -59,13 +62,25 @@ export function TableClientsActions({ row }: Props) {
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
 			<DropdownMenuItem
-			disabled={!row.original.isActive}
+				disabled={!row.original.isActive}
 				onClick={() => {
 					emitCustomEvent('CreateApiKeyByID', {
 						customerID: row.original.id,
 					})
 				}}>
 				Opret API nøgle
+			</DropdownMenuItem>
+			<DropdownMenuItem
+				disabled={!row.original.isActive}
+				onClick={() => {
+					emitCustomEvent('ToggleCanUseIntegrationByID', {
+						customerID: row.original.id,
+						canUseIntegration: row.original.canUseIntegration,
+					})
+				}}>
+				{row.original.canUseIntegration
+					? 'Slå integrationer fra'
+					: 'Slå integrationer til'}
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
 			<DropdownMenuItem

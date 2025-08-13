@@ -1,7 +1,7 @@
 import { Order, OrderLine } from '@/lib/database/schema/reorders'
 
 export interface FormattedOrder extends OrderWithCount {
-  lines: OrderLine[]
+	lines: OrderLine[]
 }
 
 export interface OrderWithCount extends Order {

@@ -2,6 +2,7 @@
 
 import { I18NLanguage } from '@/app/i18n/settings'
 import { useLanguage } from '@/context/language'
+import { stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatDate, formatNumber } from '@/lib/utils'
 import {
 	ColumnDef,
@@ -21,10 +22,9 @@ import { TableGroupedCell } from '../table/table-grouped-cell'
 import { TableHeader as TableHeaderCell } from '../table/table-header'
 import { TableHeaderGroup } from '../table/table-header-group'
 import { TablePagination } from '../table/table-pagination'
-import { Table, TableBody, TableCell, TableHeader, TableRow } from '../ui/table'
-import { stringSortingFn } from '@/lib/tanstack/filter-fns'
-import { ProductInventoryWithDefault } from './product-inventories'
 import { Badge } from '../ui/badge'
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '../ui/table'
+import { ProductInventoryWithDefault } from './product-inventories'
 
 interface Props {
 	data: ProductInventoryWithDefault[]
@@ -39,11 +39,15 @@ const ROW_PER_PAGE = [25, 50, 75, 100]
 
 export function ProductInventoryTable({ data, t, aggregationOptions }: Props) {
 	const lng = useLanguage()
-	const columns = useMemo(() => getTableColumnDefs(lng, t, aggregationOptions), [lng, t, aggregationOptions])
-
-	const [sorting, onSortingChange] = useState(
-		[{ id: 'placement', desc: true }, { id: 'quantity', desc: true }]
+	const columns = useMemo(
+		() => getTableColumnDefs(lng, t, aggregationOptions),
+		[lng, t, aggregationOptions],
 	)
+
+	const [sorting, onSortingChange] = useState([
+		{ id: 'placement', desc: true },
+		{ id: 'quantity', desc: true },
+	])
 
 	const table = useReactTable({
 		data,
@@ -61,7 +65,7 @@ export function ProductInventoryTable({ data, t, aggregationOptions }: Props) {
 		onSortingChange,
 
 		state: {
-			sorting
+			sorting,
 		},
 	})
 
@@ -116,8 +120,8 @@ function getTableColumnDefs(
 	lng: I18NLanguage,
 	t: TFunction,
 	aggregationOptions: {
-		aggregatePlacements: boolean,
-		aggregateBatches: boolean,
+		aggregatePlacements: boolean
+		aggregateBatches: boolean
 	},
 ): ColumnDef<ProductInventoryWithDefault>[] {
 	const quantityCol: ColumnDef<ProductInventoryWithDefault> = {
@@ -157,7 +161,10 @@ function getTableColumnDefs(
 			</div>
 		),
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
+			return stringSortingFn(
+				String(ra.getValue('placement')),
+				String(rb.getValue('placement')),
+			)
 		},
 	}
 	const batchCol: ColumnDef<ProductInventoryWithDefault> = {
@@ -171,7 +178,10 @@ function getTableColumnDefs(
 		),
 		cell: ({ getValue }) => getValue<string>(),
 		sortingFn: (ra, rb) => {
-			return stringSortingFn(String(ra.getValue('placement')), String(rb.getValue('placement')))
+			return stringSortingFn(
+				String(ra.getValue('placement')),
+				String(rb.getValue('placement')),
+			)
 		},
 	}
 	const updatedCol: ColumnDef<ProductInventoryWithDefault> = {
@@ -188,12 +198,7 @@ function getTableColumnDefs(
 		},
 	}
 
-	let allCols = [
-		placementCol,
-		batchCol,
-		quantityCol,
-		updatedCol,
-	]
+	let allCols = [placementCol, batchCol, quantityCol, updatedCol]
 
 	if (aggregationOptions.aggregatePlacements) {
 		allCols = allCols.filter(c => c != placementCol)

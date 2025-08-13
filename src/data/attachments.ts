@@ -1,9 +1,9 @@
 import { db, TRX } from '@/lib/database'
 import {
-  Attachment,
-  AttachmentID,
-  attachmentsTable,
-  NewAttachment,
+	Attachment,
+	AttachmentID,
+	attachmentsTable,
+	NewAttachment,
 } from '@/lib/database/schema/attachments'
 import { CustomerID } from '@/lib/database/schema/customer'
 import { AttachmentType } from '@/service/file'
@@ -14,70 +14,70 @@ export const attachmentRefTypeValidation = z.enum(['product', 'genbestil'])
 export type RefType = z.infer<typeof attachmentRefTypeValidation>
 
 export const attachments = {
-  create: async function (
-    a: NewAttachment,
-    tx: TRX = db,
-  ): Promise<Attachment | undefined> {
-    const attachment = await tx.insert(attachmentsTable).values(a).returning()
-    return attachment[0]
-  },
-  deleteByID: async function (
-    ID: AttachmentID,
-    tx: TRX = db,
-  ): Promise<boolean> {
-    const res = await tx
-      .delete(attachmentsTable)
-      .where(eq(attachmentsTable.id, ID))
-    return res.rowsAffected == 1
-  },
-  getByRefID: async function (
-    domain: RefType,
-    id: number | string,
-    tx: TRX = db,
-  ): Promise<Attachment[]> {
-    const stringID = String(id)
-    return await tx
-      .select()
-      .from(attachmentsTable)
-      .where(
-        and(
-          eq(attachmentsTable.refDomain, domain),
-          eq(attachmentsTable.refID, stringID),
-        ),
-      )
-      .orderBy(asc(attachmentsTable.id))
-  },
-  getByID: async function (
-    id: number,
-    tx: TRX = db,
-  ): Promise<Attachment | undefined> {
-    const res = await tx
-      .select()
-      .from(attachmentsTable)
-      .where(eq(attachmentsTable.id, id))
-    return res[0]
-  },
-  getByCustomerID: async function (
-    customerID: CustomerID,
-    domain?: RefType,
-    type?: AttachmentType,
-    tx: TRX = db,
-  ): Promise<Attachment[]> {
-    const whereClauses: SQLWrapper[] = []
+	create: async function (
+		a: NewAttachment,
+		tx: TRX = db,
+	): Promise<Attachment | undefined> {
+		const attachment = await tx.insert(attachmentsTable).values(a).returning()
+		return attachment[0]
+	},
+	deleteByID: async function (
+		ID: AttachmentID,
+		tx: TRX = db,
+	): Promise<boolean> {
+		const res = await tx
+			.delete(attachmentsTable)
+			.where(eq(attachmentsTable.id, ID))
+		return res.rowsAffected == 1
+	},
+	getByRefID: async function (
+		domain: RefType,
+		id: number | string,
+		tx: TRX = db,
+	): Promise<Attachment[]> {
+		const stringID = String(id)
+		return await tx
+			.select()
+			.from(attachmentsTable)
+			.where(
+				and(
+					eq(attachmentsTable.refDomain, domain),
+					eq(attachmentsTable.refID, stringID),
+				),
+			)
+			.orderBy(asc(attachmentsTable.id))
+	},
+	getByID: async function (
+		id: number,
+		tx: TRX = db,
+	): Promise<Attachment | undefined> {
+		const res = await tx
+			.select()
+			.from(attachmentsTable)
+			.where(eq(attachmentsTable.id, id))
+		return res[0]
+	},
+	getByCustomerID: async function (
+		customerID: CustomerID,
+		domain?: RefType,
+		type?: AttachmentType,
+		tx: TRX = db,
+	): Promise<Attachment[]> {
+		const whereClauses: SQLWrapper[] = []
 
-    if (domain) {
-      whereClauses.push(eq(attachmentsTable.refDomain, domain))
-    }
+		if (domain) {
+			whereClauses.push(eq(attachmentsTable.refDomain, domain))
+		}
 
-    if (type) {
-      whereClauses.push(eq(attachmentsTable.type, type))
-    }
+		if (type) {
+			whereClauses.push(eq(attachmentsTable.type, type))
+		}
 
-    const attachments = await tx
-      .select()
-      .from(attachmentsTable)
-      .where(and(eq(attachmentsTable.customerID, customerID), ...whereClauses))
+		const attachments = await tx
+			.select()
+			.from(attachmentsTable)
+			.where(and(eq(attachmentsTable.customerID, customerID), ...whereClauses))
 
-    return attachments
-  },
+		return attachments
+	},
 }

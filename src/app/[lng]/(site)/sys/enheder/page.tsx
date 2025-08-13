@@ -8,33 +8,33 @@ import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 
 interface pageprops extends WithAuthProps {
-  params: {
-    lng: string
-  }
+	params: {
+		lng: string
+	}
 }
 
 async function Page({ params: { lng }, user }: pageprops) {
-  const location = await locationService.getLastVisited(user.id)
-  if (!location) {
-    await signOutAction()
-    return null
-  }
+	const location = await locationService.getLastVisited(user.id)
+	if (!location) {
+		await signOutAction()
+		return null
+	}
 
-  const units = await inventoryService.getAllUnits()
-  const { t } = await serverTranslation(lng, 'enheder')
+	const units = await inventoryService.getAllUnits()
+	const { t } = await serverTranslation(lng, 'enheder')
 
-  return (
-    <SiteWrapper
-      title={t('unit-page.unit-title')}
-      description={t('unit-page.unit-description')}
-      actions={
-        <>
-          <ModalCreateUnit />
-        </>
-      }>
-      <UnitOverview units={units} user={user} />
-    </SiteWrapper>
-  )
+	return (
+		<SiteWrapper
+			title={t('unit-page.unit-title')}
+			description={t('unit-page.unit-description')}
+			actions={
+				<>
+					<ModalCreateUnit />
+				</>
+			}>
+			<UnitOverview units={units} user={user} />
+		</SiteWrapper>
+	)
 }
 
 export default withAuth(Page, undefined, 'system_administrator')

@@ -1,11 +1,12 @@
 import { serverTranslation } from '@/app/i18n'
+import { DeleteSettingModal } from '@/components/admin/mail-settings'
 import { CompanyInfoSkeleton } from '@/components/admin/tab-company-info'
 import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { Suspense } from 'react'
 import { CompanyInfoWrapper } from './company-wrapper'
-import { withAuth, WithAuthProps } from '@/components/common/with-auth'
+import { IntegrationsWrapper } from './integrations-wrapper'
 import { MailSettingWrapper } from './mail-wrapper'
-import { DeleteSettingModal } from '@/components/admin/mail-settings'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -26,8 +27,14 @@ async function Page({ params: { lng }, customer, user }: Props) {
 			<Suspense fallback={<p>loading mail settings...</p>}>
 				<MailSettingWrapper customer={customer} user={user} />
 			</Suspense>
-
-			<DeleteSettingModal />
+			{customer.canUseIntegration && (
+				<Suspense>
+					<IntegrationsWrapper user={user} />
+				</Suspense>
+			)}
+			<Suspense>
+				<DeleteSettingModal />
+			</Suspense>
 		</SiteWrapper>
 	)
 }

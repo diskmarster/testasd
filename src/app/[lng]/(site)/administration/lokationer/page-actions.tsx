@@ -59,7 +59,7 @@ export function LocationPageActions({
 					disabled={isLocationLimitReached(customer.plan, locationCount)}
 					className={cn(
 						isLocationLimitReached(customer.plan, locationCount) &&
-						'pointer-events-none',
+							'pointer-events-none',
 					)}
 					tooltip={t('modal-create-location.tooltip')}>
 					<Icons.gridPlus className='size-5' />

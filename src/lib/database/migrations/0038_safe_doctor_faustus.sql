@@ -1,0 +1,1 @@
+ALTER TABLE `nl_customer` ADD `can_use_integration` integer DEFAULT false NOT NULL;

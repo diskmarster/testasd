@@ -129,8 +129,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-					row.original.product.fileCount > 0 &&
-					'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -142,8 +142,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+							row.original.product.fileCount > 0 &&
+							'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -426,7 +426,9 @@ export function getTableOverviewColumns(
 									/>
 								</TooltipTrigger>
 								<TooltipContent className='bg-foreground text-background'>
-									{t('batch-indicator-tooltip', { context: isExpired ? 'expired' : 'valid' })}
+									{t('batch-indicator-tooltip', {
+										context: isExpired ? 'expired' : 'valid',
+									})}
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>

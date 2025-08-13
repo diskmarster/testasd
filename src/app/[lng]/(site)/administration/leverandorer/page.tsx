@@ -1,9 +1,9 @@
-import { SiteWrapper } from "@/components/common/site-wrapper"
-import { TableWrapper } from "./table-wrapper"
-import { serverTranslation } from "@/app/i18n"
-import { CreateSupplierModal } from "@/components/suppliers/create-modal"
-import { DeleteSupplierModal } from "@/components/suppliers/delete-modal"
-import { withAuth, WithAuthProps } from "@/components/common/with-auth"
+import { serverTranslation } from '@/app/i18n'
+import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
+import { CreateSupplierModal } from '@/components/suppliers/create-modal'
+import { DeleteSupplierModal } from '@/components/suppliers/delete-modal'
+import { TableWrapper } from './table-wrapper'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -12,18 +12,17 @@ interface Props extends WithAuthProps {
 }
 
 async function Page({ params: { lng }, user }: Props) {
-	const { t } = await serverTranslation(lng, "leverandører")
+	const { t } = await serverTranslation(lng, 'leverandører')
 
 	return (
 		<SiteWrapper
-			title={t("page.title")}
-			description={t("page.desc")}
+			title={t('page.title')}
+			description={t('page.desc')}
 			actions={
 				<>
 					<CreateSupplierModal />
 				</>
-			}
-		>
+			}>
 			<TableWrapper user={user!} />
 
 			<DeleteSupplierModal />

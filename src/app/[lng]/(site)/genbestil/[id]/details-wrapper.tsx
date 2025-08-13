@@ -1,7 +1,7 @@
-import { Details } from "@/components/orders/details"
-import { Customer } from "@/lib/database/schema/customer"
-import { ordersService } from "@/service/orders"
-import { User } from "lucia"
+import { Details } from '@/components/orders/details'
+import { Customer } from '@/lib/database/schema/customer'
+import { ordersService } from '@/service/orders'
+import { User } from 'lucia'
 
 interface Props {
 	id: string
@@ -11,7 +11,5 @@ interface Props {
 
 export async function DetailsWrapper({ id, customer, user }: Props) {
 	const order = await ordersService.getByID(user.customerID, id)
-	return (
-		<Details order={order} user={user} customer={customer} />
-	)
+	return <Details order={order} user={user} customer={customer} />
 }

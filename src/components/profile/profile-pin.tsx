@@ -6,15 +6,15 @@ import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
-  Credenza,
-  CredenzaBody,
-  CredenzaClose,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaFooter,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
+	Credenza,
+	CredenzaBody,
+	CredenzaClose,
+	CredenzaContent,
+	CredenzaDescription,
+	CredenzaFooter,
+	CredenzaHeader,
+	CredenzaTitle,
+	CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { Label } from '@/components/ui/label'
@@ -30,128 +30,128 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 export function ProfilePin() {
-  const lng = useLanguage()
-  const { t } = useTranslation(lng, 'profil')
-  return (
-    <div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
-      <div className='grid gap-0.5'>
-        <Label>{t('profile-pin.pin')}</Label>
-        <p className='text-sm text-muted-foreground'>
-          {t('profile-pin.update-pin')}
-        </p>
-      </div>
-      <PinDialog />
-    </div>
-  )
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'profil')
+	return (
+		<div className='flex flex-row items-center justify-between rounded-md border p-4 md:max-w-lg'>
+			<div className='grid gap-0.5'>
+				<Label>{t('profile-pin.pin')}</Label>
+				<p className='text-sm text-muted-foreground'>
+					{t('profile-pin.update-pin')}
+				</p>
+			</div>
+			<PinDialog />
+		</div>
+	)
 }
 
 export function PinDialog() {
-  const { session } = useSession()
-  const [pending, startTransition] = useTransition()
-  const [error, setError] = useState<string>()
-  const [open, setOpen] = useState<boolean>(false)
-  const lng = useLanguage()
-  const { t } = useTranslation(lng, 'profil')
-  const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = updatePinValidation(validationT)
+	const { session } = useSession()
+	const [pending, startTransition] = useTransition()
+	const [error, setError] = useState<string>()
+	const [open, setOpen] = useState<boolean>(false)
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'profil')
+	const { t: validationT } = useTranslation(lng, 'validation')
+	const schema = updatePinValidation(validationT)
 
-  const { handleSubmit, formState, register, reset, watch } = useForm<
-    z.infer<typeof schema>
-  >({
-    resolver: zodResolver(schema),
-  })
+	const { handleSubmit, formState, register, reset, watch } = useForm<
+		z.infer<typeof schema>
+	>({
+		resolver: zodResolver(schema),
+	})
 
-  if (!session) return null
-  return (
-    <Credenza open={open} onOpenChange={setOpen}>
-      <CredenzaTrigger asChild>
-        <Button variant='outline' className='hover:text-destructive'>
-          {t('profile-pin-dialog.title')}
-        </Button>
-      </CredenzaTrigger>
-      <CredenzaContent>
-        <form className='space-y-4'>
-          <CredenzaHeader>
-            <CredenzaTitle>{t('profile-pin-dialog.new-pin')}</CredenzaTitle>
-            <CredenzaDescription>
-              {t('profile-pin-dialog.description')}
-            </CredenzaDescription>
-          </CredenzaHeader>
-          <CredenzaBody>
-            <div className={cn('grid w-full items-start gap-4 md:max-w-lg')}>
-              {error && (
-                <Alert variant='destructive'>
-                  <Icons.alert className='size-4 !top-3' />
-                  <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-              <div className='grid gap-2'>
-                <Label htmlFor='currentPin'>
-                  {t('profile-pin-dialog.current-pin')}
-                </Label>
-                <PasswordInput id='currentPin' {...register('currentPin')} />
-                {formState.errors.currentPin && (
-                  <p className='text-sm text-destructive '>
-                    {formState.errors.currentPin.message}
-                  </p>
-                )}
-              </div>
-              <div className='grid gap-2'>
-                <Label htmlFor='newPin'>
-                  {t('profile-pin-dialog.new-pin')}
-                </Label>
-                <PasswordInput id='newPin' {...register('newPin')} />
-                {formState.errors.newPin && (
-                  <p className='text-sm text-destructive '>
-                    {formState.errors.newPin.message}
-                  </p>
-                )}
-              </div>
-              <div className='grid gap-2'>
-                <Label htmlFor='confirmPin'>
-                  {t('profile-pin-dialog.confirm-pin')}
-                </Label>
-                <PasswordInput id='confirmPin' {...register('confirmPin')} />
-                {formState.errors.confirmPin && (
-                  <p className='text-sm text-destructive '>
-                    {formState.errors.confirmPin.message}
-                  </p>
-                )}
-              </div>
-            </div>
-          </CredenzaBody>
-          <CredenzaFooter>
-            <CredenzaClose asChild>
-              <Button variant='link'>
-                {t('profile-pin-dialog.cancel-button')}
-              </Button>
-            </CredenzaClose>
-            <Button
-              disabled={!formState.isDirty}
-              type='submit'
-              className='flex items-center gap-2'
-              onClick={handleSubmit(values => {
-                startTransition(async () => {
-                  const res = await updatePinAction({ ...values })
-                  if (res && res.serverError) {
-                    setError(res.serverError)
-                    return
-                  }
-                  toast(t(`common:${siteConfig.successTitle}`), {
-                    description: t('profile-pin.pin-updated'),
-                  })
-                  setError(undefined)
-                  reset()
-                  setOpen(false)
-                })
-              })}>
-              {pending && <Icons.spinner className='size-4 animate-spin' />}
-              {t('profile-pin-dialog.update-button')}
-            </Button>
-          </CredenzaFooter>
-        </form>
-      </CredenzaContent>
-    </Credenza>
-  )
+	if (!session) return null
+	return (
+		<Credenza open={open} onOpenChange={setOpen}>
+			<CredenzaTrigger asChild>
+				<Button variant='outline' className='hover:text-destructive'>
+					{t('profile-pin-dialog.title')}
+				</Button>
+			</CredenzaTrigger>
+			<CredenzaContent>
+				<form className='space-y-4'>
+					<CredenzaHeader>
+						<CredenzaTitle>{t('profile-pin-dialog.new-pin')}</CredenzaTitle>
+						<CredenzaDescription>
+							{t('profile-pin-dialog.description')}
+						</CredenzaDescription>
+					</CredenzaHeader>
+					<CredenzaBody>
+						<div className={cn('grid w-full items-start gap-4 md:max-w-lg')}>
+							{error && (
+								<Alert variant='destructive'>
+									<Icons.alert className='size-4 !top-3' />
+									<AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
+									<AlertDescription>{error}</AlertDescription>
+								</Alert>
+							)}
+							<div className='grid gap-2'>
+								<Label htmlFor='currentPin'>
+									{t('profile-pin-dialog.current-pin')}
+								</Label>
+								<PasswordInput id='currentPin' {...register('currentPin')} />
+								{formState.errors.currentPin && (
+									<p className='text-sm text-destructive '>
+										{formState.errors.currentPin.message}
+									</p>
+								)}
+							</div>
+							<div className='grid gap-2'>
+								<Label htmlFor='newPin'>
+									{t('profile-pin-dialog.new-pin')}
+								</Label>
+								<PasswordInput id='newPin' {...register('newPin')} />
+								{formState.errors.newPin && (
+									<p className='text-sm text-destructive '>
+										{formState.errors.newPin.message}
+									</p>
+								)}
+							</div>
+							<div className='grid gap-2'>
+								<Label htmlFor='confirmPin'>
+									{t('profile-pin-dialog.confirm-pin')}
+								</Label>
+								<PasswordInput id='confirmPin' {...register('confirmPin')} />
+								{formState.errors.confirmPin && (
+									<p className='text-sm text-destructive '>
+										{formState.errors.confirmPin.message}
+									</p>
+								)}
+							</div>
+						</div>
+					</CredenzaBody>
+					<CredenzaFooter>
+						<CredenzaClose asChild>
+							<Button variant='link'>
+								{t('profile-pin-dialog.cancel-button')}
+							</Button>
+						</CredenzaClose>
+						<Button
+							disabled={!formState.isDirty}
+							type='submit'
+							className='flex items-center gap-2'
+							onClick={handleSubmit(values => {
+								startTransition(async () => {
+									const res = await updatePinAction({ ...values })
+									if (res && res.serverError) {
+										setError(res.serverError)
+										return
+									}
+									toast(t(`common:${siteConfig.successTitle}`), {
+										description: t('profile-pin.pin-updated'),
+									})
+									setError(undefined)
+									reset()
+									setOpen(false)
+								})
+							})}>
+							{pending && <Icons.spinner className='size-4 animate-spin' />}
+							{t('profile-pin-dialog.update-button')}
+						</Button>
+					</CredenzaFooter>
+				</form>
+			</CredenzaContent>
+		</Credenza>
+	)
 }

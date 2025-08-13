@@ -25,7 +25,7 @@ export const createMailSetting = z
         message: 'bruger ikke denne. har den bare for at formen ikke er valid',
       })
     }
-    
+
     if (val.mails.sendMovementsMail == true && val.userID == null) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

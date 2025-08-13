@@ -5,24 +5,28 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
-  title: 'Invitering',
+	title: 'Invitering',
 }
 
 interface PageProps {
-  params: {
-    lng: string
-  }
+	params: {
+		lng: string
+	}
 }
 
-export default async function Page({ params }: { params: { linkID: string, lng: string } }) {
-  const customer = await customerService.getByUserLinkID(params.linkID)
-  const inviteLink = await userService.getInviteLinkByID(params.linkID)
+export default async function Page({
+	params,
+}: {
+	params: { linkID: string; lng: string }
+}) {
+	const customer = await customerService.getByUserLinkID(params.linkID)
+	const inviteLink = await userService.getInviteLinkByID(params.linkID)
 
-  if (!customer || !inviteLink) redirect(`/${params.lng}/log-ind`)
+	if (!customer || !inviteLink) redirect(`/${params.lng}/log-ind`)
 
-  return (
-    <section className='w-full'>
-      <SignUpInvitedCard customer={customer} inviteLink={inviteLink} />
-    </section>
-  )
+	return (
+		<section className='w-full'>
+			<SignUpInvitedCard customer={customer} inviteLink={inviteLink} />
+		</section>
+	)
 }

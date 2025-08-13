@@ -52,7 +52,7 @@ export function getSupplierColumns(
 			<TableHeader column={column} title={t('table.col-country')} />
 		),
 		cell: ({ row }) => (
-			<div className="flex items-center gap-1.5">
+			<div className='flex items-center gap-1.5'>
 				<ReactCountryFlag
 					className='!size-4 rounded-md'
 					countryCode={row.original.country}
@@ -78,7 +78,7 @@ export function getSupplierColumns(
 				<p>{value}</p>
 			) : (
 				<div className='italic text-muted-foreground flex'>
-				{t("table.col-no-value")} <div className='w-0.5'></div>
+					{t('table.col-no-value')} <div className='w-0.5'></div>
 				</div>
 			)
 		},
@@ -117,7 +117,7 @@ export function getSupplierColumns(
 		},
 		meta: {
 			viewLabel: t('table.col-inserted'),
-			className: 'justify-start'
+			className: 'justify-start',
 		},
 	}
 
@@ -151,7 +151,7 @@ export function getSupplierColumns(
 		},
 		meta: {
 			viewLabel: t('table.col-updated'),
-			className: 'justify-start'
+			className: 'justify-start',
 		},
 	}
 
@@ -198,9 +198,9 @@ export function getSupplierFilters(
 		options: [
 			...supplierContries.map(c => ({
 				label: c,
-				value: c
-			}))
-		]
+				value: c,
+			})),
+		],
 	}
 
 	const clientIDFilter: FilterField<SupplierWithItemCount> = {

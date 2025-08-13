@@ -1,5 +1,10 @@
 'use client'
 
+import {
+	getSupplierColumns,
+	getSupplierFilters,
+} from '@/app/[lng]/(site)/administration/leverandorer/columns'
+import { useTranslation } from '@/app/i18n/client'
 import { TableGroupedCell } from '@/components/table/table-grouped-cell'
 import { TablePagination } from '@/components/table/table-pagination'
 import { TableToolbar } from '@/components/table/table-toolbar'
@@ -7,13 +12,16 @@ import {
 	Table,
 	TableBody,
 	TableCell,
-	TableHead,
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
+import { useLanguage } from '@/context/language'
+import { SupplierWithItemCount } from '@/data/suppliers.types'
+import { useUrlFiltering } from '@/hooks/use-url-filtering'
+import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
+import { useUrlSorting } from '@/hooks/use-url-sorting'
 import { cn } from '@/lib/utils'
 import {
-	flexRender,
 	getCoreRowModel,
 	getExpandedRowModel,
 	getFacetedRowModel,
@@ -27,17 +35,10 @@ import {
 	useReactTable,
 	VisibilityState,
 } from '@tanstack/react-table'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { TableFloatingBar } from '../table/table-floating-bar'
-import { useLanguage } from '@/context/language'
-import { useTranslation } from '@/app/i18n/client'
-import { useUrlSorting } from '@/hooks/use-url-sorting'
-import { useUrlFiltering } from '@/hooks/use-url-filtering'
-import { getSupplierColumns, getSupplierFilters } from '@/app/[lng]/(site)/administration/leverandorer/columns'
-import { SupplierWithItemCount } from '@/data/suppliers.types'
-import { useSearchParams } from 'next/navigation'
-import { useUrlGlobalFiltering } from '@/hooks/use-url-global-filtering'
 import { TableHeaderGroup } from '../table/table-header-group'
 
 const ROW_SELECTION_ENABLED = true
@@ -56,9 +57,13 @@ export function SuppliersTable({ suppliers }: Props) {
 	const columns = useMemo(() => getSupplierColumns(t), [t])
 
 	const mutableSearchParams = new URLSearchParams(useSearchParams())
-  const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(mutableSearchParams, '')
+	const [globalFilter, setGlobalFilter] = useUrlGlobalFiltering(
+		mutableSearchParams,
+		'',
+	)
 	const [sorting, handleSortingChange] = useUrlSorting(mutableSearchParams)
-	const [columnFilters, handleColumnFiltersChange] = useUrlFiltering(mutableSearchParams)
+	const [columnFilters, handleColumnFiltersChange] =
+		useUrlFiltering(mutableSearchParams)
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 	const [mounted, setMounted] = useState(false)
@@ -146,7 +151,10 @@ export function SuppliersTable({ suppliers }: Props) {
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map(headerGroup => (
-							<TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup} />
+							<TableHeaderGroup
+								key={headerGroup.id}
+								headerGroup={headerGroup}
+							/>
 						))}
 					</TableHeader>
 					<TableBody>

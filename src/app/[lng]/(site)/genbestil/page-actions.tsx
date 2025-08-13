@@ -17,7 +17,11 @@ interface Props {
 	orders: OrderWithCount[]
 }
 
-export function ReorderPageActions({ reorders, productsWithNoReorder, orders }: Props) {
+export function ReorderPageActions({
+	reorders,
+	productsWithNoReorder,
+	orders,
+}: Props) {
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'genbestil')
 
