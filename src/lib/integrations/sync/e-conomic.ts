@@ -167,27 +167,37 @@ export class EconomicSyncProvider implements SyncProvider {
 					const res:
 						| SyncProviderResponse<'productEvent', 'e-conomic'>
 						| undefined = await db.transaction(async tx => {
-						const newCreateProduct = await webhookService.upsertProduct(
-							{
-								customerID: customer.id,
-								sku: economicProduct.productNumber,
-								barcode:
-									economicProduct.barCode ?? economicProduct.productNumber,
-								costPrice: economicProduct.costPrice ?? 0,
-								salesPrice: economicProduct.salesPrice ?? 0,
-								text1: economicProduct.name,
-								text2: economicProduct.description,
-								unit: economicProduct.unit?.name,
-								group: economicProduct.productGroup.name,
-								isBarred: economicProduct.barred ?? false,
-							},
-							tx,
+						const newCreateProduct = await tryCatch(
+							webhookService.upsertProduct(
+								{
+									customerID: customer.id,
+									sku: economicProduct.productNumber,
+									barcode:
+										economicProduct.barCode ?? economicProduct.productNumber,
+									costPrice: economicProduct.costPrice ?? 0,
+									salesPrice: economicProduct.salesPrice ?? 0,
+									text1: economicProduct.name,
+									text2: economicProduct.description,
+									unit: economicProduct.unit?.name,
+									group: economicProduct.productGroup.name,
+									isBarred: economicProduct.barred ?? false,
+								},
+								tx,
+							),
 						)
 
-						if (!newCreateProduct) {
+						if (!newCreateProduct.success) {
+							let errMsgKey = 'product-not-created-economic'
+							if (
+								newCreateProduct.error.message.includes(
+									'UNIQUE constraint failed: nl_product.customer_id, nl_product.barcode',
+								)
+							) {
+								errMsgKey = 'product-dublicate-barcode'
+							}
 							return {
 								success: false,
-								message: 'product-not-created-economic',
+								message: errMsgKey,
 								eventData: {
 									input: inputData,
 									action: eventData,
@@ -197,12 +207,12 @@ export class EconomicSyncProvider implements SyncProvider {
 
 						const didCreateZeroes = await webhookService.createZeroInventories(
 							customer.id,
-							newCreateProduct.id,
+							newCreateProduct.data.id,
 							tx,
 						)
 						if (!didCreateZeroes) {
 							console.error(
-								`product with id ${newCreateProduct.id} has no zero inventories created`,
+								`product with id ${newCreateProduct.data.id} has no zero inventories created`,
 							)
 
 							return {
@@ -218,7 +228,7 @@ export class EconomicSyncProvider implements SyncProvider {
 						const didCreateHistoryLog =
 							await webhookService.createProductHistoryLog(
 								{
-									...newCreateProduct,
+									...newCreateProduct.data,
 									groupName: economicProduct.productGroup.name,
 									unitName: economicProduct.unit?.name ?? 'Stk',
 								},
@@ -228,7 +238,7 @@ export class EconomicSyncProvider implements SyncProvider {
 							)
 						if (!didCreateHistoryLog) {
 							console.error(
-								`product with id ${newCreateProduct.id} has no history log created`,
+								`product with id ${newCreateProduct.data.id} has no history log created`,
 							)
 							return {
 								success: false,
