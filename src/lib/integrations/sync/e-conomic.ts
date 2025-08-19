@@ -188,16 +188,19 @@ export class EconomicSyncProvider implements SyncProvider {
 
 						if (!newProductResult.success) {
 							let errMsgKey = 'product-not-created-economic'
-							if (newProductResult.error.message.includes(
+							if (
+								newProductResult.error.message.includes(
 									'UNIQUE constraint failed: nl_product.customer_id, nl_product.barcode',
-							)) {
+								)
+							) {
 								errMsgKey = 'product-dublicate-barcode'
 							} else if (
-								newProductResult.error.message == 'product-new-group-not-created' ||
+								newProductResult.error.message ==
+									'product-new-group-not-created' ||
 								newProductResult.error.message == 'product-unit-not-supported'
 							) {
 								errMsgKey = newProductResult.error.message
-							} 
+							}
 							return {
 								success: false,
 								message: errMsgKey,
@@ -264,35 +267,41 @@ export class EconomicSyncProvider implements SyncProvider {
 					const res:
 						| SyncProviderResponse<'productEvent', 'e-conomic'>
 						| undefined = await db.transaction(async tx => {
-						const updateProductResult = await tryCatch(webhookService.upsertProduct(
-							{
-								customerID: customer.id,
-								sku: economicProduct.productNumber,
-								barcode:
-									economicProduct.barCode ?? economicProduct.productNumber,
-								costPrice: economicProduct.costPrice ?? 0,
-								salesPrice: economicProduct.salesPrice ?? 0,
-								text1: economicProduct.name,
-								text2: economicProduct.description,
-								unit: economicProduct.unit?.name,
-								group: economicProduct.productGroup.name,
-								isBarred: economicProduct.barred ?? false,
-							},
-							tx,
-						))
+						const updateProductResult = await tryCatch(
+							webhookService.upsertProduct(
+								{
+									customerID: customer.id,
+									sku: economicProduct.productNumber,
+									barcode:
+										economicProduct.barCode ?? economicProduct.productNumber,
+									costPrice: economicProduct.costPrice ?? 0,
+									salesPrice: economicProduct.salesPrice ?? 0,
+									text1: economicProduct.name,
+									text2: economicProduct.description,
+									unit: economicProduct.unit?.name,
+									group: economicProduct.productGroup.name,
+									isBarred: economicProduct.barred ?? false,
+								},
+								tx,
+							),
+						)
 
 						if (!updateProductResult.success) {
 							let errMsgKey = 'product-not-updated-economic'
-							if (updateProductResult.error.message.includes(
+							if (
+								updateProductResult.error.message.includes(
 									'UNIQUE constraint failed: nl_product.customer_id, nl_product.barcode',
-							)) {
+								)
+							) {
 								errMsgKey = 'product-dublicate-barcode'
 							} else if (
-								updateProductResult.error.message == 'product-new-group-not-created' ||
-								updateProductResult.error.message == 'product-unit-not-supported'
+								updateProductResult.error.message ==
+									'product-new-group-not-created' ||
+								updateProductResult.error.message ==
+									'product-unit-not-supported'
 							) {
 								errMsgKey = updateProductResult.error.message
-							} 
+							}
 							return {
 								success: false,
 								message: errMsgKey,

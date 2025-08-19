@@ -227,7 +227,7 @@ async function getUnitAndGroup(
 		values.includes(normalizedUnit),
 	)?.[0]
 
-	const unit = allowedUnit && unitMap.get(allowedUnit) 
+	const unit = allowedUnit && unitMap.get(allowedUnit)
 	if (!unit) {
 		throw new ActionError('product-unit-not-supported')
 	}
