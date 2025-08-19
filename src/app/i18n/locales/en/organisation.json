@@ -398,9 +398,9 @@
 			"message_product-zero-inv-not-created": "Zero inventory could not be created for product",
 			"message_product-no-history-log": "Product history log could not be created for product",
 			"message_product-unknown-error-economic": "An error occurred while synchronizing a product from e-conomic",
-			"message_product-dublicate-barcode": "An error occured whie synchronizing: Barcode already exists",
-			"message_product-new-group-not-created": "Der skete en fejl ved synkronisering: New group not created",
-			"message_product-unit-not-supported": "Der skete en fejl ved synkronisering: Unsupported unit",
+			"message_product-dublicate-barcode": "An error occured while synchronizing: Barcode already exists",
+			"message_product-new-group-not-created": "An error occured while synchronizing: New group not created",
+			"message_product-unit-not-supported": "An error occured while synchronizing: Unsupported unit",
 			"message_full-product-sync-successfull": "Full synchronization of product catalog successful",
 			"message_full-fetch-products-failed-economic": "Fetching product catalog from e-conomic failed",
 			"message_full-upsert-failed-economic": "Full update of product catalog from e-conomic failed"
