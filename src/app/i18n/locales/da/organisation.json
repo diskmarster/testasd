@@ -399,6 +399,8 @@
 			"message_product-no-history-log": "Vare historik log kunne ikke oprettes for vare",
 			"message_product-unknown-error-economic": "Der skete en fejl ved synkroniseringen af en vare fra economic",
 			"message_product-dublicate-barcode": "Der skete en fejl ved synkronisering: Stregkode findes allerede",
+			"message_product-new-group-not-created": "Der skete en fejl ved synkronisering: Ny varegruppe ikke oprettet",
+			"message_product-unit-not-supported": "Der skete en fejl ved synkronisering: Understøtter ikke enhed",
 			"message_full-product-sync-successfull": "Fuld synkronisering af varekartotek succesfuld",
 			"message_full-fetch-products-failed-economic": "Hentning af varekartotek fra e-conomic fejlede",
 			"message_full-upsert-failed-economic": "Fuld opdatering af varekartotek fra e-conomic fejlede"

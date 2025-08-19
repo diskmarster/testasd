@@ -215,7 +215,7 @@ async function getUnitAndGroup(
 			tx,
 		)
 		if (!newProductGroup) {
-			throw new ActionError('product group was not created')
+			throw new ActionError('product-new-group-not-created')
 		}
 		productGroup = newProductGroup
 	}
@@ -227,9 +227,9 @@ async function getUnitAndGroup(
 		values.includes(normalizedUnit),
 	)?.[0]
 
-	const unit = allowedUnit ? unitMap.get(allowedUnit) : unitMap.get('Stk')
+	const unit = allowedUnit && unitMap.get(allowedUnit) 
 	if (!unit) {
-		throw new ActionError('unable to find valid unit for product')
+		throw new ActionError('product-unit-not-supported')
 	}
 
 	return {

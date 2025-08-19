@@ -188,13 +188,16 @@ export class EconomicSyncProvider implements SyncProvider {
 
 						if (!newProductResult.success) {
 							let errMsgKey = 'product-not-created-economic'
-							if (
-								newProductResult.error.message.includes(
+							if (newProductResult.error.message.includes(
 									'UNIQUE constraint failed: nl_product.customer_id, nl_product.barcode',
-								)
-							) {
+							)) {
 								errMsgKey = 'product-dublicate-barcode'
-							}
+							} else if (
+								newProductResult.error.message == 'product-new-group-not-created' ||
+								newProductResult.error.message == 'product-unit-not-supported'
+							) {
+								errMsgKey = newProductResult.error.message
+							} 
 							return {
 								success: false,
 								message: errMsgKey,
@@ -284,7 +287,12 @@ export class EconomicSyncProvider implements SyncProvider {
 									'UNIQUE constraint failed: nl_product.customer_id, nl_product.barcode',
 							)) {
 								errMsgKey = 'product-dublicate-barcode'
-							}
+							} else if (
+								updateProductResult.error.message == 'product-new-group-not-created' ||
+								updateProductResult.error.message == 'product-unit-not-supported'
+							) {
+								errMsgKey = updateProductResult.error.message
+							} 
 							return {
 								success: false,
 								message: errMsgKey,
