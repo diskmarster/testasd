@@ -1026,4 +1026,19 @@ export const inventory = {
 
 		return inventory
 	},
+	/**
+	 * Function getInventoriesByCustomerID fetches inventories by customer id and groups them by product id.
+	 * @param {CustomerID} customerID
+	 * @param [TRX] tx - optional transaction
+	 */
+	getInventoriesByCustomerID: async function (
+		customerID: CustomerID,
+		tx: TRX = db,
+	): Promise<Inventory[]> {
+		return await tx
+			.select()
+			.from(inventoryTable)
+			.where(eq(inventoryTable.customerID, customerID))
+			.groupBy(inventoryTable.productID)
+	},
 }
