@@ -57,6 +57,17 @@ export const webhookService = {
 			group: string
 		})[],
 	): Promise<Product[]> {
+		const inventories = await inventory
+			.getInventoriesByCustomerID(customerID)
+			.then(invs =>
+				invs.reduce((acc, cur) => {
+					if (!acc.has(cur.productID)) {
+						acc.set(cur.productID, true)
+					}
+					return acc
+				}, new Map<ProductID, boolean>()),
+			)
+
 		return db.transaction(async tx => {
 			const units = await inventory.getActiveUnits(tx)
 
@@ -97,6 +108,18 @@ export const webhookService = {
 					if (!newProduct) {
 						tx.rollback()
 						throw new ActionError('product from webhook was not upserted')
+					}
+					if (!inventories.has(newProduct.id)) {
+						const zeroInventory = await webhookService.createZeroInventories(
+							customerID,
+							newProduct.id,
+						)
+						if (!zeroInventory) {
+							tx.rollback()
+							throw new ActionError(
+								`product from webhook was created but zero inventories not created (product id: ${newProduct.id})`,
+							)
+						}
 					}
 					res(newProduct)
 				})
