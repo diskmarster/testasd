@@ -110,7 +110,7 @@ export const webhookService = {
 						throw new ActionError('product from webhook was not upserted')
 					}
 					if (!inventories.has(newProduct.id)) {
-						const zeroInventory = await webhookService.createZeroInventories(
+						const zeroInventory = await this.createZeroInventories(
 							customerID,
 							newProduct.id,
 						)
