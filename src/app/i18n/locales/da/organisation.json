@@ -132,6 +132,9 @@
     "settings": {
       "reference": "Konto/sag",
       "reference-description": "Konto/sag registreres ved tilgang, afgang, regulering og flyt",
+	  "reference-disabled": "Aktiveret",
+	  "reference-enabled": "Deaktiveret",
+	  "reference-partial": "Delvis aktiveret",
       "placement": "Placeringer",
       "placement-description": "Placeringer registreres ved tilgang, afgang, regulering og flyt",
       "batch": "Batch nr.",

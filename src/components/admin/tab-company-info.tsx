@@ -273,7 +273,7 @@ function CompanySettings({
 								</SettingDescription>
 							</SettingLabel>
 							<SettingContent className='flex gap-2 items-center'>
-								<Label>{(!useReferencePartial && !useReferenceFull) ? 'Slået fra' : (useReferencePartial && !useReferenceFull) ? 'Delvis aktiveret' : 'Slået til'}</Label>
+								<Label>{(!useReferencePartial && !useReferenceFull) ? t('company-page.settings.reference-enabled') : (useReferencePartial && !useReferenceFull) ? t('company-page.settings.reference-partial') : t('company-page.settings.reference-disabled')}</Label>
 								<Switch
 									checked={useReferencePartial}
 									onCheckedChange={(input: boolean) => {

@@ -132,6 +132,9 @@
     "settings": {
       "reference": "Account/Case",
       "reference-description": "Account/Case is recorded during incoming, outgoing, adjustment, and move",
+	  "reference-disabled": "Activated",
+	  "reference-enabled": "Deactivated",
+	  "reference-partial": "Partially activated",
       "placement": "Placements",
       "placement-description": "Placements are recorded during incoming, outgoing, adjustment, and move",
       "batch": "Batch No.",
