@@ -16,14 +16,6 @@ import { useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '../ui/card'
 import { Separator } from '../ui/separator'
 import {
 	Setting,
@@ -62,14 +54,14 @@ export function FormCompanyEdit({ customer }: Props) {
 	})
 
 	return (
-		<Card className='flex flex-col'>
-			<CardHeader>
-				<CardTitle>{t('company-page.title', { context })}</CardTitle>
-				<CardDescription>
+		<div className='flex flex-col'>
+			<div className='mb-2'>
+				<h2 className='text-base font-medium'>{t('company-page.title', { context })}</h2>
+				<p className='text-sm text-muted-foreground'>
 					{t('company-page.description', { context })}
-				</CardDescription>
-			</CardHeader>
-			<CardContent className='flex-1'>
+				</p>
+			</div>
+			<div className='flex-1'>
 				<form
 					id='company-details-form'
 					className={cn('grid w-full items-start gap-4')}
@@ -142,8 +134,8 @@ export function FormCompanyEdit({ customer }: Props) {
 						</Setting>
 					</div>
 				</form>
-			</CardContent>
-			<CardFooter>
+			</div>
+			<div>
 				<Button
 					form='company-details-form'
 					disabled={!formState.isDirty}
@@ -152,19 +144,19 @@ export function FormCompanyEdit({ customer }: Props) {
 					{pending && <Icons.spinner className='size-4 animate-spin' />}
 					{t('company-page.update-button', { context })}
 				</Button>
-			</CardFooter>
-		</Card>
+			</div>
+		</div>
 	)
 }
 
 export function CompanyEditSkeleton() {
 	return (
-		<Card className='flex flex-col'>
-			<CardHeader>
+		<div className='flex flex-col'>
+			<div className='mb-2 space-y-1'>
 				<Skeleton className='w-1/3 h-6' />
 				<Skeleton className='w-2/3 h-4' />
-			</CardHeader>
-			<CardContent className='flex-1'>
+			</div>
+			<div className='flex-1'>
 				<div className='grid w-full items-start gap-2'>
 					<div className='flex flex-col w-full'>
 						<SettingSkeleton />
@@ -172,10 +164,10 @@ export function CompanyEditSkeleton() {
 						<SettingSkeleton />
 					</div>
 				</div>
-			</CardContent>
-			<CardFooter>
+			</div>
+			<div>
 				<Skeleton className='h-10 w-40' />
-			</CardFooter>
-		</Card>
+			</div>
+		</div>
 	)
 }
