@@ -25,13 +25,6 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '../ui/alert-dialog'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '../ui/card'
 import { Switch } from '../ui/switch'
 import { DeleteIntegrationModal } from './delete-integration-modal'
 
@@ -100,15 +93,13 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 	}
 
 	return (
-		<Card>
-			<CardHeader>
-				<div className='space-y-1.5'>
-					<CardTitle>{t('card-title')}</CardTitle>
-					<CardDescription>{t('card-desc')}</CardDescription>
-				</div>
-			</CardHeader>
-			<CardContent>
-				<div className='grid xl:grid-cols-2 gap-4'>
+		<div className='max-w-4xl'>
+			<div className='mb-2'>
+				<h2 className='text-base font-medium'>{t('card-title')}</h2>
+				<p className='text-sm text-muted-foreground'>{t('card-desc')}</p>
+			</div>
+			<div>
+				<div className='flex flex-col gap-4'>
 					<div className='space-y-2'>
 						<div>
 							<p className='text-sm font-medium'>{t('providers-title')}</p>
@@ -151,7 +142,7 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 						/>
 					</div>
 				</div>
-			</CardContent>
+			</div>
 			<EnableIntegrationSync
 				open={enableSyncDialogOpen}
 				onOpenChange={setEnableSyncDialogOpen}
@@ -167,7 +158,7 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 					})
 				}
 			/>
-		</Card>
+		</div>
 	)
 }
 

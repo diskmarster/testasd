@@ -14,13 +14,6 @@ import { useRouter } from 'next/navigation'
 import { Dispatch, SetStateAction, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 import { Button } from '../ui/button'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '../ui/card'
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
@@ -37,14 +30,12 @@ export function NoIntegrationsCard({ appInstallUrl }: Props) {
 	const [installer, setInstaller] = useState<SyncProviderType>()
 
 	return (
-		<Card>
-			<CardHeader>
-				<div className='space-y-1.5'>
-					<CardTitle>{t('card-title')}</CardTitle>
-					<CardDescription>{t('card-desc')}</CardDescription>
-				</div>
-			</CardHeader>
-			<CardContent>
+		<div>
+			<div className='space-y-1.5 mb-2'>
+				<h2 className='text-base font-medium'>{t('card-title')}</h2>
+				<p className='text-sm text-muted-foreground'>{t('card-desc')}</p>
+			</div>
+			<div>
 				{!installer ? (
 					<ChooseInstaller setInstaller={setInstaller} />
 				) : (
@@ -53,8 +44,8 @@ export function NoIntegrationsCard({ appInstallUrl }: Props) {
 						appInstallUrl={appInstallUrl}
 					/>
 				)}
-			</CardContent>
-		</Card>
+			</div>
+		</div>
 	)
 }
 
@@ -76,7 +67,7 @@ function ChooseInstaller({
 	]
 
 	return (
-		<div className='grid xl:grid-cols-[auto_1fr] gap-4'>
+		<div className='flex flex-col gap-4'>
 			<div className='flex flex-col gap-4'>
 				<p className='max-w-prose text-pretty text-sm space-y-1'>
 					{t('before-install-sub-1')}
@@ -85,7 +76,7 @@ function ChooseInstaller({
 					{t('before-install-sub-2')}
 				</p>
 			</div>
-			<ul className='flex gap-2 justify-end'>
+			<ul className='flex gap-2'>
 				{providers.map((p, i) => (
 					<li key={i}>
 						<div className='border shadow-sm bg-background min-w-80 p-4 flex items-center gap-4 rounded-md'>
