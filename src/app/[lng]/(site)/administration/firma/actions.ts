@@ -59,7 +59,7 @@ export const createMailSettingAction = adminAction
 		}
 
 		const settingWithExtra = await customerService.getExtraMailInfo(mailSetting)
-		revalidatePath(`/${ctx.lang}/administration/firma`)
+		revalidatePath(`/${ctx.lang}/administration/firma/mails`)
 		return settingWithExtra
 	})
 
@@ -71,7 +71,7 @@ export const deleteMailSettingAction = adminAction
 		if (!deleted) {
 			throw new ActionError(t('mail-settings.errors.delete-settings-failed'))
 		}
-		revalidatePath(`/${ctx.lang}/administration/firma`)
+		revalidatePath(`/${ctx.lang}/administration/firma/mails`)
 	})
 
 export const updateMultipleMailSettings = adminAction
@@ -88,7 +88,7 @@ export const updateMultipleMailSettings = adminAction
 		const responses = await Promise.all(updatePromises)
 		const updatedIDs = responses.filter(Boolean).map(r => r?.id)
 		const fullUpdate = updatedIDs.length == updatePromises.length
-		revalidatePath(`/${ctx.lang}/administration/firma`)
+		revalidatePath(`/${ctx.lang}/administration/firma/mails`)
 
 		return {
 			fullUpdate,
@@ -117,7 +117,7 @@ export const createEconomicIntegration = adminAction
 			throw new ActionError(t('did-not-update-settings'))
 		}
 
-		revalidatePath(`/${lang}/administration/firma`)
+		revalidatePath(`/${lang}/administration/firma/integrationer`)
 	})
 
 export const deleteIntegration = adminAction
@@ -133,7 +133,7 @@ export const deleteIntegration = adminAction
 		if (!didDelete) {
 			throw new ActionError(t('did-not-delete-settings'))
 		}
-		revalidatePath(`/${lang}/administration/firma`)
+		revalidatePath(`/${lang}/administration/firma/integrationer`)
 	})
 
 export const updateIntegrationSettings = adminAction
@@ -182,7 +182,7 @@ export const updateIntegrationSettings = adminAction
 			throw new ActionError(t('did-not-update-settings'))
 		}
 
-		revalidatePath(`/${lang}/administration/firma`)
+		revalidatePath(`/${lang}/administration/firma/integrationer`)
 	})
 
 export const syncProductCatalogueAction = adminAction
