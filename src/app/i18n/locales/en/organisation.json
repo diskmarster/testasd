@@ -309,6 +309,7 @@
     }
   },
 	"integrations": {
+		"not-active-for-customer": "Integrations are not activated for your account",
 		"card-title": "Integrations",
 		"card-desc": "Make NemLager smarter with integrations",
 		"before-install-sub-1": "Before you can get started, you need to install a data provider in NemLager",
@@ -408,5 +409,10 @@
 			"message_full-fetch-products-failed-economic": "Fetching product catalog from e-conomic failed",
 			"message_full-upsert-failed-economic": "Full update of product catalog from e-conomic failed"
 		}
+	},
+	"sidebar": {
+		"settings": "Company settings",
+		"mails": "Mails",
+		"integrations": "Integrations"
 	}
 }

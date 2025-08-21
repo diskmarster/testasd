@@ -309,6 +309,7 @@
     }
   },
 	"integrations": {
+		"not-active-for-customer": "Integrationer er ikke aktiveret for din konto",
 		"card-title": "Integrationer",
 		"card-desc": "Gør NemLager smartere med integrationer",
 		"before-install-sub-1": "Før du kan komme i gang med at bruge NemLagers integrationer, skal du først installere en data udbyder i NemLager.",
@@ -408,5 +409,10 @@
 			"message_full-fetch-products-failed-economic": "Hentning af varekartotek fra e-conomic fejlede",
 			"message_full-upsert-failed-economic": "Fuld opdatering af varekartotek fra e-conomic fejlede"
 		}
+	},
+	"sidebar": {
+		"settings": "Indstillinger",
+		"mails": "Mails",
+		"integrations": "Integrationer"
 	}
 }

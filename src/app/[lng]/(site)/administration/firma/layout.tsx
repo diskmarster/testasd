@@ -27,7 +27,8 @@ export default async function AdminLayout({ children, params: { lng } }: Props) 
 	)
 }
 
-function Sidebar({ pathname, lng }: { pathname: string | null, lng: string }) {
+async function Sidebar({ pathname, lng }: { pathname: string | null, lng: string }) {
+	const { t } = await serverTranslation(lng, 'organisation')
 	function isActive(path: string): boolean {
 		return pathname ? pathname.includes(path) : false
 	}
@@ -37,9 +38,9 @@ function Sidebar({ pathname, lng }: { pathname: string | null, lng: string }) {
 	}
 
 	const subpages = [
-		{ path: toPath('/indstillinger'), label: 'Indstillinger' },
-		{ path: toPath('/mails'), label: 'Mails' },
-		{ path: toPath('/integrationer'), label: 'Integrationer' }
+		{ path: toPath('/indstillinger'), label: t('sidebar.settings') },
+		{ path: toPath('/mails'), label: t('sidebar.mails') },
+		{ path: toPath('/integrationer'), label: t('sidebar.integrations') }
 	]
 
 	return (
