@@ -1,8 +1,7 @@
 import { CompanyInfoSkeleton } from "@/components/admin/tab-company-info"
 import { withAuth, WithAuthProps } from "@/components/common/with-auth"
 import { Suspense } from "react"
-import { CompanyInfoWrapper } from "../company-wrapper"
-import { MailSettingWrapper } from "../mail-wrapper"
+import { CompanyInfoWrapper } from "./company-wrapper"
 
 interface Props extends WithAuthProps {
 	params: {
@@ -10,7 +9,7 @@ interface Props extends WithAuthProps {
 	}
 }
 
-async function Page({ params: { lng }, customer, user }: Props) {
+async function Page({ customer }: Props) {
 	return (
 		<div className="space-y-4">
 			<Suspense fallback={<CompanyInfoSkeleton plan={customer.plan} />}>

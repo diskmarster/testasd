@@ -1,10 +1,5 @@
 'use client'
 
-import {
-	getEventType,
-	getTableIntegrationLogsColumns,
-	getTableIntegrationLogsFilters,
-} from '@/app/[lng]/(site)/administration/firma/integration-log-columns'
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
 import { useUrlFiltering } from '@/hooks/use-url-filtering'
@@ -32,6 +27,7 @@ import { TableHeaderGroup } from '../table/table-header-group'
 import { TablePagination } from '../table/table-pagination'
 import { TableToolbar } from '../table/table-toolbar'
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../ui/table'
+import { getEventType, getTableIntegrationLogsColumns, getTableIntegrationLogsFilters } from '@/app/[lng]/(site)/administration/firma/integrationer/integration-log-columns'
 
 const COLUMN_FILTERS_ENABLED = true
 const ROW_PER_PAGE = [25, 50, 75, 100]
@@ -160,7 +156,7 @@ export function TableIntegrationLogs({ data }: Props) {
 										className={cn(
 											(row.original.status == 'error' ||
 												eventType == 'productEvent_delete') &&
-												'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
+											'bg-destructive/10 border-b-destructive/15 hover:bg-destructive/15 data-[state=selected]:bg-destructive/20',
 										)}
 										key={row.id}
 										data-state={row.getIsSelected() && 'selected'}>
