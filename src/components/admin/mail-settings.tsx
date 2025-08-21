@@ -107,9 +107,9 @@ export function MailSettings({ settings, user }: Props) {
 			let msg = res?.data?.fullUpdate
 				? t('mail-settings.errors.update-settings-success')
 				: t('mail-settings.errors.update-settings-failed', {
-					count: res?.data?.ids.length || 0,
-					max: payload.length,
-				})
+						count: res?.data?.ids.length || 0,
+						max: payload.length,
+					})
 
 			const newMap = new Map()
 			const updatedSettings = localSettings.map(setting => {
@@ -141,7 +141,9 @@ export function MailSettings({ settings, user }: Props) {
 			<div className='flex flex-row items-start justify-between'>
 				<div className='space-y-1.5'>
 					<h2 className='text-base font-medium'>{t('mail-settings.title')}</h2>
-					<p className='text-sm text-muted-foreground'>{t('mail-settings.description')}</p>
+					<p className='text-sm text-muted-foreground'>
+						{t('mail-settings.description')}
+					</p>
 				</div>
 				<div className='flex items-center gap-4'>
 					<Link

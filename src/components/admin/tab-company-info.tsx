@@ -201,13 +201,13 @@ function CompanySettings({
 	const [useReferencePartial, useReferenceFull] = useMemo(
 		() => [
 			useReference.tilgang ||
-			useReference.afgang ||
-			useReference.regulering ||
-			useReference.flyt,
+				useReference.afgang ||
+				useReference.regulering ||
+				useReference.flyt,
 			useReference.tilgang &&
-			useReference.afgang &&
-			useReference.regulering &&
-			useReference.flyt,
+				useReference.afgang &&
+				useReference.regulering &&
+				useReference.flyt,
 		],
 		[
 			useReference.tilgang,
@@ -230,7 +230,9 @@ function CompanySettings({
 	return (
 		<div>
 			<div className='mb-2'>
-				<h2 className='text-base font-medium'>{t('company-page.title', { context })}</h2>
+				<h2 className='text-base font-medium'>
+					{t('company-page.title', { context })}
+				</h2>
 				<p className='text-sm text-muted-foreground'>
 					{t('company-page.description', { context })}
 				</p>
@@ -273,7 +275,13 @@ function CompanySettings({
 								</SettingDescription>
 							</SettingLabel>
 							<SettingContent className='flex gap-2 items-center'>
-								<Label>{(!useReferencePartial && !useReferenceFull) ? t('company-page.settings.reference-enabled') : (useReferencePartial && !useReferenceFull) ? t('company-page.settings.reference-partial') : t('company-page.settings.reference-disabled')}</Label>
+								<Label>
+									{!useReferencePartial && !useReferenceFull
+										? t('company-page.settings.reference-enabled')
+										: useReferencePartial && !useReferenceFull
+											? t('company-page.settings.reference-partial')
+											: t('company-page.settings.reference-disabled')}
+								</Label>
 								<Switch
 									checked={useReferencePartial}
 									onCheckedChange={(input: boolean) => {

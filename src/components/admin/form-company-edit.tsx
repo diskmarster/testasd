@@ -56,7 +56,9 @@ export function FormCompanyEdit({ customer }: Props) {
 	return (
 		<div className='flex flex-col'>
 			<div className='mb-2'>
-				<h2 className='text-base font-medium'>{t('company-page.title', { context })}</h2>
+				<h2 className='text-base font-medium'>
+					{t('company-page.title', { context })}
+				</h2>
 				<p className='text-sm text-muted-foreground'>
 					{t('company-page.description', { context })}
 				</p>

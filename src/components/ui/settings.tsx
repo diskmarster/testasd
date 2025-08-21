@@ -34,7 +34,9 @@ export function SettingTitle({
 	...props
 }: HTMLProps<HTMLHeadingElement>) {
 	return (
-		<h3 className={cn('font-medium text-sm tracking-tight', className)} {...props}>
+		<h3
+			className={cn('font-medium text-sm tracking-tight', className)}
+			{...props}>
 			{children}
 		</h3>
 	)
