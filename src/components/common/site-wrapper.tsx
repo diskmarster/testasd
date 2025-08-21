@@ -24,7 +24,7 @@ export function SiteWrapper({
 		<div
 			{...props}
 			className={cn(
-				'flex flex-col pb-6 scroll-smooth',
+				'flex flex-col pb-6 scroll-smooth grow',
 				className,
 				!fullWidth && 'container',
 				!noPadding && 'gap-4 pt-4',

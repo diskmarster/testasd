@@ -15,27 +15,23 @@ interface Props extends WithAuthProps {
 }
 
 async function Page({ params: { lng }, customer, user }: Props) {
-	const { t } = await serverTranslation(lng, 'organisation')
-
 	return (
-		<SiteWrapper
-			title={t('company-page.title')}
-			description={t('company-page.description')}>
+		<div className='space-y-4'>
 			<Suspense fallback={<CompanyInfoSkeleton plan={customer.plan} />}>
 				<CompanyInfoWrapper customer={customer} />
 			</Suspense>
 			<Suspense fallback={<p>loading mail settings...</p>}>
 				<MailSettingWrapper customer={customer} user={user} />
 			</Suspense>
-			{customer.canUseIntegration && (
-				<Suspense>
-					<IntegrationsWrapper user={user} />
-				</Suspense>
-			)}
-			<Suspense>
-				<DeleteSettingModal />
-			</Suspense>
-		</SiteWrapper>
+			{/* {customer.canUseIntegration && ( */}
+			{/* 	<Suspense> */}
+			{/* 		<IntegrationsWrapper user={user} /> */}
+			{/* 	</Suspense> */}
+			{/* )} */}
+			{/* <Suspense> */}
+			{/* 	<DeleteSettingModal /> */}
+			{/* </Suspense> */}
+		</div>
 	)
 }
 
