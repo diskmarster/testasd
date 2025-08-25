@@ -111,8 +111,8 @@ export function ProductDetails({
 	const { y: scrollY } = useScroll()
 
 	const [dialogOpen, setDialogOpen] = useState(false)
-	const [dialogOnAccept, setDialogOnAccept] = useState(() => () => {})
-	const [dialogOnDismiss, setDialogOnDismiss] = useState(() => () => {})
+	const [dialogOnAccept, setDialogOnAccept] = useState(() => () => { })
+	const [dialogOnDismiss, setDialogOnDismiss] = useState(() => () => { })
 
 	const { setValue, watch, reset, register, formState } = useForm<
 		z.infer<typeof schema>
@@ -129,8 +129,8 @@ export function ProductDetails({
 	function onDialogOpenChange(open: boolean) {
 		setDialogOpen(open)
 		if (!open) {
-			setDialogOnAccept(() => () => {})
-			setDialogOnDismiss(() => () => {})
+			setDialogOnAccept(() => () => { })
+			setDialogOnDismiss(() => () => { })
 		}
 	}
 
@@ -256,7 +256,7 @@ export function ProductDetails({
 				className={cn(
 					'rounded bg-background flex items-center transition-all justify-between sticky top-[70px] py-4 -mt-4',
 					scrollY > 20 &&
-						'mx-2 shadow-[0px_8px_5px_-3px_rgba(0,0,0,0.15)] border p-4 z-10',
+					'mx-2 shadow-[0px_8px_5px_-3px_rgba(0,0,0,0.15)] border p-4 z-10',
 				)}>
 				<div className='space-y-0.5'>
 					<div className='flex items-start gap-3 flex-1'>
@@ -272,45 +272,44 @@ export function ProductDetails({
 						{formatDate(product.updated)}
 					</p>
 				</div>
-				{hasPermissionByRank(user.role, 'bruger') &&
-					!integrationSettings?.useSyncProducts && (
-						<IfElse
-							condition={isEditing}
-							trueComp={
-								<div className='flex gap-2'>
-									<Button
-										onClick={() => {
-											reset()
-											setIsEditing(false)
-										}}
-										variant='outline'>
-										{t('details-page.details.button-cancel')}
-									</Button>
-									<Button
-										disabled={pending || !formState.isDirty}
-										onClick={() => onSubmit(formValues)}
-										variant='default'
-										className='flex items-center gap-2'>
-										{isSubmitting && (
-											<Icons.spinner className='size-4 animate-spin' />
-										)}
-										{t('details-page.details.button-update')}
-									</Button>
-								</div>
-							}
-							falseComp={
-								<Button onClick={() => setIsEditing(true)} variant='outline'>
-									{t('details-page.details.button-edit')}
+				{hasPermissionByRank(user.role, 'bruger') && (
+					<IfElse
+						condition={isEditing}
+						trueComp={
+							<div className='flex gap-2'>
+								<Button
+									onClick={() => {
+										reset()
+										setIsEditing(false)
+									}}
+									variant='outline'>
+									{t('details-page.details.button-cancel')}
 								</Button>
-							}
-						/>
-					)}
+								<Button
+									disabled={pending || !formState.isDirty}
+									onClick={() => onSubmit(formValues)}
+									variant='default'
+									className='flex items-center gap-2'>
+									{isSubmitting && (
+										<Icons.spinner className='size-4 animate-spin' />
+									)}
+									{t('details-page.details.button-update')}
+								</Button>
+							</div>
+						}
+						falseComp={
+							<Button onClick={() => setIsEditing(true)} variant='outline'>
+								{t('details-page.details.button-edit')}
+							</Button>
+						}
+					/>
+				)}
 			</div>
 			<div className='grid grid-cols-2 gap-4 w-full border rounded-md p-4'>
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='text1'>{t('details-page.details.label-text1')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='min-h-[60px] h-full px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm'>
 								{product.text1}
@@ -337,7 +336,7 @@ export function ProductDetails({
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='text2'>{t('details-page.details.label-text2')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='min-h-[60px] px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm'>
 								{product.text2}
@@ -365,7 +364,7 @@ export function ProductDetails({
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='text3'>{t('details-page.details.label-text3')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm'>
 								{product.text3 != ''
@@ -394,7 +393,7 @@ export function ProductDetails({
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='note'>{t('details-page.details.label-note')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm'>
 								{product.note != ''
@@ -424,7 +423,7 @@ export function ProductDetails({
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='group'>{t('details-page.details.label-group')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 								{product.group}
@@ -457,7 +456,7 @@ export function ProductDetails({
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='unit'>{t('details-page.details.label-unit')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 								{product.unit}
@@ -506,7 +505,7 @@ export function ProductDetails({
 						{t('details-page.details.label-barcode')}
 					</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 								{product.barcode}
@@ -537,7 +536,7 @@ export function ProductDetails({
 								{t('details-page.details.label-costPrice')}
 							</Label>
 							<IfElse
-								condition={isEditing}
+								condition={isEditing && !integrationSettings?.useSyncProducts}
 								falseComp={
 									<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 										{numberToCurrency(product.costPrice, lng)}
@@ -560,7 +559,7 @@ export function ProductDetails({
 								{t('details-page.details.label-salesPrice')}
 							</Label>
 							<IfElse
-								condition={isEditing}
+								condition={isEditing && !integrationSettings?.useSyncProducts}
 								falseComp={
 									<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 										{numberToCurrency(product.salesPrice, lng)}
