@@ -111,8 +111,8 @@ export function ProductDetails({
 	const { y: scrollY } = useScroll()
 
 	const [dialogOpen, setDialogOpen] = useState(false)
-	const [dialogOnAccept, setDialogOnAccept] = useState(() => () => { })
-	const [dialogOnDismiss, setDialogOnDismiss] = useState(() => () => { })
+	const [dialogOnAccept, setDialogOnAccept] = useState(() => () => {})
+	const [dialogOnDismiss, setDialogOnDismiss] = useState(() => () => {})
 
 	const { setValue, watch, reset, register, formState } = useForm<
 		z.infer<typeof schema>
@@ -129,8 +129,8 @@ export function ProductDetails({
 	function onDialogOpenChange(open: boolean) {
 		setDialogOpen(open)
 		if (!open) {
-			setDialogOnAccept(() => () => { })
-			setDialogOnDismiss(() => () => { })
+			setDialogOnAccept(() => () => {})
+			setDialogOnDismiss(() => () => {})
 		}
 	}
 
@@ -256,7 +256,7 @@ export function ProductDetails({
 				className={cn(
 					'rounded bg-background flex items-center transition-all justify-between sticky top-[70px] py-4 -mt-4',
 					scrollY > 20 &&
-					'mx-2 shadow-[0px_8px_5px_-3px_rgba(0,0,0,0.15)] border p-4 z-10',
+						'mx-2 shadow-[0px_8px_5px_-3px_rgba(0,0,0,0.15)] border p-4 z-10',
 				)}>
 				<div className='space-y-0.5'>
 					<div className='flex items-start gap-3 flex-1'>
