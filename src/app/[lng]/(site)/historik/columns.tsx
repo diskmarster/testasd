@@ -596,6 +596,9 @@ export function getTableHistoryFilters(
 			...placements.map(placement => ({
 				value: placement.name,
 				label: placement.name,
+				icon: placement.isBarred 
+									? <span className={cn('size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block')}/>
+									: undefined
 			})),
 		],
 	}

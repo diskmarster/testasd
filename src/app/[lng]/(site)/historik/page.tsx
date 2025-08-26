@@ -22,7 +22,7 @@ async function Page({ params: { lng }, user, customer }: Props) {
 
 	const units = await inventoryService.getActiveUnits()
 	const groups = await inventoryService.getActiveGroupsByID(customer.id)
-	const placements = await inventoryService.getActivePlacementsByID(location)
+	const placements = await inventoryService.getAllPlacementsByID(location)
 	const batches = await inventoryService.getActiveBatchesByID(location)
 	const { t } = await serverTranslation(lng, 'historik')
 	const settings: CustomerSettings = (await customerService.getSettings(
