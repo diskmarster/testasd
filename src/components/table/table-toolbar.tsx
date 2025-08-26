@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils'
 import { Column, Table } from '@tanstack/react-table'
 import { t } from 'i18next'
 import { usePathname } from 'next/navigation'
-import { useContext, useState, useTransition } from 'react'
+import { ReactElement, ReactNode, useContext, useState, useTransition } from 'react'
 
 type ToolbarOptions = {
 	showExport?: boolean
@@ -28,7 +28,7 @@ type ToolbarOptions = {
 type FilterOption = {
 	label: string
 	value: any
-	icon?: React.ComponentType<{ className?: string }>
+	icon?: ReactElement
 }
 
 export type NumberRange = {
