@@ -68,7 +68,7 @@ export const updateProductAction = editableAction
 				// some fields are ok to change when catalogue sync is enabled
 				// - useBatch
 				// - supplierID
-				const allKeys = Object.keys(updatedProductData)
+				const nonAllowedKeys = Object.keys(updatedProductData)
 					.map(key => {
 						if (key == 'useBatch' || key == 'supplierID') return
 						return key
@@ -76,7 +76,7 @@ export const updateProductAction = editableAction
 					.filter(Boolean)
 				const dirtyKeys = Object.keys(dirtyFields as {})
 
-				if (dirtyKeys.some(item => allKeys.includes(item))) {
+				if (dirtyKeys.some(item => nonAllowedKeys.includes(item))) {
 					throw new ActionError(t('product-action.sync-is-on'))
 				}
 			}
