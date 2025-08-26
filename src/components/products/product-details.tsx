@@ -160,7 +160,7 @@ export function ProductDetails({
 			})
 
 			if (res && res.serverError) {
-				toast.success(t(`common:${siteConfig.successTitle}`), {
+				toast.error(t(`common:${siteConfig.errorTitle}`), {
 					description: res.serverError,
 				})
 				setIsSubmitting(false)
