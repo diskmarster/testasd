@@ -24,7 +24,7 @@ export const createProductAction = editableAction
 		const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
 		const integrationSettings = await integrationsService.getSettings(
-			ctx.user.id,
+			ctx.user.customerID,
 		)
 		if (integrationSettings?.useSyncProducts) {
 			throw new ActionError(t('product-action.sync-is-on'))
@@ -101,7 +101,7 @@ export const toggleBarredProductAction = editableAction
 		async ({ parsedInput: { productID, isBarred }, ctx: { user, lang } }) => {
 			const { t } = await serverTranslation(lang, 'action-errors')
 
-			const integrationSettings = await integrationsService.getSettings(user.id)
+			const integrationSettings = await integrationsService.getSettings(user.customerID)
 			if (integrationSettings?.useSyncProducts) {
 				throw new ActionError(t('product-action.sync-is-on'))
 			}
@@ -127,7 +127,7 @@ export const importProductsAction = adminAction
 		const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
 		const integrationSettings = await integrationsService.getSettings(
-			ctx.user.id,
+			ctx.user.customerID,
 		)
 		if (integrationSettings?.useSyncProducts) {
 			throw new ActionError(t('product-action.sync-is-on'))
@@ -158,7 +158,7 @@ export const deleteProductAction = adminAction
 		const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
 		const integrationSettings = await integrationsService.getSettings(
-			ctx.user.id,
+			ctx.user.customerID,
 		)
 		if (integrationSettings?.useSyncProducts) {
 			throw new ActionError(t('product-action.sync-is-on'))
