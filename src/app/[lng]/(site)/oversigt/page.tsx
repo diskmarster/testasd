@@ -28,7 +28,7 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
 
 	const units = inventoryService.getActiveUnits()
 	const groups = inventoryService.getActiveGroupsByID(customer.id)
-	const placements = inventoryService.getActivePlacementsByID(location)
+	const placements = inventoryService.getAllPlacementsByID(location)
 	const batches = inventoryService.getActiveBatchesByID(location)
 	const customerSettings = (await customerService.getSettings(customer.id)) ?? {
 		usePlacement: true,
