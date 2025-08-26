@@ -60,9 +60,25 @@ export const updateProductAction = editableAction
 			parsedInput: { productID, data: updatedProductData, dirtyFields },
 		}) => {
 			const { t } = await serverTranslation(lang, 'action-errors')
-			const integrationSettings = await integrationsService.getSettings(user.id)
+			const integrationSettings = await integrationsService.getSettings(
+				user.customerID,
+			)
+
 			if (integrationSettings?.useSyncProducts) {
-				throw new ActionError(t('product-action.sync-is-on'))
+				// some fields are ok to change when catalogue sync is enabled
+				// - useBatch
+				// - supplierID
+				const allKeys = Object.keys(updatedProductData)
+					.map(key => {
+						if (key == 'useBatch' || key == 'supplierID') return
+						return key
+					})
+					.filter(Boolean)
+				const dirtyKeys = Object.keys(dirtyFields as {})
+
+				if (dirtyKeys.some(item => allKeys.includes(item))) {
+					throw new ActionError(t('product-action.sync-is-on'))
+				}
 			}
 
 			if (updatedProductData.supplierID == -1) {
@@ -101,7 +117,9 @@ export const toggleBarredProductAction = editableAction
 		async ({ parsedInput: { productID, isBarred }, ctx: { user, lang } }) => {
 			const { t } = await serverTranslation(lang, 'action-errors')
 
-			const integrationSettings = await integrationsService.getSettings(user.customerID)
+			const integrationSettings = await integrationsService.getSettings(
+				user.customerID,
+			)
 			if (integrationSettings?.useSyncProducts) {
 				throw new ActionError(t('product-action.sync-is-on'))
 			}
