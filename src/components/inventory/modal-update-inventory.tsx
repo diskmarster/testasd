@@ -508,7 +508,7 @@ export function ModalUpdateInventory({
 									setValue('amount', 0, { shouldValidate: true })
 									setValue('type', 'tilgang', { shouldValidate: true })
 								}}>
-								{t('type', {context: 'incoming'})}
+								{t('type', { context: 'incoming' })}
 							</Button>
 							<Button
 								type='button'
@@ -524,7 +524,7 @@ export function ModalUpdateInventory({
 									setValue('type', 'regulering', { shouldValidate: true })
 									setValue('amount', 0, { shouldValidate: true })
 								}}>
-								{t('type', {context: 'regulate'})}
+								{t('type', { context: 'regulate' })}
 							</Button>
 							<Button
 								type='button'
@@ -540,7 +540,7 @@ export function ModalUpdateInventory({
 									setValue('type', 'afgang', { shouldValidate: true })
 									setValue('amount', 0, { shouldValidate: true })
 								}}>
-								{t('type', {context: 'outgoing'})}
+								{t('type', { context: 'outgoing' })}
 							</Button>
 						</div>
 						<div className='pt-2 flex flex-col gap-2'>
@@ -594,7 +594,7 @@ export function ModalUpdateInventory({
 							size='lg'
 							className='w-full gap-2'>
 							{pending && <Icons.spinner className='size-4 animate-spin' />}
-							{t('create-button', {context: type})} 
+							{t('create-button', { context: type })}
 						</Button>
 					</form>
 				</CredenzaBody>
