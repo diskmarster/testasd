@@ -27,6 +27,8 @@ import { format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 import { useDebouncedCallback } from 'use-debounce'
 import { ScrollArea } from '../ui/scroll-area'
+import { updateInventoryAction } from '@/app/[lng]/(site)/oversigt/actions'
+import { placementTable } from '@/lib/database/schema/inventory'
 
 type TableToolbarFiltersProps<T> = {
 	table: Table<T>
@@ -60,10 +62,19 @@ function TableToolbarFilters<T>({
 			const fields = filterFields.filter(ff =>
 				unqFilters.has(ff.column?.id || ''),
 			)
+		
 			setSelectedFields(fields)
 		}
 	}, [filterLocalStorageKey])
-
+ useEffect(() => {
+  setSelectedFields(
+   previousState => filterFields.filter(
+    filterField => previousState.find(
+     prieousField => prieousField.column?.id == filterField.column?.id)
+   )
+  )
+ }, [filterFields])
+ 
 	const [activeIndex, setActiveIndex] = useState<number>()
 
 	const lng = useLanguage()
