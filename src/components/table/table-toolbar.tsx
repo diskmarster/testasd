@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils'
 import { Column, Table } from '@tanstack/react-table'
 import { t } from 'i18next'
 import { usePathname } from 'next/navigation'
-import { ReactElement, ReactNode, useContext, useState, useTransition } from 'react'
+import { ReactElement, useContext, useState, useTransition } from 'react'
 
 type ToolbarOptions = {
 	showExport?: boolean

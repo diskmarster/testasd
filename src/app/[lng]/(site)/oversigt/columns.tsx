@@ -26,9 +26,7 @@ import { ColumnDef, Table } from '@tanstack/react-table'
 import { isBefore } from 'date-fns'
 import { TFunction } from 'i18next'
 import { User } from 'lucia'
-import { Sun } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
 
 export type InventoryTableRow = FormattedInventory & {
 	disposable: number | null
@@ -838,9 +836,13 @@ export function getTableOverviewFilters(
 			...placements.map(placement => ({
 				value: placement.name,
 				label: placement.name,
-				icon: placement.isBarred 
-					? <span className={cn('size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block')}/>
-					: undefined
+				icon: placement.isBarred ? (
+					<span
+						className={cn(
+							'size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block',
+						)}
+					/>
+				) : undefined,
 			})),
 		],
 	}
@@ -856,10 +858,13 @@ export function getTableOverviewFilters(
 			...batches.map(batch => ({
 				value: batch.batch,
 				label: batch.batch,
-				icon: batch.isBarred 
-					? <span className={cn('size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block')}/>
-					: undefined
-
+				icon: batch.isBarred ? (
+					<span
+						className={cn(
+							'size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block',
+						)}
+					/>
+				) : undefined,
 			})),
 		],
 	}

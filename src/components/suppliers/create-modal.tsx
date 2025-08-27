@@ -60,7 +60,7 @@ export function CreateSupplierModal({}: Props) {
 				return
 			}
 			toast.success(t(siteConfig.successTitle), {
-				description: t("create.toast-success")
+				description: t('create.toast-success'),
 			})
 			onOpenChange(false)
 		})
