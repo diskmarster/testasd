@@ -61,7 +61,6 @@ export async function OverviewTableWrapper({
 		images: imageMap.get(i.product.id.toString(10)) ?? [],
 	}))
 
-		console.log("placements: ", await placements)
 	const placementData = await placements
 	return (
 		<TableOverview
