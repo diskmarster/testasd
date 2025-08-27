@@ -856,6 +856,10 @@ export function getTableOverviewFilters(
 			...batches.map(batch => ({
 				value: batch.batch,
 				label: batch.batch,
+				icon: batch.isBarred 
+					? <span className={cn('size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block')}/>
+					: undefined
+
 			})),
 		],
 	}
