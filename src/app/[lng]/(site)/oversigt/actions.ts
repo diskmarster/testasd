@@ -100,7 +100,7 @@ export const updateInventoryAction = editableAction
 				placementID,
 				batchID,
 				type,
-				type == 'tilgang' ? amount : -amount,
+				type == 'afgang' ? -amount : amount,
 				reference,
 				null,
 				ctx.lang,

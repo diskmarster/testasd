@@ -1,4 +1,8 @@
 {
+  "type_incoming": "Tilgang",
+  "type_outgoing": "Afgang",
+  "type_regulate": "Reguler",
+  "type_move": "Flyt",
   "overview": "Oversigt",
   "overview-description": "Se en oversigt over din varebeholdning",
   "modal-update-inventory.translations": "",
@@ -18,6 +22,9 @@
   "use-account-case": "Brug konto/sag?",
   "use-account-case-placeholder": "Skriv konto/sag",
   "create-button": "Opret",
+  "create-button_tilgang": "Opret tilgang",
+  "create-button_afgang": "Opret afgang",
+  "create-button_regulering": "Opret regulering",
   "modal-move-inventory-translations": "",
   "inventory-moved": "Beholdning flyttet",
   "move-inventory": "Flyt beholdning",

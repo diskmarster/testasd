@@ -1,7 +1,10 @@
 {
+  "type_incoming": "Incoming",
+  "type_outgoing": "Outgoing",
+  "type_regulate": "Adjust",
+  "type_move": "Move",
   "overview": "Overview",
   "overview-description": "See an overview of your inventory",
-
   "modal-update-inventory.translations": "",
   "update-inventory": "Update inventory",
   "update-inventory-description": "Update your inventory by making an incoming or outgoing transaction",
@@ -20,7 +23,9 @@
   "use-account-case": "Use account/case?",
   "use-account-case-placeholder": "Write account/case",
   "create-button": "Create",
-
+  "create-button_tilgang": "Create incoming",
+  "create-button_afgang": "Create outgoing",
+  "create-button_regulering": "Create adjustment",
   "modal-move-inventory-translations": "",
   "inventory-moved": "Quantity moved",
   "move-inventory": "Move quantity",

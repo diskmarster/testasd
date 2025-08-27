@@ -170,7 +170,12 @@ export function ModalUpdateInventory({
 	}
 
 	function decrement() {
-		const nextValue = Math.max(0, getValues().amount - 1)
+		let nextValue = 0
+		if (type == 'regulering') {
+			nextValue = getValues().amount - 1
+		} else {
+			nextValue = Math.max(0, getValues().amount - 1)
+		}
 		setValue('amount', parseFloat(nextValue.toFixed(4)), {
 			shouldValidate: true,
 		})
@@ -498,16 +503,33 @@ export function ModalUpdateInventory({
 							<Button
 								type='button'
 								className='w-full rounded-r-none'
-								variant={isIncoming ? 'default' : 'secondary'}
-								onClick={() =>
+								variant={type == 'tilgang' ? 'default' : 'secondary'}
+								onClick={() => {
+									setValue('amount', 0, { shouldValidate: true })
 									setValue('type', 'tilgang', { shouldValidate: true })
-								}>
-								{t('incoming')}
+								}}>
+								{t('type', {context: 'incoming'})}
+							</Button>
+							<Button
+								type='button'
+								className='w-full rounded-none'
+								variant={type == 'regulering' ? 'default' : 'secondary'}
+								onClick={() => {
+									setNewPlacement(false)
+									setNewBatch(false)
+									if (newPlacement || newBatch) {
+										resetField('placementID')
+										resetField('batchID')
+									}
+									setValue('type', 'regulering', { shouldValidate: true })
+									setValue('amount', 0, { shouldValidate: true })
+								}}>
+								{t('type', {context: 'regulate'})}
 							</Button>
 							<Button
 								type='button'
 								className='w-full rounded-l-none'
-								variant={!isIncoming ? 'default' : 'secondary'}
+								variant={type == 'afgang' ? 'default' : 'secondary'}
 								onClick={() => {
 									setNewPlacement(false)
 									setNewBatch(false)
@@ -516,8 +538,9 @@ export function ModalUpdateInventory({
 										resetField('batchID')
 									}
 									setValue('type', 'afgang', { shouldValidate: true })
+									setValue('amount', 0, { shouldValidate: true })
 								}}>
-								{t('outgoing')}
+								{t('type', {context: 'outgoing'})}
 							</Button>
 						</div>
 						<div className='pt-2 flex flex-col gap-2'>
@@ -571,7 +594,7 @@ export function ModalUpdateInventory({
 							size='lg'
 							className='w-full gap-2'>
 							{pending && <Icons.spinner className='size-4 animate-spin' />}
-							{t('create-button')} {isIncoming ? t('incoming') : t('outgoing')}
+							{t('create-button', {context: type})} 
 						</Button>
 					</form>
 				</CredenzaBody>
