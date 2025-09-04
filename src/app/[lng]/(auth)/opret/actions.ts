@@ -10,6 +10,7 @@ import { emailService } from '@/service/email'
 import { locationService } from '@/service/location'
 import { userService } from '@/service/user'
 import { generateIdFromEntropySize } from 'lucia'
+import { cookies } from 'next/headers'
 
 export const createCustomerAction = publicAction
 	.metadata({ actionName: 'createCustomer' })
@@ -26,7 +27,8 @@ export const createCustomerAction = publicAction
 			throw new ActionError(t('create-action.user-email-exists'))
 		}
 
-		const newCustomer = await customerService.create(parsedInput)
+		const retailerId = cookies().get('retailer')?.value
+		const newCustomer = await customerService.create({...parsedInput, retailerId})
 		if (!newCustomer) {
 			throw new ActionError(t('create-action.customer-not-created'))
 		}
