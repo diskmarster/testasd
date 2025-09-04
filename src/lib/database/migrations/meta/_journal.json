@@ -281,6 +281,13 @@
       "when": 1754638998755,
       "tag": "0039_omniscient_redwing",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "6",
+      "when": 1756987692923,
+      "tag": "0040_slippery_talos",
+      "breakpoints": true
     }
   ]
 }
