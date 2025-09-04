@@ -1,14 +1,14 @@
-import { cookieName, fallbackLng, languages } from "@/app/i18n/settings";
+import { cookieName, fallbackLng, languages } from '@/app/i18n/settings'
 import acceptLanguage from 'accept-language'
-import { cookies, headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { NextRequest } from "next/server";
+import { cookies, headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { NextRequest } from 'next/server'
 
 acceptLanguage.languages(languages)
 
 export async function GET(
 	r: NextRequest,
-{ params }: { params: { retailerId: string } }
+	{ params }: { params: { retailerId: string } },
 ) {
 	const cookieStore = cookies()
 	cookieStore.set('retailer', params.retailerId)

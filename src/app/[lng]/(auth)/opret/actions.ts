@@ -28,7 +28,10 @@ export const createCustomerAction = publicAction
 		}
 
 		const retailerId = cookies().get('retailer')?.value
-		const newCustomer = await customerService.create({...parsedInput, retailerId})
+		const newCustomer = await customerService.create({
+			...parsedInput,
+			retailerId,
+		})
 		if (!newCustomer) {
 			throw new ActionError(t('create-action.customer-not-created'))
 		}

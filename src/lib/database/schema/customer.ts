@@ -31,7 +31,7 @@ export const customerTable = sqliteTable('nl_customer', {
 		.default(sql`(unixepoch())`)
 		.$onUpdateFn(() => new Date())
 		.$type<Date>(),
-	retailerId: text('retailer_id')
+	retailerId: text('retailer_id'),
 })
 
 export type NewCustomer = typeof customerTable.$inferInsert
