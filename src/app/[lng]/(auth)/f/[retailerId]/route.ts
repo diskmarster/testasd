@@ -1,8 +1,10 @@
 import { cookieName, fallbackLng, languages } from '@/app/i18n/settings'
 import acceptLanguage from 'accept-language'
+import { addDays } from 'date-fns'
 import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest } from 'next/server'
+import { env } from 'process'
 
 acceptLanguage.languages(languages)
 
@@ -11,7 +13,12 @@ export async function GET(
 	{ params }: { params: { retailerId: string } },
 ) {
 	const cookieStore = cookies()
-	cookieStore.set('retailer', params.retailerId)
+	cookieStore.set('retailer', params.retailerId, {
+		expires: addDays(new Date(), 30),
+		secure: env.NODE_ENV == 'production',
+		sameSite: 'lax',
+		httpOnly: true,
+	})
 	const headerStore = headers()
 
 	let lng: string | undefined | null

@@ -11,6 +11,7 @@ import { locationService } from '@/service/location'
 import { userService } from '@/service/user'
 import { generateIdFromEntropySize } from 'lucia'
 import { cookies } from 'next/headers'
+import { env } from 'process'
 
 export const createCustomerAction = publicAction
 	.metadata({ actionName: 'createCustomer' })
@@ -35,6 +36,12 @@ export const createCustomerAction = publicAction
 		if (!newCustomer) {
 			throw new ActionError(t('create-action.customer-not-created'))
 		}
+		cookies().set('retailer', '', {
+			expires: 0,
+			secure: env.NODE_ENV == 'production',
+			sameSite: 'lax',
+			httpOnly: true,
+		})
 
 		const newLocationID = generateIdFromEntropySize(8)
 		const newLocation = await locationService.create({
