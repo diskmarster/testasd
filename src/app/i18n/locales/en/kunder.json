@@ -16,7 +16,9 @@
 		"integration_false": "Off",
 		"email": "Company email",
 		"extra": "Extra users",
-		"users": "Registered users"
+		"users": "Registered users",
+		"retailer": "Retailer",
+		"no-retailer": "-"
 	},
 	"row-actions": {
 		"update": "Update client",

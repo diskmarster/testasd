@@ -16,7 +16,9 @@
 		"integration_false": "Fra",
 		"email": "Firma e-mail",
 		"extra": "Ekstra brugere",
-		"users": "Registreret brugere"
+		"users": "Registreret brugere",
+		"retailer": "Forhandler",
+		"no-retailer": "-"
 	},
 	"row-actions": {
 		"update": "Opdater kunde",
