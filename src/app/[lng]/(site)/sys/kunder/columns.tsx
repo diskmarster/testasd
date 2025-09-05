@@ -91,7 +91,10 @@ export function getTableClientsColumns(
 		header: ({ column }) => (
 			<TableHeader column={column} title={t('columns.retailer')} />
 		),
-		cell: ({ row }) => row.original.retailerId ? row.original.retailerId : t('columns.no-retailer'),
+		cell: ({ row }) =>
+			row.original.retailerId
+				? row.original.retailerId
+				: t('columns.no-retailer'),
 		enableHiding: true,
 		meta: {
 			viewLabel: t('columns.retailer'),
