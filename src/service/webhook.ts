@@ -2,6 +2,7 @@ import { inventory } from '@/data/inventory'
 import { ProductHistoryType } from '@/data/inventory.types'
 import { location } from '@/data/location'
 import { product } from '@/data/products'
+import { suppliers } from '@/data/suppliers'
 import { db, TRX } from '@/lib/database'
 import { ApiKey } from '@/lib/database/schema/apikeys'
 import { CustomerID } from '@/lib/database/schema/customer'
@@ -14,6 +15,7 @@ import {
 	ProductID,
 	Unit,
 } from '@/lib/database/schema/inventory'
+import { NewSupplier, Supplier } from '@/lib/database/schema/suppliers'
 import { ActionError } from '@/lib/safe-action/error'
 import { tryCatch } from '@/lib/utils.server'
 
@@ -219,6 +221,9 @@ export const webhookService = {
 		const historyLog = await product.createHistoryLog(data, tx)
 
 		return historyLog != undefined
+	},
+	createSupplier: async function (data: NewSupplier): Promise<Supplier> {
+		return await suppliers.create(data)
 	},
 }
 

@@ -45,6 +45,9 @@ export const customerIntegrationSettings = sqliteTable(
 		useSyncProducts: integer('use_sync_products', { mode: 'boolean' })
 			.notNull()
 			.default(false),
+		useSyncSuppliers: integer('use_sync_suppliers', { mode: 'boolean' })
+			.notNull()
+			.default(false),
 	},
 )
 

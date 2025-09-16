@@ -407,7 +407,11 @@
 			"message_product-unit-not-supported": "Der skete en fejl ved synkronisering: Understøtter ikke enhed",
 			"message_full-product-sync-successfull": "Fuld synkronisering af varekartotek succesfuld",
 			"message_full-fetch-products-failed-economic": "Hentning af varekartotek fra e-conomic fejlede",
-			"message_full-upsert-failed-economic": "Fuld opdatering af varekartotek fra e-conomic fejlede"
+			"message_full-upsert-failed-economic": "Fuld opdatering af varekartotek fra e-conomic fejlede",
+			"message_supplier-sync-successful": "Vare synkroniseret succesfuldt",
+			"message_supplier-renumber-not-supported-economic": "Ændring af leverandør nummer er ikke understøttet",
+			"message_supplier-invalid-economic-webhook": "Ugyldig webhook type fra e-conomic",
+			"message_supplier-unknown-error-economic": "Der skete en fejl ved synkroniseringen af en leverandør fra economic"
 		}
 	},
 	"sidebar": {

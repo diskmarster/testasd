@@ -2,6 +2,7 @@ import { fallbackLng } from '@/app/i18n/settings'
 import { db } from '@/lib/database'
 import { ApiKey } from '@/lib/database/schema/apikeys'
 import type { Customer } from '@/lib/database/schema/customer'
+import { NewSupplier } from '@/lib/database/schema/suppliers'
 import { tryCatch } from '@/lib/utils.server'
 import { productService } from '@/service/products'
 import { webhookService } from '@/service/webhook'
@@ -30,17 +31,43 @@ type EconomicProduct = {
 		| undefined
 }
 
+type EconomicSupplier = {
+	supplierNumber: number
+	address: string | undefined
+	country: string | undefined
+	email: string | undefined // can be multiple emails in e-conomic separated by spaces
+	name: string
+	phone: string | undefined
+	attention:
+		| {
+				number: number
+				self: string
+		  }
+		| undefined
+	supplierContact:
+		| {
+				number: number
+				self: string
+		  }
+		| undefined
+}
+
 export type EconomicProductEventData = {
 	oldParam: string | null
 	newParam: string | null
 }
 
-export type EconomicProductEventAction =
-	| { action: 'create'; sku: string }
-	| { action: 'update'; sku: string }
-	| { action: 'delete'; sku: string }
-	| { action: 're-number'; oldSku: string; newSku: string }
+export type EconomicOldNewEventAction =
+	| { action: 'create'; param: string }
+	| { action: 'update'; param: string }
+	| { action: 'delete'; param: string }
+	| { action: 're-number'; oldParam: string; newParam: string }
 	| { action: 'invalid' }
+
+export type EconomicSupplierEventData = {
+	oldParam: string | null
+	newParam: string | null
+}
 
 export class EconomicSyncProvider implements SyncProvider {
 	private baseUrl = 'https://restapi.e-conomic.com'
@@ -51,21 +78,93 @@ export class EconomicSyncProvider implements SyncProvider {
 		this.agreementGrantToken = config.agreementGrantToken
 	}
 
-	private productEventAction(
+	private oldNewEventAction(
 		oldParam: string | null,
 		newParam: string | null,
-	): EconomicProductEventAction {
+	): EconomicOldNewEventAction {
 		if (!oldParam && newParam) {
-			return { action: 'create', sku: newParam }
+			return { action: 'create', param: newParam }
 		} else if (!newParam && oldParam) {
-			return { action: 'delete', sku: oldParam }
+			return { action: 'delete', param: oldParam }
 		} else if (oldParam && newParam && oldParam === newParam) {
-			return { action: 'update', sku: newParam }
+			return { action: 'update', param: newParam }
 		} else if (oldParam && newParam && oldParam !== newParam) {
-			return { action: 're-number', oldSku: oldParam, newSku: newParam }
+			return { action: 're-number', oldParam: oldParam, newParam: newParam }
 		} else {
 			return { action: 'invalid' }
 		}
+	}
+
+	private async fetchSupplierByNumber(
+		supplierNumber: string,
+	): Promise<EconomicSupplier> {
+		const response = await fetch(
+			`${this.baseUrl}/suppliers/${supplierNumber}`,
+			{
+				headers: {
+					'X-AppSecretToken': this.appSecretToken,
+					'X-AgreementGrantToken': this.agreementGrantToken,
+					'Content-Type': 'application/json',
+				},
+			},
+		)
+
+		if (!response.ok) {
+			console.log(await response.json())
+			throw Error(`e-conomic response failed with status ${response.status}`)
+		}
+
+		const contentType = response.headers.get('Content-Type')
+
+		if (!contentType?.includes('application/json')) {
+			throw Error('e-conomic response is not application/json')
+		}
+
+		const json = await response.json()
+
+		console.log('product from e-conomic', json)
+
+		return json as EconomicSupplier
+	}
+
+	private async fetchSuppliersFromUrl(
+		url: string,
+	): Promise<EconomicSupplier[]> {
+		const response = await fetch(url, {
+			headers: {
+				'X-AppSecretToken': this.appSecretToken,
+				'X-AgreementGrantToken': this.agreementGrantToken,
+				Accept: 'application/json',
+			},
+		})
+		if (!response.ok) {
+			throw Error(
+				`fetchSuppliersFromUrl(): e-conomic request failed with status ${response.status}`,
+			)
+		}
+
+		const contentType = response.headers.get('Content-Type')
+
+		if (!contentType?.includes('application/json')) {
+			throw Error('e-conomic response is not application/json')
+		}
+
+		const json = await response.json()
+		let collection: EconomicSupplier[] = json.collection
+
+		const nextPage = json.pagination.nextPage
+		if (nextPage != undefined) {
+			const next = await this.fetchSuppliersFromUrl(nextPage)
+			collection = [...collection, ...next]
+		}
+
+		return collection
+	}
+
+	private async fetchSuppliers(): Promise<EconomicSupplier[]> {
+		return await this.fetchSuppliersFromUrl(
+			`${this.baseUrl}/suppliers?skippages=0&pagesize=1000`,
+		)
 	}
 
 	private async fetchProductBySku(sku: string): Promise<EconomicProduct> {
@@ -147,7 +246,7 @@ export class EconomicSyncProvider implements SyncProvider {
 
 		let economicProduct: EconomicProduct
 
-		const eventData = this.productEventAction(oldParam, newParam)
+		const eventData = this.oldNewEventAction(oldParam, newParam)
 		if (eventData.action == 'invalid') {
 			return {
 				success: false,
@@ -162,7 +261,7 @@ export class EconomicSyncProvider implements SyncProvider {
 		try {
 			switch (eventData.action) {
 				case 'create': {
-					economicProduct = await this.fetchProductBySku(eventData.sku)
+					economicProduct = await this.fetchProductBySku(eventData.param)
 
 					const res:
 						| SyncProviderResponse<'productEvent', 'e-conomic'>
@@ -262,7 +361,7 @@ export class EconomicSyncProvider implements SyncProvider {
 					break
 				}
 				case 'update': {
-					economicProduct = await this.fetchProductBySku(eventData.sku)
+					economicProduct = await this.fetchProductBySku(eventData.param)
 
 					const res:
 						| SyncProviderResponse<'productEvent', 'e-conomic'>
@@ -345,7 +444,7 @@ export class EconomicSyncProvider implements SyncProvider {
 				case 'delete': {
 					const nemLagerProduct = await productService.getBySkuOrBarcode(
 						customer.id,
-						eventData.sku,
+						eventData.param,
 					)
 					if (!nemLagerProduct) {
 						return {
@@ -377,7 +476,7 @@ export class EconomicSyncProvider implements SyncProvider {
 					break
 				}
 				case 're-number': {
-					economicProduct = await this.fetchProductBySku(eventData.newSku)
+					economicProduct = await this.fetchProductBySku(eventData.newParam)
 					return {
 						success: true,
 						message: 'product-renumber-not-supported-economic',
@@ -452,5 +551,97 @@ export class EconomicSyncProvider implements SyncProvider {
 		}
 
 		return { success: true, eventData: null }
+	}
+
+	async handleSupplierEvent(
+		customer: Customer,
+		r: NextRequest,
+		apiKey: ApiKey,
+	): Promise<SyncProviderResponse<'productEvent', 'e-conomic'>> {
+		const searchParams = r.nextUrl.searchParams
+		const oldParam = searchParams.get('old')
+		const newParam = searchParams.get('new')
+		const inputData: EconomicSupplierEventData = {
+			oldParam,
+			newParam,
+		}
+
+		const eventData = this.oldNewEventAction(oldParam, newParam)
+		if (eventData.action == 'invalid') {
+			return {
+				success: false,
+				message: 'supplier-invalid-economic-webhook',
+				eventData: {
+					input: inputData,
+					action: eventData,
+				},
+			}
+		}
+
+		const suppliers = await this.fetchSuppliers()
+
+		let economicSupplier: EconomicSupplier
+		console.log('e-conomic webhook', suppliers.slice(100, 110))
+
+		try {
+			switch (eventData.action) {
+				case 'create':
+					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
+					console.log('create event', economicSupplier)
+
+					const newSupplier: NewSupplier = {
+						name: economicSupplier.name ?? 'Unavngivet',
+						customerID: customer.id,
+						country: 'UNKNOWN',
+						userID: 0,
+						userName: '',
+						contactPerson:
+							economicSupplier.attention?.number.toString() || undefined,
+						email: economicSupplier.email,
+						phone: economicSupplier.phone,
+						idOfClient: economicSupplier.supplierNumber.toString(),
+					}
+
+				// const newSupplierRes = await tryCatch(
+				// 	webhookService.createSupplier(newSupplier),
+				// )
+				case 'update':
+					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
+				case 'delete':
+				case 're-number':
+					return {
+						success: true,
+						message: 'product-renumber-not-supported-economic',
+						eventData: {
+							input: inputData,
+							action: eventData,
+						},
+					}
+			}
+		} catch (err) {
+			const errMsg =
+				(err as Error).message ??
+				'unknown error occured when handling supplier webhook'
+
+			console.error('Economic::handleProductEvent:', errMsg)
+			return {
+				success: false,
+				message: 'supplier-unknown-error-economic',
+				eventData: {
+					input: inputData,
+					action: eventData,
+				},
+			}
+		}
+
+		// logic for supplier event
+
+		return {
+			success: true,
+			eventData: {
+				input: inputData,
+				action: eventData,
+			},
+		}
 	}
 }
