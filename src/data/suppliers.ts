@@ -102,4 +102,17 @@ export const suppliers = {
 				and(eq(supplierTable.id, id), eq(supplierTable.customerID, customerID)),
 			)
 	},
+	upsert: async function (data: NewSupplier, tx: TRX = db): Promise<Supplier> {
+		const [supplier] = await tx
+			.insert(supplierTable)
+			.values(data)
+			.onConflictDoUpdate({
+				target: [
+					supplierTable.integrationId,
+				],
+				set: { ...data },
+			})
+			.returning()
+		return supplier
+	},
 }

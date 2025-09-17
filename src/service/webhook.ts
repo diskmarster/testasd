@@ -15,7 +15,7 @@ import {
 	ProductID,
 	Unit,
 } from '@/lib/database/schema/inventory'
-import { NewSupplier, Supplier } from '@/lib/database/schema/suppliers'
+import { NewSupplier, NewSupplierHistory, Supplier } from '@/lib/database/schema/suppliers'
 import { ActionError } from '@/lib/safe-action/error'
 import { tryCatch } from '@/lib/utils.server'
 
@@ -108,7 +108,9 @@ export const webhookService = {
 				const newProductPromise: Promise<Product> = new Promise(async res => {
 					const newProduct = await product.upsertWithNoLog(newProductData, tx)
 					if (!newProduct) {
-						tx.rollback()
+						try {
+							tx.rollback()
+						} catch (_err) {}
 						throw new ActionError('product from webhook was not upserted')
 					}
 					if (!inventories.has(newProduct.id)) {
@@ -117,7 +119,9 @@ export const webhookService = {
 							newProduct.id,
 						)
 						if (!zeroInventory) {
-							tx.rollback()
+							try {
+								tx.rollback()
+							} catch (_err) {}
 							throw new ActionError(
 								`product from webhook was created but zero inventories not created (product id: ${newProduct.id})`,
 							)
@@ -225,6 +229,12 @@ export const webhookService = {
 	createSupplier: async function (data: NewSupplier): Promise<Supplier> {
 		return await suppliers.create(data)
 	},
+	upsertSupplier: async function (data: NewSupplier): Promise<Supplier> {
+		return await suppliers.upsert(data)
+	},
+	createSupplierLog: async function(data: NewSupplierHistory) {
+		return await suppliers.createLog(data)
+	}
 }
 
 async function getUnitAndGroup(

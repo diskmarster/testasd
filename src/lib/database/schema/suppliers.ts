@@ -24,6 +24,7 @@ export const supplierTable = sqliteTable('nl_suppliers', {
 	phone: text('phone').notNull().default(''),
 	email: text('email').notNull().default(''),
 	contactPerson: text('contact_person').notNull().default(''),
+	integrationId: text('integration_id').unique(),
 })
 
 export type Supplier = typeof supplierTable.$inferSelect

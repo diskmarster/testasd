@@ -411,7 +411,10 @@
 			"message_supplier-sync-successful": "Vare synkroniseret succesfuldt",
 			"message_supplier-renumber-not-supported-economic": "Ændring af leverandør nummer er ikke understøttet",
 			"message_supplier-invalid-economic-webhook": "Ugyldig webhook type fra e-conomic",
-			"message_supplier-unknown-error-economic": "Der skete en fejl ved synkroniseringen af en leverandør fra economic"
+			"message_supplier-unknown-error-economic": "Der skete en fejl ved synkroniseringen af en leverandør fra economic",
+			"message_supplier-not-created-economic": "Leverandør fra e-conomic kunne ikke oprettes",
+			"message_supplier-not-updated-economic": "Leverandør fra e-conomic kunne ikke opdateres",
+			"message_supplier-no-history-log": "Vare historik log kunne ikke oprettes for vare"
 		}
 	},
 	"sidebar": {

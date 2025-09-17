@@ -2,7 +2,10 @@ import { fallbackLng } from '@/app/i18n/settings'
 import { db } from '@/lib/database'
 import { ApiKey } from '@/lib/database/schema/apikeys'
 import type { Customer } from '@/lib/database/schema/customer'
-import { NewSupplier } from '@/lib/database/schema/suppliers'
+import {
+	NewSupplier,
+	NewSupplierHistory,
+} from '@/lib/database/schema/suppliers'
 import { tryCatch } from '@/lib/utils.server'
 import { productService } from '@/service/products'
 import { webhookService } from '@/service/webhook'
@@ -122,8 +125,6 @@ export class EconomicSyncProvider implements SyncProvider {
 
 		const json = await response.json()
 
-		console.log('product from e-conomic', json)
-
 		return json as EconomicSupplier
 	}
 
@@ -159,6 +160,33 @@ export class EconomicSyncProvider implements SyncProvider {
 		}
 
 		return collection
+	}
+
+	private async fetchSupplierContactByUrl(
+		url: string,
+	): Promise<EconomicSupplier> {
+		const response = await fetch(url, {
+			headers: {
+				'X-AppSecretToken': this.appSecretToken,
+				'X-AgreementGrantToken': this.agreementGrantToken,
+				'Content-Type': 'application/json',
+			},
+		})
+
+		if (!response.ok) {
+			console.log(await response.json())
+			throw Error(`e-conomic response failed with status ${response.status}`)
+		}
+
+		const contentType = response.headers.get('Content-Type')
+
+		if (!contentType?.includes('application/json')) {
+			throw Error('e-conomic response is not application/json')
+		}
+
+		const json = await response.json()
+
+		return json as EconomicSupplier
 	}
 
 	private async fetchSuppliers(): Promise<EconomicSupplier[]> {
@@ -557,7 +585,7 @@ export class EconomicSyncProvider implements SyncProvider {
 		customer: Customer,
 		r: NextRequest,
 		apiKey: ApiKey,
-	): Promise<SyncProviderResponse<'productEvent', 'e-conomic'>> {
+	): Promise<SyncProviderResponse<'supplierEvent', 'e-conomic'>> {
 		const searchParams = r.nextUrl.searchParams
 		const oldParam = searchParams.get('old')
 		const newParam = searchParams.get('new')
@@ -578,10 +606,7 @@ export class EconomicSyncProvider implements SyncProvider {
 			}
 		}
 
-		const suppliers = await this.fetchSuppliers()
-
 		let economicSupplier: EconomicSupplier
-		console.log('e-conomic webhook', suppliers.slice(100, 110))
 
 		try {
 			switch (eventData.action) {
@@ -589,24 +614,140 @@ export class EconomicSyncProvider implements SyncProvider {
 					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
 					console.log('create event', economicSupplier)
 
+					// if (economicSupplier.supplierContact) {
+					// 	const contactPerson = await this.fetchSupplierContactByUrl(
+					// 		economicSupplier.supplierContact.self,
+					// 	)
+					// 	console.log(
+					// 		'contactPerson',
+					// 		economicSupplier.supplierContact,
+					// 		contactPerson,
+					// 	)
+					// }
+
 					const newSupplier: NewSupplier = {
-						name: economicSupplier.name ?? 'Unavngivet',
+						name: economicSupplier.name,
 						customerID: customer.id,
+						idOfClient: '',
 						country: 'UNKNOWN',
-						userID: 0,
-						userName: '',
-						contactPerson:
-							economicSupplier.attention?.number.toString() || undefined,
+						userID: -1,
+						userName: apiKey.name,
+						contactPerson: '',
 						email: economicSupplier.email,
 						phone: economicSupplier.phone,
-						idOfClient: economicSupplier.supplierNumber.toString(),
 					}
 
-				// const newSupplierRes = await tryCatch(
-				// 	webhookService.createSupplier(newSupplier),
-				// )
+					const newSupplierRes = await tryCatch(
+						webhookService.upsertSupplier(newSupplier),
+					)
+					if (!newSupplierRes.success) {
+						console.error(
+							`Economic::handleSupplierEvent. Upsert (create) failed: ${newSupplierRes.error}`,
+						)
+						return {
+							success: false,
+							message: 'supplier-not-created-economic',
+							eventData: {
+								input: inputData,
+								action: eventData,
+							},
+						}
+					}
+
+					const supplierCreateLog: NewSupplierHistory = {
+						country: 'UNKNOWN',
+						customerID: apiKey.customerID,
+						name: newSupplierRes.data.name,
+						supplierID: newSupplierRes.data.id,
+						type: 'oprettet',
+						userID: -1,
+						userName: apiKey.name,
+						contactPerson: newSupplierRes.data.contactPerson,
+						email: newSupplierRes.data.email,
+						idOfClient: newSupplierRes.data.idOfClient,
+						phone: newSupplierRes.data.phone,
+					}
+
+					const supplierLogRes = await tryCatch(
+						webhookService.createSupplierLog(supplierCreateLog),
+					)
+					if (!supplierLogRes.success) {
+						console.error(
+							`Economic::handleSupplierEvent. Log create failed: ${supplierLogRes.error}`,
+						)
+
+						return {
+							success: false,
+							message: 'supplier-no-history-log',
+							eventData: {
+								input: inputData,
+								action: eventData,
+							},
+						}
+					}
 				case 'update':
 					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
+
+					const updateSupplier: NewSupplier = {
+						name: economicSupplier.name,
+						customerID: customer.id,
+						idOfClient: '',
+						country: 'UNKNOWN',
+						userID: -1,
+						userName: apiKey.name,
+						contactPerson: '',
+						email: economicSupplier.email,
+						phone: economicSupplier.phone,
+					}
+
+					const updateSupplierRes = await tryCatch(
+						webhookService.upsertSupplier(updateSupplier),
+					)
+					if (!updateSupplierRes.success) {
+						console.error(
+							`Economic::handleSupplierEvent. Upsert (update) failed: ${updateSupplierRes.error}`,
+						)
+						return {
+							success: false,
+							message: 'supplier-not-updated-economic',
+							eventData: {
+								input: inputData,
+								action: eventData,
+							},
+						}
+					}
+
+					const supplierUpdateLog: NewSupplierHistory = {
+						country: 'UNKNOWN',
+						customerID: apiKey.customerID,
+						name: updateSupplierRes.data.name,
+						supplierID: updateSupplierRes.data.id,
+						type: 'oprettet',
+						userID: -1,
+						userName: apiKey.name,
+						contactPerson: updateSupplierRes.data.contactPerson,
+						email: updateSupplierRes.data.email,
+						idOfClient: updateSupplierRes.data.idOfClient,
+						phone: updateSupplierRes.data.phone,
+					}
+
+					const updateSupplierLogRes = await tryCatch(
+						webhookService.createSupplierLog(supplierUpdateLog),
+					)
+					if (!updateSupplierLogRes.success) {
+						console.error(
+							`Economic::handleSupplierEvent. Log create failed: ${updateSupplierLogRes.error}`,
+						)
+
+						return {
+							success: false,
+							message: 'supplier-no-history-log',
+							eventData: {
+								input: inputData,
+								action: eventData,
+							},
+						}
+					}
 				case 'delete':
 				case 're-number':
 					return {
@@ -623,7 +764,7 @@ export class EconomicSyncProvider implements SyncProvider {
 				(err as Error).message ??
 				'unknown error occured when handling supplier webhook'
 
-			console.error('Economic::handleProductEvent:', errMsg)
+			console.error('Economic::handleSupplierEvent:', errMsg)
 			return {
 				success: false,
 				message: 'supplier-unknown-error-economic',
