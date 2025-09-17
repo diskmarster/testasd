@@ -105,6 +105,7 @@ export function ProductDetails({
 			customerID: 0,
 			userID: 0,
 			userName: '',
+			integrationId: '',
 		},
 	])
 	const [isSubmitting, setIsSubmitting] = useState(false)
