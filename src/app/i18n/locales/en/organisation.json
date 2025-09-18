@@ -132,6 +132,9 @@
     "settings": {
       "reference": "Account/Case",
       "reference-description": "Account/Case is recorded during incoming, outgoing, adjustment, and move",
+	  "reference-disabled": "Activated",
+	  "reference-enabled": "Deactivated",
+	  "reference-partial": "Partially activated",
       "placement": "Placements",
       "placement-description": "Placements are recorded during incoming, outgoing, adjustment, and move",
       "batch": "Batch No.",
@@ -304,5 +307,112 @@
       "button-no": "No",
       "button-yes": "Yes, delete scheduled email"
     }
-  }
+  },
+	"integrations": {
+		"not-active-for-customer": "Integrations are not activated for your account",
+		"card-title": "Integrations",
+		"card-desc": "Make NemLager smarter with integrations",
+		"before-install-sub-1": "Before you can get started, you need to install a data provider in NemLager",
+		"before-install-sub-2": "At the moment, NemLager supports e-conomic.",
+		"install-btn": "Install",
+		"go-back-btn": "Go back",
+		"integration-installed": "{{provider}} was installed",
+		"nothing-in-clipboard": "You have not copied anything",
+		"e-conomic": {
+			"description": "Syncronize products with e-conomics webhooks",
+			"sub-1": "Before the two systems can talk to each other, you need to install our NemLager app in your e-conomic account.",
+			"sub-2-part-1": "The app can be installed by following our",
+			"sub-2-link": "installation link",
+			"sub-2-part-2": "and following e-conomics instructions. Only superusers can do this.",
+			"sub-3": "After that, the ID shown on the screen must be saved in NemLager by copying it into the input field below. If you closed the e-conomic page, the ID can still be found in e-conomic by going to Alle indstillinger > Udvidelser > Apps i e-conomic.",
+			"id-label": "E-conomic ID",
+			"id-placeholder": "Insert ID here",
+			"paste-btn": "Paste",
+			"save-btn": "Save"
+		},
+		"updating-settings-loading": "Updating integrations...",
+		"updating-settings-error": "Integrations was not updated",
+		"updating-settings-success": "Integrations was updated successfully",
+		"syncing-catalogue-loading": "Synchronizing product catalog...",
+		"syncing-catalogue-error": "Product catalog was not synchronized",
+		"syncing-catalogue-success": "Product catalog was synchronized",
+		"providers-title": "Data providers",
+		"providers-desc": "Here you can see what data providers are installed in NemLager",
+		"integrations-title": "Integrations",
+		"integrations-desc": "Here you can see what integrations are activated in NemLager",
+		"integrations": {
+			"sync-products-title": "Product syncronize",
+			"sync-products-desc": "Update products in NemLager when updated in other systems"
+		},
+		"delete-modal": {
+			"trigger": "Uninstall",
+			"title": "Uninstall {{provider}}",
+			"body": "When you uninstall a data provider in NemLager, data is only removed from NemLager. You are responsible for disconnecting NemLager from the external system if you want to fully terminate the integration.",
+			"close-btn": "Close",
+			"confirm-btn": "Uninstall",
+			"toast-success": "Data provider uninstalled"
+		},
+		"enable-sync-dialog": {
+			"title": "Enable product catalog synchronization",
+			"description": "When you enable synchronization of your product catalog, only SkanCode can disable it again. Do you want to enable synchronization?",
+			"dismiss-btn": "Cancel",
+			"accept-btn": "Enable"
+		},
+		"actions": {
+			"cannot-update-settings": "Could not update the integration",
+			"did-not-update-settings": "The integration was not updated",
+			"did-not-delete-settings": "The integration was not deleted",
+			"did-not-install-settings": "The integration was not installed",
+			"cannot-sync-catalogue": "Could not synchronize the product catalog",
+			"did-not-sync-catalogue": "Error synchronizing the product catalog"
+		}
+	},
+	"integration-logs": {
+		"table": {
+			"columns": {
+				"inserted": "Date",
+				"event-type": "Type",
+				"event-info": "Info",
+				"status": "Status",
+				"message": "Message"
+			},
+			"status": "Unknown",
+			"status_success": "OK",
+			"status_error": "Error",
+			"event-type": "Unknown",
+			"event-type_productEvent_create": "Product creation",
+			"event-type_productEvent_update": "Product update",
+			"event-type_productEvent_delete": "Product deletion",
+			"event-type_productEvent_re-number": "Product number change",
+			"event-type_productEvent_invalid": "Product synchronization",
+			"event-type_fullSync": "Product catalog synchronization",
+			"event-info": "None",
+			"event-info_none": "No info",
+			"event-info_create": "Product no. {{ sku }}",
+			"event-info_update": "Product no. {{ sku }}",
+			"event-info_delete": "Product no. {{ sku }}",
+			"event-info_re-number": "From {{ from }} to {{ to }}",
+			"message": "No message",
+			"message_product-sync-successful": "Product synchronized successfully",
+			"message_product-invalid-economic-webhook": "Invalid webhook type from e-conomic",
+			"message_product-not-created-economic": "Product from e-conomic could not be created",
+			"message_product-not-updated-economic": "Product from e-conomic could not be updated",
+			"message_product-not-deleted-economic": "Product from e-conomic could not be deleted",
+			"message_product-renumber-not-supported-economic": "Changing the product number is not supported",
+			"message_product-zero-inv-not-created": "Zero inventory could not be created for product",
+			"message_product-no-history-log": "Product history log could not be created for product",
+			"message_product-unknown-error-economic": "An error occurred while synchronizing a product from e-conomic",
+			"message_product-dublicate-barcode": "An error occured while synchronizing: Barcode already exists",
+			"message_product-new-group-not-created": "An error occured while synchronizing: New group not created",
+			"message_product-unit-not-supported": "An error occured while synchronizing: Unsupported unit",
+			"message_full-product-sync-successfull": "Full synchronization of product catalog successful",
+			"message_full-fetch-products-failed-economic": "Fetching product catalog from e-conomic failed",
+			"message_full-upsert-failed-economic": "Full update of product catalog from e-conomic failed"
+		}
+	},
+	"sidebar": {
+		"settings": "Company settings",
+		"mails": "Mails",
+		"integrations": "Integrations"
+	}
 }

@@ -1,4 +1,4 @@
-import { ModalBulkOutgoing } from "@/components/inventory/modal-bulk-outgoing";
+import { ModalBulkOutgoing } from '@/components/inventory/modal-bulk-outgoing'
 import { ModalMoveInventory } from '@/components/inventory/modal-move-inventory'
 import { ModalUpdateInventory } from '@/components/inventory/modal-update-inventory'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -51,10 +51,11 @@ export async function PageActionsWrapper({
 				customerSettings.usePlacement &&
 				hasPermissionByRank(user.role, 'bruger') && (
 					<>
-						<ModalBulkOutgoing 
-							placements={placements} 
-							useBatch={hasPermissionByPlan(customer.plan, 'pro')} 
-							useReference={customerSettings.useReference.afgang} />
+						<ModalBulkOutgoing
+							placements={placements}
+							useBatch={hasPermissionByPlan(customer.plan, 'pro')}
+							useReference={customerSettings.useReference.afgang}
+						/>
 						<ModalMoveInventory
 							placements={placements}
 							customer={customer}
@@ -85,9 +86,9 @@ export function PageActionsSkeleton({
 			{hasPermissionByPlan(plan, 'basis') &&
 				usePlacement &&
 				hasPermissionByRank(role, 'bruger') && (
-					<div className="flex items-center gap-2">
-					<Skeleton className="size-9 aspect-square border border-input shadow-sm" />
-					<Skeleton className="size-9 aspect-square border border-input shadow-sm" />
+					<div className='flex items-center gap-2'>
+						<Skeleton className='size-9 aspect-square border border-input shadow-sm' />
+						<Skeleton className='size-9 aspect-square border border-input shadow-sm' />
 					</div>
 				)}
 		</>

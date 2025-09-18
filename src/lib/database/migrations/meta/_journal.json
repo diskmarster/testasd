@@ -253,6 +253,41 @@
       "when": 1753259161288,
       "tag": "0035_open_purple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "6",
+      "when": 1753344310657,
+      "tag": "0036_melted_wilson_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "6",
+      "when": 1753362695939,
+      "tag": "0037_purple_quentin_quire",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "6",
+      "when": 1753707013838,
+      "tag": "0038_safe_doctor_faustus",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "6",
+      "when": 1754638998755,
+      "tag": "0039_omniscient_redwing",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "6",
+      "when": 1756987692923,
+      "tag": "0040_slippery_talos",
+      "breakpoints": true
     }
   ]
 }

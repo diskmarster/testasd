@@ -1,11 +1,16 @@
-"use client"
+'use client'
 
-import Link from "next/link";
-import { Icons } from "../ui/icons";
-import { useLanguage } from "@/context/language";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "../ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { useLanguage } from '@/context/language'
+import { cn } from '@/lib/utils'
+import Link from 'next/link'
+import { buttonVariants } from '../ui/button'
+import { Icons } from '../ui/icons'
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '../ui/tooltip'
 
 export function NavFAQ() {
 	const lng = useLanguage()
@@ -15,12 +20,15 @@ export function NavFAQ() {
 				<TooltipTrigger>
 					<Link
 						href={`/${lng}/faq`}
-						target="_blank"
-						className={cn('', buttonVariants({ variant: 'outline', size: 'icon' }))}>
-						<Icons.help className="size-4" />
+						target='_blank'
+						className={cn(
+							'',
+							buttonVariants({ variant: 'outline', size: 'icon' }),
+						)}>
+						<Icons.help className='size-4' />
 					</Link>
 				</TooltipTrigger>
-				<TooltipContent className="bg-foreground text-background">
+				<TooltipContent className='bg-foreground text-background'>
 					<p>Gå til F.A.Q. side</p>
 				</TooltipContent>
 			</Tooltip>

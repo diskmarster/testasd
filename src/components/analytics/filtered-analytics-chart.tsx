@@ -506,19 +506,19 @@ function AnalyticsFilterPanel({
 								...prev,
 								start: dateRange.from
 									? {
-										days: dateFns.differenceInDays(
-											start,
-											dateFns.startOfDay(dateRange.from),
-										),
-									}
+											days: dateFns.differenceInDays(
+												start,
+												dateFns.startOfDay(dateRange.from),
+											),
+										}
 									: prev.start,
 								end: dateRange.to
 									? {
-										days: dateFns.differenceInDays(
-											dateFns.endOfDay(dateRange.to),
-											end,
-										),
-									}
+											days: dateFns.differenceInDays(
+												dateFns.endOfDay(dateRange.to),
+												end,
+											),
+										}
 									: prev.end,
 							}))
 						}

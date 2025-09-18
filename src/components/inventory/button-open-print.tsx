@@ -4,19 +4,19 @@ import { RefObject } from 'react'
 import { Button } from '../ui/button'
 
 interface Props {
-  labelRef: RefObject<HTMLDivElement>
+	labelRef: RefObject<HTMLDivElement>
 }
 
 export function ButtonOpenPrint({ labelRef }: Props) {
-  function openPrintWindow() {
-    const content = labelRef.current?.outerHTML
+	function openPrintWindow() {
+		const content = labelRef.current?.outerHTML
 
-    const newWindow = window.open('', '', 'width=800,height=600')
+		const newWindow = window.open('', '', 'width=800,height=600')
 
-    if (newWindow) {
-      const styles = document.querySelector('link[rel="stylesheet"]')?.outerHTML
+		if (newWindow) {
+			const styles = document.querySelector('link[rel="stylesheet"]')?.outerHTML
 
-      newWindow.document.write(`
+			newWindow.document.write(`
       <html>
         <head>
           <title>Label Print</title>
@@ -28,18 +28,18 @@ export function ButtonOpenPrint({ labelRef }: Props) {
       </html>
 `)
 
-      newWindow.document.close()
-      newWindow.focus()
-      newWindow.onload = e => {
-        newWindow.print()
-        newWindow.close()
-      }
-    }
-  }
+			newWindow.document.close()
+			newWindow.focus()
+			newWindow.onload = e => {
+				newWindow.print()
+				newWindow.close()
+			}
+		}
+	}
 
-  return (
-    <Button className='w-full' variant='outline' onClick={openPrintWindow}>
-      Print
-    </Button>
-  )
+	return (
+		<Button className='w-full' variant='outline' onClick={openPrintWindow}>
+			Print
+		</Button>
+	)
 }

@@ -1,6 +1,6 @@
-import { ProductFilesGrid } from "@/components/products/product-files-grid"
-import { User } from "@/lib/database/schema/auth"
-import { attachmentService } from "@/service/attachments"
+import { ProductFilesGrid } from '@/components/products/product-files-grid'
+import { User } from '@/lib/database/schema/auth'
+import { attachmentService } from '@/service/attachments'
 
 interface Props {
 	id: string
@@ -10,7 +10,5 @@ interface Props {
 
 export async function ProductFilesWrapper({ id, user }: Props) {
 	const files = await attachmentService.getByRefID('product', parseInt(id))
-	return (
-		<ProductFilesGrid files={files} user={user} productID={Number(id)} />
-	)
+	return <ProductFilesGrid files={files} user={user} productID={Number(id)} />
 }

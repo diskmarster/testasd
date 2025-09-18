@@ -8,12 +8,12 @@ export const LanguageContext = createContext<I18NLanguage>(fallbackLng)
 export const useLanguage = () => React.useContext(LanguageContext)
 
 export const LanguageProvider = ({
-  value,
-  children,
+	value,
+	children,
 }: React.PropsWithChildren<{ value: I18NLanguage }>) => {
-  return (
-    <LanguageContext.Provider value={value}>
-      {children}
-    </LanguageContext.Provider>
-  )
+	return (
+		<LanguageContext.Provider value={value}>
+			{children}
+		</LanguageContext.Provider>
+	)
 }

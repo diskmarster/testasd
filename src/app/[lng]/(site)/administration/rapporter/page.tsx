@@ -14,17 +14,15 @@ async function Page({ params: { lng } }: PageProps) {
 	const { t } = await serverTranslation(lng, 'rapporter')
 
 	return (
-		<SiteWrapper
-			title={t('title')}
-			description={t('description')}>
+		<SiteWrapper title={t('title')} description={t('description')}>
 			<ReportCardWrapper
-				title={t("inventory-report-modal.card-label")}
-				description={t("inventory-report-modal.card-desc")}>
+				title={t('inventory-report-modal.card-label')}
+				description={t('inventory-report-modal.card-desc')}>
 				<ModalInventoryReport />
 			</ReportCardWrapper>
 			<ReportCardWrapper
-				title={t("inventory-sum-report.card-label")}
-				description={t("inventory-sum-report.card-desc")}>
+				title={t('inventory-sum-report.card-label')}
+				description={t('inventory-sum-report.card-desc')}>
 				<ModalSumReport />
 			</ReportCardWrapper>
 		</SiteWrapper>
@@ -36,8 +34,8 @@ function ReportCardWrapper({
 	description,
 	children,
 }: PropsWithChildren<{
-	title: string,
-	description: string,
+	title: string
+	description: string
 }>) {
 	return (
 		<div className='md:max-w-lg'>

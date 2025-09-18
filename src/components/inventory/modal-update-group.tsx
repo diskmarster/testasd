@@ -1,3 +1,5 @@
+import { updateGroupAction } from '@/app/[lng]/(site)/varer/varegrupper/actions'
+import { createGroupValidation } from '@/app/[lng]/(site)/varer/varegrupper/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { LanguageContext } from '@/context/language'
@@ -10,125 +12,123 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 import {
-  Credenza,
-  CredenzaBody,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
+	Credenza,
+	CredenzaBody,
+	CredenzaContent,
+	CredenzaDescription,
+	CredenzaHeader,
+	CredenzaTitle,
 } from '../ui/credenza'
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { createGroupValidation } from '@/app/[lng]/(site)/varer/varegrupper/validation'
-import { updateGroupAction } from '@/app/[lng]/(site)/varer/varegrupper/actions'
 
 export function ModalUpdateGroup({
-  groupToEdit,
-  isOpen,
-  setOpen,
+	groupToEdit,
+	isOpen,
+	setOpen,
 }: {
-  groupToEdit?: Group
-  isOpen: boolean
-  setOpen: (open: boolean) => void
+	groupToEdit?: Group
+	isOpen: boolean
+	setOpen: (open: boolean) => void
 }) {
-  const [pending, startTransition] = useTransition()
-  const [error, setError] = useState<string>()
-  const lng = useContext(LanguageContext)
-  const { t } = useTranslation(lng, 'varegrupper')
-  const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = createGroupValidation(validationT)
+	const [pending, startTransition] = useTransition()
+	const [error, setError] = useState<string>()
+	const lng = useContext(LanguageContext)
+	const { t } = useTranslation(lng, 'varegrupper')
+	const { t: validationT } = useTranslation(lng, 'validation')
+	const schema = createGroupValidation(validationT)
 
-  const { handleSubmit, register, formState, setValue, reset } = useForm<
-    z.infer<typeof schema>
-  >({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      name: groupToEdit?.name || '',
-    },
-  })
+	const { handleSubmit, register, formState, setValue, reset } = useForm<
+		z.infer<typeof schema>
+	>({
+		resolver: zodResolver(schema),
+		defaultValues: {
+			name: groupToEdit?.name || '',
+		},
+	})
 
-  async function onSubmit(values: z.infer<typeof schema>) {
-    startTransition(async () => {
-      if (!groupToEdit) {
-        setError(t('update-product-group-modal.no-product-group'))
-        return
-      }
+	async function onSubmit(values: z.infer<typeof schema>) {
+		startTransition(async () => {
+			if (!groupToEdit) {
+				setError(t('update-product-group-modal.no-product-group'))
+				return
+			}
 
-      const response = await updateGroupAction({
-        groupID: groupToEdit.id,
-        data: values,
-      })
+			const response = await updateGroupAction({
+				groupID: groupToEdit.id,
+				data: values,
+			})
 
-      if (response && response.serverError) {
-        setError(response.serverError)
-        return
-      }
+			if (response && response.serverError) {
+				setError(response.serverError)
+				return
+			}
 
-      setError(undefined)
-      setOpen(false)
-      toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${values.name} ${t('toasts.update-group')}`,
-      })
-    })
-  }
+			setError(undefined)
+			setOpen(false)
+			toast.success(t(`common:${siteConfig.successTitle}`), {
+				description: `${values.name} ${t('toasts.update-group')}`,
+			})
+		})
+	}
 
-  useEffect(() => {
-    if (groupToEdit) {
-      setValue('name', groupToEdit.name)
-    }
-  }, [groupToEdit, setValue])
+	useEffect(() => {
+		if (groupToEdit) {
+			setValue('name', groupToEdit.name)
+		}
+	}, [groupToEdit, setValue])
 
-  function onOpenChange(open: boolean) {
-    setOpen(open)
-    reset()
-    setError(undefined)
-  }
+	function onOpenChange(open: boolean) {
+		setOpen(open)
+		reset()
+		setError(undefined)
+	}
 
-  return (
-    <Credenza open={isOpen} onOpenChange={onOpenChange}>
-      <CredenzaContent className='md:max-w-lg'>
-        <CredenzaHeader>
-          <CredenzaTitle>{t('update-product-group-modal.title')}</CredenzaTitle>
-          <CredenzaDescription>
-            {t('update-product-group-modal.description')}
-          </CredenzaDescription>
-        </CredenzaHeader>
-        <CredenzaBody>
-          <form
-            className='space-y-4 pb-4 md:pb-0'
-            onSubmit={handleSubmit(onSubmit)}>
-            {error && (
-              <Alert variant='destructive'>
-                <Icons.alert className='!top-3 size-4' />
-                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+	return (
+		<Credenza open={isOpen} onOpenChange={onOpenChange}>
+			<CredenzaContent className='md:max-w-lg'>
+				<CredenzaHeader>
+					<CredenzaTitle>{t('update-product-group-modal.title')}</CredenzaTitle>
+					<CredenzaDescription>
+						{t('update-product-group-modal.description')}
+					</CredenzaDescription>
+				</CredenzaHeader>
+				<CredenzaBody>
+					<form
+						className='space-y-4 pb-4 md:pb-0'
+						onSubmit={handleSubmit(onSubmit)}>
+						{error && (
+							<Alert variant='destructive'>
+								<Icons.alert className='!top-3 size-4' />
+								<AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
+								<AlertDescription>{error}</AlertDescription>
+							</Alert>
+						)}
 
-            <div className='mt-2 mb-2'>
-              <div className=''>
-                <Label htmlFor='sku'>
-                  {t('update-product-group-modal.name')}
-                  <span className='text-destructive'> * </span>
-                </Label>
-                <Input id='name' type='text' {...register('name')} />
-                {formState.errors.name && (
-                  <p className='text-sm text-destructive'>
-                    {formState.errors.name.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <Button
-              type='submit'
-              disabled={pending || !formState.isValid}
-              className='w-full md:w-auto'>
-              {t('update-product-group-modal.update-button')}
-            </Button>
-          </form>
-        </CredenzaBody>
-      </CredenzaContent>
-    </Credenza>
-  )
+						<div className='mt-2 mb-2'>
+							<div className=''>
+								<Label htmlFor='sku'>
+									{t('update-product-group-modal.name')}
+									<span className='text-destructive'> * </span>
+								</Label>
+								<Input id='name' type='text' {...register('name')} />
+								{formState.errors.name && (
+									<p className='text-sm text-destructive'>
+										{formState.errors.name.message}
+									</p>
+								)}
+							</div>
+						</div>
+						<Button
+							type='submit'
+							disabled={pending || !formState.isValid}
+							className='w-full md:w-auto'>
+							{t('update-product-group-modal.update-button')}
+						</Button>
+					</form>
+				</CredenzaBody>
+			</CredenzaContent>
+		</Credenza>
+	)
 }

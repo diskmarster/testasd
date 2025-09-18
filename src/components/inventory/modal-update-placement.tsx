@@ -1,3 +1,5 @@
+import { updatePlacementAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
+import { createPlacementValidation } from '@/app/[lng]/(site)/varer/placeringer/validation'
 import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
@@ -10,125 +12,123 @@ import { z } from 'zod'
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert'
 import { Button } from '../ui/button'
 import {
-  Credenza,
-  CredenzaBody,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
+	Credenza,
+	CredenzaBody,
+	CredenzaContent,
+	CredenzaDescription,
+	CredenzaHeader,
+	CredenzaTitle,
 } from '../ui/credenza'
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { createPlacementValidation } from '@/app/[lng]/(site)/varer/placeringer/validation'
-import { updatePlacementAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
 
 export function ModalUpdatePlacement({
-  placementToEdit,
-  isOpen,
-  setOpen,
+	placementToEdit,
+	isOpen,
+	setOpen,
 }: {
-  placementToEdit?: Placement
-  isOpen: boolean
-  setOpen: (open: boolean) => void
+	placementToEdit?: Placement
+	isOpen: boolean
+	setOpen: (open: boolean) => void
 }) {
-  const [pending, startTransition] = useTransition()
-  const [error, setError] = useState<string>()
-  const lng = useLanguage()
-  const { t } = useTranslation(lng, 'placeringer')
-  const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = createPlacementValidation(validationT)
+	const [pending, startTransition] = useTransition()
+	const [error, setError] = useState<string>()
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'placeringer')
+	const { t: validationT } = useTranslation(lng, 'validation')
+	const schema = createPlacementValidation(validationT)
 
-  const { handleSubmit, register, formState, setValue, reset, } = useForm<
-    z.infer<typeof schema>
-  >({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      name: placementToEdit?.name || '',
-    },
-  })
+	const { handleSubmit, register, formState, setValue, reset } = useForm<
+		z.infer<typeof schema>
+	>({
+		resolver: zodResolver(schema),
+		defaultValues: {
+			name: placementToEdit?.name || '',
+		},
+	})
 
-  async function onSubmit(values: z.infer<typeof schema>) {
-    startTransition(async () => {
-      if (!placementToEdit) {
-        setError('Ingen placering at redigere')
-        return
-      }
+	async function onSubmit(values: z.infer<typeof schema>) {
+		startTransition(async () => {
+			if (!placementToEdit) {
+				setError('Ingen placering at redigere')
+				return
+			}
 
-      const response = await updatePlacementAction({
-        placementID: placementToEdit.id,
-        data: values,
-      })
+			const response = await updatePlacementAction({
+				placementID: placementToEdit.id,
+				data: values,
+			})
 
-      if (response && response.serverError) {
-        setError(response.serverError)
-        return
-      }
+			if (response && response.serverError) {
+				setError(response.serverError)
+				return
+			}
 
-      setError(undefined)
-      setOpen(false)
-      toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${values.name} ${t('toasts.placement-updated')}`,
-      })
-    })
-  }
+			setError(undefined)
+			setOpen(false)
+			toast.success(t(`common:${siteConfig.successTitle}`), {
+				description: `${values.name} ${t('toasts.placement-updated')}`,
+			})
+		})
+	}
 
-  useEffect(() => {
-    if (placementToEdit) {
-      setValue('name', placementToEdit.name)
-    }
-  }, [placementToEdit, setValue])
+	useEffect(() => {
+		if (placementToEdit) {
+			setValue('name', placementToEdit.name)
+		}
+	}, [placementToEdit, setValue])
 
-  function onOpenChange(open: boolean) {
-    setOpen(open)
-    reset()
-    setError(undefined)
-  }
+	function onOpenChange(open: boolean) {
+		setOpen(open)
+		reset()
+		setError(undefined)
+	}
 
-  return (
-    <Credenza open={isOpen} onOpenChange={onOpenChange}>
-      <CredenzaContent className='md:max-w-lg'>
-        <CredenzaHeader>
-          <CredenzaTitle>{t('modal-update-placement.title')}</CredenzaTitle>
-          <CredenzaDescription>
-            {t('modal-update-placement.description')}
-          </CredenzaDescription>
-        </CredenzaHeader>
-        <CredenzaBody>
-          <form
-            className='space-y-4 pb-4 md:pb-0'
-            onSubmit={handleSubmit(onSubmit)}>
-            {error && (
-              <Alert variant='destructive'>
-                <Icons.alert className='!top-3 size-4' />
-                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+	return (
+		<Credenza open={isOpen} onOpenChange={onOpenChange}>
+			<CredenzaContent className='md:max-w-lg'>
+				<CredenzaHeader>
+					<CredenzaTitle>{t('modal-update-placement.title')}</CredenzaTitle>
+					<CredenzaDescription>
+						{t('modal-update-placement.description')}
+					</CredenzaDescription>
+				</CredenzaHeader>
+				<CredenzaBody>
+					<form
+						className='space-y-4 pb-4 md:pb-0'
+						onSubmit={handleSubmit(onSubmit)}>
+						{error && (
+							<Alert variant='destructive'>
+								<Icons.alert className='!top-3 size-4' />
+								<AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
+								<AlertDescription>{error}</AlertDescription>
+							</Alert>
+						)}
 
-            <div className='mt-2 mb-2'>
-              <div className='grid gap-2'>
-                <Label htmlFor='sku'>
-                  {t('modal-update-placement.placement')}
-                  <span className='text-destructive'> * </span>
-                </Label>
-                <Input id='name' type='text' {...register('name')} />
-                {formState.errors.name && (
-                  <p className='text-sm text-destructive'>
-                    {formState.errors.name.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <Button
-              type='submit'
-              disabled={pending || !formState.isValid}
-              className='w-full md:w-auto'>
-              {t('modal-update-placement.update-button')}
-            </Button>
-          </form>
-        </CredenzaBody>
-      </CredenzaContent>
-    </Credenza>
-  )
+						<div className='mt-2 mb-2'>
+							<div className='grid gap-2'>
+								<Label htmlFor='sku'>
+									{t('modal-update-placement.placement')}
+									<span className='text-destructive'> * </span>
+								</Label>
+								<Input id='name' type='text' {...register('name')} />
+								{formState.errors.name && (
+									<p className='text-sm text-destructive'>
+										{formState.errors.name.message}
+									</p>
+								)}
+							</div>
+						</div>
+						<Button
+							type='submit'
+							disabled={pending || !formState.isValid}
+							className='w-full md:w-auto'>
+							{t('modal-update-placement.update-button')}
+						</Button>
+					</form>
+				</CredenzaBody>
+			</CredenzaContent>
+		</Credenza>
+	)
 }

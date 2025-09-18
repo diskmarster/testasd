@@ -9,200 +9,202 @@ import { fileService } from '@/service/file'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { ordersService } from '@/service/orders'
+import { suppliersService } from '@/service/suppliers'
+import { formatDate } from 'date-fns'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import * as XLSX from 'xlsx'
 import {
-  addOrderedToReorderValidation,
-  bulkAddOrderedToReorderValidation,
-  createReorderValidation,
-  deleteReorderValidation,
-  updateReorderValidation,
+	addOrderedToReorderValidation,
+	bulkAddOrderedToReorderValidation,
+	createReorderValidation,
+	deleteReorderValidation,
+	updateReorderValidation,
 } from './validation'
-import { suppliersService } from '@/service/suppliers'
-import { formatDate } from 'date-fns'
 
 export const createReorderAction = editableAction
-  .metadata({ actionName: 'createReorder' })
-  .schema(async () => await getSchema(createReorderValidation, 'validation'))
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const locationID = await locationService.getLastVisited(ctx.user.id)
-    if (!locationID) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    const existsLocation = await locationService.getByID(locationID)
-    if (!existsLocation) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError(
-        t('restock-action.company-location-belongs-to-your-company'),
-      )
-    }
+	.metadata({ actionName: 'createReorder' })
+	.schema(async () => await getSchema(createReorderValidation, 'genbestil'))
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const locationID = await locationService.getLastVisited(ctx.user.id)
+		if (!locationID) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		const existsLocation = await locationService.getByID(locationID)
+		if (!existsLocation) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		if (existsLocation.customerID != ctx.user.customerID) {
+			throw new ActionError(
+				t('restock-action.company-location-belongs-to-your-company'),
+			)
+		}
 
-    const newReorder = await inventoryService.createReorder({
-      ...parsedInput,
-      locationID: existsLocation.id,
-      customerID: ctx.user.customerID,
-    })
-    if (!newReorder) {
-      throw new ActionError(t('minimum-stock-action.minimum-stock-not-created'))
-    }
+		const newReorder = await inventoryService.createReorder({
+			...parsedInput,
+			locationID: existsLocation.id,
+			customerID: ctx.user.customerID,
+		})
+		if (!newReorder) {
+			throw new ActionError(t('minimum-stock-action.minimum-stock-not-created'))
+		}
 
-    revalidatePath(`/${ctx.lang}/genbestil`)
-  })
+		revalidatePath(`/${ctx.lang}/genbestil`)
+	})
 
 export const updateReorderAction = editableAction
-  .metadata({ actionName: 'updateReorder' })
-  .schema(async () => await getSchema(updateReorderValidation, 'validation'))
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
+	.metadata({ actionName: 'updateReorder' })
+	.schema(async () => await getSchema(updateReorderValidation, 'genbestil'))
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
 
-    const locationID = await locationService.getLastVisited(ctx.user.id)
-    if (!locationID) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    const existsLocation = await locationService.getByID(locationID)
-    if (!existsLocation) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError(
-        t('restock-action.company-location-belongs-to-your-company'),
-      )
-    }
+		const locationID = await locationService.getLastVisited(ctx.user.id)
+		if (!locationID) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		const existsLocation = await locationService.getByID(locationID)
+		if (!existsLocation) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		if (existsLocation.customerID != ctx.user.customerID) {
+			throw new ActionError(
+				t('restock-action.company-location-belongs-to-your-company'),
+			)
+		}
 
-    const newReorder = await inventoryService.updateReorderByIDs(
-      parsedInput.productID,
-      locationID,
-      ctx.user.customerID,
-      {
-        minimum: parsedInput.minimum,
-        orderAmount: parsedInput.orderAmount,
-        maxOrderAmount: parsedInput.maxOrderAmount,
-      },
-    )
-    if (!newReorder) {
-      throw new ActionError(t('minimum-stock-action.minimum-stock-not-updated'))
-    }
+		const newReorder = await inventoryService.updateReorderByIDs(
+			parsedInput.productID,
+			locationID,
+			ctx.user.customerID,
+			{
+				minimum: parsedInput.minimum,
+				orderAmount: parsedInput.orderAmount,
+				maxOrderAmount: parsedInput.maxOrderAmount,
+			},
+		)
+		if (!newReorder) {
+			throw new ActionError(t('minimum-stock-action.minimum-stock-not-updated'))
+		}
 
-    revalidatePath(`/${ctx.lang}/genbestil`)
-  })
+		revalidatePath(`/${ctx.lang}/genbestil`)
+	})
 
 export const deleteReorderAction = editableAction
-  .metadata({ actionName: 'deleteReorder' })
-  .schema(async () => await getSchema(deleteReorderValidation, 'validation'))
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const existsLocation = await locationService.getByID(parsedInput.locationID)
-    if (!existsLocation) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError(
-        t('restock-action.company-location-belongs-to-your-company'),
-      )
-    }
+	.metadata({ actionName: 'deleteReorder' })
+	.schema(async () => await getSchema(deleteReorderValidation, 'validation'))
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const existsLocation = await locationService.getByID(parsedInput.locationID)
+		if (!existsLocation) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		if (existsLocation.customerID != ctx.user.customerID) {
+			throw new ActionError(
+				t('restock-action.company-location-belongs-to-your-company'),
+			)
+		}
 
-    const didDelete = await inventoryService.deleteReorderByIDs(
-      parsedInput.productID,
-      parsedInput.locationID,
-      ctx.user.customerID,
-    )
-    if (!didDelete) {
-      throw new ActionError(t('minimum-stock-action.minimum-stock-not-deleted'))
-    }
+		const didDelete = await inventoryService.deleteReorderByIDs(
+			parsedInput.productID,
+			parsedInput.locationID,
+			ctx.user.customerID,
+		)
+		if (!didDelete) {
+			throw new ActionError(t('minimum-stock-action.minimum-stock-not-deleted'))
+		}
 
-    revalidatePath(`/${ctx.lang}/genbestil`)
-  })
+		revalidatePath(`/${ctx.lang}/genbestil`)
+	})
 
 export const addOrderedToReorderAction = editableAction
-  .metadata({ actionName: 'addOrderedToReorderAction' })
-  .schema(
-    async () => await getSchema(addOrderedToReorderValidation, 'validation'),
-  )
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const existsLocation = await locationService.getByID(parsedInput.locationID)
-    if (!existsLocation) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError(
-        t('restock-action.company-location-belongs-to-your-company'),
-      )
-    }
+	.metadata({ actionName: 'addOrderedToReorderAction' })
+	.schema(
+		async () => await getSchema(addOrderedToReorderValidation, 'validation'),
+	)
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const existsLocation = await locationService.getByID(parsedInput.locationID)
+		if (!existsLocation) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		if (existsLocation.customerID != ctx.user.customerID) {
+			throw new ActionError(
+				t('restock-action.company-location-belongs-to-your-company'),
+			)
+		}
 
-    const newReorder = await inventoryService.updateReorderByIDs(
-      parsedInput.productID,
-      parsedInput.locationID,
-      ctx.user.customerID,
-      {
-        ordered: parsedInput.ordered,
-      },
-    )
-    if (!newReorder) {
-      throw new ActionError(t('minimum-stock-action.minimum-stock-not-updated'))
-    }
+		const newReorder = await inventoryService.updateReorderByIDs(
+			parsedInput.productID,
+			parsedInput.locationID,
+			ctx.user.customerID,
+			{
+				ordered: parsedInput.ordered,
+			},
+		)
+		if (!newReorder) {
+			throw new ActionError(t('minimum-stock-action.minimum-stock-not-updated'))
+		}
 
-    revalidatePath(`/${ctx.lang}/genbestil`)
-  })
+		revalidatePath(`/${ctx.lang}/genbestil`)
+	})
 
 export const bulkAddOrderedToReorderAction = editableAction
-  .metadata({ actionName: 'bulkAddOrderedToReorderAction' })
-  .schema(
-    async () => await getSchema(bulkAddOrderedToReorderValidation, 'genbestil'),
-  )
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const { t: reorderT } = await serverTranslation(ctx.lang, 'genbestil')
-    const locationID = await locationService.getLastVisited(ctx.user.id)
-    if (!locationID) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    const existsLocation = await locationService.getByID(locationID)
-    if (!existsLocation) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
-    if (existsLocation.customerID != ctx.user.customerID) {
-      throw new ActionError(
-        t('restock-action.company-location-belongs-to-your-company'),
-      )
-    }
+	.metadata({ actionName: 'bulkAddOrderedToReorderAction' })
+	.schema(
+		async () => await getSchema(bulkAddOrderedToReorderValidation, 'genbestil'),
+	)
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const { t: reorderT } = await serverTranslation(ctx.lang, 'genbestil')
+		const locationID = await locationService.getLastVisited(ctx.user.id)
+		if (!locationID) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		const existsLocation = await locationService.getByID(locationID)
+		if (!existsLocation) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
+		if (existsLocation.customerID != ctx.user.customerID) {
+			throw new ActionError(
+				t('restock-action.company-location-belongs-to-your-company'),
+			)
+		}
 
-		const suppliers = await suppliersService.getAllByCustomerID(ctx.user.customerID)
+		const suppliers = await suppliersService.getAllByCustomerID(
+			ctx.user.customerID,
+		)
 
-    const promises = []
+		const promises = []
 
-    for (const reorder of parsedInput.items) {
-      if (!reorder.isRequested) {
-        const addPromise = inventoryService.updateReorderByIDs(
-          reorder.productID,
-          locationID,
-          ctx.user.customerID,
-          {
-            ordered: reorder.ordered + reorder.alreadyOrdered,
-          },
-        )
-        promises.push(addPromise)
-      } else {
-        const deletePromise = inventoryService.deleteReorderByIDs(
-          reorder.productID,
-          locationID,
-          ctx.user.customerID,
-        )
-        promises.push(deletePromise)
-      }
-    }
+		for (const reorder of parsedInput.items) {
+			if (!reorder.isRequested) {
+				const addPromise = inventoryService.updateReorderByIDs(
+					reorder.productID,
+					locationID,
+					ctx.user.customerID,
+					{
+						ordered: reorder.ordered + reorder.alreadyOrdered,
+					},
+				)
+				promises.push(addPromise)
+			} else {
+				const deletePromise = inventoryService.deleteReorderByIDs(
+					reorder.productID,
+					locationID,
+					ctx.user.customerID,
+				)
+				promises.push(deletePromise)
+			}
+		}
 
-    const newOrder = {
-      meta: {
-        customerID: ctx.user.customerID,
-        locationID: locationID,
-        userID: ctx.user.id,
-        userName: ctx.user.name,
-      },
+		const newOrder = {
+			meta: {
+				customerID: ctx.user.customerID,
+				locationID: locationID,
+				userID: ctx.user.id,
+				userName: ctx.user.name,
+			},
 			lines: [
 				...parsedInput.items.map(i => {
 					const supplier = suppliers.find(s => s.id == i.supplierID)
@@ -229,78 +231,89 @@ export const bulkAddOrderedToReorderAction = editableAction
 					}
 				}),
 			],
-    }
+		}
 
-    const order = await ordersService.create(newOrder.meta, newOrder.lines)
+		const order = await ordersService.create(newOrder.meta, newOrder.lines)
 		const uniqSuppliers = new Set(parsedInput.items.map(i => i.supplierName))
-		const uniqSupplier = suppliers.find(s => s.id == parsedInput.items.at(0)?.supplierID)
-		const singleSupplier = (uniqSuppliers.size == 1 && !!uniqSupplier && uniqSupplier?.name != "-")
-			? { 
-				name: uniqSupplier.name,
-				email: uniqSupplier.email,
-				phone: uniqSupplier.phone,
-				idOfClient: uniqSupplier.idOfClient,
-				contact: uniqSupplier.contactPerson,
-			}
+		const uniqSupplier = suppliers.find(
+			s => s.id == parsedInput.items.at(0)?.supplierID,
+		)
+		const singleSupplier =
+			uniqSuppliers.size == 1 && !!uniqSupplier && uniqSupplier?.name != '-'
+				? {
+						name: uniqSupplier.name,
+						email: uniqSupplier.email,
+						phone: uniqSupplier.phone,
+						idOfClient: uniqSupplier.idOfClient,
+						contact: uniqSupplier.contactPerson,
+					}
 				: undefined
 
-    const workbook = genReorderExcelWorkbook(order.id, order.inserted, ctx.user, ctx.customer!, newOrder.lines, reorderT, singleSupplier)
-    const arr = XLSX.write(workbook, { type: 'array' })
-    const fileInfo = fileService.validate({
-      mimeType:
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      customerID: ctx.user.customerID,
-      refType: 'genbestil',
-      refID: order.id,
-    })
-    if (fileInfo.success) {
-      promises.push(
-        fileService.upload({
-          key: fileInfo.key,
-          mimeType: fileInfo.type,
-          body: arr,
-        }),
-      )
-      promises.push(
-        attachmentService.create({
-          customerID: ctx.user.customerID,
-          refDomain: 'genbestil',
-          refID: order.id,
-          name: `nemlager_genbestilling_${formatDate(new Date(), 'dd-MM-yyyy')}.xlsx`,
-          type: fileInfo.type,
-          key: fileInfo.key,
-          url: fileInfo.url,
-          userID: ctx.user.id,
-          userName: ctx.user.name,
-        }),
-      )
-    }
+		const workbook = genReorderExcelWorkbook(
+			order.id,
+			order.inserted,
+			ctx.user,
+			ctx.customer!,
+			newOrder.lines,
+			reorderT,
+			singleSupplier,
+		)
+		const arr = XLSX.write(workbook, { type: 'array' })
+		const fileInfo = fileService.validate({
+			mimeType:
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+			customerID: ctx.user.customerID,
+			refType: 'genbestil',
+			refID: order.id,
+		})
+		if (fileInfo.success) {
+			promises.push(
+				fileService.upload({
+					key: fileInfo.key,
+					mimeType: fileInfo.type,
+					body: arr,
+				}),
+			)
+			promises.push(
+				attachmentService.create({
+					customerID: ctx.user.customerID,
+					refDomain: 'genbestil',
+					refID: order.id,
+					name: `nemlager_genbestilling_${formatDate(new Date(), 'dd-MM-yyyy')}.xlsx`,
+					type: fileInfo.type,
+					key: fileInfo.key,
+					url: fileInfo.url,
+					userID: ctx.user.id,
+					userName: ctx.user.name,
+				}),
+			)
+		}
 
-    await Promise.all(promises)
+		await Promise.all(promises)
 
-    redirect(`/${ctx.lang}/genbestil/${order.id}`)
-  })
+		redirect(`/${ctx.lang}/genbestil/${order.id}`)
+	})
 
 export const fetchOrdersActions = editableAction
-  .metadata({ actionName: 'fetchOrders' })
-  .action(async ({ ctx: { user, lang } }) => {
-    const { t } = await serverTranslation(lang, 'action-errors')
+	.metadata({ actionName: 'fetchOrders' })
+	.action(async ({ ctx: { user, lang } }) => {
+		const { t } = await serverTranslation(lang, 'action-errors')
 
-    const locationID = await locationService.getLastVisited(user.id)
-    if (!locationID) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
+		const locationID = await locationService.getLastVisited(user.id)
+		if (!locationID) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
 
-    const existsLocation = await locationService.getByID(locationID)
-    if (!existsLocation) {
-      throw new ActionError(t('restock-action.company-location-not-found'))
-    }
+		const existsLocation = await locationService.getByID(locationID)
+		if (!existsLocation) {
+			throw new ActionError(t('restock-action.company-location-not-found'))
+		}
 
-    if (existsLocation.customerID != user.customerID) {
-      throw new ActionError(
-        t('restock-action.company-location-belongs-to-your-company'),
-      )
-    }
+		if (existsLocation.customerID != user.customerID) {
+			throw new ActionError(
+				t('restock-action.company-location-belongs-to-your-company'),
+			)
+		}
 
-    return await ordersService.getAll(user.customerID, locationID)
-  })
+		return await ordersService.getAll(user.customerID, locationID)
+	})

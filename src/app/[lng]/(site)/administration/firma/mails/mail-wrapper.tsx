@@ -1,7 +1,7 @@
-import { MailSettings } from "@/components/admin/mail-settings"
-import { Customer } from "@/lib/database/schema/customer"
-import { customerService } from "@/service/customer"
-import { User } from "lucia"
+import { MailSettings } from '@/components/admin/mail-settings'
+import { Customer } from '@/lib/database/schema/customer'
+import { customerService } from '@/service/customer'
+import { User } from 'lucia'
 
 interface Props {
 	customer: Customer

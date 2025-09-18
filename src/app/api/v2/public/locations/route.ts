@@ -9,44 +9,44 @@ import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
-  r: NextRequest,
+	r: NextRequest,
 ): Promise<NextResponse<ApiResponse<Location[]>>> {
-  const lng = getLanguageFromRequest(headers())
-  const { t } = await serverTranslation(lng, 'common')
+	const lng = getLanguageFromRequest(headers())
+	const { t } = await serverTranslation(lng, 'common')
 
-  if (isMaintenanceMode()) {
-    return apiResponse.locked(
-      t('route-translations-regulations.maintenance'),
-      getVercelRequestID(headers()),
-    )
-  }
+	if (isMaintenanceMode()) {
+		return apiResponse.locked(
+			t('route-translations-regulations.maintenance'),
+			getVercelRequestID(headers()),
+		)
+	}
 
-  const { customer, apikey } = await validatePublicRequest(headers())
-  if (customer == null) {
-    return apiResponse.unauthorized(
-      t('route-translations-product.no-access-to-resource'),
-      getVercelRequestID(headers()),
-    )
-  }
+	const { customer, apikey } = await validatePublicRequest(headers())
+	if (customer == null) {
+		return apiResponse.unauthorized(
+			t('route-translations-product.no-access-to-resource'),
+			getVercelRequestID(headers()),
+		)
+	}
 
-  const locationResponse = await tryCatch(
-    locationService.getByCustomerID(customer.id),
-  )
-  if (!locationResponse.success) {
-    return apiResponse.internal(
-      locationResponse.error.message,
-      getVercelRequestID(headers()),
-    )
-  }
+	const locationResponse = await tryCatch(
+		locationService.getByCustomerID(customer.id),
+	)
+	if (!locationResponse.success) {
+		return apiResponse.internal(
+			locationResponse.error.message,
+			getVercelRequestID(headers()),
+		)
+	}
 
-  const trimmedLocations: Location[] = locationResponse.data.map(l => ({
-    id: l.id,
-    customerID: l.customerID,
-    name: l.name,
-    inserted: l.inserted,
-    updated: l.updated,
-    isBarred: l.isBarred,
-  }))
+	const trimmedLocations: Location[] = locationResponse.data.map(l => ({
+		id: l.id,
+		customerID: l.customerID,
+		name: l.name,
+		inserted: l.inserted,
+		updated: l.updated,
+		isBarred: l.isBarred,
+	}))
 
-  return apiResponse.ok(trimmedLocations)
+	return apiResponse.ok(trimmedLocations)
 }

@@ -77,7 +77,8 @@
     "product-not-created": "Noget gik galt under oprettelsen af produktet",
     "product-not-updated": "Noget gik galt under opdateringen af produktet",
     "product-not-updated-barred": "Noget gik galt under spærringen af produktet",
-    "product-not-deleted": "Noget gik galt under sletningen af produktet"
+    "product-not-deleted": "Noget gik galt under sletningen af produktet",
+	"sync-is-on": "Produkter kan ikke oprettes eller opdateres fra NemLager når varekartotek synkroniser er aktiv"
   },
   "product-group-action": {
     "user-not-logged-in": "Bruger ikke logget ind",

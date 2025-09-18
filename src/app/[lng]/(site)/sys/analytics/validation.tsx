@@ -1,15 +1,14 @@
 import { z } from 'zod'
 
-const durationSchema = z
-		.object({
-			seconds: z.coerce.number().optional(),
-			minutes: z.coerce.number().optional(),
-			hours: z.coerce.number().optional(),
-			days: z.coerce.number().optional(),
-			months: z.coerce.number().optional(),
-			weeks: z.coerce.number().optional(),
-			years: z.coerce.number().optional(),
-		}) 
+const durationSchema = z.object({
+	seconds: z.coerce.number().optional(),
+	minutes: z.coerce.number().optional(),
+	hours: z.coerce.number().optional(),
+	days: z.coerce.number().optional(),
+	months: z.coerce.number().optional(),
+	weeks: z.coerce.number().optional(),
+	years: z.coerce.number().optional(),
+})
 
 export const getActiveUsersAnalyticsValidation = z.object({
 	start: durationSchema.optional(),

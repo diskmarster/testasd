@@ -6,11 +6,11 @@ import {
 	DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { useLanguage } from '@/context/language'
+import { SupplierWithItemCount } from '@/data/suppliers.types'
 import { Row, Table } from '@tanstack/react-table'
+import Link from 'next/link'
 import { emitCustomEvent } from 'react-custom-events'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
-import { SupplierWithItemCount } from '@/data/suppliers.types'
-import Link from 'next/link'
 
 interface Props {
 	table: Table<SupplierWithItemCount>
@@ -25,7 +25,7 @@ export function SupplierActionsColumn({ row }: Props) {
 		<TableActionsWrapper>
 			<DropdownMenuItem asChild>
 				<Link href={`/${lng}/administration/leverandorer/${row.original.id}`}>
-					{t("table.col-actions-show")}
+					{t('table.col-actions-show')}
 				</Link>
 			</DropdownMenuItem>
 			<DropdownMenuSeparator />
@@ -34,10 +34,10 @@ export function SupplierActionsColumn({ row }: Props) {
 				onClick={() => {
 					emitCustomEvent('DeleteSupplierByID', {
 						id: row.original.id,
-						itemCount: row.original.itemCount
+						itemCount: row.original.itemCount,
 					})
 				}}>
-				{t("table.col-actions-delete")}
+				{t('table.col-actions-delete')}
 			</DropdownMenuItem>
 		</TableActionsWrapper>
 	)

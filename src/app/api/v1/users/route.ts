@@ -11,7 +11,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest): Promise<NextResponse<unknown>> {
 	const start = performance.now()
-	
+
 	const { session, user } = await validateRequest(headers())
 	const lng = getLanguageFromRequest(headers())
 	const { t } = await serverTranslation(lng, 'common')

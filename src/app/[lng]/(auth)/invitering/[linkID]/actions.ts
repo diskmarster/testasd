@@ -11,63 +11,63 @@ import { userService } from '@/service/user'
 import { redirect } from 'next/navigation'
 
 export const signUpInvitedAction = publicAction
-  .metadata({ actionName: 'signUpInvite' })
-  .schema(async () => await getSchema(signUpInvitedValidation, 'validation'))
-  .action(async ({ parsedInput, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const activationLink = await userService.getInviteLinkByID(
-      parsedInput.linkID,
-    )
-    if (!activationLink) {
-      throw new ActionError(t('invited-user-action.link-no-longer-exists'))
-    }
+	.metadata({ actionName: 'signUpInvite' })
+	.schema(async () => await getSchema(signUpInvitedValidation, 'validation'))
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const activationLink = await userService.getInviteLinkByID(
+			parsedInput.linkID,
+		)
+		if (!activationLink) {
+			throw new ActionError(t('invited-user-action.link-no-longer-exists'))
+		}
 
-    const isLinkValid = userService.validateUserLink(activationLink.inserted)
-    if (!isLinkValid) {
-      throw new ActionError(t('invited-user-action.expired-link'))
-    }
+		const isLinkValid = userService.validateUserLink(activationLink.inserted)
+		if (!isLinkValid) {
+			throw new ActionError(t('invited-user-action.expired-link'))
+		}
 
-    const existingCustomer = await customerService.getByID(parsedInput.clientID)
-    if (!existingCustomer) {
-      throw new ActionError(
-        t('invited-user-action.company-account-doesnt-exist'),
-      )
-    }
+		const existingCustomer = await customerService.getByID(parsedInput.clientID)
+		if (!existingCustomer) {
+			throw new ActionError(
+				t('invited-user-action.company-account-doesnt-exist'),
+			)
+		}
 
-    const existingUser = await userService.getByEmail(parsedInput.email)
-    if (existingUser) {
-      throw new ActionError(t('invited-user-action.existing-user-mail'))
-    }
+		const existingUser = await userService.getByEmail(parsedInput.email)
+		if (existingUser) {
+			throw new ActionError(t('invited-user-action.existing-user-mail'))
+		}
 
-    const newUser = await userService.createInvitedUser(activationLink, {
-      customerID: parsedInput.clientID,
-      name: parsedInput.name,
-      email: parsedInput.email,
-      hash: parsedInput.password,
-      pin: parsedInput.pin,
-      role: activationLink.role,
-      isActive: true,
-      webAccess: activationLink.webAccess,
-      appAccess: activationLink.appAccess,
-      priceAccess: activationLink.priceAccess,
-    })
-    if (!newUser) {
-      throw new ActionError(t('invited-user-action.user-not-created'))
-    }
+		const newUser = await userService.createInvitedUser(activationLink, {
+			customerID: parsedInput.clientID,
+			name: parsedInput.name,
+			email: parsedInput.email,
+			hash: parsedInput.password,
+			pin: parsedInput.pin,
+			role: activationLink.role,
+			isActive: true,
+			webAccess: activationLink.webAccess,
+			appAccess: activationLink.appAccess,
+			priceAccess: activationLink.priceAccess,
+		})
+		if (!newUser) {
+			throw new ActionError(t('invited-user-action.user-not-created'))
+		}
 
-    const isLinkDeleted = await userService.deleteUserLink(parsedInput.linkID)
-    if (!isLinkDeleted) {
-      console.error(
-        `${t('invited-user-action.invitation-link-not-deleted')} ${newUser.id}`,
-      )
-    }
+		const isLinkDeleted = await userService.deleteUserLink(parsedInput.linkID)
+		if (!isLinkDeleted) {
+			console.error(
+				`${t('invited-user-action.invitation-link-not-deleted')} ${newUser.id}`,
+			)
+		}
 
-    if (newUser.role == 'afgang') {
-      redirect(`/${ctx.lang}/log-ind`)
-      return
-    }
-    locationService.setCookie(activationLink.locationIDs[0])
-    await sessionService.create(newUser.id)
+		if (newUser.role == 'afgang') {
+			redirect(`/${ctx.lang}/log-ind`)
+			return
+		}
+		locationService.setCookie(activationLink.locationIDs[0])
+		await sessionService.create(newUser.id)
 
-    redirect(`/${ctx.lang}/oversigt`)
-  })
+		redirect(`/${ctx.lang}/oversigt`)
+	})

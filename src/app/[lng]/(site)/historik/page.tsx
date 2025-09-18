@@ -9,53 +9,53 @@ import { locationService } from '@/service/location'
 import { redirect } from 'next/navigation'
 
 interface Props extends WithAuthProps {
-  params: {
-    lng: string
-  }
+	params: {
+		lng: string
+	}
 }
 
 async function Page({ params: { lng }, user, customer }: Props) {
-  const location = await locationService.getLastVisited(user.id!)
-  if (!location) redirect(`/${lng}/log-ind`)
+	const location = await locationService.getLastVisited(user.id!)
+	if (!location) redirect(`/${lng}/log-ind`)
 
-  const history = await inventoryService.getHistoryByLocationID(location)
+	const history = await inventoryService.getHistoryByLocationID(location)
 
-  const units = await inventoryService.getActiveUnits()
-  const groups = await inventoryService.getActiveGroupsByID(customer.id)
-  const placements = await inventoryService.getActivePlacementsByID(location)
-  const batches = await inventoryService.getActiveBatchesByID(location)
-  const { t } = await serverTranslation(lng, 'historik')
-  const settings: CustomerSettings = (await customerService.getSettings(
-    customer.id,
-  )) ?? {
-    id: -1,
-    customerID: customer.id,
-    useReference: {
-      tilgang: false,
-      afgang: false,
-      regulering: false,
-      flyt: false,
-    },
-    usePlacement: false,
-    authTimeoutMinutes: 5,
-    inserted: new Date(),
-    updated: new Date(),
-  }
+	const units = await inventoryService.getActiveUnits()
+	const groups = await inventoryService.getActiveGroupsByID(customer.id)
+	const placements = await inventoryService.getAllPlacementsByID(location)
+	const batches = await inventoryService.getAllBatchesByID(location)
+	const { t } = await serverTranslation(lng, 'historik')
+	const settings: CustomerSettings = (await customerService.getSettings(
+		customer.id,
+	)) ?? {
+		id: -1,
+		customerID: customer.id,
+		useReference: {
+			tilgang: false,
+			afgang: false,
+			regulering: false,
+			flyt: false,
+		},
+		usePlacement: false,
+		authTimeoutMinutes: 5,
+		inserted: new Date(),
+		updated: new Date(),
+	}
 
-  return (
-    <SiteWrapper title={t('page.title')} description={t('page.description')}>
-      <TableHistory
-        data={history}
-        user={user}
-        plan={customer.plan}
-        units={units}
-        groups={groups}
-        placements={placements}
-        batches={batches}
-        customerSettings={settings}
-      />
-    </SiteWrapper>
-  )
+	return (
+		<SiteWrapper title={t('page.title')} description={t('page.description')}>
+			<TableHistory
+				data={history}
+				user={user}
+				plan={customer.plan}
+				units={units}
+				groups={groups}
+				placements={placements}
+				batches={batches}
+				customerSettings={settings}
+			/>
+		</SiteWrapper>
+	)
 }
 
 export default withAuth(Page)

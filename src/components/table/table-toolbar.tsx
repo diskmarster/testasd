@@ -19,11 +19,7 @@ import { cn } from '@/lib/utils'
 import { Column, Table } from '@tanstack/react-table'
 import { t } from 'i18next'
 import { usePathname } from 'next/navigation'
-import {
-	useContext,
-	useState,
-	useTransition,
-} from 'react'
+import { ReactElement, useContext, useState, useTransition } from 'react'
 
 type ToolbarOptions = {
 	showExport?: boolean
@@ -32,7 +28,7 @@ type ToolbarOptions = {
 type FilterOption = {
 	label: string
 	value: any
-	icon?: React.ComponentType<{ className?: string }>
+	icon?: ReactElement
 }
 
 export type NumberRange = {
@@ -90,7 +86,7 @@ export function TableToolbar<T>({
 function DownloadButton<T>({ table }: { table: Table<T> }) {
 	const [pending, startTransition] = useTransition()
 	const lng = useContext(LanguageContext)
-	const { t } =useTranslation(lng, 'other')
+	const { t } = useTranslation(lng, 'other')
 	return (
 		<Button
 			variant='outline'
@@ -119,7 +115,10 @@ export function ViewOptions<T>({ table }: { table: Table<T> }) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant='outline' size='icon' tooltip={t('tooltips.show-hide-show')}>
+				<Button
+					variant='outline'
+					size='icon'
+					tooltip={t('tooltips.show-hide-show')}>
 					<Icons.columns className='size-4' />
 				</Button>
 			</DropdownMenuTrigger>

@@ -61,6 +61,7 @@ export async function OverviewTableWrapper({
 		images: imageMap.get(i.product.id.toString(10)) ?? [],
 	}))
 
+	const placementData = await placements
 	return (
 		<TableOverview
 			data={rows}
@@ -68,7 +69,7 @@ export async function OverviewTableWrapper({
 			plan={customer.plan}
 			units={await units}
 			groups={await groups}
-			placements={await placements}
+			placements={placementData}
 			batches={await batches}
 			customerSettings={customerSettings}
 			isGrouped={isGrouped}

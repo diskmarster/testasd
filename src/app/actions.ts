@@ -1,9 +1,9 @@
 'use server'
 
 import {
-  HistoryFilter,
-  HistoryType,
-  historyTypeZodSchema,
+	HistoryFilter,
+	HistoryType,
+	historyTypeZodSchema,
 } from '@/data/inventory.types'
 import { adminAction, authedAction } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
@@ -15,94 +15,94 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 const changeLocationValidation = z.object({
-  locationID: z.string(),
-  revalidatePath: z.string(),
+	locationID: z.string(),
+	revalidatePath: z.string(),
 })
 
 export const changeLocationAction = authedAction
-  .metadata({ actionName: 'changeLocation' })
-  .schema(changeLocationValidation)
-  .action(async ({ parsedInput }) => {
-    locationService.setCookie(parsedInput.locationID)
-    revalidatePath(parsedInput.revalidatePath)
-  })
+	.metadata({ actionName: 'changeLocation' })
+	.schema(changeLocationValidation)
+	.action(async ({ parsedInput }) => {
+		locationService.setCookie(parsedInput.locationID)
+		revalidatePath(parsedInput.revalidatePath)
+	})
 
 export const refreshTableAction = authedAction
-  .schema(z.object({ pathName: z.string() }))
-  .action(async ({ parsedInput }) => {
-    revalidatePath(parsedInput.pathName)
-  })
+	.schema(z.object({ pathName: z.string() }))
+	.action(async ({ parsedInput }) => {
+		revalidatePath(parsedInput.pathName)
+	})
 
 export const genInventoryReportAction = adminAction
-  .schema(
-    z.object({
-      locationID: z.string(),
-    }),
-  )
-  .action(async ({ parsedInput: { locationID }, ctx: { user } }) => {
-    const [customer, inventory, location] = await Promise.all([
-      customerService.getByID(user.customerID),
-      inventoryService.getInventory(user.customerID, locationID),
-      locationService.getByID(locationID),
-    ])
+	.schema(
+		z.object({
+			locationID: z.string(),
+		}),
+	)
+	.action(async ({ parsedInput: { locationID }, ctx: { user } }) => {
+		const [customer, inventory, location] = await Promise.all([
+			customerService.getByID(user.customerID),
+			inventoryService.getInventory(user.customerID, locationID),
+			locationService.getByID(locationID),
+		])
 
-    if (!customer) throw new ActionError('firma blev ikke fundet')
-    if (!location) throw new ActionError('lokation blev ikke fundet')
+		if (!customer) throw new ActionError('firma blev ikke fundet')
+		if (!location) throw new ActionError('lokation blev ikke fundet')
 
-    return {
-      customer,
-      location,
-      inventory,
-    }
-  })
+		return {
+			customer,
+			location,
+			inventory,
+		}
+	})
 
 export const genInventoryMovementsReportAction = adminAction
-  .schema(
-    z.object({
-      locationID: z.string(),
-      itemGroup: z.array(z.string()),
-      dateRange: z.object({
-        from: z.coerce.date(),
-        to: z.coerce.date(),
-      }),
-      type: z.array(z.literal('all').or(historyTypeZodSchema)),
-    }),
-  )
-  .action(
-    async ({
-      parsedInput: { locationID, dateRange, itemGroup, type },
-      ctx: { user },
-    }) => {
-      let historyFilter: HistoryFilter = {
-        date: dateRange,
-      }
-      if (!itemGroup.includes('all')) {
-        historyFilter.group = itemGroup
-      }
-      if (!type.includes('all')) {
-        historyFilter.type = type as HistoryType[]
-      }
+	.schema(
+		z.object({
+			locationID: z.string(),
+			itemGroup: z.array(z.string()),
+			dateRange: z.object({
+				from: z.coerce.date(),
+				to: z.coerce.date(),
+			}),
+			type: z.array(z.literal('all').or(historyTypeZodSchema)),
+		}),
+	)
+	.action(
+		async ({
+			parsedInput: { locationID, dateRange, itemGroup, type },
+			ctx: { user },
+		}) => {
+			let historyFilter: HistoryFilter = {
+				date: dateRange,
+			}
+			if (!itemGroup.includes('all')) {
+				historyFilter.group = itemGroup
+			}
+			if (!type.includes('all')) {
+				historyFilter.type = type as HistoryType[]
+			}
 
-      const [customer, history, location] = await Promise.all([
-        customerService.getByID(user.customerID),
-        inventoryService.getHistoryByLocationID(locationID, historyFilter),
-        locationService.getByID(locationID),
-      ])
+			const [customer, history, location] = await Promise.all([
+				customerService.getByID(user.customerID),
+				inventoryService.getHistoryByLocationID(locationID, historyFilter),
+				locationService.getByID(locationID),
+			])
 
-      if (!customer) throw new ActionError('firma blev ikke fundet')
-      if (!location) throw new ActionError('lokation blev ikke fundet')
+			if (!customer) throw new ActionError('firma blev ikke fundet')
+			if (!location) throw new ActionError('lokation blev ikke fundet')
 
-      return {
-        customer,
-        location,
-        history,
-      }
-    },
-  )
+			return {
+				customer,
+				location,
+				history,
+			}
+		},
+	)
 
 export const hideAnnouncementAction = authedAction
-  .schema(z.object({ announcementID: z.coerce.number(), pathname: z.string() }))
-  .action(async ({ parsedInput: { announcementID, pathname } }) => {
-    announcementService.setCookie(announcementID)
-    revalidatePath(pathname)
-  })
+	.schema(z.object({ announcementID: z.coerce.number(), pathname: z.string() }))
+	.action(async ({ parsedInput: { announcementID, pathname } }) => {
+		announcementService.setCookie(announcementID)
+		revalidatePath(pathname)
+	})

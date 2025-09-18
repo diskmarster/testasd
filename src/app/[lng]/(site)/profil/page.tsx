@@ -9,27 +9,27 @@ import { ProfilePin } from '@/components/profile/profile-pin'
 import { Separator } from '@/components/ui/separator'
 
 interface PageProps extends WithAuthProps {
-  params: {
-    lng: string
-  }
+	params: {
+		lng: string
+	}
 }
 
 export const metadata = {
-  title: 'Min profil',
+	title: 'Min profil',
 }
 
 async function Page({ params: { lng } }: PageProps) {
-  return (
-    <SiteWrapper>
-      <ProfileHeader />
-      <Separator className='my-4' />
-      <ProfileInformation />
-      <ProfileLocation lng={lng} />
-      <ProfilePassword />
-      <ProfileDelete />
-      <ProfilePin />
-    </SiteWrapper>
-  )
+	return (
+		<SiteWrapper>
+			<ProfileHeader />
+			<Separator className='my-4' />
+			<ProfileInformation />
+			<ProfileLocation lng={lng} />
+			<ProfilePassword />
+			<ProfileDelete />
+			<ProfilePin />
+		</SiteWrapper>
+	)
 }
 
 export default withAuth(Page)

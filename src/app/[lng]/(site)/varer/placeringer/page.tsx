@@ -10,32 +10,32 @@ import { locationService } from '@/service/location'
 import { redirect } from 'next/navigation'
 
 interface PageProps extends WithAuthProps {
-  params: {
-    lng: string
-  }
+	params: {
+		lng: string
+	}
 }
 
 async function Page({ params: { lng }, user, pathname }: PageProps) {
-  const location = await locationService.getLastVisited(user.id!)
-  if (!location) redirect(`/${lng}/log-ind?redirect=${pathname}`)
+	const location = await locationService.getLastVisited(user.id!)
+	if (!location) redirect(`/${lng}/log-ind?redirect=${pathname}`)
 
-  const allPlacement = await inventoryService.getAllPlacementsByID(location)
-  const { t } = await serverTranslation(lng, 'placeringer')
+	const allPlacement = await inventoryService.getAllPlacementsByID(location)
+	const { t } = await serverTranslation(lng, 'placeringer')
 
-  return (
-    <SiteWrapper
-      title={t('placement-page.title')}
-      description={t('placement-page.description')}
-      actions={
-        <>
-          {hasPermissionByRank(user.role, 'bruger') && <ModalCreatePlacement />}
-        </>
-      }>
-      <TablePlacement data={allPlacement} user={user} />
+	return (
+		<SiteWrapper
+			title={t('placement-page.title')}
+			description={t('placement-page.description')}
+			actions={
+				<>
+					{hasPermissionByRank(user.role, 'bruger') && <ModalCreatePlacement />}
+				</>
+			}>
+			<TablePlacement data={allPlacement} user={user} />
 
-      <ModalShowPlacementLabel />
-    </SiteWrapper>
-  )
+			<ModalShowPlacementLabel />
+		</SiteWrapper>
+	)
 }
 
 export default withAuth(Page, undefined, 'læseadgang')

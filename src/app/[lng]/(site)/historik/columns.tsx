@@ -184,7 +184,13 @@ export function getTableHistoryColumns(
 		cell: ({ getValue }) => {
 			const type = getValue<HistoryType>()
 			const variant =
-				type == 'tilgang' ? 'green' : type == 'afgang' ? 'red' : type == 'slet' ? 'destructive' : 'yellow'
+				type == 'tilgang'
+					? 'green'
+					: type == 'afgang'
+						? 'red'
+						: type == 'slet'
+							? 'destructive'
+							: 'yellow'
 
 			return (
 				<Badge className='capitalize' variant={variant}>
@@ -590,6 +596,13 @@ export function getTableHistoryFilters(
 			...placements.map(placement => ({
 				value: placement.name,
 				label: placement.name,
+				icon: placement.isBarred ? (
+					<span
+						className={cn(
+							'size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block',
+						)}
+					/>
+				) : undefined,
 			})),
 		],
 	}
@@ -602,6 +615,13 @@ export function getTableHistoryFilters(
 			...batches.map(batch => ({
 				value: batch.batch,
 				label: batch.batch,
+				icon: batch.isBarred ? (
+					<span
+						className={cn(
+							'size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block',
+						)}
+					/>
+				) : undefined,
 			})),
 		],
 	}

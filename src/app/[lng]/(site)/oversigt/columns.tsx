@@ -129,8 +129,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-					row.original.product.fileCount > 0 &&
-					'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -142,8 +142,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+							row.original.product.fileCount > 0 &&
+							'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -426,7 +426,9 @@ export function getTableOverviewColumns(
 									/>
 								</TooltipTrigger>
 								<TooltipContent className='bg-foreground text-background'>
-									{t('batch-indicator-tooltip', { context: isExpired ? 'expired' : 'valid' })}
+									{t('batch-indicator-tooltip', {
+										context: isExpired ? 'expired' : 'valid',
+									})}
 								</TooltipContent>
 							</Tooltip>
 						</TooltipProvider>
@@ -834,6 +836,13 @@ export function getTableOverviewFilters(
 			...placements.map(placement => ({
 				value: placement.name,
 				label: placement.name,
+				icon: placement.isBarred ? (
+					<span
+						className={cn(
+							'size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block',
+						)}
+					/>
+				) : undefined,
 			})),
 		],
 	}
@@ -849,6 +858,13 @@ export function getTableOverviewFilters(
 			...batches.map(batch => ({
 				value: batch.batch,
 				label: batch.batch,
+				icon: batch.isBarred ? (
+					<span
+						className={cn(
+							'size-2 rounded-full bg-destructive/50 border border-destructive cursor-pointer block',
+						)}
+					/>
+				) : undefined,
 			})),
 		],
 	}

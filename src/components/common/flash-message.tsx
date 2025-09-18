@@ -1,15 +1,15 @@
-"use client"
+'use client'
 
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { Icons } from '../ui/icons'
 import { hideAnnouncementAction } from '@/app/actions'
+import { Button } from '@/components/ui/button'
 import { Announcement } from '@/lib/database/schema/announcements'
-import { useState, useTransition } from 'react'
+import { cn } from '@/lib/utils'
 import { usePathname } from 'next/navigation'
+import { useState, useTransition } from 'react'
+import { Icons } from '../ui/icons'
 
 interface Props {
-	announcement: Announcement,
+	announcement: Announcement
 	dismissible?: boolean
 	className?: string
 }
@@ -58,7 +58,7 @@ export default function FlashMessage({
 		startTransition(async () => {
 			await hideAnnouncementAction({
 				announcementID: announcement.id,
-				pathname: pathname
+				pathname: pathname,
 			})
 			setIsHidden(true)
 		})
@@ -67,12 +67,19 @@ export default function FlashMessage({
 	if (isHidden) return null
 
 	return (
-		<div className={cn('w-full border-b px-3 transition-all duration-300 ease-in-out', variant.container, className)}>
+		<div
+			className={cn(
+				'w-full border-b px-3 transition-all duration-300 ease-in-out',
+				variant.container,
+				className,
+			)}>
 			<div className='container mx-auto py-3'>
 				<div className='flex items-center justify-between gap-3'>
 					<div className='flex items-center gap-3 min-w-0 flex-1'>
 						<Icon className={cn('h-4 w-4 flex-shrink-0', variant.iconColor)} />
-						<p className='text-sm font-medium leading-relaxed truncate sm:whitespace-normal'>{announcement.message}</p>
+						<p className='text-sm font-medium leading-relaxed truncate sm:whitespace-normal'>
+							{announcement.message}
+						</p>
 					</div>
 
 					{dismissible && (
@@ -81,8 +88,9 @@ export default function FlashMessage({
 							variant='ghost'
 							size='sm'
 							className={cn(
-								'h-6 w-6 p-0 hover:bg-black/10 flex-shrink-0', variant.butten)}
-						>
+								'h-6 w-6 p-0 hover:bg-black/10 flex-shrink-0',
+								variant.butten,
+							)}>
 							<Icons.cross className='h-3 w-3' />
 							<span className='sr-only'>Dismiss</span>
 						</Button>

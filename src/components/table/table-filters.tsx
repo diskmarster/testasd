@@ -60,9 +60,19 @@ function TableToolbarFilters<T>({
 			const fields = filterFields.filter(ff =>
 				unqFilters.has(ff.column?.id || ''),
 			)
+
 			setSelectedFields(fields)
 		}
 	}, [filterLocalStorageKey])
+	useEffect(() => {
+		setSelectedFields(previousState =>
+			filterFields.filter(filterField =>
+				previousState.find(
+					prieousField => prieousField.column?.id == filterField.column?.id,
+				),
+			),
+		)
+	}, [filterFields])
 
 	const [activeIndex, setActiveIndex] = useState<number>()
 
@@ -132,7 +142,13 @@ function TableToolbarFilters<T>({
 					className='gap-1'
 					onClick={handleClearAllFilters}>
 					<Icons.cross className='size-4' />
-					<span className='hidden md:block'>{t('table-filters.clear', { count: selectedFields.length + (defaultGlobalFilter.length > 0 ? 1 : 0) })}</span>
+					<span className='hidden md:block'>
+						{t('table-filters.clear', {
+							count:
+								selectedFields.length +
+								(defaultGlobalFilter.length > 0 ? 1 : 0),
+						})}
+					</span>
 				</Button>
 			)}
 		</div>
@@ -405,32 +421,33 @@ function GlobalFilter<T>({
 
 	return (
 		<div className='relative'>
-				<Icons.search 
-					className={cn(
-						'transition-all absolute right-1/2 top-1/2 size-4 -translate-y-1/2 translate-x-1/2 pointer-events-none',
-						(isFocused || search != "") && 'right-3 translate-x-0 rotate-90 text-muted-foreground'
-					)}
-				/>
-				<Input
-					type='text'
-					size={12}
-					placeholder={t('table-filters.search-placeholder')}
-					id='table-searchbar'
-					className={cn(
-						'transition-all w-9 placeholder:opacity-0 cursor-pointer',
-						isFocused && 'w-52 placeholder:opacity-100 cursor-text',
-						search != "" && 'min-w-52 w-fit cursor-text',
-						(!isFocused && search == "") && 'hover:bg-accent'
-					)}
-					onFocus={() => setIsFocsued(true)}
-					onBlur={() => setIsFocsued(false)}
-					value={search}
-					onChange={e => {
-						setSearch(e.target.value)
-						debouncedSeteFilter(e.target.value)
-					}}
-				/>
-			</div>
+			<Icons.search
+				className={cn(
+					'transition-all absolute right-1/2 top-1/2 size-4 -translate-y-1/2 translate-x-1/2 pointer-events-none',
+					(isFocused || search != '') &&
+						'right-3 translate-x-0 rotate-90 text-muted-foreground',
+				)}
+			/>
+			<Input
+				type='text'
+				size={12}
+				placeholder={t('table-filters.search-placeholder')}
+				id='table-searchbar'
+				className={cn(
+					'transition-all w-9 placeholder:opacity-0 cursor-pointer',
+					isFocused && 'w-52 placeholder:opacity-100 cursor-text',
+					search != '' && 'min-w-52 w-fit cursor-text',
+					!isFocused && search == '' && 'hover:bg-accent',
+				)}
+				onFocus={() => setIsFocsued(true)}
+				onBlur={() => setIsFocsued(false)}
+				value={search}
+				onChange={e => {
+					setSearch(e.target.value)
+					debouncedSeteFilter(e.target.value)
+				}}
+			/>
+		</div>
 	)
 }
 
@@ -479,9 +496,13 @@ function FilterDateRange<T>({
 	)
 }
 
-function getFilterFieldFacetedUniqueValues<T>(field: FilterField<T>): Map<any, number> | undefined {
+function getFilterFieldFacetedUniqueValues<T>(
+	field: FilterField<T>,
+): Map<any, number> | undefined {
 	if (field.column == undefined) {
-		console.error(`Column for filter with label: '${field.label}' was undefined`)
+		console.error(
+			`Column for filter with label: '${field.label}' was undefined`,
+		)
 		return undefined
 	}
 
@@ -494,7 +515,7 @@ function getFilterFieldFacetedUniqueValues<T>(field: FilterField<T>): Map<any, n
 	const facetedRowModel = field.column?.getFacetedRowModel()
 
 	const map = new Map<string, any>()
-	for (let row of (facetedRowModel?.flatRows ?? [])) {
+	for (let row of facetedRowModel?.flatRows ?? []) {
 		const unique = row.getValue(uniqueColumnId)
 		const col = row.getValue(columnId)
 		const key = `${unique}_${col}`
@@ -511,7 +532,7 @@ function getFilterFieldFacetedUniqueValues<T>(field: FilterField<T>): Map<any, n
 		}
 
 		const cur = customFacets.get(facet)!
-		customFacets.set(facet, cur+1)
+		customFacets.set(facet, cur + 1)
 	}
 
 	return customFacets
@@ -581,10 +602,9 @@ function FilterSelect<T>({
 											)}>
 											<Icons.check className={cn('h-4 w-4')} />
 										</div>
-										{option.icon && (
-											<option.icon className='mr-2 h-4 w-4 text-muted-foreground' />
-										)}
+
 										<span>{option.label}</span>
+										{option.icon && <div className='ml-2'>{option.icon}</div>}
 										<span className='ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs'>
 											{facets?.get(option.value) ?? 0}
 										</span>

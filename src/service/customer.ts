@@ -1,134 +1,142 @@
 import { fallbackLng } from '@/app/i18n/settings'
 import { customer } from '@/data/customer'
-import { CustomerMailSettingWithEmail, CustomerWithUserCount } from '@/data/customer.types'
+import {
+	CustomerMailSettingWithEmail,
+	CustomerWithUserCount,
+} from '@/data/customer.types'
+import { location } from '@/data/location'
 import { user } from '@/data/user'
+import { hasPermissionByRank } from '@/data/user.types'
+import { db } from '@/lib/database'
+import { ApiKey, NewApiKey } from '@/lib/database/schema/apikeys'
 import { UserID, UserLinkID } from '@/lib/database/schema/auth'
 import {
-  Customer,
-  CustomerID,
-  CustomerLink,
-  CustomerLinkID,
-  CustomerMailSetting,
-  CustomerMailSettingID,
-  CustomerSettings,
-  CustomerSettingsID,
-  LocationID,
-  NewCustomer,
-  NewCustomerLink,
-  NewCustomerMailSetting,
-  NewCustomerSettings,
-  PartialCustomer,
-  PartialCustomerSettings,
+	Customer,
+	CustomerID,
+	CustomerLink,
+	CustomerLinkID,
+	CustomerMailSetting,
+	CustomerMailSettingID,
+	CustomerSettings,
+	CustomerSettingsID,
+	LocationID,
+	NewCustomer,
+	NewCustomerLink,
+	NewCustomerMailSetting,
+	NewCustomerSettings,
+	PartialCustomer,
+	PartialCustomerSettings,
 } from '@/lib/database/schema/customer'
+import { hasher } from '@/lib/hash/hasher'
+import { ActionError } from '@/lib/safe-action/error'
+import { tryCatch } from '@/lib/utils.server'
 import { generateIdFromEntropySize } from 'lucia'
 import { isLinkExpired } from './customer.utils'
-import { db } from '@/lib/database'
-import { location } from '@/data/location'
-import { hasPermissionByRank } from '@/data/user.types'
-import { ApiKey, NewApiKey } from '@/lib/database/schema/apikeys'
-import { apikeys } from '@/lib/api-key/api-key'
-import { tryCatch } from '@/lib/utils.server'
-import { ActionError } from '@/lib/safe-action/error'
 
 const ACTIVATION_LINK_BASEURL =
-  process.env.VERCEL_ENV === 'production'
-    ? 'https://lager.nemunivers.app'
-    : process.env.VERCEL_ENV === 'preview'
-      ? 'stage.lager.nemunivers.app'
-      : 'http://localhost:3000'
+	process.env.VERCEL_ENV === 'production'
+		? 'https://lager.nemunivers.app'
+		: process.env.VERCEL_ENV === 'preview'
+			? 'stage.lager.nemunivers.app'
+			: 'http://localhost:3000'
 export type CustomerActivationLink =
-  `${typeof ACTIVATION_LINK_BASEURL}/${string}/registrer/${CustomerLinkID}`
+	`${typeof ACTIVATION_LINK_BASEURL}/${string}/registrer/${CustomerLinkID}`
 const LINK_DURATION_HOURS = 24
 
 export const customerService = {
-  create: async function (
-    customerData: NewCustomer,
-  ): Promise<Customer | undefined> {
-    return db.transaction(async (trx) => {
-      const newCustomer = await customer.create(customerData, trx)
+	create: async function (
+		customerData: NewCustomer,
+	): Promise<Customer | undefined> {
+		return db.transaction(async trx => {
+			const newCustomer = await customer.create(customerData, trx)
 
-      if (newCustomer == undefined) {
-        return undefined
-      }
+			if (newCustomer == undefined) {
+				return undefined
+			}
 
-      const settings = await customer.createSettings({customerID: newCustomer?.id}, trx)
-      if (settings == undefined) {
-        trx.rollback()
-        return undefined
-      }
+			const settings = await customer.createSettings(
+				{ customerID: newCustomer?.id },
+				trx,
+			)
+			if (settings == undefined) {
+				trx.rollback()
+				return undefined
+			}
 
-      return newCustomer
-    })
-  },
-  getByEmail: async function (email: string): Promise<Customer | undefined> {
-    const existingCustomer = await customer.getByEmail(email)
-    return existingCustomer
-  },
-  getByID: async function (
-    customerID: CustomerID,
-  ): Promise<Customer | undefined> {
-    const existingCustomer = await customer.getByID(customerID)
-    return existingCustomer
-  },
-  createActivationLink: async function (
-    customerLinkData: Omit<NewCustomerLink, 'id'>,
-  ): Promise<CustomerActivationLink | undefined> {
-    const id = generateIdFromEntropySize(16)
-    const newCustomerLink = await customer.createCustomerLink({
-      ...customerLinkData,
-      id: id,
-    })
-    if (!newCustomerLink) return undefined
-    return `${ACTIVATION_LINK_BASEURL}/${fallbackLng}/registrer/${newCustomerLink.id}`
-  },
-  getActivationLinkByID: async function (
-    linkID: CustomerLinkID,
-  ): Promise<CustomerLink | undefined> {
-    const existingCustomerLink = await customer.getCustomerLinkByID(linkID)
-    return existingCustomerLink
-  },
-  validateActivationLink: function (insertedDate: Date): boolean {
-    return isLinkExpired(insertedDate, LINK_DURATION_HOURS)
-  },
-  deleteActivationLink: async function (
-    linkID: CustomerLinkID,
-  ): Promise<boolean> {
-    return await customer.deleteCustomerLink(linkID)
-  },
-  getByLinkID: async function (
-    linkID: CustomerLinkID,
-  ): Promise<Customer | undefined> {
-    const existingLink = await customer.getCustomerLinkByID(linkID)
-    if (!existingLink) return undefined
-    const existingCustomer = customer.getByID(existingLink.customerID)
-    return existingCustomer
-  },
-  getByUserLinkID: async function (
-    linkID: UserLinkID,
-  ): Promise<Customer | undefined> {
-    const existingLink = await user.getUserLinkByID(linkID)
-    if (!existingLink) return undefined
-    const existingCustomer = customer.getByID(existingLink.customerID)
-    return existingCustomer
-  },
-  toggleActivationByID: async function (
-    customerID: CustomerID,
-  ): Promise<boolean> {
-    return await customer.toggleActivationStatusByID(customerID)
-  },
-  updateByID: async function (
-    customerID: CustomerID,
-    customerData: PartialCustomer,
-  ): Promise<boolean> {
-    return await customer.updateByID(customerID, customerData)
-  },
-  getAll: async function (): Promise<CustomerWithUserCount[]> {
-    return customer.getAll()
-  },
-  deleteByID: async function(customerID: CustomerID): Promise<boolean> {
-    return customer.deleteByID(customerID)
-  },
-  getSettings: async function(customerID: CustomerID): Promise<CustomerSettings | undefined> {
+			return newCustomer
+		})
+	},
+	getByEmail: async function (email: string): Promise<Customer | undefined> {
+		const existingCustomer = await customer.getByEmail(email)
+		return existingCustomer
+	},
+	getByID: async function (
+		customerID: CustomerID,
+	): Promise<Customer | undefined> {
+		const existingCustomer = await customer.getByID(customerID)
+		return existingCustomer
+	},
+	createActivationLink: async function (
+		customerLinkData: Omit<NewCustomerLink, 'id'>,
+	): Promise<CustomerActivationLink | undefined> {
+		const id = generateIdFromEntropySize(16)
+		const newCustomerLink = await customer.createCustomerLink({
+			...customerLinkData,
+			id: id,
+		})
+		if (!newCustomerLink) return undefined
+		return `${ACTIVATION_LINK_BASEURL}/${fallbackLng}/registrer/${newCustomerLink.id}`
+	},
+	getActivationLinkByID: async function (
+		linkID: CustomerLinkID,
+	): Promise<CustomerLink | undefined> {
+		const existingCustomerLink = await customer.getCustomerLinkByID(linkID)
+		return existingCustomerLink
+	},
+	validateActivationLink: function (insertedDate: Date): boolean {
+		return isLinkExpired(insertedDate, LINK_DURATION_HOURS)
+	},
+	deleteActivationLink: async function (
+		linkID: CustomerLinkID,
+	): Promise<boolean> {
+		return await customer.deleteCustomerLink(linkID)
+	},
+	getByLinkID: async function (
+		linkID: CustomerLinkID,
+	): Promise<Customer | undefined> {
+		const existingLink = await customer.getCustomerLinkByID(linkID)
+		if (!existingLink) return undefined
+		const existingCustomer = customer.getByID(existingLink.customerID)
+		return existingCustomer
+	},
+	getByUserLinkID: async function (
+		linkID: UserLinkID,
+	): Promise<Customer | undefined> {
+		const existingLink = await user.getUserLinkByID(linkID)
+		if (!existingLink) return undefined
+		const existingCustomer = customer.getByID(existingLink.customerID)
+		return existingCustomer
+	},
+	toggleActivationByID: async function (
+		customerID: CustomerID,
+	): Promise<boolean> {
+		return await customer.toggleActivationStatusByID(customerID)
+	},
+	updateByID: async function (
+		customerID: CustomerID,
+		customerData: PartialCustomer,
+	): Promise<boolean> {
+		return await customer.updateByID(customerID, customerData)
+	},
+	getAll: async function (): Promise<CustomerWithUserCount[]> {
+		return customer.getAll()
+	},
+	deleteByID: async function (customerID: CustomerID): Promise<boolean> {
+		return customer.deleteByID(customerID)
+	},
+	getSettings: async function (
+		customerID: CustomerID,
+	): Promise<CustomerSettings | undefined> {
 		const settings = await customer.getSettings(customerID)
 
 		// after migration the useReference settings of existing customers are stored as numbers
@@ -136,75 +144,105 @@ export const customerService = {
 		// this is especially important for the api, since the app will fail on incorrect types
 		return settings != undefined
 			? {
-				...settings,
-				useReference: {
-					tilgang: Boolean(settings.useReference.tilgang),
-					afgang: Boolean(settings.useReference.afgang),
-					regulering: Boolean(settings.useReference.regulering),
-					flyt: Boolean(settings.useReference.flyt),
-				},
-			}
+					...settings,
+					useReference: {
+						tilgang: Boolean(settings.useReference.tilgang),
+						afgang: Boolean(settings.useReference.afgang),
+						regulering: Boolean(settings.useReference.regulering),
+						flyt: Boolean(settings.useReference.flyt),
+					},
+				}
 			: undefined
-  },
-  createSettings: async function(data: NewCustomerSettings): Promise<CustomerSettings | undefined> {
-    return await customer.createSettings(data)
-  },
-  updateSettings: async function(id: CustomerSettingsID, data: PartialCustomerSettings): Promise<CustomerSettings | undefined> {
-    if (data.id != undefined) {
-      delete data.id
-    }
-    if (data.customerID != undefined) {
-      delete data.customerID
-    }
+	},
+	createSettings: async function (
+		data: NewCustomerSettings,
+	): Promise<CustomerSettings | undefined> {
+		return await customer.createSettings(data)
+	},
+	updateSettings: async function (
+		id: CustomerSettingsID,
+		data: PartialCustomerSettings,
+	): Promise<CustomerSettings | undefined> {
+		if (data.id != undefined) {
+			delete data.id
+		}
+		if (data.customerID != undefined) {
+			delete data.customerID
+		}
 
-    return customer.updateSettings(id, data)
-  },
-	getMailSettings: async function(
+		return customer.updateSettings(id, data)
+	},
+	getMailSettings: async function (
 		customerID: CustomerID,
-		userID?: UserID
+		userID?: UserID,
 	): Promise<CustomerMailSettingWithEmail[]> {
 		return await db.transaction(async tx => {
-				const loggedInUser = userID && await user.getByID(userID, tx)
-				if (loggedInUser && !hasPermissionByRank(loggedInUser.role, 'administrator')) {
-					const userAccess = await location.getAllActiveByUserID(loggedInUser.id, tx)
-					const locationIDs = userAccess.map(a => a.id)
-					return await customer.getAccessibleMailSettings(customerID, locationIDs, tx)
-				}
-				return await customer.getAllMailSettings(customerID, tx)
+			const loggedInUser = userID && (await user.getByID(userID, tx))
+			if (
+				loggedInUser &&
+				!hasPermissionByRank(loggedInUser.role, 'administrator')
+			) {
+				const userAccess = await location.getAllActiveByUserID(
+					loggedInUser.id,
+					tx,
+				)
+				const locationIDs = userAccess.map(a => a.id)
+				return await customer.getAccessibleMailSettings(
+					customerID,
+					locationIDs,
+					tx,
+				)
+			}
+			return await customer.getAllMailSettings(customerID, tx)
 		})
 	},
-	createMailSetting: async function(
-		data: NewCustomerMailSetting
+	createMailSetting: async function (
+		data: NewCustomerMailSetting,
 	): Promise<CustomerMailSetting | undefined> {
 		return await customer.createMailSetting(data)
 	},
-	getMailsForCron: async function(
-		mailType?: keyof Pick<CustomerMailSetting, 'sendStockMail' | 'sendMovementsMail'>,
+	getMailsForCron: async function (
+		mailType?: keyof Pick<
+			CustomerMailSetting,
+			'sendStockMail' | 'sendMovementsMail'
+		>,
 	): Promise<CustomerMailSettingWithEmail[]> {
 		return customer.getMailSettingsForCron(mailType)
 	},
-	deleteMailSetting: async function(settingID: CustomerMailSettingID): Promise<boolean> {
+	deleteMailSetting: async function (
+		settingID: CustomerMailSettingID,
+	): Promise<boolean> {
 		return await customer.deleteMailSetting(settingID)
 	},
-  updateMailSetting: async function(id: CustomerMailSettingID, data: Partial<CustomerMailSettingWithEmail>): Promise<CustomerMailSetting | undefined> {
-    if (data.id != undefined) {
-      delete data.id
-    }
-    if (data.customerID != undefined) {
-      delete data.customerID
-    }
+	updateMailSetting: async function (
+		id: CustomerMailSettingID,
+		data: Partial<CustomerMailSettingWithEmail>,
+	): Promise<CustomerMailSetting | undefined> {
+		if (data.id != undefined) {
+			delete data.id
+		}
+		if (data.customerID != undefined) {
+			delete data.customerID
+		}
 
-    return customer.updateMailSetting(id, data)
-  },
-  getMailSettingsForIDs: async function(
-    customerID: CustomerID,
-    locationID: LocationID,
-		mailType: keyof Pick<CustomerMailSetting, 'sendStockMail' | 'sendReorderMail'>,
-	): Promise<CustomerMailSettingWithEmail[]> {
-		return await customer.getMailSettingsForIDs(customerID, locationID, mailType)
+		return customer.updateMailSetting(id, data)
 	},
-	getExtraMailInfo: async function(
-		setting: CustomerMailSetting
+	getMailSettingsForIDs: async function (
+		customerID: CustomerID,
+		locationID: LocationID,
+		mailType: keyof Pick<
+			CustomerMailSetting,
+			'sendStockMail' | 'sendReorderMail'
+		>,
+	): Promise<CustomerMailSettingWithEmail[]> {
+		return await customer.getMailSettingsForIDs(
+			customerID,
+			locationID,
+			mailType,
+		)
+	},
+	getExtraMailInfo: async function (
+		setting: CustomerMailSetting,
 	): Promise<CustomerMailSettingWithEmail | undefined> {
 		const extra = await customer.getExtraMailInfo(setting.id)
 
@@ -215,14 +253,14 @@ export const customerService = {
 			...extra,
 		}
 	},
-	createApiKey: async function(
+	createApiKey: async function (
 		customerID: CustomerID,
 		name: string,
 		expiry: Date | undefined,
 	): Promise<ApiKey> {
 		const base = crypto.randomUUID()
-		const encrypted = apikeys.encrypt(base)
-		const hash = apikeys.hash(base)
+		const encrypted = hasher.encrypt(base)
+		const hash = hasher.hash(base)
 		const key: NewApiKey = {
 			key: encrypted,
 			hash,
@@ -232,17 +270,15 @@ export const customerService = {
 		}
 		const apikey = await tryCatch(customer.createApiKey(key))
 		if (!apikey.success) {
-			if (apikey.error.message.includes("UNIQUE")) {
-				throw new ActionError("API nøgle findes allerede")		
+			if (apikey.error.message.includes('UNIQUE')) {
+				throw new ActionError('API nøgle findes allerede')
 			} else {
 				throw new Error(apikey.error.message)
 			}
 		}
 		return apikey.data
 	},
-	getApiKey: async function(
-		hash: string
-	): Promise<ApiKey | undefined> {
+	getApiKey: async function (hash: string): Promise<ApiKey | undefined> {
 		return customer.getApiKey(hash)
-	}
+	},
 }

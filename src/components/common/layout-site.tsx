@@ -1,9 +1,9 @@
 import { Header } from '@/components/common/header'
 import { isMaintenanceMode } from '@/lib/utils.server'
-import { redirect } from 'next/navigation'
-import { withAuth, WithAuthProps } from './with-auth'
-import FlashMessage from './flash-message'
 import { announcementService } from '@/service/announcements'
+import { redirect } from 'next/navigation'
+import FlashMessage from './flash-message'
+import { withAuth, WithAuthProps } from './with-auth'
 
 interface Props extends WithAuthProps {
 	children: React.ReactNode
@@ -28,9 +28,11 @@ async function LayoutSite({
 
 	return (
 		<div className='relative flex min-h-screen flex-col'>
-			{announcement && !isHidden && <FlashMessage announcement={announcement} />}
+			{announcement && !isHidden && (
+				<FlashMessage announcement={announcement} />
+			)}
 			<Header lng={lng} user={user} customer={customer} />
-			<main className='flex-1'>{children}</main>
+			<main className='flex-1 flex flex-col'>{children}</main>
 		</div>
 	)
 }

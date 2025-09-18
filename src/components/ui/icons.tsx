@@ -24,6 +24,7 @@ import {
 	CloudUpload,
 	Columns2,
 	Copy,
+	DatabaseBackup,
 	Diff,
 	Download,
 	Ellipsis,
@@ -44,6 +45,7 @@ import {
 	Minus,
 	Monitor,
 	Moon,
+	MoveRight,
 	PackageCheck,
 	PackageIcon,
 	PackagePlusIcon,
@@ -68,11 +70,11 @@ import {
 	Warehouse,
 	X,
 	Zap,
-	MoveRight,
 } from 'lucide-react'
 
 export const Icons = {
 	moveRight: MoveRight,
+	databaseBackup: DatabaseBackup,
 	fileDigit: FileDigit,
 	circle: Circle,
 	circleCheck: CircleCheck,

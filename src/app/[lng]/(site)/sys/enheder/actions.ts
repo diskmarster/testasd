@@ -7,60 +7,60 @@ import { inventoryService } from '@/service/inventory'
 import { sessionService } from '@/service/session'
 import { revalidatePath } from 'next/cache'
 import {
-  createUnitValidation,
-  toggleBarredUnitValidation,
-  updateUnitValidation,
+	createUnitValidation,
+	toggleBarredUnitValidation,
+	updateUnitValidation,
 } from './validation'
 
 export const createUnitAction = sysAdminAction
-  .schema(createUnitValidation)
-  .action(async ({ parsedInput: { name }, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const { session } = await sessionService.validate()
-    if (!session) {
-      throw new ActionError(t('unit-action.user-not-logged-in'))
-    }
-    const newUnit = await inventoryService.createUnit(
-      {
-        name,
-      },
-      ctx.lang,
-    )
-    if (!newUnit) {
-      throw new ActionError(t('unit-action.unit-not-created'))
-    }
-    revalidatePath(`/${ctx.lang}/sys/enheder`)
-  })
+	.schema(createUnitValidation)
+	.action(async ({ parsedInput: { name }, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const { session } = await sessionService.validate()
+		if (!session) {
+			throw new ActionError(t('unit-action.user-not-logged-in'))
+		}
+		const newUnit = await inventoryService.createUnit(
+			{
+				name,
+			},
+			ctx.lang,
+		)
+		if (!newUnit) {
+			throw new ActionError(t('unit-action.unit-not-created'))
+		}
+		revalidatePath(`/${ctx.lang}/sys/enheder`)
+	})
 
 export const updateUnitAction = sysAdminAction
-  .metadata({ actionName: 'updateUnit' })
-  .schema(updateUnitValidation)
-  .action(async ({ parsedInput: { unitID, data: updatedUnitData }, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const updatedUnit = await inventoryService.updateUnitByID(
-      unitID,
-      updatedUnitData,
-    )
+	.metadata({ actionName: 'updateUnit' })
+	.schema(updateUnitValidation)
+	.action(async ({ parsedInput: { unitID, data: updatedUnitData }, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const updatedUnit = await inventoryService.updateUnitByID(
+			unitID,
+			updatedUnitData,
+		)
 
-    if (!updatedUnit) {
-      throw new ActionError(t('unit-action.unit-not-updated'))
-    }
-    revalidatePath(`/${ctx.lang}/sys/enheder`)
-  })
+		if (!updatedUnit) {
+			throw new ActionError(t('unit-action.unit-not-updated'))
+		}
+		revalidatePath(`/${ctx.lang}/sys/enheder`)
+	})
 
 export const toggleBarredUnitAction = sysAdminAction
-  .metadata({ actionName: 'unitToggleBarred' })
-  .schema(toggleBarredUnitValidation)
-  .action(async ({ parsedInput: { unitID, isBarred }, ctx }) => {
-    const { t } = await serverTranslation(ctx.lang, 'action-errors')
-    const updatedUnit = await inventoryService.updateUnitBarredStatus(
-      unitID,
-      isBarred,
-    )
+	.metadata({ actionName: 'unitToggleBarred' })
+	.schema(toggleBarredUnitValidation)
+	.action(async ({ parsedInput: { unitID, isBarred }, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+		const updatedUnit = await inventoryService.updateUnitBarredStatus(
+			unitID,
+			isBarred,
+		)
 
-    if (!updatedUnit) {
-      throw new ActionError(t('unit-action.unit-not-barred'))
-    }
+		if (!updatedUnit) {
+			throw new ActionError(t('unit-action.unit-not-barred'))
+		}
 
-    revalidatePath(`/${ctx.lang}/sys/enheder`)
-  })
+		revalidatePath(`/${ctx.lang}/sys/enheder`)
+	})

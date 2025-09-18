@@ -1,71 +1,79 @@
+import { toggleBarredPlacementAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { ModalUpdatePlacement } from '@/components/inventory/modal-update-placement'
-import { DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import {
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { Placement } from '@/lib/database/schema/inventory'
 import { Row } from '@tanstack/react-table'
 import { useState, useTransition } from 'react'
+import { emitCustomEvent } from 'react-custom-events'
 import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
-import { emitCustomEvent } from 'react-custom-events'
-import { toggleBarredPlacementAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
 
 interface Props {
-  row: Row<Placement>
+	row: Row<Placement>
 }
 
 export function TableOverviewActions({ row }: Props) {
-  const lng = useLanguage()
-  const { t } = useTranslation(lng, 'placeringer')
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'placeringer')
 
-  const [open, setOpen] = useState<boolean>(false)
-  const [_, startTransition] = useTransition()
-  const handleToggleBar = () => {
-    startTransition(async () => {
-      const isCurrentlyBarred = row.original.isBarred
-      const updatedBarredStatus = !isCurrentlyBarred
-      const res = await toggleBarredPlacementAction({
-        placementID: row.original.id,
-        isBarred: updatedBarredStatus,
-      })
-      if (res && res.serverError) {
-        toast.error(t(`common:${siteConfig.errorTitle}`), {
-          description: res.serverError,
-        })
-        return
-      }
+	const [open, setOpen] = useState<boolean>(false)
+	const [_, startTransition] = useTransition()
+	const handleToggleBar = () => {
+		startTransition(async () => {
+			const isCurrentlyBarred = row.original.isBarred
+			const updatedBarredStatus = !isCurrentlyBarred
+			const res = await toggleBarredPlacementAction({
+				placementID: row.original.id,
+				isBarred: updatedBarredStatus,
+			})
+			if (res && res.serverError) {
+				toast.error(t(`common:${siteConfig.errorTitle}`), {
+					description: res.serverError,
+				})
+				return
+			}
 
-      toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: t('toasts.placement-updated'),
-      })
-    })
-  }
+			toast.success(t(`common:${siteConfig.successTitle}`), {
+				description: t('toasts.placement-updated'),
+			})
+		})
+	}
 
-  return (
-    <>
-      <TableActionsWrapper>
-        <DropdownMenuItem onClick={() => setOpen(true)}>
-          {t('table-placement-actions.update')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => emitCustomEvent("PrintPlacementLabel", {
-          name: row.original.name
-        })}>
-          {t('table-placement-actions.print')}
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleToggleBar} className='!text-destructive'>
-          {row.original.isBarred
-            ? t('table-placement-actions.unbar')
-            : t('table-placement-actions.bar')}
-        </DropdownMenuItem>
-      </TableActionsWrapper>
+	return (
+		<>
+			<TableActionsWrapper>
+				<DropdownMenuItem onClick={() => setOpen(true)}>
+					{t('table-placement-actions.update')}
+				</DropdownMenuItem>
+				<DropdownMenuItem
+					onClick={() =>
+						emitCustomEvent('PrintPlacementLabel', {
+							name: row.original.name,
+						})
+					}>
+					{t('table-placement-actions.print')}
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem
+					onClick={handleToggleBar}
+					className='!text-destructive'>
+					{row.original.isBarred
+						? t('table-placement-actions.unbar')
+						: t('table-placement-actions.bar')}
+				</DropdownMenuItem>
+			</TableActionsWrapper>
 
-      <ModalUpdatePlacement
-        placementToEdit={row.original}
-        isOpen={open}
-        setOpen={setOpen}
-      />
-    </>
-  )
+			<ModalUpdatePlacement
+				placementToEdit={row.original}
+				isOpen={open}
+				setOpen={setOpen}
+			/>
+		</>
+	)
 }

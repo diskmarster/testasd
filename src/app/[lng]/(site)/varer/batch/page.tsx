@@ -10,28 +10,28 @@ import { locationService } from '@/service/location'
 import { redirect } from 'next/navigation'
 
 interface PageProps extends WithAuthProps {
-  params: {
-    lng: string
-  }
+	params: {
+		lng: string
+	}
 }
 
 async function Page({ params: { lng }, user, pathname }: PageProps) {
-  const location = await locationService.getLastVisited(user.id)
-  if (!location) redirect(`/${lng}/log-ind?redirect=${pathname}`)
+	const location = await locationService.getLastVisited(user.id)
+	if (!location) redirect(`/${lng}/log-ind?redirect=${pathname}`)
 
-  const allBatches = await inventoryService.getAllBatchesByID(location)
-  const { t } = await serverTranslation(lng, 'batch')
-  return (
-    <SiteWrapper
-      title={t('batch-page.page-title')}
-      description={t('batch-page.page-description')}
-      actions={
-        <>{hasPermissionByRank(user.role, 'bruger') && <ModalCreateBatch />}</>
-      }>
-      <TableBatch data={allBatches} user={user} />
-      <ModalUpdateBatch />
-    </SiteWrapper>
-  )
+	const allBatches = await inventoryService.getAllBatchesByID(location)
+	const { t } = await serverTranslation(lng, 'batch')
+	return (
+		<SiteWrapper
+			title={t('batch-page.page-title')}
+			description={t('batch-page.page-description')}
+			actions={
+				<>{hasPermissionByRank(user.role, 'bruger') && <ModalCreateBatch />}</>
+			}>
+			<TableBatch data={allBatches} user={user} />
+			<ModalUpdateBatch />
+		</SiteWrapper>
+	)
 }
 
 export default withAuth(Page)

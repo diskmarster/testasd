@@ -64,45 +64,47 @@ export function DailyActiveUsersChart({
 				<CardTitle>{title}</CardTitle>
 			</CardHeader>
 			<CardContent>
-				{loading ? (<ChartSkeleton />): (
-				<ChartContainer config={chartConfig} className='min-h-[200px] w-full'>
-					<BarChart
-						accessibilityLayer
-						data={data}
-						margin={{
-							left: 12,
-							right: 12,
-						}}>
-						<CartesianGrid
-							vertical={false}
-							horizontalValues={horizontalLineValues}
-						/>
-						<XAxis
-							dataKey='label'
-							tickLine={false}
-							axisLine={false}
-							tickMargin={10}
-							tickFormatter={tickFormatter}
-						/>
-						<YAxis domain={[0, 'dataMax']} hide />
-						<ChartTooltip content={<ChartTooltipContent />} />
-						<ChartLegend content={<ChartLegendContent />} />
-						<Bar
-							type={'natural'}
-							fillOpacity={0.4}
-							dataKey='desktopUsers'
-							fill='hsl(var(--chart-1))'
-							radius={4}
-						/>
-						<Bar
-							type={'natural'}
-							fillOpacity={0.4}
-							dataKey='appUsers'
-							fill='hsl(var(--chart-2))'
-							radius={4}
-						/>
-					</BarChart>
-				</ChartContainer>
+				{loading ? (
+					<ChartSkeleton />
+				) : (
+					<ChartContainer config={chartConfig} className='min-h-[200px] w-full'>
+						<BarChart
+							accessibilityLayer
+							data={data}
+							margin={{
+								left: 12,
+								right: 12,
+							}}>
+							<CartesianGrid
+								vertical={false}
+								horizontalValues={horizontalLineValues}
+							/>
+							<XAxis
+								dataKey='label'
+								tickLine={false}
+								axisLine={false}
+								tickMargin={10}
+								tickFormatter={tickFormatter}
+							/>
+							<YAxis domain={[0, 'dataMax']} hide />
+							<ChartTooltip content={<ChartTooltipContent />} />
+							<ChartLegend content={<ChartLegendContent />} />
+							<Bar
+								type={'natural'}
+								fillOpacity={0.4}
+								dataKey='desktopUsers'
+								fill='hsl(var(--chart-1))'
+								radius={4}
+							/>
+							<Bar
+								type={'natural'}
+								fillOpacity={0.4}
+								dataKey='appUsers'
+								fill='hsl(var(--chart-2))'
+								radius={4}
+							/>
+						</BarChart>
+					</ChartContainer>
 				)}
 			</CardContent>
 		</Card>
@@ -111,16 +113,14 @@ export function DailyActiveUsersChart({
 
 function ChartSkeleton() {
 	return (
-		<div className="h-[225px] w-full flex flex-col items-center gap-4" >
+		<div className='h-[225px] w-full flex flex-col items-center gap-4'>
 			<div className='relative h-4/5 w-full flex items-end justify-evenly'>
 				<Skeleton className='w-1/12 h-3/5' />
 				<Skeleton className='w-1/12 h-full' />
 				<Skeleton className='w-1/12 h-2/5' />
 				<Skeleton className='w-1/12 h-4/5' />
 				<Skeleton className='w-1/12 h-3/5' />
-				<div className='absolute flex justify-between'>
-					
-				</div>
+				<div className='absolute flex justify-between'></div>
 			</div>
 			<Skeleton className='w-[95%] h-[12px]' />
 			<Skeleton className='w-[50%] h-[12px]' />

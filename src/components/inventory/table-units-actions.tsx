@@ -11,54 +11,54 @@ import { toast } from 'sonner'
 import { TableActionsWrapper } from '../table/table-actions-wrapper'
 
 interface Props {
-  table: Table<Unit>
-  row: Row<Unit>
+	table: Table<Unit>
+	row: Row<Unit>
 }
 
 export function TableOverviewActions({ table, row }: Props) {
-  const [open, setOpen] = useState<boolean>(false)
-  const lng = useLanguage()
-  const { t } = useTranslation(lng, 'enheder')
-  const [_, startTransition] = useTransition()
-  const handleToggleBar = () => {
-    startTransition(async () => {
-      const isCurrentlyBarred = row.original.isBarred
-      const updatedBarredStatus = !isCurrentlyBarred
-      const res = await toggleBarredUnitAction({
-        unitID: row.original.id,
-        isBarred: updatedBarredStatus,
-      })
-      if (res && res.serverError) {
-        toast.error(t(`common:${siteConfig.errorTitle}`), {
-          description: res.serverError,
-        })
-        return
-      }
+	const [open, setOpen] = useState<boolean>(false)
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'enheder')
+	const [_, startTransition] = useTransition()
+	const handleToggleBar = () => {
+		startTransition(async () => {
+			const isCurrentlyBarred = row.original.isBarred
+			const updatedBarredStatus = !isCurrentlyBarred
+			const res = await toggleBarredUnitAction({
+				unitID: row.original.id,
+				isBarred: updatedBarredStatus,
+			})
+			if (res && res.serverError) {
+				toast.error(t(`common:${siteConfig.errorTitle}`), {
+					description: res.serverError,
+				})
+				return
+			}
 
-      toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: t('update-product-group-modal.product-group-success'),
-      })
-    })
-  }
+			toast.success(t(`common:${siteConfig.successTitle}`), {
+				description: t('update-product-group-modal.product-group-success'),
+			})
+		})
+	}
 
-  return (
-    <>
-      <TableActionsWrapper>
-        <DropdownMenuItem onClick={() => setOpen(true)}>
-          {t('table-units-actions.update')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleToggleBar}>
-          {row.original.isBarred
-            ? t('table-units-actions.unbar')
-            : t('table-units-actions.bar')}
-        </DropdownMenuItem>
-      </TableActionsWrapper>
+	return (
+		<>
+			<TableActionsWrapper>
+				<DropdownMenuItem onClick={() => setOpen(true)}>
+					{t('table-units-actions.update')}
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={handleToggleBar}>
+					{row.original.isBarred
+						? t('table-units-actions.unbar')
+						: t('table-units-actions.bar')}
+				</DropdownMenuItem>
+			</TableActionsWrapper>
 
-      <ModalUpdateUnit
-        unitToEdit={row.original}
-        isOpen={open}
-        setOpen={setOpen}
-      />
-    </>
-  )
+			<ModalUpdateUnit
+				unitToEdit={row.original}
+				isOpen={open}
+				setOpen={setOpen}
+			/>
+		</>
+	)
 }

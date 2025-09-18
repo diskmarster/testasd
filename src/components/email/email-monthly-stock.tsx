@@ -1,10 +1,20 @@
 import { siteConfig } from '@/config/site'
 import { CustomerMailSettingWithEmail } from '@/data/customer.types'
 import { Customer } from '@/lib/database/schema/customer'
-import { Body, Container, Head, Heading, Hr, Html, Preview, Section, Tailwind, Text } from '@react-email/components'
+import {
+	Body,
+	Container,
+	Head,
+	Heading,
+	Hr,
+	Html,
+	Preview,
+	Section,
+	Tailwind,
+	Text,
+} from '@react-email/components'
 import { formatDate } from 'date-fns'
 import { da } from 'date-fns/locale'
-import { Boxes } from 'lucide-react'
 
 interface Props {
 	mailInfo: CustomerMailSettingWithEmail
@@ -27,17 +37,20 @@ export function EmailSendMonthlyStock({ mailInfo, customer }: Props) {
 								Hej {customer.company}
 							</Text>
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
-								Vedhæftet finder du den seneste lagerværdirapport for {mailInfo.locationName}. Rapporten indeholder en opgørelse over din lagerbeholdning og værdi pr. {dateStr}.
+								Vedhæftet finder du den seneste lagerværdirapport for{' '}
+								{mailInfo.locationName}. Rapporten indeholder en opgørelse over
+								din lagerbeholdning og værdi pr. {dateStr}.
 							</Text>
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
-								Du finder rapporten i både PDF- og Excelformat, så du nemt kan gennemgå og bearbejde dine data.
+								Du finder rapporten i både PDF- og Excelformat, så du nemt kan
+								gennemgå og bearbejde dine data.
 							</Text>
 							<Hr className='border-[#e6ebf1] dark:border-[#6b6b6b] my-5' />
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
 								Vores supportteam står klar til at hjælpe jer, hvis I har
 								spørgsmål eller har brug for hjælp til opsætningen. Tøv ikke med
-								at kontakte os – vi er her for at sikre, at I får den bedst mulige
-								oplevelse med {siteConfig.name}.
+								at kontakte os – vi er her for at sikre, at I får den bedst
+								mulige oplevelse med {siteConfig.name}.
 							</Text>
 							<Text className='text-primary-foreground text-base leading-6 text-left'>
 								- SkanCode Teamet

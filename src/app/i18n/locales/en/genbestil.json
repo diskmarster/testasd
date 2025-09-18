@@ -56,9 +56,10 @@
 		"orderAmount-description": "This is used to prefill the register reorders form. This can be edited when registrering.",
 		"maxAmount": "Max order quantity",
 		"maxAmount-description": "Leave at 0 to ignore.",
-		"orderAmount-too-big": "Max order quantity must be bigger than order quantity",
+		"orderAmount-too-big": "Order quantity can't be bigger than max order quantity",
 		"value-not-positive": "Value must be a positive number",
-		"required": "This field is requried"
+		"required": "This field is requried",
+		"value-not-number": "Value must be a number"
 	},
 	"modal-update-reorder": {
 		"title": "Update minimum stock",

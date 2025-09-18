@@ -9,42 +9,42 @@ import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(
-  r: NextRequest,
+	r: NextRequest,
 ): Promise<NextResponse<ApiResponse<ProductWithInventories[]>>> {
-  const lng = getLanguageFromRequest(headers())
-  const { t } = await serverTranslation(lng, 'common')
+	const lng = getLanguageFromRequest(headers())
+	const { t } = await serverTranslation(lng, 'common')
 
-  if (isMaintenanceMode()) {
-    return apiResponse.locked(
-      t('route-translations-regulations.maintenance'),
-      getVercelRequestID(headers()),
-    )
-  }
+	if (isMaintenanceMode()) {
+		return apiResponse.locked(
+			t('route-translations-regulations.maintenance'),
+			getVercelRequestID(headers()),
+		)
+	}
 
-  const { customer } = await validatePublicRequest(headers())
-  if (customer == null) {
-    return apiResponse.unauthorized(
-      t('route-translations-product.no-access-to-resource'),
-      getVercelRequestID(headers()),
-    )
-  }
+	const { customer } = await validatePublicRequest(headers())
+	if (customer == null) {
+		return apiResponse.unauthorized(
+			t('route-translations-product.no-access-to-resource'),
+			getVercelRequestID(headers()),
+		)
+	}
 
-  const searchparams = r.nextUrl.searchParams
-  let filters: ProductFilters = {}
+	const searchparams = r.nextUrl.searchParams
+	let filters: ProductFilters = {}
 
-  if (searchparams.has('group')) {
-    filters.group = searchparams.get('group')?.split(',')
-  }
+	if (searchparams.has('group')) {
+		filters.group = searchparams.get('group')?.split(',')
+	}
 
-  const productRes = await tryCatch(
-    productService.getAllProductsWithInventories(customer.id, filters),
-  )
-  if (!productRes.success) {
-    return apiResponse.internal(
-      productRes.error.message,
-      getVercelRequestID(headers()),
-    )
-  }
+	const productRes = await tryCatch(
+		productService.getAllProductsWithInventories(customer.id, filters),
+	)
+	if (!productRes.success) {
+		return apiResponse.internal(
+			productRes.error.message,
+			getVercelRequestID(headers()),
+		)
+	}
 
-  return apiResponse.ok(productRes.data)
+	return apiResponse.ok(productRes.data)
 }

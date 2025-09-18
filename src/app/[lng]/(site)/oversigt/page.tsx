@@ -28,8 +28,8 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
 
 	const units = inventoryService.getActiveUnits()
 	const groups = inventoryService.getActiveGroupsByID(customer.id)
-	const placements = inventoryService.getActivePlacementsByID(location)
-	const batches = inventoryService.getActiveBatchesByID(location)
+	const placements = inventoryService.getAllPlacementsByID(location)
+	const batches = inventoryService.getAllBatchesByID(location)
 	const customerSettings = (await customerService.getSettings(customer.id)) ?? {
 		usePlacement: true,
 		useReference: {
@@ -132,9 +132,7 @@ async function filterGroupedInventories(
 	).flatMap(invs => {
 		let filtered = invs
 		if (filtered.some(inv => inv.isDefaultPlacement)) {
-			filtered = filtered.filter(
-				inv => inv.isDefaultPlacement
-			)
+			filtered = filtered.filter(inv => inv.isDefaultPlacement)
 		}
 
 		const totalQty: number = filtered.reduce(
@@ -155,7 +153,7 @@ function sumQuantities(
 	customerSettings: Pick<CustomerSettings, 'usePlacement'>,
 	customer: Customer,
 ) {
-	return async function(
+	return async function (
 		inventories: FormattedInventory[],
 	): Promise<Map<string, FormattedInventory>> {
 		// build map of inventories

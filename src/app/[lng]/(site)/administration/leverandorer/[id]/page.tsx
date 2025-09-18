@@ -1,11 +1,11 @@
-import { SiteWrapper } from "@/components/common/site-wrapper";
-import { Suspense } from "react";
-import { DetailsWrapper } from "./details-wrapper";
-import { SupplierHistoryWrapper } from "./history-wrapper";
-import { Separator } from "@/components/ui/separator";
-import { SupplierDetailsSkeleton } from "@/components/suppliers/details";
-import { SupplierHistorySkeleton } from "@/components/suppliers/history";
-import { withAuth, WithAuthProps } from "@/components/common/with-auth";
+import { SiteWrapper } from '@/components/common/site-wrapper'
+import { withAuth, WithAuthProps } from '@/components/common/with-auth'
+import { SupplierDetailsSkeleton } from '@/components/suppliers/details'
+import { SupplierHistorySkeleton } from '@/components/suppliers/history'
+import { Separator } from '@/components/ui/separator'
+import { Suspense } from 'react'
+import { DetailsWrapper } from './details-wrapper'
+import { SupplierHistoryWrapper } from './history-wrapper'
 
 interface Props extends WithAuthProps {
 	params: {
@@ -25,7 +25,10 @@ async function Page({ params: { id }, user }: Props) {
 			<Separator />
 			<div>
 				<Suspense fallback={<SupplierHistorySkeleton />}>
-					<SupplierHistoryWrapper customerID={user.customerID} id={parseInt(id)} />
+					<SupplierHistoryWrapper
+						customerID={user.customerID}
+						id={parseInt(id)}
+					/>
 				</Suspense>
 			</div>
 		</SiteWrapper>

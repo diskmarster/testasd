@@ -14,98 +14,106 @@ import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
-import { DialogContentV2, DialogFooterV2, DialogHeaderV2, DialogTitleV2, DialogV2 } from '../ui/dialog-v2'
+import {
+	DialogContentV2,
+	DialogFooterV2,
+	DialogHeaderV2,
+	DialogTitleV2,
+	DialogV2,
+} from '../ui/dialog-v2'
 
-interface Props { }
+interface Props {}
 
-export function ModalDeleteReorder({ }: Props) {
-  const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string>()
-  const [pending, startTransition] = useTransition()
-  const lng = useLanguage()
-  const { t } = useTranslation(lng, 'genbestil')
-  const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = deleteReorderValidation(validationT)
+export function ModalDeleteReorder({}: Props) {
+	const [open, setOpen] = useState(false)
+	const [error, setError] = useState<string>()
+	const [pending, startTransition] = useTransition()
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, 'genbestil')
+	const { t: validationT } = useTranslation(lng, 'validation')
+	const schema = deleteReorderValidation(validationT)
 	const [text1, setText1] = useState<string>('')
 
-  const { setValue, handleSubmit, formState, reset } = useForm<
-    z.infer<typeof schema>
-  >({
-    resolver: zodResolver(schema),
-  })
+	const { setValue, handleSubmit, formState, reset } = useForm<
+		z.infer<typeof schema>
+	>({
+		resolver: zodResolver(schema),
+	})
 
-  useCustomEventListener('DeleteReorderByIDs', (data: any) => {
-    setOpen(true)
-    setValue('productID', data.productID, { shouldValidate: true })
-    setValue('locationID', data.locationID, { shouldValidate: true })
+	useCustomEventListener('DeleteReorderByIDs', (data: any) => {
+		setOpen(true)
+		setValue('productID', data.productID, { shouldValidate: true })
+		setValue('locationID', data.locationID, { shouldValidate: true })
 		setText1(data.text1)
-  })
+	})
 
-  function onSubmit(values: z.infer<typeof schema>) {
-    startTransition(async () => {
-      const res = await deleteReorderAction(values)
+	function onSubmit(values: z.infer<typeof schema>) {
+		startTransition(async () => {
+			const res = await deleteReorderAction(values)
 
-      if (res && res.serverError) {
-        setError(res.serverError)
-        return
-      }
+			if (res && res.serverError) {
+				setError(res.serverError)
+				return
+			}
 
-      setError(undefined)
-      setOpen(false)
-      toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${t('toasts.delete-reorder')} ${text1}`,
-      })
-    })
-  }
+			setError(undefined)
+			setOpen(false)
+			toast.success(t(`common:${siteConfig.successTitle}`), {
+				description: `${t('toasts.delete-reorder')} ${text1}`,
+			})
+		})
+	}
 
-  function onOpenChange(open: boolean) {
-    reset()
-    setOpen(open)
-  }
+	function onOpenChange(open: boolean) {
+		reset()
+		setOpen(open)
+	}
 
-  return (
-    <DialogV2 open={open} onOpenChange={onOpenChange}>
-      <DialogContentV2 className='md:max-w-sm'>
-        <DialogHeaderV2>
-					<div className="flex items-center gap-2">
-						<Icons.trash className="size-4 text-destructive" />
-						<DialogTitleV2 className='text-sm'>{t('modal-delete-reorder.title')}</DialogTitleV2>
+	return (
+		<DialogV2 open={open} onOpenChange={onOpenChange}>
+			<DialogContentV2 className='md:max-w-sm'>
+				<DialogHeaderV2>
+					<div className='flex items-center gap-2'>
+						<Icons.trash className='size-4 text-destructive' />
+						<DialogTitleV2 className='text-sm'>
+							{t('modal-delete-reorder.title')}
+						</DialogTitleV2>
 					</div>
-        </DialogHeaderV2>
-          <form
-						id="delete-reorder-form"
-            onSubmit={handleSubmit(onSubmit)}
-            className='space-y-4  px-3'>
-            {error && (
-              <Alert variant='destructive'>
-                <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-					<p className="text-sm text-muted-foreground">{t("modal-delete-reorder.description")}</p>
-          </form>
-					<DialogFooterV2>
-                <Button
-								onClick={() => setOpen(false)}
-                  type='button'
-                  size='sm'
-                  variant='outline'>
-                  {t('modal-delete-reorder.cancel-button')}
-                </Button>
-              <Button
-								form='delete-reorder-form'
-                disabled={
-                  !formState.isValid || pending || formState.isSubmitting
-                }
-                variant='destructive'
-                size='sm'
-                className='flex items-center gap-2'>
-                {pending && <Icons.spinner className='size-4 animate-spin' />}
-                {t('modal-delete-reorder.delete-button')}
-              </Button>
-					</DialogFooterV2>
-      </DialogContentV2>
-    </DialogV2>
-  )
+				</DialogHeaderV2>
+				<form
+					id='delete-reorder-form'
+					onSubmit={handleSubmit(onSubmit)}
+					className='space-y-4  px-3'>
+					{error && (
+						<Alert variant='destructive'>
+							<Icons.alert className='size-4 !top-3' />
+							<AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
+							<AlertDescription>{error}</AlertDescription>
+						</Alert>
+					)}
+					<p className='text-sm text-muted-foreground'>
+						{t('modal-delete-reorder.description')}
+					</p>
+				</form>
+				<DialogFooterV2>
+					<Button
+						onClick={() => setOpen(false)}
+						type='button'
+						size='sm'
+						variant='outline'>
+						{t('modal-delete-reorder.cancel-button')}
+					</Button>
+					<Button
+						form='delete-reorder-form'
+						disabled={!formState.isValid || pending || formState.isSubmitting}
+						variant='destructive'
+						size='sm'
+						className='flex items-center gap-2'>
+						{pending && <Icons.spinner className='size-4 animate-spin' />}
+						{t('modal-delete-reorder.delete-button')}
+					</Button>
+				</DialogFooterV2>
+			</DialogContentV2>
+		</DialogV2>
+	)
 }

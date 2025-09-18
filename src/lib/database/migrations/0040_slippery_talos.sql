@@ -1,0 +1,1 @@
+ALTER TABLE `nl_customer` ADD `retailer_id` text;

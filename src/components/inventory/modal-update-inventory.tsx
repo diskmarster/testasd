@@ -6,26 +6,23 @@ import { useTranslation } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
-  Credenza,
-  CredenzaBody,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
+	Credenza,
+	CredenzaBody,
+	CredenzaContent,
+	CredenzaDescription,
+	CredenzaHeader,
+	CredenzaTitle,
+	CredenzaTrigger,
 } from '@/components/ui/credenza'
 import { Icons } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByPlan } from '@/data/user.types'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
-import {
-  Batch,
-  Placement,
-  ProductID,
-} from '@/lib/database/schema/inventory'
+import { Batch, Placement, ProductID } from '@/lib/database/schema/inventory'
 import { cn, tryParseInt, updateChipCount } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { isBefore } from 'date-fns'
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { useForm } from 'react-hook-form'
@@ -34,85 +31,99 @@ import { z } from 'zod'
 import { AutoComplete } from '../ui/autocomplete'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { isBefore } from 'date-fns'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '../ui/tooltip'
 
 interface Props {
-  customer: Customer
-  inventory: FormattedInventory[]
-  placements: Placement[]
-  batches: Batch[]
-  lng: string
-  settings: Pick<CustomerSettings, 'useReference' | 'usePlacement'>
+	customer: Customer
+	inventory: FormattedInventory[]
+	placements: Placement[]
+	batches: Batch[]
+	lng: string
+	settings: Pick<CustomerSettings, 'useReference' | 'usePlacement'>
 }
 
 export function ModalUpdateInventory({
-  inventory,
-  customer,
-  placements,
-  batches,
-  lng,
-  settings,
+	inventory,
+	customer,
+	placements,
+	batches,
+	lng,
+	settings,
 }: Props) {
-  const [open, setOpen] = useState(false)
-  const [error, setError] = useState<string>()
-  const [pending, startTransition] = useTransition()
-  const [newPlacement, setNewPlacement] = useState(false)
-  const [newBatch, setNewBatch] = useState(false)
-  const [searchProduct, setSearchProduct] = useState<string>('')
-  const [searchBatch, setSearchBatch] = useState<string>('')
-  const [searchPlacement, setSearchPlacement] = useState<string>('')
-  const { t } = useTranslation(lng, 'oversigt')
-  const { t: validationT } = useTranslation(lng, 'validation')
-  const schema = updateInventoryValidation(validationT)
+	const [open, setOpen] = useState(false)
+	const [error, setError] = useState<string>()
+	const [pending, startTransition] = useTransition()
+	const [newPlacement, setNewPlacement] = useState(false)
+	const [newBatch, setNewBatch] = useState(false)
+	const [searchProduct, setSearchProduct] = useState<string>('')
+	const [searchBatch, setSearchBatch] = useState<string>('')
+	const [searchPlacement, setSearchPlacement] = useState<string>('')
+	const { t } = useTranslation(lng, 'oversigt')
+	const { t: validationT } = useTranslation(lng, 'validation')
+	const schema = updateInventoryValidation(validationT)
 
-  const products = useMemo(
-    () =>
-      inventory
-        .filter((item, index, self) => {
-          return (
-            index ===
-            self.findIndex(
-              i => i.product.id === item.product.id && !i.product.isBarred,
-            )
-          )
-        })
-        .map(item => item.product),
-    [],
-  )
+	const products = useMemo(
+		() =>
+			inventory
+				.filter((item, index, self) => {
+					return (
+						index ===
+						self.findIndex(
+							i => i.product.id === item.product.id && !i.product.isBarred,
+						)
+					)
+				})
+				.map(item => item.product),
+		[],
+	)
 
-  const productOptions = products
-    .filter(
-      prod =>
-        prod.text1.toLowerCase().includes(searchProduct.toLowerCase()) ||
-        prod.sku.toLowerCase().includes(searchProduct.toLowerCase()),
-    )
-    .map(prod => ({
-      label: prod.text1,
-      value: prod.id.toString(),
-    }))
+	const productOptions = products
+		.filter(
+			prod =>
+				prod.text1.toLowerCase().includes(searchProduct.toLowerCase()) ||
+				prod.sku.toLowerCase().includes(searchProduct.toLowerCase()),
+		)
+		.map(prod => ({
+			label: prod.text1,
+			value: prod.id.toString(),
+		}))
 
-  const batchOptions = useMemo(
-    () => batches
-      .filter(batch =>
-        batch.batch.toLowerCase().includes(searchBatch.toLowerCase()),
-      )
-      .map(batch => ({
-        label: batch.batch,
-        value: batch.id.toString(),
-      })),
-    []
-  )
+	const batchOptions = useMemo(
+		() =>
+			batches
+				.filter(batch =>
+					batch.batch.toLowerCase().includes(searchBatch.toLowerCase()),
+				)
+				.map(batch => ({
+					label: batch.batch,
+					value: batch.id.toString(),
+				})),
+		[],
+	)
 
-	const placementsForProduct = (productID: ProductID, hasDefaultPlacement: boolean) => (
+	const placementsForProduct = (
+		productID: ProductID,
+		hasDefaultPlacement: boolean,
+	) =>
 		placements
-			.filter(p => 
-				p.name.toLowerCase().includes(searchPlacement.toLowerCase()) &&
-				(!hasDefaultPlacement || inventory.some((item, index, self) => (
-					item.placement.id == p.id && item.isDefaultPlacement && index == self.findIndex(i => (
-						i.product.id == productID && i.isDefaultPlacement
-					))
-				)))
+			.filter(
+				p =>
+					p.name.toLowerCase().includes(searchPlacement.toLowerCase()) &&
+					(!hasDefaultPlacement ||
+						inventory.some(
+							(item, index, self) =>
+								item.placement.id == p.id &&
+								item.isDefaultPlacement &&
+								index ==
+									self.findIndex(
+										i => i.product.id == productID && i.isDefaultPlacement,
+									),
+						)),
 			)
 			.sort((a, b) => {
 				return a.name.localeCompare(b.name)
@@ -121,220 +132,227 @@ export function ModalUpdateInventory({
 				label: prod.name,
 				value: prod.id.toString(),
 			}))
-	)
 
-  const fallbackPlacementID =
-    settings.usePlacement && hasPermissionByPlan(customer.plan, 'basis')
-      ? undefined
-      : placements.find(placement => placement.name == '-')?.id
-  const fallbackBatchID = hasPermissionByPlan(customer.plan, 'pro')
-    ? undefined
-    : batches.find(batch => batch.batch == '-')?.id
+	const fallbackPlacementID =
+		settings.usePlacement && hasPermissionByPlan(customer.plan, 'basis')
+			? undefined
+			: placements.find(placement => placement.name == '-')?.id
+	const fallbackBatchID = hasPermissionByPlan(customer.plan, 'pro')
+		? undefined
+		: batches.find(batch => batch.batch == '-')?.id
 
-  const {
-    register,
-    setValue,
-    formState,
-    reset,
-    getValues,
-    watch,
-    handleSubmit,
-    resetField,
-  } = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      type: 'tilgang',
-      amount: 0,
-      productID: undefined,
-      placementID: fallbackPlacementID,
-      batchID: fallbackBatchID,
-    },
-  })
-
-  function increment() {
-    // @ts-ignore
-    const nextValue = parseFloat(getValues().amount) + 1
-    setValue('amount', parseFloat(nextValue.toFixed(4)), {
-      shouldValidate: true,
-    })
-  }
-
-  function decrement() {
-    const nextValue = Math.max(0, getValues().amount - 1)
-    setValue('amount', parseFloat(nextValue.toFixed(4)), {
-      shouldValidate: true,
-    })
-  }
-
-  const productID = watch('productID')
-  const placementID = watch('placementID')
-  const batchID = watch('batchID')
-  const type = watch('type')
-
-  const useBatch = useMemo(
-    () => products.find(p => p.id == productID)?.useBatch ?? false,
-    [productID],
-  )
-  const hasDefaultPlacement = useMemo(
-    () =>
-      inventory
-        .filter(i => i.product.id == productID)
-        .some(i => i.isDefaultPlacement),
-    [productID],
-  )
-	const defaultPlacementID = useMemo(
-		() => {
-			if (hasDefaultPlacement) {
-				const invWithDefault = inventory
-					.filter(i => i.product.id == productID) 
-					.find(i => i.isDefaultPlacement)
-
-				return placements.find(p => p.id == invWithDefault?.placement.id)?.id
-			}
-			return undefined
+	const {
+		register,
+		setValue,
+		formState,
+		reset,
+		getValues,
+		watch,
+		handleSubmit,
+		resetField,
+	} = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
+		defaultValues: {
+			type: 'tilgang',
+			amount: 0,
+			productID: undefined,
+			placementID: fallbackPlacementID,
+			batchID: fallbackBatchID,
 		},
-		[hasDefaultPlacement, productID]
+	})
+
+	function increment() {
+		// @ts-ignore
+		const nextValue = parseFloat(getValues().amount) + 1
+		setValue('amount', parseFloat(nextValue.toFixed(4)), {
+			shouldValidate: true,
+		})
+	}
+
+	function decrement() {
+		let nextValue = 0
+		if (type == 'regulering') {
+			nextValue = getValues().amount - 1
+		} else {
+			nextValue = Math.max(0, getValues().amount - 1)
+		}
+		setValue('amount', parseFloat(nextValue.toFixed(4)), {
+			shouldValidate: true,
+		})
+	}
+
+	const productID = watch('productID')
+	const placementID = watch('placementID')
+	const batchID = watch('batchID')
+	const type = watch('type')
+
+	const useBatch = useMemo(
+		() => products.find(p => p.id == productID)?.useBatch ?? false,
+		[productID],
 	)
-  const isExpired = useMemo(
-    () => {
-      if (!useBatch || typeof batchID != 'number') return false
-      
-      const batch = batches.find(b => b.id == batchID)
-      if (!batch) {
-        return false
-      }
+	const hasDefaultPlacement = useMemo(
+		() =>
+			inventory
+				.filter(i => i.product.id == productID)
+				.some(i => i.isDefaultPlacement),
+		[productID],
+	)
+	const defaultPlacementID = useMemo(() => {
+		if (hasDefaultPlacement) {
+			const invWithDefault = inventory
+				.filter(i => i.product.id == productID)
+				.find(i => i.isDefaultPlacement)
 
-      return batch.expiry != null && isBefore(batch.expiry, Date.now())
-    },
-    [useBatch, batchID]
-  )
+			return placements.find(p => p.id == invWithDefault?.placement.id)?.id
+		}
+		return undefined
+	}, [hasDefaultPlacement, productID])
+	const isExpired = useMemo(() => {
+		if (!useBatch || typeof batchID != 'number') return false
 
-  useEffect(() => {
-    if (!useBatch) {
-      setValue('batchID', batches.find(b => b.batch == '-')?.id ?? -1, {
-        shouldDirty: true,
-        shouldValidate: true,
-      })
-    }
-  }, [useBatch, productID])
+		const batch = batches.find(b => b.id == batchID)
+		if (!batch) {
+			return false
+		}
 
-  const isIncoming = type === 'tilgang'
-  const hasProduct = productID != undefined
-  const hasPlacement = placementID != undefined
+		return batch.expiry != null && isBefore(batch.expiry, Date.now())
+	}, [useBatch, batchID])
 
-  function onOpenChange(open: boolean) {
-    reset()
-    setError(undefined)
-    setNewBatch(false)
-    setNewPlacement(false)
-    setSearchProduct('')
-    setSearchPlacement('')
-    setSearchBatch('')
-    setOpen(open)
-  }
+	useEffect(() => {
+		if (!useBatch) {
+			setValue('batchID', batches.find(b => b.batch == '-')?.id ?? -1, {
+				shouldDirty: true,
+				shouldValidate: true,
+			})
+		}
+	}, [useBatch, productID])
 
-  function onSubmit(values: z.infer<typeof schema>) {
-    startTransition(async () => {
-      const res = await updateInventoryAction(values)
+	const isIncoming = type === 'tilgang'
+	const hasProduct = productID != undefined
+	const hasPlacement = placementID != undefined
 
-      if (res && res.serverError) {
-        setError(res.serverError)
-        return
-      }
+	function onOpenChange(open: boolean) {
+		reset()
+		setError(undefined)
+		setNewBatch(false)
+		setNewPlacement(false)
+		setSearchProduct('')
+		setSearchPlacement('')
+		setSearchBatch('')
+		setOpen(open)
+	}
 
-      setError(undefined)
-      reset()
-      setOpen(false)
-      setNewBatch(false)
-      setNewPlacement(false)
-      toast.success(t(`common:${siteConfig.successTitle}`), {
-        description: `${isIncoming ? t('incoming') : t('outgoing')} ${t('toasts.was-created')}`,
-      })
-      updateChipCount()
-    })
-  }
+	function onSubmit(values: z.infer<typeof schema>) {
+		startTransition(async () => {
+			const res = await updateInventoryAction(values)
 
-  function placementIcon(product: ProductID) {
-    const comp = (option: {value: string, label: string}) => {
-      const inv = inventory.find(b => (!hasDefaultPlacement || b.product.id == product) && b.placement.id == tryParseInt(option.value))
-      const isDefault = hasDefaultPlacement && (inv?.isDefaultPlacement ?? false)
-      const isBarred = inv?.placement?.isBarred ?? false
+			if (res && res.serverError) {
+				setError(res.serverError)
+				return
+			}
 
-      return (
-        <span className={cn(
-          'hidden size-2 rounded-full border',
-          isDefault && 'block bg-primary/50 border-primary',
-          isBarred && 'block bg-destructive/50 border-destructive',
-        )}/>
-      )
-    }
-    comp.displayName = 'placementIcon'
-    return comp
-  }
+			setError(undefined)
+			reset()
+			setOpen(false)
+			setNewBatch(false)
+			setNewPlacement(false)
+			toast.success(t(`common:${siteConfig.successTitle}`), {
+				description: `${isIncoming ? t('incoming') : t('outgoing')} ${t('toasts.was-created')}`,
+			})
+			updateChipCount()
+		})
+	}
 
-  useCustomEventListener('UpdateInventoryByIDs', (data: any) => {
-    setOpen(true)
-    setSearchProduct(data.productName)
-    setSearchPlacement(data.placementName)
-    setSearchBatch(data.batchName)
-    setValue('productID', data.productID, { shouldValidate: true })
-    setValue('placementID', data.placementID, { shouldValidate: true })
-    setValue('batchID', data.batchID, { shouldValidate: true })
-  })
+	function placementIcon(product: ProductID) {
+		const comp = (option: { value: string; label: string }) => {
+			const inv = inventory.find(
+				b =>
+					(!hasDefaultPlacement || b.product.id == product) &&
+					b.placement.id == tryParseInt(option.value),
+			)
+			const isDefault =
+				hasDefaultPlacement && (inv?.isDefaultPlacement ?? false)
+			const isBarred = inv?.placement?.isBarred ?? false
 
-  return (
-    <Credenza open={open} onOpenChange={onOpenChange}>
-      <CredenzaTrigger asChild>
-        <Button size='icon' variant='outline' tooltip={t('update-inventory')}>
-          <Icons.plusMinus className='size-4' />
-        </Button>
-      </CredenzaTrigger>
-      <CredenzaContent className='md:max-w-lg'>
-        <CredenzaHeader>
-          <CredenzaTitle>{t('update-inventory')}</CredenzaTitle>
-          <CredenzaDescription>
-            {t('update-inventory-description')}
-          </CredenzaDescription>
-        </CredenzaHeader>
-        <CredenzaBody>
-          <form
-            className='space-y-4 pb-4 md:pb-0'
-            onSubmit={handleSubmit(onSubmit)}>
-            {error && (
-              <Alert variant='destructive'>
-                <Icons.alert className='size-4 !top-3' />
-                <AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            <div className='grid gap-2'>
-              <Label>{t('product')}</Label>
-              <AutoComplete
-                autoFocus={false}
-                placeholder={t('product-placeholder')}
-                emptyMessage={t('product-empty-message')}
-                items={productOptions}
-                onSelectedValueChange={value => {
-                  setSearchPlacement('')
-                  setSearchBatch('')
-                  reset({
+			return (
+				<span
+					className={cn(
+						'hidden size-2 rounded-full border',
+						isDefault && 'block bg-primary/50 border-primary',
+						isBarred && 'block bg-destructive/50 border-destructive',
+					)}
+				/>
+			)
+		}
+		comp.displayName = 'placementIcon'
+		return comp
+	}
+
+	useCustomEventListener('UpdateInventoryByIDs', (data: any) => {
+		setOpen(true)
+		setSearchProduct(data.productName)
+		setSearchPlacement(data.placementName)
+		setSearchBatch(data.batchName)
+		setValue('productID', data.productID, { shouldValidate: true })
+		setValue('placementID', data.placementID, { shouldValidate: true })
+		setValue('batchID', data.batchID, { shouldValidate: true })
+	})
+
+	return (
+		<Credenza open={open} onOpenChange={onOpenChange}>
+			<CredenzaTrigger asChild>
+				<Button size='icon' variant='outline' tooltip={t('update-inventory')}>
+					<Icons.plusMinus className='size-4' />
+				</Button>
+			</CredenzaTrigger>
+			<CredenzaContent className='md:max-w-lg'>
+				<CredenzaHeader>
+					<CredenzaTitle>{t('update-inventory')}</CredenzaTitle>
+					<CredenzaDescription>
+						{t('update-inventory-description')}
+					</CredenzaDescription>
+				</CredenzaHeader>
+				<CredenzaBody>
+					<form
+						className='space-y-4 pb-4 md:pb-0'
+						onSubmit={handleSubmit(onSubmit)}>
+						{error && (
+							<Alert variant='destructive'>
+								<Icons.alert className='size-4 !top-3' />
+								<AlertTitle>{t(siteConfig.errorTitle)}</AlertTitle>
+								<AlertDescription>{error}</AlertDescription>
+							</Alert>
+						)}
+						<div className='grid gap-2'>
+							<Label>{t('product')}</Label>
+							<AutoComplete
+								autoFocus={false}
+								placeholder={t('product-placeholder')}
+								emptyMessage={t('product-empty-message')}
+								items={productOptions}
+								onSelectedValueChange={value => {
+									setSearchPlacement('')
+									setSearchBatch('')
+									reset({
 										productID: tryParseInt(value),
 										type,
 										amount: 0,
-										placementID: hasDefaultPlacement ? defaultPlacementID : fallbackPlacementID,
+										placementID: hasDefaultPlacement
+											? defaultPlacementID
+											: fallbackPlacementID,
 										batchID: fallbackBatchID,
 									})
-                }}
-                onSearchValueChange={setSearchProduct}
-                selectedValue={productID ? productID.toString() : ''}
-                searchValue={searchProduct}
-              />
-              {formState.errors.productID && (
-                <p className='text-sm text-destructive'>
-                  {formState.errors.productID.message}
-                </p>
-              )}
-            </div>
+								}}
+								onSearchValueChange={setSearchProduct}
+								selectedValue={productID ? productID.toString() : ''}
+								searchValue={searchProduct}
+							/>
+							{formState.errors.productID && (
+								<p className='text-sm text-destructive'>
+									{formState.errors.productID.message}
+								</p>
+							)}
+						</div>
 						{hasPermissionByPlan(customer.plan, 'basis') && (
 							<div className='flex flex-col gap-4 md:flex-row'>
 								{settings.usePlacement && (
@@ -364,25 +382,28 @@ export function ModalUpdateInventory({
 												{...register('placementID')}
 											/>
 										) : (
-												<AutoComplete
-													disabled={!hasProduct}
-													autoFocus={false}
-													placeholder={t('placement-placeholder')}
-													emptyMessage={t('placement-empty-message')}
-													items={placementsForProduct(productID, hasDefaultPlacement)}
-													onSelectedValueChange={value =>
-														setValue('placementID', parseInt(value), {
-															shouldValidate: true,
-														})
-													}
-													onSearchValueChange={setSearchPlacement}
-													selectedValue={
-														placementID ? placementID.toString() : ''
-													}
-													searchValue={searchPlacement}
-													icon={placementIcon(productID)}
-												/>
-											)}
+											<AutoComplete
+												disabled={!hasProduct}
+												autoFocus={false}
+												placeholder={t('placement-placeholder')}
+												emptyMessage={t('placement-empty-message')}
+												items={placementsForProduct(
+													productID,
+													hasDefaultPlacement,
+												)}
+												onSelectedValueChange={value =>
+													setValue('placementID', parseInt(value), {
+														shouldValidate: true,
+													})
+												}
+												onSearchValueChange={setSearchPlacement}
+												selectedValue={
+													placementID ? placementID.toString() : ''
+												}
+												searchValue={searchPlacement}
+												icon={placementIcon(productID)}
+											/>
+										)}
 									</div>
 								)}
 								{hasPermissionByPlan(customer.plan, 'pro') && (
@@ -405,7 +426,9 @@ export function ModalUpdateInventory({
 																<Icons.info className='size-3.5 text-yellow-600 dark:text-warning' />
 															</TooltipTrigger>
 															<TooltipContent className='bg-foreground text-background'>
-																{t('oversigt:batch-indicator-tooltip', { context: 'expired' })}
+																{t('oversigt:batch-indicator-tooltip', {
+																	context: 'expired',
+																})}
 															</TooltipContent>
 														</Tooltip>
 													</TooltipProvider>
@@ -415,8 +438,7 @@ export function ModalUpdateInventory({
 												className={cn(
 													'text-sm md:text-xs cursor-pointer hover:underline text-muted-foreground select-none',
 													!isIncoming && 'hidden',
-													!useBatch &&
-														'cursor-not-allowed hover:no-underline',
+													!useBatch && 'cursor-not-allowed hover:no-underline',
 												)}
 												onClick={() => {
 													if (useBatch) {
@@ -435,122 +457,148 @@ export function ModalUpdateInventory({
 												{...register('batchID')}
 											/>
 										) : (
-												<AutoComplete
-													disabled={!useBatch || !hasPlacement}
-													autoFocus={false}
-													placeholder={t('batch-placeholder')}
-													emptyMessage={t('batch-empty-message')}
-													items={batchOptions}
-													onSelectedValueChange={value =>
-														setValue('batchID', parseInt(value), {
-															shouldValidate: true,
-														})
-													}
-													onSearchValueChange={setSearchBatch}
-													selectedValue={batchID ? batchID.toString() : ''}
-													searchValue={searchBatch}
-													icon={(option) => {
-														const batch = batches.find(b => b.id == tryParseInt(option.value))
-														const hasExpiry = batch != undefined && batch.expiry != null 
-														const isExpired = batch != undefined && batch.expiry != null && isBefore(batch.expiry, Date.now())
-														return (
-															<span className={cn(
+											<AutoComplete
+												disabled={!useBatch || !hasPlacement}
+												autoFocus={false}
+												placeholder={t('batch-placeholder')}
+												emptyMessage={t('batch-empty-message')}
+												items={batchOptions}
+												onSelectedValueChange={value =>
+													setValue('batchID', parseInt(value), {
+														shouldValidate: true,
+													})
+												}
+												onSearchValueChange={setSearchBatch}
+												selectedValue={batchID ? batchID.toString() : ''}
+												searchValue={searchBatch}
+												icon={option => {
+													const batch = batches.find(
+														b => b.id == tryParseInt(option.value),
+													)
+													const hasExpiry =
+														batch != undefined && batch.expiry != null
+													const isExpired =
+														batch != undefined &&
+														batch.expiry != null &&
+														isBefore(batch.expiry, Date.now())
+													return (
+														<span
+															className={cn(
 																'block size-2 rounded-full border-black/20 border',
-																hasExpiry && (isExpired 
-																	? 'bg-destructive/50 border-destructive' 
-																	: 'bg-success/50 border-success'
-																)
-															)}/>
-														)
-													}}
-												/>
-											)}
+																hasExpiry &&
+																	(isExpired
+																		? 'bg-destructive/50 border-destructive'
+																		: 'bg-success/50 border-success'),
+															)}
+														/>
+													)
+												}}
+											/>
+										)}
 									</div>
 								)}
 							</div>
 						)}
-            <div className='flex items-center pt-2'>
-              <Button
-                type='button'
-                className='w-full rounded-r-none'
-                variant={isIncoming ? 'default' : 'secondary'}
-                onClick={() =>
-                  setValue('type', 'tilgang', { shouldValidate: true })
-                }>
-                {t('incoming')}
-              </Button>
-              <Button
-                type='button'
-                className='w-full rounded-l-none'
-                variant={!isIncoming ? 'default' : 'secondary'}
-                onClick={() => {
-                  setNewPlacement(false)
-                  setNewBatch(false)
-                  if (newPlacement || newBatch) {
-                    resetField('placementID')
-                    resetField('batchID')
-                  }
-                  setValue('type', 'afgang', { shouldValidate: true })
-                }}>
-                {t('outgoing')}
-              </Button>
-            </div>
-            <div className='pt-2 flex flex-col gap-2'>
-              <div className='flex'>
-                <Button
-                  size='icon'
-                  type='button'
-                  variant='outline'
-                  className='h-14 w-28 border-r-0 rounded-r-none'
-                  onClick={decrement}>
-                  <Icons.minus className='size-6' />
-                </Button>
-                <Input
-                  type='number'
-                  {...register('amount')}
-                  step={0.01}
-                  className={cn(
-                    'w-full h-14 rounded-none text-center text-2xl z-10',
-                    '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-                  )}
-                />
-                <Button
-                  size='icon'
-                  type='button'
-                  variant='outline'
-                  className='h-14 w-28 border-l-0 rounded-l-none'
-                  onClick={increment}>
-                  <Icons.plus className='size-6' />
-                </Button>
-              </div>
-              {formState.errors.amount && (
-                <p className='text-sm text-destructive'>
-                  {formState.errors.amount.message}
-                </p>
-              )}
-            </div>
-            <div className={cn('relative flex flex-col transition-all')}>
-              <Input
-                {...register('reference')}
-                placeholder={t('use-account-case-placeholder')}
-                className={cn(
-                  'transition-all',
-                  !settings.useReference[type]
-                    ? 'h-0 p-0 border-none'
-                    : 'h-[40px]',
-                )}
-              />
-            </div>
-            <Button
-              disabled={!formState.isValid || pending || formState.isSubmitting}
-              size='lg'
-              className='w-full gap-2'>
-              {pending && <Icons.spinner className='size-4 animate-spin' />}
-              {t('create-button')} {isIncoming ? t('incoming') : t('outgoing')}
-            </Button>
-          </form>
-        </CredenzaBody>
-      </CredenzaContent>
-    </Credenza>
-  )
+						<div className='flex items-center pt-2'>
+							<Button
+								type='button'
+								className='w-full rounded-r-none'
+								variant={type == 'tilgang' ? 'default' : 'secondary'}
+								onClick={() => {
+									setValue('amount', 0, { shouldValidate: true })
+									setValue('type', 'tilgang', { shouldValidate: true })
+								}}>
+								{t('type', { context: 'incoming' })}
+							</Button>
+							<Button
+								type='button'
+								className='w-full rounded-none'
+								variant={type == 'regulering' ? 'default' : 'secondary'}
+								onClick={() => {
+									setNewPlacement(false)
+									setNewBatch(false)
+									if (newPlacement || newBatch) {
+										resetField('placementID')
+										resetField('batchID')
+									}
+									setValue('type', 'regulering', { shouldValidate: true })
+									setValue('amount', 0, { shouldValidate: true })
+								}}>
+								{t('type', { context: 'regulate' })}
+							</Button>
+							<Button
+								type='button'
+								className='w-full rounded-l-none'
+								variant={type == 'afgang' ? 'default' : 'secondary'}
+								onClick={() => {
+									setNewPlacement(false)
+									setNewBatch(false)
+									if (newPlacement || newBatch) {
+										resetField('placementID')
+										resetField('batchID')
+									}
+									setValue('type', 'afgang', { shouldValidate: true })
+									setValue('amount', 0, { shouldValidate: true })
+								}}>
+								{t('type', { context: 'outgoing' })}
+							</Button>
+						</div>
+						<div className='pt-2 flex flex-col gap-2'>
+							<div className='flex'>
+								<Button
+									size='icon'
+									type='button'
+									variant='outline'
+									className='h-14 w-28 border-r-0 rounded-r-none'
+									onClick={decrement}>
+									<Icons.minus className='size-6' />
+								</Button>
+								<Input
+									type='number'
+									{...register('amount')}
+									step={0.01}
+									className={cn(
+										'w-full h-14 rounded-none text-center text-2xl z-10',
+										'[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+									)}
+								/>
+								<Button
+									size='icon'
+									type='button'
+									variant='outline'
+									className='h-14 w-28 border-l-0 rounded-l-none'
+									onClick={increment}>
+									<Icons.plus className='size-6' />
+								</Button>
+							</div>
+							{formState.errors.amount && (
+								<p className='text-sm text-destructive'>
+									{formState.errors.amount.message}
+								</p>
+							)}
+						</div>
+						<div className={cn('relative flex flex-col transition-all')}>
+							<Input
+								{...register('reference')}
+								placeholder={t('use-account-case-placeholder')}
+								className={cn(
+									'transition-all',
+									!settings.useReference[type]
+										? 'h-0 p-0 border-none'
+										: 'h-[40px]',
+								)}
+							/>
+						</div>
+						<Button
+							disabled={!formState.isValid || pending || formState.isSubmitting}
+							size='lg'
+							className='w-full gap-2'>
+							{pending && <Icons.spinner className='size-4 animate-spin' />}
+							{t('create-button', { context: type })}
+						</Button>
+					</form>
+				</CredenzaBody>
+			</CredenzaContent>
+		</Credenza>
+	)
 }

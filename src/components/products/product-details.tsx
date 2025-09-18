@@ -13,10 +13,13 @@ import { useLanguage } from '@/context/language'
 import { FormattedProduct } from '@/data/products.types'
 import { hasPermissionByPlan, hasPermissionByRank } from '@/data/user.types'
 import { useScroll } from '@/hooks/use-scroll'
+import { Customer } from '@/lib/database/schema/customer'
+import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 import { Group, Inventory, Unit } from '@/lib/database/schema/inventory'
 import { Supplier } from '@/lib/database/schema/suppliers'
 import { cn, formatDate, numberToCurrency } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { TFunction } from 'i18next'
 import { User } from 'lucia'
 import { useEffect, useState, useTransition } from 'react'
 import { emitCustomEvent } from 'react-custom-events'
@@ -24,6 +27,16 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { IfElse } from '../common/if-else'
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '../ui/alert-dialog'
 import { Badge } from '../ui/badge'
 import { Button, buttonVariants } from '../ui/button'
 import { Icons } from '../ui/icons'
@@ -39,17 +52,20 @@ import {
 import { Skeleton } from '../ui/skeleton'
 import { Switch } from '../ui/switch'
 import { Textarea } from '../ui/textarea'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog'
-import { TFunction } from 'i18next'
-import { Customer } from '@/lib/database/schema/customer'
 
 interface Props {
 	product: FormattedProduct & { inventories: Inventory[] }
 	user: User
 	customer: Customer
+	integrationSettings: CustomerIntegrationSettings | undefined
 }
 
-export function ProductDetails({ product, user, customer }: Props) {
+export function ProductDetails({
+	product,
+	user,
+	customer,
+	integrationSettings,
+}: Props) {
 	const [pending, startTransition] = useTransition()
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'produkter')
@@ -123,7 +139,10 @@ export function ProductDetails({ product, user, customer }: Props) {
 			setDialogOpen(true)
 			setDialogOnAccept(() => () => submitValues(values))
 			setDialogOnDismiss(() => () => {
-				setValue('data.useBatch', true, {shouldDirty: true, shouldValidate: true})
+				setValue('data.useBatch', true, {
+					shouldDirty: true,
+					shouldValidate: true,
+				})
 				setDialogOpen(false)
 			})
 		} else {
@@ -141,7 +160,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 			})
 
 			if (res && res.serverError) {
-				toast.success(t(`common:${siteConfig.successTitle}`), {
+				toast.error(t(`common:${siteConfig.errorTitle}`), {
 					description: res.serverError,
 				})
 				setIsSubmitting(false)
@@ -225,7 +244,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 	return (
 		<div className='w-full space-y-4'>
 			{isEditing && (
-				<DisableBatchDialog 
+				<DisableBatchDialog
 					open={dialogOpen}
 					onOpenChange={onDialogOpenChange}
 					onDismiss={dialogOnDismiss}
@@ -237,7 +256,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 				className={cn(
 					'rounded bg-background flex items-center transition-all justify-between sticky top-[70px] py-4 -mt-4',
 					scrollY > 20 &&
-					'mx-2 shadow-[0px_8px_5px_-3px_rgba(0,0,0,0.15)] border p-4 z-10',
+						'mx-2 shadow-[0px_8px_5px_-3px_rgba(0,0,0,0.15)] border p-4 z-10',
 				)}>
 				<div className='space-y-0.5'>
 					<div className='flex items-start gap-3 flex-1'>
@@ -290,7 +309,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='text1'>{t('details-page.details.label-text1')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='min-h-[60px] h-full px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm'>
 								{product.text1}
@@ -317,7 +336,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='text2'>{t('details-page.details.label-text2')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='min-h-[60px] px-3 py-2 flex items-start border rounded-md bg-muted/50 text-sm'>
 								{product.text2}
@@ -345,7 +364,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='text3'>{t('details-page.details.label-text3')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm'>
 								{product.text3 != ''
@@ -374,7 +393,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='note'>{t('details-page.details.label-note')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='py-2 px-3 border rounded-md bg-muted/50 min-h-[120px] whitespace-pre-wrap text-sm'>
 								{product.note != ''
@@ -404,7 +423,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='group'>{t('details-page.details.label-group')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 								{product.group}
@@ -437,7 +456,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 				<div className='grid grid-rows-[20px_1fr] space-y-0.5 w-full'>
 					<Label htmlFor='unit'>{t('details-page.details.label-unit')}</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 								{product.unit}
@@ -486,7 +505,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 						{t('details-page.details.label-barcode')}
 					</Label>
 					<IfElse
-						condition={isEditing}
+						condition={isEditing && !integrationSettings?.useSyncProducts}
 						falseComp={
 							<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 								{product.barcode}
@@ -517,7 +536,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 								{t('details-page.details.label-costPrice')}
 							</Label>
 							<IfElse
-								condition={isEditing}
+								condition={isEditing && !integrationSettings?.useSyncProducts}
 								falseComp={
 									<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 										{numberToCurrency(product.costPrice, lng)}
@@ -540,7 +559,7 @@ export function ProductDetails({ product, user, customer }: Props) {
 								{t('details-page.details.label-salesPrice')}
 							</Label>
 							<IfElse
-								condition={isEditing}
+								condition={isEditing && !integrationSettings?.useSyncProducts}
 								falseComp={
 									<div className='h-9 px-3 flex items-center border rounded-md bg-muted/50 text-sm'>
 										{numberToCurrency(product.salesPrice, lng)}
@@ -634,22 +653,32 @@ function DisableBatchDialog({
 	onDismiss,
 	t,
 }: {
-		open: boolean,
-		onOpenChange: (v: boolean) => void
-		onAccept: () => void
-		onDismiss: () => void
-		t: TFunction<'produkter'>
-	}) {
+	open: boolean
+	onOpenChange: (v: boolean) => void
+	onAccept: () => void
+	onDismiss: () => void
+	t: TFunction<'produkter'>
+}) {
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>{t('details-page.details.disable-batch-dialog.title')}</AlertDialogTitle>
-					<AlertDialogDescription>{t('details-page.details.disable-batch-dialog.description')}</AlertDialogDescription>
+					<AlertDialogTitle>
+						{t('details-page.details.disable-batch-dialog.title')}
+					</AlertDialogTitle>
+					<AlertDialogDescription>
+						{t('details-page.details.disable-batch-dialog.description')}
+					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel onClick={onDismiss}>{t('details-page.details.disable-batch-dialog.cancel')}</AlertDialogCancel>
-					<AlertDialogAction onClick={onAccept} className={buttonVariants({variant: 'destructive'})}>{t('details-page.details.disable-batch-dialog.action')}</AlertDialogAction>
+					<AlertDialogCancel onClick={onDismiss}>
+						{t('details-page.details.disable-batch-dialog.cancel')}
+					</AlertDialogCancel>
+					<AlertDialogAction
+						onClick={onAccept}
+						className={buttonVariants({ variant: 'destructive' })}>
+						{t('details-page.details.disable-batch-dialog.action')}
+					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>
