@@ -1,7 +1,7 @@
 import { Supplier, SupplierHisotry } from '@/lib/database/schema/suppliers'
 import { z } from 'zod'
 
-export const supplierCountriesSchema = z.enum(['DK', 'SE', 'NO', 'DE', 'UNKNOWN'])
+export const supplierCountriesSchema = z.enum(['DK', 'SE', 'NO', 'DE', 'UNK'])
 export type SupplierContry = z.infer<typeof supplierCountriesSchema>
 export const supplierContries = supplierCountriesSchema.options
 

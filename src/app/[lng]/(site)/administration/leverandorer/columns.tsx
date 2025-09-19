@@ -2,6 +2,7 @@ import { SupplierActionsColumn } from '@/components/suppliers/actions-column'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Icons } from '@/components/ui/icons'
 import { supplierContries, SupplierWithItemCount } from '@/data/suppliers.types'
 import { formatDate } from '@/lib/utils'
 import { ColumnDef, Table } from '@tanstack/react-table'
@@ -53,11 +54,17 @@ export function getSupplierColumns(
 		),
 		cell: ({ row }) => (
 			<div className='flex items-center gap-1.5'>
-				<ReactCountryFlag
-					className='!size-4 rounded-md'
-					countryCode={row.original.country}
-					svg
-				/>
+				{row.original.country != "UNK" ? (
+					<ReactCountryFlag
+						className='!size-4 rounded-md'
+						countryCode={row.original.country}
+						svg
+					/>
+				) : (
+					<div className='w-[16px] h-[14px] bg-foreground rounded-sm flex items-center justify-center text-background'>
+						<Icons.minus className='size-4' />
+					</div>
+				)}
 				{row.original.country}
 			</div>
 		),

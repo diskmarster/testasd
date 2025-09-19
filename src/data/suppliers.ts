@@ -107,12 +107,25 @@ export const suppliers = {
 			.insert(supplierTable)
 			.values(data)
 			.onConflictDoUpdate({
-				target: [
-					supplierTable.integrationId,
-				],
+				target: [supplierTable.customerID, supplierTable.integrationId],
 				set: { ...data },
 			})
 			.returning()
 		return supplier
+	},
+	deleteByIntegrationID: async function (
+		customerID: CustomerID,
+		integrationID: string,
+		tx: TRX = db,
+	): Promise<boolean> {
+		const result = await tx
+			.delete(supplierTable)
+			.where(
+				and(
+					eq(supplierTable.customerID, customerID),
+					eq(supplierTable.integrationId, integrationID),
+				),
+			)
+		return result.rowsAffected == 1
 	},
 }

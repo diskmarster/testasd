@@ -15,7 +15,11 @@ import {
 	ProductID,
 	Unit,
 } from '@/lib/database/schema/inventory'
-import { NewSupplier, NewSupplierHistory, Supplier } from '@/lib/database/schema/suppliers'
+import {
+	NewSupplier,
+	NewSupplierHistory,
+	Supplier,
+} from '@/lib/database/schema/suppliers'
 import { ActionError } from '@/lib/safe-action/error'
 import { tryCatch } from '@/lib/utils.server'
 
@@ -232,9 +236,15 @@ export const webhookService = {
 	upsertSupplier: async function (data: NewSupplier): Promise<Supplier> {
 		return await suppliers.upsert(data)
 	},
-	createSupplierLog: async function(data: NewSupplierHistory) {
+	createSupplierLog: async function (data: NewSupplierHistory) {
 		return await suppliers.createLog(data)
-	}
+	},
+	deleteSupplier: async function (
+		customerId: CustomerID,
+		integrationId: string,
+	): Promise<boolean> {
+		return await suppliers.deleteByIntegrationID(customerId, integrationId)
+	},
 }
 
 async function getUnitAndGroup(

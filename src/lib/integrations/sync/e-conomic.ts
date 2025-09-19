@@ -162,9 +162,7 @@ export class EconomicSyncProvider implements SyncProvider {
 		return collection
 	}
 
-	private async fetchSupplierContactByUrl(
-		url: string,
-	): Promise<EconomicSupplier> {
+	private async fetchSelfByUrl<T>(url: string): Promise<T> {
 		const response = await fetch(url, {
 			headers: {
 				'X-AppSecretToken': this.appSecretToken,
@@ -186,7 +184,7 @@ export class EconomicSyncProvider implements SyncProvider {
 
 		const json = await response.json()
 
-		return json as EconomicSupplier
+		return json as T
 	}
 
 	private async fetchSuppliers(): Promise<EconomicSupplier[]> {
@@ -595,6 +593,7 @@ export class EconomicSyncProvider implements SyncProvider {
 		}
 
 		const eventData = this.oldNewEventAction(oldParam, newParam)
+		console.log({ eventData })
 		if (eventData.action == 'invalid') {
 			return {
 				success: false,
@@ -612,29 +611,30 @@ export class EconomicSyncProvider implements SyncProvider {
 			switch (eventData.action) {
 				case 'create':
 					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
-					console.log('create event', economicSupplier)
+					// console.log('create event', economicSupplier)
 
-					// if (economicSupplier.supplierContact) {
-					// 	const contactPerson = await this.fetchSupplierContactByUrl(
-					// 		economicSupplier.supplierContact.self,
-					// 	)
-					// 	console.log(
-					// 		'contactPerson',
-					// 		economicSupplier.supplierContact,
-					// 		contactPerson,
-					// 	)
-					// }
+					if (economicSupplier.supplierContact) {
+						const contactPerson = await this.fetchSelfByUrl(
+							economicSupplier.supplierContact.self,
+						)
+						console.log(
+							'contactPerson',
+							economicSupplier.supplierContact,
+							contactPerson,
+						)
+					}
 
 					const newSupplier: NewSupplier = {
 						name: economicSupplier.name,
 						customerID: customer.id,
 						idOfClient: '',
-						country: 'UNKNOWN',
+						country: 'UNK',
 						userID: -1,
 						userName: apiKey.name,
 						contactPerson: '',
 						email: economicSupplier.email,
 						phone: economicSupplier.phone,
+						integrationId: economicSupplier.supplierNumber.toString(),
 					}
 
 					const newSupplierRes = await tryCatch(
@@ -655,7 +655,7 @@ export class EconomicSyncProvider implements SyncProvider {
 					}
 
 					const supplierCreateLog: NewSupplierHistory = {
-						country: 'UNKNOWN',
+						country: newSupplierRes.data.country,
 						customerID: apiKey.customerID,
 						name: newSupplierRes.data.name,
 						supplierID: newSupplierRes.data.id,
@@ -666,6 +666,7 @@ export class EconomicSyncProvider implements SyncProvider {
 						email: newSupplierRes.data.email,
 						idOfClient: newSupplierRes.data.idOfClient,
 						phone: newSupplierRes.data.phone,
+						integrationId: economicSupplier.supplierNumber.toString(),
 					}
 
 					const supplierLogRes = await tryCatch(
@@ -685,6 +686,7 @@ export class EconomicSyncProvider implements SyncProvider {
 							},
 						}
 					}
+					break
 				case 'update':
 					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
 
@@ -692,12 +694,13 @@ export class EconomicSyncProvider implements SyncProvider {
 						name: economicSupplier.name,
 						customerID: customer.id,
 						idOfClient: '',
-						country: 'UNKNOWN',
+						country: 'UNK',
 						userID: -1,
 						userName: apiKey.name,
 						contactPerson: '',
 						email: economicSupplier.email,
 						phone: economicSupplier.phone,
+						integrationId: economicSupplier.supplierNumber.toString(),
 					}
 
 					const updateSupplierRes = await tryCatch(
@@ -718,7 +721,7 @@ export class EconomicSyncProvider implements SyncProvider {
 					}
 
 					const supplierUpdateLog: NewSupplierHistory = {
-						country: 'UNKNOWN',
+						country: updateSupplierRes.data.country,
 						customerID: apiKey.customerID,
 						name: updateSupplierRes.data.name,
 						supplierID: updateSupplierRes.data.id,
@@ -729,6 +732,7 @@ export class EconomicSyncProvider implements SyncProvider {
 						email: updateSupplierRes.data.email,
 						idOfClient: updateSupplierRes.data.idOfClient,
 						phone: updateSupplierRes.data.phone,
+						integrationId: economicSupplier.supplierNumber.toString(),
 					}
 
 					const updateSupplierLogRes = await tryCatch(
@@ -748,11 +752,28 @@ export class EconomicSyncProvider implements SyncProvider {
 							},
 						}
 					}
+					break
 				case 'delete':
+					const didDelete = await webhookService.deleteSupplier(apiKey.customerID, eventData.param)
+					if (!didDelete) {
+						console.error(
+							`Economic::handleSupplierEvent. Supplier delete failed`,
+						)
+
+						return {
+							success: false,
+							message: 'supplier-not-deleted-economic',
+							eventData: {
+								input: inputData,
+								action: eventData,
+							},
+						}
+					}
+					break
 				case 're-number':
 					return {
 						success: true,
-						message: 'product-renumber-not-supported-economic',
+						message: 'supplier-renumber-not-supported-economic',
 						eventData: {
 							input: inputData,
 							action: eventData,
@@ -774,8 +795,6 @@ export class EconomicSyncProvider implements SyncProvider {
 				},
 			}
 		}
-
-		// logic for supplier event
 
 		return {
 			success: true,

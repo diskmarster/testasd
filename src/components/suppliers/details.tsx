@@ -133,12 +133,18 @@ export function SupplierDetails({ supplier }: Props) {
 						<IfElse
 							condition={isEditing}
 							falseComp={
-								<div className='flex items-center gap-1.5 w-full h-9'>
-									<ReactCountryFlag
-										className='!size-4 rounded-md'
-										countryCode={supplier.country}
-										svg
-									/>
+								<div className='flex items-center gap-2 text-sm'>
+									{supplier.country != "UNK" ? (
+										<ReactCountryFlag
+											className='!size-4 rounded-md'
+											countryCode={supplier.country}
+											svg
+										/>
+									) : (
+										<div className='w-[16px] h-[14px] bg-foreground rounded-sm flex items-center justify-center text-background'>
+											<Icons.minus className='size-4' />
+										</div>
+									)}
 									{supplier.country}
 								</div>
 							}
