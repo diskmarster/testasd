@@ -245,6 +245,23 @@ export const webhookService = {
 	): Promise<boolean> {
 		return await suppliers.deleteByIntegrationID(customerId, integrationId)
 	},
+	updateSupplierByIntegrationId: async function (
+		customerId: CustomerID,
+		integrationId: string,
+		data: Partial<Omit<Supplier, 'id' | 'customerID' | 'updated' | 'inserted'>>,
+	): Promise<Supplier> {
+		return await suppliers.updateByIntegrationID(
+			integrationId,
+			customerId,
+			data,
+		)
+	},
+	getSupplierByIntegrationId: async function (
+		customerId: CustomerID,
+		integrationId: string,
+	): Promise<Supplier> {
+		return await suppliers.getByIntegrationID(integrationId, customerId)
+	},
 }
 
 async function getUnitAndGroup(

@@ -128,4 +128,39 @@ export const suppliers = {
 			)
 		return result.rowsAffected == 1
 	},
+	updateByIntegrationID: async function (
+		integrationID: string,
+		customerID: CustomerID,
+		data: Partial<Supplier>,
+		tx: TRX = db,
+	): Promise<Supplier> {
+		const res = await tx
+			.update(supplierTable)
+			.set({ ...data })
+			.where(
+				and(
+					eq(supplierTable.customerID, customerID),
+					eq(supplierTable.integrationId, integrationID),
+				),
+			)
+			.returning()
+		return res[0]
+	},
+	getByIntegrationID: async function (
+		integrationID: string,
+		customerID: CustomerID,
+		tx: TRX = db,
+	): Promise<Supplier> {
+		const res = await tx
+			.select()
+			.from(supplierTable)
+			.where(
+				and(
+					eq(supplierTable.integrationId, integrationID),
+					eq(supplierTable.customerID, customerID),
+				),
+			)
+			.limit(1)
+		return res[0]
+	},
 }

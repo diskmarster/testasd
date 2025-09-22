@@ -593,7 +593,6 @@ export class EconomicSyncProvider implements SyncProvider {
 		}
 
 		const eventData = this.oldNewEventAction(oldParam, newParam)
-		console.log({ eventData })
 		if (eventData.action == 'invalid') {
 			return {
 				success: false,
@@ -611,7 +610,6 @@ export class EconomicSyncProvider implements SyncProvider {
 			switch (eventData.action) {
 				case 'create':
 					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
-					// console.log('create event', economicSupplier)
 
 					if (economicSupplier.supplierContact) {
 						const contactPerson = await this.fetchSelfByUrl(
@@ -637,12 +635,12 @@ export class EconomicSyncProvider implements SyncProvider {
 						integrationId: economicSupplier.supplierNumber.toString(),
 					}
 
-					const newSupplierRes = await tryCatch(
+					const createRes = await tryCatch(
 						webhookService.upsertSupplier(newSupplier),
 					)
-					if (!newSupplierRes.success) {
+					if (!createRes.success) {
 						console.error(
-							`Economic::handleSupplierEvent. Upsert (create) failed: ${newSupplierRes.error}`,
+							`Economic::handleSupplierEvent. Upsert (create) failed: ${createRes.error}`,
 						)
 						return {
 							success: false,
@@ -654,27 +652,27 @@ export class EconomicSyncProvider implements SyncProvider {
 						}
 					}
 
-					const supplierCreateLog: NewSupplierHistory = {
-						country: newSupplierRes.data.country,
+					const createLog: NewSupplierHistory = {
+						country: createRes.data.country,
 						customerID: apiKey.customerID,
-						name: newSupplierRes.data.name,
-						supplierID: newSupplierRes.data.id,
+						name: createRes.data.name,
+						supplierID: createRes.data.id,
 						type: 'oprettet',
 						userID: -1,
 						userName: apiKey.name,
-						contactPerson: newSupplierRes.data.contactPerson,
-						email: newSupplierRes.data.email,
-						idOfClient: newSupplierRes.data.idOfClient,
-						phone: newSupplierRes.data.phone,
-						integrationId: economicSupplier.supplierNumber.toString(),
+						contactPerson: createRes.data.contactPerson,
+						email: createRes.data.email,
+						idOfClient: createRes.data.idOfClient,
+						phone: createRes.data.phone,
+						integrationId: createRes.data.integrationId,
 					}
 
-					const supplierLogRes = await tryCatch(
-						webhookService.createSupplierLog(supplierCreateLog),
+					const createLogRes = await tryCatch(
+						webhookService.createSupplierLog(createLog),
 					)
-					if (!supplierLogRes.success) {
+					if (!createLogRes.success) {
 						console.error(
-							`Economic::handleSupplierEvent. Log create failed: ${supplierLogRes.error}`,
+							`Economic::handleSupplierEvent. Log for creating supplier failed: ${createLogRes.error}`,
 						)
 
 						return {
@@ -690,7 +688,7 @@ export class EconomicSyncProvider implements SyncProvider {
 				case 'update':
 					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
 
-					const updateSupplier: NewSupplier = {
+					const updateData: NewSupplier = {
 						name: economicSupplier.name,
 						customerID: customer.id,
 						idOfClient: '',
@@ -703,12 +701,12 @@ export class EconomicSyncProvider implements SyncProvider {
 						integrationId: economicSupplier.supplierNumber.toString(),
 					}
 
-					const updateSupplierRes = await tryCatch(
-						webhookService.upsertSupplier(updateSupplier),
+					const updateRes = await tryCatch(
+						webhookService.upsertSupplier(updateData),
 					)
-					if (!updateSupplierRes.success) {
+					if (!updateRes.success) {
 						console.error(
-							`Economic::handleSupplierEvent. Upsert (update) failed: ${updateSupplierRes.error}`,
+							`Economic::handleSupplierEvent. Upsert (update) failed: ${updateRes.error}`,
 						)
 						return {
 							success: false,
@@ -720,27 +718,27 @@ export class EconomicSyncProvider implements SyncProvider {
 						}
 					}
 
-					const supplierUpdateLog: NewSupplierHistory = {
-						country: updateSupplierRes.data.country,
+					const updateLog: NewSupplierHistory = {
+						country: updateRes.data.country,
 						customerID: apiKey.customerID,
-						name: updateSupplierRes.data.name,
-						supplierID: updateSupplierRes.data.id,
-						type: 'oprettet',
+						name: updateRes.data.name,
+						supplierID: updateRes.data.id,
+						type: 'opdateret',
 						userID: -1,
 						userName: apiKey.name,
-						contactPerson: updateSupplierRes.data.contactPerson,
-						email: updateSupplierRes.data.email,
-						idOfClient: updateSupplierRes.data.idOfClient,
-						phone: updateSupplierRes.data.phone,
-						integrationId: economicSupplier.supplierNumber.toString(),
+						contactPerson: updateRes.data.contactPerson,
+						email: updateRes.data.email,
+						idOfClient: updateRes.data.idOfClient,
+						phone: updateRes.data.phone,
+						integrationId: updateRes.data.integrationId,
 					}
 
-					const updateSupplierLogRes = await tryCatch(
-						webhookService.createSupplierLog(supplierUpdateLog),
+					const updateLogRes = await tryCatch(
+						webhookService.createSupplierLog(updateLog),
 					)
-					if (!updateSupplierLogRes.success) {
+					if (!updateLogRes.success) {
 						console.error(
-							`Economic::handleSupplierEvent. Log create failed: ${updateSupplierLogRes.error}`,
+							`Economic::handleSupplierEvent. Log for updating supplier failed: ${updateLogRes.error}`,
 						)
 
 						return {
@@ -754,11 +752,16 @@ export class EconomicSyncProvider implements SyncProvider {
 					}
 					break
 				case 'delete':
-					const didDelete = await webhookService.deleteSupplier(apiKey.customerID, eventData.param)
-					if (!didDelete) {
-						console.error(
-							`Economic::handleSupplierEvent. Supplier delete failed`,
-						)
+					const supplier = await webhookService.getSupplierByIntegrationId(
+						customer.id,
+						eventData.param,
+					)
+
+					const deleteRes = await tryCatch(
+						webhookService.deleteSupplier(apiKey.customerID, eventData.param),
+					)
+					if (!deleteRes.success) {
+						console.error(`Economic::handleSupplierEvent. Delete failed`)
 
 						return {
 							success: false,
@@ -769,8 +772,112 @@ export class EconomicSyncProvider implements SyncProvider {
 							},
 						}
 					}
+
+					const deleteLog: NewSupplierHistory = {
+						country: supplier.country,
+						customerID: apiKey.customerID,
+						name: supplier.name,
+						supplierID: supplier.id,
+						type: 'slettet',
+						userID: -1,
+						userName: apiKey.name,
+						contactPerson: supplier.contactPerson,
+						email: supplier.email,
+						idOfClient: supplier.idOfClient,
+						phone: supplier.phone,
+						integrationId: supplier.integrationId,
+					}
+
+					const deleteLogRes = await tryCatch(
+						webhookService.createSupplierLog(deleteLog),
+					)
+					if (!deleteLogRes.success) {
+						console.error(
+							`Economic::handleSupplierEvent. Log for deleting supplier failed: ${deleteLogRes.error}`,
+						)
+
+						return {
+							success: false,
+							message: 'supplier-no-history-log',
+							eventData: {
+								input: inputData,
+								action: eventData,
+							},
+						}
+					}
 					break
 				case 're-number':
+					economicSupplier = await this.fetchSupplierByNumber(
+						eventData.newParam,
+					)
+
+					const renumberSupplier: NewSupplier = {
+						name: economicSupplier.name,
+						customerID: customer.id,
+						idOfClient: '',
+						country: 'UNK',
+						userID: -1,
+						userName: apiKey.name,
+						contactPerson: '',
+						email: economicSupplier.email,
+						phone: economicSupplier.phone,
+						integrationId: economicSupplier.supplierNumber.toString(),
+					}
+
+					const renumberRes = await tryCatch(
+						webhookService.updateSupplierByIntegrationId(
+							customer.id,
+							eventData.oldParam,
+							renumberSupplier,
+						),
+					)
+					if (!renumberRes.success) {
+						console.error(
+							`Economic::handleSupplierEvent. Update (renumber) failed: ${renumberRes.error}`,
+						)
+						return {
+							success: false,
+							message: 'supplier-not-updated-economic',
+							eventData: {
+								input: inputData,
+								action: eventData,
+							},
+						}
+					}
+
+					const renumberLog: NewSupplierHistory = {
+						country: renumberRes.data.country,
+						customerID: apiKey.customerID,
+						name: renumberRes.data.name,
+						supplierID: renumberRes.data.id,
+						type: 'opdateret',
+						userID: -1,
+						userName: apiKey.name,
+						contactPerson: renumberRes.data.contactPerson,
+						email: renumberRes.data.email,
+						idOfClient: renumberRes.data.idOfClient,
+						phone: renumberRes.data.phone,
+						integrationId: renumberRes.data.integrationId,
+					}
+
+					const renumberLogRes = await tryCatch(
+						webhookService.createSupplierLog(renumberLog),
+					)
+					if (!renumberLogRes.success) {
+						console.error(
+							`Economic::handleSupplierEvent. Log for renumber supplier failed: ${renumberLogRes.error}`,
+						)
+
+						return {
+							success: false,
+							message: 'supplier-no-history-log',
+							eventData: {
+								input: inputData,
+								action: eventData,
+							},
+						}
+					}
+
 					return {
 						success: true,
 						message: 'supplier-renumber-not-supported-economic',
