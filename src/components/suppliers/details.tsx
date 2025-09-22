@@ -27,12 +27,14 @@ import {
 } from '../ui/select'
 import { Separator } from '../ui/separator'
 import { Skeleton } from '../ui/skeleton'
+import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 
 interface Props {
 	supplier: Supplier
+	integrationSettings: CustomerIntegrationSettings | undefined
 }
 
-export function SupplierDetails({ supplier }: Props) {
+export function SupplierDetails({ supplier, integrationSettings }: Props) {
 	const [pending, startTransition] = useTransition()
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'leverandører')
@@ -90,39 +92,41 @@ export function SupplierDetails({ supplier }: Props) {
 		<div className='max-w-full lg:max-w-[50%] min-w-[36rem] space-y-4'>
 			<div className='flex items-center gap-4 justify-between'>
 				<h1 className='font-medium'>{t('details-page.details.title')}</h1>
-				<IfElse
-					condition={isEditing}
-					trueComp={
-						<div className='flex gap-2'>
+				{!integrationSettings?.useSyncSuppliers && (
+					<IfElse
+						condition={isEditing}
+						trueComp={
+							<div className='flex gap-2'>
+								<Button
+									size='sm'
+									onClick={() => {
+										reset()
+										setIsEditing(false)
+									}}
+									variant='outline'>
+									{t('details-page.details.btn-cancel')}
+								</Button>
+								<Button
+									disabled={pending || !formState.isDirty}
+									onClick={() => onSubmit(formValues)}
+									size='sm'
+									variant='default'
+									className='flex items-center gap-2'>
+									{pending && <Icons.spinner className='size-4 animate-spin' />}
+									{t('details-page.details.btn-confirm')}
+								</Button>
+							</div>
+						}
+						falseComp={
 							<Button
 								size='sm'
-								onClick={() => {
-									reset()
-									setIsEditing(false)
-								}}
+								onClick={() => setIsEditing(true)}
 								variant='outline'>
-								{t('details-page.details.btn-cancel')}
+								{t('details-page.details.btn-edit')}
 							</Button>
-							<Button
-								disabled={pending || !formState.isDirty}
-								onClick={() => onSubmit(formValues)}
-								size='sm'
-								variant='default'
-								className='flex items-center gap-2'>
-								{pending && <Icons.spinner className='size-4 animate-spin' />}
-								{t('details-page.details.btn-confirm')}
-							</Button>
-						</div>
-					}
-					falseComp={
-						<Button
-							size='sm'
-							onClick={() => setIsEditing(true)}
-							variant='outline'>
-							{t('details-page.details.btn-edit')}
-						</Button>
-					}
-				/>
+						}
+					/>
+				)}
 			</div>
 			<div className='space-y-2'>
 				<div className='flex items-center gap-2'>
