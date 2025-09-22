@@ -44,6 +44,7 @@ export function getSupplierColumns(
 		cell: ({ row }) => row.original.name,
 		meta: {
 			viewLabel: t('table.col-name'),
+			fillMaxWidth: true,
 		},
 	}
 
