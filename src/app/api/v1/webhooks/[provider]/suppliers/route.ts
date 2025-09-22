@@ -53,11 +53,11 @@ export async function POST(
 			)
 		}
 
-		// if (!integrationSettings.useSyncSuppliers) {
-		// 	return apiResponse.ok<{ message: string }>({
-		// 		message: 'supplier sync is disabled',
-		// 	})
-		// }
+		if (!integrationSettings.useSyncSuppliers) {
+			return apiResponse.ok<{ message: string }>({
+				message: 'supplier sync is disabled',
+			})
+		}
 
 		const customerProvider = await integrationsService.getProviderByType(
 			customer.id,
