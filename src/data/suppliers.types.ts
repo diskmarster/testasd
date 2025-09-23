@@ -5,7 +5,11 @@ export const supplierCountriesSchema = z.enum(['DK', 'SE', 'NO', 'DE', 'UNK'])
 export type SupplierContry = z.infer<typeof supplierCountriesSchema>
 export const supplierContries = supplierCountriesSchema.options
 
-export const supplierHistorySchema = z.enum(['oprettet', 'opdateret', 'slettet'])
+export const supplierHistorySchema = z.enum([
+	'oprettet',
+	'opdateret',
+	'slettet',
+])
 export type SupplierHistoryType = z.infer<typeof supplierHistorySchema>
 export const historyTypes =
 	supplierHistorySchema.options as readonly SupplierHistoryType[]

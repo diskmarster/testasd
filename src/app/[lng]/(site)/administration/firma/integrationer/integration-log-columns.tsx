@@ -94,9 +94,7 @@ export function getTableIntegrationLogsColumns(
 
 			return (
 				<p
-					className={cn(
-						eventType.includes('re-number') && 'text-destructive',
-					)}>
+					className={cn(eventType.includes('re-number') && 'text-destructive')}>
 					{t('message', { context: getValue<string>() })}
 				</p>
 			)
@@ -111,11 +109,18 @@ export function getTableIntegrationLogsColumns(
 
 export function getEventType(
 	row: Row<IntegrationLog>,
-): 'fullSync' | `productEvent_${EconomicOldNewEventAction['action']}` | `supplierEvent_${EconomicOldNewEventAction['action']}` | '' {
+):
+	| 'fullSync'
+	| `productEvent_${EconomicOldNewEventAction['action']}`
+	| `supplierEvent_${EconomicOldNewEventAction['action']}`
+	| '' {
 	const event = row.original.event
 	if (event.type == 'fullSync') {
 		return event.type
-	} else if ((event.type == 'productEvent' || event.type == 'supplierEvent') && event.provider == 'e-conomic') {
+	} else if (
+		(event.type == 'productEvent' || event.type == 'supplierEvent') &&
+		event.provider == 'e-conomic'
+	) {
 		return `${event.type}_${event.data.action.action}`
 	}
 
@@ -130,7 +135,10 @@ function getEventInfo(
 
 	if (event.type == 'fullSync') {
 		return t('event-info', { context: 'none' })
-	} else if ((event.type == 'productEvent' || event.type == 'supplierEvent') && event.provider == 'e-conomic') {
+	} else if (
+		(event.type == 'productEvent' || event.type == 'supplierEvent') &&
+		event.provider == 'e-conomic'
+	) {
 		const data = event.data
 
 		switch (data.action.action) {

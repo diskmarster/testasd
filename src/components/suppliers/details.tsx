@@ -6,6 +6,7 @@ import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { supplierContries, SupplierContry } from '@/data/suppliers.types'
+import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 import { Supplier } from '@/lib/database/schema/suppliers'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -27,7 +28,6 @@ import {
 } from '../ui/select'
 import { Separator } from '../ui/separator'
 import { Skeleton } from '../ui/skeleton'
-import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 
 interface Props {
 	supplier: Supplier
@@ -138,7 +138,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 							condition={isEditing}
 							falseComp={
 								<div className='flex items-center gap-2 text-sm'>
-									{supplier.country != "UNK" ? (
+									{supplier.country != 'UNK' ? (
 										<ReactCountryFlag
 											className='!size-4 rounded-md'
 											countryCode={supplier.country}

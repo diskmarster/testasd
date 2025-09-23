@@ -44,9 +44,8 @@ export async function POST(request: NextRequest) {
 		)
 	}
 
-	const integrations = await integrationsService.getIntegrationsWithSettings(
-		customerID,
-	)
+	const integrations =
+		await integrationsService.getIntegrationsWithSettings(customerID)
 	if (integrations.length == 0) {
 		console.log('No integrations found for customer id')
 		return apiResponse.badRequest(

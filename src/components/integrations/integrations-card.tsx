@@ -42,9 +42,8 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 	const router = useRouter()
 
 	const [settings, setSettings] = useState<{
-		useSyncProducts: boolean;
-		useSyncSuppliers: boolean;
-
+		useSyncProducts: boolean
+		useSyncSuppliers: boolean
 	}>({
 		useSyncProducts: integrationSettings.useSyncProducts,
 		useSyncSuppliers: integrationSettings.useSyncSuppliers,
@@ -54,10 +53,9 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 
 	function toggleIntegrationSetting(
 		integrationID: number,
-		settings: Partial<Pick<
-			CustomerIntegrationSettings,
-			'useSyncProducts' | 'useSyncSuppliers'
-		>>,
+		settings: Partial<
+			Pick<CustomerIntegrationSettings, 'useSyncProducts' | 'useSyncSuppliers'>
+		>,
 	) {
 		startTransition(async () => {
 			const actionPromise = updateIntegrationSettings({ ...settings })
@@ -142,7 +140,7 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 							title={t('integrations.sync-products-title')}
 							sub={t('integrations.sync-products-desc')}
 							checked={settings.useSyncProducts}
-							disabled={settings.useSyncProducts || pending}
+							disabled={settings.useSyncProducts || pending}
 							onCheckedChange={(checked: boolean) => {
 								setSettings(prev => ({ ...prev, useSyncProducts: true }))
 								setEnableSyncDialogOpen(checked)

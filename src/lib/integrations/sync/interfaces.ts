@@ -1,5 +1,6 @@
 import { ApiKey } from '@/lib/database/schema/apikeys'
 import { Customer } from '@/lib/database/schema/customer'
+import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 import { NextRequest } from 'next/server'
 import {
 	EconomicOldNewEventAction,
@@ -7,7 +8,6 @@ import {
 	EconomicSupplierEventData,
 	EconomicSyncProvider,
 } from './e-conomic'
-import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 
 export function createProvider<T extends SyncProviderType>(
 	type: T,
