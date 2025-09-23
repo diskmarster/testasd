@@ -1,1 +1,0 @@
-ALTER TABLE `nl_customer_integration_settings` ADD `lamba_uploaded` integer DEFAULT false NOT NULL;
