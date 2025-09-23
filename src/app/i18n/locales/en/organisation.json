@@ -342,7 +342,9 @@
 		"integrations-desc": "Here you can see what integrations are activated in NemLager",
 		"integrations": {
 			"sync-products-title": "Product syncronize",
-			"sync-products-desc": "Update products in NemLager when updated in other systems"
+			"sync-products-desc": "Update products in NemLager when updated in other systems",
+			"sync-suppliers-title": "Supplier syncronize",
+			"sync-suppliers-desc": "Update suppliers in NemLager when updated in other systems"
 		},
 		"delete-modal": {
 			"trigger": "Uninstall",
@@ -410,9 +412,18 @@
 			"message_product-dublicate-barcode": "An error occured while synchronizing: Barcode already exists",
 			"message_product-new-group-not-created": "An error occured while synchronizing: New group not created",
 			"message_product-unit-not-supported": "An error occured while synchronizing: Unsupported unit",
-			"message_full-product-sync-successfull": "Full synchronization of product catalog successful",
+			"message_full-sync-successfull": "Full synchronization successful",
 			"message_full-fetch-products-failed-economic": "Fetching product catalog from e-conomic failed",
-			"message_full-upsert-failed-economic": "Full update of product catalog from e-conomic failed"
+			"message_full-upsert-failed-economic": "Full update of product catalog from e-conomic failed",
+			"message_supplier-sync-successful": "Suppliers synchronized successfully",
+			"message_supplier-invalid-economic-webhook": "Invalid webhook type from e-conomic",
+			"message_supplier-unknown-error-economic": "An error occurred while synchronizing a supplier from e-conomic",
+			"message_supplier-not-created-economic": "Supplier from e-conomic could not be created",
+			"message_supplier-not-updated-economic": "Supplier from e-conomic could not be updated",
+			"message_supplier-not-deleted-economic": "Supplier from e-conomic could not be deleted",
+			"message_supplier-no-history-log": "Supplier history log could not be created for product",
+			"message_full-fetch-suppliers-failed-economic": "Fetching suppliers from e-conomic failed",
+			"message_full-upsert-suppliers-failed-economic": "Full update of suppliers from e-conomic failed"
 		}
 	},
 	"sidebar": {
