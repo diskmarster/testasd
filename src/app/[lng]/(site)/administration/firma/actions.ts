@@ -137,8 +137,13 @@ export const deleteIntegration = adminAction
 	})
 
 export const updateIntegrationSettings = adminAction
-	.schema(z.object({ useSyncProducts: z.coerce.boolean() }))
-	.action(async ({ parsedInput: { useSyncProducts }, ctx: { user, lang } }) => {
+	.schema(
+		z.object({
+			useSyncProducts: z.optional(z.coerce.boolean()),
+			useSyncSuppliers: z.optional(z.coerce.boolean()),
+		}),
+	)
+	.action(async ({ parsedInput, ctx: { user, lang } }) => {
 		const { t } = await serverTranslation(lang, 'organisation', {
 			keyPrefix: 'integrations.actions',
 		})
@@ -147,7 +152,8 @@ export const updateIntegrationSettings = adminAction
 		)
 		if (
 			currentSettings == undefined ||
-			currentSettings.useSyncProducts == useSyncProducts
+			(currentSettings.useSyncProducts == parsedInput.useSyncProducts &&
+				currentSettings.useSyncSuppliers == parsedInput.useSyncSuppliers)
 		) {
 			throw new ActionError(t('cannot-update-settings'))
 		}
@@ -163,23 +169,36 @@ export const updateIntegrationSettings = adminAction
 
 		const didUpdate = await integrationsService.updateSettings(
 			user.customerID,
-			{ useSyncProducts },
+			{ ...parsedInput },
 		)
 		if (!didUpdate) {
 			throw new ActionError(t('did-not-update-settings'))
 		}
 
-		const lambdaResult = await integrationsService.createLambda(
-			currentSettings.customerID,
-			currentProvider.provider,
-			currentSettings.integrationID,
-		)
-		if (!lambdaResult.success) {
-			console.error(lambdaResult)
-			await integrationsService.updateSettings(user.customerID, {
-				useSyncProducts: !useSyncProducts,
+		if (!currentSettings.lambaUploaded) {
+			const lambdaResult = await integrationsService.createLambda(
+				currentSettings.customerID,
+				currentProvider.provider,
+				currentSettings.integrationID,
+			)
+			if (!lambdaResult.success) {
+				const inverseValues = Object.fromEntries(
+					Object.entries(parsedInput).map(([key, value]) => [key, !value]),
+				)
+				console.error(lambdaResult)
+				await integrationsService.updateSettings(user.customerID, {
+					...inverseValues,
+				})
+				throw new ActionError(t('did-not-update-settings'))
+			} else {
+				await integrationsService.updateSettings(user.customerID, {
+					lambaUploaded: true,
+				})
+			}
+		} else {
+			console.log('customer has lamba uploaded', {
+				customerID: user.customerID,
 			})
-			throw new ActionError(t('did-not-update-settings'))
 		}
 
 		revalidatePath(`/${lang}/administration/firma/integrationer`)
@@ -198,11 +217,16 @@ export const syncProductCatalogueAction = adminAction
 				console.log({ customer, i })
 				throw new ActionError(t('cannot-sync-catalogue'))
 			}
+			const settings = await integrationsService.getSettings(customer.id)
+			if (!settings) {
+				console.log({ customer, i })
+				throw new ActionError(t('cannot-sync-catalogue'))
+			}
 
 			const config = integrationsService.decryptConfig(i.provider, i.config)
 			const provider = new syncProvidersImpl[i.provider](config)
 
-			const res = await tryCatch(provider.handleFullSync(customer))
+			const res = await tryCatch(provider.handleFullSync(customer, settings))
 			if (!res.success || !res.data.success) {
 				console.error(
 					`Full sync of '${i.provider}' failed for '${customer.company}' with message: ${res.error ?? res.data.message}`,

@@ -56,17 +56,19 @@ export function getSupplierColumns(
 		cell: ({ row }) => (
 			<div className='flex items-center gap-1.5'>
 				{row.original.country != "UNK" ? (
-					<ReactCountryFlag
-						className='!size-4 rounded-md'
-						countryCode={row.original.country}
-						svg
-					/>
+					<>
+						<ReactCountryFlag
+							className='!size-4 rounded-md'
+							countryCode={row.original.country}
+							svg
+						/>
+						{row.original.country}
+					</>
 				) : (
-					<div className='w-[16px] h-[14px] bg-foreground rounded-sm flex items-center justify-center text-background'>
-						<Icons.minus className='size-4' />
+					<div className='italic text-muted-foreground flex'>
+						{t('table.col-no-value')} <div className='w-0.5'></div>
 					</div>
 				)}
-				{row.original.country}
 			</div>
 		),
 		meta: {
