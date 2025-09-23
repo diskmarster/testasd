@@ -95,7 +95,7 @@ export function getTableIntegrationLogsColumns(
 			return (
 				<p
 					className={cn(
-						eventType.includes('re_number') && 'text-destructive',
+						eventType.includes('re-number') && 'text-destructive',
 					)}>
 					{t('message', { context: getValue<string>() })}
 				</p>
