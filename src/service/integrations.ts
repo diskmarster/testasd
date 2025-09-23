@@ -206,7 +206,12 @@ export const integrationsService = {
 	},
 	updateSettings: async function (
 		customerID: CustomerID,
-		settings: Pick<CustomerIntegrationSettings, 'useSyncProducts'>,
+		settings: Partial<
+			Pick<
+				CustomerIntegrationSettings,
+				'useSyncProducts' | 'useSyncSuppliers' | 'lambaUploaded'
+			>
+		>,
 	): Promise<boolean> {
 		return await integrations.updateSettings(customerID, settings)
 	},

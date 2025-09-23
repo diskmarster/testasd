@@ -48,6 +48,9 @@ export const customerIntegrationSettings = sqliteTable(
 		useSyncSuppliers: integer('use_sync_suppliers', { mode: 'boolean' })
 			.notNull()
 			.default(false),
+		lambaUploaded: integer('lamba_uploaded', { mode: 'boolean' })
+			.notNull()
+			.default(false),
 	},
 )
 

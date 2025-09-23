@@ -106,7 +106,12 @@ export const integrations = {
 	},
 	updateSettings: async function (
 		customerID: CustomerID,
-		settings: Pick<CustomerIntegrationSettings, 'useSyncProducts'>,
+		settings: Partial<
+			Pick<
+				CustomerIntegrationSettings,
+				'useSyncProducts' | 'useSyncSuppliers' | 'lambaUploaded'
+			>
+		>,
 		tx: TRX = db,
 	) {
 		const result = await tx

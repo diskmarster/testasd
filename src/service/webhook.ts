@@ -19,9 +19,11 @@ import {
 	NewSupplier,
 	NewSupplierHistory,
 	Supplier,
+	supplierTable,
 } from '@/lib/database/schema/suppliers'
 import { ActionError } from '@/lib/safe-action/error'
 import { tryCatch } from '@/lib/utils.server'
+import { eq } from 'drizzle-orm'
 
 export const webhookService = {
 	upsertProduct: async function (
@@ -261,6 +263,31 @@ export const webhookService = {
 		integrationId: string,
 	): Promise<Supplier> {
 		return await suppliers.getByIntegrationID(integrationId, customerId)
+	},
+	upsertSuppliers: async function (
+		newSuppliers: NewSupplier[],
+	): Promise<Supplier[]> {
+		return await db.transaction(async tx => {
+			const promises: Promise<Supplier>[] = []
+			for (const newSupplier of newSuppliers) {
+				promises.push(suppliers.upsert(newSupplier, tx))
+			}
+			return await Promise.all(promises)
+		})
+	},
+	getAllSupplierIDs: async function (
+		customerID: CustomerID,
+		tx: TRX = db,
+	): Promise<
+		{ id: Supplier['id']; integrationID: Supplier['integrationId'] }[]
+	> {
+		return await tx
+			.select({
+				id: supplierTable.id,
+				integrationID: supplierTable.integrationId,
+			})
+			.from(supplierTable)
+			.where(eq(supplierTable.customerID, customerID))
 	},
 }
 

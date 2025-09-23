@@ -1,7 +1,9 @@
 import { fallbackLng } from '@/app/i18n/settings'
+import { supplierCountriesSchema } from '@/data/suppliers.types'
 import { db } from '@/lib/database'
 import { ApiKey } from '@/lib/database/schema/apikeys'
 import type { Customer } from '@/lib/database/schema/customer'
+import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 import {
 	NewSupplier,
 	NewSupplierHistory,
@@ -540,39 +542,91 @@ export class EconomicSyncProvider implements SyncProvider {
 
 	async handleFullSync(
 		customer: Customer,
+		integrationSettings: CustomerIntegrationSettings,
 	): Promise<SyncProviderResponse<'fullSync'>> {
-		const productsRes = await tryCatch(this.fetchProducts())
-		if (!productsRes.success) {
-			console.error(`Economic::HandleFullSync failed: ${productsRes.error}`)
-			return {
-				success: false,
-				message: 'full-fetch-products-failed-economic',
-				eventData: null,
+		if (integrationSettings.useSyncSuppliers) {
+			console.debug('Starting supplier sync...')
+			const economicSuppliersRes = await tryCatch(this.fetchSuppliers())
+			if (!economicSuppliersRes.success) {
+				console.error(
+					`Economic::HandleFullSync failed: ${economicSuppliersRes.error}`,
+				)
+				return {
+					success: false,
+					message: 'full-fetch-suppliers-failed-economic',
+					eventData: null,
+				}
+			}
+
+			const nemLagerSuppliers: NewSupplier[] = []
+			for (const economicSupplier of economicSuppliersRes.data) {
+				const countryValidation = supplierCountriesSchema.safeParse(
+					economicSupplier.country,
+				)
+
+				nemLagerSuppliers.push({
+					name: economicSupplier.name,
+					customerID: customer.id,
+					idOfClient: '',
+					country: countryValidation.success ? countryValidation.data : 'UNK',
+					userID: -1,
+					userName: 'Cron',
+					contactPerson: '',
+					email: economicSupplier.email,
+					phone: economicSupplier.phone,
+					integrationId: economicSupplier.supplierNumber.toString(),
+				})
+			}
+			const upsertedSuppliersRes = await tryCatch(
+				webhookService.upsertSuppliers(nemLagerSuppliers),
+			)
+			if (!upsertedSuppliersRes.success) {
+				console.error(
+					`Economic::HandleFullSync failed: ${upsertedSuppliersRes.error}`,
+				)
+				return {
+					success: false,
+					message: 'full-upsert-suppliers-failed-economic',
+					eventData: null,
+				}
 			}
 		}
-		const products = productsRes.data
 
-		const upsertData = products.map(economicProduct => ({
-			sku: economicProduct.productNumber,
-			barcode: economicProduct.barCode ?? economicProduct.productNumber,
-			costPrice: economicProduct.costPrice ?? 0,
-			salesPrice: economicProduct.salesPrice ?? 0,
-			text1: economicProduct.name,
-			text2: economicProduct.description,
-			unit: economicProduct.unit?.name ?? 'Stk',
-			group: economicProduct.productGroup.name,
-			isBarred: economicProduct.barred ?? false,
-		}))
+		if (integrationSettings.useSyncProducts) {
+			console.debug('Starting products sync...')
+			const productsRes = await tryCatch(this.fetchProducts())
+			if (!productsRes.success) {
+				console.error(`Economic::HandleFullSync failed: ${productsRes.error}`)
+				return {
+					success: false,
+					message: 'full-fetch-products-failed-economic',
+					eventData: null,
+				}
+			}
+			const products = productsRes.data
 
-		const res = await tryCatch(
-			webhookService.upsertProducts(customer.id, upsertData),
-		)
-		if (!res.success) {
-			console.error(`Economic::HandleFullSync. Upsert failed: ${res.error}`)
-			return {
-				success: false,
-				message: 'full-upsert-failed-economic',
-				eventData: null,
+			const upsertData = products.map(economicProduct => ({
+				sku: economicProduct.productNumber,
+				barcode: economicProduct.barCode ?? economicProduct.productNumber,
+				costPrice: economicProduct.costPrice ?? 0,
+				salesPrice: economicProduct.salesPrice ?? 0,
+				text1: economicProduct.name,
+				text2: economicProduct.description,
+				unit: economicProduct.unit?.name ?? 'Stk',
+				group: economicProduct.productGroup.name,
+				isBarred: economicProduct.barred ?? false,
+			}))
+
+			const res = await tryCatch(
+				webhookService.upsertProducts(customer.id, upsertData),
+			)
+			if (!res.success) {
+				console.error(`Economic::HandleFullSync. Upsert failed: ${res.error}`)
+				return {
+					success: false,
+					message: 'full-upsert-products-failed-economic',
+					eventData: null,
+				}
 			}
 		}
 
@@ -622,11 +676,15 @@ export class EconomicSyncProvider implements SyncProvider {
 						)
 					}
 
+					const countryValidation = supplierCountriesSchema.safeParse(
+						economicSupplier.country,
+					)
+
 					const newSupplier: NewSupplier = {
 						name: economicSupplier.name,
 						customerID: customer.id,
 						idOfClient: '',
-						country: 'UNK',
+						country: countryValidation.success ? countryValidation.data : 'UNK',
 						userID: -1,
 						userName: apiKey.name,
 						contactPerson: '',
@@ -688,11 +746,17 @@ export class EconomicSyncProvider implements SyncProvider {
 				case 'update':
 					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
 
+					const updateCountryValidation = supplierCountriesSchema.safeParse(
+						economicSupplier.country,
+					)
+
 					const updateData: NewSupplier = {
 						name: economicSupplier.name,
 						customerID: customer.id,
 						idOfClient: '',
-						country: 'UNK',
+						country: updateCountryValidation.success
+							? updateCountryValidation.data
+							: 'UNK',
 						userID: -1,
 						userName: apiKey.name,
 						contactPerson: '',
@@ -811,11 +875,17 @@ export class EconomicSyncProvider implements SyncProvider {
 						eventData.newParam,
 					)
 
+					const renumberCountryValidation = supplierCountriesSchema.safeParse(
+						economicSupplier.country,
+					)
+
 					const renumberSupplier: NewSupplier = {
 						name: economicSupplier.name,
 						customerID: customer.id,
 						idOfClient: '',
-						country: 'UNK',
+						country: renumberCountryValidation.success
+							? renumberCountryValidation.data
+							: 'UNK',
 						userID: -1,
 						userName: apiKey.name,
 						contactPerson: '',
@@ -876,15 +946,6 @@ export class EconomicSyncProvider implements SyncProvider {
 								action: eventData,
 							},
 						}
-					}
-
-					return {
-						success: true,
-						message: 'supplier-renumber-not-supported-economic',
-						eventData: {
-							input: inputData,
-							action: eventData,
-						},
 					}
 			}
 		} catch (err) {

@@ -7,6 +7,7 @@ import {
 	EconomicSupplierEventData,
 	EconomicSyncProvider,
 } from './e-conomic'
+import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 
 export function createProvider<T extends SyncProviderType>(
 	type: T,
@@ -42,7 +43,10 @@ export interface SyncProvider {
 		request: NextRequest,
 		apiKey: ApiKey,
 	): Promise<SyncProviderResponse<'productEvent'>>
-	handleFullSync(customer: Customer): Promise<SyncProviderResponse<'fullSync'>>
+	handleFullSync(
+		customer: Customer,
+		integrationSettins: CustomerIntegrationSettings,
+	): Promise<SyncProviderResponse<'fullSync'>>
 	handleSupplierEvent(
 		customer: Customer,
 		request: NextRequest,
