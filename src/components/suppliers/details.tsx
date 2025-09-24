@@ -129,7 +129,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 				)}
 			</div>
 			<div className='space-y-2'>
-				<div className='flex items-center gap-2'>
+				<div className='flex items-start gap-2'>
 					<div className='w-1/4'>
 						<span className='text-sm text-muted-foreground'>
 							{t('details-page.details.label-country')}
@@ -137,7 +137,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 						<IfElse
 							condition={isEditing}
 							falseComp={
-								<div className='flex items-center gap-2 text-sm'>
+								<div className='flex h-9 items-center gap-2 text-sm'>
 									{supplier.country != 'UNK' ? (
 										<ReactCountryFlag
 											className='!size-4 rounded-md'
