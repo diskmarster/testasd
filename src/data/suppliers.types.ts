@@ -9,6 +9,7 @@ export const supplierHistorySchema = z.enum([
 	'oprettet',
 	'opdateret',
 	'slettet',
+	'synkroniseret',
 ])
 export type SupplierHistoryType = z.infer<typeof supplierHistorySchema>
 export const historyTypes =

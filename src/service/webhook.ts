@@ -19,6 +19,7 @@ import {
 	NewSupplier,
 	NewSupplierHistory,
 	Supplier,
+	SupplierHisotry,
 } from '@/lib/database/schema/suppliers'
 import { ActionError } from '@/lib/safe-action/error'
 import { tryCatch } from '@/lib/utils.server'
@@ -267,10 +268,36 @@ export const webhookService = {
 	): Promise<Supplier[]> {
 		return await db.transaction(async tx => {
 			const promises: Promise<Supplier>[] = []
+			const logPromises: Promise<SupplierHisotry>[] = []
 			for (const newSupplier of newSuppliers) {
 				promises.push(suppliers.upsert(newSupplier, tx))
 			}
-			return await Promise.all(promises)
+			const upsertedSuppliers = await Promise.all(promises)
+
+			for (const upserted of upsertedSuppliers) {
+				logPromises.push(
+					suppliers.createLog(
+						{
+							name: upserted.name,
+							country: upserted.country,
+							customerID: upserted.customerID,
+							supplierID: upserted.id,
+							type: 'synkroniseret',
+							userID: upserted.userID,
+							userName: upserted.userName,
+							contactPerson: upserted.contactPerson,
+							email: upserted.email,
+							phone: upserted.phone,
+							idOfClient: upserted.idOfClient,
+							integrationId: upserted.integrationId,
+						},
+						tx,
+					),
+				)
+			}
+			await Promise.all(logPromises)
+
+			return upsertedSuppliers
 		})
 	},
 }
