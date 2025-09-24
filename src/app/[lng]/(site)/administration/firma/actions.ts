@@ -219,7 +219,6 @@ export const syncProductCatalogueAction = adminAction
 			}
 			const settings = await integrationsService.getSettings(customer.id)
 			if (!settings) {
-				console.log({ customer, i })
 				throw new ActionError(t('cannot-sync-catalogue'))
 			}
 
