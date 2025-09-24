@@ -70,6 +70,7 @@
 			"action": "changed",
 			"action_oprettet": "created",
 			"action_opdateret": "updated",
+			"action_synkroniseret": "synchronized",
 			"key": "unknown field",
 			"key_name": "Name",
 			"key_country": "Country",

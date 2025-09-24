@@ -70,6 +70,7 @@
 			"action": "ændret",
 			"action_oprettet": "oprettet",
 			"action_opdateret": "opdateret",
+			"action_synkroniseret": "synkroniseret",
 			"key": "ukendt felt",
 			"key_name": "Navn",
 			"key_country": "Land",

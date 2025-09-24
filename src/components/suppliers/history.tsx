@@ -57,6 +57,8 @@ export function SupplierLogs({ logs }: Props) {
 		switch (type) {
 			case 'oprettet':
 				return <Icons.squarePlus className={cn(classes, '')} />
+			case 'synkroniseret':
+				return <Icons.cloudCog className={cn(classes, '')} />
 			case 'opdateret':
 			default:
 				return <Icons.squareSlash className={cn(classes, '')} />
