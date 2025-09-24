@@ -545,7 +545,6 @@ export class EconomicSyncProvider implements SyncProvider {
 		integrationSettings: CustomerIntegrationSettings,
 	): Promise<SyncProviderResponse<'fullSync'>> {
 		if (integrationSettings.useSyncSuppliers) {
-			console.debug('Starting supplier sync...')
 			const economicSuppliersRes = await tryCatch(this.fetchSuppliers())
 			if (!economicSuppliersRes.success) {
 				console.error(
@@ -593,7 +592,6 @@ export class EconomicSyncProvider implements SyncProvider {
 		}
 
 		if (integrationSettings.useSyncProducts) {
-			console.debug('Starting products sync...')
 			const productsRes = await tryCatch(this.fetchProducts())
 			if (!productsRes.success) {
 				console.error(`Economic::HandleFullSync failed: ${productsRes.error}`)
