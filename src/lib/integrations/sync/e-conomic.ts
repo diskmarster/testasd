@@ -663,17 +663,6 @@ export class EconomicSyncProvider implements SyncProvider {
 				case 'create':
 					economicSupplier = await this.fetchSupplierByNumber(eventData.param)
 
-					if (economicSupplier.supplierContact) {
-						const contactPerson = await this.fetchSelfByUrl(
-							economicSupplier.supplierContact.self,
-						)
-						console.log(
-							'contactPerson',
-							economicSupplier.supplierContact,
-							contactPerson,
-						)
-					}
-
 					const countryValidation = supplierCountriesSchema.safeParse(
 						economicSupplier.country,
 					)
