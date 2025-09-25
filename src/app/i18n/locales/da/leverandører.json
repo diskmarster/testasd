@@ -16,7 +16,11 @@
 		"col-inserted": "Oprettet",
 		"col-updated": "Opdateret",
 		"col-actions-show": "Vis",
-		"col-actions-delete": "Slet"
+		"col-actions-delete": "Slet",
+		"col-email": "Email",
+		"col-email-placeholder": "Søg i email",
+		"col-phone": "Tlf.",
+		"col-phone-placeholder": "Søg i tlf."
 	},
 	"create": {
 		"title": "Opret leverandør",
