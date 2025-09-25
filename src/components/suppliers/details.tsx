@@ -19,6 +19,7 @@ import { IfElse } from '../common/if-else'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
+import { Label } from '../ui/label'
 import {
 	Select,
 	SelectContent,
@@ -28,7 +29,6 @@ import {
 } from '../ui/select'
 import { Separator } from '../ui/separator'
 import { Skeleton } from '../ui/skeleton'
-import { Label } from '../ui/label'
 
 interface Props {
 	supplier: Supplier
@@ -133,9 +133,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 				<div className='w-full space-y-0.5'>
 					<div className='flex items-start gap-2'>
 						<div className='w-1/4'>
-							<Label>
-								{t('details-page.details.label-country')}
-							</Label>
+							<Label>{t('details-page.details.label-country')}</Label>
 							<IfElse
 								condition={isEditing}
 								falseComp={
@@ -186,9 +184,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 							/>
 						</div>
 						<div className='w-full space-y-0.5'>
-							<Label>
-								{t('details-page.details.label-name')}
-							</Label>
+							<Label>{t('details-page.details.label-name')}</Label>
 							<IfElse
 								condition={isEditing}
 								falseComp={
@@ -199,9 +195,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 						</div>
 					</div>
 					<div className='w-full space-y-0.5'>
-						<Label>
-							{t('details-page.details.label-id')}.
-						</Label>
+						<Label>{t('details-page.details.label-id')}.</Label>
 						<IfElse
 							condition={isEditing}
 							falseComp={
@@ -219,9 +213,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 				</div>
 				<div className='w-full'>
 					<div className='w-full space-y-0.5'>
-						<Label>
-							{t('details-page.details.label-contact')}
-						</Label>
+						<Label>{t('details-page.details.label-contact')}</Label>
 						<IfElse
 							condition={isEditing}
 							falseComp={
@@ -238,9 +230,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 					</div>
 					<div className='flex gap-2'>
 						<div className='w-full space-y-0.5'>
-							<Label>
-								{t('details-page.details.label-phone')}
-							</Label>
+							<Label>{t('details-page.details.label-phone')}</Label>
 							<IfElse
 								condition={isEditing}
 								falseComp={
@@ -256,9 +246,7 @@ export function SupplierDetails({ supplier, integrationSettings }: Props) {
 							/>
 						</div>
 						<div className='w-full space-y-0.5'>
-							<Label>
-								{t('details-page.details.label-email')}
-							</Label>
+							<Label>{t('details-page.details.label-email')}</Label>
 							<IfElse
 								condition={isEditing}
 								falseComp={
