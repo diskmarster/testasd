@@ -129,8 +129,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-					row.original.product.fileCount > 0 &&
-					'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -142,8 +142,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+							row.original.product.fileCount > 0 &&
+							'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -675,8 +675,8 @@ export function getTableOverviewColumns(
 			return value.includes(row.getValue(id))
 		},
 		meta: {
-			isShadow: true
-		}
+			isShadow: true,
+		},
 	}
 
 	let planCols: ColumnDef<InventoryTableRow>[] = [
@@ -937,16 +937,16 @@ export function getTableOverviewFilters(
 	const useBatchFilter: FilterField<InventoryTableRow> = {
 		column: table.getColumn('useBatch'),
 		type: 'select',
-		label: t("useBatch"),
+		label: t('useBatch'),
 		value: '',
 		options: [
 			{
 				value: true,
-				label: t("useBatch-yes"),
+				label: t('useBatch-yes'),
 			},
 			{
 				value: false,
-				label: t("useBatch-no"),
+				label: t('useBatch-no'),
 			},
 		],
 		facetedUniqueColumnId: 'sku',
