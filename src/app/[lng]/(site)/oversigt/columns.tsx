@@ -3,6 +3,7 @@ import { ModalShowProductLabel } from '@/components/inventory/modal-show-product
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
+import { Badge } from '@/components/ui/badge'
 import {
 	HoverCard,
 	HoverCardContent,
@@ -129,8 +130,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+					row.original.product.fileCount > 0 &&
+					'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -142,8 +143,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-							row.original.product.fileCount > 0 &&
-							'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -405,6 +406,12 @@ export function getTableOverviewColumns(
 		accessorKey: 'batch.batch',
 		id: 'batch',
 		header: ({ column }) => <TableHeader column={column} title={t('batch')} />,
+		aggregatedCell: (props) => {
+			const useBatch = props.row.getLeafRows().filter(r => r.original.product.useBatch).length > 0
+			return useBatch && (
+				<Badge variant="blue">{t("useBatch-badge")}</Badge>
+			)
+		},
 		cell: ({ getValue, row }) => {
 			if (!row.original.product.useBatch) return null
 
@@ -668,7 +675,7 @@ export function getTableOverviewColumns(
 		},
 	}
 
-	const hasBatchCol: ColumnDef<InventoryTableRow> = {
+	const useBatchCol: ColumnDef<InventoryTableRow> = {
 		accessorKey: 'product.useBatch',
 		id: 'useBatch',
 		filterFn: (row, id, value) => {
@@ -695,7 +702,7 @@ export function getTableOverviewColumns(
 		dispQuantityCol,
 		unitCol,
 		placementCol,
-		hasBatchCol,
+		useBatchCol,
 		batchCol,
 		actionsCol,
 		isBarredCol,
@@ -713,7 +720,7 @@ export function getTableOverviewColumns(
 
 	if (!hasPermissionByPlan(plan, 'pro')) {
 		planCols = planCols.filter(
-			col => !(col === totalQuantityCol || col === batchCol),
+			col => !(col === totalQuantityCol || col === batchCol || col === useBatchCol),
 		)
 	} else {
 		planCols = planCols.filter(col => {
@@ -985,7 +992,7 @@ export function getTableOverviewFilters(
 
 	if (!hasPermissionByPlan(plan, 'pro')) {
 		planFilters = planFilters.filter(
-			filter => !(filter === totalQuantityFilter || filter === batchFilter),
+			filter => !(filter === totalQuantityFilter || filter === batchFilter || filter === useBatchFilter),
 		)
 	} else {
 		planFilters = planFilters.filter(filter => {

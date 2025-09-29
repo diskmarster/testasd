@@ -63,6 +63,7 @@
 	"useBatch": "Batch activated",
 	"useBatch-yes": "Yes",
 	"useBatch-no": "No",
+	"useBatch-badge": "Active",
 	"supplierName": "Supplier",
 	"attachments": "Files",
 	"has-attach-yes": "1 or more files",

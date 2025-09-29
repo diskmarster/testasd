@@ -64,6 +64,7 @@
 	"useBatch": "Batch aktiveret",
 	"useBatch-yes": "Ja",
 	"useBatch-no": "Nej",
+	"useBatch-badge": "Aktiveret",
 	"supplierName": "Leverandør",
 	"attachments": "Filer",
 	"has-attach-yes": "1 eller flere filer",
