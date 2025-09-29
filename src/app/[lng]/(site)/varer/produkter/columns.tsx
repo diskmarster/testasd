@@ -51,8 +51,8 @@ export function getProductOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.fileCount != undefined &&
-						row.original.fileCount > 0 &&
-						'block',
+					row.original.fileCount > 0 &&
+					'block',
 				)}>
 				<p>{`${row.original.fileCount}/5`}</p>
 			</div>
@@ -259,6 +259,17 @@ export function getProductOverviewColumns(
 		enableSorting: false,
 	}
 
+	const useBatchCol: ColumnDef<FormattedProduct> = {
+		accessorKey: 'useBatch',
+		id: 'useBatch',
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+		meta: {
+			isShadow: true,
+		},
+	}
+
 	const columns = [
 		skuCol,
 		attachmentsCol,
@@ -272,6 +283,7 @@ export function getProductOverviewColumns(
 		costPriceCol,
 		salesPriceCol,
 		updatedCol,
+		useBatchCol,
 		isBarredCol,
 	].filter(
 		col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
@@ -413,6 +425,24 @@ export function getProductTableOverviewFilters(
 		],
 	}
 
+	const useBatchFilter: FilterField<FormattedProduct> = {
+		column: table.getColumn('useBatch'),
+		type: 'select',
+		label: t('useBatch'),
+		value: '',
+		options: [
+			{
+				value: true,
+				label: t('useBatch-yes'),
+			},
+			{
+				value: false,
+				label: t('useBatch-no'),
+			},
+		],
+		facetedUniqueColumnId: 'sku',
+	}
+
 	return [
 		skuFilter,
 		attachmentsFilter,
@@ -423,6 +453,7 @@ export function getProductTableOverviewFilters(
 		text2Filter,
 		text3Filter,
 		unitFilter,
+		useBatchFilter,
 		costPriceFilter,
 		salesPriceFilter,
 		updatedFilter,
