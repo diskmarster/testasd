@@ -51,8 +51,8 @@ export function getProductOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.fileCount != undefined &&
-					row.original.fileCount > 0 &&
-					'block',
+						row.original.fileCount > 0 &&
+						'block',
 				)}>
 				<p>{`${row.original.fileCount}/5`}</p>
 			</div>
