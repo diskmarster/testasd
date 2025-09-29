@@ -53,6 +53,7 @@ export type FormattedInventory = {
 		group: string
 		fileCount: number
 		supplierName: string | null
+		useBatch: boolean
 	}
 	placement: Placement
 	batch: Batch

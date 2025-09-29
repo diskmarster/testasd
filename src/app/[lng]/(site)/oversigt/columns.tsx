@@ -129,8 +129,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+					row.original.product.fileCount > 0 &&
+					'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -142,8 +142,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-							row.original.product.fileCount > 0 &&
-							'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -668,6 +668,17 @@ export function getTableOverviewColumns(
 		},
 	}
 
+	const hasBatchCol: ColumnDef<InventoryTableRow> = {
+		accessorKey: 'product.useBatch',
+		id: 'useBatch',
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+		meta: {
+			isShadow: true
+		}
+	}
+
 	let planCols: ColumnDef<InventoryTableRow>[] = [
 		skuCol,
 		attachmentsCol,
@@ -684,6 +695,7 @@ export function getTableOverviewColumns(
 		dispQuantityCol,
 		unitCol,
 		placementCol,
+		hasBatchCol,
 		batchCol,
 		actionsCol,
 		isBarredCol,
@@ -922,6 +934,24 @@ export function getTableOverviewFilters(
 		facetedUniqueColumnId: 'sku',
 	}
 
+	const useBatchFilter: FilterField<InventoryTableRow> = {
+		column: table.getColumn('useBatch'),
+		type: 'select',
+		label: t("useBatch"),
+		value: '',
+		options: [
+			{
+				value: true,
+				label: t("useBatch-yes"),
+			},
+			{
+				value: false,
+				label: t("useBatch-no"),
+			},
+		],
+		facetedUniqueColumnId: 'sku',
+	}
+
 	let planFilters: FilterField<InventoryTableRow>[] = [
 		skuFilter,
 		attachmentsFilter,
@@ -939,6 +969,7 @@ export function getTableOverviewFilters(
 		dispQuantityFilter,
 		placementFilter,
 		batchFilter,
+		useBatchFilter,
 		isBarredFilter,
 	]
 
