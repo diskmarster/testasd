@@ -59,6 +59,9 @@ export type FormattedInventory = {
 	batch: Batch
 	totalQuantity: number
 	isDefaultPlacement: boolean
+	incomingAt: Date | null
+	outgoingAt: Date | null
+	regulatedAt: Date | null
 }
 
 export interface FormattedDefaultPlacement extends DefaultPlacement {

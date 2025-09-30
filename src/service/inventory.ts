@@ -36,6 +36,7 @@ import {
 	Inventory,
 	NewBatch,
 	NewHistory,
+	NewInventory,
 	NewPlacement,
 	NewUnit,
 	PartialBatch,
@@ -407,15 +408,31 @@ export const inventoryService = {
 				}
 			}
 
-			const didUpsert = await inventory.upsertInventory(
-				{
+			let upsertData: NewInventory = {
 					customerID,
 					locationID,
 					productID,
 					placementID,
 					batchID,
 					quantity: amount,
-				},
+			}
+
+			switch (type) {
+				case 'afgang':
+					upsertData.outgoingAt = new Date()
+					break
+				case 'tilgang':
+					upsertData.incomingAt = new Date()
+					break
+				case 'regulering':
+					upsertData.regulatedAt = new Date()
+					break
+			}
+
+			console.log("upsertData", upsertData)
+
+			const didUpsert = await inventory.upsertInventory(
+				upsertData,
 				trx,
 			)
 			if (!didUpsert) {

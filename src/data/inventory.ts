@@ -103,6 +103,9 @@ export const inventory = {
 				quantity: inventoryTable.quantity,
 				customerID: inventoryTable.customerID,
 				locationID: inventoryTable.locationID,
+				incomingAt: inventoryTable.incomingAt,
+				outgoingAt: inventoryTable.outgoingAt,
+				regulatedAt: inventoryTable.regulatedAt,
 				product: {
 					...PRODUCT_COLS,
 					unit: UNIT_COLS.name,
@@ -303,6 +306,9 @@ export const inventory = {
 					inventoryTable.customerID,
 				],
 				set: {
+					incomingAt: inventory.incomingAt ? inventory.incomingAt : inventoryTable.incomingAt,
+					outgoingAt: inventory.outgoingAt ? inventory.outgoingAt : inventoryTable.outgoingAt,
+					regulatedAt: inventory.regulatedAt ? inventory.regulatedAt : inventoryTable.regulatedAt,
 					quantity: sql`${inventoryTable.quantity} + ${inventory.quantity}`,
 				},
 			})
@@ -957,6 +963,9 @@ export const inventory = {
 				quantity: inventoryTable.quantity,
 				customerID: inventoryTable.customerID,
 				locationID: inventoryTable.locationID,
+				incomingAt: inventoryTable.incomingAt,
+				outgoingAt: inventoryTable.outgoingAt,
+				regulatedAt: inventoryTable.regulatedAt,
 				product: {
 					...PRODUCT_COLS,
 					unit: UNIT_COLS.name,
