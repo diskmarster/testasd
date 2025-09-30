@@ -46,6 +46,8 @@ export function DurationHoverCard({
 		return isDays ? daysSince : relateSince
 	}
 
+	if (!lastDate) return null
+
 	return (
 		<HoverCard openDelay={250}>
 			<HoverCardTrigger className="hover:dark:bg-foreground/20 hover:bg-foreground/10 text-xs font-medium transition-colors duration-200 px-2 py-1 rounded-md">
