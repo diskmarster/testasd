@@ -25,7 +25,7 @@ import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatNumber, numberToCurrency } from '@/lib/utils'
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import { addHours, intervalToDuration, isAfter, isBefore, isSameDay } from 'date-fns'
+import { intervalToDuration, isBefore } from 'date-fns'
 import { TFunction } from 'i18next'
 import { User } from 'lucia'
 import Link from 'next/link'
@@ -131,8 +131,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-					row.original.product.fileCount > 0 &&
-					'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -144,8 +144,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+							row.original.product.fileCount > 0 &&
+							'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -738,17 +738,21 @@ export function getTableOverviewColumns(
 			}
 
 			const lastDate = getLastDate(
-				...[row.original.incomingAt, row.original.outgoingAt, row.original.regulatedAt]
+				...[
+					row.original.incomingAt,
+					row.original.outgoingAt,
+					row.original.regulatedAt,
+				],
 			)
 
 			// if (!lastDate) return false
 
 			const { from, to } = value
-			const val = intervalToDuration({
-				start: lastDate || new Date(), // just to please typescript, will not be used if lastDate is null
-				end: new Date()
-			}).days || 0 + 1
-
+			const val =
+				intervalToDuration({
+					start: lastDate || new Date(), // just to please typescript, will not be used if lastDate is null
+					end: new Date(),
+				}).days || 0 + 1
 
 			if (from == undefined && to == undefined) {
 				return true
@@ -765,7 +769,7 @@ export function getTableOverviewColumns(
 			} else {
 				return true
 			}
-		}
+		},
 	}
 
 	let planCols: ColumnDef<InventoryTableRow>[] = [
@@ -1046,7 +1050,7 @@ export function getTableOverviewFilters(
 	const latestRegFilter: FilterField<InventoryTableRow> = {
 		column: table.getColumn('latestReg'),
 		type: 'number-range',
-		label: t("lastRegistration"),
+		label: t('lastRegistration'),
 		value: '',
 	}
 
@@ -1112,7 +1116,9 @@ type RegistrationDates = {
 	regulatedAt: Date | null
 }
 
-function processRegistrationDates(row: Row<InventoryTableRow>): RegistrationDates {
+function processRegistrationDates(
+	row: Row<InventoryTableRow>,
+): RegistrationDates {
 	const dates: RegistrationDates = row.getLeafRows().reduce(
 		(acc, cur) => {
 			function compareDates(
