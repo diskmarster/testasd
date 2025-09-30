@@ -409,12 +409,12 @@ export const inventoryService = {
 			}
 
 			let upsertData: NewInventory = {
-					customerID,
-					locationID,
-					productID,
-					placementID,
-					batchID,
-					quantity: amount,
+				customerID,
+				locationID,
+				productID,
+				placementID,
+				batchID,
+				quantity: amount,
 			}
 
 			switch (type) {
@@ -429,12 +429,9 @@ export const inventoryService = {
 					break
 			}
 
-			console.log("upsertData", upsertData)
+			console.log('upsertData', upsertData)
 
-			const didUpsert = await inventory.upsertInventory(
-				upsertData,
-				trx,
-			)
+			const didUpsert = await inventory.upsertInventory(upsertData, trx)
 			if (!didUpsert) {
 				throw new ActionError(
 					t('inventory-service-action.inventory-not-updated'),

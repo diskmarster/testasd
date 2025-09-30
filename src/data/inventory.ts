@@ -306,9 +306,15 @@ export const inventory = {
 					inventoryTable.customerID,
 				],
 				set: {
-					incomingAt: inventory.incomingAt ? inventory.incomingAt : inventoryTable.incomingAt,
-					outgoingAt: inventory.outgoingAt ? inventory.outgoingAt : inventoryTable.outgoingAt,
-					regulatedAt: inventory.regulatedAt ? inventory.regulatedAt : inventoryTable.regulatedAt,
+					incomingAt: inventory.incomingAt
+						? inventory.incomingAt
+						: inventoryTable.incomingAt,
+					outgoingAt: inventory.outgoingAt
+						? inventory.outgoingAt
+						: inventoryTable.outgoingAt,
+					regulatedAt: inventory.regulatedAt
+						? inventory.regulatedAt
+						: inventoryTable.regulatedAt,
 					quantity: sql`${inventoryTable.quantity} + ${inventory.quantity}`,
 				},
 			})
