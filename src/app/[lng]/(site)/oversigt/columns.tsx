@@ -2,7 +2,7 @@ import { I18NLanguage } from '@/app/i18n/settings'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
-import { FilterField } from '@/components/table/table-toolbar'
+import { FilterField, NumberRange } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import {
 	HoverCard,
@@ -23,11 +23,13 @@ import { CustomerSettings } from '@/lib/database/schema/customer'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatNumber, numberToCurrency } from '@/lib/utils'
-import { ColumnDef, Table } from '@tanstack/react-table'
-import { isBefore } from 'date-fns'
+import { ColumnDef, Row, Table } from '@tanstack/react-table'
+import { isAfter, isBefore, isSameDay } from 'date-fns'
 import { TFunction } from 'i18next'
 import { User } from 'lucia'
 import Link from 'next/link'
+import { DateRange } from 'react-day-picker'
+import { DurationHoverCard } from '@/components/inventory/duration-hover-card'
 
 export type InventoryTableRow = FormattedInventory & {
 	disposable: number | null
@@ -130,8 +132,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+					row.original.product.fileCount > 0 &&
+					'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -143,8 +145,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-							row.original.product.fileCount > 0 &&
-							'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -686,6 +688,46 @@ export function getTableOverviewColumns(
 		},
 	}
 
+	const latestRegCol: ColumnDef<InventoryTableRow> = {
+		accessorKey: 'latestReg',
+		header: ({ column }) => (
+			<TableHeader column={column} title={t("lastRegistration")} />
+		),
+		aggregatedCell: ({ row }) => {
+			const dates = processRegistrationDates(row)
+			if (!dates.lastDate) return null
+
+			return <DurationHoverCard
+				lng={lng}
+				lastDate={dates.lastDate}
+				incomingAt={dates.incomingAt}
+				outgoingAt={dates.outgoingAt}
+				regulatedAt={dates.regulatedAt}
+			/>
+		},
+		cell: ({ row }) => {
+			const dates = processRegistrationDates(row)
+			if (!dates.lastDate) return null
+
+			return <DurationHoverCard
+				lng={lng}
+				lastDate={dates.lastDate}
+				incomingAt={dates.incomingAt}
+				outgoingAt={dates.outgoingAt}
+				regulatedAt={dates.regulatedAt}
+			/>
+		},
+		sortingFn: (a, b) => {
+			const aLast = processRegistrationDates(a).lastDate
+			const bLast = processRegistrationDates(b).lastDate
+
+			if (!aLast && !bLast) return 0
+			if (!bLast) return 1
+			if (!aLast) return -1
+			return Number(bLast) - Number(aLast)
+		},
+	}
+
 	let planCols: ColumnDef<InventoryTableRow>[] = [
 		skuCol,
 		attachmentsCol,
@@ -701,6 +743,7 @@ export function getTableOverviewColumns(
 		totalQuantityCol,
 		dispQuantityCol,
 		unitCol,
+		latestRegCol,
 		placementCol,
 		useBatchCol,
 		batchCol,
@@ -1012,4 +1055,39 @@ export function getTableOverviewFilters(
 	}
 
 	return planFilters
+}
+
+type DurationDates = {
+	lastDate: Date | null
+	incomingAt: Date | null
+	outgoingAt: Date | null
+	regulatedAt: Date | null
+}
+
+function processRegistrationDates(row: Row<InventoryTableRow>): DurationDates {
+	const dates: DurationDates = row.getLeafRows().reduce((acc, cur) => {
+		function compareDates(accDate: Date | null, curDate: Date | null): Date | null {
+			if (!accDate) return curDate
+			if (!curDate) return accDate
+			return curDate > accDate ? curDate : accDate
+		}
+
+		function getLastDate(...dates: (Date | null)[]): Date | null {
+			const sorted = dates.filter(d => d != null).sort((a, b) => Number(b) - Number(a))
+			return sorted.at(0) ? sorted.at(0)! : null
+		}
+
+		acc.incomingAt = compareDates(acc.incomingAt, cur.original.incomingAt)
+		acc.outgoingAt = compareDates(acc.outgoingAt, cur.original.outgoingAt)
+		acc.regulatedAt = compareDates(acc.regulatedAt, cur.original.regulatedAt)
+		acc.lastDate = getLastDate(...[acc.incomingAt, acc.outgoingAt, acc.regulatedAt])
+
+		return acc
+	}, {
+		lastDate: null,
+		incomingAt: null,
+		outgoingAt: null,
+		regulatedAt: null
+	} as DurationDates)
+	return dates
 }

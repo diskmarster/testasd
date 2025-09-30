@@ -106,5 +106,11 @@
 		"errors-title": "Fejlbeskeder",
 		"btn-close": "Luk",
 		"btn-confirm": "Afgangsfør"
-	}
+	},
+	"lastRegistration": "Seneste reg.",
+	"lastRegistrationHoverText": "Tid siden seneste registrering",
+	"incoming": "Tilgang:",
+	"outgoing": "Afgang:",
+	"regulation": "Regulering:",
+	"noReg": "Ingen registrering"
 }

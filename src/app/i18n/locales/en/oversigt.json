@@ -102,5 +102,11 @@
 		"errors-title": "Error messages",
 		"btn-close": "Close",
 		"btn-confirm": "Process"
-	}
+	},
+	"lastRegistration": "Latest reg.",
+	"lastRegistrationHoverText": "Time since last registration",
+	"incoming": "Incoming:",
+	"outgoing": "Outoging:",
+	"regulation": "Regulation:",
+	"noReg": "No registration"
 }
