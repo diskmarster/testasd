@@ -203,6 +203,9 @@ export const inventoryTable = sqliteTable(
 			.default(sql`(unixepoch())`)
 			.$onUpdateFn(() => new Date())
 			.$type<Date>(),
+		incomingAt: integer('incoming_at').$type<Date>(),
+		outgoingAt: integer('outgoing_at').$type<Date>(),
+		regulatedAt: integer('regulated_at').$type<Date>(),
 	},
 	t => [
 		primaryKey({
