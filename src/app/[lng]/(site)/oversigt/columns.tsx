@@ -3,7 +3,7 @@ import { DurationHoverCard } from '@/components/inventory/duration-hover-card'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
-import { FilterField } from '@/components/table/table-toolbar'
+import { FilterField, NumberRange } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
 import {
 	HoverCard,
@@ -25,7 +25,7 @@ import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatNumber, numberToCurrency } from '@/lib/utils'
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
-import { isBefore } from 'date-fns'
+import { addHours, intervalToDuration, isAfter, isBefore, isSameDay } from 'date-fns'
 import { TFunction } from 'i18next'
 import { User } from 'lucia'
 import Link from 'next/link'
@@ -729,6 +729,43 @@ export function getTableOverviewColumns(
 			if (!aLast) return -1
 			return Number(bLast) - Number(aLast)
 		},
+		filterFn: (row, id, value: NumberRange) => {
+			function getLastDate(...dates: (Date | null)[]): Date | null {
+				const sorted = dates
+					.filter(d => d != null)
+					.sort((a, b) => Number(b) - Number(a))
+				return sorted.at(0) ? sorted.at(0)! : null
+			}
+
+			const lastDate = getLastDate(
+				...[row.original.incomingAt, row.original.outgoingAt, row.original.regulatedAt]
+			)
+
+			// if (!lastDate) return false
+
+			const { from, to } = value
+			const val = intervalToDuration({
+				start: lastDate || new Date(), // just to please typescript, will not be used if lastDate is null
+				end: new Date()
+			}).days || 0 + 1
+
+
+			if (from == undefined && to == undefined) {
+				return true
+			} else if (from == undefined && lastDate == null && to != undefined) {
+				return false
+			} else if (from == undefined && to != undefined) {
+				return val <= to
+			} else if (from != undefined && to == undefined) {
+				return val >= from
+			} else if (from != undefined && to != undefined && !lastDate) {
+				return false
+			} else if (from != undefined && to != undefined) {
+				return val >= from && val <= to
+			} else {
+				return true
+			}
+		}
 	}
 
 	let planCols: ColumnDef<InventoryTableRow>[] = [
@@ -1006,6 +1043,13 @@ export function getTableOverviewFilters(
 		facetedUniqueColumnId: 'sku',
 	}
 
+	const latestRegFilter: FilterField<InventoryTableRow> = {
+		column: table.getColumn('latestReg'),
+		type: 'number-range',
+		label: t("lastRegistration"),
+		value: '',
+	}
+
 	let planFilters: FilterField<InventoryTableRow>[] = [
 		skuFilter,
 		attachmentsFilter,
@@ -1024,6 +1068,7 @@ export function getTableOverviewFilters(
 		placementFilter,
 		batchFilter,
 		useBatchFilter,
+		latestRegFilter,
 		isBarredFilter,
 	]
 
