@@ -131,8 +131,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+					row.original.product.fileCount > 0 &&
+					'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -144,8 +144,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-							row.original.product.fileCount > 0 &&
-							'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -1060,15 +1060,15 @@ export function getTableOverviewFilters(
 	return planFilters
 }
 
-type DurationDates = {
+type RegistrationDates = {
 	lastDate: Date | null
 	incomingAt: Date | null
 	outgoingAt: Date | null
 	regulatedAt: Date | null
 }
 
-function processRegistrationDates(row: Row<InventoryTableRow>): DurationDates {
-	const dates: DurationDates = row.getLeafRows().reduce(
+function processRegistrationDates(row: Row<InventoryTableRow>): RegistrationDates {
+	const dates: RegistrationDates = row.getLeafRows().reduce(
 		(acc, cur) => {
 			function compareDates(
 				accDate: Date | null,
@@ -1100,7 +1100,7 @@ function processRegistrationDates(row: Row<InventoryTableRow>): DurationDates {
 			incomingAt: null,
 			outgoingAt: null,
 			regulatedAt: null,
-		} as DurationDates,
+		} as RegistrationDates,
 	)
 	return dates
 }
