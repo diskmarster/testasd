@@ -23,7 +23,7 @@ import {
 import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { Table } from '@tanstack/react-table'
-import { format } from 'date-fns'
+import { addDays, addHours, addMinutes, format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 import { useDebouncedCallback } from 'use-debounce'
 import { ScrollArea } from '../ui/scroll-area'
@@ -488,6 +488,12 @@ function FilterDateRange<T>({
 			mode='range'
 			selected={date}
 			onSelect={dateRange => {
+				const newDateRange = dateRange
+				if (newDateRange?.to) {
+					const withHours = addHours(newDateRange.to, 23)
+					const withMinutes = addMinutes(withHours, 59)
+					newDateRange.to = withMinutes
+				}
 				setDate(dateRange)
 				debouncedCallback(dateRange)
 			}}
