@@ -429,8 +429,6 @@ export const inventoryService = {
 					break
 			}
 
-			console.log('upsertData', upsertData)
-
 			const didUpsert = await inventory.upsertInventory(upsertData, trx)
 			if (!didUpsert) {
 				throw new ActionError(
