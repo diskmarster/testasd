@@ -18,7 +18,9 @@ import { emitCustomEvent, useCustomEventListener } from 'react-custom-events'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { base64ToUint8Array, cn } from '@/lib/utils'
+import { useTranslation } from '@/app/i18n/client'
+import { useLanguage } from '@/context/language'
 
 interface Props extends React.ButtonHTMLAttributes<'button'>, VariantProps<typeof buttonVariants> {
 	labelData: ProductLabel[]
@@ -54,6 +56,9 @@ export function ModalProductLabel() {
 	const [height, setHeight] = useState<number>(productLabelSizes['small'][1])
 	const [copies, setCopies] = useState(1)
 
+	const lng = useLanguage()
+	const { t } = useTranslation(lng, "produkter")
+
 	useCustomEventListener('ModalProductLabel', (data: typeof rows) => {
 		setRows(data)
 		setOpen(true)
@@ -67,21 +72,8 @@ export function ModalProductLabel() {
 				products: rows
 			})
 
-			if (!res) {
-				toast("ingen response")
-			}
-
 			if (res?.serverError) {
-				toast(res.serverError)
-			}
-
-			function base64ToUint8Array(base64: string) {
-				const raw = atob(base64)
-				const uint8Array = new Uint8Array(raw.length)
-				for (let i = 0; i < raw.length; i++) {
-					uint8Array[i] = raw.charCodeAt(i)
-				}
-				return uint8Array
+				toast(t("modal-product-label.error-toast"))
 			}
 
 			if (res?.data) {
@@ -103,24 +95,17 @@ export function ModalProductLabel() {
 
 	return (
 		<DialogV2 open={open} onOpenChange={setOpen}>
-			{false && (
-				<DialogTriggerV2 asChild>
-					<Button size="icon" variant="ghost">
-						<Icons.printer className='size-4' />
-					</Button>
-				</DialogTriggerV2>
-			)}
 			<DialogContentV2>
 				<DialogHeaderV2>
 					<div className='flex items-center gap-2'>
 						<Icons.printer className='size-4 text-primary' />
-						<DialogTitleV2>Print labels</DialogTitleV2>
+						<DialogTitleV2>{t("modal-product-label.title")}</DialogTitleV2>
 					</div>
 				</DialogHeaderV2>
 				<div className='px-3'>
 					<div className='space-y-4'>
 						<div className='grid gap-1.5'>
-							<Label>Antal kopier</Label>
+							<Label>{t("modal-product-label.copies")}</Label>
 							<Input
 								type="number"
 								value={copies}
@@ -132,7 +117,7 @@ export function ModalProductLabel() {
 
 						<div className='grid gap-1.5'>
 							<div>
-								<Label>Label størrelse</Label>
+								<Label>{t("modal-product-label.size")}</Label>
 								<p className="text-sm text-muted-foreground">Størrelse angives i millimeter (mm)</p>
 							</div>
 							<div className="flex items-center gap-2 my-4">
@@ -145,14 +130,14 @@ export function ModalProductLabel() {
 										}}
 										size="sm"
 										variant="secondary"
-										className={cn("capitalize w-full border border-transparent", isActive(value) && 'border-primary')}>
-										{key}
+										className={cn("w-full border border-transparent", isActive(value) && 'border-primary')}>
+										{t("modal-product-label.size", { context: key })}
 									</Button>
 								))}
 							</div>
 							<div className="flex items-center gap-2">
 								<div className="grid gap-1.5 w-full">
-									<Label>Længde</Label>
+									<Label>{t("modal-product-label.width")}</Label>
 									<Input
 										type="number"
 										value={width}
@@ -160,7 +145,7 @@ export function ModalProductLabel() {
 									/>
 								</div>
 								<div className="grid gap-1.5 w-full">
-									<Label>Højde</Label>
+									<Label>{t("modal-product-label.height")}</Label>
 									<Input
 										type="number"
 										value={height}
@@ -175,7 +160,7 @@ export function ModalProductLabel() {
 				<DialogFooterV2>
 					<Button onClick={getPdf} className='flex items-center gap-2'>
 						{pending && <Icons.spinner className='size-4 animate-spin' />}
-						Åben Print
+						{t("modal-product-label.print-button")}
 					</Button>
 				</DialogFooterV2>
 			</DialogContentV2>
