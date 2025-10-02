@@ -127,10 +127,6 @@ export async function generateProductLabels(
 		doc.setLineWidth(lineWidth)
 		doc.setDrawColor(226, 231, 240)
 		doc.line(barcodeX - paddingX * 0.75, 0, barcodeX - paddingX * 0.75, height)
-		const dividerX = barcodeX - paddingX * 0.75
-		doc.line(dividerX, 0, dividerX, height)
-		doc.setFillColor(241, 245, 249)
-		doc.rect(dividerX, 0, width - dividerX, height, 'F')
 
 		doc.setFont('helvetica', 'bold')
 		doc.setFontSize(fonts.text1)
