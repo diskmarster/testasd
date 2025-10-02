@@ -13,6 +13,7 @@ import { locationService } from '@/service/location'
 import { Suspense } from 'react'
 import { PageActionsSkeleton, PageActionsWrapper } from './PageActionsWrapper'
 import { OverviewTableWrapper } from './TableWrapper'
+import { ModalProductLabel } from '@/components/inventory/modal-product-label'
 
 interface PageProps extends WithAuthProps {
 	params: {
@@ -100,6 +101,8 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
 					isGrouped={isGrouped}
 				/>
 			</Suspense>
+
+			<ModalProductLabel />
 		</SiteWrapper>
 	)
 }
@@ -153,7 +156,7 @@ function sumQuantities(
 	customerSettings: Pick<CustomerSettings, 'usePlacement'>,
 	customer: Customer,
 ) {
-	return async function (
+	return async function(
 		inventories: FormattedInventory[],
 	): Promise<Map<string, FormattedInventory>> {
 		// build map of inventories
