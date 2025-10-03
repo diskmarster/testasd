@@ -104,6 +104,7 @@
 		"btn-confirm": "Process"
 	},
 	"lastRegistration": "Latest reg.",
+	"lastRegistrationTooltip": "Only shows registrations made after 03/10/2025",
 	"lastRegistrationHoverText": "Time since last registration",
 	"incoming": "Incoming:",
 	"outgoing": "Outoging:",

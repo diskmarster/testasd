@@ -108,6 +108,7 @@
 		"btn-confirm": "Afgangsfør"
 	},
 	"lastRegistration": "Seneste reg.",
+	"lastRegistrationTooltip": "Viser kun registreringer lavet efter 03/10/2025",
 	"lastRegistrationHoverText": "Tid siden seneste registrering",
 	"incoming": "Tilgang:",
 	"outgoing": "Afgang:",
