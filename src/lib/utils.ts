@@ -225,10 +225,6 @@ export function isNullOrUndefined(val: unknown): boolean {
 }
 
 export function base64ToUint8Array(base64: string) {
-	const raw = atob(base64)
-	const uint8Array = new Uint8Array(raw.length)
-	for (let i = 0; i < raw.length; i++) {
-		uint8Array[i] = raw.charCodeAt(i)
-	}
-	return uint8Array
+	const buffer = Buffer.from(base64, 'base64')
+	return new Uint8Array(buffer)
 }
