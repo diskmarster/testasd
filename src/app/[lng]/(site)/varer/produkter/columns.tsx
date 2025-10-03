@@ -1,9 +1,11 @@
 import { I18NLanguage } from '@/app/i18n/settings'
+import { ModalProductLabel, ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/products/product-table-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
 import { hasPermissionByRank } from '@/data/user.types'
@@ -24,6 +26,29 @@ export function getProductOverviewColumns(
 	lng: I18NLanguage,
 	t: (key: string) => string,
 ): ColumnDef<FormattedProduct>[] {
+	const selectCol: ColumnDef<FormattedProduct> = {
+		id: 'select',
+		header: ({ table }) => (
+			<Checkbox
+				checked={
+					table.getIsAllPageRowsSelected() ||
+					(table.getIsSomePageRowsSelected() && 'indeterminate')
+				}
+				onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+				aria-label='Select all'
+			/>
+		),
+		cell: ({ row }) => (
+			<Checkbox
+				checked={row.getIsSelected()}
+				onCheckedChange={value => row.toggleSelected(!!value)}
+				aria-label='Select row'
+			/>
+		),
+		enableSorting: false,
+		enableHiding: false,
+	}
+
 	const skuCol: ColumnDef<FormattedProduct> = {
 		accessorKey: 'sku',
 		header: ({ column }) => (
@@ -51,8 +76,8 @@ export function getProductOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.fileCount != undefined &&
-						row.original.fileCount > 0 &&
-						'block',
+					row.original.fileCount > 0 &&
+					'block',
 				)}>
 				<p>{`${row.original.fileCount}/5`}</p>
 			</div>
@@ -247,7 +272,12 @@ export function getProductOverviewColumns(
 		header: () => null,
 		cell: ({ table, row }) => (
 			<>
-				<ModalShowProductLabel product={row.original} />
+				<ModalProductLabelTrigger labelData={[{
+					text1: row.original.text1,
+					text2: row.original.text2,
+					sku: row.original.sku,
+					barcode: row.original.barcode
+				}]} />
 				<TableOverviewActions
 					integrationSettings={integrationSettings}
 					table={table}
@@ -257,6 +287,9 @@ export function getProductOverviewColumns(
 		),
 		enableHiding: false,
 		enableSorting: false,
+		meta: {
+			rightAlign: true
+		}
 	}
 
 	const useBatchCol: ColumnDef<FormattedProduct> = {
@@ -271,6 +304,7 @@ export function getProductOverviewColumns(
 	}
 
 	const columns = [
+		selectCol,
 		skuCol,
 		attachmentsCol,
 		barcodeCol,

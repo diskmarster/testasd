@@ -214,5 +214,19 @@
 		"product-deleted": "Vare slettet",
 		"sku-copied": "Varenummer kopieret",
 		"copy-failed": "Kunne ikke kopiere varenummer"
+	},
+	"modal-product-label": {
+		"title": "Print labels",
+		"copies": "Antal kopier",
+		"size": "Label størrelse",
+		"size-description": "Størrelse angives i millimeter (mm)",
+		"size_small": "Lille",
+		"size_medium": "Medium",
+		"size_large": "Stor",
+		"size_xlarge": "XL",
+		"width": "Længde",
+		"height": "Højde",
+		"print-button": "Åbn print",
+		"error-toast": "Kunne ikke generere labels"
 	}
 }

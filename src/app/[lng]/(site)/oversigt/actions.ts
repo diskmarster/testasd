@@ -1,6 +1,7 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
+import { generateProductLabels } from '@/lib/pdf/product-label'
 import { authedAction, editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { attachmentService } from '@/service/attachments'
@@ -231,3 +232,30 @@ export const bulkOutgoingAction = authedAction
 			}
 		},
 	)
+
+export const prepareProductLabelsPDFAction = authedAction
+	.schema(
+		z.object({
+			size: z.tuple([z.number(), z.number()]),
+			copies: z.number().optional(),
+			products: z.array(
+				z.object({
+					text1: z.string(),
+					text2: z.optional(z.string()),
+					sku: z.string(),
+					barcode: z.string(),
+				}),
+			),
+		}),
+	)
+	.action(async ({ parsedInput }) => {
+		const pdf = await generateProductLabels(
+			parsedInput.products,
+			parsedInput.size,
+			parsedInput.copies,
+		)
+		const blob = pdf.output('blob')
+		const buffer = Buffer.from(await blob.arrayBuffer())
+		const base64String = buffer.toString('base64')
+		return { pdf: base64String }
+	})

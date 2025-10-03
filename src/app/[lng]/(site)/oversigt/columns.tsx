@@ -1,5 +1,6 @@
 import { I18NLanguage } from '@/app/i18n/settings'
 import { DurationHoverCard } from '@/components/inventory/duration-hover-card'
+import { ModalProductLabel, ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
@@ -643,7 +644,12 @@ export function getTableOverviewColumns(
 		accessorKey: 'actions',
 		header: () => null,
 		aggregatedCell: ({ row }) => (
-			<ModalShowProductLabel product={row.original.product} />
+			<ModalProductLabelTrigger labelData={[{
+				text1: row.original.product.text1,
+				text2: row.original.product.text2,
+				sku: row.original.product.sku,
+				barcode: row.original.product.barcode
+			}]} />
 		),
 		cell: ({ table, row }) =>
 			/*@ts-ignore*/

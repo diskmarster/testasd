@@ -13,6 +13,7 @@ import { productService } from '@/service/products'
 import { Suspense } from 'react'
 import { PageActionsSkeleton, PageActionsWrapper } from './PageActionsWrapper'
 import { TableWrapper } from './TableWrapper'
+import { ModalProductLabel } from '@/components/inventory/modal-product-label'
 
 interface PageProps extends WithAuthProps {
 	params: {
@@ -81,6 +82,7 @@ async function Page({ params: { lng }, user, customer }: PageProps) {
 				/>
 			</Suspense>
 			<DeleteProductModal />
+			<ModalProductLabel />
 		</SiteWrapper>
 	)
 }

@@ -45,7 +45,7 @@ export function middleware(req: NextRequest) {
 		const lngInReferer = languages.find(l =>
 			refererUrl.pathname.startsWith(`/${l}`),
 		)
-		const response = NextResponse.next({ headers })
+		const response = NextResponse.next({ request: { headers } })
 		if (lngInReferer) response.cookies.set(cookieName, lngInReferer)
 		return response
 	}
@@ -56,5 +56,5 @@ export function middleware(req: NextRequest) {
 
 	req.cookies.set('lang', lang)
 
-	return NextResponse.next({ headers })
+	return NextResponse.next({ request: { headers } })
 }
