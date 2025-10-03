@@ -36,7 +36,7 @@ function calculateLayout(size: LabelSize) {
 		paddingY: Math.max(0.5, 2.5 * scale),
 		paddingX: Math.max(2, 2.5 * scale),
 		lineWidth: Math.max(0.15, 0.2 * scale),
-		barcodeSize: Math.min(height * 0.65, width * 0.35),
+		barcodeSize: height * 0.65,
 	}
 }
 
@@ -100,17 +100,17 @@ export async function generateProductLabels(
 	const barcodeBlobs = await Promise.all(barcodePromises)
 
 	const barcodeArrays = await Promise.all(
-		barcodeBlobs.map(async blob => {
-			if (!blob) {
-				throw new Error('Barcode generation failed')
+		barcodeBlobs.map(async res => {
+			if (!res.success) {
+				throw new Error(res.error)
 			}
-			return new Uint8Array(await blob.arrayBuffer())
+			return res.barcode
 		}),
 	)
 
 	for (let i = 0; i < labels.length; i++) {
 		const product = labels[i]
-		const barcodeArray = barcodeArrays[i]
+		const barcode = barcodeArrays[i]
 
 		if (i > 0) {
 			doc.addPage(size, 'landscape')
@@ -133,7 +133,7 @@ export async function generateProductLabels(
 		doc.setTextColor(20, 20, 20)
 
 		const text1Lines = doc.splitTextToSize(product.text1, textWidth)
-		const text1Height = doc.getTextDimensions(text1Lines, {
+		const text1Dim = doc.getTextDimensions(text1Lines, {
 			fontSize: fonts.text1,
 		})
 		doc.text(text1Lines, paddingX, paddingY, {
@@ -142,7 +142,7 @@ export async function generateProductLabels(
 			maxWidth: textWidth,
 		})
 
-		let currentY = paddingY + text1Height['h'] + paddingY
+		let currentY = paddingY + text1Dim['h'] + paddingY
 
 		if (product.text2) {
 			doc.setFont('helvetica', 'normal')
@@ -166,9 +166,10 @@ export async function generateProductLabels(
 			baseline: 'middle',
 		})
 
+		const barcodeBytes = await barcode.bytes()
 		doc.addImage(
-			barcodeArray,
-			'PNG',
+			barcodeBytes,
+			barcode.imageFormat().toUpperCase(),
 			barcodeX,
 			barcodeY,
 			barcodeSize,
