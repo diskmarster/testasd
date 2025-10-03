@@ -97,10 +97,9 @@ export async function generateProductLabels(
 		}),
 	)
 
-	const barcodeBlobs = await Promise.all(barcodePromises)
-
+	const barcodeResponses = await Promise.all(barcodePromises)
 	const barcodeArrays = await Promise.all(
-		barcodeBlobs.map(async res => {
+		barcodeResponses.map(async res => {
 			if (!res.success) {
 				throw new Error(res.error)
 			}
