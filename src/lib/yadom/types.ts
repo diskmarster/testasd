@@ -1,3 +1,5 @@
+import { Barcode } from './barcode'
+
 export enum BarcodeType {
 	QR = 'qr',
 	Code128 = 'code128',
@@ -30,3 +32,21 @@ export type GS1BarcodeRequest = {
 	imageFormat?: ImageFormat
 	quietZone?: number
 }
+
+export type BarcodeAPIResponseError = {
+	error: string
+}
+
+type Success = {
+	success: true
+	error?: never
+	barcode: Barcode
+}
+
+type Failed = {
+	success: false
+	error: string
+	barcode?: never
+}
+
+export type GenerateResponse = Success | Failed

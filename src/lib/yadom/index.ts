@@ -1,79 +1,103 @@
-import { BarcodeRequest } from './types'
+import { Barcode } from './barcode'
+import {
+	BarcodeAPIResponseError,
+	BarcodeRequest,
+	BarcodeType,
+	GenerateResponse,
+	GS1BarcodeRequest,
+	ImageFormat,
+} from './types'
 
 class BarcodeGenerator {
+	private apiKey = '' // implementation tot come
 	private baseUrl = 'https://barcodes.yadom.io/v1'
 
 	constructor() {}
 
-	async generateQR(req: BarcodeRequest) {
-		try {
-			const response = await fetch(`${this.baseUrl}/barcodes/qr`, {
-				method: 'POST',
-				body: JSON.stringify(req),
-			})
-
-			if (!response.ok) {
-				return
+	async generateQR(req: BarcodeRequest): Promise<GenerateResponse> {
+		const [barcode, error] = await this.fetchBarcode(
+			`${this.baseUrl}/barcodes/qr`,
+			BarcodeType.QR,
+			req,
+		)
+		if (error) {
+			return {
+				success: false,
+				error: error.message,
 			}
-
-			if (this.isContentType(response, 'application/json')) {
-				return
-			}
-
-			if (
-				this.isContentType(response, 'image/png') ||
-				this.isContentType(response, 'image/jpeg')
-			) {
-				let blob = new Blob()
-
-				try {
-					blob = await response.blob()
-				} catch (err) {
-					return
-				}
-
-				return blob
-			}
-
-			return
-		} catch (err) {
-			return
+		}
+		return {
+			success: true,
+			barcode: barcode,
 		}
 	}
 
-	async generateDatamatrix(req: BarcodeRequest) {
+	async generateDatamatrix(req: BarcodeRequest): Promise<GenerateResponse> {
+		const [barcode, error] = await this.fetchBarcode(
+			`${this.baseUrl}/barcodes/datamatrix`,
+			BarcodeType.Datamatrix,
+			req,
+		)
+		if (error) {
+			return {
+				success: false,
+				error: error.message,
+			}
+		}
+		return {
+			success: true,
+			barcode: barcode,
+		}
+	}
+
+	private async fetchBarcode(
+		url: string,
+		type: BarcodeType,
+		req: BarcodeRequest | GS1BarcodeRequest,
+	): Promise<[Barcode, null] | [null, Error]> {
+		if (!req.imageFormat) {
+			req.imageFormat = ImageFormat.PNG
+		}
 		try {
-			const response = await fetch(`${this.baseUrl}/barcodes/datamatrix`, {
+			const response = await fetch(url, {
 				method: 'POST',
 				body: JSON.stringify(req),
+				headers: {
+					'X-API-Key': this.apiKey,
+				},
 			})
-
 			if (!response.ok) {
-				return
-			}
-
-			if (this.isContentType(response, 'application/json')) {
-				return
-			}
-
-			if (
-				this.isContentType(response, 'image/png') ||
-				this.isContentType(response, 'image/jpeg')
-			) {
-				let blob = new Blob()
-
-				try {
-					blob = await response.blob()
-				} catch (err) {
-					return
+				let messege = 'Unknown error occured'
+				if (this.isContentType(response, 'application/json')) {
+					let json
+					try {
+						json = (await response.json()) as BarcodeAPIResponseError
+					} catch (err) {
+						return [null, err as Error]
+					}
+					messege = json.error
 				}
-
-				return blob
+				if (this.isContentType(response, 'text/plain')) {
+					let text
+					try {
+						text = await response.text()
+					} catch (err) {
+						return [null, err as Error]
+					}
+					messege = text
+				}
+				return [null, new Error(messege)]
 			}
-
-			return
+			let blob
+			try {
+				blob = await response.blob()
+			} catch (err) {
+				return [null, err as Error]
+			}
+			const barcode = new Barcode(blob, type, req.imageFormat)
+			return [barcode, null]
 		} catch (err) {
-			return
+			return [null, err as Error]
 		}
 	}
 
