@@ -11,7 +11,7 @@ import {
 import { Button, buttonVariants } from '../ui/button'
 import { Icons } from '../ui/icons'
 import React, { useState, useTransition } from 'react'
-import { preparePDFAction } from '@/app/[lng]/(site)/oversigt/actions'
+import { prepareProductLabelsPDFAction } from '@/app/[lng]/(site)/oversigt/actions'
 import { toast } from 'sonner'
 import { ProductLabel, productLabelSizes } from '@/lib/pdf/product-label'
 import { emitCustomEvent, useCustomEventListener } from 'react-custom-events'
@@ -66,7 +66,7 @@ export function ModalProductLabel() {
 
 	function getPdf() {
 		startTransition(async () => {
-			const res = await preparePDFAction({
+			const res = await prepareProductLabelsPDFAction({
 				size: [width, height],
 				copies,
 				products: rows

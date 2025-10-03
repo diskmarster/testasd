@@ -233,7 +233,7 @@ export const bulkOutgoingAction = authedAction
 		},
 	)
 
-export const preparePDFAction = authedAction
+export const prepareProductLabelsPDFAction = authedAction
 	.schema(
 		z.object({
 			size: z.tuple([z.number(), z.number()]),
