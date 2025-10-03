@@ -254,6 +254,8 @@ export const prepareProductLabelsPDFAction = authedAction
 			parsedInput.size,
 			parsedInput.copies,
 		)
-		const base64String = pdf.output('datauristring').split(',')[1]
+		const blob = pdf.output('blob')
+		const buffer = Buffer.from(await blob.arrayBuffer())
+		const base64String = buffer.toString('base64')
 		return { pdf: base64String }
 	})
