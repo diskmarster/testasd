@@ -88,7 +88,7 @@ export async function generateProductLabels(
 	)
 
 	const barcodePromises = labels.map(product =>
-		yadom.generateDatamatrix({
+		yadom.generateQR({
 			data: product.barcode,
 			imageFormat: ImageFormat.PNG,
 			width: 190,
@@ -146,7 +146,7 @@ export async function generateProductLabels(
 		if (product.text2) {
 			doc.setFont('helvetica', 'normal')
 			doc.setFontSize(fonts.text2)
-			doc.setTextColor(100, 100, 100)
+			doc.setTextColor(0, 0, 0)
 
 			const text2Lines = doc.splitTextToSize(product.text2, textWidth)
 			doc.text(text2Lines, paddingX, currentY, {
@@ -160,7 +160,7 @@ export async function generateProductLabels(
 
 		doc.setFont('helvetica', 'normal')
 		doc.setFontSize(fonts.sku)
-		doc.setTextColor(100, 100, 100)
+		doc.setTextColor(0, 0, 0)
 		doc.text(`Varenr.: ${product.sku}`, paddingX, skuY, {
 			baseline: 'middle',
 		})
