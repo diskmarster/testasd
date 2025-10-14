@@ -228,3 +228,10 @@ export function base64ToUint8Array(base64: string) {
 	const buffer = Buffer.from(base64, 'base64')
 	return new Uint8Array(buffer)
 }
+
+export function truncate(str: string, length: number): string {
+	if (str.length > length) {
+		return str.slice(0, length) + '...'
+	}
+	return str
+}

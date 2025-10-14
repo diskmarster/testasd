@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf'
+import { truncate } from '../utils'
 import { createYadom } from '../yadom'
 import { ImageFormat } from '../yadom/types'
 
@@ -131,7 +132,10 @@ export async function generateProductLabels(
 		doc.setFontSize(fonts.text1)
 		doc.setTextColor(20, 20, 20)
 
-		const text1Lines = doc.splitTextToSize(product.text1, textWidth)
+		const text1Lines = doc.splitTextToSize(
+			truncate(product.text1, 64),
+			textWidth,
+		)
 		const text1Dim = doc.getTextDimensions(text1Lines, {
 			fontSize: fonts.text1,
 		})
@@ -148,7 +152,10 @@ export async function generateProductLabels(
 			doc.setFontSize(fonts.text2)
 			doc.setTextColor(0, 0, 0)
 
-			const text2Lines = doc.splitTextToSize(product.text2, textWidth)
+			const text2Lines = doc.splitTextToSize(
+				truncate(product.text2, 42),
+				textWidth,
+			)
 			doc.text(text2Lines, paddingX, currentY, {
 				baseline: 'top',
 				lineHeightFactor: 1.1,
