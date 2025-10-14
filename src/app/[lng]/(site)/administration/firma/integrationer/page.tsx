@@ -4,6 +4,8 @@ import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { Suspense } from 'react'
 import { IntegrationsWrapper } from './integrations-wrapper'
 
+export const maxDuration = 120
+
 interface Props extends WithAuthProps {
 	params: {
 		lng: string

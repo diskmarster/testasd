@@ -122,6 +122,7 @@ export const webhookService = {
 						const zeroInventory = await this.createZeroInventories(
 							customerID,
 							newProduct.id,
+							tx,
 						)
 						if (!zeroInventory) {
 							try {
