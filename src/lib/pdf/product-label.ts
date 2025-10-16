@@ -36,7 +36,7 @@ function calculateLayout(size: LabelSize) {
 		},
 		paddingY: Math.max(0.5, 2.5 * scale),
 		paddingX: Math.max(2, 2.5 * scale),
-		lineWidth: Math.max(0.15, 0.2 * scale),
+		lineWidth: Math.max(0.25, 0.2 * scale),
 		barcodeSize: height * 0.65,
 	}
 }
@@ -124,8 +124,9 @@ export async function generateProductLabels(
 		const barcodeX = width - barcodeSize - paddingX
 		const barcodeY = (height - barcodeSize) / 2
 
+		console.log('line width', lineWidth)
 		doc.setLineWidth(lineWidth)
-		doc.setDrawColor(226, 231, 240)
+		doc.setDrawColor(210, 210, 210)
 		doc.line(barcodeX - paddingX * 0.75, 0, barcodeX - paddingX * 0.75, height)
 
 		doc.setFont('helvetica', 'bold')
