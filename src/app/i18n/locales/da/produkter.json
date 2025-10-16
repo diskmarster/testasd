@@ -224,7 +224,7 @@
 		"size_medium": "Medium",
 		"size_large": "Stor",
 		"size_xlarge": "XL",
-		"width": "Længde",
+		"width": "Bredde",
 		"height": "Højde",
 		"print-button": "Åbn print",
 		"error-toast": "Kunne ikke generere labels"

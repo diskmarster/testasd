@@ -221,7 +221,7 @@
 		"size_medium": "Medium",
 		"size_large": "Large",
 		"size_xlarge": "XLarge",
-		"width": "Length",
+		"width": "Width",
 		"height": "Height",
 		"print-button": "Open print",
 		"error-toast": "Could not generate labels"

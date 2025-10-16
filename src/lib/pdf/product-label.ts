@@ -132,8 +132,11 @@ export async function generateProductLabels(
 		doc.setFontSize(fonts.text1)
 		doc.setTextColor(20, 20, 20)
 
+		let text1Truncate = size[1]
+		let text2Truncate = size[1]
+
 		const text1Lines = doc.splitTextToSize(
-			truncate(product.text1, 64),
+			truncate(product.text1, text1Truncate),
 			textWidth,
 		)
 		const text1Dim = doc.getTextDimensions(text1Lines, {
@@ -153,7 +156,7 @@ export async function generateProductLabels(
 			doc.setTextColor(0, 0, 0)
 
 			const text2Lines = doc.splitTextToSize(
-				truncate(product.text2, 42),
+				truncate(product.text2, text2Truncate),
 				textWidth,
 			)
 			doc.text(text2Lines, paddingX, currentY, {
@@ -181,6 +184,19 @@ export async function generateProductLabels(
 			barcodeSize,
 			barcodeSize,
 		)
+
+		const barcodeTextY = barcodeY + barcodeSize + 0.5
+		const barcodeTextFontSize = fonts.sku * 0.9
+
+		doc.setFont('helvetica', 'normal')
+		doc.setFontSize(barcodeTextFontSize)
+		doc.setTextColor(0, 0, 0)
+
+		const barcodeTextX = barcodeX + barcodeSize / 2
+		doc.text(product.barcode, barcodeTextX, barcodeTextY, {
+			baseline: 'top',
+			align: 'center',
+		})
 	}
 
 	return doc
