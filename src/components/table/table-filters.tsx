@@ -23,7 +23,7 @@ import {
 import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { Table } from '@tanstack/react-table'
-import { addHours, addMinutes, endOfDay, format } from 'date-fns'
+import { endOfDay, format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 import { useDebouncedCallback } from 'use-debounce'
 import { ScrollArea } from '../ui/scroll-area'
@@ -425,7 +425,7 @@ function GlobalFilter<T>({
 				className={cn(
 					'transition-all absolute right-1/2 top-1/2 size-4 -translate-y-1/2 translate-x-1/2 pointer-events-none',
 					(isFocused || search != '') &&
-					'right-3 translate-x-0 rotate-90 text-muted-foreground',
+						'right-3 translate-x-0 rotate-90 text-muted-foreground',
 				)}
 			/>
 			<Input

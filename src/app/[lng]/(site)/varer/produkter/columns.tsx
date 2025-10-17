@@ -1,6 +1,5 @@
 import { I18NLanguage } from '@/app/i18n/settings'
-import { ModalProductLabel, ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
-import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
+import { ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
 import { TableOverviewActions } from '@/components/products/product-table-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
@@ -76,8 +75,8 @@ export function getProductOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.fileCount != undefined &&
-					row.original.fileCount > 0 &&
-					'block',
+						row.original.fileCount > 0 &&
+						'block',
 				)}>
 				<p>{`${row.original.fileCount}/5`}</p>
 			</div>
@@ -272,12 +271,16 @@ export function getProductOverviewColumns(
 		header: () => null,
 		cell: ({ table, row }) => (
 			<>
-				<ModalProductLabelTrigger labelData={[{
-					text1: row.original.text1,
-					text2: row.original.text2,
-					sku: row.original.sku,
-					barcode: row.original.barcode
-				}]} />
+				<ModalProductLabelTrigger
+					labelData={[
+						{
+							text1: row.original.text1,
+							text2: row.original.text2,
+							sku: row.original.sku,
+							barcode: row.original.barcode,
+						},
+					]}
+				/>
 				<TableOverviewActions
 					integrationSettings={integrationSettings}
 					table={table}
@@ -288,8 +291,8 @@ export function getProductOverviewColumns(
 		enableHiding: false,
 		enableSorting: false,
 		meta: {
-			rightAlign: true
-		}
+			rightAlign: true,
+		},
 	}
 
 	const useBatchCol: ColumnDef<FormattedProduct> = {

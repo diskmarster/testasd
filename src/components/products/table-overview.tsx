@@ -39,10 +39,10 @@ import {
 import { User } from 'lucia'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import { ExportSelectedButton } from '../inventory/button-export-selected'
+import { TableFloatingBar } from '../table/table-floating-bar'
 import { TableHeaderGroup } from '../table/table-header-group'
 import { TableToolbar } from '../table/table-toolbar'
-import { TableFloatingBar } from '../table/table-floating-bar'
-import { ExportSelectedButton } from '../inventory/button-export-selected'
 import { PrintSelectedButton } from './action-bar-print'
 
 const ROW_SELECTION_ENABLED = true
@@ -215,9 +215,7 @@ export function ProductOverview({
 					{table => (
 						<>
 							<ExportSelectedButton table={table} />
-							<PrintSelectedButton
-								table={table}
-							/>
+							<PrintSelectedButton table={table} />
 						</>
 					)}
 				</TableFloatingBar>

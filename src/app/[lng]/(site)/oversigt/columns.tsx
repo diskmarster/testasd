@@ -1,6 +1,6 @@
 import { I18NLanguage } from '@/app/i18n/settings'
 import { DurationHoverCard } from '@/components/inventory/duration-hover-card'
-import { ModalProductLabel, ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
+import { ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
 import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
@@ -132,8 +132,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-					row.original.product.fileCount > 0 &&
-					'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -145,8 +145,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+							row.original.product.fileCount > 0 &&
+							'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -644,12 +644,16 @@ export function getTableOverviewColumns(
 		accessorKey: 'actions',
 		header: () => null,
 		aggregatedCell: ({ row }) => (
-			<ModalProductLabelTrigger labelData={[{
-				text1: row.original.product.text1,
-				text2: row.original.product.text2,
-				sku: row.original.product.sku,
-				barcode: row.original.product.barcode
-			}]} />
+			<ModalProductLabelTrigger
+				labelData={[
+					{
+						text1: row.original.product.text1,
+						text2: row.original.product.text2,
+						sku: row.original.product.sku,
+						barcode: row.original.product.barcode,
+					},
+				]}
+			/>
 		),
 		cell: ({ table, row }) =>
 			/*@ts-ignore*/
@@ -696,7 +700,11 @@ export function getTableOverviewColumns(
 	const latestRegCol: ColumnDef<InventoryTableRow> = {
 		accessorKey: 'latestReg',
 		header: ({ column }) => (
-			<TableHeader column={column} title={t('lastRegistration')} tooltip={t("lastRegistrationTooltip")} />
+			<TableHeader
+				column={column}
+				title={t('lastRegistration')}
+				tooltip={t('lastRegistrationTooltip')}
+			/>
 		),
 		aggregatedCell: ({ row }) => {
 			const dates = processRegistrationDates(row)

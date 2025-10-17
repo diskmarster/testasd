@@ -2,6 +2,7 @@ import { serverTranslation } from '@/app/i18n/index'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { SkeletonTable } from '@/components/common/skeleton-table'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
+import { ModalProductLabel } from '@/components/inventory/modal-product-label'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByPlan } from '@/data/user.types'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
@@ -13,7 +14,6 @@ import { locationService } from '@/service/location'
 import { Suspense } from 'react'
 import { PageActionsSkeleton, PageActionsWrapper } from './PageActionsWrapper'
 import { OverviewTableWrapper } from './TableWrapper'
-import { ModalProductLabel } from '@/components/inventory/modal-product-label'
 
 interface PageProps extends WithAuthProps {
 	params: {
@@ -156,7 +156,7 @@ function sumQuantities(
 	customerSettings: Pick<CustomerSettings, 'usePlacement'>,
 	customer: Customer,
 ) {
-	return async function(
+	return async function (
 		inventories: FormattedInventory[],
 	): Promise<Map<string, FormattedInventory>> {
 		// build map of inventories

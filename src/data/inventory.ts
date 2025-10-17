@@ -112,6 +112,17 @@ export const inventory = {
 					group: GROUP_COLS.name,
 					fileCount: count(attachmentsTable.id),
 					supplierName: supplierTable.name,
+					isReorder: sql`${exists(
+						trx
+							.select()
+							.from(reorderTable)
+							.where(
+								and(
+									eq(reorderTable.productID, inventoryTable.productID),
+									eq(reorderTable.locationID, inventoryTable.locationID),
+								),
+							),
+					)}`.mapWith(Boolean),
 				},
 				placement: { ...PLACEMENT_COLS },
 				batch: { ...BATCH_COLS },
@@ -978,6 +989,24 @@ export const inventory = {
 					group: GROUP_COLS.name,
 					fileCount: count(attachmentsTable.id),
 					supplierName: supplierTable.name,
+					isReorder: sql`${exists(
+						trx
+							.select()
+							.from(defaultPlacementTable)
+							.where(
+								and(
+									eq(defaultPlacementTable.productID, inventoryTable.productID),
+									eq(
+										defaultPlacementTable.placementID,
+										inventoryTable.placementID,
+									),
+									eq(
+										defaultPlacementTable.locationID,
+										inventoryTable.locationID,
+									),
+								),
+							),
+					)}`.mapWith(Boolean),
 				},
 				placement: { ...PLACEMENT_COLS },
 				batch: { ...BATCH_COLS },

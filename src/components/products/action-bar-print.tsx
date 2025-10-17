@@ -1,6 +1,6 @@
+import { FormattedProduct } from '@/data/products.types'
 import { Table } from '@tanstack/react-table'
 import { ModalProductLabelTrigger } from '../inventory/modal-product-label'
-import { FormattedProduct } from '@/data/products.types'
 
 export function PrintSelectedButton({
 	table,
@@ -17,9 +17,8 @@ export function PrintSelectedButton({
 	return (
 		<ModalProductLabelTrigger
 			className='size-9'
-			variant="outline"
+			variant='outline'
 			labelData={labelData}
 		/>
 	)
 }
-

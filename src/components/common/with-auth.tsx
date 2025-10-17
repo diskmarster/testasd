@@ -5,6 +5,7 @@ import {
 	UserRole,
 } from '@/data/user.types'
 import { Customer } from '@/lib/database/schema/customer'
+import { locationService } from '@/service/location'
 import { sessionService } from '@/service/session'
 import { User } from 'lucia'
 import { headers } from 'next/headers'
@@ -14,6 +15,7 @@ import React from 'react'
 export type WithAuthProps = {
 	user: User
 	customer: Customer
+	currentLocationID: string
 	pathname: string
 }
 
@@ -40,12 +42,15 @@ export function withAuth<P extends WithAuthProps>(
 			redirect('/oversigt')
 		}
 
+		const location = await locationService.getLastVisited(user.id)
+
 		return (
 			<WrappedComponent
 				{...(props as P)}
 				user={user}
 				customer={customer}
 				pathname={pathname}
+				currentLocationID={location}
 			/>
 		)
 	}
