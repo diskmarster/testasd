@@ -1,8 +1,8 @@
 import { serverTranslation } from '@/app/i18n'
-import { ModalShowPlacementLabel } from '@/components/admin/modal-show-placement-label'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
 import { ModalCreatePlacement } from '@/components/inventory/modal-create-placement'
+import { ModalPlacementLabel } from '@/components/inventory/modal-placement-label'
 import { TablePlacement } from '@/components/inventory/table-placements'
 import { hasPermissionByRank } from '@/data/user.types'
 import { inventoryService } from '@/service/inventory'
@@ -33,7 +33,7 @@ async function Page({ params: { lng }, user, pathname }: PageProps) {
 			}>
 			<TablePlacement data={allPlacement} user={user} />
 
-			<ModalShowPlacementLabel />
+			<ModalPlacementLabel />
 		</SiteWrapper>
 	)
 }

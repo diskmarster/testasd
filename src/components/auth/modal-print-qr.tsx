@@ -7,7 +7,6 @@ import { QRCodeSVG } from 'qrcode.react'
 import { useRef, useState } from 'react'
 import { useCustomEventListener } from 'react-custom-events'
 import { ButtonOpenPrint } from '../inventory/button-open-print'
-import { LabelSize } from '../inventory/modal-show-product-label'
 import {
 	Credenza,
 	CredenzaBody,
@@ -26,9 +25,11 @@ import {
 	SelectValue,
 } from '../ui/select'
 
-interface Props {}
+interface Props { }
 
-export function ModalQrPrint({}: Props) {
+type LabelSize = 'small' | 'medium' | 'large'
+
+export function ModalQrPrint({ }: Props) {
 	const [open, setOpen] = useState(false)
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'other')

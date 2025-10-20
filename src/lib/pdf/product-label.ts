@@ -88,29 +88,25 @@ export async function generateProductLabels(
 		Array(copies).fill(product),
 	)
 
-	const barcodePromises = labels.map(product =>
-		yadom.generateQR({
+	const barcodePromises = labels.map(async product => {
+		const generateRes = await yadom.generateQR({
 			data: product.barcode,
 			imageFormat: ImageFormat.PNG,
 			width: 190,
 			height: 190,
 			quietZone: 10,
-		}),
-	)
+		})
+		if (!generateRes.success) {
+			throw new Error(generateRes.error)
+		}
+		return generateRes.barcode
+	})
 
 	const barcodeResponses = await Promise.all(barcodePromises)
-	const barcodeArrays = await Promise.all(
-		barcodeResponses.map(async res => {
-			if (!res.success) {
-				throw new Error(res.error)
-			}
-			return res.barcode
-		}),
-	)
 
 	for (let i = 0; i < labels.length; i++) {
 		const product = labels[i]
-		const barcode = barcodeArrays[i]
+		const barcode = barcodeResponses[i]
 
 		if (i > 0) {
 			doc.addPage(size, 'landscape')

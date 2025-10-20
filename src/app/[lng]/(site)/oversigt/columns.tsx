@@ -1,7 +1,6 @@
 import { I18NLanguage } from '@/app/i18n/settings'
 import { DurationHoverCard } from '@/components/inventory/duration-hover-card'
 import { ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
-import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField, NumberRange } from '@/components/table/table-toolbar'
@@ -132,8 +131,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+					row.original.product.fileCount > 0 &&
+					'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -145,8 +144,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-							row.original.product.fileCount > 0 &&
-							'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -668,7 +667,6 @@ export function getTableOverviewColumns(
 				) : null
 			) : (
 				<div className='flex gap-2'>
-					<ModalShowProductLabel product={row.original.product} />
 					{hasPermissionByRank(user.role, 'bruger') && (
 						<TableOverviewActions
 							row={row}

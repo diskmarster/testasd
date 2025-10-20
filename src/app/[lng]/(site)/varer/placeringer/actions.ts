@@ -1,12 +1,14 @@
 'use server'
 
 import { serverTranslation } from '@/app/i18n'
-import { editableAction, getSchema } from '@/lib/safe-action'
+import { generatePlacementLabels } from '@/lib/pdf/placement-lable'
+import { authedAction, editableAction, getSchema } from '@/lib/safe-action'
 import { ActionError } from '@/lib/safe-action/error'
 import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 import {
 	createPlacementValidation,
 	toggleBarredPlacementValidation,
@@ -79,4 +81,28 @@ export const toggleBarredPlacementAction = editableAction
 			throw new ActionError(t('placement-action.placement-not-updated-barred'))
 		}
 		revalidatePath(`/${ctx.lang}/varer/placeringer`)
+	})
+
+export const preparePlacementLabelsPDFAction = authedAction
+	.schema(
+		z.object({
+			size: z.tuple([z.number(), z.number()]),
+			copies: z.number().optional(),
+			placements: z.array(
+				z.object({
+					name: z.string(),
+				}),
+			),
+		}),
+	)
+	.action(async ({ parsedInput }) => {
+		const pdf = await generatePlacementLabels(
+			parsedInput.placements,
+			parsedInput.size,
+			parsedInput.copies,
+		)
+		const blob = pdf.output('blob')
+		const buffer = Buffer.from(await blob.arrayBuffer())
+		const base64String = buffer.toString('base64')
+		return { pdf: base64String }
 	})
