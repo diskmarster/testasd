@@ -1,10 +1,7 @@
 'use client'
 
-import { preparePlacementLabelsPDFAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
-import { Placement } from '@/lib/database/schema/inventory'
-import { PlacementLabel } from '@/lib/pdf/placement-lable'
 import { productLabelSizes } from '@/lib/pdf/product-label'
 import { base64ToUint8Array, cn } from '@/lib/utils'
 import { Table } from '@tanstack/react-table'
@@ -23,6 +20,10 @@ import {
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
+import { preparePlacementLabelsPDFAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
+import { PlacementLabel, placementLabelSizes } from '@/lib/pdf/placement-lable'
+import { Placement } from '@/lib/database/schema/inventory'
+import { useLocalStorage } from '@uidotdev/usehooks'
 
 interface Props
 	extends React.ButtonHTMLAttributes<'button'>,
@@ -71,8 +72,8 @@ export function ModalPlacementLabel() {
 	const [rows, setRows] = useState<PlacementLabel[]>([])
 	const [pending, startTransition] = useTransition()
 
-	const [width, setWidth] = useState<number>(productLabelSizes['small'][0])
-	const [height, setHeight] = useState<number>(productLabelSizes['small'][1])
+	const [width, setWidth] = useLocalStorage("placement-label-width", placementLabelSizes['small'][0])
+	const [height, setHeight] = useLocalStorage("placement-label-height", placementLabelSizes['small'][1])
 	const [copies, setCopies] = useState(1)
 
 	const lng = useLanguage()

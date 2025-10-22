@@ -1,5 +1,6 @@
 'use client'
 
+import { useLocalStorage } from "@uidotdev/usehooks"
 import { prepareProductLabelsPDFAction } from '@/app/[lng]/(site)/oversigt/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
@@ -23,7 +24,7 @@ import { Label } from '../ui/label'
 
 interface Props
 	extends React.ButtonHTMLAttributes<'button'>,
-		VariantProps<typeof buttonVariants> {
+	VariantProps<typeof buttonVariants> {
 	labelData: ProductLabel[]
 }
 
@@ -53,8 +54,8 @@ export function ModalProductLabel() {
 	const [rows, setRows] = useState<ProductLabel[]>([])
 	const [pending, startTransition] = useTransition()
 
-	const [width, setWidth] = useState<number>(productLabelSizes['small'][0])
-	const [height, setHeight] = useState<number>(productLabelSizes['small'][1])
+	const [width, setWidth] = useLocalStorage("product-label-width", productLabelSizes['small'][0])
+	const [height, setHeight] = useLocalStorage("product-label-height", productLabelSizes['small'][1])
 	const [copies, setCopies] = useState(1)
 
 	const lng = useLanguage()
