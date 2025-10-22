@@ -1,10 +1,13 @@
 'use client'
 
-import { prepareProductLabelsPDFAction } from '@/app/[lng]/(site)/oversigt/actions'
+import { preparePlacementLabelsPDFAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
 import { useTranslation } from '@/app/i18n/client'
 import { useLanguage } from '@/context/language'
-import { ProductLabel, productLabelSizes } from '@/lib/pdf/product-label'
+import { Placement } from '@/lib/database/schema/inventory'
+import { PlacementLabel } from '@/lib/pdf/placement-lable'
+import { productLabelSizes } from '@/lib/pdf/product-label'
 import { base64ToUint8Array, cn } from '@/lib/utils'
+import { Table } from '@tanstack/react-table'
 import { VariantProps } from 'class-variance-authority'
 import React, { useState, useTransition } from 'react'
 import { emitCustomEvent, useCustomEventListener } from 'react-custom-events'
@@ -20,23 +23,15 @@ import {
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import { preparePlacementLabelsPDFAction } from '@/app/[lng]/(site)/varer/placeringer/actions'
-import { PlacementLabel } from '@/lib/pdf/placement-lable'
-import { Table } from '@tanstack/react-table'
-import { Placement } from '@/lib/database/schema/inventory'
 
 interface Props
 	extends React.ButtonHTMLAttributes<'button'>,
-	VariantProps<typeof buttonVariants> {
+		VariantProps<typeof buttonVariants> {
 	labelData: PlacementLabel[]
 }
 
 // used in table action bar
-export function PrintSelectedButton({
-	table,
-}: {
-	table: Table<Placement>
-}) {
+export function PrintSelectedButton({ table }: { table: Table<Placement> }) {
 	const selectedRows = table.getSelectedRowModel().rows
 	const labelData = selectedRows.map(r => ({
 		name: r.original.name,
@@ -142,8 +137,10 @@ export function ModalPlacementLabel() {
 
 						<div className='grid gap-1.5'>
 							<div>
-								<Label>{t("modal-product-label.size")}</Label>
-								<p className="text-sm text-muted-foreground">{t('modal-product-label.size-description')}</p>
+								<Label>{t('modal-product-label.size')}</Label>
+								<p className='text-sm text-muted-foreground'>
+									{t('modal-product-label.size-description')}
+								</p>
 							</div>
 							<div className='flex items-center gap-2 my-4'>
 								{Object.entries(productLabelSizes).map(([key, value]) => (

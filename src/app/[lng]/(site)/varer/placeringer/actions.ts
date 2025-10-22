@@ -106,3 +106,33 @@ export const preparePlacementLabelsPDFAction = authedAction
 		const base64String = buffer.toString('base64')
 		return { pdf: base64String }
 	})
+
+export const importPlacementsAction = authedAction
+	.schema(z.array(z.string()))
+	.action(async ({ parsedInput, ctx }) => {
+		const { t } = await serverTranslation(ctx.lang, 'action-errors')
+
+		const currentLocationID = await locationService.getLastVisited(ctx.user.id)
+		if (!currentLocationID) {
+			throw new ActionError(t('placement-action.location-not-found'))
+		}
+
+		let failedInserts = []
+
+		for (let name of parsedInput) {
+			const newPlacement = await inventoryService.createPlacement(
+				{
+					name,
+					locationID: currentLocationID,
+				},
+				ctx.lang,
+			)
+
+			if (!newPlacement) {
+				failedInserts.push(name)
+			}
+		}
+
+		revalidatePath(`/${ctx.lang}/varer/placeringer`)
+		return { failedInserts }
+	})

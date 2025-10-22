@@ -497,7 +497,9 @@ export function SmartphoneUpdateInventory({
 										inputMode='decimal'
 										onChange={e => {
 											setAmount(e.target.valueAsNumber)
-											form.setValue('amount', e.target.valueAsNumber, { shouldValidate: true })
+											form.setValue('amount', e.target.valueAsNumber, {
+												shouldValidate: true,
+											})
 										}}
 										placeholder={t('updateInventory.amountPlaceholder')}
 									/>

@@ -1,53 +1,71 @@
 {
-  "placement-page": {
-    "title": "Placeringer",
-    "description": "Se et overblik over alle dine placeringer her."
-  },
-  "table-placements": {
-    "no-placements": "Ingen placeringer"
-  },
-  "placement-columns": {
-    "placement": "Placering",
-    "is-barred": "Status",
-    "is-barred-yes": "Spærret",
-    "is-barred-no": "Aktiv",
-    "inserted": "Indsat",
-    "updated": "Opdateret"
-  },
-  "table-placement-actions": {
-    "update": "Opdater",
-    "bar": "Spær placeringen",
-    "unbar": "Fjern spærring",
-    "print": "Print label"
-  },
-  "modal-label": {
-    "title": "Placeringslabels",
-    "description": "Print labels for dine placeringer",
-    "size": "Labelstørrelse",
-    "size_small": "Lille",
-    "size-desc_small": "Egnet til 51x26mm",
-    "size_big": "Stor",
-    "size-desc_big": "Egnet til 100x192mm",
-    "size_medium": "Medium",
-    "size-desc_medium": "Egnet til 76x51mm"
-  },
-  "modal-create-placement": {
-    "title": "Opret ny placering",
-    "description": "Her kan du oprette en ny placering.",
-    "placement": "Placering",
-    "placement-placeholder": "Indtast navn på ny placering",
-    "create-button": "Opret",
-    "tooltip": "Opret placering"
-  },
-  "modal-update-placement": {
-    "title": "Opdater placering",
-    "description": "Her kan du opdatere en placering.",
-    "placement": "Placering",
-    "placement-placeholder": "Indtast navn på placering",
-    "update-button": "Opdater"
-  },
-  "toasts": {
-    "placement-created": " placering oprettet succesfuldt",
-    "placement-updated": " placering opdateret succesfuldt"
-  }
+	"placement-page": {
+		"title": "Placeringer",
+		"description": "Se et overblik over alle dine placeringer her."
+	},
+	"table-placements": {
+		"no-placements": "Ingen placeringer"
+	},
+	"placement-columns": {
+		"placement": "Placering",
+		"is-barred": "Status",
+		"is-barred-yes": "Spærret",
+		"is-barred-no": "Aktiv",
+		"inserted": "Indsat",
+		"updated": "Opdateret"
+	},
+	"table-placement-actions": {
+		"update": "Opdater",
+		"bar": "Spær placeringen",
+		"unbar": "Fjern spærring",
+		"print": "Print label"
+	},
+	"modal-label": {
+		"title": "Placeringslabels",
+		"description": "Print labels for dine placeringer",
+		"size": "Labelstørrelse",
+		"size_small": "Lille",
+		"size-desc_small": "Egnet til 51x26mm",
+		"size_big": "Stor",
+		"size-desc_big": "Egnet til 100x192mm",
+		"size_medium": "Medium",
+		"size-desc_medium": "Egnet til 76x51mm"
+	},
+	"modal-create-placement": {
+		"title": "Opret ny placering",
+		"description": "Her kan du oprette en ny placering.",
+		"placement": "Placering",
+		"placement-placeholder": "Indtast navn på ny placering",
+		"create-button": "Opret",
+		"tooltip": "Opret placering"
+	},
+	"modal-update-placement": {
+		"title": "Opdater placering",
+		"description": "Her kan du opdatere en placering.",
+		"placement": "Placering",
+		"placement-placeholder": "Indtast navn på placering",
+		"update-button": "Opdater"
+	},
+	"toasts": {
+		"placement-created": " placering oprettet succesfuldt",
+		"placement-updated": " placering opdateret succesfuldt"
+	},
+	"modal-import": {
+		"title": "Importer placeringer",
+		"description": "Tilføj dine placeringer hurtigt og nemt ved at importere ét eller flere Excel-ark.",
+		"file-label": "Vælg Excel-fil",
+		"found-placements-label": "Fundne placeringer",
+		"found-placements-sub": "Der blev fundet {{count}} nye placeringer",
+		"placement-label": "Placering",
+		"placement-error-tooltip": "Placeringen blev ikke oprettet",
+		"placement-error": "Nogle placeringer blev ikke importeret",
+		"placement-error-sub": "Vi kunne ikke importere alle placeringer. Placeringer markeret med et rødt ikon indeholder fejl eller findes allerede. Ret eventuelle fejl i filen og prøv igen for de markeret placeringer.",
+		"clear-button": "Ryd liste",
+		"submit-button": "Importer placeringer",
+		"success-toast": "Placeringer blev importeret",
+		"file-example": "Eksempel på fil",
+		"file-example-sub": "Se hvordan filen skal formateres",
+		"file-button": "Download",
+		"invalid-data-toast": "Kunne ikke importere {{filename}}. Tjek filens indhold og prøv igen."
+	}
 }

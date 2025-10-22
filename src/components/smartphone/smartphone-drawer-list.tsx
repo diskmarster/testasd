@@ -58,7 +58,11 @@ export function DrawerList({
 
 	function opt({ option, selected }: { option: Option; selected: boolean }) {
 		return (
-			<div className={cn('px-3 py-2 min-h-14 flex flex-col justify-center', selected && 'bg-muted')}>
+			<div
+				className={cn(
+					'px-3 py-2 min-h-14 flex flex-col justify-center',
+					selected && 'bg-muted',
+				)}>
 				<p className='font-medium text-sm line-clamp-1'>{option.label}</p>
 				{option.sub && (
 					<p className='text-muted-foreground line-clamp-1 text-sm'>

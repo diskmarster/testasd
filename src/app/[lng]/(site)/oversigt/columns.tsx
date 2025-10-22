@@ -131,8 +131,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-					row.original.product.fileCount > 0 &&
-					'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -144,8 +144,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+							row.original.product.fileCount > 0 &&
+							'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>

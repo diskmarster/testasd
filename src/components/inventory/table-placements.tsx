@@ -37,8 +37,8 @@ import {
 import { User } from 'lucia'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import { TableHeaderGroup } from '../table/table-header-group'
 import { TableFloatingBar } from '../table/table-floating-bar'
+import { TableHeaderGroup } from '../table/table-header-group'
 import { ExportSelectedButton } from './button-export-selected'
 import { PrintSelectedButton } from './modal-placement-label'
 

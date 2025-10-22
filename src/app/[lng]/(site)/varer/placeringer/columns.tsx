@@ -148,9 +148,13 @@ export function getTablePlacementColumns(
 		cell: ({ table, row }) =>
 			hasPermissionByRank(user.role, 'bruger') ? (
 				<>
-					<ModalPlacementLabelTrigger labelData={[{
-						name: row.original.name
-					}]} />
+					<ModalPlacementLabelTrigger
+						labelData={[
+							{
+								name: row.original.name,
+							},
+						]}
+					/>
 					<TableOverviewActions row={row} />
 				</>
 			) : null,
@@ -164,7 +168,14 @@ export function getTablePlacementColumns(
 	if (!hasPermissionByRank(user.role, 'bruger')) {
 		return [placementCol, isBarredCol, insertedCol, updatedCol]
 	}
-	return [selectCol, placementCol, isBarredCol, insertedCol, updatedCol, actionsCol]
+	return [
+		selectCol,
+		placementCol,
+		isBarredCol,
+		insertedCol,
+		updatedCol,
+		actionsCol,
+	]
 }
 
 export function getTablePlacementFilters(

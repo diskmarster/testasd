@@ -25,11 +25,11 @@ import {
 	SelectValue,
 } from '../ui/select'
 
-interface Props { }
+interface Props {}
 
 type LabelSize = 'small' | 'medium' | 'large'
 
-export function ModalQrPrint({ }: Props) {
+export function ModalQrPrint({}: Props) {
 	const [open, setOpen] = useState(false)
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'other')

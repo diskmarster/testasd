@@ -119,8 +119,10 @@ export function ModalProductLabel() {
 
 						<div className='grid gap-1.5'>
 							<div>
-								<Label>{t("modal-product-label.size")}</Label>
-								<p className="text-sm text-muted-foreground">{t('modal-product-label.size-description')}</p>
+								<Label>{t('modal-product-label.size')}</Label>
+								<p className='text-sm text-muted-foreground'>
+									{t('modal-product-label.size-description')}
+								</p>
 							</div>
 							<div className='flex items-center gap-2 my-4'>
 								{Object.entries(productLabelSizes).map(([key, value]) => (
