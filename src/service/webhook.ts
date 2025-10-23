@@ -10,7 +10,6 @@ import {
 	NewInventory,
 	NewProduct,
 	NewProductHistory,
-	PlacementID,
 	Product,
 	ProductID,
 	Unit,
@@ -34,7 +33,20 @@ export const webhookService = {
 	): Promise<Product> {
 		const units = await inventory.getActiveUnits(tx)
 
-		const { unit, productGroup } = await getUnitAndGroup(data, units, tx)
+		const { unit } = getUnit(data, units)
+
+		const groups = await inventory.getActiveGroupsByID(data.customerID)
+		let productGroup = groups.find(group => group.name === data.group)
+		if (!productGroup) {
+			const newProductGroup = await inventory.createProductGroup({
+				name: data.group,
+				customerID: data.customerID,
+			})
+			if (!newProductGroup) {
+				throw new ActionError('product-new-group-not-created')
+			}
+			productGroup = newProductGroup
+		}
 
 		const newProductData: NewProduct = {
 			customerID: data.customerID,
@@ -75,90 +87,114 @@ export const webhookService = {
 				}, new Map<ProductID, boolean>()),
 			)
 
-		return db.transaction(async tx => {
-			const units = await inventory.getActiveUnits(tx)
+		const units = await inventory.getActiveUnits()
 
-			const newProductPromises: Promise<Product>[] = []
+		let groups = await inventory.getActiveGroupsByID(customerID)
 
-			for (const p of productData) {
-				const unitGroupRes = await tryCatch(
-					getUnitAndGroup(
-						{ customerID, unit: p.unit, group: p.group },
-						units,
-						tx,
-					),
-				)
+		const preparedProducts: NewProduct[] = []
 
-				if (!unitGroupRes.success) {
-					throw new ActionError(
-						`Could not get unit and group: customerID = ${customerID}, group = ${p.group}, unit = ${p.unit}, error = ${unitGroupRes.error}`,
-					)
-				}
-				const { unit, productGroup } = unitGroupRes.data
-
-				const newProductData: NewProduct = {
+		for (const p of productData) {
+			let productGroup = groups.find(group => group.name === p.group)
+			if (!productGroup) {
+				const newProductGroup = await inventory.createProductGroup({
+					name: p.group,
 					customerID: customerID,
-					text1: p.text1,
-					text2: p.text2,
-					text3: p.text3,
-					sku: p.sku,
-					barcode: p.barcode,
-					isBarred: p.isBarred,
-					costPrice: p.costPrice,
-					salesPrice: p.salesPrice,
-					groupID: productGroup.id,
-					unitID: unit.id,
-				}
-
-				const newProductPromise: Promise<Product> = new Promise(async res => {
-					const newProduct = await product.upsertWithNoLog(newProductData, tx)
-					if (!newProduct) {
-						try {
-							tx.rollback()
-						} catch (_err) {}
-						throw new ActionError('product from webhook was not upserted')
-					}
-					if (!inventories.has(newProduct.id)) {
-						const zeroInventory = await this.createZeroInventories(
-							customerID,
-							newProduct.id,
-							tx,
-						)
-						if (!zeroInventory) {
-							try {
-								tx.rollback()
-							} catch (_err) {}
-							throw new ActionError(
-								`product from webhook was created but zero inventories not created (product id: ${newProduct.id})`,
-							)
-						}
-					}
-					res(newProduct)
 				})
-
-				newProductPromises.push(newProductPromise)
+				if (!newProductGroup) {
+					throw new ActionError('product-new-group-not-created')
+				}
+				productGroup = newProductGroup
+				groups.push(newProductGroup)
 			}
 
-			return await Promise.all(newProductPromises)
+			const { unit } = getUnit(
+				{ customerID, unit: p.unit, group: p.group },
+				units,
+			)
+			if (!unit) {
+				console.log(
+					`Could not get unit: customerID = ${customerID}, unit = ${p.unit}`,
+				)
+				throw new ActionError(
+					`Could not get unit: customerID = ${customerID}, unit = ${p.unit}`,
+				)
+			}
+
+			preparedProducts.push({
+				customerID: customerID,
+				text1: p.text1,
+				text2: p.text2,
+				text3: p.text3,
+				sku: p.sku,
+				barcode: p.barcode,
+				isBarred: p.isBarred,
+				costPrice: p.costPrice,
+				salesPrice: p.salesPrice,
+				groupID: productGroup.id,
+				unitID: unit.id,
+			})
+		}
+
+		return db.transaction(async tx => {
+			const upsertedProducts = await tryCatch(
+				product.upsertMultipleWithNoLog(preparedProducts, tx),
+			)
+			if (!upsertedProducts.success) {
+				console.log(
+					`products from webhook was not upserted: ${upsertedProducts.error?.message}`,
+				)
+				throw new ActionError(
+					`Could not upsert products: customerID = ${customerID}, error = ${upsertedProducts.error.message}`,
+				)
+			}
+
+			let ids = []
+			for (let upsertedProduct of upsertedProducts.data) {
+				if (!inventories.has(upsertedProduct.id)) {
+					ids.push(upsertedProduct.id)
+				}
+			}
+
+			const insertedInventoryRes = await tryCatch(
+				this.createZeroInventories(customerID, ids, tx),
+			)
+			if (!insertedInventoryRes.success) {
+				console.log(
+					`inventories from webhook was not inserted: ${insertedInventoryRes.error?.message}`,
+				)
+				throw new ActionError(
+					`Could not create zero inventories: customerID = ${customerID}, error = ${insertedInventoryRes.error.message}`,
+				)
+			}
+
+			return upsertedProducts.data
 		})
 	},
 	createZeroInventories: async function (
 		customerID: CustomerID,
-		newProductID: ProductID,
-		tx: TRX = db,
+		productIDs: ProductID[],
+		tx?: TRX,
 	): Promise<boolean> {
-		return await tx.transaction(async trx => {
-			const locations = await location.getAllByCustomerID(customerID, trx)
-			for (const location of locations) {
-				const placementIDs: PlacementID[] = []
+		if (productIDs.length === 0) return true
+		async function execute(
+			customerID: CustomerID,
+			newProductsIDs: ProductID[],
+			transaction?: TRX,
+		) {
+			let newInventories: NewInventory[] = []
+			const locations = await location.getAllByCustomerID(
+				customerID,
+				transaction,
+			)
 
+			for (let location of locations) {
 				const defaultPlacement = await inventory.getDefaultPlacementByID(
 					location.id,
-					trx,
+					transaction,
 				)
 				const defaultBatch = await inventory.getDefaultBatchByID(
 					location.id,
-					trx,
+					transaction,
 				)
 
 				let placementID = defaultPlacement?.id
@@ -169,37 +205,111 @@ export const webhookService = {
 							name: '-',
 							locationID: location.id,
 						},
-						trx,
+						transaction,
 					)
 					placementID = newDefaultPlacement.id
 				}
 
-				placementIDs.push(placementID)
-
 				if (!defaultBatch) {
 					const newBatch = await inventory.createBatch(
 						{ batch: '-', locationID: location.id },
-						trx,
+						transaction,
 					)
 					batchID = newBatch.id
 				}
 
-				await Promise.all(
-					placementIDs.map(async placementID => {
-						const newInventoryData: NewInventory = {
-							productID: newProductID,
-							placementID: placementID,
-							batchID: batchID,
-							quantity: 0,
-							customerID: customerID,
-							locationID: location.id,
-						}
-						await inventory.upsertInventory(newInventoryData, trx)
+				newProductsIDs.map(pid =>
+					newInventories.push({
+						productID: pid,
+						placementID: placementID,
+						batchID: batchID,
+						quantity: 0,
+						customerID: customerID,
+						locationID: location.id,
 					}),
 				)
 			}
+
+			const responses = await inventory.createInventories(
+				newInventories,
+				transaction,
+			)
+			return responses.length === newInventories.length
+		}
+
+		if (tx) {
+			return await execute(customerID, productIDs, tx)
+		} else {
+			return await db.transaction(async trx => {
+				return await execute(customerID, productIDs, trx)
+			})
+		}
+	},
+	upsertZeroInventory: async function (
+		customerID: CustomerID,
+		newProductID: ProductID,
+		tx?: TRX,
+	): Promise<boolean> {
+		async function execute(
+			customerID: CustomerID,
+			productID: ProductID,
+			transaction: TRX,
+		) {
+			const locations = await location.getAllByCustomerID(
+				customerID,
+				transaction,
+			)
+			for (const location of locations) {
+				const defaultPlacement = await inventory.getDefaultPlacementByID(
+					location.id,
+					transaction,
+				)
+				const defaultBatch = await inventory.getDefaultBatchByID(
+					location.id,
+					transaction,
+				)
+
+				let placementID = defaultPlacement?.id
+				let batchID = defaultBatch?.id
+				if (!defaultPlacement) {
+					const newDefaultPlacement = await inventory.createPlacement(
+						{
+							name: '-',
+							locationID: location.id,
+						},
+						transaction,
+					)
+					placementID = newDefaultPlacement.id
+				}
+
+				if (!defaultBatch) {
+					const newBatch = await inventory.createBatch(
+						{ batch: '-', locationID: location.id },
+						transaction,
+					)
+					batchID = newBatch.id
+				}
+
+				const newInventoryData: NewInventory = {
+					productID: productID,
+					placementID: placementID,
+					batchID: batchID,
+					quantity: 0,
+					customerID: customerID,
+					locationID: location.id,
+				}
+				await inventory.upsertInventory(newInventoryData, transaction)
+			}
 			return true
-		})
+		}
+
+		if (tx) {
+			return await execute(customerID, newProductID, tx)
+		} else {
+			return await db.transaction(async trx => {
+				return await execute(customerID, newProductID, trx)
+			})
+		}
 	},
 	createProductHistoryLog: async function (
 		p: Product & { groupName: string; unitName: string },
@@ -268,12 +378,8 @@ export const webhookService = {
 		newSuppliers: NewSupplier[],
 	): Promise<Supplier[]> {
 		return await db.transaction(async tx => {
-			const promises: Promise<Supplier>[] = []
 			const logPromises: Promise<SupplierHisotry>[] = []
-			for (const newSupplier of newSuppliers) {
-				promises.push(suppliers.upsert(newSupplier, tx))
-			}
-			const upsertedSuppliers = await Promise.all(promises)
+			const upsertedSuppliers = await suppliers.upsertMultiple(newSuppliers)
 
 			for (const upserted of upsertedSuppliers) {
 				logPromises.push(
@@ -303,27 +409,10 @@ export const webhookService = {
 	},
 }
 
-async function getUnitAndGroup(
+function getUnit(
 	data: { customerID: CustomerID; group: string; unit: string | undefined },
 	units: Unit[],
-	tx: TRX = db,
 ) {
-	const groups = await inventory.getActiveGroupsByID(data.customerID, tx)
-	let productGroup = groups.find(group => group.name === data.group)
-	if (!productGroup) {
-		const newProductGroup = await inventory.createProductGroup(
-			{
-				name: data.group,
-				customerID: data.customerID,
-			},
-			tx,
-		)
-		if (!newProductGroup) {
-			throw new ActionError('product-new-group-not-created')
-		}
-		productGroup = newProductGroup
-	}
-
 	const unitMap = new Map(units.map(unit => [unit.name, unit]))
 
 	const normalizedUnit = data.unit?.trim() ?? 'Stk'
@@ -331,14 +420,13 @@ async function getUnitAndGroup(
 		values.includes(normalizedUnit),
 	)?.[0]
 
-	const unit = allowedUnit && unitMap.get(allowedUnit)
+	let unit = (allowedUnit && unitMap.get(allowedUnit)) || unitMap.get('Stk')
 	if (!unit) {
 		throw new ActionError('product-unit-not-supported')
 	}
 
 	return {
 		unit,
-		productGroup,
 	}
 }
 

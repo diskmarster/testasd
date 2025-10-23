@@ -4,6 +4,7 @@ import { db } from '@/lib/database'
 import { ApiKey } from '@/lib/database/schema/apikeys'
 import type { Customer } from '@/lib/database/schema/customer'
 import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
+import { NewProduct } from '@/lib/database/schema/inventory'
 import {
 	NewSupplier,
 	NewSupplierHistory,
@@ -164,31 +165,6 @@ export class EconomicSyncProvider implements SyncProvider {
 		return collection
 	}
 
-	private async fetchSelfByUrl<T>(url: string): Promise<T> {
-		const response = await fetch(url, {
-			headers: {
-				'X-AppSecretToken': this.appSecretToken,
-				'X-AgreementGrantToken': this.agreementGrantToken,
-				'Content-Type': 'application/json',
-			},
-		})
-
-		if (!response.ok) {
-			console.log(await response.json())
-			throw Error(`e-conomic response failed with status ${response.status}`)
-		}
-
-		const contentType = response.headers.get('Content-Type')
-
-		if (!contentType?.includes('application/json')) {
-			throw Error('e-conomic response is not application/json')
-		}
-
-		const json = await response.json()
-
-		return json as T
-	}
-
 	private async fetchSuppliers(): Promise<EconomicSupplier[]> {
 		return await this.fetchSuppliersFromUrl(
 			`${this.baseUrl}/suppliers?skippages=0&pagesize=1000`,
@@ -338,7 +314,7 @@ export class EconomicSyncProvider implements SyncProvider {
 							}
 						}
 
-						const didCreateZeroes = await webhookService.createZeroInventories(
+						const didCreateZeroes = await webhookService.upsertZeroInventory(
 							customer.id,
 							newProductResult.data.id,
 							tx,
@@ -601,22 +577,47 @@ export class EconomicSyncProvider implements SyncProvider {
 					eventData: null,
 				}
 			}
-			const products = productsRes.data
 
-			const upsertData = products.map(economicProduct => ({
-				sku: economicProduct.productNumber,
-				barcode: economicProduct.barCode ?? economicProduct.productNumber,
-				costPrice: economicProduct.costPrice ?? 0,
-				salesPrice: economicProduct.salesPrice ?? 0,
-				text1: economicProduct.name,
-				text2: economicProduct.description,
-				unit: economicProduct.unit?.name ?? 'Stk',
-				group: economicProduct.productGroup.name,
-				isBarred: economicProduct.barred ?? false,
-			}))
+			const products = Array.from(
+				productsRes.data
+					.reduce(
+						(acc, cur) => {
+							if (cur.barred) return acc
+
+							let identifier = cur.barCode
+							if (!identifier || identifier === '') {
+								identifier = cur.productNumber
+							}
+
+							if (!acc.has(identifier)) {
+								acc.set(identifier, {
+									sku: cur.productNumber,
+									barcode: cur.barCode ?? cur.productNumber,
+									costPrice: cur.costPrice ?? 0,
+									salesPrice: cur.salesPrice ?? 0,
+									text1: cur.name,
+									text2: cur.description,
+									unit: cur.unit?.name ?? 'Stk',
+									group: cur.productGroup.name,
+									isBarred: cur.barred ?? false,
+								})
+							}
+
+							return acc
+						},
+						new Map() as Map<
+							string,
+							Omit<NewProduct, 'customerID' | 'unitID' | 'groupID'> & {
+								unit: string | undefined
+								group: string
+							}
+						>,
+					)
+					.values(),
+			)
 
 			const res = await tryCatch(
-				webhookService.upsertProducts(customer.id, upsertData),
+				webhookService.upsertProducts(customer.id, products),
 			)
 			if (!res.success) {
 				console.error(`Economic::HandleFullSync. Upsert failed: ${res.error}`)

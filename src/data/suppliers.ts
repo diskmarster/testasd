@@ -10,7 +10,7 @@ import {
 	SupplierID,
 	supplierTable,
 } from '@/lib/database/schema/suppliers'
-import { and, asc, count, desc, eq, getTableColumns } from 'drizzle-orm'
+import { and, asc, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
 import { SupplierWithItemCount } from './suppliers.types'
 
 export const suppliers = {
@@ -112,6 +112,33 @@ export const suppliers = {
 			})
 			.returning()
 		return supplier
+	},
+	upsertMultiple: async function (
+		data: NewSupplier[],
+		tx: TRX = db,
+	): Promise<Supplier[]> {
+		return await tx
+			.insert(supplierTable)
+			.values(data)
+			.onConflictDoUpdate({
+				target: [supplierTable.customerID, supplierTable.integrationId],
+				set: {
+					name: sql.raw(`excluded.${supplierTable.name.name}`),
+					country: sql.raw(`excluded.${supplierTable.country.name}`),
+					email: sql.raw(`excluded.${supplierTable.email.name}`),
+					idOfClient: sql.raw(`excluded.${supplierTable.idOfClient.name}`),
+					contactPerson: sql.raw(
+						`excluded.${supplierTable.contactPerson.name}`,
+					),
+					phone: sql.raw(`excluded.${supplierTable.phone.name}`),
+					integrationId: sql.raw(
+						`excluded.${supplierTable.integrationId.name}`,
+					),
+					userID: sql.raw(`excluded.${supplierTable.userID.name}`),
+					userName: sql.raw(`excluded.${supplierTable.userName.name}`),
+				},
+			})
+			.returning()
 	},
 	deleteByIntegrationID: async function (
 		customerID: CustomerID,

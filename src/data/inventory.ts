@@ -663,6 +663,16 @@ export const inventory = {
 		const res = await trx.insert(inventoryTable).values(inventory).returning()
 		return res[0]
 	},
+	createInventories: async function (
+		inventories: NewInventory[],
+		trx: TRX = db,
+	): Promise<Inventory[]> {
+		return await trx
+			.insert(inventoryTable)
+			.values(inventories)
+			.onConflictDoNothing()
+			.returning()
+	},
 	getAllProductsByID: async function (
 		customerID: CustomerID,
 		trx: TRX = db,
