@@ -2,6 +2,7 @@ import { serverTranslation } from '@/app/i18n/index'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { SkeletonTable } from '@/components/common/skeleton-table'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
+import { ModalProductLabel } from '@/components/inventory/modal-product-label'
 import { FormattedInventory } from '@/data/inventory.types'
 import { hasPermissionByPlan } from '@/data/user.types'
 import { Customer, CustomerSettings } from '@/lib/database/schema/customer'
@@ -100,6 +101,8 @@ async function Home({ params: { lng }, user, customer }: PageProps) {
 					isGrouped={isGrouped}
 				/>
 			</Suspense>
+
+			<ModalProductLabel />
 		</SiteWrapper>
 	)
 }

@@ -1,37 +1,31 @@
 'use client'
 
 import { useLanguage } from '@/context/language'
-import { cn } from '@/lib/utils'
 import Link from 'next/link'
-import { buttonVariants } from '../ui/button'
+import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
 import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from '../ui/tooltip'
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 export function NavFAQ() {
 	const lng = useLanguage()
 	return (
-		<TooltipProvider delayDuration={250}>
-			<Tooltip>
-				<TooltipTrigger>
-					<Link
-						href={`/${lng}/faq`}
-						target='_blank'
-						className={cn(
-							'',
-							buttonVariants({ variant: 'outline', size: 'icon' }),
-						)}>
-						<Icons.help className='size-4' />
-					</Link>
-				</TooltipTrigger>
-				<TooltipContent className='bg-foreground text-background'>
-					<p>Gå til F.A.Q. side</p>
-				</TooltipContent>
-			</Tooltip>
-		</TooltipProvider>
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="outline" size='icon' className='aspect-square'>
+					<Icons.help className="size-4" />
+					<span className='sr-only'>Settings</span>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent className='w-48' align='end'>
+				<DropdownMenuItem asChild>
+					<Link target="_blank" href={`/${lng}/faq`}>Oftest stillede spørgsmål</Link>
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	)
 }

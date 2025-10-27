@@ -10,7 +10,7 @@ import {
 	SupplierID,
 	supplierTable,
 } from '@/lib/database/schema/suppliers'
-import { and, asc, count, desc, eq, getTableColumns } from 'drizzle-orm'
+import { and, asc, count, desc, eq, getTableColumns, sql } from 'drizzle-orm'
 import { SupplierWithItemCount } from './suppliers.types'
 
 export const suppliers = {
@@ -101,5 +101,93 @@ export const suppliers = {
 			.where(
 				and(eq(supplierTable.id, id), eq(supplierTable.customerID, customerID)),
 			)
+	},
+	upsert: async function (data: NewSupplier, tx: TRX = db): Promise<Supplier> {
+		const [supplier] = await tx
+			.insert(supplierTable)
+			.values(data)
+			.onConflictDoUpdate({
+				target: [supplierTable.customerID, supplierTable.integrationId],
+				set: { ...data },
+			})
+			.returning()
+		return supplier
+	},
+	upsertMultiple: async function (
+		data: NewSupplier[],
+		tx: TRX = db,
+	): Promise<Supplier[]> {
+		return await tx
+			.insert(supplierTable)
+			.values(data)
+			.onConflictDoUpdate({
+				target: [supplierTable.customerID, supplierTable.integrationId],
+				set: {
+					name: sql.raw(`excluded.${supplierTable.name.name}`),
+					country: sql.raw(`excluded.${supplierTable.country.name}`),
+					email: sql.raw(`excluded.${supplierTable.email.name}`),
+					idOfClient: sql.raw(`excluded.${supplierTable.idOfClient.name}`),
+					contactPerson: sql.raw(
+						`excluded.${supplierTable.contactPerson.name}`,
+					),
+					phone: sql.raw(`excluded.${supplierTable.phone.name}`),
+					integrationId: sql.raw(
+						`excluded.${supplierTable.integrationId.name}`,
+					),
+					userID: sql.raw(`excluded.${supplierTable.userID.name}`),
+					userName: sql.raw(`excluded.${supplierTable.userName.name}`),
+				},
+			})
+			.returning()
+	},
+	deleteByIntegrationID: async function (
+		customerID: CustomerID,
+		integrationID: string,
+		tx: TRX = db,
+	): Promise<boolean> {
+		const result = await tx
+			.delete(supplierTable)
+			.where(
+				and(
+					eq(supplierTable.customerID, customerID),
+					eq(supplierTable.integrationId, integrationID),
+				),
+			)
+		return result.rowsAffected == 1
+	},
+	updateByIntegrationID: async function (
+		integrationID: string,
+		customerID: CustomerID,
+		data: Partial<Supplier>,
+		tx: TRX = db,
+	): Promise<Supplier> {
+		const res = await tx
+			.update(supplierTable)
+			.set({ ...data })
+			.where(
+				and(
+					eq(supplierTable.customerID, customerID),
+					eq(supplierTable.integrationId, integrationID),
+				),
+			)
+			.returning()
+		return res[0]
+	},
+	getByIntegrationID: async function (
+		integrationID: string,
+		customerID: CustomerID,
+		tx: TRX = db,
+	): Promise<Supplier> {
+		const res = await tx
+			.select()
+			.from(supplierTable)
+			.where(
+				and(
+					eq(supplierTable.integrationId, integrationID),
+					eq(supplierTable.customerID, customerID),
+				),
+			)
+			.limit(1)
+		return res[0]
 	},
 }

@@ -57,6 +57,8 @@ export function SupplierLogs({ logs }: Props) {
 		switch (type) {
 			case 'oprettet':
 				return <Icons.squarePlus className={cn(classes, '')} />
+			case 'synkroniseret':
+				return <Icons.cloudCog className={cn(classes, '')} />
 			case 'opdateret':
 			default:
 				return <Icons.squareSlash className={cn(classes, '')} />
@@ -130,7 +132,7 @@ export function SupplierLogs({ logs }: Props) {
 					))}
 					{logs.length > 5 && limit != logs.length && (
 						<Button className='mx-auto' onClick={() => setLimit(logs.length)}>
-							{t('details-page.logs.see-all', { count: logs.length })}
+							{t('details-page.history.see-all', { count: logs.length })}
 						</Button>
 					)}
 				</div>

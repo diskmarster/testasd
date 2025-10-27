@@ -41,18 +41,24 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 	const [pending, startTransition] = useTransition()
 	const router = useRouter()
 
+	const [settings, setSettings] = useState<{
+		useSyncProducts: boolean
+		useSyncSuppliers: boolean
+	}>({
+		useSyncProducts: integrationSettings.useSyncProducts,
+		useSyncSuppliers: integrationSettings.useSyncSuppliers,
+	})
+
 	const [enableSyncDialogOpen, setEnableSyncDialogOpen] = useState(false)
 
 	function toggleIntegrationSetting(
-		settings: Pick<
-			CustomerIntegrationSettings,
-			'useSyncProducts' | 'integrationID'
+		integrationID: number,
+		settings: Partial<
+			Pick<CustomerIntegrationSettings, 'useSyncProducts' | 'useSyncSuppliers'>
 		>,
 	) {
 		startTransition(async () => {
-			const actionPromise = updateIntegrationSettings({
-				useSyncProducts: settings.useSyncProducts,
-			})
+			const actionPromise = updateIntegrationSettings({ ...settings })
 
 			toast.promise(actionPromise, {
 				loading: t('updating-settings-loading'),
@@ -70,7 +76,7 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 			router.refresh()
 
 			const syncActionPromise = syncProductCatalogueAction({
-				integrationID: settings.integrationID,
+				integrationID: integrationID,
 			})
 			toast.promise(
 				syncActionPromise.then(data => {
@@ -133,9 +139,21 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 						<SwitchSection
 							title={t('integrations.sync-products-title')}
 							sub={t('integrations.sync-products-desc')}
-							checked={integrationSettings.useSyncProducts}
-							disabled={integrationSettings.useSyncProducts}
+							checked={settings.useSyncProducts}
+							disabled={settings.useSyncProducts || pending}
 							onCheckedChange={(checked: boolean) => {
+								setSettings(prev => ({ ...prev, useSyncProducts: true }))
+								setEnableSyncDialogOpen(checked)
+							}}
+							isLoading={pending}
+						/>
+						<SwitchSection
+							title={t('integrations.sync-suppliers-title')}
+							sub={t('integrations.sync-suppliers-desc')}
+							checked={settings.useSyncSuppliers}
+							disabled={settings.useSyncSuppliers || pending}
+							onCheckedChange={(checked: boolean) => {
+								setSettings(prev => ({ ...prev, useSyncSuppliers: true }))
 								setEnableSyncDialogOpen(checked)
 							}}
 							isLoading={pending}
@@ -152,10 +170,7 @@ export function IntegrationsCard({ providers, integrationSettings }: Props) {
 				acceptText={t('enable-sync-dialog.accept-btn')}
 				onDismiss={() => setEnableSyncDialogOpen(false)}
 				onAccept={() =>
-					toggleIntegrationSetting({
-						useSyncProducts: true,
-						integrationID: integrationSettings.integrationID,
-					})
+					toggleIntegrationSetting(integrationSettings.integrationID, settings)
 				}
 			/>
 		</div>

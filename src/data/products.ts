@@ -357,4 +357,31 @@ export const product = {
 
 		return result.at(0)
 	},
+	upsertMultipleWithNoLog: async function (
+		data: NewProduct[],
+		tx: TRX = db,
+	): Promise<Product[]> {
+		return await tx
+			.insert(productTable)
+			.values(data)
+			.onConflictDoUpdate({
+				target: [productTable.customerID, productTable.sku],
+				set: {
+					sku: sql.raw(`excluded.${productTable.sku.name}`),
+					barcode: sql.raw(`excluded.${productTable.barcode.name}`),
+					text1: sql.raw(`excluded.${productTable.text1.name}`),
+					text2: sql.raw(`excluded.${productTable.text2.name}`),
+					text3: sql.raw(`excluded.${productTable.text3.name}`),
+					note: sql.raw(`excluded.${productTable.note.name}`),
+					costPrice: sql.raw(`excluded.${productTable.costPrice.name}`),
+					salesPrice: sql.raw(`excluded.${productTable.salesPrice.name}`),
+					groupID: sql.raw(`excluded.${productTable.groupID.name}`),
+					unitID: sql.raw(`excluded.${productTable.unitID.name}`),
+					isBarred: sql.raw(`excluded.${productTable.isBarred.name}`),
+					useBatch: sql.raw(`excluded.${productTable.useBatch.name}`),
+					supplierID: sql.raw(`excluded.${productTable.supplierID.name}`),
+				},
+			})
+			.returning()
+	},
 }

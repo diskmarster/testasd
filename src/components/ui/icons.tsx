@@ -21,6 +21,7 @@ import {
 	CircleDashed,
 	CircleDollarSign,
 	CircleHelp,
+	CloudCog,
 	CloudUpload,
 	Columns2,
 	Copy,
@@ -40,6 +41,7 @@ import {
 	ListPlus,
 	ListTodo,
 	Loader2,
+	LogOutIcon,
 	Mail,
 	Menu,
 	Minus,
@@ -48,16 +50,19 @@ import {
 	MoveRight,
 	PackageCheck,
 	PackageIcon,
+	PackageMinusIcon,
 	PackagePlusIcon,
 	PackageXIcon,
 	Pencil,
 	Plus,
 	Printer,
 	RefreshCcw,
+	ScanBarcode,
 	Search,
 	Settings,
 	Sheet,
 	Smartphone,
+	SquarePen,
 	SquarePlus,
 	SquareSlash,
 	Star,
@@ -73,6 +78,8 @@ import {
 } from 'lucide-react'
 
 export const Icons = {
+	squarePen: SquarePen,
+	scanBarcode: ScanBarcode,
 	moveRight: MoveRight,
 	databaseBackup: DatabaseBackup,
 	fileDigit: FileDigit,
@@ -90,7 +97,9 @@ export const Icons = {
 	packagePlus: PackagePlusIcon,
 	packageCross: PackageXIcon,
 	packageCheck: PackageCheck,
+	packageMinus: PackageMinusIcon,
 	package: PackageIcon,
+	logout: LogOutIcon,
 	filetext: FileText,
 	help: CircleHelp,
 	hash: Hash,
@@ -242,4 +251,5 @@ export const Icons = {
 			<path d='M4 4h6v6h-6zm10 0h6v6h-6zm-10 10h6v6h-6zm10 3h6m-3 -3v6' />
 		</svg>
 	),
+	cloudCog: CloudCog,
 }

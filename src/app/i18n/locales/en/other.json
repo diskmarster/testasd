@@ -87,8 +87,20 @@
     "product-group-criteria": "can contain both numbers and letters",
     "unit": "Unit ",
     "unit-criteria": "must be written as they appear on the product cards. Case sensitivity is not taken into account. E.g., Stk or stk.",
+    "unit-criteria2": "Valid units are:",
+    "unit-criteria3": "Kasse - Kg - Stk - Gram - Pose - Plade - Meter - Liter - Ark - Rulle - Pakke - M2 - Palle - Sæt.",
+	"important-information": "Important information about imortfile",
+	"sub1": "To correctly import or update a product catalog, the import file must meet certain requirements. If the file does not comply with these, the import will not work.",
+	"sub2": "The template contains several columns:",
+	"sub-list-li-1": "Columns with text or pre-filled values must be completed",
+	"sub-list-li-2": " – these are necessary for the system to process the file correctly.",
+	"sub-list-li-3": "Empty columns are optional",
+	"sub-list-li-4": " – you don’t need to fill them in, but you can if you want to add extra information.",
+	"sub3": "Below, we go through each column in the template – here we explain what they mean, what they can contain, and what requirements apply to them.",
     "text1": "Product text 1 ",
     "text1-criteria": "must not contain only numbers. E.g., 34567 must have at least one letter.",
+    "text2-3": "Product Text 2 and 3",
+    "text2-3-criteria": "It is optional to fill out these fields. If used, the same requirements apply as for Product Text 1.",
     "text2": "Product text 2 ",
     "text2-criteria": "must not contain only numbers. E.g., 34567 must have at least one letter. Is optional.",
     "text3": "Product text 3 ",
@@ -105,12 +117,16 @@
     "maximum-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required.",
     "order-amount": "Order quantity",
     "order-amount-criteria": "can be omitted. If included, decimals should be separated by a comma (,). A thousand separator can be used with a period (.) but is not required.",
-    "cron-mails": {
-      "question": "Which scheduled mails can I receive?",
-      "sub": "Nem Lager offers the following list of scheduled mails to be sent to its users or outside emails.",
-      "answer-title": "Monthly stock value",
-      "answer": "Get an email containing an Excel- and PDF-file with your entire inventory value summed up and ready for further processing if needed."
-    },
+	"cron-mails": {
+	  "question": "Which scheduled emails can I receive?",
+	  "sub": "Easy Warehouse offers the following list of emails that can be sent to either internal users or external emails:",
+	  "stock-value-title": "Monthly stock value",
+	  "stock-value-answer": "Receive an Excel sheet and a PDF with a summary of the warehouse value – broken down by both products and product groups. The material is summarized and ready for further work. The email is sent automatically on the last day of each month.",
+	  "restock-title": "Reordering",
+	  "restock-answer": "When the first product with a specified minimum stock falls below the threshold, you will automatically receive an email with an overview of products that need to be reordered. Note: The email is only sent when the list goes from empty to at least one product below the minimum – not with every single change. You will receive a new email once the reorder list is cleared and meets the criteria again.",
+	  "movements-title": "Stock movements",
+	  "movements-answer": "An email is sent to the user who has registered the pickup of products from the warehouse. The email contains an overview of which products and how many units the user has taken – so you have full insight into your own movements."
+	},
     "app-signout": {
       "question": "When are my users signed out of the app?",
       "sub": "In the Nem Lager app, your users can be signed out if one of the following scenarios occurs:",
@@ -120,7 +136,72 @@
       "li-desc": "Unknown description",
       "li-desc_screen": "If the screen on the scanner goes to sleep while the app is open, the user will be signed out. The time before the screen goes to sleep can be configured on the scanner via the \"Settings\" app.",
       "li-desc_background": "If the Nem Lager app is in the background for an extended period, the user will be signed out. This could happen, for example, when using other apps. The duration before the user is signed out can be configured from the Nem Lager website via the [Administration] -> [Company] menu."
-    }
+    },
+	"restock-setup": {
+		"question": "How do I use Restock?",
+		"sub": "Reorder only shows the product numbers that have a minimum stock quantity specified.",
+		"methods": "You can add a recommended quantity either directly from the product page by clicking the reorder icon \"+\", or via the import file.",
+		"watch-how": "Want to see how? In the video below, we walk you through the process step by step."
+	},
+	"delete-sku": {
+		"question": "How do I delete an item number?",
+		"sub": "In NemLager you have two options if an item number is no longer needed:",
+		"option1": "Delete the item",
+		"option1-sub": "When you delete an item, it is permanently removed from your account. It cannot be searched for or restored later. This option should only be used if you are absolutely sure the item will never be needed again.",
+		"option2": "Block the item",
+		"option2-sub": "When you block an item, it remains in the system but is marked as inactive. You can easily filter out blocked items by selecting the filter 'Status' → 'Active'. The advantage of this solution is that the block can be lifted if the item becomes relevant again later.",
+		"tip": "TIP:",
+		"tip-txt": "If you are unsure, we recommend blocking the item instead of deleting it.",
+		"steps-delete-title": "How to delete an item",
+		"steps-delete-1": "Go to Product Catalog",
+		"steps-delete-2": "Find the item you want to delete",
+		"steps-delete-3": "Click on the three dots (…) on the far right of the row",
+		"steps-delete-4": "Click 'Delete item' and confirm the action",
+		"steps-block-title": "How to block an item",
+		"steps-block-1": "Go to Product Catalog",
+		"steps-block-2": "Find the item you want to block",
+		"steps-block-3": "Click on the three dots (…) on the far right of the row",
+		"steps-block-4": "Click 'Block item' – the item will immediately be marked as blocked and disappear from the overview unless you have enabled the filter 'Status' → 'Blocked'."
+	},
+	"suppliers": {
+		"question": "Suppliers",
+		"sub": "Here you can create and manage suppliers, so they can be linked to your items.",
+		"intro": "With this feature, you can link your primary supplier to an item number. At the same time, you can add contact details such as customer number, name, phone, and email, so you always have the most important information gathered in one place. This makes the ordering process faster, more efficient, and gives you a clear overview of where your products come from.",
+		"benefits-title": "Benefits of using suppliers:",
+		"benefit-1": "Filter products by supplier in overview and history.",
+		"benefit-2": "Make reordering easier by linking supplier data to the item number.",
+		"benefit-3": "Keep track of important information such as customer number, contact person, phone, and email.",
+		"benefit-4": "Create a complete overview of all your suppliers in one place.",
+		"steps-title": "How to create a supplier:",
+		"steps-1": "In the top menu, select 'Administration'.",
+		"steps-2": "Go to the 'Suppliers' section.",
+		"steps-3": "Click the plus icon (+) in the top right corner.",
+		"steps-4": "Enter details such as supplier name, country, and any contact information.",
+		"steps-5": "Click 'Create' to save the supplier.",
+		"steps-link-title": "How to link a supplier to an item number",
+		"steps-link-1": "Go to 'Product Catalog'.",
+		"steps-link-2": "Open the product you want to link a supplier to.",
+		"steps-link-3": "Click the 'Edit' button in the top right corner.",
+		"steps-link-4": "Select the supplier in the 'Supplier' field.",
+		"steps-link-5": "Save the changes – the product is now linked to the supplier.",
+		"tip": "TIP:",
+		"tip-txt": "We recommend adding both contact person, phone, and email, so you always have the necessary information at hand when ordering products."
+	},
+	"locations-vs-placements": {
+		"question": "What is the difference between Location and Placement?",
+		"sub": "Locations and placements are used differently in NemLager and are important to distinguish between.",
+		"location-title": "Location:",
+		"location": "A location is a physical address or department where inventory is kept separate from other locations.",
+		"placement-title": "Placement:",
+		"placement": "A placement, on the other hand, is a specific spot within a location, e.g., a shelf or rack, where the item is stored.",
+		"roles-title": "Who can see which locations?",
+		"role-admin": "Administrator:",
+		"role-admin-txt": "Can see all locations and their inventory.",
+		"role-moderator": "Moderator:",
+		"role-moderator-txt": "Can view and manage their assigned location.",
+		"role-other": "Other roles:",
+		"role-other-txt": "Can view data and perform stock movements on their assigned locations."
+	}
   },
   "modal-show-user-label": {
     "title": "User Label",
@@ -139,5 +220,9 @@
     "download-inventory": "Download filtered data",
     "show-hide-show": "Show/Hide Columns",
     "import-products": "Import product catalog"
+  },
+  "videos": {
+	  "title": "Videoguides",
+	  "not-supported": "Your browser does not support video tags"
   }
 }

@@ -16,7 +16,11 @@
 		"col-inserted": "Inserted",
 		"col-updated": "Updated",
 		"col-actions-show": "Show",
-		"col-actions-delete": "Delete"
+		"col-actions-delete": "Delete",
+		"col-email": "Email",
+		"col-email-placeholder": "Search email",
+		"col-phone": "Phone",
+		"col-phone-placeholder": "Search phone"
 	},
 	"create": {
 		"title": "Create supplier",
@@ -70,6 +74,7 @@
 			"action": "changed",
 			"action_oprettet": "created",
 			"action_opdateret": "updated",
+			"action_synkroniseret": "synchronized",
 			"key": "unknown field",
 			"key_name": "Name",
 			"key_country": "Country",

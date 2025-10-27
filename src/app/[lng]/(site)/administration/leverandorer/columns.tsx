@@ -43,6 +43,51 @@ export function getSupplierColumns(
 		cell: ({ row }) => row.original.name,
 		meta: {
 			viewLabel: t('table.col-name'),
+			fillMaxWidth: true,
+		},
+	}
+
+	const emailCol: ColumnDef<SupplierWithItemCount> = {
+		accessorKey: 'email',
+		header: ({ column }) => (
+			<TableHeader column={column} title={t('table.col-email')} />
+		),
+		cell: ({ row }) => {
+			const value = row.original.email
+
+			return value ? (
+				<p>{value}</p>
+			) : (
+				<div className='italic text-muted-foreground flex'>
+					{t('table.col-no-value')} <div className='w-0.5'></div>
+				</div>
+			)
+		},
+		meta: {
+			viewLabel: t('table.col-email'),
+			fillMaxWidth: true,
+		},
+	}
+
+	const phoneCol: ColumnDef<SupplierWithItemCount> = {
+		accessorKey: 'phone',
+		header: ({ column }) => (
+			<TableHeader column={column} title={t('table.col-phone')} />
+		),
+		cell: ({ row }) => {
+			const value = row.original.phone
+
+			return value ? (
+				<p>{value}</p>
+			) : (
+				<div className='italic text-muted-foreground flex'>
+					{t('table.col-no-value')} <div className='w-0.5'></div>
+				</div>
+			)
+		},
+		meta: {
+			viewLabel: t('table.col-phone'),
+			fillMaxWidth: true,
 		},
 	}
 
@@ -53,12 +98,20 @@ export function getSupplierColumns(
 		),
 		cell: ({ row }) => (
 			<div className='flex items-center gap-1.5'>
-				<ReactCountryFlag
-					className='!size-4 rounded-md'
-					countryCode={row.original.country}
-					svg
-				/>
-				{row.original.country}
+				{row.original.country != 'UNK' ? (
+					<>
+						<ReactCountryFlag
+							className='!size-4 rounded-md'
+							countryCode={row.original.country}
+							svg
+						/>
+						{row.original.country}
+					</>
+				) : (
+					<div className='italic text-muted-foreground flex'>
+						{t('table.col-no-value')} <div className='w-0.5'></div>
+					</div>
+				)}
 			</div>
 		),
 		meta: {
@@ -170,6 +223,8 @@ export function getSupplierColumns(
 		selectCol,
 		countryCol,
 		nameCol,
+		emailCol,
+		phoneCol,
 		clientIDCol,
 		insertedCol,
 		updatedCol,
@@ -187,6 +242,22 @@ export function getSupplierFilters(
 		label: t('table.col-name'),
 		value: '',
 		placeholder: t('table.col-name-placeholder'),
+	}
+
+	const emailFilter: FilterField<SupplierWithItemCount> = {
+		column: table.getColumn('email'),
+		type: 'text',
+		label: t('table.col-email'),
+		value: '',
+		placeholder: t('table.col-email-placeholder'),
+	}
+
+	const phoneFilter: FilterField<SupplierWithItemCount> = {
+		column: table.getColumn('phone'),
+		type: 'text',
+		label: t('table.col-phone'),
+		value: '',
+		placeholder: t('table.col-phone-placeholder'),
 	}
 
 	const countryFilter: FilterField<SupplierWithItemCount> = {
@@ -227,6 +298,8 @@ export function getSupplierFilters(
 
 	return [
 		nameFilter,
+		emailFilter,
+		phoneFilter,
 		countryFilter,
 		clientIDFilter,
 		insertedFilter,

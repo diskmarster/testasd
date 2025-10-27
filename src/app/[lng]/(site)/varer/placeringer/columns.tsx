@@ -1,7 +1,9 @@
+import { ModalPlacementLabelTrigger } from '@/components/inventory/modal-placement-label'
 import { TableOverviewActions } from '@/components/inventory/table-placement-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { hasPermissionByRank } from '@/data/user.types'
 import { Placement } from '@/lib/database/schema/inventory'
 import { formatDate } from '@/lib/utils'
@@ -15,6 +17,29 @@ export function getTablePlacementColumns(
 	t: (key: string) => string,
 	user: User,
 ): ColumnDef<Placement>[] {
+	const selectCol: ColumnDef<Placement> = {
+		id: 'select',
+		header: ({ table }) => (
+			<Checkbox
+				checked={
+					table.getIsAllPageRowsSelected() ||
+					(table.getIsSomePageRowsSelected() && 'indeterminate')
+				}
+				onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+				aria-label='Select all'
+			/>
+		),
+		cell: ({ row }) => (
+			<Checkbox
+				checked={row.getIsSelected()}
+				onCheckedChange={value => row.toggleSelected(!!value)}
+				aria-label='Select row'
+			/>
+		),
+		enableSorting: false,
+		enableHiding: false,
+	}
+
 	const placementCol: ColumnDef<Placement> = {
 		accessorKey: 'name',
 		header: ({ column }) => (
@@ -122,7 +147,16 @@ export function getTablePlacementColumns(
 		header: () => null,
 		cell: ({ table, row }) =>
 			hasPermissionByRank(user.role, 'bruger') ? (
-				<TableOverviewActions row={row} />
+				<>
+					<ModalPlacementLabelTrigger
+						labelData={[
+							{
+								name: row.original.name,
+							},
+						]}
+					/>
+					<TableOverviewActions row={row} />
+				</>
 			) : null,
 		enableHiding: false,
 		enableSorting: false,
@@ -134,7 +168,14 @@ export function getTablePlacementColumns(
 	if (!hasPermissionByRank(user.role, 'bruger')) {
 		return [placementCol, isBarredCol, insertedCol, updatedCol]
 	}
-	return [placementCol, isBarredCol, insertedCol, updatedCol, actionsCol]
+	return [
+		selectCol,
+		placementCol,
+		isBarredCol,
+		insertedCol,
+		updatedCol,
+		actionsCol,
+	]
 }
 
 export function getTablePlacementFilters(

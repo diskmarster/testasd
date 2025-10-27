@@ -44,10 +44,8 @@ export async function POST(request: NextRequest) {
 		)
 	}
 
-	const integrations = await integrationsService.getIntegrationsWithSettings(
-		customerID,
-		true,
-	)
+	const integrations =
+		await integrationsService.getIntegrationsWithSettings(customerID)
 	if (integrations.length == 0) {
 		console.log('No integrations found for customer id')
 		return apiResponse.badRequest(
@@ -66,7 +64,7 @@ export async function POST(request: NextRequest) {
 			const config = integrationsService.decryptConfig(i.provider, i.config)
 			const provider = new syncProvidersImpl[i.provider](config)
 
-			const res = await tryCatch(provider.handleFullSync(customer))
+			const res = await tryCatch(provider.handleFullSync(customer, i))
 
 			const log = await integrationsService.createIntegrationLog({
 				customerID: customer.id,

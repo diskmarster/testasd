@@ -36,6 +36,7 @@ import {
 	Inventory,
 	NewBatch,
 	NewHistory,
+	NewInventory,
 	NewPlacement,
 	NewUnit,
 	PartialBatch,
@@ -407,17 +408,28 @@ export const inventoryService = {
 				}
 			}
 
-			const didUpsert = await inventory.upsertInventory(
-				{
-					customerID,
-					locationID,
-					productID,
-					placementID,
-					batchID,
-					quantity: amount,
-				},
-				trx,
-			)
+			let upsertData: NewInventory = {
+				customerID,
+				locationID,
+				productID,
+				placementID,
+				batchID,
+				quantity: amount,
+			}
+
+			switch (type) {
+				case 'afgang':
+					upsertData.outgoingAt = new Date()
+					break
+				case 'tilgang':
+					upsertData.incomingAt = new Date()
+					break
+				case 'regulering':
+					upsertData.regulatedAt = new Date()
+					break
+			}
+
+			const didUpsert = await inventory.upsertInventory(upsertData, trx)
 			if (!didUpsert) {
 				throw new ActionError(
 					t('inventory-service-action.inventory-not-updated'),

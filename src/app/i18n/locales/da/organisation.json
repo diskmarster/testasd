@@ -342,7 +342,9 @@
 		"integrations-desc": "Her kan du se hvilke integrationer jeres konto har aktiveret",
 		"integrations": {
 			"sync-products-title": "Varekartotek synkroniser",
-			"sync-products-desc": "Opdater NemLager varer når de opdateres i et andet system"
+			"sync-products-desc": "Opdater NemLager varer når de opdateres i et andet system",
+			"sync-suppliers-title": "Leverandør synkroniser",
+			"sync-suppliers-desc": "Opdater NemLager leverandør når de opdateres i et andet system"
 		},
 		"delete-modal": {
 			"trigger": "Afinstaller",
@@ -380,6 +382,11 @@
 			"status_success": "OK",
 			"status_error": "Fejl",
 			"event-type": "Ukendt",
+			"event-type_supplierEvent_create": "Leverandør oprettelse",
+			"event-type_supplierEvent_update": "Leverandør opdatering",
+			"event-type_supplierEvent_delete": "Leverandør sletning",
+			"event-type_supplierEvent_re-number": "Leverandørnummer ændring",
+			"event-type_supplierEvent_invalid": "Leverandør synkronisering",
 			"event-type_productEvent_create": "Vare oprettelse",
 			"event-type_productEvent_update": "Vare opdatering",
 			"event-type_productEvent_delete": "Vare sletning",
@@ -405,9 +412,18 @@
 			"message_product-dublicate-barcode": "Der skete en fejl ved synkronisering: Stregkode findes allerede",
 			"message_product-new-group-not-created": "Der skete en fejl ved synkronisering: Ny varegruppe ikke oprettet",
 			"message_product-unit-not-supported": "Der skete en fejl ved synkronisering: Understøtter ikke enhed",
-			"message_full-product-sync-successfull": "Fuld synkronisering af varekartotek succesfuld",
+			"message_full-sync-successfull": "Fuld synkronisering succesfuld",
 			"message_full-fetch-products-failed-economic": "Hentning af varekartotek fra e-conomic fejlede",
-			"message_full-upsert-failed-economic": "Fuld opdatering af varekartotek fra e-conomic fejlede"
+			"message_full-upsert-products-failed-economic": "Fuld opdatering af varekartotek fra e-conomic fejlede",
+			"message_supplier-sync-successful": "Leverandør synkroniseret succesfuldt",
+			"message_supplier-invalid-economic-webhook": "Ugyldig webhook type fra e-conomic",
+			"message_supplier-unknown-error-economic": "Der skete en fejl ved synkroniseringen af en leverandør fra economic",
+			"message_supplier-not-created-economic": "Leverandør fra e-conomic kunne ikke oprettes",
+			"message_supplier-not-updated-economic": "Leverandør fra e-conomic kunne ikke opdateres",
+			"message_supplier-not-deleted-economic": "Leverandør fra e-conomic kunne ikke slettes",
+			"message_supplier-no-history-log": "Vare historik log kunne ikke oprettes for vare",
+			"message_full-fetch-suppliers-failed-economic": "Hentning af leverandøre fra e-conomic fejlede",
+			"message_full-upsert-suppliers-failed-economic": "Fuld opdatering af leverandøre fra e-conomic fejlede"
 		}
 	},
 	"sidebar": {

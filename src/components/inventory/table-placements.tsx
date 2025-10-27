@@ -37,7 +37,10 @@ import {
 import { User } from 'lucia'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import { TableFloatingBar } from '../table/table-floating-bar'
 import { TableHeaderGroup } from '../table/table-header-group'
+import { ExportSelectedButton } from './button-export-selected'
+import { PrintSelectedButton } from './modal-placement-label'
 
 const ROW_SELECTION_ENABLED = true
 const COLUMN_FILTERS_ENABLED = true
@@ -193,6 +196,17 @@ export function TablePlacement({ data, user }: Props) {
 				</Table>
 			</div>
 			<TablePagination table={table} pageSizes={ROW_PER_PAGE} />
+
+			{ROW_SELECTION_ENABLED && (
+				<TableFloatingBar table={table}>
+					{table => (
+						<>
+							<ExportSelectedButton table={table} />
+							<PrintSelectedButton table={table} />
+						</>
+					)}
+				</TableFloatingBar>
+			)}
 		</div>
 	)
 }

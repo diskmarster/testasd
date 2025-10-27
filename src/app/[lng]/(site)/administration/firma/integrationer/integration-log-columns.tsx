@@ -3,7 +3,7 @@ import { FilterField } from '@/components/table/table-toolbar'
 import { Badge, BadgeVariant } from '@/components/ui/badge'
 import { IntegrationLogStatus } from '@/data/integrations.types'
 import { IntegrationLog } from '@/lib/database/schema/integrations'
-import { EconomicProductEventAction } from '@/lib/integrations/sync/e-conomic'
+import { EconomicOldNewEventAction } from '@/lib/integrations/sync/e-conomic'
 import { cn, formatDate } from '@/lib/utils'
 import { ColumnDef, Row, Table } from '@tanstack/react-table'
 import { isAfter, isBefore, isSameDay } from 'date-fns'
@@ -94,9 +94,7 @@ export function getTableIntegrationLogsColumns(
 
 			return (
 				<p
-					className={cn(
-						eventType == 'productEvent_re-number' && 'text-destructive',
-					)}>
+					className={cn(eventType.includes('re-number') && 'text-destructive')}>
 					{t('message', { context: getValue<string>() })}
 				</p>
 			)
@@ -111,11 +109,18 @@ export function getTableIntegrationLogsColumns(
 
 export function getEventType(
 	row: Row<IntegrationLog>,
-): 'fullSync' | `productEvent_${EconomicProductEventAction['action']}` | '' {
+):
+	| 'fullSync'
+	| `productEvent_${EconomicOldNewEventAction['action']}`
+	| `supplierEvent_${EconomicOldNewEventAction['action']}`
+	| '' {
 	const event = row.original.event
 	if (event.type == 'fullSync') {
 		return event.type
-	} else if (event.type == 'productEvent' && event.provider == 'e-conomic') {
+	} else if (
+		(event.type == 'productEvent' || event.type == 'supplierEvent') &&
+		event.provider == 'e-conomic'
+	) {
 		return `${event.type}_${event.data.action.action}`
 	}
 
@@ -130,7 +135,10 @@ function getEventInfo(
 
 	if (event.type == 'fullSync') {
 		return t('event-info', { context: 'none' })
-	} else if (event.type == 'productEvent' && event.provider == 'e-conomic') {
+	} else if (
+		(event.type == 'productEvent' || event.type == 'supplierEvent') &&
+		event.provider == 'e-conomic'
+	) {
 		const data = event.data
 
 		switch (data.action.action) {

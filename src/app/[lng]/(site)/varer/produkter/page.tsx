@@ -2,6 +2,7 @@ import { serverTranslation } from '@/app/i18n'
 import { SiteWrapper } from '@/components/common/site-wrapper'
 import { SkeletonTable } from '@/components/common/skeleton-table'
 import { withAuth, WithAuthProps } from '@/components/common/with-auth'
+import { ModalProductLabel } from '@/components/inventory/modal-product-label'
 import { DeleteProductModal } from '@/components/products/product-delete-modal'
 import { LocationWithCounts } from '@/data/location.types'
 import { LocationID } from '@/lib/database/schema/customer'
@@ -81,6 +82,7 @@ async function Page({ params: { lng }, user, customer }: PageProps) {
 				/>
 			</Suspense>
 			<DeleteProductModal />
+			<ModalProductLabel />
 		</SiteWrapper>
 	)
 }

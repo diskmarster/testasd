@@ -1,54 +1,72 @@
 {
-  "placement-page": {
-    "title": "Placements",
-    "description": "See an overview of all your placements here."
-  },
-  "table-placements": {
-    "no-placements": "No placements"
-  },
-  "placement-columns": {
-    "placement": "Placement",
-    "is-barred": "Status",
-    "is-barred-yes": "Barred",
-    "is-barred-no": "Active",
-    "inserted": "Inserted",
-    "updated": "Updated"
-  },
-  "table-placement-actions": {
-    "update": "Update",
-    "bar": "Bar the placement",
-    "unbar": "Unbar the placement",
-    "print": "Print label"
-  },
-  "modal-label": {
-    "title": "Placement labels",
-    "description": "Print labels for placements",
-    "size": "Label size",
-    "size_small": "Small",
-    "size-desc_small": "Best for 51x26mm",
-    "size_big": "Big",
-    "size-desc_big": "Best for 100x192mm",
-    "size_medium": "Medium",
-    "size-desc_medium": "Best for 76x51mm"
-  },
-  "modal-create-placement": {
-    "title": "Create new placement",
-    "description": "Here you can create a new placement.",
-    "placement": "Placement",
-    "placement-placeholder": "Enter name for new placement",
-    "autocomplete-empty-message": "Nothing found.",
-    "create-button": "Create",
-    "tooltip": "Create placement"
-  },
-  "modal-update-placement": {
-    "title": "Update placement",
-    "description": "Here you can update a placement.",
-    "placement": "Placement",
-    "placement-placeholder": "Enter name for placement",
-    "update-button": "Update"
-  },
-  "toasts": {
-    "placement-created": " placement created successfully",
-    "placement-updated": " placement updated successfully"
-  }
+	"placement-page": {
+		"title": "Placements",
+		"description": "See an overview of all your placements here."
+	},
+	"table-placements": {
+		"no-placements": "No placements"
+	},
+	"placement-columns": {
+		"placement": "Placement",
+		"is-barred": "Status",
+		"is-barred-yes": "Barred",
+		"is-barred-no": "Active",
+		"inserted": "Inserted",
+		"updated": "Updated"
+	},
+	"table-placement-actions": {
+		"update": "Update",
+		"bar": "Bar the placement",
+		"unbar": "Unbar the placement",
+		"print": "Print label"
+	},
+	"modal-label": {
+		"title": "Placement labels",
+		"description": "Print labels for placements",
+		"size": "Label size",
+		"size_small": "Small",
+		"size-desc_small": "Best for 51x26mm",
+		"size_big": "Big",
+		"size-desc_big": "Best for 100x192mm",
+		"size_medium": "Medium",
+		"size-desc_medium": "Best for 76x51mm"
+	},
+	"modal-create-placement": {
+		"title": "Create new placement",
+		"description": "Here you can create a new placement.",
+		"placement": "Placement",
+		"placement-placeholder": "Enter name for new placement",
+		"autocomplete-empty-message": "Nothing found.",
+		"create-button": "Create",
+		"tooltip": "Create placement"
+	},
+	"modal-update-placement": {
+		"title": "Update placement",
+		"description": "Here you can update a placement.",
+		"placement": "Placement",
+		"placement-placeholder": "Enter name for placement",
+		"update-button": "Update"
+	},
+	"toasts": {
+		"placement-created": " placement created successfully",
+		"placement-updated": " placement updated successfully"
+	},
+	"modal-import": {
+		"title": "Import placements",
+		"description": "Add your placements quickly and easily by importing one or more Excel files.",
+		"file-label": "Select Excel file",
+		"found-placements-label": "Found placements",
+		"found-placements-sub": "{{count}} new placements were found",
+		"placement-label": "Placement",
+		"placement-error-tooltip": "The placement was not created",
+		"placement-error": "Some placements were not imported",
+		"placement-error-sub": "We could not import all placements. Placements marked with a red icon contain errors or already exist. Fix any issues in the file and try again for the marked locations.",
+		"clear-button": "Clear list",
+		"submit-button": "Import placements",
+		"success-toast": "Placements was imported",
+		"file-example": "Example file",
+		"file-example-sub": "See how the file should be structured",
+		"file-button": "Download",
+		"invalid-data-toast": "Could not import {{filename}}. Check the files data and try again."
+	}
 }

@@ -23,7 +23,7 @@ import {
 import { useLanguage } from '@/context/language'
 import { cn } from '@/lib/utils'
 import { Table } from '@tanstack/react-table'
-import { format } from 'date-fns'
+import { endOfDay, format } from 'date-fns'
 import { DateRange } from 'react-day-picker'
 import { useDebouncedCallback } from 'use-debounce'
 import { ScrollArea } from '../ui/scroll-area'
@@ -488,6 +488,10 @@ function FilterDateRange<T>({
 			mode='range'
 			selected={date}
 			onSelect={dateRange => {
+				const newDateRange = dateRange
+				if (newDateRange?.to) {
+					newDateRange.to = endOfDay(newDateRange.to)
+				}
 				setDate(dateRange)
 				debouncedCallback(dateRange)
 			}}

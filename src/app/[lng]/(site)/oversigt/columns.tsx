@@ -1,8 +1,10 @@
 import { I18NLanguage } from '@/app/i18n/settings'
-import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
+import { DurationHoverCard } from '@/components/inventory/duration-hover-card'
+import { ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
 import { TableOverviewActions } from '@/components/inventory/table-overview-actions'
 import { TableHeader } from '@/components/table/table-header'
-import { FilterField } from '@/components/table/table-toolbar'
+import { FilterField, NumberRange } from '@/components/table/table-toolbar'
+import { Badge } from '@/components/ui/badge'
 import {
 	HoverCard,
 	HoverCardContent,
@@ -22,8 +24,8 @@ import { CustomerSettings } from '@/lib/database/schema/customer'
 import { Batch, Group, Placement, Unit } from '@/lib/database/schema/inventory'
 import { numberRangeFilterFn, stringSortingFn } from '@/lib/tanstack/filter-fns'
 import { cn, formatNumber, numberToCurrency } from '@/lib/utils'
-import { ColumnDef, Table } from '@tanstack/react-table'
-import { isBefore } from 'date-fns'
+import { ColumnDef, Row, Table } from '@tanstack/react-table'
+import { intervalToDuration, isBefore } from 'date-fns'
 import { TFunction } from 'i18next'
 import { User } from 'lucia'
 import Link from 'next/link'
@@ -405,6 +407,12 @@ export function getTableOverviewColumns(
 		accessorKey: 'batch.batch',
 		id: 'batch',
 		header: ({ column }) => <TableHeader column={column} title={t('batch')} />,
+		aggregatedCell: props => {
+			const useBatch =
+				props.row.getLeafRows().filter(r => r.original.product.useBatch)
+					.length > 0
+			return useBatch && <Badge variant='blue'>{t('useBatch-badge')}</Badge>
+		},
 		cell: ({ getValue, row }) => {
 			if (!row.original.product.useBatch) return null
 
@@ -635,7 +643,16 @@ export function getTableOverviewColumns(
 		accessorKey: 'actions',
 		header: () => null,
 		aggregatedCell: ({ row }) => (
-			<ModalShowProductLabel product={row.original.product} />
+			<ModalProductLabelTrigger
+				labelData={[
+					{
+						text1: row.original.product.text1,
+						text2: row.original.product.text2,
+						sku: row.original.product.sku,
+						barcode: row.original.product.barcode,
+					},
+				]}
+			/>
 		),
 		cell: ({ table, row }) =>
 			/*@ts-ignore*/
@@ -650,7 +667,6 @@ export function getTableOverviewColumns(
 				) : null
 			) : (
 				<div className='flex gap-2'>
-					<ModalShowProductLabel product={row.original.product} />
 					{hasPermissionByRank(user.role, 'bruger') && (
 						<TableOverviewActions
 							row={row}
@@ -665,6 +681,106 @@ export function getTableOverviewColumns(
 		enableSorting: false,
 		meta: {
 			className: 'justify-end',
+		},
+	}
+
+	const useBatchCol: ColumnDef<InventoryTableRow> = {
+		accessorKey: 'product.useBatch',
+		id: 'useBatch',
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+		meta: {
+			isShadow: true,
+		},
+	}
+
+	const latestRegCol: ColumnDef<InventoryTableRow> = {
+		accessorKey: 'latestReg',
+		header: ({ column }) => (
+			<TableHeader
+				column={column}
+				title={t('lastRegistration')}
+				tooltip={t('lastRegistrationTooltip')}
+			/>
+		),
+		aggregatedCell: ({ row }) => {
+			const dates = processRegistrationDates(row)
+			if (!dates.lastDate) return null
+
+			return (
+				<DurationHoverCard
+					lng={lng}
+					lastDate={dates.lastDate}
+					incomingAt={dates.incomingAt}
+					outgoingAt={dates.outgoingAt}
+					regulatedAt={dates.regulatedAt}
+				/>
+			)
+		},
+		cell: ({ row }) => {
+			const dates = processRegistrationDates(row)
+			if (!dates.lastDate) return null
+
+			return (
+				<DurationHoverCard
+					lng={lng}
+					lastDate={dates.lastDate}
+					incomingAt={dates.incomingAt}
+					outgoingAt={dates.outgoingAt}
+					regulatedAt={dates.regulatedAt}
+				/>
+			)
+		},
+		sortingFn: (a, b) => {
+			const aLast = processRegistrationDates(a).lastDate
+			const bLast = processRegistrationDates(b).lastDate
+
+			if (!aLast && !bLast) return 0
+			if (!bLast) return 1
+			if (!aLast) return -1
+			return Number(bLast) - Number(aLast)
+		},
+		filterFn: (row, id, value: NumberRange) => {
+			function getLastDate(...dates: (Date | null)[]): Date | null {
+				const sorted = dates
+					.filter(d => d != null)
+					.sort((a, b) => Number(b) - Number(a))
+				return sorted.at(0) ? sorted.at(0)! : null
+			}
+
+			const lastDate = getLastDate(
+				...[
+					row.original.incomingAt,
+					row.original.outgoingAt,
+					row.original.regulatedAt,
+				],
+			)
+
+			// if (!lastDate) return false
+
+			const { from, to } = value
+			const val =
+				intervalToDuration({
+					start: lastDate || new Date(), // just to please typescript, will not be used if lastDate is null
+					end: new Date(),
+				}).days || 0 + 1
+
+			if (from == undefined && to == undefined) {
+				return true
+			} else if (from == undefined && lastDate == null && to != undefined) {
+				return false
+			} else if (from == undefined && to != undefined) {
+				return val <= to
+			} else if (from != undefined && to == undefined) {
+				return val >= from
+			} else if (from != undefined && to != undefined && !lastDate) {
+				return false
+			} else if (from != undefined && to != undefined) {
+				return val >= from && val <= to
+			} else {
+				return true
+			}
 		},
 	}
 
@@ -683,7 +799,9 @@ export function getTableOverviewColumns(
 		totalQuantityCol,
 		dispQuantityCol,
 		unitCol,
+		latestRegCol,
 		placementCol,
+		useBatchCol,
 		batchCol,
 		actionsCol,
 		isBarredCol,
@@ -701,7 +819,8 @@ export function getTableOverviewColumns(
 
 	if (!hasPermissionByPlan(plan, 'pro')) {
 		planCols = planCols.filter(
-			col => !(col === totalQuantityCol || col === batchCol),
+			col =>
+				!(col === totalQuantityCol || col === batchCol || col === useBatchCol),
 		)
 	} else {
 		planCols = planCols.filter(col => {
@@ -922,6 +1041,31 @@ export function getTableOverviewFilters(
 		facetedUniqueColumnId: 'sku',
 	}
 
+	const useBatchFilter: FilterField<InventoryTableRow> = {
+		column: table.getColumn('useBatch'),
+		type: 'select',
+		label: t('useBatch'),
+		value: '',
+		options: [
+			{
+				value: true,
+				label: t('useBatch-yes'),
+			},
+			{
+				value: false,
+				label: t('useBatch-no'),
+			},
+		],
+		facetedUniqueColumnId: 'sku',
+	}
+
+	const latestRegFilter: FilterField<InventoryTableRow> = {
+		column: table.getColumn('latestReg'),
+		type: 'number-range',
+		label: t('lastRegistration'),
+		value: '',
+	}
+
 	let planFilters: FilterField<InventoryTableRow>[] = [
 		skuFilter,
 		attachmentsFilter,
@@ -939,6 +1083,8 @@ export function getTableOverviewFilters(
 		dispQuantityFilter,
 		placementFilter,
 		batchFilter,
+		useBatchFilter,
+		latestRegFilter,
 		isBarredFilter,
 	]
 
@@ -954,7 +1100,12 @@ export function getTableOverviewFilters(
 
 	if (!hasPermissionByPlan(plan, 'pro')) {
 		planFilters = planFilters.filter(
-			filter => !(filter === totalQuantityFilter || filter === batchFilter),
+			filter =>
+				!(
+					filter === totalQuantityFilter ||
+					filter === batchFilter ||
+					filter === useBatchFilter
+				),
 		)
 	} else {
 		planFilters = planFilters.filter(filter => {
@@ -968,4 +1119,51 @@ export function getTableOverviewFilters(
 	}
 
 	return planFilters
+}
+
+type RegistrationDates = {
+	lastDate: Date | null
+	incomingAt: Date | null
+	outgoingAt: Date | null
+	regulatedAt: Date | null
+}
+
+function processRegistrationDates(
+	row: Row<InventoryTableRow>,
+): RegistrationDates {
+	const dates: RegistrationDates = row.getLeafRows().reduce(
+		(acc, cur) => {
+			function compareDates(
+				accDate: Date | null,
+				curDate: Date | null,
+			): Date | null {
+				if (!accDate) return curDate
+				if (!curDate) return accDate
+				return curDate > accDate ? curDate : accDate
+			}
+
+			function getLastDate(...dates: (Date | null)[]): Date | null {
+				const sorted = dates
+					.filter(d => d != null)
+					.sort((a, b) => Number(b) - Number(a))
+				return sorted.at(0) ? sorted.at(0)! : null
+			}
+
+			acc.incomingAt = compareDates(acc.incomingAt, cur.original.incomingAt)
+			acc.outgoingAt = compareDates(acc.outgoingAt, cur.original.outgoingAt)
+			acc.regulatedAt = compareDates(acc.regulatedAt, cur.original.regulatedAt)
+			acc.lastDate = getLastDate(
+				...[acc.incomingAt, acc.outgoingAt, acc.regulatedAt],
+			)
+
+			return acc
+		},
+		{
+			lastDate: null,
+			incomingAt: null,
+			outgoingAt: null,
+			regulatedAt: null,
+		} as RegistrationDates,
+	)
+	return dates
 }

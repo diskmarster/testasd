@@ -6,6 +6,7 @@ import { useTranslation } from '@/app/i18n/client'
 import { siteConfig } from '@/config/site'
 import { useLanguage } from '@/context/language'
 import { supplierContries, SupplierContry } from '@/data/suppliers.types'
+import { CustomerIntegrationSettings } from '@/lib/database/schema/integrations'
 import { Supplier } from '@/lib/database/schema/suppliers'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,6 +19,7 @@ import { IfElse } from '../common/if-else'
 import { Button } from '../ui/button'
 import { Icons } from '../ui/icons'
 import { Input } from '../ui/input'
+import { Label } from '../ui/label'
 import {
 	Select,
 	SelectContent,
@@ -30,9 +32,10 @@ import { Skeleton } from '../ui/skeleton'
 
 interface Props {
 	supplier: Supplier
+	integrationSettings: CustomerIntegrationSettings | undefined
 }
 
-export function SupplierDetails({ supplier }: Props) {
+export function SupplierDetails({ supplier, integrationSettings }: Props) {
 	const [pending, startTransition] = useTransition()
 	const lng = useLanguage()
 	const { t } = useTranslation(lng, 'leverandører')
@@ -87,181 +90,177 @@ export function SupplierDetails({ supplier }: Props) {
 	}
 
 	return (
-		<div className='max-w-full lg:max-w-[50%] min-w-[36rem] space-y-4'>
+		<div className='w-full space-y-4'>
 			<div className='flex items-center gap-4 justify-between'>
 				<h1 className='font-medium'>{t('details-page.details.title')}</h1>
-				<IfElse
-					condition={isEditing}
-					trueComp={
-						<div className='flex gap-2'>
+				{!integrationSettings?.useSyncSuppliers && (
+					<IfElse
+						condition={isEditing}
+						trueComp={
+							<div className='flex gap-2'>
+								<Button
+									size='sm'
+									onClick={() => {
+										reset()
+										setIsEditing(false)
+									}}
+									variant='outline'>
+									{t('details-page.details.btn-cancel')}
+								</Button>
+								<Button
+									disabled={pending || !formState.isDirty}
+									onClick={() => onSubmit(formValues)}
+									size='sm'
+									variant='default'
+									className='flex items-center gap-2'>
+									{pending && <Icons.spinner className='size-4 animate-spin' />}
+									{t('details-page.details.btn-confirm')}
+								</Button>
+							</div>
+						}
+						falseComp={
 							<Button
 								size='sm'
-								onClick={() => {
-									reset()
-									setIsEditing(false)
-								}}
+								onClick={() => setIsEditing(true)}
 								variant='outline'>
-								{t('details-page.details.btn-cancel')}
+								{t('details-page.details.btn-edit')}
 							</Button>
-							<Button
-								disabled={pending || !formState.isDirty}
-								onClick={() => onSubmit(formValues)}
-								size='sm'
-								variant='default'
-								className='flex items-center gap-2'>
-								{pending && <Icons.spinner className='size-4 animate-spin' />}
-								{t('details-page.details.btn-confirm')}
-							</Button>
-						</div>
-					}
-					falseComp={
-						<Button
-							size='sm'
-							onClick={() => setIsEditing(true)}
-							variant='outline'>
-							{t('details-page.details.btn-edit')}
-						</Button>
-					}
-				/>
+						}
+					/>
+				)}
 			</div>
-			<div className='space-y-2'>
-				<div className='flex items-center gap-2'>
-					<div className='w-1/4'>
-						<span className='text-sm text-muted-foreground'>
-							{t('details-page.details.label-country')}
-						</span>
+			<div className='flex flex-col gap-2 md:flex-row'>
+				<div className='w-full space-y-0.5'>
+					<div className='flex items-start gap-2'>
+						<div className='w-1/4'>
+							<Label>{t('details-page.details.label-country')}</Label>
+							<IfElse
+								condition={isEditing}
+								falseComp={
+									<div className='flex h-9 items-center gap-2 text-sm'>
+										{supplier.country != 'UNK' ? (
+											<ReactCountryFlag
+												className='!size-4 rounded-md'
+												countryCode={supplier.country}
+												svg
+											/>
+										) : (
+											<div className='w-[16px] h-[14px] bg-foreground rounded-sm flex items-center justify-center text-background'>
+												<Icons.minus className='size-4' />
+											</div>
+										)}
+										{supplier.country}
+									</div>
+								}
+								trueComp={
+									<Select
+										name='country'
+										defaultValue={formValues.data.country}
+										onValueChange={(val: SupplierContry) =>
+											setValue('data.country', val, {
+												shouldValidate: true,
+												shouldDirty: true,
+											})
+										}>
+										<SelectTrigger>
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											{supplierContries.map((c, i) => (
+												<SelectItem value={c} key={`${c}-${i}`}>
+													<div className='flex items-center gap-1.5'>
+														<ReactCountryFlag
+															className='!size-4 rounded-md'
+															countryCode={c}
+															svg
+														/>
+														{c}
+													</div>
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								}
+							/>
+						</div>
+						<div className='w-full space-y-0.5'>
+							<Label>{t('details-page.details.label-name')}</Label>
+							<IfElse
+								condition={isEditing}
+								falseComp={
+									<p className='h-9 flex items-center'>{supplier.name}</p>
+								}
+								trueComp={<Input {...register('data.name')} />}
+							/>
+						</div>
+					</div>
+					<div className='w-full space-y-0.5'>
+						<Label>{t('details-page.details.label-id')}.</Label>
 						<IfElse
 							condition={isEditing}
 							falseComp={
-								<div className='flex items-center gap-1.5 w-full h-9'>
-									<ReactCountryFlag
-										className='!size-4 rounded-md'
-										countryCode={supplier.country}
-										svg
-									/>
-									{supplier.country}
-								</div>
+								<p
+									className={cn(
+										'h-9 flex items-center',
+										!supplier.idOfClient && 'italic text-muted-foreground',
+									)}>
+									{supplier.idOfClient || t('details-page.details.no-value')}
+								</p>
 							}
-							trueComp={
-								<Select
-									name='country'
-									defaultValue={formValues.data.country}
-									onValueChange={(val: SupplierContry) =>
-										setValue('data.country', val, {
-											shouldValidate: true,
-											shouldDirty: true,
-										})
-									}>
-									<SelectTrigger>
-										<SelectValue />
-									</SelectTrigger>
-									<SelectContent>
-										{supplierContries.map((c, i) => (
-											<SelectItem value={c} key={`${c}-${i}`}>
-												<div className='flex items-center gap-1.5'>
-													<ReactCountryFlag
-														className='!size-4 rounded-md'
-														countryCode={c}
-														svg
-													/>
-													{c}
-												</div>
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							}
-						/>
-					</div>
-					<div className='w-full'>
-						<span className='text-sm text-muted-foreground'>
-							{t('details-page.details.label-name')}
-						</span>
-						<IfElse
-							condition={isEditing}
-							falseComp={
-								<p className='h-9 flex items-center'>{supplier.name}</p>
-							}
-							trueComp={<Input {...register('data.name')} />}
+							trueComp={<Input {...register('data.idOfClient')} />}
 						/>
 					</div>
 				</div>
-				<div className='w-full space-y-1'>
-					<span className='text-sm text-muted-foreground'>
-						{t('details-page.details.label-id')}.
-					</span>
-					<IfElse
-						condition={isEditing}
-						falseComp={
-							<p
-								className={cn(
-									'h-9 flex items-center',
-									!supplier.idOfClient && 'italic text-muted-foreground',
-								)}>
-								{supplier.idOfClient || t('details-page.details.no-value')}
-							</p>
-						}
-						trueComp={<Input {...register('data.idOfClient')} />}
-					/>
-				</div>
-				<Separator className='!my-4' />
-				<h2 className='font-medium'>
-					{t('details-page.details.contact-title')}
-				</h2>
 				<div className='w-full'>
-					<span className='text-sm text-muted-foreground'>
-						{t('details-page.details.label-contact')}
-					</span>
-					<IfElse
-						condition={isEditing}
-						falseComp={
-							<p
-								className={cn(
-									'h-9 flex items-center',
-									!supplier.contactPerson && 'italic text-muted-foreground',
-								)}>
-								{supplier.contactPerson || t('details-page.details.no-value')}
-							</p>
-						}
-						trueComp={<Input {...register('data.contactPerson')} />}
-					/>
-				</div>
-				<div className='flex gap-2'>
-					<div className='w-full'>
-						<span className='text-sm text-muted-foreground'>
-							{t('details-page.details.label-phone')}
-						</span>
+					<div className='w-full space-y-0.5'>
+						<Label>{t('details-page.details.label-contact')}</Label>
 						<IfElse
 							condition={isEditing}
 							falseComp={
 								<p
 									className={cn(
 										'h-9 flex items-center',
-										!supplier.phone && 'italic text-muted-foreground',
+										!supplier.contactPerson && 'italic text-muted-foreground',
 									)}>
-									{supplier.phone || t('details-page.details.no-value')}
+									{supplier.contactPerson || t('details-page.details.no-value')}
 								</p>
 							}
-							trueComp={<Input {...register('data.phone')} />}
+							trueComp={<Input {...register('data.contactPerson')} />}
 						/>
 					</div>
-					<div className='w-full'>
-						<span className='text-sm text-muted-foreground'>
-							{t('details-page.details.label-email')}
-						</span>
-						<IfElse
-							condition={isEditing}
-							falseComp={
-								<p
-									className={cn(
-										'h-9 flex items-center',
-										!supplier.email && 'italic text-muted-foreground',
-									)}>
-									{supplier.email || t('details-page.details.no-value')}
-								</p>
-							}
-							trueComp={<Input {...register('data.email')} />}
-						/>
+					<div className='flex gap-2'>
+						<div className='w-full space-y-0.5'>
+							<Label>{t('details-page.details.label-phone')}</Label>
+							<IfElse
+								condition={isEditing}
+								falseComp={
+									<p
+										className={cn(
+											'h-9 flex items-center',
+											!supplier.phone && 'italic text-muted-foreground',
+										)}>
+										{supplier.phone || t('details-page.details.no-value')}
+									</p>
+								}
+								trueComp={<Input {...register('data.phone')} />}
+							/>
+						</div>
+						<div className='w-full space-y-0.5'>
+							<Label>{t('details-page.details.label-email')}</Label>
+							<IfElse
+								condition={isEditing}
+								falseComp={
+									<p
+										className={cn(
+											'h-9 flex items-center',
+											!supplier.email && 'italic text-muted-foreground',
+										)}>
+										{supplier.email || t('details-page.details.no-value')}
+									</p>
+								}
+								trueComp={<Input {...register('data.email')} />}
+							/>
+						</div>
 					</div>
 				</div>
 			</div>

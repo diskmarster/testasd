@@ -266,5 +266,11 @@
 		"error-occured-getting-settings": "An error occurred while retrieving app settings: "
 	},
 	"form-validation-error": "There is an error in the following fields:",
-	"unknown-error": "An unknown error occurred"
+	"unknown-error": "An unknown error occurred",
+	"excel-file-importer": {
+		"supported-extensions": "Supported file types: ",
+		"max-size": "Max size: ",
+		"drag-and-drop": "Drag and drop your file here",
+		"drag-and-drop-plus": "Drag and drop your file here, or click to select"
+	}
 }

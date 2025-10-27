@@ -53,11 +53,16 @@ export type FormattedInventory = {
 		group: string
 		fileCount: number
 		supplierName: string | null
+		useBatch: boolean
+		isReorder: boolean
 	}
 	placement: Placement
 	batch: Batch
 	totalQuantity: number
 	isDefaultPlacement: boolean
+	incomingAt: Date | null
+	outgoingAt: Date | null
+	regulatedAt: Date | null
 }
 
 export interface FormattedDefaultPlacement extends DefaultPlacement {

@@ -1,9 +1,10 @@
 import { I18NLanguage } from '@/app/i18n/settings'
-import { ModalShowProductLabel } from '@/components/inventory/modal-show-product-label'
+import { ModalProductLabelTrigger } from '@/components/inventory/modal-product-label'
 import { TableOverviewActions } from '@/components/products/product-table-actions'
 import { TableHeader } from '@/components/table/table-header'
 import { FilterField } from '@/components/table/table-toolbar'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Plan } from '@/data/customer.types'
 import { FormattedProduct } from '@/data/products.types'
 import { hasPermissionByRank } from '@/data/user.types'
@@ -24,6 +25,29 @@ export function getProductOverviewColumns(
 	lng: I18NLanguage,
 	t: (key: string) => string,
 ): ColumnDef<FormattedProduct>[] {
+	const selectCol: ColumnDef<FormattedProduct> = {
+		id: 'select',
+		header: ({ table }) => (
+			<Checkbox
+				checked={
+					table.getIsAllPageRowsSelected() ||
+					(table.getIsSomePageRowsSelected() && 'indeterminate')
+				}
+				onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+				aria-label='Select all'
+			/>
+		),
+		cell: ({ row }) => (
+			<Checkbox
+				checked={row.getIsSelected()}
+				onCheckedChange={value => row.toggleSelected(!!value)}
+				aria-label='Select row'
+			/>
+		),
+		enableSorting: false,
+		enableHiding: false,
+	}
+
 	const skuCol: ColumnDef<FormattedProduct> = {
 		accessorKey: 'sku',
 		header: ({ column }) => (
@@ -247,7 +271,16 @@ export function getProductOverviewColumns(
 		header: () => null,
 		cell: ({ table, row }) => (
 			<>
-				<ModalShowProductLabel product={row.original} />
+				<ModalProductLabelTrigger
+					labelData={[
+						{
+							text1: row.original.text1,
+							text2: row.original.text2,
+							sku: row.original.sku,
+							barcode: row.original.barcode,
+						},
+					]}
+				/>
 				<TableOverviewActions
 					integrationSettings={integrationSettings}
 					table={table}
@@ -257,9 +290,24 @@ export function getProductOverviewColumns(
 		),
 		enableHiding: false,
 		enableSorting: false,
+		meta: {
+			rightAlign: true,
+		},
+	}
+
+	const useBatchCol: ColumnDef<FormattedProduct> = {
+		accessorKey: 'useBatch',
+		id: 'useBatch',
+		filterFn: (row, id, value) => {
+			return value.includes(row.getValue(id))
+		},
+		meta: {
+			isShadow: true,
+		},
 	}
 
 	const columns = [
+		selectCol,
 		skuCol,
 		attachmentsCol,
 		barcodeCol,
@@ -272,6 +320,7 @@ export function getProductOverviewColumns(
 		costPriceCol,
 		salesPriceCol,
 		updatedCol,
+		useBatchCol,
 		isBarredCol,
 	].filter(
 		col => user.priceAccess || (col !== costPriceCol && col !== salesPriceCol),
@@ -413,6 +462,24 @@ export function getProductTableOverviewFilters(
 		],
 	}
 
+	const useBatchFilter: FilterField<FormattedProduct> = {
+		column: table.getColumn('useBatch'),
+		type: 'select',
+		label: t('useBatch'),
+		value: '',
+		options: [
+			{
+				value: true,
+				label: t('useBatch-yes'),
+			},
+			{
+				value: false,
+				label: t('useBatch-no'),
+			},
+		],
+		facetedUniqueColumnId: 'sku',
+	}
+
 	return [
 		skuFilter,
 		attachmentsFilter,
@@ -423,6 +490,7 @@ export function getProductTableOverviewFilters(
 		text2Filter,
 		text3Filter,
 		unitFilter,
+		useBatchFilter,
 		costPriceFilter,
 		salesPriceFilter,
 		updatedFilter,

@@ -266,5 +266,11 @@
 		"error-occured-getting-settings": "Der opstod en fejl under hentning af app indstillinger: "
 	},
 	"form-validation-error": "Der er en fejl i følgende felter:",
-	"unknown-error": "Der skete en ukendt fejl"
+	"unknown-error": "Der skete en ukendt fejl",
+	"excel-file-importer": {
+		"supported-extensions": "Gyldige filtyper: ",
+		"max-size": "Maks. størrelse: ",
+		"drag-and-drop": "Træk og slip din fil her",
+		"drag-and-drop-plus": "Træk og slip din fil her, eller klik for at vælge"
+	}
 }
