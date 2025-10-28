@@ -235,3 +235,8 @@ export function truncate(str: string, length: number): string {
 	}
 	return str
 }
+
+export function maxLines(arr: string[], max: number): string[] {
+	const res = [...arr].splice(0, max)
+	return res
+}
