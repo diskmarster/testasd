@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf'
-import { truncate } from '../utils'
+import { maxLines } from '../utils'
 import { createYadom } from '../yadom'
 import { ImageFormat } from '../yadom/types'
 
@@ -30,14 +30,14 @@ function calculateLayout(size: LabelSize) {
 
 	return {
 		fonts: {
-			text1: Math.max(8, Math.min(20, 12 * scale)),
-			text2: Math.max(6, Math.min(11, 8 * scale)),
-			sku: Math.max(6, Math.min(11, 8 * scale)),
+			text1: Math.max(10, Math.min(20, 12 * scale)),
+			text2: Math.max(8, Math.min(11, 8 * scale)),
+			sku: Math.max(8, Math.min(11, 8 * scale)),
+			barcodeText: Math.max(7, Math.min(10, 7 * scale)),
 		},
 		paddingY: Math.max(0.5, 2.5 * scale),
-		paddingX: Math.max(2, 2.5 * scale),
-		lineWidth: Math.max(0.25, 0.2 * scale),
-		barcodeSize: height * 0.65,
+		paddingX: Math.max(2.5, 2.5 * scale),
+		barcodeScale: 0.7,
 	}
 }
 
@@ -113,63 +113,83 @@ export async function generateProductLabels(
 		}
 
 		const [width, height] = size
-		const { fonts, paddingY, paddingX, lineWidth, barcodeSize } = layout
+		const { fonts, paddingY, paddingX, barcodeScale } = layout
 
-		const textWidth = width - barcodeSize - paddingX * 3.5
+		const textWidth = width - paddingX * 3.5
 
-		const barcodeX = width - barcodeSize - paddingX
-		const barcodeY = (height - barcodeSize) / 2
-
-		console.log('line width', lineWidth)
-		doc.setLineWidth(lineWidth)
-		doc.setDrawColor(210, 210, 210)
-		doc.line(barcodeX - paddingX * 0.75, 0, barcodeX - paddingX * 0.75, height)
+		// doc.setLineWidth(lineWidth)
+		// doc.setDrawColor(210, 210, 210)
+		// doc.line(barcodeX - paddingX * 0.75, 0, barcodeX - paddingX * 0.75, height)
 
 		doc.setFont('helvetica', 'bold')
 		doc.setFontSize(fonts.text1)
 		doc.setTextColor(20, 20, 20)
 
-		let text1Truncate = size[1]
-		let text2Truncate = size[1]
-
-		const text1Lines = doc.splitTextToSize(
-			truncate(product.text1, text1Truncate),
-			textWidth,
+		const text1Lines = maxLines(
+			doc.splitTextToSize(product.text1, textWidth) as string[],
+			2,
 		)
-		const text1Dim = doc.getTextDimensions(text1Lines, {
-			fontSize: fonts.text1,
-		})
+
+		const text1Dim = text1Lines.reduce(
+			(acc, cur) => {
+				const curDim = doc.getTextDimensions(cur, {
+					fontSize: fonts.text1,
+				})
+				return {
+					h: acc.h + curDim.h,
+					w: Math.max(acc.w, curDim.w),
+				}
+			},
+			{ h: 0, w: 0 },
+		)
 		doc.text(text1Lines, paddingX, paddingY, {
 			baseline: 'top',
 			lineHeightFactor: 1,
 			maxWidth: textWidth,
 		})
 
-		let currentY = paddingY + text1Dim['h'] + paddingY
+		let currentY = paddingY + text1Dim.h + paddingY
+
+		const remainingHeight = height - currentY
+
+		const barcodeTextDim = doc.getTextDimensions(product.barcode, {
+			fontSize: fonts.barcodeText,
+		})
+
+		const barcodeImageBottom = height - paddingY * 2 - 0.5
+
+		const barcodeSize = remainingHeight * barcodeScale
+		const barcodePaddingTop =
+			barcodeImageBottom - (currentY + barcodeSize + barcodeTextDim.h)
+
+		const barcodeX = width - barcodeSize - paddingX * 1.5
+		const barcodeY = currentY + barcodePaddingTop
 
 		if (product.text2) {
 			doc.setFont('helvetica', 'normal')
 			doc.setFontSize(fonts.text2)
 			doc.setTextColor(0, 0, 0)
+			const text2Width = width - (paddingX + barcodeSize + paddingX)
 
-			const text2Lines = doc.splitTextToSize(
-				truncate(product.text2, text2Truncate),
-				textWidth,
+			const text2Lines = maxLines(
+				doc.splitTextToSize(product.text2, text2Width),
+				2,
 			)
 			doc.text(text2Lines, paddingX, currentY, {
 				baseline: 'top',
 				lineHeightFactor: 1.1,
-				maxWidth: textWidth,
+				maxWidth: text2Width,
 			})
 		}
 
-		const skuY = height - paddingY - fonts.sku * 0.5
+		const skuY = height - paddingY * 2
 
 		doc.setFont('helvetica', 'normal')
 		doc.setFontSize(fonts.sku)
 		doc.setTextColor(0, 0, 0)
 		doc.text(`Varenr.: ${product.sku}`, paddingX, skuY, {
-			baseline: 'middle',
+			baseline: 'bottom',
+			maxWidth: width - barcodeSize,
 		})
 
 		const barcodeBytes = await barcode.bytes()
@@ -182,8 +202,8 @@ export async function generateProductLabels(
 			barcodeSize,
 		)
 
-		const barcodeTextY = barcodeY + barcodeSize + 0.5
-		const barcodeTextFontSize = fonts.sku * 0.9
+		const barcodeTextFontSize = fonts.barcodeText
+		const barcodeTextY = skuY
 
 		doc.setFont('helvetica', 'normal')
 		doc.setFontSize(barcodeTextFontSize)
@@ -191,7 +211,7 @@ export async function generateProductLabels(
 
 		const barcodeTextX = barcodeX + barcodeSize / 2
 		doc.text(product.barcode, barcodeTextX, barcodeTextY, {
-			baseline: 'top',
+			baseline: 'bottom',
 			align: 'center',
 		})
 	}
