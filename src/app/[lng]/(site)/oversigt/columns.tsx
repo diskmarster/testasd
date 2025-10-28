@@ -131,8 +131,8 @@ export function getTableOverviewColumns(
 				className={cn(
 					'tabular-nums hidden rounded-full',
 					row.original.product.fileCount != undefined &&
-						row.original.product.fileCount > 0 &&
-						'block',
+					row.original.product.fileCount > 0 &&
+					'block',
 				)}>
 				<p>{`${row.original.product.fileCount}/5`}</p>
 			</div>
@@ -144,8 +144,8 @@ export function getTableOverviewColumns(
 					className={cn(
 						'tabular-nums hidden rounded-full',
 						row.original.product.fileCount != undefined &&
-							row.original.product.fileCount > 0 &&
-							'block',
+						row.original.product.fileCount > 0 &&
+						'block',
 					)}>
 					<p>{`${row.original.product.fileCount}/5`}</p>
 				</div>
@@ -658,15 +658,37 @@ export function getTableOverviewColumns(
 			/*@ts-ignore*/
 			table.options.meta?.isGrouped ? (
 				hasPermissionByRank(user.role, 'bruger') ? (
-					<TableOverviewActions
-						row={row}
-						table={table}
-						plan={plan}
-						settings={settings}
-					/>
+					<>
+						<ModalProductLabelTrigger
+							labelData={[
+								{
+									text1: row.original.product.text1,
+									text2: row.original.product.text2,
+									sku: row.original.product.sku,
+									barcode: row.original.product.barcode,
+								},
+							]}
+						/>
+						<TableOverviewActions
+							row={row}
+							table={table}
+							plan={plan}
+							settings={settings}
+						/>
+					</>
 				) : null
 			) : (
 				<div className='flex gap-2'>
+					<ModalProductLabelTrigger
+						labelData={[
+							{
+								text1: row.original.product.text1,
+								text2: row.original.product.text2,
+								sku: row.original.product.sku,
+								barcode: row.original.product.barcode,
+							},
+						]}
+					/>
 					{hasPermissionByRank(user.role, 'bruger') && (
 						<TableOverviewActions
 							row={row}
