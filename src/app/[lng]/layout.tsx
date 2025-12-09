@@ -1,3 +1,4 @@
+import { ChatToggle } from '@/components/chatbot/ChatToggle'
 import { LanguageProvider } from '@/context/language'
 import { dir } from 'i18next'
 import {
@@ -32,6 +33,7 @@ export default function RootLayout({
 			<body>
 				<LanguageProvider value={lng as I18NLanguage}>
 					{children}
+					<ChatToggle />
 				</LanguageProvider>
 			</body>
 		</html>
