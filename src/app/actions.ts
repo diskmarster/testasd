@@ -12,6 +12,7 @@ import { customerService } from '@/service/customer'
 import { inventoryService } from '@/service/inventory'
 import { locationService } from '@/service/location'
 import { revalidatePath } from 'next/cache'
+import { chatbotService } from "@/service/chatbot"
 import { z } from 'zod'
 
 const changeLocationValidation = z.object({
@@ -55,6 +56,34 @@ export const genInventoryReportAction = adminAction
 			inventory,
 		}
 	})
+
+	export const askFaqAction = authedAction
+  .metadata({ actionName: "askFaqAction" })
+  .schema(
+	z.object({
+	  message: z.string().min(1),
+	}),
+  )
+  .action(async ({ parsedInput, ctx }) => {
+    const { message } = parsedInput
+    const locale = ctx.lang ?? "da" // kommer fra safe-action middleware
+
+    const match = chatbotService.findBestMatch(message, locale)
+
+    if (!match) {
+      return {
+        matched: false,
+        answer:
+          "Jeg kunne desværre ikke finde et svar på dit spørgsmål. Prøv at formulere det anderledes eller kontakt support.",
+      }
+    }
+
+    return {
+      matched: true,
+      answer: match.answer,
+      question: match.question,
+    }
+  })
 
 export const genInventoryMovementsReportAction = adminAction
 	.schema(
